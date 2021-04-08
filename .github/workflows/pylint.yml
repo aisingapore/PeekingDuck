@@ -17,7 +17,7 @@ jobs:
 
       # Runs the Super-Linter action
       - name: Run Pylint
-        run: bash ../scripts/evaluate_pylint.sh
+        run: bash ../../scripts/evaluate_pylint.sh
         env:
           DEFAULT_BRANCH: 1-github-actions-trial
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
