@@ -1,4 +1,7 @@
 def main():
+    """
+    hello
+    """
     print(6)
     return 2*3
 
