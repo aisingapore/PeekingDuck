@@ -1,10 +1,13 @@
-def main():
-    """
+"""
+Do this, do that
+"""
+
+def node1():
+    '''
     hello
-    """
-    print(6)
-    return 2*3
+    '''
+    print("This node says hello!")
 
 
 if __name__ == "__main__":
-    main()
+    node1()
