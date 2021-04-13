@@ -9,8 +9,4 @@ else
     echo "PYLINT SUCCESS!!"
 fi
 
-
-# run pytest
-pytest
-
 echo "CHECKCODE: CONGRATULATIONS, ALL TESTS SUCCESSFUL!!"
