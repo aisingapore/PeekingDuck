@@ -141,6 +141,7 @@ cython_debug/
 data/
 logs/
 results/
+weights/
 
 # Other likely files that should not be committed
 .DS_Store
