@@ -17,7 +17,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run linter
         run: bash ./scripts/linter.sh
-      - name: Run license header check
-        run: bash ./scripts/check_license.sh
+      - name: Check for copyright and license headers in .py files
+        run: bash ./scripts/check_headers.sh
 
 
