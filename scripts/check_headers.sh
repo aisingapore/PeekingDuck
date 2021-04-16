@@ -1,18 +1,19 @@
 #!/bin/bash
 
 dir=peekingduck
-copyright='Copyright 2021 AI Singapore'
+copyright='AI Singapore'
 license='www.apache.org/licenses/LICENSE-2.0'
+top_rows=15 # assuming copyright and license are within first top_rows of file
 fail=false
 
 # For easy troubleshooting, show all the files which do not have the required headers
 for file in $(find $dir -type f -name '*.py'); do
-    if ! head -n 10 $file | grep -q "$copyright"
+    if ! head -n $top_rows $file | grep -q "$copyright"
     then 
         echo "$file: Does not have AISG copyright header."
         fail=true
     fi
-    if ! head -n 10 $file | grep -q "$license"
+    if ! head -n $top_rows $file | grep -q "$license"
     then 
         echo "$file: Does not have Apache license header."
         fail=true
