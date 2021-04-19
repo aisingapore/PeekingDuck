@@ -1,0 +1,7 @@
+nodes:
+- input.live
+- model.yolo_node
+# # - custom.dot
+# # - heuristics.peoplecounting
+- draw.bbox
+- output.screen

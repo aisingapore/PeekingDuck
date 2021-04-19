@@ -1,0 +1,9 @@
+input: ["source"]
+output: ["img", "end"]
+
+resolution: {
+            width: 1280,
+            height: 720
+        }
+input_source: '/Users/ngleeping/Desktop/1m.mp4'
+mirror_image: False
