@@ -21,7 +21,7 @@ graph_files: {
 }
 size: 416
 image: ../weights/yolov3/images/street.jpg
-output: ../results/yolov3/output.jpg
+output_dir: ../results/yolov3/output.jpg
 num_classes: 80
 detect_ids: [0]
 yolo_iou_threshold: 0.5
