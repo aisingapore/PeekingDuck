@@ -1,8 +1,8 @@
-name: linter
+name: Code Check
 on: push
 
 jobs:
-  check_linting:
+  check_code:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -17,5 +17,7 @@ jobs:
           pip install -r requirements.txt
       - name: Run linter
         run: bash ./scripts/linter.sh
+      - name: Check for copyright and license headers in .py files
+        run: bash ./scripts/check_headers.sh
 
 
