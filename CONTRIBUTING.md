@@ -36,7 +36,7 @@ We use:
 ## 3. Code Styles
 
 - **Comments**<br>
-When writing comments, write comments that tells readers new information that they should know.
+Use comments sparingly, it should be used for situations where the code is not self-explanatory. If and when comments are used, it should be clear and succinct.
 - **Single Responsibility Principle**<br>
 The function/method should only perform one role.
 - **Don't Repeat Yourself (DRY)**<br>
