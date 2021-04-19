@@ -14,10 +14,10 @@ class YoloModel:
 
         # check for yolo weights, if none then download into weights folder
         if not checker.has_weights(config['root'],
-                                   config['yolo']['weights_dir']):
+                                   config['weights_dir']):
             print('---no yolo weights detected. proceeding to download...---')
             downloader.download_weights(config['root'],
-                                        config['yolo']['weights_id'])
+                                        config['weights_id'])
             print('---yolo weights download complete.---')
 
         #get classnames path to read all the classes
