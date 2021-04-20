@@ -22,12 +22,12 @@ This toolkit provides state of the art computer vision models to make real time 
 
 ## How to Use for Developers (Temporary)
 
-- git clone this repo
+- `git clone` this repo
+- `pip install .`
 - Choose the required nodes in [run_config.yml](run_config.yml)
 - To run:
     ```
-    cd ..
-    python peekingduck
+    peekingduck run --config_path <path_to_config>
     ```
 - To create a new node, check out [CONTRIBUTING.md](CONTRIBUTING.md)
 
@@ -57,6 +57,16 @@ Unless specified, all nodes in `peekingduck` will use the default configs for ev
 ``` bash
 > peekingduck get-configs
 ```
+
+### `run`
+You can run the PeekingDuck runner via the following command:
+
+```bash
+peekingduck run --config_path <path_to_config>
+```
+
+If `config_path` is not provided, this command will look for `run_config.yml` in the current directory.
+
 
 For specific information on how to use peekingduck-cli, you can use `peekingduck --help`.
 
