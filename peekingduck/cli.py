@@ -79,7 +79,7 @@ def get_configs(config_path):
     with open('node_config.yml', 'a') as node_configs:
         for node in nodes:
             module, node_name = node.split('.')
-            if node_path[0] == 'custom':
+            if module == 'custom':
                 node_config_path = os.path.join('src/custom_nodes', node_name, 'config.yml')
             else:
                 dir_path = os.path.dirname(os.path.realpath(__file__))
