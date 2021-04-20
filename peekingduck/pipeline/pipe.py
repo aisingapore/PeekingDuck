@@ -26,11 +26,10 @@ class Pipe:
                       for key in node.inputs if key in self._datas}
             outputs = node.run(inputs)
 
-            # _node_name should no longer be a private variable as used here
-            if node._name == "input.recorded":
-                if outputs['end']:
-                    self.video_end = True
-                    break
+            if 'end' in outputs and outputs['end']:
+                self.video_end = True
+                break
+    
             self._datas.update(outputs)
 
     @staticmethod
