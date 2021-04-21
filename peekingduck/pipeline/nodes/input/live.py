@@ -10,6 +10,8 @@ class Node(AbstractNode):
         input_source = config['input_source']
         mirror_image = config['mirror_image']
 
+        self.logger.info("TESTING")
+
         self.videocap = VideoThread(resolution, input_source, mirror_image)
 
     def run(self, inputs: dict):
