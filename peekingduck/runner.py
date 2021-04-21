@@ -4,7 +4,7 @@ import yaml
 import importlib
 import logging
 
-from peekingduck.pipeline.pipe import Pipe
+from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.config import ConfigLoader
 END_TYPE = 'process_end'
 
@@ -65,7 +65,7 @@ class Runner():
 
         # Create Graph
         try:
-            self.pipe = Pipe(instantiated_nodes)
+            self.pipeline = Pipeline(instantiated_nodes)
         except ValueError as e:
             logging.error(str(e))
             sys.exit(1)
@@ -73,5 +73,5 @@ class Runner():
     def run(self):
         """execute single or continuous inference
         """
-        while not self.pipe.video_end:
-            self.pipe.execute()
+        while not self.pipeline.video_end:
+            self.pipeline.execute()
