@@ -12,18 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import logging 
-from peekingduck.utils.logger import setup_logger
-import peekingduck.runner as pkd
+import logging
 
-if __name__ == "__main__":
-    RUN_PATH = os.path.join(os.getcwd(), 'PeekingDuck/run_config.yml')
-    CUSTOM_NODE_PATH = os.path.join(os.getcwd(), 'PeekingDuck/custom_nodes')
+def setup_logger() -> None:
+    """
+    Universal logging configuration 
+    """
+
+    logging.basicConfig(level=logging.INFO, 
+                        format='%(asctime)s %(name)s %(levelname)s:%(message)s',
+                        datefmt="%Y-%m-%dT%H:%M:%S")
+
     
-    setup_logger()
-    logger = logging.getLogger(__name__)
-    logger.info("Run path: %s", RUN_PATH)
-
-    runner = pkd.Runner(RUN_PATH, CUSTOM_NODE_PATH)
-    runner.run()

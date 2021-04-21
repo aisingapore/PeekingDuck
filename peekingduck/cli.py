@@ -1,6 +1,9 @@
 import os
+import logging
 import yaml
 import click
+
+logger = logging.getLogger(__name__)
 
 @click.group()
 def cli():
@@ -17,7 +20,7 @@ def _get_cwd():
 def create_custom_folder():
     curdir = _get_cwd()
     custom_node_dir = os.path.join(curdir, "src/custom_nodes")
-    print (f"Creating custom nodes folder in {custom_node_dir}")
+    logger.info (f"Creating custom nodes folder in {custom_node_dir}")
     os.makedirs(custom_node_dir, exist_ok = True)
 
 
@@ -67,12 +70,12 @@ def get_configs(config_path):
                     node_config = {node_name: node_config}
                 yaml.dump(node_config, node_configs, default_flow_style = False)
             else:
-                print(f'No associated configs found for {node}. Skipping')
+                logger.info(f'No associated configs found for {node}. Skipping')
 
 
 @cli.command()
 def init():
     """Initialise a PeekingDuck project"""
-    print("Welcome to PeekingDuck!")
+    logger.info("Welcome to PeekingDuck!")
     create_custom_folder()
     create_yml()

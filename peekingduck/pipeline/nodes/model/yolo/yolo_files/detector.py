@@ -14,16 +14,21 @@ import os
 import yaml
 
 import numpy as np
-from absl import logging
+import logging
 import tensorflow as tf
 
 from .graph_functions import load_graph
 from .dataset import transform_images
 
+logger = logging.getLogger(__name__)
+
 
 class Detector:
 
     def __init__(self, config):
+        
+        
+        
         self.config = config
         self.root_dir = config['root']
 
@@ -33,9 +38,9 @@ class Detector:
     def _setup_gpu():
         physical_devices = tf.config.experimental.list_physical_devices('GPU')
         if len(physical_devices) > 0:
-            logging.info('GPU setup with %d devices', len(physical_devices))
+            logger.info('GPU setup with %d devices', len(physical_devices))
         else:
-            logging.info('use CPU')
+            logger.info('use CPU')
 
     def _create_yolo_model(self):
         '''
@@ -67,7 +72,7 @@ class Detector:
     @staticmethod
     def _load_image(image_file):
         img = open(image_file, 'rb').read()
-        logging.info('image file %s loaded', image_file)
+        logger.info('image file %s loaded', image_file)
         return img
 
     @staticmethod

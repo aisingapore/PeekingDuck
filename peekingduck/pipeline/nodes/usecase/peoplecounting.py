@@ -1,6 +1,9 @@
+import logging
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.datamap import DataMap
 
+logger = logging.getLogger(__name__)
 
 class Node(AbstractNode):
     def __init__(self, config):
@@ -17,5 +20,5 @@ class Node(AbstractNode):
     def get_outputs(self, dmap:DataMap):
         results = len(dmap.get(self._valid_input_type[0]))
         dmap.set(self._output_type[0], self._node_name, results)
-        print('peoplecount: {}'.format(results))
+        logger.info('peoplecount: {}'.format(results))
         return dmap
