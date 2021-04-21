@@ -78,12 +78,12 @@ def get_configs(config_path):
     #should use ConfigLoader() here as well
     with open('node_config.yml', 'a') as node_configs:
         for node in nodes:
-            module, node_name = node.split('.')
-            if module == 'custom':
+            node_type, node_name = node.split('.')
+            if node_type == 'custom':
                 node_config_path = os.path.join('src/custom_nodes', node_name, 'config.yml')
             else:
                 dir_path = os.path.dirname(os.path.realpath(__file__))
-                config_filename =  module + '_' + node_name + '.yml'
+                config_filename =  node_type + '_' + node_name + '.yml'
                 node_config_path = os.path.join(dir_path, 'configs', config_filename)
             if os.path.isfile(node_config_path):
                 with open(node_config_path, 'r') as node_yml:
