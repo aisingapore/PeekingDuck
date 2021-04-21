@@ -2,7 +2,7 @@ from typing import List, Set
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Pipe:
+class Pipeline:
     """ Pipe class that stores nodes and manages the data information used during inference
     """
 
