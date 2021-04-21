@@ -22,7 +22,7 @@ class Node(AbstractNode):
         '''
         outputs = self._run_single_file()
 
-        if outputs["end"]:
+        if outputs[self.outputs[1]]:
             self._get_next_input()
             outputs = self._run_single_file()
 
@@ -48,9 +48,20 @@ class Node(AbstractNode):
     def _get_next_input(self):
         
         if self._filepaths:
-            self.videocap = VideoNoThread(
-                self._resolution, 
-                self._filepaths.pop(0), 
-                self._mirror_image
-            )
+            file_path = self._filepaths.pop(0)
+            if self._is_valid_file_type(file_path):
+                self.videocap = VideoNoThread(
+                    self._resolution, 
+                    file_path,
+                    self._mirror_image
+                )
+            else:
+                self._get_next_input()
+            
+    
+    def _is_valid_file_type(self, filepath):
+        allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]
+        if filepath.split(".")[-1] in allowed_extensions:
+            return True
+        return False
         
