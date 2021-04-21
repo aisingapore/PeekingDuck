@@ -21,6 +21,9 @@ class VideoThread:
         self._lock = Lock()
         thread = Thread(target=self._reading_thread, args=(), daemon=True)
         thread.start()
+    
+    def __del__(self):
+        self.stream.release()
 
     def _reading_thread(self):
         '''
@@ -58,6 +61,9 @@ class VideoNoThread:
 
         width, height = res['width'], res['height']
         set_res(self.stream, width, height)
+    
+    def __del__(self):
+        self.stream.release()
 
     def read_frame(self):
         '''
