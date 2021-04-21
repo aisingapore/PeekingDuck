@@ -1,6 +1,6 @@
 from typing import Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .yolo import yolo_model
+from .yolov4 import yolo_model
 
 
 class Node(AbstractNode):
