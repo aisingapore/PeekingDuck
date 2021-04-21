@@ -23,6 +23,7 @@ This toolkit provides state of the art computer vision models to make real time 
 ## How to Use for Developers (Temporary)
 
 - `git clone` this repo
+- `cd PeekingDuck`
 - `pip install .`
 - Choose the required nodes in [run_config.yml](run_config.yml)
 - To run:
