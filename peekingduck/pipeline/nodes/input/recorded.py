@@ -4,8 +4,6 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
-logger = logging.getLogger(__name__)
-
 class Node(AbstractNode):
     def __init__(self, config):
         super().__init__(config, name='input.recorded')
@@ -59,10 +57,10 @@ class Node(AbstractNode):
                     self._mirror_image
                 )
             else:
-                logger.warning("Skipping '%s' as it is not an accepted file format %s",
-                                file_path,
-                                str(self._allowed_extensions)
-                                )
+                self.logger.warning("Skipping '%s' as it is not an accepted file format %s",
+                                    file_path,
+                                    str(self._allowed_extensions)
+                                    )
                 self._get_next_input()
 
     def _is_valid_file_type(self, filepath):

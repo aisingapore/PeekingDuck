@@ -6,11 +6,11 @@ class AbstractNode(metaclass=ABCMeta):
 
     def __init__(self, config: dict, name: str):
 
-        self.logger = logging.getLogger(__name__)
-
         self._inputs = config['input']
         self._outputs = config['output']
         self._name = name
+
+        self.logger = logging.getLogger(__name__ + "." + self._name)
 
     @classmethod
     def __subclasshook__(cls, subclass):

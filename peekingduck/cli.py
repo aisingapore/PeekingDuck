@@ -3,6 +3,9 @@ import logging
 import yaml
 import click
 
+from utils.logger import setup_logger
+
+setup_logger()
 logger = logging.getLogger(__name__)
 
 @click.group()
