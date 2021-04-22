@@ -4,7 +4,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='VideoPlotter')
+        super().__init__(config, node_name=__name__)
 
     def run(self, inputs: dict):
         cv2.imshow('livefeed', inputs[self.inputs[0]])

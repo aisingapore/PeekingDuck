@@ -1,3 +1,4 @@
+name: ["Yolo"]
 input: ["img"]
 output: ["bboxes", "labels", "score"]
 

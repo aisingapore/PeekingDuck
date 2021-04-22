@@ -4,13 +4,13 @@ from typing import Dict, List, Any
 
 class AbstractNode(metaclass=ABCMeta):
 
-    def __init__(self, config: dict, name: str):
+    def __init__(self, config: dict, node_name: str):
 
         self._inputs = config['input']
         self._outputs = config['output']
-        self._name = name
+        self._name = node_name
 
-        self.logger = logging.getLogger(__name__ + "." + self._name)
+        self.logger = logging.getLogger(self._name)
 
     @classmethod
     def __subclasshook__(cls, subclass):

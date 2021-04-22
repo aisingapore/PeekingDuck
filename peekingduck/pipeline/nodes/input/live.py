@@ -4,7 +4,7 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoThread
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='input.live')
+        super().__init__(config, node_path=__name__)
 
         resolution = config['resolution']
         input_source = config['input_source']

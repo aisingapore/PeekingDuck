@@ -5,7 +5,7 @@ from peekingduck.pipeline.datamap import DataMap
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='PeopleCount')
+        super().__init__(config, node_path=__name__)
         self._valid_input_type = ['bboxes']
         self._output_type = ['peoplecount']
 

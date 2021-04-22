@@ -6,7 +6,7 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='input.recorded')
+        super().__init__(config, node_name=__name__)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]
         input_source = config['input_source']
         self._resolution = config['resolution']

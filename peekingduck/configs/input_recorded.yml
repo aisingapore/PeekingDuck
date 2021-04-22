@@ -1,3 +1,4 @@
+name: ["input.recorded"]
 input: ["source"]
 output: ["img", "end"]
 
