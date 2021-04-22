@@ -50,8 +50,8 @@ def init():
               help="List of nodes to run. If none, assumes a run_config.yml at current working directory")
 def run(config_path):
     """Runs PeekingDuck"""
+    curdir = _get_cwd()
     if not config_path:
-        curdir = _get_cwd()
         config_path = os.path.join(curdir, "run_config.yml")
 
     custom_node_path = os.path.join(curdir, 'src/custom_nodes')
