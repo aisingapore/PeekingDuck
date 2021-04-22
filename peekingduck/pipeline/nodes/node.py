@@ -4,11 +4,11 @@ from typing import Dict, List, Any
 
 class AbstractNode(metaclass=ABCMeta):
 
-    def __init__(self, config: dict, node_name: str):
+    def __init__(self, config: dict, node_path: str):
 
         self._inputs = config['input']
         self._outputs = config['output']
-        self._name = node_name
+        self._name = node_path
 
         self.logger = logging.getLogger(self._name)
 
