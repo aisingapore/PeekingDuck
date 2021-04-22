@@ -15,32 +15,32 @@ limitations under the License.
 """
 
 import numpy as np
-from typing import Dict, List
+from typing import Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
     def __init__(self, config: Dict) -> None:
-        super().__init__(config, name='heuristic.3dLocFromBbox')
+        super().__init__(config, name='heuristic.3D_loc_bbox')
 
         self.height_factor = config['height_factor']
         self.focal_length = config['focal_length']
 
-    def run(self, inputs: Dict) -> List:
+    def run(self, inputs: Dict) -> Dict:
         """Converts 2D bounding boxes into 3D locations.
 
         Args:
             inputs: ["bboxes"]
 
         Returns:
-            locations: ["3D_loc"]
+            outputs: ["obj_3D_locs"]
 
         """
 
         locations = []
 
-        for idx, bbox in enumerate(inputs[self.inputs[0]]):
+        for idx, bbox in enumerate(inputs["bboxes"]):
             # Subtraction is to make the camera the origin of the coordinate system
             center_2d = (bbox[0:2] + bbox[2:4] * 0.5) - np.array([0.5, 0.5])
 
@@ -48,7 +48,9 @@ class Node(AbstractNode):
             x = (center_2d[0] * self.height_factor) / bbox[3]
             y = (center_2d[1] * self.height_factor) / bbox[3]
 
-            loc_3D = np.array([x, y, z])
-            locations.append({"idx": idx, "3D_loc": loc_3D})
+            point = np.array([x, y, z])
+            locations.append({"idx": idx, "3D_loc": point})
 
-        return locations
+        outputs = {"obj_3D_locs": locations}
+
+        return outputs
