@@ -5,7 +5,7 @@ from .utils.drawfunctions import draw_human_bboxes
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='DrawBBox')
+        super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict):
 

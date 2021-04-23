@@ -8,7 +8,7 @@ class Node(AbstractNode):
     from image frame
     """
     def __init__(self, config):
-        super().__init__(config, name='Yolo')
+        super().__init__(config, node_path=__name__)
         self.model = yolo_model.YoloModel(config)
 
     def run(self, inputs: Dict):

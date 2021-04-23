@@ -1,9 +1,11 @@
 import os
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+import logging
 import tensorflow as tf
 
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'yolov3')
 
+logger = logging.getLogger(__name__)
 
 def wrap_frozen_graph(graph_def, inputs, outputs):
     '''
@@ -63,7 +65,7 @@ def print_inputs(graph_def):
         if op.type == "Placeholder":
             input_list.append(op.name)
 
-        print('Inputs:', input_list)
+        logger.info('Inputs: %s', input_list)
 
 
 def print_outputs(graph_def):
@@ -77,4 +79,4 @@ def print_outputs(graph_def):
         input_list.extend(node.input)
 
     outputs = set(name_list) - set(input_list)
-    print('Outputs:', list(outputs))
+    logger.info('Outputs: %s', list(outputs))
