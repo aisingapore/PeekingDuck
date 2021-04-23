@@ -20,7 +20,7 @@ class Node(AbstractNode):
         self._prepare_directory(config["outputdir"])
         self._fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 
-    def run(self, inputs: Dict[str, Any]):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath
 
         Args:

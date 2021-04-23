@@ -1,4 +1,3 @@
 input: ["img", "filename", "fps"]
 output: ["end"]
-resolution: (1280, 70)
 outputdir: 'PeekingDuck/output'
