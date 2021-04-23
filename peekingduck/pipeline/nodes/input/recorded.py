@@ -22,7 +22,7 @@ class Node(AbstractNode):
         '''
         outputs = self._run_single_file()
 
-        if outputs[self.outputs[1]]:
+        if outputs["end"]:
             self._get_next_input()
             outputs = self._run_single_file()
 
@@ -31,14 +31,14 @@ class Node(AbstractNode):
     def _run_single_file(self) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()
 
-        outputs = {self.outputs[0]: None,
-                   self.outputs[1]: True,
-                   self.outputs[2]: self._file_name,
+        outputs = {"img": None,
+                   "end": True,
+                   "filename": self._file_name,
                    "fps": self._fps}
         if success:
-            outputs = {self.outputs[0]: img,
-                       self.outputs[1]: False,
-                       self.outputs[2]: self._file_name,
+            outputs = {"img": img,
+                       "end": False,
+                       "filename": self._file_name,
                        "fps": self._fps}
         return outputs
 

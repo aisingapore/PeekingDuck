@@ -13,7 +13,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='output.mediawriter')
+        super().__init__(config, node_path=__name__)
 
         self._file_name = None
         self._output_dir = config["outputdir"]
