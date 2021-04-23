@@ -22,7 +22,7 @@ class Node(AbstractNode):
         '''
         outputs = self._run_single_file()
 
-        if outputs[self.outputs[1]]:
+        if outputs["end"]:
             self._get_next_input()
             outputs = self._run_single_file()
 
@@ -31,10 +31,15 @@ class Node(AbstractNode):
     def _run_single_file(self) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()
 
-        outputs = {self.outputs[0]: None, self.outputs[1]: True}
+        outputs = {"img": None,
+                   "end": True,
+                   "filename": self._file_name,
+                   "fps": self._fps}
         if success:
-            outputs = {self.outputs[0]: img, self.outputs[1]: False}
-
+            outputs = {"img": img,
+                       "end": False,
+                       "filename": self._file_name,
+                       "fps": self._fps}
         return outputs
 
     def _get_files(self, path) -> None:
@@ -50,12 +55,15 @@ class Node(AbstractNode):
 
         if self._filepaths:
             file_path = self._filepaths.pop(0)
+            self._file_name = os.path.basename(file_path)
+            
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(
                     self._resolution,
                     file_path,
                     self._mirror_image
                 )
+                self._fps = self.videocap.fps
             else:
                 self.logger.warning("Skipping '%s' as it is not an accepted file format %s",
                                     file_path,
