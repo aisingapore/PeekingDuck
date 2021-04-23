@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config: Dict) -> None:
-        super().__init__(config, name='heuristic.3D_loc_bbox')
+        super().__init__(config, name='heuristic.2D_bbox_3D_loc')
 
         self.height_factor = config['height_factor']
         self.focal_length = config['focal_length']
