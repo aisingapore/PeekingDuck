@@ -1,4 +1,3 @@
-name: ["heuristic.3dLocFromBbox"]
 input: ["bboxes"]
 output: ["3D_loc"]
 
