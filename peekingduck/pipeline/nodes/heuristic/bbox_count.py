@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config: Dict) -> None:
-        super().__init__(config, name='heuristic.bbox_to_pt')
+        super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict) -> int:
         """Counts bboxes of object chosen in the frame. Note that this method
