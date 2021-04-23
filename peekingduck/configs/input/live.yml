@@ -1,9 +1,10 @@
+name: ["input.live"]
 input: ["source"]
-output: ["img", "end", "filename", "fps"]
+output: ["img"]
 
 resolution: {
             width: 1280,
             height: 720
         }
-input_source: 'PeekingDuck/data/original/waving'
+input_source: 0    # 0 for webcam, rtsp URL for CCTV
 mirror_image: False

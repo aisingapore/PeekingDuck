@@ -24,8 +24,9 @@ class ConfigLoader:
     def _load_from_node_list(self, nodes: List[AbstractNode]) -> None:
         """load node_configs from a list of nodes, configs is expected to be at level of peekingduck"""
         for node in nodes:
-            config_filename = node.replace('.','_') + '.yml'
-            filepath = os.path.join(self._rootdir, 'configs',config_filename)
+            node_type, node_name = node.split('.')
+            config_filename = node_name + '.yml'
+            filepath = os.path.join(self._rootdir, 'configs', node_type, config_filename)
             node_config = self._load_from_path(filepath)
             self._master_node_config[node] = node_config
 

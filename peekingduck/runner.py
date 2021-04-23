@@ -12,7 +12,6 @@ END_TYPE = 'process_end'
 Combine runner at this level. Use this to create the graph, and waddle is loop or once
 """
 
-
 class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
@@ -26,12 +25,15 @@ class Runner():
                 initialize by giving the node stack as a list
 
         """
+
+        self.logger = logging.getLogger(__name__)
+
         instantiated_nodes = []
 
         if not nodes:
             with open(RUN_PATH) as file:
                 run_config = yaml.load(file, Loader=yaml.FullLoader)
-                logging.info(
+                self.logger.info(
                     'Successfully loaded run_config file. Proceeding to create Graph.')
             # create Graph to run
             nodes_config = ConfigLoader(run_config['nodes'])
@@ -48,7 +50,7 @@ class Runner():
                 else:
                     imported_nodes.append((node, importlib.import_module(
                         'peekingduck.pipeline.nodes.' + node)))
-                logging.info("{} added to pipeline.".format(node))
+                self.logger.info("{} added to pipeline.".format(node))
 
             # instantiate classes from imported nodes
             for node_name, node in imported_nodes:
@@ -67,7 +69,7 @@ class Runner():
         try:
             self.pipeline = Pipeline(instantiated_nodes)
         except ValueError as e:
-            logging.error(str(e))
+            self.logger.error(str(e))
             sys.exit(1)
 
     def run(self):

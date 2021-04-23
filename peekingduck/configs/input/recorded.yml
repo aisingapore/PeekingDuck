@@ -1,0 +1,10 @@
+name: ["input.recorded"]
+input: ["source"]
+output: ["img", "end", "filename", "fps"]
+
+resolution: {
+            width: 1280,
+            height: 720
+        }
+input_source: 'PeekingDuck/data/original/waving'
+mirror_image: False
