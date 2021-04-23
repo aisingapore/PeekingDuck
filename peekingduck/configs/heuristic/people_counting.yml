@@ -1,3 +1,0 @@
-name: ["PeopleCount"]
-input: ["bboxes"]
-output: ["peoplecount"]
