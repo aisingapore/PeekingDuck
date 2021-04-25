@@ -23,6 +23,7 @@ SKELETON_SHORT_NAMES = (
     "RSH", "LEL", "REL", "LWR", "RWR",
     "LHI", "RHI", "LKN", "RKN", "LAN", "RAN")
 
+
 def draw_human_poses(image, poses, draw_activities=False):
     '''draw pose estimates onto frame image'''
     image_size = _get_image_size(image)
@@ -97,15 +98,20 @@ def _project_points_onto_original_image(points, image_size):
 
     return projected_points
 
-def draw_human_bboxes(frame, human_bboxes):
+def draw_bboxes(frame, bboxes):
     '''draw only human bboxes onto frame image'''
     image_size = _get_image_size(frame)
-    for bbox in human_bboxes:
+    for bbox in bboxes:
         _draw_bbox(frame, bbox, image_size, HUMAN_BBOX_COLOR)
 
-def _draw_bbox(frame, bbox, image_size, color):
-    top_left, bottom_right = _project_points_onto_original_image(bbox, image_size)
-    cv2.rectangle(frame, (top_left[0], top_left[1]),
-                    (bottom_right[0], bottom_right[1]),
-                    color, 2)
-    return top_left
+def draw_count(frame, count):
+    """draw count of selected object onto frame
+
+    Args:
+        frame (List[float]): image of current frame
+        count (int): total count of selected object
+            in current frame
+    """
+    text = 'COUNT: {0}'.format(count)
+    cv2.putText(frame, text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
+                0.75, COUNTING_TEXT_COLOR, 2, cv2.LINE_AA)
