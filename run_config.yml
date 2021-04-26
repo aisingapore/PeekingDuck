@@ -1,7 +1,6 @@
 nodes:
 - input.live
 - model.yolo
-- draw.fps
 - draw.bbox
+- draw.fps
 - output.screen
-# - output.media_writer
