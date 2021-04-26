@@ -14,6 +14,7 @@ KEYPOINT_DOT_COLOR = (0, 255, 0)
 KEYPOINT_CONNECT_COLOR = (0, 255, 255)
 HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
 HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
+FPS_TEXT_FONT = cv2.FONT_HERSHEY_SIMPLEX
 FPS_TEXT_COLOR = (255, 0, 255)
 COUNTING_TEXT_COLOR = (0, 0, 255)
 FONT_SCALE = 1
@@ -117,6 +118,7 @@ def draw_fps(frame: np.array, current_fps: float) -> None:
         - frame: array containing the RGB values of the frame image
         - current_fps: value of the calculated FPS
     """
-    font = cv2.FONT_HERSHEY_SIMPLEX
-    cv2.putText(frame, "FPS: {:.05}".format(current_fps), (25, 25), font,
-                    1, FPS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+    fps_text = "FPS: {:.05}".format(current_fps)
+
+    cv2.putText(frame, fps_text, (25, 25), FPS_TEXT_FONT, 1,
+                FPS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
