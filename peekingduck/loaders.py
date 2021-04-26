@@ -107,7 +107,7 @@ class DeclarativeLoader:
             self.logger.info("{} added to pipeline.".format(node))
         return imported_nodes
 
-    def _instantiate_nodes(self, imported_nodes: List[Any]) -> List(AbstractNode):
+    def _instantiate_nodes(self, imported_nodes: List[Any]) -> List[AbstractNode]:
         """ Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
         for node_name, node in imported_nodes:
