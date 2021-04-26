@@ -82,5 +82,6 @@ class Node(AbstractNode):
         self._file_path = os.path.join(self._output_dir, filename)
         self.writer = cv2.VideoWriter(self._file_path, self._fourcc, fps, resolution)
 
-    def _prepare_directory(self, outputdir):
+    @staticmethod
+    def _prepare_directory(outputdir):
         os.makedirs(outputdir, exist_ok=True)
