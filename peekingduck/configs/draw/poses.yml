@@ -1,0 +1,2 @@
+input: ["poses", "img"]
+output: ["img"]
