@@ -23,10 +23,81 @@ SKELETON_SHORT_NAMES = (
     "N", "LEY", "REY", "LEA", "REA", "LSH",
     "RSH", "LEL", "REL", "LWR", "RWR",
     "LHI", "RHI", "LKN", "RKN", "LAN", "RAN")
+SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
+            [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
+            [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4],
+            [3, 5], [4, 6], [5, 7]]
+
+def add_plotter_details(poses):
+    '''
+    filters out low-confidence keypoints and adds bounding box and connections
+    '''
+    for pose in poses:
+        pose.keypoints = get_valid_full_keypoints_coords(pose.keypoints, pose.masks)
+        pose.bbox = _get_bbox_of_one_pose(pose.keypoints, pose.masks)
+        pose.connections = _get_connections_of_one_pose(pose.keypoints, pose.masks)
+
+    return poses
+
+def get_valid_full_keypoints_coords(coords, masks):
+    '''
+    apply masks to keep only valid (detected) keypoints' relative coordinates for a given pose
+
+    args:
+        - coords: relative coordinates as an (Nx2) array
+        - masks: masks of valid (with enough confidence) keypoints, as an (N,) array
+
+    return:
+        - a set of keypoints as a (Nx2) array
+          undetected keypoints are assigned a (-1) value.
+    '''
+    full_joints = coords.copy()
+    full_joints[~masks] = -1
+    return full_joints
+
+def _get_bbox_of_one_pose(coords, mask):
+    '''
+    Gets the bounding box bordering the keypoints of a single pose
+
+    args:
+        - coords: relative coordinates as an (Nx2) array
+        - masks: masks of valid (with enough confidence) keypoints, as an (N,) array
+
+    return:
+        - a 2x2 numpy array representing the bounding box corners
+        [[min_x, min_y], [max_x, max_y]]
+    '''
+    coords = coords[mask, :]
+    if coords.shape[0]:
+        min_x, min_y, max_x, max_y = (coords[:, 0].min(),
+                                      coords[:, 1].min(),
+                                      coords[:, 0].max(),
+                                      coords[:, 1].max())
+        bbox = [[min_x, min_y], [max_x, max_y]]
+        return np.array(bbox)
+    return np.zeros(0)
+
+
+def _get_connections_of_one_pose(coords, masks):
+    """Get connections from one pose's keypoints and masks
+    args:
+        - coords: 17 pairs of xy keypoint positions in normalized
+                    coordinates as a (17x2) array
+        - masks: 17 boolean masks that specify if keypoint was detected, as a (17,) array
+
+    return:
+        list of adjacent keypoint pairs where both ends are detected
+    """
+    connections = []
+    for l1, l2 in SKELETON:
+        if masks[l1 - 1] and masks[l2 - 1]:
+            connections.append((coords[l1 - 1], coords[l2 - 1]))
+    return np.array(connections)
 
 def draw_human_poses(image, poses, draw_activities=False):
     '''draw pose estimates onto frame image'''
     image_size = _get_image_size(image)
+    poses = add_plotter_details(poses)
     for pose in poses:
         if pose.bbox.shape == (2, 2):
             _draw_connections(image, pose.connections,
