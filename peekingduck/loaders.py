@@ -1,6 +1,6 @@
 """ Reads and manipulations configuration files
 """
-
+import sys
 import os
 import yaml
 import importlib
@@ -26,7 +26,7 @@ class ConfigLoader:
     def _load_configs(self):
         configs_folder = os.path.join(self._rootdir, 'configs')
         node_filepaths = [os.path.join(node_type_path, node)
-                          for _, node_type_path, nodes in os.walk(configs_folder)
+                          for node_type_path, _, nodes in os.walk(configs_folder)
                           for node in nodes if node.endswith('.yml')]
         for filepath in node_filepaths:
             filepath_split = filepath.split('/')
@@ -50,16 +50,19 @@ class ConfigLoader:
 class DeclarativeLoader:
 
     def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str):
+        self.logger = logging.getLogger(__name__)
+
         self.node_configs = node_configs
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
-
-        self.logger = logging.getLogger(__name__)
 
     def _load_node_list(self, run_config: str):
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
             nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
+
+        self.logger.info(
+            'Successfully loaded run_config file.')
         return nodes
 
     def compile_configrc(self):
@@ -96,8 +99,8 @@ class DeclarativeLoader:
                 imported_nodes.append(("custom", module))
             else:
                 imported_nodes.append((node_str, importlib.import_module(
-                    'peekingduck.pipeline.nodes.' + node)))
-            logging.info("{} added to pipeline.".format(node))
+                    'peekingduck.pipeline.nodes.' + node_str)))
+            self.logger.info("{} added to pipeline.".format(node))
         return imported_nodes
 
     def _instantiate_nodes(self, imported_nodes):
@@ -114,4 +117,8 @@ class DeclarativeLoader:
         imported_nodes = self._import_nodes()
         instantiated_nodes = self._instantiate_nodes(imported_nodes)
 
-        return Pipeline(instantiated_nodes)
+        try:
+            return Pipeline(instantiated_nodes)
+        except ValueError as e:
+            self.logger.error(str(e))
+            sys.exit(1)
