@@ -51,7 +51,7 @@ class ConfigLoader:
 class DeclarativeLoader:
     """Uses the declarative run_config.yml to load pipelines or compiled configs"""
 
-    def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str) -> None:
+    def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str = 'src/custom_nodes') -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs
@@ -75,7 +75,7 @@ class DeclarativeLoader:
             for node_str in self.node_list:
                 node_type, node = node_str.split('.')
                 if node_type == 'custom':
-                    node_config_path = os.path.join('src/custom_nodes', node, 'config.yml')
+                    node_config_path = os.path.join(self.custom_folder_path, node, 'config.yml')
                 else:
                     dir_path = os.path.dirname(os.path.realpath(__file__))
                     config_filename = node + '.yml'
