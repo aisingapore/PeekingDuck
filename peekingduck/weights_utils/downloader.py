@@ -1,8 +1,21 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 import os
-import urllib
 import zipfile
 import requests
-import re
 
 from tqdm import tqdm
 
@@ -20,27 +33,41 @@ def download_weights(root, url):
     download_file_from_google_drive(url, zip_path)
 
     # search for downloaded .zip file and extract, then delete
-    with zipfile.ZipFile(zip_path, "r") as f:
-        for file in tqdm(iterable=f.namelist(), total=len(f.namelist())):
-            f.extract(member=file, path=extract_dir)
+    with zipfile.ZipFile(zip_path, "r") as temp:
+        for file in tqdm(iterable=temp.namelist(), total=len(temp.namelist())):
+            temp.extract(member=file, path=extract_dir)
 
     os.remove(zip_path)
 
-def download_file_from_google_drive(id, destination):
-    URL = "https://docs.google.com/uc?export=download"
+def download_file_from_google_drive(file_id, destination):
+    """Method to download publicly shared files from google drive
+
+    Args:
+        file_id (str): file id of google drive file
+        destination (str): destination directory of download
+    """
+    url = "https://docs.google.com/uc?export=download"
 
     session = requests.Session()
 
-    response = session.get(URL, params = { 'id' : id }, stream = True)
+    response = session.get(url, params={'id': file_id}, stream=True)
     token = get_confirm_token(response)
 
     if token:
-        params = { 'id' : id, 'confirm' : token }
-        response = session.get(URL, params = params, stream = True)
+        params = {'id': file_id, 'confirm': token}
+        response = session.get(url, params=params, stream=True)
 
-    save_response_content(response, destination)    
+    save_response_content(response, destination)
 
 def get_confirm_token(response):
+    """Method to get confirmation token
+
+    Args:
+        response (Response): html response from call
+
+    Returns:
+        value (str): confirmation token
+    """
     for key, value in response.cookies.items():
         if key.startswith('download_warning'):
             return value
@@ -48,9 +75,16 @@ def get_confirm_token(response):
     return None
 
 def save_response_content(response, destination):
-    CHUNK_SIZE = 32768
+    """Chunk saving of download content. Chunk size set to large
+    integer as weights are usually pretty large
 
-    with open(destination, "wb") as f:
-        for chunk in tqdm(response.iter_content(CHUNK_SIZE)):
+    Args:
+        response (Reponse): html response
+        destination (str): destintation directory of download
+    """
+    chunk_size = 32768
+
+    with open(destination, "wb") as temp:
+        for chunk in tqdm(response.iter_content(chunk_size)):
             if chunk: # filter out keep-alive new chunks
-                f.write(chunk)
+                temp.write(chunk)
