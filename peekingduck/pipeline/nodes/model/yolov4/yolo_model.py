@@ -1,14 +1,31 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 import os
 import logging
-import numpy as np
+from typing import List, Dict, Any
 
+import numpy as np
 from peekingduck.weights_utils import checker, downloader
 from .yolo_files.detector import Detector
 
 class YoloModel:
     """Yolo model with model types: v3 and v3tiny"""
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
 
         self.logger = logging.getLogger(__name__)
@@ -25,11 +42,11 @@ class YoloModel:
         classes_path = os.path.join(config['root'], config['classes'])
         self.class_names = [c.strip() for c in open(classes_path).readlines()]
         self.detect_ids = config['detect_ids']
-        self.logger.info('yolo model detecting ids: {}'.format(self.detect_ids))
+        self.logger.info('yolo model detecting ids: %s', self.detect_ids)
 
         self.detector = Detector(config)
 
-    def predict(self, frame):
+    def predict(self, frame: List[List[float]]) -> List[Any]:
         """predict the bbox from frame
 
         returns:
@@ -46,3 +63,10 @@ class YoloModel:
             self.class_names, frame, self.detect_ids
         )
 
+    def get_detect_ids(self) -> List[int]:
+        """getter for selected ids for detection
+
+        Returns:
+            List[int]: list of selected detection ids
+        """
+        return self.detect_ids

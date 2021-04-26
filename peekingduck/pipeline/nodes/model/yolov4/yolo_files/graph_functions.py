@@ -1,13 +1,32 @@
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
-import logging
-import tensorflow as tf
+"""
+Copyright 2021 AI Singapore
 
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+import os
+import logging
+from typing import List
+
+import tensorflow as tf
+from tensorflow.compat.v1 import GraphDef
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'yolov3')
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__) #pylint: disable=invalid-name
 
-def wrap_frozen_graph(graph_def, inputs, outputs):
+def wrap_frozen_graph(graph_def: GraphDef, inputs: List, outputs: List):
     '''
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -34,13 +53,13 @@ def wrap_frozen_graph(graph_def, inputs, outputs):
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename, inputs, outputs):
+def load_graph(filename: str, inputs: List, outputs: List):
     '''
     Loads the graph
     '''
-    with tf.io.gfile.GFile(filename, "rb") as f:
+    with tf.io.gfile.GFile(filename, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
-        graph_def.ParseFromString(f.read())
+        graph_def.ParseFromString(graph_file.read())
 
         # print_inputs(graph_def)
         # print_outputs(graph_def)
@@ -52,7 +71,7 @@ def load_graph(filename, inputs, outputs):
         return frozen_func
 
 
-def print_inputs(graph_def):
+def print_inputs(graph_def: GraphDef):
     '''
     Prints the input nodes of graph_def
     '''
@@ -61,14 +80,14 @@ def print_inputs(graph_def):
         tf.import_graph_def(graph_def, name='')
 
     input_list = []
-    for op in graph.get_operations():  # tensorflow.python.framework.ops.Operation
-        if op.type == "Placeholder":
-            input_list.append(op.name)
+    for operation in graph.get_operations():  # tensorflow.python.framework.ops.Operation
+        if operation.type == "Placeholder":
+            input_list.append(operation.name)
 
         logger.info('Inputs: %s', input_list)
 
 
-def print_outputs(graph_def):
+def print_outputs(graph_def: GraphDef):
     '''
     Prints the output nodes of graph_def
     '''
