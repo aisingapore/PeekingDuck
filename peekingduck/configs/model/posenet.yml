@@ -1,0 +1,41 @@
+input: ["img"]
+output: ["poses","img"]
+
+model_class: posemodel
+pose_approach: bottomup
+model_type: resnet # 50, 75, 101 or resnet
+weights_dir: ["../weights/posenet/models"]
+weights_id: 0 # check and update weights id
+model_files: {
+    50: ../weights/posenet/models/model-mobilenet_v1_050.pb,
+    75: ../weights/posenet/models/model-mobilenet_v1_075.pb,
+    101: ../weights/posenet/models/model-mobilenet_v1_101.pb,
+    resnet: ../weights/posenet/models/model-resnet.pb
+}
+resolution: 225x225
+output_stride: 16
+max_pose_detection: 10
+score_threshold: 0.4
+# train_data: COCO_keypoints/annotations/person_keypoints_train2017.json
+# validation_data: COCO_keypoints/annotations/person_keypoints_val2017.json
+
+MODEL_NODES:
+  {
+    mobilenet:
+      {
+        inputs: [image:0],
+        outputs:
+          [heatmap:0, offset_2:0, displacement_fwd_2:0, displacement_bwd_2:0],
+      },
+    resnet:
+      {
+        inputs: [sub_2:0],
+        outputs:
+          [
+            float_heatmaps:0,
+            float_short_offsets:0,
+            resnet_v1_50/displacement_fwd_2/BiasAdd:0,
+            resnet_v1_50/displacement_bwd_2/BiasAdd:0,
+          ],
+      },
+  }
