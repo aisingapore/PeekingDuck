@@ -109,3 +109,14 @@ def _draw_bbox(frame, bbox, image_size, color):
                     (bottom_right[0], bottom_right[1]),
                     color, 2)
     return top_left
+
+def draw_fps(frame: np.array, current_fps: float) -> None:
+    """ Draw FPS onto frame image
+
+    args:
+        - frame: array containing the RGB values of the frame image
+        - current_fps: value of the calculated FPS
+    """
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    cv2.putText(frame, "FPS: {:.05}".format(current_fps), (25, 25), font,
+                    1, FPS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
