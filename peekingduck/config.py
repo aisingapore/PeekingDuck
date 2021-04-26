@@ -2,8 +2,9 @@
 """
 
 import os
-import yaml
 from typing import Any, Dict, List
+
+import yaml
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 class ConfigLoader:
@@ -19,10 +20,11 @@ class ConfigLoader:
             node_config = self._load_from_path(node_yml)
             self._master_node_config = node_config
         else:
-            self._load_from_node_list(nodes)
+            self.load_from_node_list(nodes)
 
-    def _load_from_node_list(self, nodes: List[AbstractNode]) -> None:
-        """load node_configs from a list of nodes, configs is expected to be at level of peekingduck"""
+    def load_from_node_list(self, nodes: List[AbstractNode]) -> None:
+        """load node_configs from a list of nodes.
+        Configs is expected to be at level of peekingduck"""
         for node in nodes:
             node_type, node_name = node.split('.')
             config_filename = node_name + '.yml'
@@ -30,8 +32,8 @@ class ConfigLoader:
             node_config = self._load_from_path(filepath)
             self._master_node_config[node] = node_config
 
-
-    def _load_from_path(self, filepath: str) -> None:
+    @staticmethod
+    def _load_from_path(filepath: str) -> None:
         """load node_configs directly from a custom node_config"""
         with open(filepath) as file:
             node_config = yaml.load(file, Loader=yaml.FullLoader)
