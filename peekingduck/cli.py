@@ -2,12 +2,15 @@ import os
 import logging
 import yaml
 import click
-from peekingduck.runner import Runner
 
-from utils.logger import setup_logger
+
+from peekingduck.runner import Runner
+from peekingduck.loaders import ConfigLoader, DeclarativeLoader
+from peekingduck.utils.logger import setup_logger
 
 setup_logger()
 logger = logging.getLogger(__name__)
+
 
 @click.group()
 def cli():
@@ -70,34 +73,11 @@ def run(config_path):
 
 
 @cli.command()
-@click.option('--config_path', default = None, type=click.Path(),
+@click.option('--run_config_path', default='./run_config.yml', type=click.Path(),
               help="List of nodes to pull config ymls from. If none, assumes a run_config.yml at current working directory")
-def get_configs(config_path):
+def get_configs(run_config_path):
     """Creates node specific config ymls for usage. If no configs are specified, pull all"""
-    if not config_path:
-        curdir = _get_cwd()
-        config_path = os.path.join(curdir, "run_config.yml")
+    node_configs = ConfigLoader()
 
-    with open(config_path) as node_yml:
-        nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
-
-    if os.path.isfile('node_config.yml'):
-        os.remove('node_config.yml')
-
-    #should use ConfigLoader() here as well
-    with open('node_config.yml', 'a') as node_configs:
-        for node in nodes:
-            node_type, node_name = node.split('.')
-            if node_type == 'custom':
-                node_config_path = os.path.join('src/custom_nodes', node_name, 'config.yml')
-            else:
-                dir_path = os.path.dirname(os.path.realpath(__file__))
-                config_filename = node_name + '.yml'
-                node_config_path = os.path.join(dir_path, 'configs', node_type, config_filename)
-            if os.path.isfile(node_config_path):
-                with open(node_config_path, 'r') as node_yml:
-                    node_config = yaml.load(node_yml, Loader=yaml.FullLoader)
-                    node_config = {node_name: node_config}
-                yaml.dump(node_config, node_configs, default_flow_style = False)
-            else:
-                logger.info(f'No associated configs found for {node}. Skipping')
+    node_loader = DeclarativeLoader(node_configs, run_config_path)
+    node_loader.compile_configrc()
