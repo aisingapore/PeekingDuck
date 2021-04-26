@@ -27,7 +27,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-        self.previous_frame_time = 0
+        self.previous_time = 0
 
     def run(self, inputs: Dict[str, Any]) -> None:
         """ Calculates FPS using the time difference between the current frame
@@ -41,8 +41,8 @@ class Node(AbstractNode):
         """
 
         current_time = perf_counter()
-        current_fps = 1 / (current_time - self.previous_frame_time)
-        self.previous_frame_time = current_time
+        current_fps = 1 / (current_time - self.previous_time)
+        self.previous_time = current_time
         draw_fps(inputs['img'], current_fps)
 
         return {}

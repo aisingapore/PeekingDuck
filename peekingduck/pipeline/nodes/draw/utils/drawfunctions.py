@@ -1,9 +1,11 @@
 import numpy as np
 import cv2
+from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 
 
 POSE_BBOX_COLOR = (255, 255, 0)
 BLACK_COLOR = (0, 0, 0)
+PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 HUMAN_BBOX_COLOR = (255, 0, 255)
 GROUP_BBOX_COLOR = (0, 140, 255)
@@ -14,8 +16,6 @@ KEYPOINT_DOT_COLOR = (0, 255, 0)
 KEYPOINT_CONNECT_COLOR = (0, 255, 255)
 HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
 HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
-FPS_TEXT_FONT = cv2.FONT_HERSHEY_SIMPLEX
-FPS_TEXT_COLOR = (255, 0, 255)
 COUNTING_TEXT_COLOR = (0, 0, 255)
 FONT_SCALE = 1
 FONT_THICKNESS = 2
@@ -118,7 +118,8 @@ def draw_fps(frame: np.array, current_fps: float) -> None:
         - frame: array containing the RGB values of the frame image
         - current_fps: value of the calculated FPS
     """
-    fps_text = "FPS: {:.05}".format(current_fps)
+    text = "FPS: {:.05}".format(current_fps)
+    text_location = (25, 25)
 
-    cv2.putText(frame, fps_text, (25, 25), FPS_TEXT_FONT, 1,
-                FPS_TEXT_COLOR, FONT_THICKNESS, cv2.LINE_AA)
+    cv2.putText(frame, text, text_location, FONT_HERSHEY_SIMPLEX, FONT_SCALE,
+                PINK_COLOR, FONT_THICKNESS, LINE_AA)
