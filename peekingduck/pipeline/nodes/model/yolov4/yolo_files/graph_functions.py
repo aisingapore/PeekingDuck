@@ -19,14 +19,13 @@ import logging
 from typing import List
 
 import tensorflow as tf
-from tensorflow.compat.v1 import GraphDef
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'yolov3')
 
 logger = logging.getLogger(__name__) #pylint: disable=invalid-name
 
-def wrap_frozen_graph(graph_def: GraphDef, inputs: List, outputs: List):
+def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List, outputs: List):
     '''
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -71,7 +70,7 @@ def load_graph(filename: str, inputs: List, outputs: List):
         return frozen_func
 
 
-def print_inputs(graph_def: GraphDef):
+def print_inputs(graph_def: tf.compat.v1.GraphDef):
     '''
     Prints the input nodes of graph_def
     '''
@@ -87,7 +86,7 @@ def print_inputs(graph_def: GraphDef):
         logger.info('Inputs: %s', input_list)
 
 
-def print_outputs(graph_def: GraphDef):
+def print_outputs(graph_def: tf.compat.v1.GraphDef):
     '''
     Prints the output nodes of graph_def
     '''
