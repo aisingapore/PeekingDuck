@@ -77,3 +77,4 @@ class Runner():
         """
         while not self.pipeline.video_end:
             self.pipeline.execute()
+        del self.pipeline
