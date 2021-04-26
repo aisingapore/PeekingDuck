@@ -47,7 +47,7 @@ class Pipeline:
 
             self._datas.update(outputs)
 
-    def get_pipeline_results(self) -> Dict[Any]:
+    def get_pipeline_results(self) -> Dict[str, Any]:
         """get all results data of nodes in pipeline
 
         Returns:
