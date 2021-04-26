@@ -19,7 +19,7 @@ import sys
 import importlib
 import logging
 
-from typing import List
+from typing import List, Dict, Any
 import yaml
 
 from peekingduck.pipeline.pipeline import Pipeline
@@ -93,13 +93,13 @@ class Runner():
             self.logger.error(str(exception))
             sys.exit(1)
 
-    def run(self):
+    def run(self) -> None:
         """execute single or continuous inference
         """
         while not self.pipeline.video_end:
             self.pipeline.execute()
 
-    def get_run_config(self):
+    def get_run_config(self) -> Dict[Any]:
         """retreive run configs
 
         Returns:
