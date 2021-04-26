@@ -1,3 +1,18 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
 # import keras
 from tensorflow import keras
 import tensorflow as tf
@@ -10,7 +25,8 @@ class BatchNormalization(keras.layers.BatchNormalization):
 
     def __init__(self, freeze, *args, **kwargs):
         self.freeze = freeze
-        super(BatchNormalization, self).__init__(*args, **kwargs)
+        # super(BatchNormalization, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         # set to non-trainable if freeze is true
         self.trainable = not self.freeze
@@ -18,40 +34,48 @@ class BatchNormalization(keras.layers.BatchNormalization):
     def call(self, inputs, training=None, **kwargs):
         # return super.call, but set training
         if not training:
-            return super(BatchNormalization, self).call(inputs, training=False)
-        else:
-            return super(BatchNormalization, self).call(inputs, training=(not self.freeze))
+            # return super(BatchNormalization, self).call(inputs, training=False)
+            return super().call(inputs, training=False)
+        # return super(BatchNormalization, self).call(inputs, training=(not self.freeze))
+        return super().call(inputs, training=(not self.freeze))
 
     def get_config(self):
-        config = super(BatchNormalization, self).get_config()
+        # config = super(BatchNormalization, self).get_config()
+        config = super().get_config()
         config.update({'freeze': self.freeze})
         return config
 
 
-class wBiFPNAdd(keras.layers.Layer):
+class WBiFPNAdd(keras.layers.Layer):
+    """Class for Weighted Bi-directional FPN
+    """
+
     def __init__(self, epsilon=1e-4, **kwargs):
-        super(wBiFPNAdd, self).__init__(**kwargs)
+        # super(wBiFPNAdd, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.epsilon = epsilon
+        self.weight = None
 
     def build(self, input_shape):
         num_in = len(input_shape)
-        self.w = self.add_weight(name=self.name,
-                                 shape=(num_in,),
-                                 initializer=keras.initializers.constant(1 / num_in),
-                                 trainable=True,
-                                 dtype=tf.float32)
+        self.weight = self.add_weight(name=self.name,
+                                      shape=(num_in,),
+                                      initializer=keras.initializers.constant(1 / num_in),
+                                      trainable=True,
+                                      dtype=tf.float32)
 
     def call(self, inputs, **kwargs):
-        w = keras.activations.relu(self.w)
-        x = tf.reduce_sum([w[i] * inputs[i] for i in range(len(inputs))], axis=0)
-        x = x / (tf.reduce_sum(w) + self.epsilon)
-        return x
+        weight = keras.activations.relu(self.weight)
+        x_in = tf.reduce_sum([weight[i] * inputs[i] for i in range(len(inputs))], axis=0)
+        x_in = x_in / (tf.reduce_sum(weight) + self.epsilon)
+        return x_in
 
     def compute_output_shape(self, input_shape):
         return input_shape[0]
 
     def get_config(self):
-        config = super(wBiFPNAdd, self).get_config()
+        # config = super(wBiFPNAdd, self).get_config()
+        config = super().get_config()
         config.update({
             'epsilon': self.epsilon
         })
@@ -59,25 +83,38 @@ class wBiFPNAdd(keras.layers.Layer):
 
 
 def bbox_transform_inv(boxes, deltas, scale_factors=None):
-    cxa = (boxes[..., 0] + boxes[..., 2]) / 2
-    cya = (boxes[..., 1] + boxes[..., 3]) / 2
-    wa = boxes[..., 2] - boxes[..., 0]
-    ha = boxes[..., 3] - boxes[..., 1]
-    ty, tx, th, tw = deltas[..., 0], deltas[..., 1], deltas[..., 2], deltas[..., 3]
+    """Helper function to transform bboxes using offsets
+
+    Args:
+        boxes : detected bboxes]
+        deltas : bbox offsets
+        scale_factors ([type], optional): [description]. Defaults to None.
+
+    Returns:
+        tf.Tensor: bboxes in xmin, ymin, xmax, ymax format
+    """
+    # center_xa = (boxes[..., 0] + boxes[..., 2]) / 2
+    # center_ya = (boxes[..., 1] + boxes[..., 3]) / 2
+    wt_a = boxes[..., 2] - boxes[..., 0]
+    ht_a = boxes[..., 3] - boxes[..., 1]
+    t_y, t_x, t_h, t_w = deltas[..., 0], deltas[..., 1], deltas[..., 2], deltas[..., 3]
     if scale_factors:
-        ty *= scale_factors[0]
-        tx *= scale_factors[1]
-        th *= scale_factors[2]
-        tw *= scale_factors[3]
-    w = tf.exp(tw) * wa
-    h = tf.exp(th) * ha
-    cy = ty * ha + cya
-    cx = tx * wa + cxa
-    ymin = cy - h / 2.
-    xmin = cx - w / 2.
-    ymax = cy + h / 2.
-    xmax = cx + w / 2.
-    return tf.stack([xmin, ymin, xmax, ymax], axis=-1)
+        t_y *= scale_factors[0]
+        t_x *= scale_factors[1]
+        t_h *= scale_factors[2]
+        t_w *= scale_factors[3]
+    width = tf.exp(t_w) * wt_a
+    height = tf.exp(t_h) * ht_a
+    center_y = t_y * ht_a + (boxes[..., 1] + boxes[..., 3]) / 2
+    center_x = t_x * wt_a + (boxes[..., 0] + boxes[..., 2]) / 2
+    # ymin = center_y - height / 2.
+    # xmin = center_x - width / 2.
+    # ymax = center_y + height / 2.
+    # xmax = center_x + width / 2.
+    top_left = center_x - width / 2., center_y - height / 2.
+    btm_right = center_x + width / 2., center_y + height / 2.
+    # return tf.stack([xmin, ymin, xmax, ymax], axis=-1)
+    return tf.stack([top_left[0], top_left[1], btm_right[0], btm_right[1]], axis=-1)
 
 
 class ClipBoxes(keras.layers.Layer):
@@ -86,12 +123,12 @@ class ClipBoxes(keras.layers.Layer):
         shape = keras.backend.cast(keras.backend.shape(image), keras.backend.floatx())
         height = shape[1]
         width = shape[2]
-        x1 = tf.clip_by_value(boxes[:, :, 0], 0, width - 1)
-        y1 = tf.clip_by_value(boxes[:, :, 1], 0, height - 1)
-        x2 = tf.clip_by_value(boxes[:, :, 2], 0, width - 1)
-        y2 = tf.clip_by_value(boxes[:, :, 3], 0, height - 1)
+        x_1 = tf.clip_by_value(boxes[:, :, 0], 0, width - 1)
+        y_1 = tf.clip_by_value(boxes[:, :, 1], 0, height - 1)
+        x_2 = tf.clip_by_value(boxes[:, :, 2], 0, width - 1)
+        y_2 = tf.clip_by_value(boxes[:, :, 3], 0, height - 1)
 
-        return keras.backend.stack([x1, y1, x2, y2], axis=2)
+        return keras.backend.stack([x_1, y_1, x_2, y_2], axis=2)
 
     def compute_output_shape(self, input_shape):
         return input_shape[1]
@@ -99,7 +136,8 @@ class ClipBoxes(keras.layers.Layer):
 
 class RegressBoxes(keras.layers.Layer):
     def __init__(self, *args, **kwargs):
-        super(RegressBoxes, self).__init__(*args, **kwargs)
+        # super(RegressBoxes, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def call(self, inputs, **kwargs):
         anchors, regression = inputs
@@ -109,7 +147,8 @@ class RegressBoxes(keras.layers.Layer):
         return input_shape[0]
 
     def get_config(self):
-        config = super(RegressBoxes, self).get_config()
+        # config = super(RegressBoxes, self).get_config()
+        config = super().get_config()
         return config
 
 
@@ -195,9 +234,9 @@ def filter_detections(
     if class_specific_filter:
         all_indices = []
         # perform per class filtering
-        for c in range(int(classification.shape[1])):
-            scores = classification[:, c]
-            labels = c * tf.ones((keras.backend.shape(scores)[0],), dtype='int64')
+        for category in range(int(classification.shape[1])):
+            scores = classification[:, category]
+            labels = category * tf.ones((keras.backend.shape(scores)[0],), dtype='int64')
             all_indices.append(_filter_detections(scores, labels))
 
         # concatenate indices to single tensor
@@ -239,8 +278,8 @@ def filter_detections(
         alphas.set_shape([max_detections, 4])
         ratios.set_shape([max_detections])
         return [boxes, scores, alphas, ratios, labels]
-    else:
-        return [boxes, scores, labels]
+
+    return [boxes, scores, labels]
 
 
 class FilterDetections(keras.layers.Layer):
@@ -277,7 +316,7 @@ class FilterDetections(keras.layers.Layer):
         self.max_detections = max_detections
         self.parallel_iterations = parallel_iterations
         self.detect_quadrangle = detect_quadrangle
-        super(FilterDetections, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
     def call(self, inputs, **kwargs):
         """
@@ -350,12 +389,12 @@ class FilterDetections(keras.layers.Layer):
                 (input_shape[1][0], self.max_detections),
                 (input_shape[1][0], self.max_detections),
             ]
-        else:
-            return [
-                (input_shape[0][0], self.max_detections, 4),
-                (input_shape[1][0], self.max_detections),
-                (input_shape[1][0], self.max_detections),
-            ]
+
+        return [
+            (input_shape[0][0], self.max_detections, 4),
+            (input_shape[1][0], self.max_detections),
+            (input_shape[1][0], self.max_detections),
+        ]
 
     def compute_mask(self, inputs, mask=None):
         """
@@ -370,7 +409,7 @@ class FilterDetections(keras.layers.Layer):
         Returns
             Dictionary containing the parameters of this layer.
         """
-        config = super(FilterDetections, self).get_config()
+        config = super().get_config()
         config.update({
             'nms': self.nms,
             'class_specific_filter': self.class_specific_filter,

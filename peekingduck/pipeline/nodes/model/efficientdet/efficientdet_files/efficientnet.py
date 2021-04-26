@@ -27,25 +27,23 @@ from __future__ import division
 from __future__ import print_function
 
 import os
-import json
 import math
 import string
 import collections
-import numpy as np
 
 from six.moves import xrange
 from keras_applications.imagenet_utils import _obtain_input_shape
-from keras_applications.imagenet_utils import decode_predictions
+# from keras_applications.imagenet_utils import decode_predictions
 from keras_applications.imagenet_utils import preprocess_input as _preprocess_input
 
 # from .layers import BatchNormalization
 from .utils.submodule import get_submodules_from_kwargs
 
 
-backend = None
-layers = None
-models = None
-keras_utils = None
+BACKEND = None
+LAYERS = None
+MODELS = None
+KERAS_UTILS = None
 
 
 BASE_WEIGHTS_PATH = (
@@ -146,7 +144,7 @@ def get_swish(**kwargs):
     """Swish activation function: x * sigmoid(x).
         Reference: [Searching for Activation Functions](https://arxiv.org/abs/1710.05941)
         """
-    backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
+    backend, _, _, _ = get_submodules_from_kwargs(kwargs)
 
     def swish(swish_x):
 
@@ -211,109 +209,109 @@ def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix='', fre
     """Mobile Inverted Residual Bottleneck."""
 
     has_se = (block_args.se_ratio is not None) and (0 < block_args.se_ratio <= 1)
-    bn_axis = 3 if backend.image_data_format() == 'channels_last' else 1
+    bn_axis = 3 if BACKEND.image_data_format() == 'channels_last' else 1
 
     # workaround over non working dropout with None in noise_shape in tf.keras
     Dropout = get_dropout(
-        backend=backend,
-        layers=layers,
-        models=models,
-        utils=keras_utils
+        backend=BACKEND,
+        layers=LAYERS,
+        models=MODELS,
+        utils=KERAS_UTILS
     )
 
     # Expansion phase
     filters = block_args.input_filters * block_args.expand_ratio
     if block_args.expand_ratio != 1:
-        x = layers.Conv2D(filters, 1,
-                          padding='same',
-                          use_bias=False,
-                          kernel_initializer=CONV_KERNEL_INITIALIZER,
-                          name=prefix + 'expand_conv')(inputs)
+        x_in = LAYERS.Conv2D(filters, 1,
+                             padding='same',
+                             use_bias=False,
+                             kernel_initializer=CONV_KERNEL_INITIALIZER,
+                             name=prefix + 'expand_conv')(inputs)
         # x = BatchNormalization(freeze=freeze_bn, axis=bn_axis, name=prefix + 'expand_bn')(x)
-        x = layers.BatchNormalization(axis=bn_axis, name=prefix + 'expand_bn')(x)
-        x = layers.Activation(activation, name=prefix + 'expand_activation')(x)
+        x_in = LAYERS.BatchNormalization(axis=bn_axis, name=prefix + 'expand_bn')(x_in)
+        x_in = LAYERS.Activation(activation, name=prefix + 'expand_activation')(x_in)
     else:
-        x = inputs
+        x_in = inputs
 
     # Depthwise Convolution
-    x = layers.DepthwiseConv2D(block_args.kernel_size,
-                               strides=block_args.strides,
-                               padding='same',
-                               use_bias=False,
-                               depthwise_initializer=CONV_KERNEL_INITIALIZER,
-                               name=prefix + 'dwconv')(x)
+    x_in = LAYERS.DepthwiseConv2D(block_args.kernel_size,
+                                  strides=block_args.strides,
+                                  padding='same',
+                                  use_bias=False,
+                                  depthwise_initializer=CONV_KERNEL_INITIALIZER,
+                                  name=prefix + 'dwconv')(x_in)
     # x = BatchNormalization(freeze=freeze_bn, axis=bn_axis, name=prefix + 'bn')(x)
-    x = layers.BatchNormalization(axis=bn_axis, name=prefix + 'bn')(x)
-    x = layers.Activation(activation, name=prefix + 'activation')(x)
+    x_in = LAYERS.BatchNormalization(axis=bn_axis, name=prefix + 'bn')(x_in)
+    x_in = LAYERS.Activation(activation, name=prefix + 'activation')(x_in)
 
     # Squeeze and Excitation phase
     if has_se:
         num_reduced_filters = max(1, int(
             block_args.input_filters * block_args.se_ratio
         ))
-        se_tensor = layers.GlobalAveragePooling2D(name=prefix + 'se_squeeze')(x)
+        se_tensor = LAYERS.GlobalAveragePooling2D(name=prefix + 'se_squeeze')(x_in)
 
-        target_shape = (1, 1, filters) if backend.image_data_format(
+        target_shape = (1, 1, filters) if BACKEND.image_data_format(
         ) == 'channels_last' else (filters, 1, 1)
-        se_tensor = layers.Reshape(target_shape, name=prefix + 'se_reshape')(se_tensor)
-        se_tensor = layers.Conv2D(num_reduced_filters, 1,
+        se_tensor = LAYERS.Reshape(target_shape, name=prefix + 'se_reshape')(se_tensor)
+        se_tensor = LAYERS.Conv2D(num_reduced_filters, 1,
                                   activation=activation,
                                   padding='same',
                                   use_bias=True,
                                   kernel_initializer=CONV_KERNEL_INITIALIZER,
                                   name=prefix + 'se_reduce')(se_tensor)
-        se_tensor = layers.Conv2D(filters, 1,
+        se_tensor = LAYERS.Conv2D(filters, 1,
                                   activation='sigmoid',
                                   padding='same',
                                   use_bias=True,
                                   kernel_initializer=CONV_KERNEL_INITIALIZER,
                                   name=prefix + 'se_expand')(se_tensor)
-        if backend.backend() == 'theano':
+        if BACKEND.backend() == 'theano':
             # For the Theano backend, we have to explicitly make
             # the excitation weights broadcastable.
-            pattern = ([True, True, True, False] if backend.image_data_format() == 'channels_last'
+            pattern = ([True, True, True, False] if BACKEND.image_data_format() == 'channels_last'
                        else [True, False, True, True])
-            se_tensor = layers.Lambda(
-                lambda x: backend.pattern_broadcast(x, pattern),
+            se_tensor = LAYERS.Lambda(
+                lambda x: BACKEND.pattern_broadcast(x, pattern),
                 name=prefix + 'se_broadcast')(se_tensor)
-        x = layers.multiply([x, se_tensor], name=prefix + 'se_excite')
+        x_in = LAYERS.multiply([x_in, se_tensor], name=prefix + 'se_excite')
 
     # Output phase
-    x = layers.Conv2D(block_args.output_filters, 1,
-                      padding='same',
-                      use_bias=False,
-                      kernel_initializer=CONV_KERNEL_INITIALIZER,
-                      name=prefix + 'project_conv')(x)
+    x_in = LAYERS.Conv2D(block_args.output_filters, 1,
+                         padding='same',
+                         use_bias=False,
+                         kernel_initializer=CONV_KERNEL_INITIALIZER,
+                         name=prefix + 'project_conv')(x_in)
     # x = BatchNormalization(freeze=freeze_bn, axis=bn_axis, name=prefix + 'project_bn')(x)
-    x = layers.BatchNormalization(axis=bn_axis, name=prefix + 'project_bn')(x)
+    x_in = LAYERS.BatchNormalization(axis=bn_axis, name=prefix + 'project_bn')(x_in)
     if block_args.id_skip and all(
             s == 1 for s in block_args.strides
     ) and block_args.input_filters == block_args.output_filters:
         if drop_rate and (drop_rate > 0):
-            x = Dropout(drop_rate,
-                        noise_shape=(None, 1, 1, 1),
-                        name=prefix + 'drop')(x)
-        x = layers.add([x, inputs], name=prefix + 'add')
+            x_in = Dropout(drop_rate,
+                           noise_shape=(None, 1, 1, 1),
+                           name=prefix + 'drop')(x_in)
+        x_in = LAYERS.add([x_in, inputs], name=prefix + 'add')
 
-    return x
+    return x_in
 
 
-def EfficientNet(width_coefficient,
-                 depth_coefficient,
-                 default_resolution,
-                 dropout_rate=0.2,
-                 drop_connect_rate=0.2,
-                 depth_divisor=8,
-                 blocks_args=DEFAULT_BLOCKS_ARGS,
-                 model_name='efficientnet',
-                 include_top=True,
-                 weights='imagenet',
-                 input_tensor=None,
-                 input_shape=None,
-                 pooling=None,
-                 classes=1000,
-                 freeze_bn=False,
-                 **kwargs):
+def efficientnet_base(width_coefficient,
+                      depth_coefficient,
+                      default_resolution,
+                      dropout_rate=0.2,
+                      drop_connect_rate=0.2,
+                      depth_divisor=8,
+                      blocks_args=DEFAULT_BLOCKS_ARGS,
+                      model_name='efficientnet',
+                      include_top=True,
+                      weights='imagenet',
+                      input_tensor=None,
+                      input_shape=None,
+                      pooling=None,
+                      classes=1000,
+                      freeze_bn=False,
+                      **kwargs):
     """Instantiates the EfficientNet architecture using given scaling coefficients.
     Optionally loads weights pre-trained on ImageNet.
     Note that the data format convention used by the model is
@@ -358,8 +356,8 @@ def EfficientNet(width_coefficient,
         ValueError: in case of invalid argument for `weights`,
             or invalid input shape.
     """
-    global backend, layers, models, keras_utils
-    backend, layers, models, keras_utils = get_submodules_from_kwargs(kwargs)
+    global BACKEND, LAYERS, MODELS, KERAS_UTILS
+    BACKEND, LAYERS, MODELS, KERAS_UTILS = get_submodules_from_kwargs(kwargs)
     features = []
     if not (weights in {'imagenet', None} or os.path.exists(weights)):
         raise ValueError('The `weights` argument should be either '
@@ -375,36 +373,36 @@ def EfficientNet(width_coefficient,
     input_shape = _obtain_input_shape(input_shape,
                                       default_size=default_resolution,
                                       min_size=32,
-                                      data_format=backend.image_data_format(),
+                                      data_format=BACKEND.image_data_format(),
                                       require_flatten=include_top,
                                       weights=weights)
 
     if input_tensor is None:
-        img_input = layers.Input(shape=input_shape)
+        img_input = LAYERS.Input(shape=input_shape)
     else:
-        if backend.backend() == 'tensorflow':
+        if BACKEND.backend() == 'tensorflow':
             from tensorflow.python.keras.backend import is_keras_tensor
         else:
-            is_keras_tensor = backend.is_keras_tensor
+            is_keras_tensor = BACKEND.is_keras_tensor
         if not is_keras_tensor(input_tensor):
-            img_input = layers.Input(tensor=input_tensor, shape=input_shape)
+            img_input = LAYERS.Input(tensor=input_tensor, shape=input_shape)
         else:
             img_input = input_tensor
 
-    bn_axis = 3 if backend.image_data_format() == 'channels_last' else 1
+    bn_axis = 3 if BACKEND.image_data_format() == 'channels_last' else 1
     activation = get_swish(**kwargs)
 
     # Build stem
-    x = img_input
-    x = layers.Conv2D(round_filters(32, width_coefficient, depth_divisor), 3,
-                      strides=(2, 2),
-                      padding='same',
-                      use_bias=False,
-                      kernel_initializer=CONV_KERNEL_INITIALIZER,
-                      name='stem_conv')(x)
+    x_in = img_input
+    x_in = LAYERS.Conv2D(round_filters(32, width_coefficient, depth_divisor), 3,
+                         strides=(2, 2),
+                         padding='same',
+                         use_bias=False,
+                         kernel_initializer=CONV_KERNEL_INITIALIZER,
+                         name='stem_conv')(x_in)
     # x = BatchNormalization(freeze=freeze_bn, axis=bn_axis, name='stem_bn')(x)
-    x = layers.BatchNormalization(axis=bn_axis, name='stem_bn')(x)
-    x = layers.Activation(activation, name='stem_activation')(x)
+    x_in = LAYERS.BatchNormalization(axis=bn_axis, name='stem_bn')(x_in)
+    x_in = LAYERS.Activation(activation, name='stem_activation')(x_in)
     # Build blocks
     num_blocks_total = sum(block_args.num_repeat for block_args in blocks_args)
     block_num = 0
@@ -420,12 +418,12 @@ def EfficientNet(width_coefficient,
 
         # The first block needs to take care of stride and filter size increase.
         drop_rate = drop_connect_rate * float(block_num) / num_blocks_total
-        x = mb_conv_block(x, block_args,
-                          activation=activation,
-                          drop_rate=drop_rate,
-                          prefix='block{}a_'.format(idx + 1),
-                          freeze_bn=freeze_bn
-                          )
+        x_in = mb_conv_block(x_in, block_args,
+                             activation=activation,
+                             drop_rate=drop_rate,
+                             prefix='block{}a_'.format(idx + 1),
+                             freeze_bn=freeze_bn
+                             )
         block_num += 1
         if block_args.num_repeat > 1:
             # pylint: disable=protected-access
@@ -438,145 +436,161 @@ def EfficientNet(width_coefficient,
                     idx + 1,
                     string.ascii_lowercase[bidx + 1]
                 )
-                x = mb_conv_block(x, block_args,
-                                  activation=activation,
-                                  drop_rate=drop_rate,
-                                  prefix=block_prefix,
-                                  freeze_bn=freeze_bn
-                                  )
+                x_in = mb_conv_block(x_in, block_args,
+                                     activation=activation,
+                                     drop_rate=drop_rate,
+                                     prefix=block_prefix,
+                                     freeze_bn=freeze_bn
+                                     )
                 block_num += 1
         if idx < len(blocks_args) - 1 and blocks_args[idx + 1].strides[0] == 2:
-            features.append(x)
+            features.append(x_in)
         elif idx == len(blocks_args) - 1:
-            features.append(x)
+            features.append(x_in)
     return features
 
 
-def EfficientNetB0(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.0, 1.0, 224, 0.2,
-                        model_name='efficientnet-b0',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b0(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B0 model
+    """
+    return efficientnet_base(1.0, 1.0, 224, 0.2,
+                             model_name='efficientnet-b0',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB1(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.0, 1.1, 240, 0.2,
-                        model_name='efficientnet-b1',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b1(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B1 model
+    """
+    return efficientnet_base(1.0, 1.1, 240, 0.2,
+                             model_name='efficientnet-b1',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB2(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.1, 1.2, 260, 0.3,
-                        model_name='efficientnet-b2',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b2(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B2 model
+    """
+    return efficientnet_base(1.1, 1.2, 260, 0.3,
+                             model_name='efficientnet-b2',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB3(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.2, 1.4, 300, 0.3,
-                        model_name='efficientnet-b3',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b3(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B3 model
+    """
+    return efficientnet_base(1.2, 1.4, 300, 0.3,
+                             model_name='efficientnet-b3',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB4(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.4, 1.8, 380, 0.4,
-                        model_name='efficientnet-b4',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b4(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B4 model
+    """
+    return efficientnet_base(1.4, 1.8, 380, 0.4,
+                             model_name='efficientnet-b4',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB5(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.6, 2.2, 456, 0.4,
-                        model_name='efficientnet-b5',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b5(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B5 model
+    """
+    return efficientnet_base(1.6, 2.2, 456, 0.4,
+                             model_name='efficientnet-b5',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB6(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(1.8, 2.6, 528, 0.5,
-                        model_name='efficientnet-b6',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b6(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B6 model
+    """
+    return efficientnet_base(1.8, 2.6, 528, 0.5,
+                             model_name='efficientnet-b6',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-def EfficientNetB7(include_top=True,
-                   weights='imagenet',
-                   input_tensor=None,
-                   input_shape=None,
-                   pooling=None,
-                   classes=1000,
-                   **kwargs):
-    return EfficientNet(2.0, 3.1, 600, 0.5,
-                        model_name='efficientnet-b7',
-                        include_top=include_top, weights=weights,
-                        input_tensor=input_tensor, input_shape=input_shape,
-                        pooling=pooling, classes=classes,
-                        **kwargs)
+def efficientnet_b7(include_top=True,
+                    weights='imagenet',
+                    input_tensor=None,
+                    input_shape=None,
+                    pooling=None,
+                    classes=1000,
+                    **kwargs):
+    """EfficientNet-B7 model
+    """
+    return efficientnet_base(2.0, 3.1, 600, 0.5,
+                             model_name='efficientnet-b7',
+                             include_top=include_top, weights=weights,
+                             input_tensor=input_tensor, input_shape=input_shape,
+                             pooling=pooling, classes=classes,
+                             **kwargs)
 
 
-setattr(EfficientNetB0, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB1, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB2, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB3, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB4, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB5, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB6, '__doc__', EfficientNet.__doc__)
-setattr(EfficientNetB7, '__doc__', EfficientNet.__doc__)
+setattr(efficientnet_b0, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b1, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b2, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b3, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b4, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b5, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b6, '__doc__', efficientnet_base.__doc__)
+setattr(efficientnet_b7, '__doc__', efficientnet_base.__doc__)
