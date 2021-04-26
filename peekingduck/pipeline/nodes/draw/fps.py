@@ -27,7 +27,6 @@ class Node(AbstractNode):
     def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-        self.current_frame_time = 0
         self.previous_frame_time = 0
 
     def run(self, inputs: Dict[str, Any]) -> None:
@@ -41,10 +40,10 @@ class Node(AbstractNode):
             outputs: [None]
         """
 
-        self.current_frame_time = perf_counter()
-        current_fps = 1 / (self.current_frame_time - self.previous_frame_time)
-        self.previous_frame_time = self.current_frame_time
-        draw_fps(inputs[self.inputs[0]], current_fps)
+        current_time = perf_counter()
+        current_fps = 1 / (current_time - self.previous_frame_time)
+        self.previous_frame_time = current_time
+        draw_fps(inputs['img'], current_fps)
 
         return {}
 
