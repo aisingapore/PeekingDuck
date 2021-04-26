@@ -86,7 +86,7 @@ class DeclarativeLoader:
                         node_config = {node_str: node_config}
                     yaml.dump(node_config, compiled_node_config, default_flow_style=False)
                 else:
-                    self.logger(f'No associated configs found for {node}. Skipping')
+                    self.logger.info(f'No associated configs found for {node}. Skipping')
 
     def _import_nodes(self) -> None:
         """Given a list of nodes, import the appropriate nodes"""
