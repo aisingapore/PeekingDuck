@@ -1,0 +1,52 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+import os
+import logging
+import json
+import numpy as np
+
+from peekingduck.weights_utils import checker, downloader
+from .posenet_files.predictor import Predictor
+
+
+class PoseNetModel:
+    """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
+
+    def __init__(self, config):
+        super().__init__()
+
+        self.logger = logging.getLogger(__name__)
+
+        # check for posenet weights, if none then download into weights folder
+        if not checker.has_weights(config['root'],
+                                   config['weights_dir']):
+            print('---no posenet weights detected. proceeding to download...---')
+            downloader.download_weights(config['root'],
+                                        config['weights_id'])
+            print('---posenet weights download complete.---')
+
+        self.predictor = Predictor(config)
+
+    def predict(self, frame):
+        """predict poses from frame
+
+        returns:
+        poses(List[PoseData]): list of PoseData containing poses info
+        """
+        assert isinstance(frame, np.ndarray)
+
+        # return poses
+        return self.predictor.predict(frame)
