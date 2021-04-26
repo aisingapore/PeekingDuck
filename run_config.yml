@@ -1,5 +1,5 @@
 nodes:
 - input.live
-- model.yolo
-- draw.bbox
+- model.yolo # model.posenet
+- draw.bbox # draw.poses
 - output.screen
