@@ -15,7 +15,7 @@ class ConfigLoader:
     create the nodes for the project
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._master_node_config = {}
         self._rootdir = os.path.join(
             os.path.dirname(os.path.abspath(__file__))
@@ -23,7 +23,8 @@ class ConfigLoader:
 
         self._load_configs()
 
-    def _load_configs(self):
+    def _load_configs(self) -> None:
+        """ Loads all node configs from the configs folder"""
         configs_folder = os.path.join(self._rootdir, 'configs')
         node_filepaths = [os.path.join(node_type_path, node)
                           for node_type_path, _, nodes in os.walk(configs_folder)
@@ -48,8 +49,9 @@ class ConfigLoader:
 
 
 class DeclarativeLoader:
+    """Uses the declarative run_config.yml to load pipelines or compiled configs"""
 
-    def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str):
+    def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs
@@ -65,7 +67,8 @@ class DeclarativeLoader:
             'Successfully loaded run_config file.')
         return nodes
 
-    def compile_configrc(self):
+    def compile_configrc(self) -> None:
+        """Given a list of nodes, return compiled configs"""
         if os.path.isfile('node_config.yml'):
             os.remove('node_config.yml')
         with open('node_config.yml', 'a') as compiled_node_config:
@@ -85,7 +88,8 @@ class DeclarativeLoader:
                 else:
                     self.logger(f'No associated configs found for {node}. Skipping')
 
-    def _import_nodes(self):
+    def _import_nodes(self) -> None:
+        """Given a list of nodes, import the appropriate nodes"""
         imported_nodes = []
         for node_str in self.node_list:
             node_type, node = node_str.split('.')
@@ -103,7 +107,8 @@ class DeclarativeLoader:
             self.logger.info("{} added to pipeline.".format(node))
         return imported_nodes
 
-    def _instantiate_nodes(self, imported_nodes):
+    def _instantiate_nodes(self, imported_nodes: List[Any]) -> List(AbstractNode):
+        """ Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
         for node_name, node in imported_nodes:
             if node_name == 'custom':
@@ -113,7 +118,8 @@ class DeclarativeLoader:
                 instantiated_nodes.append(node.Node(config))
         return instantiated_nodes
 
-    def get_nodes(self):
+    def get_nodes(self) -> Pipeline:
+        """Returns a compiled Pipeline for PeekingDuck runner to execute"""
         imported_nodes = self._import_nodes()
         instantiated_nodes = self._instantiate_nodes(imported_nodes)
 
