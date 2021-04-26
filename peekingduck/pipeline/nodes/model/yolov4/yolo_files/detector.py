@@ -1,4 +1,18 @@
 """
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
 This is detection file that will be used to detect person bounding box with
 the confident score.
 
@@ -11,21 +25,21 @@ Commands:
     python src/yolov3/detector.py --tiny
 """
 import os
-import yaml
+import logging
 
 import numpy as np
-import logging
 import tensorflow as tf
 
 from .graph_functions import load_graph
 from .dataset import transform_images
 
+
 class Detector:
+    """Object detection class using yolo model to find object bboxes"""
 
     def __init__(self, config):
-        
         self.logger = logging.getLogger(__name__)
-        
+
         self.config = config
         self.root_dir = config['root']
 
@@ -61,12 +75,11 @@ class Detector:
         model_path = os.path.join(filepath)
         if os.path.isfile(model_path):
             return load_graph(model_path, inputs=model_nodes['inputs'],
-                            outputs=model_nodes['outputs'])
+                              outputs=model_nodes['outputs'])
         raise ValueError('Graph file does not exist. Please check that '
-                        '%s exists' % model_path)
+                         '%s exists' % model_path)
 
-    @staticmethod
-    def _load_image(image_file):
+    def _load_image(self, image_file):
         img = open(image_file, 'rb').read()
         self.logger.info('image file %s loaded', image_file)
         return img
@@ -78,7 +91,7 @@ class Detector:
         return image
 
     @staticmethod
-    def _shrink_dimension_and_length(boxes, scores, classes, nums, object_ids=[0]):
+    def _shrink_dimension_and_length(boxes, scores, classes, nums, object_ids):
         len0 = nums[0]
 
         classes = classes.numpy()[0]
@@ -156,9 +169,9 @@ class Detector:
         # 2. evaluate image
         boxes, scores, classes, nums = self._evaluate_image_by_yolo(image)
 
-        # 3. clean up return
+        # 3. clean up return. Note that object id is [0] as index 0 is for person
         boxes, scores, classes = self._shrink_dimension_and_length(
-            boxes, scores, classes, nums)
+            boxes, scores, classes, nums, [0])
 
         boxes = np.array(boxes)
         return boxes
