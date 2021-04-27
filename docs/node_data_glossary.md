@@ -80,11 +80,12 @@ A list of dictionaries, each containing the index and 3D location of an object a
 
 ### "obj_tags"
 
-A list of dictionaries, each containing the index and tag an object associated with a bounding box.
+A list of strings called tags, each tag associated with a bounding box. The order of the tags follow the order of "bboxes".
 ```
-"obj_3D_locs": [{"idx": int, "tag": str},
-                ...
-                {"idx": int, "tag": str}]
+"obj_tags": [str, str, ... , str]
+
+# for example
+"obj_tags": ["TOO CLOSE!", "", ... , "TOO CLOSE!"]
 ```
 
 
