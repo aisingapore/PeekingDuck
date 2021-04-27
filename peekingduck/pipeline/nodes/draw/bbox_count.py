@@ -29,7 +29,6 @@ class Node(AbstractNode):
              inputs (dict): Dict with keys "count" and "img".
          Returns:
              outputs (dict): None
-
          """
         draw_count(inputs["img"],
                    inputs["count"])
