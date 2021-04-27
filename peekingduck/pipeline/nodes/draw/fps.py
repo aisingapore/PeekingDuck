@@ -46,5 +46,3 @@ class Node(AbstractNode):
         draw_fps(inputs['img'], current_fps)
 
         return {}
-
-
