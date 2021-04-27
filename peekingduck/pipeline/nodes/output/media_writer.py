@@ -11,13 +11,12 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License."""
+
 import os
 from typing import Any, Dict
-
 import numpy as np
 import cv2
 from peekingduck.pipeline.nodes.node import AbstractNode
-
 
 # role of this node is to be able to take in multiple frames, stitch them together and output them.
 # to do: need to have 'live' kind of data when there is no filename
