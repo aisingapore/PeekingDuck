@@ -1,21 +1,23 @@
-# Node Data
+# Node Data Glossary
 
-## 1. Introduction
+## 1. Overview
 
-How does data get passed from one node to another? In [pipeline.py](peekingduck/pipeline/pipeline.py), self._data is a dictionary that aggregates data as nodes are traversed. If you already understand how this mechanism works and want more details on specific key-value pairs of available nodes, feel free to jump ahead to the next [section](#2-key-value-pairs).
+How does data get passed from one node to another? In [pipeline.py](peekingduck/pipeline/pipeline.py), `self._data` is a dictionary that accumulates data as nodes are triggered. If you already understand how this mechanism works and want more details on specific key-value pairs of available nodes, see [section](#2-key-value-pairs).
 
-For example, after passing through input.live:
+Here's an example when the pipeline runs [`input.live`, `model.yolo`]. 
+
+When we inspect `self._data` after passing through `input.live`:
 ```
 self._data = {"img": array}
 ```
-Following this, after passing through model.yolo, which takes in "img" and returns "bboxes":
+Following this, after passing through `model.yolo`, which takes in "img" and returns "bboxes":
 ```
 self._data = {"img": array, "bboxes": list}
 ```
 
-Before the pipeline is run, a check is done to ensure that the inputs and the outputs of the chosen nodes tally. For example, without input.live, the check would fail because model.yolo will not be able to access "img". 
+Before the pipeline is run, a check is done to ensure that the inputs and the outputs of the chosen nodes tally. For example, without `input.live`, the check would fail because `model.yolo` will not be able to access "img". 
 
-This check is done by checking the input and output of each node's config file. For example, this is the config file for input.live.
+This check is done by checking the input and output of each node's config file. For example, this is the config file for `input.live`.
 
 ```
 input: ["source"]   # to be updated
@@ -24,7 +26,7 @@ output: ["img"]
 # add other configs
 ```
 
-This is the config file for model.yolo.
+This is the config file for `model.yolo`.
 
 ```
 input: ["img"]

@@ -83,15 +83,15 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
     ```
 
 
-3. In PeekingDuck's pipeline, the output of one node would be the input to another. For example, the input to `model.quack` could be an image from `input.live`, and the output of `model.quack` would be bounding box coordinates that go to `draw.bbox`. Refer to the list of [node data](docs/node_data.md) for a full list of nodes that can be used in conjunction with yours. 
+3. In PeekingDuck's pipeline, the output of one node would be the input to another. For example, the input to `model.quack` could be an image from `input.live`, and the output of `model.quack` would be bounding box coordinates that go to `draw.bbox`. Refer to the [node data glossary](docs/node_data_glossary.md) for a full list of data keys that can be used in conjunction with yours. 
 
-4. Create a configuration file for the node in [peekingduck/configs](peekingduck/configs)/{`node_type`}/{`node_name`}.yml. In our case, the name would be 'peekingduck/configs/model/quack.yml'. The file should contain:
+4. Create a configuration file for the node in [peekingduck/configs](peekingduck/configs)/{`node_type`}/{`node_name`}.yml. In our case, the name would be 'peekingduck/configs/model/quack.yml'. You can use this [template](peekingduck/configs/node_template.yml) as a guide. The file should contain:
     ```
-    # Mandatory
+    # Mandatory configs
     input: ["img"]  # example where the input of this node is an image
     output: ["bboxes"] # example where the output of this node are bboxes
 
-    # Optional depending on node
+    # Optional configs depending on node
     threshold: 0.5 # example
     ```
 
@@ -100,7 +100,7 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
 
     Things to note:
     - All nodes should inherit from the [AbstractNode class](peekingduck/pipeline/nodes/node.py)
-    - Again, refer to the list of [node data](docs/node_data.md) for possible inputs that can be used by your node
+    - Again, refer to the list of [node data glossary](docs/node_data_glossary.md) for possible inputs that can be used by your node
     - Use self.logger for any required logging, as shown in the [template](peekingduck/pipeline/nodes/node_template.py)
 
 6. If the quack node requires some utility functions, create a folder (do not use {`node_name`} for the folder name) and put the files with these utilities inside:
@@ -115,7 +115,7 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
     |    |- utils.py
     ```
 
-7. After adding to the scaffold code, quack.py would look like this:
+7. After editing the [template](peekingduck/pipeline/nodes/node_template.py), quack.py would look like this:
     ```
     """
     Copyright 2021 AI Singapore
@@ -136,7 +136,7 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
     from typing import Any, Dict
     from peekingduck.pipeline.nodes.node import AbstractNode
 
-    from .quack_utils.model import QuackModel
+    from peekingduck.pipeline.nodes.model.quack_utils.model import QuackModel
 
 
     class Node(AbstractNode):
