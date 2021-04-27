@@ -21,21 +21,20 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    def __init__(self, config: Dict) -> None:
-        super().__init__(config, name='heuristic.2D_bbox_3D_loc')
+    def __init__(self, config: Dict[str, Any]) -> None:
+        super().__init__(config, node_path=__name__)
 
         self.height_factor = config['height_factor']
         self.focal_length = config['focal_length']
 
-    def run(self, inputs: Dict) -> Dict:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts 2D bounding boxes into 3D locations.
 
         Args:
-            inputs: ["bboxes"]
+            inputs (dict): Dict with keys "bboxes".
 
         Returns:
-            outputs: ["obj_3D_locs"]
-
+            outputs (dict): Dict with keys "obj_3D_locs".
         """
 
         locations = []
