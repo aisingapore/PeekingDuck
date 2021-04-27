@@ -15,6 +15,10 @@ We use:
 - Python PEP 8 convention
 - Pylint to lint our code
 - [PEP 484](https://www.python.org/dev/peps/pep-0484/) type hinting for functions and methods
+- Absolute imports instead of relative imports:
+    ```
+    from peekingduck.pipeline.nodes.node import AbstractNode
+    ```
 - Each code file should have a copyright and license header (if using VS Code, you could use this [extension](https://marketplace.visualstudio.com/items?itemName=minherz.copyright-inserter) instead of copy and pasting the text below):
 
     ```
