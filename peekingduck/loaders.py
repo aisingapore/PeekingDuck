@@ -2,10 +2,12 @@
 """
 import sys
 import os
-import yaml
 import importlib
 import logging
 from typing import Any, Dict, List
+
+import yaml
+
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -47,11 +49,21 @@ class ConfigLoader:
         node['root'] = self._rootdir
         return node
 
+    def get_master_configs(self) -> Dict[str, Any]:
+        """Returns the master configs for all nodes
+
+        Returns:
+            Dict[Any]: configs for all nodes.
+        """
+        return self._master_node_config
+
 
 class DeclarativeLoader:
     """Uses the declarative run_config.yml to load pipelines or compiled configs"""
 
-    def __init__(self, node_configs: ConfigLoader, run_config: str, custom_folder_path: str = 'src/custom_nodes') -> None:
+    def __init__(self, node_configs: ConfigLoader,
+                 run_config: str,
+                 custom_folder_path: str) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs
@@ -86,7 +98,7 @@ class DeclarativeLoader:
                         node_config = {node_str: node_config}
                     yaml.dump(node_config, compiled_node_config, default_flow_style=False)
                 else:
-                    self.logger.info(f'No associated configs found for {node}. Skipping')
+                    self.logger.info("No associated configs found for %s. Skipping", node)
 
     def _import_nodes(self) -> None:
         """Given a list of nodes, import the appropriate nodes"""
@@ -104,7 +116,7 @@ class DeclarativeLoader:
             else:
                 imported_nodes.append((node_str, importlib.import_module(
                     'peekingduck.pipeline.nodes.' + node_str)))
-            self.logger.info("{} added to pipeline.".format(node))
+            self.logger.info('%s added to pipeline.', node)
         return imported_nodes
 
     def _instantiate_nodes(self, imported_nodes: List[Any]) -> List[AbstractNode]:
@@ -125,6 +137,6 @@ class DeclarativeLoader:
 
         try:
             return Pipeline(instantiated_nodes)
-        except ValueError as e:
-            self.logger.error(str(e))
+        except ValueError as error:
+            self.logger.error(str(error))
             sys.exit(1)

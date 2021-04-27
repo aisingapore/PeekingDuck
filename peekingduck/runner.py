@@ -14,12 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
 import sys
-import importlib
 import logging
 from typing import List, Dict, Any
-import yaml
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -51,16 +48,16 @@ class Runner():
         if not nodes:
             node_configs = ConfigLoader()
             # create Graph to run
-            node_loader = DeclarativeLoader(node_configs, RUN_PATH, CUSTOM_NODE_PATH)
+            self.node_loader = DeclarativeLoader(node_configs, RUN_PATH, CUSTOM_NODE_PATH)
 
-            self.pipeline = node_loader.get_nodes()
+            self.pipeline = self.node_loader.get_nodes()
 
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:
                 self.pipeline = Pipeline(nodes)
-            except ValueError as e:
-                self.logger.error(str(e))
+            except ValueError as error:
+                self.logger.error(str(error))
                 sys.exit(1)
 
     def run(self) -> None:
@@ -75,4 +72,4 @@ class Runner():
         Returns:
             Dict[Any]: run configs being used for runner
         """
-        return self.run_config
+        return self.node_loader.node_list
