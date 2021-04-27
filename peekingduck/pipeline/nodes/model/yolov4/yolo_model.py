@@ -17,7 +17,6 @@ limitations under the License.
 import os
 import logging
 from typing import List, Dict, Any
-
 import numpy as np
 from peekingduck.weights_utils import checker, downloader
 from .yolo_files.detector import Detector

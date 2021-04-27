@@ -26,10 +26,8 @@ Commands:
 """
 import os
 import logging
-
 import numpy as np
 import tensorflow as tf
-
 from .graph_functions import load_graph
 from .dataset import transform_images
 

@@ -17,7 +17,6 @@ limitations under the License.
 import os
 import logging
 from typing import List
-
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'

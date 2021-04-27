@@ -29,7 +29,6 @@ from tensorflow.keras.layers import (
     ZeroPadding2D,
 )
 from tensorflow.keras.regularizers import l2
-
 from .batch_norm import BatchNormalization
 
 # pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
