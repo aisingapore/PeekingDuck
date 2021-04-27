@@ -20,6 +20,6 @@ jobs:
       - name: Check for copyright and license headers in .py files
         run: bash ./scripts/check_headers.sh
       - name: Run type cheaker
-        run: bash ./scripts/check_hinting.sh
+        run: bash ./scripts/check_type.sh
 
 
