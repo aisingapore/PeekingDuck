@@ -15,9 +15,7 @@ limitations under the License.
 """
 
 from threading import Thread, Lock
-
 import cv2
-
 from peekingduck.pipeline.nodes.input.utils.preprocess import set_res, mirror
 
 
