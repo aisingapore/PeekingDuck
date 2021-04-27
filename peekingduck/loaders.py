@@ -63,7 +63,7 @@ class DeclarativeLoader:
 
     def __init__(self, node_configs: ConfigLoader,
                  run_config: str,
-                 custom_folder_path: str) -> None:
+                 custom_folder_path: str = 'src/custom_nodes') -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs

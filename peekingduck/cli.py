@@ -24,7 +24,7 @@ from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.utils.logger import setup_logger
 
 setup_logger()
-logger = logging.getLogger(__name__) #pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @click.group()
@@ -65,6 +65,7 @@ def create_yml():
     with open('run_config.yml', 'w') as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
+
 @cli.command()
 def init():
     """Initialise a PeekingDuck project"""
@@ -91,7 +92,6 @@ def run(config_path: str) -> None:
 
 
 @cli.command()
-
 @click.option('--run_config_path', default='./run_config.yml', type=click.Path(),
               help="List of nodes to pull config ymls from. \
                    If none, assumes a run_config.yml at current working directory")
