@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import numpy as np
-from typing import Dict
+from typing import Dict, Any
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
