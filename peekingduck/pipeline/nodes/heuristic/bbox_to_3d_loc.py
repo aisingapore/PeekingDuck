@@ -43,12 +43,11 @@ class Node(AbstractNode):
             # Subtraction is to make the camera the origin of the coordinate system
             center_2d = (bbox[0:2] + bbox[2:4] * 0.5) - np.array([0.5, 0.5])
 
-            #pylint: disable = invalid-name
-            z = (self.focal_length * self.height_factor) / bbox[3]
-            x = (center_2d[0] * self.height_factor) / bbox[3]
-            y = (center_2d[1] * self.height_factor) / bbox[3]
+            z_coord = (self.focal_length * self.height_factor) / bbox[3]
+            x_coord = (center_2d[0] * self.height_factor) / bbox[3]
+            y_coord = (center_2d[1] * self.height_factor) / bbox[3]
 
-            point = np.array([x, y, z])
+            point = np.array([x_coord, y_coord, z_coord])
             locations.append({"idx": idx, "3D_loc": point})
 
         outputs = {"obj_3D_locs": locations}
