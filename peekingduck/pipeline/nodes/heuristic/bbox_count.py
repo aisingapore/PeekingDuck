@@ -14,17 +14,17 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from typing import Dict, Any
 import numpy as np
-from typing import Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    def __init__(self, config: Dict) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: Dict) -> int:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts bboxes of object chosen in the frame. Note that this method
         requires that the bbox returns all the same objects (for example, all people)
 
@@ -36,4 +36,4 @@ class Node(AbstractNode):
             count (int): count of number of same object within the image
 
         """
-        return {'count': len(inputs[self.inputs[0]])}
+        return {'count': len(inputs["bboxes"])}

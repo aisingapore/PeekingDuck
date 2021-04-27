@@ -1,3 +1,2 @@
-name: ["heuristic.bbox_count"]
 input: ["bboxes"]
 output: ["count"]
