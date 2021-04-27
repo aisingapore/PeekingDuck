@@ -21,6 +21,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
+    """Node that checks if any objects are near to each other"""
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.near_thres = config["near_threshold"]
