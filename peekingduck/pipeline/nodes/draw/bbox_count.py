@@ -18,11 +18,20 @@ from .utils.drawfunctions import draw_count
 
 
 class Node(AbstractNode):
-    """Node that draws object count at the top left corner of image"""
+    """Node that draws object counting"""
     def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict[str, Any]) -> None:
+        """Method that draws the count on the top left corner of image
+
+         Args:
+             inputs (dict): Dict with keys "count" and "img".
+         Returns:
+             outputs (dict): None
+
+         """
         draw_count(inputs["img"],
                    inputs["count"])
+
         return {}
