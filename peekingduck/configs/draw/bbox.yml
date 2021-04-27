@@ -1,3 +1,2 @@
-name: ["DrawBBox"]
 input: ["bboxes", "img"]
 output: ["img"]

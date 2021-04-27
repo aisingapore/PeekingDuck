@@ -1,7 +1,23 @@
-import cv2
-import logging
+"""
+Copyright 2021 AI Singapore
 
-logger = logging.getLogger(__name__)
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+import logging
+import cv2
+
+logger = logging.getLogger(__name__) #pylint: disable=invalid-name
 
 def set_res(stream, desired_width, desired_height):
     '''
@@ -12,10 +28,10 @@ def set_res(stream, desired_width, desired_height):
     actual_width, actual_height = get_res(stream)
     if desired_width != actual_width:
         logger.warning("Unable to change width of video frame to %s, current width: %s!",
-                            desired_width, actual_width)
+                       desired_width, actual_width)
     if desired_height != actual_height:
         logger.warning("Unable to change height of video frame to %s, current height: %s!",
-                            desired_height, actual_height)
+                       desired_height, actual_height)
 
 def get_res(stream):
     '''

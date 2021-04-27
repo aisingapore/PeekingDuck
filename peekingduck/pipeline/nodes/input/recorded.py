@@ -1,10 +1,26 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 import os
-import logging
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
 class Node(AbstractNode):
+    """Node to receive videos/image as inputs."""
     def __init__(self, config):
         super().__init__(config, node_path=__name__)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]
@@ -22,7 +38,7 @@ class Node(AbstractNode):
         '''
         outputs = self._run_single_file()
 
-        if outputs[self.outputs[1]]:
+        if outputs["end"]:
             self._get_next_input()
             outputs = self._run_single_file()
 
@@ -31,10 +47,15 @@ class Node(AbstractNode):
     def _run_single_file(self) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()
 
-        outputs = {self.outputs[0]: None, self.outputs[1]: True}
+        outputs = {"img": None,
+                   "end": True,
+                   "filename": self._file_name,
+                   "fps": self._fps}
         if success:
-            outputs = {self.outputs[0]: img, self.outputs[1]: False}
-
+            outputs = {"img": img,
+                       "end": False,
+                       "filename": self._file_name,
+                       "fps": self._fps}
         return outputs
 
     def _get_files(self, path) -> None:
@@ -50,12 +71,15 @@ class Node(AbstractNode):
 
         if self._filepaths:
             file_path = self._filepaths.pop(0)
+            self._file_name = os.path.basename(file_path)
+
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(
                     self._resolution,
                     file_path,
                     self._mirror_image
                 )
+                self._fps = self.videocap.fps
             else:
                 self.logger.warning("Skipping '%s' as it is not an accepted file format %s",
                                     file_path,
