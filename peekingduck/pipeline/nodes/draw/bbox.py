@@ -16,7 +16,7 @@ limitations under the License.
 
 from typing import Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_human_bboxes
+from .utils.drawfunctions import draw_bboxes
 
 
 class Node(AbstractNode):
@@ -26,6 +26,6 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict):
 
-        draw_human_bboxes(inputs[self.inputs[1]],
-                          inputs[self.inputs[0]])
+        draw_bboxes(inputs[self.inputs[1]],
+                    inputs[self.inputs[0]])
         return {}
