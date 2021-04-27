@@ -1,11 +1,29 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 import os
 import sys
-import yaml
 import importlib
 import logging
-
+from typing import List, Dict, Any
+import yaml
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.config import ConfigLoader
+from peekingduck.pipeline.nodes.node import AbstractNode
+
 END_TYPE = 'process_end'
 
 """
@@ -16,7 +34,8 @@ class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
 
-    def __init__(self, RUN_PATH, CUSTOM_NODE_PATH=None, nodes=[]):
+    def __init__(self, RUN_PATH: str, CUSTOM_NODE_PATH: str = None,
+                 nodes: List[AbstractNode] = None):
         """
         Args:
             RUN_PATH (str): path to yaml file of node pipeine declaration.
@@ -32,13 +51,13 @@ class Runner():
 
         if not nodes:
             with open(RUN_PATH) as file:
-                run_config = yaml.load(file, Loader=yaml.FullLoader)
+                self.run_config = yaml.load(file, Loader=yaml.FullLoader)
                 self.logger.info(
                     'Successfully loaded run_config file. Proceeding to create Graph.')
             # create Graph to run
-            nodes_config = ConfigLoader(run_config['nodes'])
+            nodes_config = ConfigLoader(self.run_config['nodes'])
             imported_nodes = []
-            for node in run_config['nodes']:
+            for node in self.run_config['nodes']:
                 if node.split('.')[0] == 'custom':
                     custom_node_path = os.path.join(
                         CUSTOM_NODE_PATH, node.split('.')[1]+'.py')
@@ -50,7 +69,7 @@ class Runner():
                 else:
                     imported_nodes.append((node, importlib.import_module(
                         'peekingduck.pipeline.nodes.' + node)))
-                self.logger.info("{} added to pipeline.".format(node))
+                self.logger.info("%s added to pipeline.", node)
 
             # instantiate classes from imported nodes
             for node_name, node in imported_nodes:
@@ -68,12 +87,20 @@ class Runner():
         # Create Graph
         try:
             self.pipeline = Pipeline(instantiated_nodes)
-        except ValueError as e:
-            self.logger.error(str(e))
+        except ValueError as exception:
+            self.logger.error(str(exception))
             sys.exit(1)
 
-    def run(self):
+    def run(self) -> None:
         """execute single or continuous inference
         """
         while not self.pipeline.video_end:
             self.pipeline.execute()
+
+    def get_run_config(self) -> Dict[str, Any]:
+        """retreive run configs
+
+        Returns:
+            Dict[Any]: run configs being used for runner
+        """
+        return self.run_config
