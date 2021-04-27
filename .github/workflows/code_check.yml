@@ -21,6 +21,6 @@ jobs:
       - name: Check for copyright and license headers in .py files
         run: bash ./scripts/check_headers.sh
       - name: Check for type hinting
-        run: mypy peekingduck
+        run: bash ./scripts/check_hinting.sh
 
 
