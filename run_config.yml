@@ -1,6 +1,5 @@
 nodes:
-- input.recorded
+- input.live
 - model.yolo
 - draw.bbox
 - output.screen
-- output.media_writer
