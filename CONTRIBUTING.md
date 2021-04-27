@@ -39,12 +39,9 @@ We use:
 Use comments sparingly, it should be used for situations where the code is not self-explanatory. If and when comments are used, it should be clear and succinct.
 - **Single Responsibility Principle**<br>
 The function/method should only perform one role.
-- **Don't Repeat Yourself (DRY)**<br>
-When a group of code is being used multiple times. It is recommended to convert this group of code into functions or methods. For this project, keep the repeat in code to fewer than 3 times. If there exists codeblocks being reused multiple times, it is time to clean the code.
 - **Naming**<br>
-    - Use snake_case for python variables, methods, functions and filenames.
+    - Use snake_case for python variables, methods, functions and filenames
     - Use PascalCase for python classes
-    - camelCase should be used only for Javascript/ 
     - Name variables explicitly so that it is easier to follow the code
         ```
         # bad
@@ -61,17 +58,15 @@ When a group of code is being used multiple times. It is recommended to convert 
 
 ## 4. How to Add a Node
 
-1. First, what kind of node do you want to add? There are 6 categories of nodes `{node_type}` in PeekingDuck:
+1. First, what kind of node do you want to add? There are 5 categories of nodes `{node_type}` in PeekingDuck:
     - input
         - Takes in live video feeds or recorded videos/images
     - model
         - AI models such as YOLO
     - heuristic
-        - Approximations such as estimating 3D distance from 2D images
-    - usecase
-        - Real life use cases such as people counting
+        - Not an AI model, but does something useful from previous outputs, such as count the number of bounding boxes from YOLO
     - draw
-        - Superimposes the outputs of the model, heuristic, usecase to the image. Examples include bounding boxes, text, etc.
+        - Superimposes the outputs of the model and/or heuristic to the image. Examples include bounding boxes, text, etc.
     - output
         - Useful output such as showing the result to screen, saving to database, posting to API, etc
 
@@ -88,66 +83,83 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
     ```
 
 
-3. In PeekingDuck's pipeline, the output of one node would be the input to another. For example, the input to `model.quack` could be an image from `input.live`, and the output of `model.quack` would be bounding box coordinates that go to `draw.bbox`. Refer to our [Node Zoo](Nodezoo) for a full list of nodes that can be used in conjunction with yours. 
+3. In PeekingDuck's pipeline, the output of one node would be the input to another. For example, the input to `model.quack` could be an image from `input.live`, and the output of `model.quack` would be bounding box coordinates that go to `draw.bbox`. Refer to the [node data glossary](docs/node_data_glossary.md) for a full list of data keys that can be used in conjunction with yours. 
 
-4. In [peekingduck/configs](peekingduck/configs), create a configuration file named `{node_type}`\_`{node_name}.yml` (separated by an underscore instead of a dot this time). In our case, the name would be `model_quack.yml`. The file should contain:
+4. Create a configuration file for the node in [peekingduck/configs](peekingduck/configs)/{`node_type`}/{`node_name`}.yml. In our case, the name would be 'peekingduck/configs/model/quack.yml'. You can use this [template](peekingduck/configs/node_template.yml) as a guide. The file should contain:
     ```
-    # Mandatory
+    # Mandatory configs
     input: ["img"]  # example where the input of this node is an image
     output: ["bboxes"] # example where the output of this node are bboxes
 
-    # Optional depending on node
+    # Optional configs depending on node
     threshold: 0.5 # example
     ```
 
-5. Create the node in [peekingduck/pipeline/nodes/](peekingduck/pipeline/nodes){`node_type`}/{`node_name`}.py. In this example, it is 'peekingduck/pipeline/nodes/model/quack.py'. You can start with the following scaffold code:
-    ```
-    from peekingduck.pipeline.nodes.node import AbstractNode
+5. Create the node in [peekingduck/pipeline/nodes/](peekingduck/pipeline/nodes){`node_type`}/{`node_name`}.py. In this example, it is 'peekingduck/pipeline/nodes/model/quack.py'. You can start writing the node with this [template](peekingduck/pipeline/nodes/node_template.py).
 
-    class Node(AbstractNode):
-        def __init__(self, config):
-            super().__init__(config, name=# replace with {node_type}.{node_name})
 
-            # your code to init any necessary items
-
-        def run(self, inputs: Dict):
-
-            # your code to do something with inputs, and return outputs
-            
-            return outputs
-    ```
     Things to note:
     - All nodes should inherit from the [AbstractNode class](peekingduck/pipeline/nodes/node.py)
-    - Refer to the [Node Zoo](Nodezoo) for definitions of `self.inputs` and `self.outputs`. The types need to match the inputs and outputs fields in the '`{node_type}`\_`{node_name}.yml`' configuration file
-    - Logging convention (to be updated)
+    - Again, refer to the list of [node data glossary](docs/node_data_glossary.md) for possible inputs that can be used by your node
+    - Use self.logger for any required logging, as shown in the [template](peekingduck/pipeline/nodes/node_template.py)
 
-6. If the quack node requires some utility functions, create a {`node_name`} folder and put the files with these utilities inside:
+6. If the quack node requires some utility functions, create a folder (do not use {`node_name`} for the folder name) and put the files with these utilities inside:
     ```
     model
     |- quack.py
-    |- quack
+    |- quack_utils
     |    |- model.py
     |
     |- yolo.py
-    |- yolo
+    |- yolov4
     |    |- utils.py
     ```
 
-7. After adding to the scaffold code, quack.py would look like this:
+7. After editing the [template](peekingduck/pipeline/nodes/node_template.py), quack.py would look like this:
     ```
+    """
+    Copyright 2021 AI Singapore
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        https://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+    """
+
+    from typing import Any, Dict
     from peekingduck.pipeline.nodes.node import AbstractNode
-    from .quack.model import QuackModel
+
+    from peekingduck.pipeline.nodes.model.quack_utils.model import QuackModel
 
 
     class Node(AbstractNode):
-        def __init__(self, config):
-            super().__init__(config, name='model.quack')
-            self.model = QuackModel(config)
+        def __init__(self, config: Dict[str, Any]) -> None:
+            super().__init__(config, node_path=__name__)
 
-        def run(self, inputs: Dict):
+            self.duck_thres = config["duck_thres"]
+            self.model = QuackModel(self.duck_thres)
+            self.logger.info("model loaded with configs: %s", self.duck_thres)
 
-            results, _, _ = self.model.predict(inputs[self.inputs[0]])
-            outputs = {self.outputs[0]: results}
+
+        def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+            """ This node does ___.
+
+            Args:
+                inputs (dict): Dict with keys "img".
+
+            Returns:
+                outputs (dict): Dict with keys "bboxes".
+            """
+
+            results, _, _ = self.model.predict(inputs["img"])
+            outputs = {"bboxes": results}
             return outputs
     ```
 

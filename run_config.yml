@@ -1,6 +1,5 @@
 nodes:
 - input.live
-- model.yolo_node
-- heuristic.2D_bbox_3D_loc
+- model.yolo
 - draw.bbox
 - output.screen

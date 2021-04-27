@@ -21,7 +21,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
         self.height_factor = config['height_factor']

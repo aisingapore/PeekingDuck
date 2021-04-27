@@ -70,3 +70,13 @@ class VideoNoThread:
         Reads the frame.
         '''
         return self.stream.read()
+
+    @property
+    def fps(self):
+        """ Get FPS of videofile
+
+        Returns:
+            int: number indicating FPS
+        """
+        fps = self.stream.get(cv2.CAP_PROP_FPS)
+        return fps
