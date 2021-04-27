@@ -14,18 +14,20 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_human_bboxes
+from typing import List
+import tensorflow as tf
 
 
-class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
-    def __init__(self, config):
-        super().__init__(config, node_path=__name__)
+def transform_images(x_image: List, size: int) -> List:
+    """transform image to size x size
 
-    def run(self, inputs: Dict):
+    Input:
+        - x_image: input image matrix
+        - size: integer size of the image
 
-        draw_human_bboxes(inputs[self.inputs[1]],
-                          inputs[self.inputs[0]])
-        return {}
+    Output:
+        - x_image: transformed image matrix
+    """
+    x_image = tf.image.resize(x_image, (size, size))
+    x_image = x_image / 255
+    return x_image
