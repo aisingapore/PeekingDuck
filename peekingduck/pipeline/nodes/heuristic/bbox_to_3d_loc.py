@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import numpy as np
 from typing import Dict, Any
-
+import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
+    """Node that used 2d bounding boxes information to estimate 3d location"""
     def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
@@ -43,6 +43,7 @@ class Node(AbstractNode):
             # Subtraction is to make the camera the origin of the coordinate system
             center_2d = (bbox[0:2] + bbox[2:4] * 0.5) - np.array([0.5, 0.5])
 
+            #pylint: disable = invalid-name
             z = (self.focal_length * self.height_factor) / bbox[3]
             x = (center_2d[0] * self.height_factor) / bbox[3]
             y = (center_2d[1] * self.height_factor) / bbox[3]
