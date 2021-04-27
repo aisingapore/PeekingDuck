@@ -15,12 +15,13 @@ limitations under the License.
 """
 
 from typing import Dict, Any
-import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
+    """Counting node class that counts total number of detected objects"""
+
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
@@ -29,11 +30,9 @@ class Node(AbstractNode):
         requires that the bbox returns all the same objects (for example, all people)
 
         Args:
-            bboxes (List[List[float]]): List of bboxes, each a list of 4 elements that
-            defines the bounding box 
+            inputs (dict): Dict with keys "bboxes".
 
         Returns:
-            count (int): count of number of same object within the image
-
+            outputs (dict): Dict with keys "count".
         """
         return {'count': len(inputs["bboxes"])}
