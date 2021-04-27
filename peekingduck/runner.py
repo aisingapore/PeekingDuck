@@ -18,10 +18,8 @@ import os
 import sys
 import importlib
 import logging
-
 from typing import List, Dict, Any
 import yaml
-
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.config import ConfigLoader
 from peekingduck.pipeline.nodes.node import AbstractNode

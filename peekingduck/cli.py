@@ -19,7 +19,6 @@ import logging
 import yaml
 import click
 from peekingduck.runner import Runner
-
 from .utils.logger import setup_logger
 
 setup_logger()
