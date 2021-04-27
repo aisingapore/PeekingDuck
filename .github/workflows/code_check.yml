@@ -21,10 +21,6 @@ jobs:
       - name: Check for copyright and license headers in .py files
         run: bash ./scripts/check_headers.sh
       - name: Check for type hinting
-        run: |
-          Get-ChildItem . -Filter "*.py" -Recurse | foreach {mypy $_.FullName `
-              --show-error-codes `
-              --raise-exceptions
-          }
+        run: mypy peekingduck
 
 
