@@ -12,17 +12,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License."""
 
-from typing import Dict
+from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .utils.drawfunctions import draw_count
 
 
 class Node(AbstractNode):
     """Node that draws object count at the top left corner of image"""
-    def __init__(self, config):
+    def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: Dict):
-        draw_count(inputs[self.inputs[1]],
-                   inputs[self.inputs[0]])
+    def run(self, inputs: Dict[str, Any]) -> None:
+        draw_count(inputs["img"],
+                   inputs["count"])
         return {}
