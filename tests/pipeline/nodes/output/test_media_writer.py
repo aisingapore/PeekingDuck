@@ -52,7 +52,7 @@ def image():
 def images():
     def generate_img():
         return np.random.randint(255, size=SIZE, dtype=np.uint8)
-    res = [generate_img() for _ in range(90)]
+    res = [generate_img() for _ in range(30)]
     return res
 
 
@@ -89,9 +89,9 @@ class TestMediaWriter:
 
     def test_writer_writes_multi_video(self, writer, images):
         for image in images:
-            writer.run({"filename": "test1.mp4", "img": image, "fps": 30})
+            writer.run({"filename": "test1.mp4", "img": image, "fps": 10})
 
         for image in images:
-            writer.run({"filename": "test2.mp4", "img": image, "fps": 30})
+            writer.run({"filename": "test2.mp4", "img": image, "fps": 10})
 
         assert directory_contents() == set(['test1.mp4', 'test2.mp4'])
