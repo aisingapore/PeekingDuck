@@ -144,6 +144,7 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
 
 
     class Node(AbstractNode):
+        """This node detects ducks in images."""
         def __init__(self, config: Dict[str, Any]) -> None:
             super().__init__(config, node_path=__name__)
 
@@ -153,7 +154,7 @@ Let's use a hypothetical example, where you'd like to add an AI model called `qu
 
 
         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-            """ This node does ___.
+            """Finds bounding boxes around ducks, if any.
 
             Args:
                 inputs (dict): Dict with keys "img".
