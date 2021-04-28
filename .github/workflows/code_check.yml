@@ -19,7 +19,7 @@ jobs:
         run: bash ./scripts/linter.sh
       - name: Check for copyright and license headers in .py files
         run: bash ./scripts/check_headers.sh
-      - name: Run type cheaker
+      - name: Run type checker
         run: bash ./scripts/check_type.sh
 
 
