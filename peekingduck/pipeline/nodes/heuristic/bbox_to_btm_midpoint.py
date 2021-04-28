@@ -45,4 +45,5 @@ class Node(AbstractNode):
                                  for bbox in bboxes]}
 
     def _xy_on_img(self, pt_x: float, pt_y: float) -> Tuple[int]:
+        """Return the int x y points of the midpoint on the original image"""
         return (int(pt_x * self.img_size[0]), int(pt_y * self.img_size[1]))
