@@ -1,0 +1,2 @@
+input: ["btm_midpoint", "img"]
+output: ["img"]
