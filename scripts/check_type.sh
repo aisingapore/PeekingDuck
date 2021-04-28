@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if ! (mypy peekingduck); then
+if ! (mypy --ignore-missing-imports peekingduck); then
     echo "TYPE CHECK FAIL"
     exit 123
 else
