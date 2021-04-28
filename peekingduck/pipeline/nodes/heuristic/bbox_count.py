@@ -14,18 +14,25 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict
+from typing import Dict, Any
+
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_bboxes
 
 
 class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
-    def __init__(self, config):
+    """Counting node class that counts total number of detected objects"""
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Counts bboxes of object chosen in the frame. Note that this method
+        requires that the bbox returns all the same objects (for example, all people)
 
-        draw_bboxes(inputs[self.inputs[1]],
-                    inputs[self.inputs[0]])
-        return {}
+        Args:
+            inputs (dict): Dict with keys "bboxes".
+
+        Returns:
+            outputs (dict): Dict with keys "count".
+        """
+        return {'count': len(inputs["bboxes"])}

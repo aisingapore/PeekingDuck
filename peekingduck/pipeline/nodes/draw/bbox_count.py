@@ -1,5 +1,4 @@
-"""
-Copyright 2021 AI Singapore
+"""Copyright 2021 AI Singapore
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -11,19 +10,27 @@ Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
-limitations under the License.
-"""
-import sys
-import cv2
+limitations under the License."""
+
+from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
+from .utils.drawfunctions import draw_count
+
 
 class Node(AbstractNode):
-    """Livestream output node"""
-    def __init__(self, config):
+    """Node that draws object counting"""
+    def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: dict):
-        cv2.imshow('livefeed', inputs[self.inputs[0]])
-        if cv2.waitKey(1) & 0xFF == ord('q'):
-            sys.exit(1)
+    def run(self, inputs: Dict[str, Any]) -> None:
+        """Method that draws the count on the top left corner of image
+
+         Args:
+             inputs (dict): Dict with keys "count" and "img".
+         Returns:
+             outputs (dict): None
+         """
+        draw_count(inputs["img"],
+                   inputs["count"])
+
         return {}
