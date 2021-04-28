@@ -19,7 +19,7 @@ We use:
     ```
     from peekingduck.pipeline.nodes.node import AbstractNode
     ```
-- Each code file should have a copyright and license header (if using VS Code, you could use this [extension](https://marketplace.visualstudio.com/items?itemName=minherz.copyright-inserter) instead of copy and pasting the text below):
+- Each code file should have a copyright and Apache License header (if using VS Code, you could use this [extension](https://marketplace.visualstudio.com/items?itemName=minherz.copyright-inserter) instead of copy and pasting the text below):
 
     ```
     Copyright 2021 AI Singapore
@@ -36,7 +36,10 @@ We use:
     See the License for the specific language governing permissions and
     limitations under the License.
     ```
-
+    If you are re-using code from other open source repositories, do check that it has a **permissive license** such as Apache or MIT, and not a copyleft license such as GPL. The original license file, headers in python files (if any), notices (if any) should be copied over, and the following added underneath the original copyright statement:
+    ```
+    Modifications copyright 2021 AI Singapore
+    
 ## 3. Code Styles
 
 - **Comments**<br>
