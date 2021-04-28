@@ -14,14 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
 import sys
-import importlib
 import logging
 from typing import List, Dict, Any
-import yaml
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.config import ConfigLoader
+from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 END_TYPE = 'process_end'
@@ -29,6 +26,7 @@ END_TYPE = 'process_end'
 """
 Combine runner at this level. Use this to create the graph, and waddle is loop or once
 """
+
 
 class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
@@ -47,49 +45,20 @@ class Runner():
 
         self.logger = logging.getLogger(__name__)
 
-        instantiated_nodes = []
-
         if not nodes:
-            with open(RUN_PATH) as file:
-                self.run_config = yaml.load(file, Loader=yaml.FullLoader)
-                self.logger.info(
-                    'Successfully loaded run_config file. Proceeding to create Graph.')
+            node_configs = ConfigLoader()
             # create Graph to run
-            nodes_config = ConfigLoader(self.run_config['nodes'])
-            imported_nodes = []
-            for node in self.run_config['nodes']:
-                if node.split('.')[0] == 'custom':
-                    custom_node_path = os.path.join(
-                        CUSTOM_NODE_PATH, node.split('.')[1]+'.py')
-                    spec = importlib.util.spec_from_file_location(
-                        node, custom_node_path)
-                    module = importlib.util.module_from_spec(spec)
-                    spec.loader.exec_module(module)
-                    imported_nodes.append(("custom", module))
-                else:
-                    imported_nodes.append((node, importlib.import_module(
-                        'peekingduck.pipeline.nodes.' + node)))
-                self.logger.info("%s added to pipeline.", node)
+            self.node_loader = DeclarativeLoader(node_configs, RUN_PATH, CUSTOM_NODE_PATH)
 
-            # instantiate classes from imported nodes
-            for node_name, node in imported_nodes:
-                if node_name == 'custom':
-                    instantiated_nodes.append(node.Node(None))
-                else:
-                    config = nodes_config.get(node_name)
-                    instantiated_nodes.append(node.Node(config))
+            self.pipeline = self.node_loader.get_nodes()
 
         # If Runner given nodes, instantiated_nodes is created differently
         else:
-            for node in nodes:
-                instantiated_nodes.append(node)
-
-        # Create Graph
-        try:
-            self.pipeline = Pipeline(instantiated_nodes)
-        except ValueError as exception:
-            self.logger.error(str(exception))
-            sys.exit(1)
+            try:
+                self.pipeline = Pipeline(nodes)
+            except ValueError as error:
+                self.logger.error(str(error))
+                sys.exit(1)
 
     def run(self) -> None:
         """execute single or continuous inference
@@ -103,4 +72,4 @@ class Runner():
         Returns:
             Dict[Any]: run configs being used for runner
         """
-        return self.run_config
+        return self.node_loader.node_list
