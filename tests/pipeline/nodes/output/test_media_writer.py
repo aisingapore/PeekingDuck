@@ -75,16 +75,11 @@ class TestMediaWriter:
         writer.run({"filename": "test.jpg", "img": image, "fps": 1})
         assert directory_contents() == set(["test.jpg"])
 
-    # def test_writer_writes_multi_image(self, writer):
-    #     # TODO fix this test
-    #     # Note there is a bug with multi image
-    #     image1 = create_image()
-    #     image2 = create_image()
-    #     image3 = create_image()
-    #     writer.run({"filename": "test1.jpg", "img": image1, "fps": 1})
-    #     writer.run({"filename": "test2.jpg", "img": image2, "fps": 1})
-    #     writer.run({"filename": "test3.jpg", "img": image3, "fps": 1})
-    #     assert os.listdir("tmp") == ["test1.jpg"]
+    def test_writer_writes_multi_image(self, writer, image):
+        writer.run({"filename": "test1.jpg", "img": image, "fps": 1})
+        writer.run({"filename": "test2.jpg", "img": image, "fps": 1})
+        writer.run({"filename": "test3.jpg", "img": image, "fps": 1})
+        assert directory_contents() == set(["test1.jpg", "test2.jpg", "test3.jpg"])
 
     def test_writer_writes_single_video(self, writer, images):
 
