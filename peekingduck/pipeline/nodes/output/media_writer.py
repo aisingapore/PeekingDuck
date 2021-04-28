@@ -26,6 +26,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     """Node that processes videos and images as primary source input"""
+
     def __init__(self, config):
         super().__init__(config, node_path=__name__)
 
@@ -33,12 +34,15 @@ class Node(AbstractNode):
         self._output_dir = config["outputdir"]
         self._prepare_directory(config["outputdir"])
         self._fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+        self._image_type = None
+        self._file_path = None
         self.writer = None
-    
-    def __del__(self):
-        if self.writer: self.writer.release()
 
-        #initialize for use in run
+    def __del__(self):
+        if self.writer:
+            self.writer.release()
+
+        # initialize for use in run
         self._file_name = None
         self._file_path = None
         self._image_type = None
@@ -63,7 +67,7 @@ class Node(AbstractNode):
             self._prepare_writer(inputs["filename"],
                                  inputs["img"],
                                  inputs["fps"])
-                                 
+
         self._write(inputs["img"])
 
         return {}
@@ -84,7 +88,8 @@ class Node(AbstractNode):
             self._image_type = "image"
         else:
             resolution = img.shape[1], img.shape[0]
-            self.writer = cv2.VideoWriter(self._file_path, self._fourcc, fps, resolution)
+            self.writer = cv2.VideoWriter(
+                self._file_path, self._fourcc, fps, resolution)
 
     @staticmethod
     def _prepare_directory(outputdir):
