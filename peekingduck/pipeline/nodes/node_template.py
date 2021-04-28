@@ -13,25 +13,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
+from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.input.utils.read import VideoThread
 
 
 class Node(AbstractNode):
-    """Node to receive livestream as inputs."""
-    def __init__(self, config):
+    """This is a template class of how to write a node for peekingduck."""
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
-        resolution = config['resolution']
-        input_source = config['input_source']
-        mirror_image = config['mirror_image']
+        # initialize/load any configs and models here
+        # self.config1 = config["config1"]
+        # self.logger.info("model loaded with configs: %s", configs)
 
-        self.videocap = VideoThread(resolution, input_source, mirror_image)
 
-    def run(self, inputs: dict):
-        success, img = self.videocap.read_frame()
-        if success:
-            outputs = {self.outputs[0]: img}
-            return outputs
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """ This node does ___.
 
-        raise Exception("An issue has been encountered reading the Image")
+        Args:
+            inputs (dict): Dict with keys "__", "__".
+
+        Returns:
+            outputs (dict): Dict with keys "__".
+        """
+
+        # result = do_something(inputs["in1"], inputs["in2"])
+        # outputs = {"out1": result}
+        # return outputs

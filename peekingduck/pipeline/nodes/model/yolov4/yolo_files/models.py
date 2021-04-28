@@ -1,3 +1,19 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -13,10 +29,9 @@ from tensorflow.keras.layers import (
     ZeroPadding2D,
 )
 from tensorflow.keras.regularizers import l2
-
 from .batch_norm import BatchNormalization
 
-# pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg
+# pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
 
 YOLO_ANCHORS = np.array([(10, 13), (16, 30), (33, 23), (30, 61), (62, 45),
                          (59, 119), (116, 90), (156, 198),
@@ -222,8 +237,6 @@ def _yolo_nms(outputs, classes):
 
 def yolov3(size=None,
            channels=3,
-           anchors=YOLO_ANCHORS,
-           masks=YOLO_ANCHOR_MASKS,
            classes=80,
            training=False):
     """Create a yolov3 model
@@ -246,6 +259,9 @@ def yolov3(size=None,
     Returns:
         - (tensorflow.keras.Model) with inputs and outputs (3 items in outputs)
     """
+    anchors = YOLO_ANCHORS
+    masks = YOLO_ANCHOR_MASKS
+
     x = inputs = Input([size, size, channels])
 
     x_36, x_61, x = _darknet(name='yolo_darknet')(x)
@@ -277,8 +293,6 @@ def yolov3(size=None,
 
 def yolov3_tiny(size=None,
                 channels=3,
-                anchors=YOLO_TINY_ANCHORS,
-                masks=YOLO_TINY_ANCHOR_MASKS,
                 classes=80,
                 training=False):
     """Create Yolov3 tiny model
@@ -301,6 +315,9 @@ def yolov3_tiny(size=None,
     Return:
         - (tensorflow.keras.Model) with inputs and outputs (2 items in outputs)
     """
+    anchors = YOLO_TINY_ANCHORS
+    masks = YOLO_TINY_ANCHOR_MASKS
+
     x = inputs = Input([size, size, channels])
 
     x_8, x = _darknet_tiny(name='yolo_darknet')(x)

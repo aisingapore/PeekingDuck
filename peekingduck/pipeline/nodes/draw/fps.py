@@ -15,28 +15,34 @@ limitations under the License.
 """
 
 from typing import Any, Dict
+from time import perf_counter
 
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_tags
-
+from .utils.drawfunctions import draw_fps
 
 class Node(AbstractNode):
-    """Node that draws tags above bounding boxes"""
-    def __init__(self, config: Dict[str, Any]) -> None:
+    """ FPS node class that calculates the FPS and draw the FPS onto the image
+    frame
+    """
+    def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws a tag above each bounding box.
+        self.previous_time = 0
+
+    def run(self, inputs: Dict[str, Any]) -> None:
+        """ Calculates FPS using the time difference between the current frame
+        and the previous frame. Calculated FPS is then draw onto image frame
 
         Args:
-            inputs (dict): Dict with keys "bboxes", "obj_tags", "img".
+            inputs: ["img"]
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs: [None]
         """
 
-        draw_tags(inputs["img"],
-                  inputs["bboxes"],
-                  inputs["obj_tags"])
+        current_time = perf_counter()
+        current_fps = 1 / (current_time - self.previous_time)
+        self.previous_time = current_time
+        draw_fps(inputs['img'], current_fps)
 
         return {}

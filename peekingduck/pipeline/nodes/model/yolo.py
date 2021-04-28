@@ -14,29 +14,31 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Dict
-
+from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_tags
+from .yolov4 import yolo_model
 
 
 class Node(AbstractNode):
-    """Node that draws tags above bounding boxes"""
-    def __init__(self, config: Dict[str, Any]) -> None:
+    """Yolo node class that initialises and use yolo model to infer bboxes
+    from image frame
+    """
+    def __init__(self, config):
         super().__init__(config, node_path=__name__)
+        self.model = yolo_model.YoloModel(config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws a tag above each bounding box.
+        """function that reads the image input and returns the bboxes
+        of the specified objects chosen to be detected
 
         Args:
-            inputs (dict): Dict with keys "bboxes", "obj_tags", "img".
+            inputs (Dict): Dictionary of inputs
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs (Dict): bbox output in dictionary format
         """
-
-        draw_tags(inputs["img"],
-                  inputs["bboxes"],
-                  inputs["obj_tags"])
-
-        return {}
+        # Currently prototyped to return just the bounding boxes
+        # without the scores
+        results, _, _ = self.model.predict(inputs[self.inputs[0]])
+        outputs = {self.outputs[0]: results}
+        return outputs
