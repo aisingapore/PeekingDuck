@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from typing import List, Tuple, Any
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -39,7 +40,7 @@ SKELETON_SHORT_NAMES = (
     "RSH", "LEL", "REL", "LWR", "RWR",
     "LHI", "RHI", "LKN", "RKN", "LAN", "RAN")
 
-def draw_human_poses(image, poses):
+def draw_human_poses(image: np.array, poses: List[Any]):
     '''draw pose estimates onto frame image'''
     image_size = _get_image_size(image)
     for pose in poses:
@@ -50,27 +51,26 @@ def draw_human_poses(image, poses):
                             pose.keypoint_scores, image_size,
                             KEYPOINT_DOT_COLOR)
 
-def _get_image_size(frame):
+def _get_image_size(frame: np.array) -> Tuple[int]:
     image_size = (frame.shape[1], frame.shape[0])  # width, height
     return image_size
 
-
-def _draw_bbox(frame, bbox, image_size, color):
+def _draw_bbox(frame: np.array, bbox: List[float],
+               image_size: Tuple[int], color: Tuple[int]) -> None:
     top_left, bottom_right = _project_points_onto_original_image(bbox, image_size)
     cv2.rectangle(frame, (top_left[0], top_left[1]),
                   (bottom_right[0], bottom_right[1]),
                   color, 2)
     return top_left
 
-
-def _draw_connections(frame, connections, image_size, connection_color):
+def _draw_connections(frame: np.array, connections: List[float],
+                      image_size: Tuple[int], connection_color: Tuple[int]) -> None:
     for connection in connections:
         pt1, pt2 = _project_points_onto_original_image(connection, image_size)
         cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
 
-
-def _draw_keypoints(frame, keypoints, scores,
-                    image_size, keypoint_dot_color):
+def _draw_keypoints(frame: np.array, keypoints: List[float], scores: List[float],
+                    image_size: Tuple[int], keypoint_dot_color: Tuple[int]) -> None:
     img_keypoints = _project_points_onto_original_image(
         keypoints, image_size)
 
@@ -79,19 +79,19 @@ def _draw_keypoints(frame, keypoints, scores,
         if scores is not None:
             _draw_one_keypoint_text(frame, idx, keypoint)
 
-
-def _draw_one_keypoint_dot(frame, keypoint, keypoint_dot_color):
+def _draw_one_keypoint_dot(frame: np.array, keypoint: List[float],
+                           keypoint_dot_color: Tuple[int]) -> None:
     cv2.circle(frame, (keypoint[0], keypoint[1]), 5, keypoint_dot_color, -1)
 
-def _draw_one_keypoint_text(frame, idx, keypoint):
+def _draw_one_keypoint_text(frame: np.array, idx: int, keypoint: List[float]) -> None:
     position = (keypoint[0], keypoint[1])
     text = str(SKELETON_SHORT_NAMES[idx])
 
     cv2.putText(frame, text, position, cv2.FONT_HERSHEY_SIMPLEX,
                 0.4, KEYPOINT_TEXT_COLOR, 1, cv2.LINE_AA)
 
-
-def _project_points_onto_original_image(points, image_size):
+def _project_points_onto_original_image(points: np.array,
+                                        image_size: Tuple[int]) -> List[Tuple[float]]:
     """Project points from relative value to absolute values in original
     image.  E.g. from (1, 0.5) to (1280, 400).  It use a coordinate with
     original point (0, 0) at top-left.
@@ -118,14 +118,13 @@ def _project_points_onto_original_image(points, image_size):
 
     return projected_points
 
-def draw_bboxes(frame, bboxes):
-    '''draw only human bboxes onto frame image'''
+def draw_bboxes(frame: np.array, bboxes: List) -> None:
+    '''draw bboxes onto frame image'''
     image_size = _get_image_size(frame)
     for bbox in bboxes:
         _draw_bbox(frame, bbox, image_size, HUMAN_BBOX_COLOR)
 
-
-def draw_tags(frame, bboxes, tags):
+def draw_tags(frame: np.array, bboxes: List, tags: List[str]) -> None:
     """Draw tags above bboxes.
 
     Args:
@@ -138,15 +137,15 @@ def draw_tags(frame, bboxes, tags):
         _draw_tag(frame, bbox, tags[idx], image_size, ACTIVITY_COLOR)
 
 
-def _draw_tag(frame, bbox, tag, image_size, color):
+def _draw_tag(frame: np.array, bbox: np.array, tag: str,
+              image_size: Tuple[int], color: Tuple[int]):
     """Draw a tag above a single bounding box.
     """
     top_left, _ = _project_points_onto_original_image(bbox, image_size)
     position = int(top_left[0]), int(top_left[1]-25)
     cv2.putText(frame, tag, position, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
-
-def draw_count(frame, count):
+def draw_count(frame: np.array, count: int) -> None:
     """draw count of selected object onto frame
 
     Args:
@@ -157,6 +156,16 @@ def draw_count(frame, count):
     text = 'COUNT: {0}'.format(count)
     cv2.putText(frame, text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
                 0.75, COUNTING_TEXT_COLOR, 2, cv2.LINE_AA)
+
+def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
+    """draw pts of selected object onto frame
+
+    Args:
+        frame (List[List[float]]): image of current frame
+        pts (List[Tuple[float]]): bottom midpoints of bboxes
+    """
+    for point in pts:
+        cv2.circle(frame, point, 5, KEYPOINT_DOT_COLOR, -1)
 
 def draw_fps(frame: np.array, current_fps: float) -> None:
     """ Draw FPS onto frame image
