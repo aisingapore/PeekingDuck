@@ -29,7 +29,8 @@ class ConcreteNode(AbstractNode):
 
 class IncorrectNode(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, name='ConcreteNode')
+        super().__init__(config, node_path=__name__)
+
 
 @pytest.fixture
 def c_node():
@@ -57,6 +58,6 @@ class TestNode():
         assert results == ["int"]
 
 
-    def test_incorrect_instantiation(self):
+    def test_node_no_concrete_run_raises_error(self):
         with pytest.raises(TypeError):
-            IncorrectNode()
+            IncorrectNode({})
