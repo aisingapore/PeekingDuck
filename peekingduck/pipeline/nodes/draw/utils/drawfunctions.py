@@ -124,6 +124,27 @@ def draw_bboxes(frame: np.array, bboxes: List) -> None:
     for bbox in bboxes:
         _draw_bbox(frame, bbox, image_size, HUMAN_BBOX_COLOR)
 
+def draw_tags(frame: np.array, bboxes: List, tags: List[str]) -> None:
+    """Draw tags above bboxes.
+
+    Args:
+        frame (List[float]): image of current frame
+        bboxes (List[List]): bounding boxes
+        tags (List[string]): tag associated with bounding box
+    """
+    image_size = _get_image_size(frame)
+    for idx, bbox in enumerate(bboxes):
+        _draw_tag(frame, bbox, tags[idx], image_size, ACTIVITY_COLOR)
+
+
+def _draw_tag(frame: np.array, bbox: np.array, tag: str,
+              image_size: Tuple[int], color: Tuple[int]):
+    """Draw a tag above a single bounding box.
+    """
+    top_left, _ = _project_points_onto_original_image(bbox, image_size)
+    position = int(top_left[0]), int(top_left[1]-25)
+    cv2.putText(frame, tag, position, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+
 def draw_count(frame: np.array, count: int) -> None:
     """draw count of selected object onto frame
 
