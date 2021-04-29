@@ -20,6 +20,8 @@ from time import perf_counter
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .utils.drawfunctions import draw_fps
 
+NUM_FRAMES = 14
+
 
 class Node(AbstractNode):
     """ FPS node class that calculates the FPS and draw the FPS onto the image
@@ -42,7 +44,7 @@ class Node(AbstractNode):
             outputs: [None]
         """
 
-        if len(self.time_window) > 14:
+        if len(self.time_window) > NUM_FRAMES:
             self.time_window.pop(0)
 
         self.time_window.append(perf_counter())
