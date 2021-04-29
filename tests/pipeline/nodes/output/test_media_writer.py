@@ -68,7 +68,7 @@ def writer():
 @pytest.mark.usefixtures("tmpdir")
 class TestMediaWriter:
 
-    def test_cwd_again_starts_empty(self):
+    def test_cwd_starts_empty(self):
         assert os.listdir(os.getcwd()) == []
 
     def test_writer_writes_single_image(self, writer, image):
