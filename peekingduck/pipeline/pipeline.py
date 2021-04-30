@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Set, Dict, Any
+from typing import List, Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -29,10 +29,10 @@ class Pipeline:
         """
         self._check_pipe(nodes)
         self.nodes = nodes
-        self._data = {}
+        self._data: Dict[str, Any] = {}
         self.video_end = False
 
-    def __del__(self):
+    def __del__(self) -> None:
         for node in self.nodes:
             del node
 
@@ -60,7 +60,7 @@ class Pipeline:
         return self._data
 
     @staticmethod
-    def _check_pipe(nodes: Set[AbstractNode]):
+    def _check_pipe(nodes: List[AbstractNode]) -> None:
         # 1. Check the initial node is a source node
         # 2. Check every subsequent node utilizes something that will exist
         # if reached end, it is all valid
