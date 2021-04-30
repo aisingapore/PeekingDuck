@@ -65,9 +65,10 @@ class Runner():
         """
         while not self.pipeline.video_end:
             self.pipeline.execute()
+        del self.pipeline
 
     def get_run_config(self) -> Dict[str, Any]:
-        """retreive run configs
+        """retrieve run configs
 
         Returns:
             Dict[Any]: run configs being used for runner

@@ -32,6 +32,10 @@ class Pipeline:
         self._data = {}
         self.video_end = False
 
+    def __del__(self):
+        for node in self.nodes:
+            del node
+
     def execute(self) -> None:
         """ executes all node contained within the pipe
         """
