@@ -19,8 +19,10 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
+
 class Node(AbstractNode):
     """Node to receive videos/image as inputs."""
+
     def __init__(self, config):
         super().__init__(config, node_path=__name__)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]

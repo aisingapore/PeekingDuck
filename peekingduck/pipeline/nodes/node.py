@@ -15,26 +15,27 @@ limitations under the License.
 """
 import logging
 from abc import ABCMeta, abstractmethod
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
 
 class AbstractNode(metaclass=ABCMeta):
     """Abstract Node class that defines requirements for a node."""
 
-    def __init__(self, config: dict, node_path: str):
+    def __init__(self, config: Dict[str, Any], node_path: str):
 
-        self._inputs = config['input']
-        self._outputs = config['output']
-        self._name = node_path
+        self._inputs: List[str] = config['input']
+        self._outputs: List[str] = config['output']
+        self._name: str = node_path
 
         self.logger = logging.getLogger(self._name)
 
     @classmethod
-    def __subclasshook__(cls, subclass):
+    def __subclasshook__(cls: Any, subclass: Any) -> bool:
         return (hasattr(subclass, 'run') and
                 callable(subclass.run))
 
     @abstractmethod
-    def run(self, inputs: Dict[str, Any]):
+    def run(self, inputs: Dict[str, Any]) -> None:
         """abstract method needed for running node"""
         raise NotImplementedError("This method needs to be implemented")
 
