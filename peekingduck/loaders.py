@@ -18,7 +18,7 @@ import sys
 import os
 import importlib
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List
 
 import yaml
 
@@ -32,7 +32,7 @@ class ConfigLoader:
     """
 
     def __init__(self) -> None:
-        self._master_node_config: Dict[str, Any] = {}
+        self._master_node_config = {}
         self._rootdir = os.path.join(
             os.path.dirname(os.path.abspath(__file__))
         )
@@ -57,7 +57,7 @@ class ConfigLoader:
         """Get item from configuration read from the filepath,
         item refers to the node item configuration you are trying to get"""
 
-        node: Dict[str, Any] = self._master_node_config[item]
+        node = self._master_node_config[item]
 
         # some models require the knowledge of where the root is for loading
         node['root'] = self._rootdir
@@ -77,17 +77,17 @@ class DeclarativeLoader:
 
     def __init__(self, node_configs: ConfigLoader,
                  run_config: str,
-                 custom_folder_path: Optional[str] = 'src/custom_nodes') -> None:
+                 custom_folder_path: str = 'src/custom_nodes') -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str) -> List[str]:
+    def _load_node_list(self, run_config: str):
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
-            nodes: List[str] = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
+            nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
 
         self.logger.info(
             'Successfully loaded run_config file.')
@@ -101,8 +101,7 @@ class DeclarativeLoader:
             for node_str in self.node_list:
                 node_type, node = node_str.split('.')
                 if node_type == 'custom':
-                    node_config_path = os.path.join(
-                        self.custom_folder_path, node, 'config.yml')  # type: ignore
+                    node_config_path = os.path.join(self.custom_folder_path, node, 'config.yml')
                 else:
                     dir_path = os.path.dirname(os.path.realpath(__file__))
                     config_filename = node + '.yml'
@@ -115,17 +114,17 @@ class DeclarativeLoader:
                 else:
                     self.logger.info("No associated configs found for %s. Skipping", node)
 
-    def _import_nodes(self) -> List[Tuple[str, Any]]:
+    def _import_nodes(self) -> None:
         """Given a list of nodes, import the appropriate nodes"""
         imported_nodes = []
         for node_str in self.node_list:
             node_type, node = node_str.split('.')
             if node_type == 'custom':
                 custom_node_path = os.path.join(
-                    self.custom_folder_path, node + '.py')  # type: ignore
-                spec = importlib.util.spec_from_file_location(  # type: ignore
+                    self.custom_folder_path, node + '.py')
+                spec = importlib.util.spec_from_file_location(
                     node, custom_node_path)
-                module = importlib.util.module_from_spec(spec)  # type: ignore
+                module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 imported_nodes.append(("custom", module))
             else:
