@@ -39,7 +39,7 @@ class Node(AbstractNode):
 
         locations = []
 
-        for idx, bbox in enumerate(inputs["bboxes"]):
+        for bbox in inputs["bboxes"]:
             # Subtraction is to make the camera the origin of the coordinate system
             center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
             bbox_height = bbox[3] - bbox[1]
@@ -49,7 +49,7 @@ class Node(AbstractNode):
             y_coord = (center_2d[1] * self.height_factor) / bbox_height
 
             point = np.array([x_coord, y_coord, z_coord])
-            locations.append({"idx": idx, "3D_loc": point})
+            locations.append(point)
 
         outputs = {"obj_3D_locs": locations}
 

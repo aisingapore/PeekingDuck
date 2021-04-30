@@ -40,14 +40,14 @@ class Node(AbstractNode):
 
         obj_tags = [""]*len(inputs["obj_3D_locs"])
 
-        for idx, obj_1 in enumerate(inputs["obj_3D_locs"]):
-            for obj_2 in inputs["obj_3D_locs"]:
-                if obj_1 == obj_2:
+        for idx_1, loc_1 in enumerate(inputs["obj_3D_locs"]):
+            for idx_2, loc_2 in enumerate(inputs["obj_3D_locs"]):
+                if idx_1 == idx_2:
                     continue
 
-                dist_bet = np.linalg.norm(obj_1["3D_loc"] - obj_1["3D_loc"])
+                dist_bet = np.linalg.norm(loc_1 - loc_2)
                 if dist_bet < self.near_thres:
-                    obj_tags[idx] = self.tag_msg
+                    obj_tags[idx_1] = self.tag_msg
                     break
 
         return {"obj_tags": obj_tags}
