@@ -20,16 +20,20 @@ from time import perf_counter
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .utils.drawfunctions import draw_fps
 
+NUM_FRAMES = 14
+
+
 class Node(AbstractNode):
     """ FPS node class that calculates the FPS and draw the FPS onto the image
     frame
     """
+
     def __init__(self, config: Dict) -> None:
         super().__init__(config, node_path=__name__)
 
-        self.previous_time = 0
+        self.time_window = [float(0)]
 
-    def run(self, inputs: Dict[str, Any]) -> None:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Calculates FPS using the time difference between the current frame
         and the previous frame. Calculated FPS is then draw onto image frame
 
@@ -40,9 +44,15 @@ class Node(AbstractNode):
             outputs: [None]
         """
 
-        current_time = perf_counter()
-        current_fps = 1 / (current_time - self.previous_time)
-        self.previous_time = current_time
-        draw_fps(inputs['img'], current_fps)
+        if len(self.time_window) > NUM_FRAMES:
+            self.time_window.pop(0)
+
+        self.time_window.append(perf_counter())
+
+        num_frames = len(self.time_window)
+        time_diff = self.time_window[-1] - self.time_window[0]
+        average_fps = num_frames / time_diff
+
+        draw_fps(inputs['img'], average_fps)
 
         return {}
