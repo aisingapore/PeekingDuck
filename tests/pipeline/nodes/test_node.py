@@ -37,7 +37,7 @@ def c_node():
     return ConcreteNode({'input': ['img'], 'output': ['int']})
 
 class TestNode():
-        
+
     def test_node_returns_correct_output(self, c_node):
         results = c_node.run({'input': 1})
         assert results == {"data1": 1, "data2": 42}

@@ -12,48 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# https://stackoverflow.com/questions/9757299/python-testing-an-abstract-base-class
-# https://stackoverflow.com/questions/51737334/pytest-deleting-files-created-by-the-tested-function
 
 import os
-import shutil
-import tempfile
 
-import numpy as np
 import pytest
 from peekingduck.pipeline.nodes.output.media_writer import Node
 
 OUTPUT_PATH = "output"
-SIZE = (900, 800, 3)
 
 
 def directory_contents():
     res = os.listdir(OUTPUT_PATH)
     return set(res)
-
-
-@pytest.fixture
-def tmpdir():
-    cwd = os.getcwd()
-    newpath = tempfile.mkdtemp()
-    os.chdir(newpath)
-    yield
-    os.chdir(cwd)
-    shutil.rmtree(newpath)
-
-
-@pytest.fixture
-def image():
-    res = np.random.randint(255, size=SIZE, dtype=np.uint8)
-    return res
-
-
-@pytest.fixture
-def images():
-    def generate_img():
-        return np.random.randint(255, size=SIZE, dtype=np.uint8)
-    res = [generate_img() for _ in range(30)]
-    return res
 
 
 @pytest.fixture
@@ -79,7 +49,8 @@ class TestMediaWriter:
         writer.run({"filename": "test1.jpg", "img": image, "fps": 1})
         writer.run({"filename": "test2.jpg", "img": image, "fps": 1})
         writer.run({"filename": "test3.jpg", "img": image, "fps": 1})
-        assert directory_contents() == set(["test1.jpg", "test2.jpg", "test3.jpg"])
+        assert directory_contents() == set(
+            ["test1.jpg", "test2.jpg", "test3.jpg"])
 
     def test_writer_writes_single_video(self, writer, images):
 
