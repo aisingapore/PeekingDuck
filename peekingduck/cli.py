@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @click.group()
-def cli() -> None:
+def cli():
     """
     PeekingDuck is a python framework for dealing with Machine Learning model inferences.
 
@@ -36,11 +36,11 @@ def cli() -> None:
     """
 
 
-def _get_cwd() -> str:
+def _get_cwd():
     return os.getcwd()
 
 
-def create_custom_folder() -> None:
+def create_custom_folder():
     """Make custom nodes folder to create custom nodes
     """
     curdir = _get_cwd()
@@ -50,7 +50,7 @@ def create_custom_folder() -> None:
     os.makedirs(custom_node_dir, exist_ok=True)
 
 
-def create_yml() -> None:
+def create_yml():
     """Inits the declarative yaml"""
     # Default yml to be discussed
     default_yml = dict(
@@ -67,7 +67,7 @@ def create_yml() -> None:
 
 
 @cli.command()
-def init() -> None:
+def init():
     """Initialise a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder()
