@@ -16,7 +16,7 @@ limitations under the License.
 
 import sys
 import logging
-from typing import Any, Dict, List, Optional
+from typing import List, Optional
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
