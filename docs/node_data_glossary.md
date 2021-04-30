@@ -76,6 +76,14 @@ A list of numpy arrays, each containing the 3D coordinates of an object associat
 "obj_3D_locs": [np.array(x, y, z), ... , np.array(x, y, z)]
 ```
 
+### "obj_groups"
+
+A list of integers, each representing the allocated group number of an object associated with a bounding box.
+```
+# for example
+"obj_groups": [1, 1, 1, 2, 3, 3, 3, 3, 3]
+```
+
 ### "obj_tags"
 
 A list of strings called tags, each tag associated with a bounding box. The order of the tags follow the order of "bboxes".
