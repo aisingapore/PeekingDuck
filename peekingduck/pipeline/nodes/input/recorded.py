@@ -67,6 +67,11 @@ class Node(AbstractNode):
                                for filepath in self._filepaths]
             self._filepaths.sort()
 
+        if not os.path.exists(path):
+            raise FileNotFoundError("Filepath does not exist")
+        if not self._filepaths:
+            raise FileNotFoundError("No Media files available")
+
     def _get_next_input(self):
 
         if self._filepaths:
