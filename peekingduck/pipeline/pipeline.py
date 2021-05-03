@@ -29,23 +29,27 @@ class Pipeline:
         """
         self._check_pipe(nodes)
         self.nodes = nodes
-        self._datas = {}
+        self._data = {}
         self.video_end = False
+
+    def __del__(self):
+        for node in self.nodes:
+            del node
 
     def execute(self) -> None:
         """ executes all node contained within the pipe
         """
 
         for node in self.nodes:
-            inputs = {key: self._datas[key]
-                      for key in node.inputs if key in self._datas}
+            inputs = {key: self._data[key]
+                      for key in node.inputs if key in self._data}
             outputs = node.run(inputs)
 
             if 'end' in outputs and outputs['end']:
                 self.video_end = True
                 break
 
-            self._datas.update(outputs)
+            self._data.update(outputs)
 
     def get_pipeline_results(self) -> Dict[str, Any]:
         """get all results data of nodes in pipeline
@@ -53,7 +57,7 @@ class Pipeline:
         Returns:
             Dict[Any]: Dictionary of all pipeline node results
         """
-        return self._datas
+        return self._data
 
     @staticmethod
     def _check_pipe(nodes: Set[AbstractNode]):

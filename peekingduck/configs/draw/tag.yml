@@ -1,0 +1,2 @@
+input: ["bboxes", "obj_tags", "img"]
+output: ["img"]

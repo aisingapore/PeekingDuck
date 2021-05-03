@@ -71,20 +71,19 @@ An image/ single video frame, in an array with shape (height, width, # colour ch
 
 ### "obj_3D_locs"
 
-A list of dictionaries, each containing the index and 3D location of an object associated with a bounding box.
+A list of numpy arrays, each containing the 3D coordinates of an object associated with a bounding box.
 ```
-"obj_3D_locs": [{"idx": int, "3D_loc": np.array(x, y, z)},
-                ...
-                {"idx": int, "3D_loc": np.array(x, y, z)}]
+"obj_3D_locs": [np.array(x, y, z), ... , np.array(x, y, z)]
 ```
 
 ### "obj_tags"
 
-A list of dictionaries, each containing the index and tag an object associated with a bounding box.
+A list of strings called tags, each tag associated with a bounding box. The order of the tags follow the order of "bboxes".
 ```
-"obj_3D_locs": [{"idx": int, "tag": str},
-                ...
-                {"idx": int, "tag": str}]
+"obj_tags": [str, str, ... , str]
+
+# for example
+"obj_tags": ["TOO CLOSE!", "", ... , "TOO CLOSE!"]
 ```
 
 
