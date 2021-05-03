@@ -34,6 +34,15 @@ def create_reader():
     return media_reader
 
 
+def _get_video_file(reader, num_frames):
+    """Helper function to get an entire videofile"""
+    video = []
+    for _ in range(num_frames):
+        output = reader.run({})
+        video.append(output["img"])
+    return video
+
+
 @pytest.mark.usefixtures("tmp_dir")
 class TestMediaReader:
 
@@ -73,3 +82,33 @@ class TestMediaReader:
         assert np.array_equal(output1['img'], image1)
         assert np.array_equal(output2['img'], image2)
         assert np.array_equal(output3['img'], image3)
+
+    def test_reader_reads_one_video(self, create_input_video):
+        num_frames = 30
+        size = (600, 800, 3)
+        video1 = create_input_video(
+            "video1.avi", fps=10, size=size, nframes=num_frames
+        )
+        reader = create_reader()
+
+        read_video1 = _get_video_file(reader, num_frames)
+        assert np.array_equal(read_video1, video1)
+
+    def test_reader_reads_multiple_videos(self, create_input_video):
+        num_frames = 20
+        size = (600, 800, 3)
+
+        video1 = create_input_video(
+            "video1.avi", fps=5, size=size, nframes=num_frames
+        )
+        video2 = create_input_video(
+            "video2.avi", fps=5, size=size, nframes=num_frames
+        )
+
+        reader = create_reader()
+
+        read_video1 = _get_video_file(reader, num_frames)
+        assert np.array_equal(read_video1, video1)
+
+        read_video2 = _get_video_file(reader, num_frames)
+        assert np.array_equal(read_video2, video2)

@@ -49,28 +49,6 @@ def create_image():
 
 
 @pytest.fixture
-def create_video():
-
-    def _create_video(size):
-        res = [np.random.randint(255, size=size, dtype=np.uint8)
-               for i in range(30)]
-        return res
-
-    return _create_video
-
-
-@pytest.fixture
-def create_input_video(create_video):
-
-    def _create_input_image(path, size):
-        vid = create_video(size)
-        cv2.imwrite(path, vid)
-        return vid
-
-    return _create_input_image
-
-
-@pytest.fixture
 def create_input_image(create_image):
 
     def _create_input_image(path, size):
@@ -79,6 +57,32 @@ def create_input_image(create_image):
         return img
 
     return _create_input_image
+
+
+@pytest.fixture
+def create_video():
+
+    def _create_video(size, nframes):
+        res = [np.random.randint(255, size=size, dtype=np.uint8)
+               for _ in range(nframes)]
+        return res
+
+    return _create_video
+
+
+@pytest.fixture
+def create_input_video(create_video):
+
+    def _create_input_video(path, fps, size, nframes):
+        vid = create_video(size, nframes)
+        fourcc = cv2.VideoWriter_fourcc(*'FFV1')
+        resolution = (size[1], size[0])
+        writer = cv2.VideoWriter(path, fourcc, fps, resolution)
+        for frame in vid:
+            writer.write(frame)
+        return vid
+
+    return _create_input_video
 
 
 @pytest.fixture
