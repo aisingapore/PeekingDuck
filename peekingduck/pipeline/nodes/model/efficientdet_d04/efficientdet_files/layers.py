@@ -13,37 +13,9 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-# import keras
+
 from tensorflow import keras
 import tensorflow as tf
-
-
-class BatchNormalization(keras.layers.BatchNormalization):
-    """
-    Identical to keras.layers.BatchNormalization, but adds the option to freeze parameters.
-    """
-
-    def __init__(self, freeze, *args, **kwargs):
-        self.freeze = freeze
-        # super(BatchNormalization, self).__init__(*args, **kwargs)
-        super().__init__(*args, **kwargs)
-
-        # set to non-trainable if freeze is true
-        self.trainable = not self.freeze
-
-    def call(self, inputs, training=None, **kwargs):
-        # return super.call, but set training
-        if not training:
-            # return super(BatchNormalization, self).call(inputs, training=False)
-            return super().call(inputs, training=False)
-        # return super(BatchNormalization, self).call(inputs, training=(not self.freeze))
-        return super().call(inputs, training=(not self.freeze))
-
-    def get_config(self):
-        # config = super(BatchNormalization, self).get_config()
-        config = super().get_config()
-        config.update({'freeze': self.freeze})
-        return config
 
 
 class WBiFPNAdd(keras.layers.Layer):
@@ -93,8 +65,7 @@ def bbox_transform_inv(boxes, deltas, scale_factors=None):
     Returns:
         tf.Tensor: bboxes in xmin, ymin, xmax, ymax format
     """
-    # center_xa = (boxes[..., 0] + boxes[..., 2]) / 2
-    # center_ya = (boxes[..., 1] + boxes[..., 3]) / 2
+
     wt_a = boxes[..., 2] - boxes[..., 0]
     ht_a = boxes[..., 3] - boxes[..., 1]
     t_y, t_x, t_h, t_w = deltas[..., 0], deltas[..., 1], deltas[..., 2], deltas[..., 3]
@@ -107,10 +78,6 @@ def bbox_transform_inv(boxes, deltas, scale_factors=None):
     height = tf.exp(t_h) * ht_a
     center_y = t_y * ht_a + (boxes[..., 1] + boxes[..., 3]) / 2
     center_x = t_x * wt_a + (boxes[..., 0] + boxes[..., 2]) / 2
-    # ymin = center_y - height / 2.
-    # xmin = center_x - width / 2.
-    # ymax = center_y + height / 2.
-    # xmax = center_x + width / 2.
     top_left = center_x - width / 2., center_y - height / 2.
     btm_right = center_x + width / 2., center_y + height / 2.
     # return tf.stack([xmin, ymin, xmax, ymax], axis=-1)
@@ -118,6 +85,9 @@ def bbox_transform_inv(boxes, deltas, scale_factors=None):
 
 
 class ClipBoxes(keras.layers.Layer):
+    """ClipBoxes class to limit the value of bbox coordinates to image height and width
+    """
+
     def call(self, inputs, **kwargs):
         image, boxes = inputs
         shape = keras.backend.cast(keras.backend.shape(image), keras.backend.floatx())
@@ -135,8 +105,10 @@ class ClipBoxes(keras.layers.Layer):
 
 
 class RegressBoxes(keras.layers.Layer):
+    """RegressBoxes class to compute actual bbox coordinate using anchors and offsets
+    """
+
     def __init__(self, *args, **kwargs):
-        # super(RegressBoxes, self).__init__(*args, **kwargs)
         super().__init__(*args, **kwargs)
 
     def call(self, inputs, **kwargs):
@@ -147,7 +119,6 @@ class RegressBoxes(keras.layers.Layer):
         return input_shape[0]
 
     def get_config(self):
-        # config = super(RegressBoxes, self).get_config()
         config = super().get_config()
         return config
 
@@ -163,7 +134,7 @@ def filter_detections(
         max_detections=100,
         nms_threshold=0.5,
         detect_quadrangle=False,
-):
+):  # pylint: disable=too-many-arguments, too-many-locals
     """
     Filter detections using the boxes and classification values.
 
@@ -297,7 +268,7 @@ class FilterDetections(keras.layers.Layer):
             parallel_iterations=32,
             detect_quadrangle=False,
             **kwargs
-    ):
+    ):  # pylint: disable=too-many-arguments
         """
         Filters detections using score threshold, NMS and selecting the top-k detections.
 

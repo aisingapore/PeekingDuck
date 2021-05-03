@@ -14,16 +14,21 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import os
+import logging
+from typing import Dict, Any, List, Tuple
 import numpy as np
-from .model import efficientdet
-from .utils.model_process import preprocess_image, postprocess_boxes
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process \
+    import preprocess_image, postprocess_boxes
 
 
 class Detector:
     """Detector class to handle detection of bboxes for efficientdet
     """
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
+        self.logger = logging.getLogger(__name__)
+
         self.config = config
         self.root_dir = config['root']
 
@@ -39,10 +44,16 @@ class Detector:
                                 score_threshold=self.config['score_threshold'])
         model_path = os.path.join(self.root_dir, self.config['model_files'][self.model_type])
         model.load_weights(model_path, by_name=True)
+        self.logger.info(
+            'Efficientdet model loaded with following configs:'
+            'Model type: D%s, '
+            'Score Threshold: %s, ',
+            self.model_type, self.config['score_threshold'])
         return model
 
     @staticmethod
-    def preprocess(image, image_size):
+    def preprocess(image: List[List[float]],
+                   image_size: int) -> Tuple[List[List[float]], float]:
         """Preprocessing function for efficientdet
 
         Args:
@@ -56,14 +67,16 @@ class Detector:
         image, scale = preprocess_image(image, image_size=image_size)
         return image, scale
 
-    def postprocess(self, network_output, scale, img_shape, detect_ids):
+    def postprocess(self, network_output: List[List[float]],
+                    scale: float,
+                    img_shape: List[int],
+                    detect_ids: List[int]) -> Tuple[List, List, List]:
         """Postprocessing of detected bboxes for efficientdet
 
         Args:
             network_output (list): list of boxes, scores and labels from network
             scale (float): scale the image was resized to
-            img_h (int): height of original image
-            img_w (int): width of original image
+            img_shape (list): height of original image
             detect_ids (list): list of label ids to be detected
 
         Returns:
@@ -89,7 +102,9 @@ class Detector:
 
         return boxes, labels, scores
 
-    def predict_bbox_from_image(self, image, detect_ids):
+    def predict_bbox_from_image(self,
+                                image: List[List[float]],
+                                detect_ids: List[int]) -> Tuple[List, List, List]:
         """Efficientdet bbox prediction function
 
         Args:

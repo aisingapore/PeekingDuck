@@ -1,3 +1,20 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+from typing import Tuple, List
 import numpy as np
 from tensorflow import keras
 
@@ -13,22 +30,30 @@ class AnchorParameters:
         scales : List of scales to use per location in a feature map.
     """
 
-    def __init__(self, sizes=(32, 64, 128, 256, 512),
-                 strides=(8, 16, 32, 64, 128),
-                 ratios=(1, 0.5, 2),
-                 scales=(2 ** 0, 2 ** (1. / 3.), 2 ** (2. / 3.))):
+    def __init__(self, sizes: Tuple[int] = (32, 64, 128, 256, 512),
+                 strides: Tuple[int] = (8, 16, 32, 64, 128),
+                 ratios: Tuple[float] = (1, 0.5, 2),
+                 scales: Tuple[float] = (2 ** 0, 2 ** (1. / 3.), 2 ** (2. / 3.))) -> None:
         self.sizes = sizes
         self.strides = strides
         self.ratios = np.array(ratios, dtype=keras.backend.floatx())
         self.scales = np.array(scales, dtype=keras.backend.floatx())
 
     def num_anchors(self):
+        """Function to get number of anchors
+
+        Returns:
+            int: the total number of anchors
+        """
         return len(self.ratios) * len(self.scales)
 
+    def get_sizes(self) -> List[int]:
+        """Getter for sizes
+        """
+        return self.sizes
 
-"""
-The default anchor parameters.
-"""
+
+# The default anchor parameters.
 AnchorParameters.default = AnchorParameters(
     sizes=[32, 64, 128, 256, 512],
     strides=[8, 16, 32, 64, 128],
@@ -38,7 +63,7 @@ AnchorParameters.default = AnchorParameters(
 )
 
 
-def guess_shapes(image_shape, pyramid_levels):
+def guess_shapes(image_shape: List[int], pyramid_levels: List[int]) -> List[List]:
     """
     Guess shapes based on pyramid levels.
 
@@ -54,9 +79,11 @@ def guess_shapes(image_shape, pyramid_levels):
     return image_shapes
 
 
-def generate_anchors(base_size=16, ratios=None, scales=None):
+def generate_anchors(base_size: int = 16,
+                     ratios: Tuple[float] = None,
+                     scales: Tuple[float] = None):
     """
-    Generate anchor (reference) windows by enumerating aspect ratios X scales w.r.t. a reference window.
+    Generate anchor windows by enumerating aspect ratios X scales w.r.t. a reference window.
 
     Args:
         base_size:
@@ -91,7 +118,7 @@ def generate_anchors(base_size=16, ratios=None, scales=None):
     return anchors
 
 
-def shift(feature_map_shape, stride, anchors):
+def shift(feature_map_shape: List[float], stride: int, anchors: List[float]):
     """
     Produce shifted anchors based on shape of the map and stride size.
 
@@ -112,17 +139,18 @@ def shift(feature_map_shape, stride, anchors):
         shift_x.ravel(), shift_y.ravel()
     )).transpose()
 
-    A = anchors.shape[0]
-    K = shifts.shape[0]
-    all_anchors = (anchors.reshape((1, A, 4)) + shifts.reshape((1, K, 4)).transpose((1, 0, 2)))
-    all_anchors = all_anchors.reshape((K * A, 4))
+    a_num = anchors.shape[0]
+    k_num = shifts.shape[0]
+    all_anchors = (anchors.reshape((1, a_num, 4)) +
+                   shifts.reshape((1, k_num, 4)).transpose((1, 0, 2)))
+    all_anchors = all_anchors.reshape((k_num * a_num, 4))
 
     return all_anchors
 
 
 def anchors_for_shape(
-        image_shape,
-        pyramid_levels=None,
+        image_shape: Tuple[int, int],
+        pyramid_levels: List[int] = None,
         anchor_params=None,
         shapes_callback=None,
 ):
@@ -131,9 +159,9 @@ def anchors_for_shape(
 
     Args
         image_shape: The shape of the image.
-        pyramid_levels: List of ints representing which pyramids to use (defaults to [3, 4, 5, 6, 7]).
+        pyramid_levels: List representing which pyramids to use (defaults to [3, 4, 5, 6, 7]).
         anchor_params: Struct containing anchor parameters. If None, default values are used.
-        shapes_callback: Function to call for getting the shape of the image at different pyramid levels.
+        shapes_callback: Function to call to get the shape of image at different pyramid levels.
 
     Returns
         np.array of shape (N, 4) containing the (x1, y1, x2, y2) coordinates for the anchors.
@@ -151,7 +179,7 @@ def anchors_for_shape(
 
     # compute anchors over all pyramid levels
     all_anchors = np.zeros((0, 4), dtype=np.float32)
-    for idx, p in enumerate(pyramid_levels):
+    for idx, _ in enumerate(pyramid_levels):
         anchors = generate_anchors(
             base_size=anchor_params.sizes[idx],
             ratios=anchor_params.ratios,

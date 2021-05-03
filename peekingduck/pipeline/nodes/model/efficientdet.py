@@ -13,20 +13,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import Dict
+from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .efficientdet import efficientdet_model
+from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 
 
 class Node(AbstractNode):
-    """Node for EfficientDet
+    """EfficientDet node class that initializes and uses efficientdet model to detect
+    bounding boxes from an image.
     """
 
-    def __init__(self, config):
-        super().__init__(config, name='EfficientDet')
+    def __init__(self, config: Dict[str, Any]) -> None:
+        super().__init__(config, node_path=__name__)
         self.model = efficientdet_model.EfficientDetModel(config)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Function that takes an image as input and returns bboxes of objects specified
+        in config.
+
+        Args:
+            inputs (Dict): Dictionary of inputs
+
+        Returns:
+            outputs (Dict): bbox (x1,y1,x2,y2) output in dictionary
+        """
         # Currently prototyped to return just the bounding boxes
         # without the scores
         results, _, _ = self.model.predict(inputs[self.inputs[0]])

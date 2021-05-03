@@ -13,20 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from functools import reduce
 
 import tensorflow as tf
 import numpy as np
-from tensorflow.keras import layers
-from tensorflow.keras import initializers
-from tensorflow.keras import models
-from .layers import ClipBoxes, RegressBoxes, FilterDetections, WBiFPNAdd
-from .initializers import PriorProbability
+from tensorflow.keras import layers, initializers, models
 
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.layers \
+    import ClipBoxes, RegressBoxes, FilterDetections, WBiFPNAdd
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.initializers \
+    import PriorProbability
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.tfkeras \
+    import EfficientNetB0, EfficientNetB1, EfficientNetB2, EfficientNetB3, \
+    EfficientNetB4, EfficientNetB5, EfficientNetB6
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.anchors \
+    import anchors_for_shape
 
-from .tfkeras import EfficientNetB0, EfficientNetB1, EfficientNetB2
-from .tfkeras import EfficientNetB3, EfficientNetB4, EfficientNetB5, EfficientNetB6
-from .utils.anchors import anchors_for_shape
+# pylint: disable=too-many-locals, too-many-statements, too-many-ancestors,too-many-instance-attributes, too-many-arguments
 
 w_bifpns = [64, 88, 112, 160, 224, 288, 384]
 d_bifpns = [3, 4, 5, 6, 7, 7, 8]
@@ -39,26 +43,25 @@ MOMENTUM = 0.997
 EPSILON = 1e-4
 
 
-def separable_conv_block(num_channels, kernel_size, strides, name, freeze_bn=False):
+def separable_conv_block(num_channels, kernel_size, strides, name):
     """Separable conv block helper function"""
     f_1 = layers.SeparableConv2D(num_channels, kernel_size=kernel_size, strides=strides,
                                  padding='same', use_bias=True, name=f'{name}/conv')
     f_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON, name=f'{name}/bn')
-    # f2 = BatchNormalization(freeze=freeze_bn, name=f'S{name}/bn')
     return reduce(lambda f, g: lambda *args, **kwargs: g(f(*args, **kwargs)), (f_1, f_2))
 
 
-def conv_block(num_channels, kernel_size, strides, name, freeze_bn=False):
+def conv_block(num_channels, kernel_size, strides, name):
     """Conv block helper function"""
     f_1 = layers.Conv2D(num_channels, kernel_size=kernel_size, strides=strides, padding='same',
                         use_bias=True, name='{}_conv'.format(name))
     f_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON, name='{}_bn'.format(name))
-    # f2 = BatchNormalization(freeze=freeze_bn, name='{}_bn'.format(name))
     f_3 = layers.ReLU(name='{}_relu'.format(name))
     return reduce(lambda f, g: lambda *args, **kwargs: g(f(*args, **kwargs)), (f_1, f_2, f_3))
 
 
-def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
+def build_wbi_fpn(features,
+                  num_channels, i_d):
     """Function to build weighted bi-directional fpn"""
     if i_d == 0:
         _, _, c_3, c_4, c_5 = features
@@ -69,7 +72,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
                               name='resample_p6/conv2d')(c_5)
         p6_in = layers.BatchNormalization(
             momentum=MOMENTUM, epsilon=EPSILON, name='resample_p6/bn')(p6_in)
-        # P6_in = BatchNormalization(freeze=freeze_bn, name='resample_p6/bn')(P6_in)
         p6_in = layers.MaxPooling2D(pool_size=3, strides=2, padding='same',
                                     name='resample_p6/maxpool')(p6_in)
         p7_in = layers.MaxPooling2D(pool_size=3, strides=2, padding='same',
@@ -84,8 +86,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
         p5_in_1 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode1/'
                                             'resample_0_2_6/bn')(p5_in_1)
-        # P5_in_1 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode1/resample_0_2_6/bn')(P5_in_1)
         p6_u = layers.UpSampling2D()(p6_td)
         p5_td = WBiFPNAdd(name=f'fpn_cells/cell_{i_d}/fnode1/add')([p5_in_1, p6_u])
         p5_td = layers.Activation(tf.nn.swish)(p5_td)
@@ -96,8 +96,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
         p4_in_1 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode2/'
                                             'resample_0_1_7/bn')(p4_in_1)
-        # P4_in_1 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode2/resample_0_1_7/bn')(P4_in_1)
         p5_u = layers.UpSampling2D()(p5_td)
         p4_td = WBiFPNAdd(name=f'fpn_cells/cell_{i_d}/fnode2/add')([p4_in_1, p5_u])
         p4_td = layers.Activation(tf.nn.swish)(p4_td)
@@ -108,8 +106,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
         p3_in = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                           name=f'fpn_cells/cell_{i_d}/fnode3/'
                                           'resample_0_0_8/bn')(p3_in)
-        # P3_in = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode3/resample_0_0_8/bn')(P3_in)
         p4_u = layers.UpSampling2D()(p4_td)
         p3_out = WBiFPNAdd(name=f'fpn_cells/cell_{i_d}/fnode3/add')([p3_in, p4_u])
         p3_out = layers.Activation(tf.nn.swish)(p3_out)
@@ -120,8 +116,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
         p4_in_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode4/'
                                             'resample_0_1_9/bn')(p4_in_2)
-        # P4_in_2 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode4/resample_0_1_9/bn')(P4_in_2)
         p3_d = layers.MaxPooling2D(pool_size=3, strides=2, padding='same')(p3_out)
         p4_out = WBiFPNAdd(name=f'fpn_cells/cell_{i_d}/fnode4/add')([p4_in_2, p4_td, p3_d])
         p4_out = layers.Activation(tf.nn.swish)(p4_out)
@@ -133,8 +127,6 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
         p5_in_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode5/'
                                             'resample_0_2_10/bn')(p5_in_2)
-        # P5_in_2 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode5/resample_0_2_10/bn')(P5_in_2)
         p4_d = layers.MaxPooling2D(pool_size=3, strides=2, padding='same')(p4_out)
         p5_out = WBiFPNAdd(name=f'fpn_cells/cell_{i_d}/fnode5/add')([p5_in_2, p5_td, p4_d])
         p5_out = layers.Activation(tf.nn.swish)(p5_out)
@@ -207,7 +199,7 @@ def build_wbi_fpn(features, num_channels, i_d, freeze_bn=False):
     return p3_out, p4_td, p5_td, p6_td, p7_out
 
 
-def build_bifpn(features, num_channels, i_d, freeze_bn=False):
+def build_bifpn(features, num_channels, i_d):
     """Function to build bi-directional fpn"""
     if i_d == 0:
         _, _, c_3, c_4, c_5 = features
@@ -218,7 +210,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
                               name='resample_p6/conv2d')(c_5)
         p6_in = layers.BatchNormalization(
             momentum=MOMENTUM, epsilon=EPSILON, name='resample_p6/bn')(p6_in)
-        # P6_in = BatchNormalization(freeze=freeze_bn, name='resample_p6/bn')(P6_in)
         p6_in = layers.MaxPooling2D(pool_size=3, strides=2, padding='same',
                                     name='resample_p6/maxpool')(p6_in)
         p7_in = layers.MaxPooling2D(pool_size=3, strides=2, padding='same',
@@ -233,8 +224,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
         p5_in_1 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode1/'
                                             'resample_0_2_6/bn')(p5_in_1)
-        # P5_in_1 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode1/resample_0_2_6/bn')(P5_in_1)
         p6_u = layers.UpSampling2D()(p6_td)
         p5_td = layers.Add(name=f'fpn_cells/cell_{i_d}/fnode1/add')([p5_in_1, p6_u])
         p5_td = layers.Activation(tf.nn.swish)(p5_td)
@@ -245,8 +234,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
         p4_in_1 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode2/'
                                             'resample_0_1_7/bn')(p4_in_1)
-        # P4_in_1 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode2/resample_0_1_7/bn')(P4_in_1)
         p5_u = layers.UpSampling2D()(p5_td)
         p4_td = layers.Add(name=f'fpn_cells/cell_{i_d}/fnode2/add')([p4_in_1, p5_u])
         p4_td = layers.Activation(tf.nn.swish)(p4_td)
@@ -257,8 +244,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
         p3_in = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                           name=f'fpn_cells/cell_{i_d}/fnode3/'
                                           'resample_0_0_8/bn')(p3_in)
-        # P3_in = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode3/resample_0_0_8/bn')(P3_in)
         p4_u = layers.UpSampling2D()(p4_td)
         p3_out = layers.Add(name=f'fpn_cells/cell_{i_d}/fnode3/add')([p3_in, p4_u])
         p3_out = layers.Activation(tf.nn.swish)(p3_out)
@@ -269,8 +254,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
         p4_in_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode4/'
                                             'resample_0_1_9/bn')(p4_in_2)
-        # P4_in_2 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode4/resample_0_1_9/bn')(P4_in_2)
         p3_d = layers.MaxPooling2D(pool_size=3, strides=2, padding='same')(p3_out)
         p4_out = layers.Add(name=f'fpn_cells/cell_{i_d}/fnode4/add')([p4_in_2, p4_td, p3_d])
         p4_out = layers.Activation(tf.nn.swish)(p4_out)
@@ -282,8 +265,6 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
         p5_in_2 = layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                             name=f'fpn_cells/cell_{i_d}/fnode5/'
                                             'resample_0_2_10/bn')(p5_in_2)
-        # P5_in_2 = BatchNormalization(freeze=freeze_bn,
-        # name=f'fpn_cells/cell_{id}/fnode5/resample_0_2_10/bn')(P5_in_2)
         p4_d = layers.MaxPooling2D(pool_size=3, strides=2, padding='same')(p4_out)
         p5_out = layers.Add(name=f'fpn_cells/cell_{i_d}/fnode5/add')([p5_in_2, p5_td, p4_d])
         p5_out = layers.Activation(tf.nn.swish)(p5_out)
@@ -359,8 +340,8 @@ def build_bifpn(features, num_channels, i_d, freeze_bn=False):
 class BoxNet(models.Model):
     """Bbox regression network"""
 
-    def __init__(self, width, depth, num_anchors=9, separable_conv=True,
-                 freeze_bn=False, detect_quadrangle=False, **kwargs):
+    def __init__(self, width, depth, num_anchors=9,
+                 separable_conv=True, detect_quadrangle=False, **kwargs):
         super().__init__(**kwargs)
         self.width = width
         self.depth = depth
@@ -399,14 +380,11 @@ class BoxNet(models.Model):
                                        name=f'{self.name}/box-{i}-bn-{j}') for j in
              range(3, 8)]
             for i in range(depth)]
-        # self.bns = [[BatchNormalization(freeze=freeze_bn,
-        # name=f'{self.name}/box-{i}-bn-{j}') for j in range(3, 8)]
-        #             for i in range(depth)]
         self.relu = layers.Lambda(tf.nn.swish)
         self.reshape = layers.Reshape((-1, num_values))
         self.level = 0
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs):  # pylint: disable=arguments-differ,
         feature, _ = inputs
         for i in range(self.depth):
             feature = self.convs[i](feature)
@@ -422,7 +400,7 @@ class ClassNet(models.Model):
     """Classification network"""
 
     def __init__(self, width, depth, num_classes=20, num_anchors=9,
-                 separable_conv=True, freeze_bn=False, **kwargs):
+                 separable_conv=True, **kwargs):
         super().__init__(**kwargs)
         self.width = width
         self.depth = depth
@@ -461,15 +439,13 @@ class ClassNet(models.Model):
             [layers.BatchNormalization(momentum=MOMENTUM, epsilon=EPSILON,
                                        name=f'{self.name}/class-{i}-bn-{j}') for j in range(3, 8)]
             for i in range(depth)]
-        # self.bns = [[BatchNormalization(freeze=freeze_bn,
-        # name=f'{self.name}/class-{i}-bn-{j}') for j in range(3, 8)]
-        #             for i in range(depth)]
+
         self.relu = layers.Lambda(tf.nn.swish)
         self.reshape = layers.Reshape((-1, num_classes))
         self.activation = layers.Activation('sigmoid')
         self.level = 0
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs):  # pylint: disable=arguments-differ,
         feature, _ = inputs
         for i in range(self.depth):
             feature = self.convs[i](feature)
@@ -482,9 +458,10 @@ class ClassNet(models.Model):
         return outputs
 
 
-def efficientdet(phi, num_classes=20, num_anchors=9, weighted_bifpn=False, freeze_bn=False,
-                 score_threshold=0.01, detect_quadrangle=False,
-                 anchor_parameters=None, separable_conv=True):
+def efficientdet(phi, num_classes=20, num_anchors=9,
+                 weighted_bifpn=False, score_threshold=0.01,
+                 detect_quadrangle=False, anchor_parameters=None,
+                 separable_conv=True):
     """Function to build Efficientdet"""
     assert phi in range(7)
     input_size = image_sizes[phi]
@@ -495,19 +472,19 @@ def efficientdet(phi, num_classes=20, num_anchors=9, weighted_bifpn=False, freez
     w_head = w_bifpn
     d_head = d_heads[phi]
     backbone_cls = backbones[phi]
-    features = backbone_cls(input_tensor=image_input, freeze_bn=freeze_bn)
+    features = backbone_cls(input_tensor=image_input)
     if weighted_bifpn:
         fpn_features = features
         for i in range(d_bifpn):
-            fpn_features = build_wbi_fpn(fpn_features, w_bifpn, i, freeze_bn=freeze_bn)
+            fpn_features = build_wbi_fpn(fpn_features, w_bifpn, i)
     else:
         fpn_features = features
         for i in range(d_bifpn):
-            fpn_features = build_bifpn(fpn_features, w_bifpn, i, freeze_bn=freeze_bn)
+            fpn_features = build_bifpn(fpn_features, w_bifpn, i)
     box_net = BoxNet(w_head, d_head, num_anchors=num_anchors, separable_conv=separable_conv,
-                     freeze_bn=freeze_bn, detect_quadrangle=detect_quadrangle, name='box_net')
+                     detect_quadrangle=detect_quadrangle, name='box_net')
     class_net = ClassNet(w_head, d_head, num_classes=num_classes, num_anchors=num_anchors,
-                         separable_conv=separable_conv, freeze_bn=freeze_bn, name='class_net')
+                         separable_conv=separable_conv, name='class_net')
     classification = [class_net([feature, i]) for i, feature in enumerate(fpn_features)]
     classification = layers.Concatenate(axis=1, name='classification')(classification)
     regression = [box_net([feature, i]) for i, feature in enumerate(fpn_features)]
