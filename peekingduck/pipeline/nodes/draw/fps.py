@@ -28,7 +28,7 @@ class Node(AbstractNode):
     frame
     """
 
-    def __init__(self, config: Dict) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
         self.time_window = [float(0)]
