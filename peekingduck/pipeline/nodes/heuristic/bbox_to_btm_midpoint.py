@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional, List
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -22,11 +22,11 @@ class Node(AbstractNode):
     """This node converts bounding boxes to a singel pt which is
     the bottom midpoint of the bounding box"""
 
-    def __init__(self, config: Dict) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.img_size = None
+        self.img_size: Tuple[int, int] = (0, 0)
 
-    def run(self, inputs: Dict) -> Dict[str, Any]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts bounding boxes to a single point of reference
         for use in zone analytics
 
@@ -44,6 +44,6 @@ class Node(AbstractNode):
         return {'btm_midpoint': [self._xy_on_img(((bbox[0]+bbox[2])/2), bbox[3])
                                  for bbox in bboxes]}
 
-    def _xy_on_img(self, pt_x: float, pt_y: float) -> Tuple[int]:
+    def _xy_on_img(self, pt_x: float, pt_y: float) -> Tuple[int, int]:
         """Return the int x y points of the midpoint on the original image"""
         return (int(pt_x * self.img_size[0]), int(pt_y * self.img_size[1]))
