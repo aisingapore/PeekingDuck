@@ -33,10 +33,10 @@ class AnchorParameters:
         scales : List of scales to use per location in a feature map.
     """
 
-    def __init__(self, sizes: Tuple[int] = (32, 64, 128, 256, 512),
-                 strides: Tuple[int] = (8, 16, 32, 64, 128),
-                 ratios: Tuple[float] = (1, 0.5, 2),
-                 scales: Tuple[float] = (2 ** 0, 2 ** (1. / 3.), 2 ** (2. / 3.))) -> None:
+    def __init__(self, sizes: Tuple[int, int, int, int, int] = (32, 64, 128, 256, 512),
+                 strides: Tuple[int, int, int, int, int] = (8, 16, 32, 64, 128),
+                 ratios: Tuple[float, float, float] = (1.0, 0.5, 2.0),
+                 scales: Tuple[float, float, float] = (1.0, 2**(1. / 3.), 2**(2. / 3.))) -> None:
         self.sizes = sizes
         self.strides = strides
         self.ratios = np.array(ratios, dtype=keras.backend.floatx())
@@ -50,7 +50,7 @@ class AnchorParameters:
         """
         return len(self.ratios) * len(self.scales)
 
-    def get_sizes(self) -> List[int]:
+    def get_sizes(self) -> Tuple[int, int, int, int, int]:
         """Getter for sizes
         """
         return self.sizes
@@ -58,9 +58,8 @@ class AnchorParameters:
 
 # The default anchor parameters.
 AnchorParameters.default = AnchorParameters(
-    sizes=[32, 64, 128, 256, 512],
-    strides=[8, 16, 32, 64, 128],
-    # ratio=h/w
+    sizes=(32, 64, 128, 256, 512),
+    strides=(8, 16, 32, 64, 128),
     ratios=np.array([1, 0.5, 2], keras.backend.floatx()),
     scales=np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
 )
@@ -121,7 +120,7 @@ def generate_anchors(base_size: int = 16,
     return anchors
 
 
-def shift(feature_map_shape: List[float], stride: int, anchors: List[float]):
+def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray):
     """
     Produce shifted anchors based on shape of the map and stride size.
 

@@ -67,7 +67,7 @@ class Detector:
         image, scale = preprocess_image(image, image_size=image_size)
         return image, scale
 
-    def postprocess(self, network_output: List[List[float]],
+    def postprocess(self, network_output: Tuple[np.ndarray, np.ndarray, np.ndarray],
                     scale: float,
                     img_shape: List[int],
                     detect_ids: List[int]) -> Tuple[List, List, List]:
@@ -103,7 +103,7 @@ class Detector:
         return boxes, labels, scores
 
     def predict_bbox_from_image(self,
-                                image: List[List[float]],
+                                image: np.ndarray,
                                 detect_ids: List[int]) -> Tuple[List, List, List]:
         """Efficientdet bbox prediction function
 
