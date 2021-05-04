@@ -21,7 +21,7 @@ from typing import Any, Dict, List
 class AbstractNode(metaclass=ABCMeta):
     """Abstract Node class that defines requirements for a node."""
 
-    def __init__(self, config: Dict[str, Any], node_path: str):
+    def __init__(self, config: Dict[str, Any], node_path: str) -> None:
 
         self._inputs: List[str] = config['input']
         self._outputs: List[str] = config['output']
