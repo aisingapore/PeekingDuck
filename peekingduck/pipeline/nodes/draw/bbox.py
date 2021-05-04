@@ -22,7 +22,7 @@ from .utils.drawfunctions import draw_bboxes
 class Node(AbstractNode):
     """Draw node for drawing bboxes onto image"""
 
-    def __init__(self, config: Dict[str, Any]):
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
