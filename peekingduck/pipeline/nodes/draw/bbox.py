@@ -14,17 +14,18 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict
+from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .utils.drawfunctions import draw_bboxes
 
 
 class Node(AbstractNode):
     """Draw node for drawing bboxes onto image"""
-    def __init__(self, config):
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
         draw_bboxes(inputs[self.inputs[1]],
                     inputs[self.inputs[0]])
