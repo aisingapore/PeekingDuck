@@ -13,13 +13,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.read import VideoThread
 
 
 class Node(AbstractNode):
     """Node to receive livestream as inputs."""
-    def __init__(self, config):
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
         resolution = config['resolution']
@@ -28,7 +31,7 @@ class Node(AbstractNode):
 
         self.videocap = VideoThread(resolution, input_source, mirror_image)
 
-    def run(self, inputs: dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()
         if success:
             outputs = {self.outputs[0]: img}
