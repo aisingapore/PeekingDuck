@@ -19,9 +19,11 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
+
 class Node(AbstractNode):
     """Node to receive videos/image as inputs."""
-    def __init__(self, config):
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]
         input_source = config['input_source']
@@ -31,7 +33,7 @@ class Node(AbstractNode):
         self._get_files(input_source)
         self._get_next_input()
 
-    def run(self, inputs: dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
         input: ["source"],
         output: ["img", "end"]
@@ -58,7 +60,7 @@ class Node(AbstractNode):
                        "fps": self._fps}
         return outputs
 
-    def _get_files(self, path) -> None:
+    def _get_files(self, path: str) -> None:
         self._filepaths = [path]
 
         if os.path.isdir(path):
@@ -67,7 +69,7 @@ class Node(AbstractNode):
                                for filepath in self._filepaths]
             self._filepaths.sort()
 
-    def _get_next_input(self):
+    def _get_next_input(self) -> None:
 
         if self._filepaths:
             file_path = self._filepaths.pop(0)
@@ -87,7 +89,7 @@ class Node(AbstractNode):
                                     )
                 self._get_next_input()
 
-    def _is_valid_file_type(self, filepath):
+    def _is_valid_file_type(self, filepath: str) -> bool:
 
         if filepath.split(".")[-1] in self._allowed_extensions:
             return True
