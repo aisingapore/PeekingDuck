@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any, Tuple
+from typing import Dict, Any, Tuple, Optional
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -24,7 +24,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.img_size: Tuple[int, int] = (0, 0)
+        self.img_size: Optional[Tuple[int, int]] = None
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts bounding boxes to a single point of reference
@@ -46,4 +46,5 @@ class Node(AbstractNode):
 
     def _xy_on_img(self, pt_x: float, pt_y: float) -> Tuple[int, int]:
         """Return the int x y points of the midpoint on the original image"""
+        assert self.img_size is not None
         return (int(pt_x * self.img_size[0]), int(pt_y * self.img_size[1]))
