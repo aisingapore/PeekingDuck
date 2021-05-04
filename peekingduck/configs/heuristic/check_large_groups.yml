@@ -1,4 +1,4 @@
 input: ["obj_groups"]
-output: ["is_obj_in_large_grp"]
+output: ["large_groups"]
 
-group_size_thres: 7
+group_size_thres: 5
