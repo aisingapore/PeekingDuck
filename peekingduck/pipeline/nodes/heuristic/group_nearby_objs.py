@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
@@ -54,7 +54,8 @@ class Node(AbstractNode):
         return {"obj_groups": group_alloc}
 
     @staticmethod
-    def _find_nearby_obj_pairs(obj_locs: List[list], obj_dist_thres: float) -> List[tuple]:
+    def _find_nearby_obj_pairs(obj_locs: List[np.array],
+                               obj_dist_thres: float) -> List[Tuple[int, int]]:
         """If the distance between 2 objects are less than the threshold, append their
         indexes to nearby_obj_pairs as a tuple."""
 
@@ -66,9 +67,7 @@ class Node(AbstractNode):
 
                 dist_bet = np.linalg.norm(loc_1 - loc_2)
 
-                if dist_bet > obj_dist_thres:
-                    pass
-                elif dist_bet <= obj_dist_thres:
+                if dist_bet <= obj_dist_thres:
                     if (idx_2, idx_1) not in nearby_obj_pairs:
                         nearby_obj_pairs.append((idx_1, idx_2))
 
