@@ -77,17 +77,17 @@ class DeclarativeLoader:
 
     def __init__(self, node_configs: ConfigLoader,
                  run_config: str,
-                 custom_folder_path: Optional[str] = 'src/custom_nodes') -> None:
+                 custom_folder_path: str = 'src/custom_nodes') -> None:
         self.logger = logging.getLogger(__name__)
 
         self.node_configs = node_configs
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str) -> List[str]:
+    def _load_node_list(self, run_config: str) -> Any:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
-            nodes: List[str] = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
+            nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
 
         self.logger.info(
             'Successfully loaded run_config file.')
@@ -102,7 +102,7 @@ class DeclarativeLoader:
                 node_type, node = node_str.split('.')
                 if node_type == 'custom':
                     node_config_path = os.path.join(
-                        self.custom_folder_path, node, 'config.yml')  # type: ignore
+                        self.custom_folder_path, node, 'config.yml')
                 else:
                     dir_path = os.path.dirname(os.path.realpath(__file__))
                     config_filename = node + '.yml'
@@ -122,7 +122,7 @@ class DeclarativeLoader:
             node_type, node = node_str.split('.')
             if node_type == 'custom':
                 custom_node_path = os.path.join(
-                    self.custom_folder_path, node + '.py')  # type: ignore
+                    self.custom_folder_path, node + '.py')
                 spec = importlib.util.spec_from_file_location(  # type: ignore
                     node, custom_node_path)
                 module = importlib.util.module_from_spec(spec)  # type: ignore
