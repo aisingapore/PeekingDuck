@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
 from typing import Any, Dict, List
 
 import numpy as np
@@ -29,9 +28,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
         self.tag = config["tag"]
         self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = (config["bbox_color"][0],
-                           config["bbox_color"][1],
-                           config["bbox_color"][2])
+        self.bbox_color = tuple(config["bbox_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Draws large bounding boxes over multiple object bounding boxes
@@ -51,9 +48,9 @@ class Node(AbstractNode):
             inputs["large_groups"], self.tag)
 
         draw_bboxes(inputs["img"], group_bboxes,
-                    self.bbox_color, self.bbox_thickness)
+                    self.bbox_color, self.bbox_thickness)   # type: ignore
         draw_tags(inputs["img"], group_bboxes,
-                  group_tags, self.bbox_color)
+                  group_tags, self.bbox_color)  # type: ignore
 
         return {}
 
