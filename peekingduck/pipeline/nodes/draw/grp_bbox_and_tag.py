@@ -28,10 +28,10 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.tag = config["tag"]
+        self.bbox_thickness = config["bbox_thickness"]
         self.bbox_color = (config["bbox_color"][0],
                            config["bbox_color"][1],
                            config["bbox_color"][2])
-        self.bbox_thickness = config["bbox_thickness"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Draws large bounding boxes over multiple object bounding boxes
@@ -65,22 +65,15 @@ class Node(AbstractNode):
         a large bbox that combines all these individual bboxes. Repeat for all large
         groups.
         """
-
         group_bboxes = []
+        bboxes = np.array(bboxes)
+        obj_groups = np.array(obj_groups)
         for group in large_groups:
+            # filter relevant bboxes, select top-left and bot-right corners
             group_bbox = np.array([1., 1., 0., 0.])
-            for idx, bbox in enumerate(bboxes):
-                if obj_groups[idx] == group:
-                    # outermost coord is < top left coord
-                    if bbox[0] < group_bbox[0]:
-                        group_bbox[0] = bbox[0]
-                    if bbox[1] < group_bbox[1]:
-                        group_bbox[1] = bbox[1]
-                    # outermost coord is > bottom right coord
-                    if bbox[2] > group_bbox[2]:
-                        group_bbox[2] = bbox[2]
-                    if bbox[3] > group_bbox[3]:
-                        group_bbox[3] = bbox[3]
+            selected_bboxes = bboxes[obj_groups == group]
+            group_bbox[:2] = np.amin(selected_bboxes, axis=0)[:2]
+            group_bbox[2:] = np.amax(selected_bboxes, axis=0)[2:]
             group_bboxes.append(group_bbox)
 
         return group_bboxes
@@ -90,8 +83,6 @@ class Node(AbstractNode):
         """ Creates a list of tags to be used for the draw_tags function.
         """
 
-        group_tags = []
-        for _ in range(len(large_groups)):
-            group_tags.append(tag)
+        group_tags = [tag for _ in range(len(large_groups))]
 
         return group_tags
