@@ -27,7 +27,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.bbox_tag = config["bbox_tag"]
+        self.tag = config["tag"]
         self.bbox_color = tuple(config["bbox_color"])
         self.bbox_thickness = config["bbox_thickness"]
 
@@ -46,7 +46,7 @@ class Node(AbstractNode):
         group_bboxes = self._get_group_bbox_coords(
             inputs["large_groups"], inputs["bboxes"], inputs["obj_groups"])
         group_tags = self._get_group_tags(
-            inputs["large_groups"], self.bbox_tag)
+            inputs["large_groups"], self.tag)
 
         draw_bboxes(inputs["img"], group_bboxes,
                     self.bbox_color, self.bbox_thickness)
@@ -84,12 +84,12 @@ class Node(AbstractNode):
         return group_bboxes
 
     @staticmethod
-    def _get_group_tags(large_groups: List[int], bbox_tag: str) -> List[str]:
+    def _get_group_tags(large_groups: List[int], tag: str) -> List[str]:
         """ Creates a list of tags to be used for the draw_tags function.
         """
 
         group_tags = []
         for _ in range(len(large_groups)):
-            group_tags.append(bbox_tag)
+            group_tags.append(tag)
 
         return group_tags

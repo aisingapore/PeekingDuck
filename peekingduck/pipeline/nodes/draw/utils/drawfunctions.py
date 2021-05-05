@@ -174,7 +174,7 @@ def _draw_tag(frame: np.array,
     """
     top_left, _ = _project_points_onto_original_image(bbox, image_size)
     position = int(top_left[0]), int(top_left[1]-25)
-    cv2.putText(frame, tag, position, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+    cv2.putText(frame, tag, position, FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
 
 def draw_count(frame: np.array, count: int) -> None:
@@ -186,8 +186,8 @@ def draw_count(frame: np.array, count: int) -> None:
             in current frame
     """
     text = 'COUNT: {0}'.format(count)
-    cv2.putText(frame, text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
-                0.75, COUNTING_TEXT_COLOR, 2, cv2.LINE_AA)
+    cv2.putText(frame, text, (10, 50), FONT_HERSHEY_SIMPLEX,
+                0.75, COUNTING_TEXT_COLOR, 2, LINE_AA)
 
 
 def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
