@@ -59,7 +59,7 @@ class TestMediaReader:
                   "input_source": file_path
                   })
 
-    def test_reader_run_throws_error_on__empty_folder(self):
+    def test_reader_run_throws_error_on_empty_folder(self):
         with pytest.raises(FileNotFoundError):
             reader = create_reader()
             reader.run({})
