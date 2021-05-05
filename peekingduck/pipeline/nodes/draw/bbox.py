@@ -24,7 +24,9 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.bbox_color = tuple(config["bbox_color"])
+        self.bbox_color = (config["bbox_color"][0],
+                           config["bbox_color"][1],
+                           config["bbox_color"][2])
         self.bbox_thickness = config["bbox_thickness"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
