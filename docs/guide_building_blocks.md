@@ -5,7 +5,7 @@ This document details the building blocks and core concepts of PeekingDuck to he
 ## Nodes
 Nodes are the basic blocks of a PeekingDuck project. It is a wrapper for a Python function, and contains information on how PeekingDuck and other PeekingDuck nodes may interact with it.
 
-For more finegrain control over a node's behavior, we recommend the use of [node configs](#node-configs)
+For more finegrain control over a node's behavior, we recommend the use of [node configs](./guide_custom_nodes.md#step-4b-configure-your-nodes)
 
 ## Pipeline
 A pipeline governs the behavior of a chain of nodes. This may include the execution order*, parallelism*, distribution strategy* of each run.
