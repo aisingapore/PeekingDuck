@@ -5,5 +5,5 @@ resolution: {
             width: 1280,
             height: 720
         }
-input_source: 'PeekingDuck/data/original/waving'
+input_source: 'PeekingDuck/data/original/groups'
 mirror_image: False

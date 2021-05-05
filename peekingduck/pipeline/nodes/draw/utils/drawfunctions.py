@@ -23,9 +23,6 @@ POSE_BBOX_COLOR = (255, 255, 0)
 BLACK_COLOR = (0, 0, 0)
 PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
-HUMAN_BBOX_COLOR = (255, 0, 255)
-GROUP_BBOX_COLOR = (0, 140, 255)
-HAND_BBOX_COLOR = (255, 0, 0)
 OBJ_MASK_COLOR = (0, 100, 255)
 KEYPOINT_TEXT_COLOR = (255, 0, 255)
 KEYPOINT_DOT_COLOR = (0, 255, 0)
@@ -56,16 +53,6 @@ def draw_human_poses(image: np.array, poses: List[Any]) -> None:
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
     image_size = (frame.shape[1], frame.shape[0])  # width, height
     return image_size
-
-
-def _draw_bbox(frame: np.array, bbox: List[float],
-               image_size: Tuple[int, int], color: Tuple[int, int, int]) -> np.array:
-    top_left, bottom_right = _project_points_onto_original_image(bbox, image_size)
-    cv2.rectangle(frame, (top_left[0], top_left[1]),
-                  (bottom_right[0], bottom_right[1]),
-                  color, 2)
-
-    return top_left
 
 
 def _draw_connections(frame: np.array, connections: List[float],
@@ -129,33 +116,65 @@ def _project_points_onto_original_image(points: np.array,
     return projected_points
 
 
-def draw_bboxes(frame: np.array, bboxes: List[List[float]]) -> None:
-    '''draw bboxes onto frame image'''
+def draw_bboxes(frame: np.array,
+                bboxes: List[List[float]],
+                color: Tuple[int, int, int],
+                thickness: int) -> None:
+    """Draw bboxes onto an image frame.
+
+    Args:
+        frame (np.array): image of current frame
+        bboxes (List[List[float]]): bounding box coordinates
+        color (Tuple[int, int, int]): color of bounding box
+        thickness (int): thickness of bounding box
+    """
     image_size = _get_image_size(frame)
     for bbox in bboxes:
-        _draw_bbox(frame, bbox, image_size, HUMAN_BBOX_COLOR)
+        _draw_bbox(frame, bbox, image_size, color, thickness)
 
 
-def draw_tags(frame: np.array, bboxes: List[List[float]], tags: List[str]) -> None:
+def _draw_bbox(frame: np.array,
+               bbox: List[float],
+               image_size: Tuple[int, int],
+               color: Tuple[int, int, int],
+               thickness: int) -> np.array:
+    """ Draw a single bounding box """
+    top_left, bottom_right = _project_points_onto_original_image(
+        bbox, image_size)
+    cv2.rectangle(frame, (top_left[0], top_left[1]),
+                  (bottom_right[0], bottom_right[1]),
+                  color, thickness)
+
+    return top_left
+
+
+def draw_tags(frame: np.array,
+              bboxes: List[List[float]],
+              tags: List[str],
+              color: Tuple[int, int, int]) -> None:
     """Draw tags above bboxes.
 
     Args:
-        frame (List[float]): image of current frame
-        bboxes (List[List]): bounding boxes
+        frame (np.array): image of current frame
+        bboxes (List[List[float]]): bounding box coordinates
         tags (List[string]): tag associated with bounding box
+        color (Tuple[int, int, int]): color of text
     """
     image_size = _get_image_size(frame)
     for idx, bbox in enumerate(bboxes):
-        _draw_tag(frame, bbox, tags[idx], image_size, ACTIVITY_COLOR)
+        _draw_tag(frame, bbox, tags[idx], image_size, color)
 
 
-def _draw_tag(frame: np.array, bbox: np.array, tag: str,
-              image_size: Tuple[int, int], color: Tuple[int, int, int]) -> None:
+def _draw_tag(frame: np.array,
+              bbox: np.array,
+              tag: str,
+              image_size: Tuple[int, int],
+              color: Tuple[int, int, int]) -> None:
     """Draw a tag above a single bounding box.
     """
     top_left, _ = _project_points_onto_original_image(bbox, image_size)
     position = int(top_left[0]), int(top_left[1]-25)
-    cv2.putText(frame, tag, position, cv2.FONT_HERSHEY_SIMPLEX, 1, color, 2)
+    cv2.putText(frame, tag, position, FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
 
 def draw_count(frame: np.array, count: int) -> None:
@@ -167,8 +186,8 @@ def draw_count(frame: np.array, count: int) -> None:
             in current frame
     """
     text = 'COUNT: {0}'.format(count)
-    cv2.putText(frame, text, (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
-                0.75, COUNTING_TEXT_COLOR, 2, cv2.LINE_AA)
+    cv2.putText(frame, text, (10, 50), FONT_HERSHEY_SIMPLEX,
+                0.75, COUNTING_TEXT_COLOR, 2, LINE_AA)
 
 
 def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
