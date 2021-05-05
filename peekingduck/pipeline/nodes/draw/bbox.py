@@ -16,7 +16,7 @@ limitations under the License.
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_bboxes
+from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_bboxes
 
 
 class Node(AbstractNode):
@@ -24,9 +24,11 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
+        self.bbox_color = tuple(config["bbox_color"])
+        self.bbox_thickness = config["bbox_thickness"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
-        draw_bboxes(inputs[self.inputs[1]],
-                    inputs[self.inputs[0]])
+        draw_bboxes(inputs["img"], inputs["bboxes"],
+                    self.bbox_color, self.bbox_thickness)
         return {}

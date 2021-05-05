@@ -22,8 +22,10 @@ from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_tags
 
 class Node(AbstractNode):
     """Node that draws tags above bounding boxes"""
+
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
+        self.tag_color = config["tag_color"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.
@@ -35,8 +37,7 @@ class Node(AbstractNode):
             outputs (dict): Dict with keys "img".
         """
 
-        draw_tags(inputs["img"],
-                  inputs["bboxes"],
-                  inputs["obj_tags"])
+        draw_tags(inputs["img"], inputs["bboxes"],
+                  inputs["obj_tags"], self.tag_color)
 
         return {}
