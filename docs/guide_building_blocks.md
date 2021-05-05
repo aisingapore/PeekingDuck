@@ -1,22 +1,20 @@
-# GUIDE
-## Building your PeekingDuck project with Custom Nodes (Beta)
+# Building Blocks
 
-This guide instructs new users on how to implement your own project powered by PeekingDuck, with custom nodes.
+This document details the building blocks and core concepts of PeekingDuck to help users understand our framework.
 
-## Building Blocks
-### Nodes
+## Nodes
 Nodes are the basic blocks of a PeekingDuck project. It is a wrapper for a Python function, and contains information on how PeekingDuck and other PeekingDuck nodes may interact with it.
 
 For more finegrain control over a node's behavior, we recommend the use of [node configs](#node-configs)
 
-### Pipeline
+## Pipeline
 A pipeline governs the behavior of a chain of nodes. This may include the execution order*, parallelism*, distribution strategy* of each run.
 
 In the most basic form of the pipeline, nodes are called in sequential order. Each node may depend on another for inputs and outputs.
 
 Here's an example of a pipeline:
 ```
-nodes
+nodes:
 - random_number_generator
 - multiply_by_two
 - write_to_file
@@ -31,27 +29,7 @@ In this example,
 
 *future implementation
 
-### Runner configs: `run_config.yml`
+## Runner configs: `run_config.yml`
 
 The runner configs, typically found in `run_config.yml` at the repository root, contains the list of nodes to be included into pipeline. PeekingDuck will refer to this list and run the nodes in sequential order.
-
-## Starting a PeekingDuck Project
-
-Once you have installed PeekingDuck, you can use it to start a new project:
-```bash
-> mkdir <new_project>
-> cd <new_project>
-> peekingduck init
-```
-
-Your project folder should look like this:
-```
-<project_name>
-├── run_config.yml
-└── src
-    └── custom_nodes
-```
-
-- `src/custom_nodes` folder is created. This is where custom nodes created for your project should be housed.
-- `run_config.yml` is the basic yml file to select your nodes in the pipeline. You will be using this to run your peekingduck pipeline.
 
