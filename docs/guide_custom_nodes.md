@@ -2,7 +2,7 @@
 
 ## Starting a PeekingDuck Project
 
-Once PeekingDuck has been installed, use `peekingduck init` to utilise our project template:
+Once PeekingDuck has been installed, use `peekingduck init` to initialise a new project with our template:
 ```bash
 > mkdir <new_project>
 > cd <new_project>
@@ -29,13 +29,13 @@ Node configs contains information on the input and outputs for PeekingDuck to ma
 We recommend new users to use the [config template](../peekingduck/configs/node_template.yml) for reference.
 
 Your node config yaml file should contain the following:
-- `input` (list of str): the key(s) to the expected inputs for your node
+- `input` (list of str): the key(s) to the required inputs for your node
 - `output` (list of str): the key(s) to the outputs
-- (optional) node-specific parameters. In our case, it will be `multiplie`.
+- (optional) node-specific parameters. In our case, it will be `multiple`.
 
-*Note: While the keys for input and output can be arbitrary, keys should be across all nodes in the pipeline.
+Note: While the keys for input and output can be arbitrary strings, keys should be consistent across all nodes in the pipeline.
 
-Here's what `multiplier.yml` will look like:
+Here's what the configs for `multiplier`, `multiplier.yml` will look like:
 
 ```
 input: ['number']
@@ -49,7 +49,7 @@ multiple: 2
 
 We recommend new users to use the [node template](../peekingduck/pipeline/nodes/node_template.py)
 
-1. Initialise your node script, multiplier.py, with the template:
+1. Initialise your node script, `multiplier.py`, with the template:
 
 ```python
 # multiplier.py
@@ -64,7 +64,7 @@ class Node(AbstractNode):
         pass
 ```
 
-2. Develop `run`, the core function that PeekingDuck will call in the pipeline. Nodes can simply retrieve the necessary data by querying the input as a dictionary. In our case, we are taking the input called `number` and multiplying it by `multiple`, and returning the new `number`:
+2. Develop `run`, the core function that PeekingDuck will call in the pipeline. Nodes can simply retrieve the necessary data by querying the input in a dict-like fashion. In this case, we are taking the input `number`, multiplying it by `multiple`, and returning the results as `multiplied_number`:
 
 ```python
 # multiplier.py
@@ -73,8 +73,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     def __init__(self, config):
         super().__init__(config, node_path =__name__)
-        self.multiple = config['multiple']
 
+        self.multiple = config['multiple']
 
     def run(self, inputs):
         results = inputs['number'] * self.multiple
@@ -84,8 +84,8 @@ class Node(AbstractNode):
 
 Note:
 - Class name should be maintained as `Node`.
-- pipeline will feed a dict as an input to the node. In order to access the input data, simply call `inputs["in1"]`
-- `run` must return a dictionary with the key-value pair defined as `{"out1": results_object}`. `out1` must be consistent with the outputs defined in the node configs. In the case of multiplier.py, it will be `{'multiplied_number': results}`
+- PeekingDuck pipelines will feed a dict as an input to the node. In order to access the input data, simply call `inputs["in1"]`
+- `run` must return a dictionary with the key-value pair defined as `{"out1": results_object}`. `out1` must be consistent with the outputs defined in the node configs. In this case, it will be `{'multiplied_number': results}`
 - logging is added to all nodes. To access it, simply call `self.logger` (e.g. `self.logger.info("Model loaded!")`)
 
 ### Step 3: Organise your custom nodes in your repository
@@ -115,7 +115,7 @@ In the case of `multiplier`, the `run_config.yml` may look like this:
 nodes:
 - random.random_number_generator         # outputs 'number'
 - custom.multiplier
-- output.write_to_file
+- output.file_writer
 ```
 
 
