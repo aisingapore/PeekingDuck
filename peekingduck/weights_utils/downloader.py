@@ -15,11 +15,13 @@ limitations under the License.
 """
 
 import os
+from typing import Any
 import zipfile
 import requests
 from tqdm import tqdm
 
-def download_weights(root, url):
+
+def download_weights(root: str, url: str) -> None:
     """Download weights for specified url
 
     Args:
@@ -39,7 +41,8 @@ def download_weights(root, url):
 
     os.remove(zip_path)
 
-def download_file_from_google_drive(file_id, destination):
+
+def download_file_from_google_drive(file_id: str, destination: str) -> None:
     """Method to download publicly shared files from google drive
 
     Args:
@@ -59,7 +62,8 @@ def download_file_from_google_drive(file_id, destination):
 
     save_response_content(response, destination)
 
-def get_confirm_token(response):
+
+def get_confirm_token(response: requests.Response) -> Any:
     """Method to get confirmation token
 
     Args:
@@ -74,7 +78,8 @@ def get_confirm_token(response):
 
     return None
 
-def save_response_content(response, destination):
+
+def save_response_content(response: requests.Response, destination: str) -> None:
     """Chunk saving of download content. Chunk size set to large
     integer as weights are usually pretty large
 
@@ -86,5 +91,5 @@ def save_response_content(response, destination):
 
     with open(destination, "wb") as temp:
         for chunk in tqdm(response.iter_content(chunk_size)):
-            if chunk: # filter out keep-alive new chunks
+            if chunk:  # filter out keep-alive new chunks
                 temp.write(chunk)
