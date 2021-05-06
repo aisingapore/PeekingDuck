@@ -22,6 +22,8 @@ Your project folder should look like this:
 
 ## Creating nodes
 
+PeekingDuck library contains several in-built nodes that may be used off-the-shelf. In the scenario in which your usecase cannot be found in PeekingDuck, we have enabled users to design their own custom nodes that should work well with PeekingDuck's native nodes as well.
+
 We will guide you to create your first node `multiplier`, a node that takes in a number and multiplies it by `multiple`, a pre-defined parameter.
 
 ### Step 1: Create your node configs
@@ -108,16 +110,19 @@ Filenames for the node script, node configs should be consistent. e.g. The filen
 ### Step 4: Add your custom nodes to the runner configs
 Add your custom node to `run_config.yml`, in the `custom.<node_name>` format.
 
+PeekingDuck is designed for flexibility and coherence between in-built and custom nodes; you can design a pipeline which has both types of nodes.
+
 As PeekingDuck runs the pipeline sequentially, it is important to check if the nodes preceding your custom nodes provides the correct inputs to your node.
 
 In the case of `multiplier`, the `run_config.yml` may look like this:
 ```
 nodes:
-- random.random_number_generator         # outputs 'number'
+- custom.random_number_generator         # outputs 'number'
 - custom.multiplier
-- output.file_writer
+- output.file_writer                     # an in-built node*
 ```
 
+*`output.file_writer` does not exist in the current version of PeekingDuck yet. If you would like to contribute, do let us know!
 
 ### Step 4b: Configure your nodes
 
