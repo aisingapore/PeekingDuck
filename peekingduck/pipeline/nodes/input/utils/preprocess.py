@@ -15,11 +15,13 @@ limitations under the License.
 """
 
 import logging
+from typing import Any, Tuple, List
 import cv2
 
-logger = logging.getLogger(__name__) #pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def set_res(stream, desired_width, desired_height):
+
+def set_res(stream: Any, desired_width: int, desired_height: int) -> None:
     '''
     Sets the resolution for the video frame
     '''
@@ -33,7 +35,8 @@ def set_res(stream, desired_width, desired_height):
         logger.warning("Unable to change height of video frame to %s, current height: %s!",
                        desired_height, actual_height)
 
-def get_res(stream):
+
+def get_res(stream: Any) -> Tuple[int, int]:
     '''
     Gets the resolution for the video frame
     '''
@@ -42,7 +45,8 @@ def get_res(stream):
 
     return width, height
 
-def mirror(frame):
+
+def mirror(frame: List[int]) -> Any:
     '''
     Mirrors a video frame.
     '''
