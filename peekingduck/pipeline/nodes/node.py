@@ -23,9 +23,9 @@ class AbstractNode(metaclass=ABCMeta):
 
     def __init__(self, config: Dict[str, Any], node_path: str) -> None:
 
-        self._inputs: List[str] = config['input']
-        self._outputs: List[str] = config['output']
-        self._name: str = node_path
+        self._inputs = config['input']
+        self._outputs = config['output']
+        self._name = node_path
 
         self.logger = logging.getLogger(self._name)
 
