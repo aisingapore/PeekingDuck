@@ -18,7 +18,7 @@ import sys
 import os
 import importlib
 import logging
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Tuple
 
 import yaml
 
