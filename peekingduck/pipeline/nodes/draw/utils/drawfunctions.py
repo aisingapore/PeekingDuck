@@ -41,6 +41,7 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4],
             [3, 5], [4, 6], [5, 7]]
 
+
 def add_plotter_details(poses):
     '''
     filters out low-confidence keypoints and adds bounding box and connections
@@ -51,6 +52,7 @@ def add_plotter_details(poses):
         pose.connections = _get_connections_of_one_pose(pose.keypoints, pose.masks)
 
     return poses
+
 
 def get_valid_full_keypoints_coords(coords, masks):
     '''
@@ -67,6 +69,7 @@ def get_valid_full_keypoints_coords(coords, masks):
     full_joints = coords.copy()
     full_joints[~masks] = -1
     return full_joints
+
 
 def _get_bbox_of_one_pose(coords, mask):
     '''
@@ -110,8 +113,7 @@ def _get_connections_of_one_pose(coords, masks):
 
 def draw_human_poses(image: np.array, poses: List[Any]) -> None:
     '''draw pose estimates onto frame image'''
-    #image_size = _get_image_size(image)
-    image_size: Tuple[int, int] = _get_image_size(image)
+    image_size = _get_image_size(image)
     poses = add_plotter_details(poses)
     for pose in poses:
         if pose.bbox.shape == (2, 2):

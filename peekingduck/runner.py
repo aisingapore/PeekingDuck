@@ -48,7 +48,8 @@ class Runner():
         if not nodes:
             node_configs = ConfigLoader()
             # create Graph to run
-            self.node_loader = DeclarativeLoader(node_configs, RUN_PATH, CUSTOM_NODE_PATH)
+            self.node_loader = DeclarativeLoader(
+                node_configs, RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
 
             self.pipeline = self.node_loader.get_nodes()
 

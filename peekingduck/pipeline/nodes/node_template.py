@@ -20,6 +20,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     """This is a template class of how to write a node for peekingduck."""
+
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
@@ -27,8 +28,7 @@ class Node(AbstractNode):
         # self.config1 = config["config1"]
         # self.logger.info("model loaded with configs: %s", configs)
 
-
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
         """ This node does ___.
 
         Args:
