@@ -1,0 +1,7 @@
+# Mandatory configs
+input: ["in1", "in2"]             # replace values
+output: ["out1", "out2", "out3"]  # replace values
+
+# Optional configs depending on node
+threshold: 0.5                    # example
+

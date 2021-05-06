@@ -1,0 +1,2 @@
+input: ["count", "img"]
+output: ["img"]
