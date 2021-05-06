@@ -17,7 +17,10 @@ import os
 import logging
 from typing import Dict, Any, List, Tuple
 import numpy as np
+import tensorflow as tf
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.graph_functions \
+    import load_graph
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process \
     import preprocess_image, postprocess_boxes
 
@@ -37,7 +40,17 @@ class Detector:
     def _create_effdet_model(self):
         self.model_type = self.config['model_type']
         if self.config['efficientdet_graph_mode']:
-            raise NotImplementedError
+            graph_path = os.path.join(self.root_dir, self.config['graph_files'][self.model_type])
+            model_nodes = self.config['MODEL_NODES']
+            model = load_graph(
+                graph_path, inputs=model_nodes['inputs'], outputs=model_nodes['outputs'])
+            self.logger.info(
+                'Efficientdet graph model loaded with following configs:'
+                'Model type: D%s, '
+                'Score Threshold: %s, ',
+                self.model_type, self.config['score_threshold'])
+            return model
+
         _, model = efficientdet(phi=self.model_type,
                                 weighted_bifpn=self.config['weighted_bifpn'],
                                 num_classes=self.config['num_classes'],
@@ -45,7 +58,7 @@ class Detector:
         model_path = os.path.join(self.root_dir, self.config['model_files'][self.model_type])
         model.load_weights(model_path, by_name=True)
         self.logger.info(
-            'Efficientdet model loaded with following configs:'
+            'Efficientdet keras model loaded with following configs:'
             'Model type: D%s, '
             'Score Threshold: %s, ',
             self.model_type, self.config['score_threshold'])
@@ -122,8 +135,14 @@ class Detector:
         image, scale = self.preprocess(image, image_size=image_size)
 
         # run network
-        boxes, scores, labels = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
-        network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
+        if self.config['efficientdet_graph_mode']:
+            graph_input = tf.convert_to_tensor(np.expand_dims(image, axis=0), dtype=tf.float32)
+            boxes, scores, labels = self.effdet(x=graph_input)
+            network_output = np.squeeze(boxes.numpy()), np.squeeze(
+                scores.numpy()), np.squeeze(labels.numpy())
+        else:
+            boxes, scores, labels = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
+            network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
 
         boxes, labels, scores = self.postprocess(network_output, scale, img_shape, detect_ids)
 

@@ -1,7 +1,7 @@
 input: ['img']
 output: ['bboxes', 'labels', 'score']
 
-efficientdet_graph_mode: False
+efficientdet_graph_mode: True
 model_type: 0 # 0-4
 weighted_bifpn: True
 classes: ../weights/efficientdet/coco_90.json
@@ -14,7 +14,17 @@ model_files:
         3: ../weights/efficientdet/efficientdet-d3.h5,
         4: ../weights/efficientdet/efficientdet-d4.h5,
     }
+graph_files:
+    {
+        0: ../weights/efficientdet/efficientdet-d0.pb,
+        1: ../weights/efficientdet/efficientdet-d1.pb,
+        2: ../weights/efficientdet/efficientdet-d2.pb,
+        3: ../weights/efficientdet/efficientdet-d3.pb,
+        4: ../weights/efficientdet/efficientdet-d4.pb,
+    }
 size: [512, 640, 768, 896, 1024, 1280, 1408]
 num_classes: 90
 score_threshold: 0.3
 detect_ids: [0]
+MODEL_NODES:
+    { inputs: [x:0], outputs: [Identity:0, Identity_1:0, Identity_2:0] }
