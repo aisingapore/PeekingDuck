@@ -4,8 +4,8 @@
 
 Once PeekingDuck has been installed, use `peekingduck init` to initialise a new project with our template:
 ```bash
-> mkdir <new_project>
-> cd <new_project>
+> mkdir <project_name>
+> cd <project_name>
 > peekingduck init
 ```
 
@@ -103,7 +103,7 @@ By default, PeekingDuck assumes that your custom nodes are found in `src/custom_
         └── node2.yml
 ```
 
-Note that the filenames for the node script, node configs, and node name in runner configs should be consistent. e.g. The files associated with the Node `multiplier` should be `multiplier.py`, `multiplier.yml`, and `custom.multiplier` respectively.
+Filenames for the node script, node configs should be consistent. e.g. The filenames associated with the Node `multiplier` should be `multiplier.py`, `multiplier.yml`.
 
 ### Step 4: Add your custom nodes to the runner configs
 Add your custom node to `run_config.yml`, in the `custom.<node_name>` format.
@@ -121,7 +121,12 @@ nodes:
 
 ### Step 4b: Configure your nodes
 
-If there are in-built nodes that you wish to configure, you may use `peekingduck get-configs` to compile a `node_config.yml` to your project repository.
+If there are nodes in-built into PeekingDuck that you wish to configure, you may use
+```
+peekingduck get-configs
+```
+
+to compile a `node_config.yml` to your project repository.
 
 Given a list of nodes (usually from `run_config.yml`), `get-configs` will retrieve and compile all associated configs into a single yaml. It will search the custom nodes folder for associated configs as well.
 
