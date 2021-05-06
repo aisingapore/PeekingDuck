@@ -13,16 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+#pylint: disable=duplicate-code
+
 import sys
+from typing import Any, Dict
 import cv2
 from peekingduck.pipeline.nodes.node import AbstractNode
 
+
 class Node(AbstractNode):
     """Livestream output node"""
-    def __init__(self, config):
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
-    def run(self, inputs: dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cv2.imshow('livefeed', inputs[self.inputs[0]])
         if cv2.waitKey(1) & 0xFF == ord('q'):
             sys.exit(1)
