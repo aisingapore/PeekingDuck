@@ -15,17 +15,19 @@ limitations under the License.
 """
 import os
 import logging
+from typing import Dict, Any, List
 import json
 import numpy as np
 
 from peekingduck.weights_utils import checker, downloader
-from .posenet_files.predictor import Predictor
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
 
 class PoseNetModel:
     """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
 
         self.logger = logging.getLogger(__name__)
@@ -40,13 +42,13 @@ class PoseNetModel:
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame):
+    def predict(self, frame: List[List[float]]) -> List[PoseData]:
         """predict poses from frame
 
         returns:
-        poses(List[PoseData]): list of PoseData containing poses info
+        posedata object(List[PoseData]): list of PoseData containing poses info
         """
         assert isinstance(frame, np.ndarray)
 
-        # return poses
+        # posedata class
         return self.predictor.predict(frame)

@@ -14,36 +14,41 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import os
-import tensorflow as tf
 import logging
+from typing import Dict, Any, List, Tuple
+import tensorflow as tf
 import numpy as np
 
-from .posedata import PoseData
-from .detector import detect_keypoints_yx, \
-    get_keypoints_relative_coords, SCALE_FACTOR, KEYPOINTS_NUM
-from .preprocessing import rescale_image
-from .graph_functions import load_graph
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import detect_keypoints, \
+    get_keypoints_relative_coords
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import SCALE_FACTOR, \
+    KEYPOINTS_NUM, MIN_PART_SCORE
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.graph_functions import load_graph
+
 
 class Predictor:
+    """Predictor class to handle detection of poses for posenet
+    """
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
 
         self.logger = logging.getLogger(__name__)
 
         self.config = config
         self.root_dir = config['root']
+
         self.output_stride = self.config['output_stride']
         self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
         self.max_pose_detection = self.config['max_pose_detection']
         self.model_type = self.config['model_type']
         self.score_threshold = self.config['score_threshold']
-
-        self.logger.info('load model [posenet#%s]', self.model_type)
-
         self.dst_scores = np.zeros(
             (self.max_pose_detection, KEYPOINTS_NUM))
         self.dst_keypoints = np.zeros(
             (self.max_pose_detection, KEYPOINTS_NUM, 2))
+
         self.posenet_model = self._create_posenet_model()
 
     def _create_posenet_model(self):
@@ -51,8 +56,17 @@ class Predictor:
         model_type = self.config['model_type']
         model_path = os.path.join(self.root_dir, self.config['model_files'][model_type])
         model_func = self._load_posenet_graph(model_path)
-        return model_func
 
+        self.logger.info(
+            'PoseNet model loaded with following configs: \n \
+            Model type: %s, \n \
+            Output stride: %s, \n \
+            Input resolution: %s, \n \
+            Max pose detection: %s, \n \
+            Score threshold: %s', self.model_type, self.output_stride, self.resolution,
+            self.max_pose_detection, self.score_threshold)
+
+        return model_func
 
     def _load_posenet_graph(self, filepath):
         model_id = 'mobilenet'
@@ -62,37 +76,33 @@ class Predictor:
         model_path = os.path.join(filepath)
         if os.path.isfile(model_path):
             return load_graph(model_path, inputs=model_nodes['inputs'],
-                            outputs=model_nodes['outputs'])
+                              outputs=model_nodes['outputs'])
         raise ValueError('Graph file does not exist. Please check that '
-                        '%s exists' % model_path)
+                         '%s exists' % model_path)
 
-    def get_resolution_as_tuple(self, resolution):
-        '''
-        Takes a resolution in str format seperated by 'x'and convert into
-        tuple. e.g. 225x225 returns (225, 225)
-        '''
+    def get_resolution_as_tuple(self,
+                                resolution: dict):
+        """ Convert resolution from dict to tuple format
 
-        res1, res2 = resolution.split('x')
+        Args:
+            resolution (dict): height and width in dict format
+
+        Returns:
+            resolution (Tuple(int)): height and width in tuple format
+        """
+        res1, res2 = resolution['height'], resolution['width']
 
         return (int(res1), int(res2))
 
+    def predict(self,
+                frame: List[List[float]]):
+        """ PoseNet prediction function
 
-    def predict(self, frame):
-        """Predict pose and update the business frame
-        Note: full means all poses
+        Args:
+            frame (np.array): image in numpy array
 
-        args:
-            posenet_model - the posenet mode's function
-            output_stride - by default it is 16
-            frame - frame to perform inference with
-            resolution - resolution to scale frame to for inference
-            dst_scores - 17x1 buffer to store keypoint scores
-            dst_keypoints - 17 x 2 buffer to store keypoint coordinates
-            model_type - model type specified in modelconfig.yml
-            score_threshold - the threshold for predictions
-
-        return:
-            business_frame
+        Returns:
+            poses (List[PoseData]): list of PoseData object
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
@@ -107,48 +117,49 @@ class Predictor:
 
         poses = []
 
-        for coords, scores, masks in zip(full_keypoint_rel_coords, full_keypoint_scores, full_masks):
+        for coords, scores, masks in zip(full_keypoint_rel_coords,
+                                         full_keypoint_scores, full_masks):
             pose = PoseData(keypoints=coords, keypoint_scores=scores,
                             masks=masks, connections=None)
             poses.append(pose)
 
         return poses
 
-
     def _predict_all_poses(
             self,
             posenet_model,
-            output_stride,
-            frame,
-            resolution,
-            dst_scores,
-            dst_keypoints,
-            model_type,
-            score_threshold):
-        """Predict relative coordinates, confident scores and validation masks for
-        all keypoints for all poses detected from image.  We call 'full' because
-        they are for all poses
+            output_stride: int,
+            frame: List[List[float]],
+            resolution: Tuple[int],
+            dst_scores: float,
+            dst_keypoints: float,
+            model_type: str,
+            score_threshold: float):
+        """Predict relative coordinates, confident scores and validation masks
+        for all detected poses
 
-        args:
-            posenet_model - tensorflow model
-            output_stride - output stride to convert output indices to image coords
-            frame - frame to perform inference with
-            resolution - resolution to scale frame to for inference
-            dst_scores - 17x1 buffer to store keypoint scores
-            dst_keypoints - 17 x 2 buffer to store keypoint coordinates
-            model_type - model type specified in modelconfig.yml
-            score_threshold - the threshold for predictions
+        Args:
+            posenet model: tensorflow model
+            output_stride (int): output stride to convert output indices to image
+                coordinates
+            frame (np.array): image for inference
+            resolution (int): resolution to scale frame for inference
+            dst_scores (np.array): 17x1 buffer to store keypoint scores
+            dst_keypoints (np.array): 17x2 buffer to store keypoint coordinates
+            model_type (str): specified model type (refer to modelconfig.yml)
+            score_threshold (float): threshold for prediction
 
-        return:
-            - full_keypoint_coords: all poses' keypoints' coordinates
-            - full_keypoint_scores: all poses' keypoints' confidence scores
-            - full_masks: all poses' keypoints' validation masks
+        Returns:
+            full_keypoint_coords (np.array): keypoints coordinates of detected poses
+            full_keypoint_scores (np.array): keypoints confidence scores of detected
+                poses
+            full_masks (np.array): keypoints validation masks of detected poses
         """
         input_res = resolution
         image, output_scale, image_size = self._create_image_from_frame(
             output_stride, frame, input_res, model_type)
 
-        pose_count = detect_keypoints_yx(
+        pose_count = detect_keypoints(
             posenet_model, image, output_stride, dst_scores, dst_keypoints,
             model_type, score_threshold)
         full_keypoint_scores = dst_scores[:pose_count]
@@ -161,8 +172,24 @@ class Predictor:
 
         return full_keypoint_rel_coords, full_keypoint_scores, full_masks
 
+    def _create_image_from_frame(self,
+                                 output_stride: int,
+                                 frame: List[List[float]],
+                                 input_res: int,
+                                 model_type: str):
+        """ Preprocess image for inference
 
-    def _create_image_from_frame(self, output_stride, frame, input_res, model_type):
+        Args:
+            output_stride (int): output stride to convert output indices to image coordinates
+            frame (np.array): image for inference
+            input_res (int): input resolution to model
+            model_type (str): specified model type (refer to modelconfig.yml)
+
+        Returns:
+            image (np.array): image for inference
+            output_scale (np.array): output scale
+            image_size (list): list of frame shape in height and width format
+        """
         image_size = [frame.shape[1], frame.shape[0]]
 
         image, output_scale = rescale_image(frame,
@@ -174,9 +201,15 @@ class Predictor:
         image = tf.convert_to_tensor(image)
         return image, output_scale, image_size
 
+    def _get_full_masks_from_keypoint_scores(self,
+                                             keypoint_scores: List[List[float]]):
+        """ PoseNet prediction function
 
-    def _get_full_masks_from_keypoint_scores(self, keypoint_scores):
-        # https://github.com/rwightman/posenet-python/blob/master/webcam_demo.py#L55
-        MIN_PART_SCORE = 0.1
+        Args:
+            keypoint_scores (np.array): keypoints confidence scores of detected poses
+
+        Returns:
+            masks (np.array): keypoints validation masks of detected poses
+        """
         masks = keypoint_scores > MIN_PART_SCORE
         return masks

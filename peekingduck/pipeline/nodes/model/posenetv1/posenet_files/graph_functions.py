@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import logging
 import tensorflow as tf
 
@@ -23,7 +23,9 @@ SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
 
 logger = logging.getLogger(__name__)
 
-def wrap_frozen_graph(graph_def, inputs, outputs):
+def wrap_frozen_graph(graph_def,
+                      inputs,
+                      outputs):
     '''
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -50,7 +52,9 @@ def wrap_frozen_graph(graph_def, inputs, outputs):
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename, inputs, outputs):
+def load_graph(filename,
+               inputs,
+               outputs):
     '''
     Loads the graph
     '''

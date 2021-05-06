@@ -37,3 +37,15 @@ _POSE_CHAIN = [
 
 POSE_CONNECTIONS = np.array([(_KEYPOINT_IDS[parent], _KEYPOINT_IDS[child])
                              for parent, child in _POSE_CHAIN])
+
+LOCAL_MAXIMUM_RADIUS = 1
+
+SCALE_FACTOR = 1.0
+
+KEYPOINTS_NUM = 17
+
+MIN_PART_SCORE = 0.1
+
+IMAGE_NET_MEAN = [-123.15, -115.90, -103.06]
+
+SWAP_AXES = (1, 0)

@@ -15,19 +15,33 @@ limitations under the License.
 """
 
 import logging
+from typing import List
+
 
 class PoseData:
-    """A class contain Pose information predicted from a frame"""
+    """PoseData class containing information about predicted poses
 
-    def __init__(self, keypoints=None, keypoint_scores=None, masks=None,
-                 connections=None, activity=''):
+       Args:
+           keypoints (np.array): keypoints coordinates
+           keypoint_scores (np.array): keypoints confidence scores
+           masks (np.array): masks for low-confidence keypoints
+           connections (np.array): list of connections
+           activity (str): activity class name
+    """
+
+    def __init__(self,
+                 keypoints: List[List[List[float]]] = None,
+                 keypoint_scores: List[List[float]] = None,
+                 masks: List[List[bool]] = None,
+                 connections: List[List[int]] = None,
+                 activity: str = ''):
         self.logger = logging.getLogger(__name__)
 
-        self.keypoints = keypoints  # (np.array) (17 x 2) a list of keypoints' coordinates
-        self.keypoint_scores = keypoint_scores  # (np.array) (17,) a list of scores
-        self.masks = masks  # (np.array) (17) a list of masks for low-confidence keypoints
-        self.connections = connections  # (float) (N x 2) a list of connections
-        self.hand_bboxes = []  # (list of np.array) (2 x 2) bounding boxes for hand estimation
-        self.hands = []  # a list of BusinessHand
-        self.activity = activity  # (str) activity class name or other info like distance in OSL
-        self.encode = None    # (float) a list of encode used in OSL visualisation only
+        self.keypoints = keypoints
+        self.keypoint_scores = keypoint_scores
+        self.masks = masks
+        self.connections = connections
+    #    self.hand_bboxes = []
+    #    self.hands = []
+        self.activity = activity
+        self.encode = None
