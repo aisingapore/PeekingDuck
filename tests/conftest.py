@@ -21,22 +21,6 @@ import pytest
 
 import cv2
 
-SIZE = (900, 800, 3)
-
-
-@pytest.fixture
-def image():
-    res = np.random.randint(255, size=SIZE, dtype=np.uint8)
-    return res
-
-
-@pytest.fixture
-def images():
-    def generate_img():
-        return np.random.randint(255, size=SIZE, dtype=np.uint8)
-    res = [generate_img() for _ in range(30)]
-    return res
-
 
 @pytest.fixture
 def create_image():
