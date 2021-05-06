@@ -20,6 +20,7 @@ import importlib
 import logging
 from typing import Any, Dict, List, Tuple
 
+
 import yaml
 
 from peekingduck.pipeline.pipeline import Pipeline
@@ -72,7 +73,7 @@ class DeclarativeLoader:
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str) -> List[str]:
+    def _load_node_list(self, run_config: str):
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
             nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
@@ -107,7 +108,7 @@ class DeclarativeLoader:
                     self.logger.info(
                         "No associated configs found for %s. Skipping", node)
 
-    def _import_nodes(self) -> List[Tuple[str, Any]]:
+    def _import_nodes(self) -> None:
         """Given a list of nodes, import the appropriate nodes"""
         imported_nodes = []
         for node_str in self.node_list:
@@ -117,7 +118,7 @@ class DeclarativeLoader:
                     self.custom_folder_path, node + '.py')
                 spec = importlib.util.spec_from_file_location(  # type: ignore
                     node, custom_node_path)
-                module = importlib.util.module_from_spec(spec)  # type: ignore
+                module = importlib.util.module_from_spec(spec)
                 spec.loader.exec_module(module)
                 imported_nodes.append(("custom", module))
             else:

@@ -16,7 +16,7 @@ limitations under the License.
 
 import sys
 import logging
-from typing import List, Optional
+from typing import List, Dict, Any
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -32,8 +32,8 @@ class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
 
-    def __init__(self, RUN_PATH: str, CUSTOM_NODE_PATH: Optional[str] = None,
-                 nodes: Optional[List[AbstractNode]] = None):
+    def __init__(self, RUN_PATH: str, CUSTOM_NODE_PATH: str = None,
+                 nodes: List[AbstractNode] = None):
         """
         Args:
             RUN_PATH (str): path to yaml file of node pipeine declaration.
@@ -44,7 +44,6 @@ class Runner():
         """
 
         self.logger = logging.getLogger(__name__)
-        self.logger.info(CUSTOM_NODE_PATH)
 
         if not nodes:
             node_configs = ConfigLoader()
@@ -69,10 +68,10 @@ class Runner():
             self.pipeline.execute()
         del self.pipeline
 
-    def get_run_config(self) -> List[str]:
+    def get_run_config(self) -> Dict[str, Any]:
         """retrieve run configs
 
         Returns:
-            List[str]: run configs being used for runner
+            Dict[Any]: run configs being used for runner
         """
         return self.node_loader.node_list

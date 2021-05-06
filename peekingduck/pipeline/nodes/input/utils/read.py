@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from typing import Dict, Any, Union
 from threading import Thread, Lock
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import set_res, mirror
@@ -24,7 +25,7 @@ class VideoThread:
     Videos will be threaded to prevent I/O blocking from affecting FPS.
     '''
 
-    def __init__(self, res, input_source, mirror_image):
+    def __init__(self, res: Dict[str, Any], input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
@@ -38,17 +39,17 @@ class VideoThread:
         thread = Thread(target=self._reading_thread, args=(), daemon=True)
         thread.start()
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.stream.release()
 
-    def _reading_thread(self):
+    def _reading_thread(self) -> None:
         '''
         A thread that continuously polls the camera for frames.
         '''
         while True:
             _, self.frame = self.stream.read()
 
-    def read_frame(self):
+    def read_frame(self) -> Union[bool, Any]:
         '''
         Reads the frame.
         '''
@@ -69,7 +70,7 @@ class VideoNoThread:
     No threading to deal with recorded videos and images.
     '''
 
-    def __init__(self, res, input_source, mirror_image):
+    def __init__(self, res: Dict[str, Any], input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
@@ -78,17 +79,17 @@ class VideoNoThread:
         width, height = res['width'], res['height']
         set_res(self.stream, width, height)
 
-    def __del__(self):
+    def __del__(self) -> None:
         self.stream.release()
 
-    def read_frame(self):
+    def read_frame(self) -> None:
         '''
         Reads the frame.
         '''
         return self.stream.read()
 
     @property
-    def fps(self):
+    def fps(self) -> float:
         """ Get FPS of videofile
 
         Returns:

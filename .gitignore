@@ -143,5 +143,8 @@ logs/
 results/
 weights/
 .vscode/
+build/
+dist/
+peekingduck.egg-info/
 # Other likely files that should not be committed
 .DS_Store
