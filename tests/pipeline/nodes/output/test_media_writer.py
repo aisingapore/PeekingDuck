@@ -38,7 +38,7 @@ def writer():
 size = (400, 600, 3)
 
 
-@pytest.mark.usefixtures("tmpdir")
+@pytest.mark.usefixtures("tmp_dir")
 class TestMediaWriter:
 
     def test_cwd_starts_empty(self):
