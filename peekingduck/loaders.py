@@ -72,7 +72,7 @@ class DeclarativeLoader:
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str) -> Any:
+    def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
             nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
@@ -94,14 +94,18 @@ class DeclarativeLoader:
                 else:
                     dir_path = os.path.dirname(os.path.realpath(__file__))
                     config_filename = node + '.yml'
-                    node_config_path = os.path.join(dir_path, 'configs', node_type, config_filename)
+                    node_config_path = os.path.join(
+                        dir_path, 'configs', node_type, config_filename)
                 if os.path.isfile(node_config_path):
                     with open(node_config_path, 'r') as node_yml:
-                        node_config = yaml.load(node_yml, Loader=yaml.FullLoader)
+                        node_config = yaml.load(
+                            node_yml, Loader=yaml.FullLoader)
                         node_config = {node_str: node_config}
-                    yaml.dump(node_config, compiled_node_config, default_flow_style=False)
+                    yaml.dump(node_config, compiled_node_config,
+                              default_flow_style=False)
                 else:
-                    self.logger.info("No associated configs found for %s. Skipping", node)
+                    self.logger.info(
+                        "No associated configs found for %s. Skipping", node)
 
     def _import_nodes(self) -> List[Tuple[str, Any]]:
         """Given a list of nodes, import the appropriate nodes"""
