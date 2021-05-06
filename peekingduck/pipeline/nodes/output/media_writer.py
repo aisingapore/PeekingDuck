@@ -27,7 +27,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Node that processes videos and images as primary source input"""
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
         self._file_name = None
@@ -38,7 +38,7 @@ class Node(AbstractNode):
         self._file_path = None
         self.writer = None
 
-    def __del__(self):
+    def __del__(self) -> None:
         if self.writer:
             self.writer.release()
 
@@ -72,25 +72,25 @@ class Node(AbstractNode):
 
         return {}
 
-    def _write(self, img: np.array):
+    def _write(self, img: np.array) -> None:
         if self._image_type == "image":
             cv2.imwrite(self._file_path, img)
         else:
-            self.writer.write(img)
+            self.writer.write(img)  # type: ignore
 
-    def _prepare_writer(self, filename: str, img: np.array, fps: int):
+    def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
-        self._file_name = filename
-        self._file_path = os.path.join(self._output_dir, filename)
+        self._file_name = filename  # type: ignore
+        self._file_path = os.path.join(self._output_dir, filename)  # type: ignore
 
-        self._image_type = "video"
+        self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
-            self._image_type = "image"
+            self._image_type = "image"  # type: ignore
         else:
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
                 self._file_path, self._fourcc, fps, resolution)
 
     @staticmethod
-    def _prepare_directory(outputdir):
+    def _prepare_directory(outputdir) -> None:  # type: ignore
         os.makedirs(outputdir, exist_ok=True)
