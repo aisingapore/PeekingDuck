@@ -14,11 +14,11 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import tensorflow as tf
 import os
 import logging
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+import tensorflow as tf
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
 
@@ -60,12 +60,9 @@ def load_graph(filename,
     '''
     Loads the graph
     '''
-    with tf.io.gfile.GFile(filename, "rb") as f:
+    with tf.io.gfile.GFile(filename, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
-        graph_def.ParseFromString(f.read())
-
-        # print_inputs(graph_def)
-        # print_outputs(graph_def)
+        graph_def.ParseFromString(graph_file.read())
 
         frozen_func = wrap_frozen_graph(graph_def=graph_def,
                                         inputs=inputs,
@@ -83,9 +80,9 @@ def print_inputs(graph_def):
         tf.import_graph_def(graph_def, name='')
 
     input_list = []
-    for op in graph.get_operations():  # tensorflow.python.framework.ops.Operation
+    for graph_op in graph.get_operations():  # tensorflow.python.framework.ops.Operation
         if op.type == "Placeholder":
-            input_list.append(op.name)
+            input_list.append(graph_op.name)
 
         logger.info('Inputs: %s', input_list)
 

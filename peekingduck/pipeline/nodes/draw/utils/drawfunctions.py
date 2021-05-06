@@ -105,8 +105,8 @@ def _get_connections_of_one_pose(coords, masks):
         list of adjacent keypoint pairs where both ends are detected
     """
     connections = []
-    for l1, l2 in SKELETON:
-        if masks[l1 - 1] and masks[l2 - 1]:
+    for start_joint, end_joint in SKELETON:
+        if masks[start_joint - 1] and masks[end_joint - 1]:
             connections.append((coords[l1 - 1], coords[l2 - 1]))
     return np.array(connections)
 

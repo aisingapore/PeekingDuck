@@ -80,8 +80,8 @@ class Predictor:
         raise ValueError('Graph file does not exist. Please check that '
                          '%s exists' % model_path)
 
-    def get_resolution_as_tuple(self,
-                                resolution: dict):
+    @staticmethod
+    def get_resolution_as_tuple(resolution: dict):
         """ Convert resolution from dict to tuple format
 
         Args:
@@ -172,8 +172,8 @@ class Predictor:
 
         return full_keypoint_rel_coords, full_keypoint_scores, full_masks
 
-    def _create_image_from_frame(self,
-                                 output_stride: int,
+    @staticmethod
+    def _create_image_from_frame(output_stride: int,
                                  frame: List[List[float]],
                                  input_res: int,
                                  model_type: str):
@@ -201,8 +201,8 @@ class Predictor:
         image = tf.convert_to_tensor(image)
         return image, output_scale, image_size
 
-    def _get_full_masks_from_keypoint_scores(self,
-                                             keypoint_scores: List[List[float]]):
+    @staticmethod
+    def _get_full_masks_from_keypoint_scores(keypoint_scores: List[List[float]]):
         """ PoseNet prediction function
 
         Args:
