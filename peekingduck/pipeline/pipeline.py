@@ -21,7 +21,7 @@ class Pipeline:
     """ Pipe class that stores nodes and manages the data information used during inference
     """
 
-    def __init__(self, nodes: List[AbstractNode]):
+    def __init__(self, nodes: List[AbstractNode]) -> None:
         """
         Args:
             nodes (:obj:'list' of :obj:'Node'): node stack as declared for use in
@@ -29,7 +29,7 @@ class Pipeline:
         """
         self._check_pipe(nodes)
         self.nodes = nodes
-        self._data: Dict[str, Any] = {}
+        self._data = {}  # type: ignore
         self.video_end = False
 
     def __del__(self) -> None:
@@ -45,11 +45,11 @@ class Pipeline:
                       for key in node.inputs if key in self._data}
             outputs = node.run(inputs)
 
-            if 'end' in outputs and outputs['end']:
+            if 'end' in outputs and outputs['end']:  # type: ignore
                 self.video_end = True
                 break
 
-            self._data.update(outputs)
+            self._data.update(outputs)  # type: ignore
 
     def get_pipeline_results(self) -> Dict[str, Any]:
         """get all results data of nodes in pipeline
