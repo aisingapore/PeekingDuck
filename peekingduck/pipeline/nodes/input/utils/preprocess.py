@@ -15,7 +15,8 @@ limitations under the License.
 """
 
 import logging
-from typing import Any, Tuple, List
+from typing import Any, Tuple
+import numpy as np
 import cv2
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -46,7 +47,7 @@ def get_res(stream: Any) -> Tuple[int, int]:
     return width, height
 
 
-def mirror(frame: List[int]) -> Any:
+def mirror(frame: np.array) -> np.array:
     '''
     Mirrors a video frame.
     '''
