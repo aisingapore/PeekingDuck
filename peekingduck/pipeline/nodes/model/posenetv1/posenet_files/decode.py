@@ -1,5 +1,6 @@
 """
-Copyright 2021 AI Singapore
+Copyright 2018 Ross Wightman
+Modifications copyright 2021 AI Singapore
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -13,37 +14,41 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+from typing import List
 import numpy as np
 
-from .constants import POSE_CONNECTIONS
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import POSE_CONNECTIONS
 
 
-def decode_pose(root_score,
-                root_id,
-                root_image_coord,
-                scores,
-                offsets,
-                output_stride,
-                displacements_fwd,
-                displacements_bwd,
-                keypoint_scores,
-                keypoint_coords):
-    """Decode pose's keypoints scores and coordinates from keypoints score,
-    coordinates and displancements. An explantion of the algorithm is here:
-    https://medium.com/@prajwalsingh_48273/posenet-for-android-8b6dede9fa2f
+def decode_pose(root_score: float,
+                root_id: int,
+                root_image_coord: List[float],
+                scores: List[List[List[float]]],
+                offsets: List[List[List[List[float]]]],
+                output_stride: int,
+                displacements_fwd: List[List[List[List[float]]]],
+                displacements_bwd: List[List[List[List[float]]]],
+                keypoint_scores: List[float],
+                keypoint_coords: List[List[float]]):
+    """ Decode pose's keypoints scores and coordinates from keypoints score,
+    coordinates and displancements
 
-    args:
-        - root_score: a keypoint with highest score is selected as root
-        - root_id: root keypoint's index
-        - root_image_coord: relative coordinate the root in image
-        - scores: reference to decode_multiple_poses()
-        - offsets: reference to decode_multiple_poses()
-        - output_stride: reference to decode_multiple_poses()
-        - displacements_fwd: reference to decode_multiple_poses()
-        - displacements_bwd: reference to decode_multiple_poses()
-        - keypoint_scores - 17x1 buffer to store keypoint scores
-        - keypoint_coords - 17 x 2 buffer to store keypoint coordinates
+    Args:
+        root_score (float): a keypoint with highest score is selected as root
+        root_id (int): root keypoint's index
+        root_image_coord (np.array): relative coordinate of root keypoint
+        scores (np.array): (h x w x num_parts) heatmap scores of body parts
+        offsets (np.array): (h x w x num_parts x 2) short range offset vector of body parts
+        output_stride (int): output stride to convert output indices to image coordinates
+        displacements_fwd (np.array): (h x w x num_edges x 2) forward displacements
+                of body connections
+        displacements_bwd (np.array): (h x w x num_edges x 2) backward displacements
+                of body connections
+        keypoints_scores (np.array): 17x1 buffer to store keypoint scores
+        keypoint_coords (np.array): 17x2 buffer to store keypoint coordinates
+
+    Returns:
+        pose_count (int): number of poses detected
     """
     num_edges = len(POSE_CONNECTIONS)
 
@@ -75,15 +80,15 @@ def decode_pose(root_score,
                                       displacements_fwd)
 
 
-def _calculate_instance_keypoints(edge,
-                                  target_keypoint_id,
-                                  source_keypoint_id,
-                                  instance_keypoint_scores,
-                                  instance_keypoint_coords,
-                                  scores,
-                                  offsets,
-                                  output_stride,
-                                  displacements):
+def _calculate_instance_keypoints(edge: int,
+                                  target_keypoint_id: int,
+                                  source_keypoint_id: int,
+                                  instance_keypoint_scores: List[float],
+                                  instance_keypoint_coords: List[List[float]],
+                                  scores: List[List[List[float]]],
+                                  offsets: List[List[List[List[float]]]],
+                                  output_stride: int,
+                                  displacements: List[List[List[List[float]]]]):
     if (instance_keypoint_scores[source_keypoint_id] > 0.0 and
             instance_keypoint_scores[target_keypoint_id] == 0.0):
         source_keypoint = instance_keypoint_coords[source_keypoint_id]
@@ -100,7 +105,10 @@ def _calculate_instance_keypoints(edge,
         instance_keypoint_coords[target_keypoint_id] = coords
 
 
-def _clip_to_indices(keypoints, output_stride, width, height):
+def _clip_to_indices(keypoints: List[float],
+                     output_stride: int,
+                     width: int,
+                     height: int):
     """Clip keypoint coordinate to indices within dimension (width, height)"""
     keypoints = keypoints / output_stride
     keypoint_indices = np.zeros((2,), dtype=np.int32)
@@ -111,13 +119,13 @@ def _clip_to_indices(keypoints, output_stride, width, height):
     return keypoint_indices
 
 
-def _traverse_to_target_keypoint(edge_id,
-                                 source_keypoint,
-                                 target_keypoint_id,
-                                 scores,
-                                 offsets,
-                                 output_stride,
-                                 displacements):
+def _traverse_to_target_keypoint(edge_id: int,
+                                 source_keypoint: int,
+                                 target_keypoint_id: int,
+                                 scores: List[float],
+                                 offsets: List[List[List[List[float]]]],
+                                 output_stride: int,
+                                 displacements: List[List[List[List[float]]]]):
     height = scores.shape[0] - 1
     width = scores.shape[1] - 1
 
