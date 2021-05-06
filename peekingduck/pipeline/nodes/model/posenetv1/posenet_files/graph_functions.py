@@ -14,14 +14,16 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
-import logging
 import tensorflow as tf
+import os
+import logging
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
 
 logger = logging.getLogger(__name__)
+
 
 def wrap_frozen_graph(graph_def,
                       inputs,
