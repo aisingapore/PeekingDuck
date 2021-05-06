@@ -24,7 +24,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.img_size: Optional[Tuple[int, int]] = None
+        self.img_size = None
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts bounding boxes to a single point of reference
@@ -40,7 +40,7 @@ class Node(AbstractNode):
         # This is calculated as x is (x1-x2)/2 and y is y2
         bboxes = inputs["bboxes"]
         frame = inputs["img"]
-        self.img_size = (frame.shape[1], frame.shape[0])
+        self.img_size = (frame.shape[1], frame.shape[0])  # type:ignore
         return {'btm_midpoint': [self._xy_on_img(((bbox[0]+bbox[2])/2), bbox[3])
                                  for bbox in bboxes]}
 
