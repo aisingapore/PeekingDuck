@@ -40,7 +40,7 @@ SKELETON_SHORT_NAMES = (
 
 def draw_human_poses(image: np.array, poses: List[Any]) -> None:
     '''draw pose estimates onto frame image'''
-    image_size: Tuple[int, int] = _get_image_size(image)
+    image_size = _get_image_size(image)
     for pose in poses:
         if pose.bbox.shape == (2, 2):
             _draw_connections(image, pose.connections,
