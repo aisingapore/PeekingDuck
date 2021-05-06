@@ -95,5 +95,5 @@ class VideoNoThread:
         Returns:
             int: number indicating FPS
         """
-        fps: float = self.stream.get(cv2.CAP_PROP_FPS)
+        fps = self.stream.get(cv2.CAP_PROP_FPS)
         return fps
