@@ -26,50 +26,38 @@ from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class ConfigLoader:
+class ConfigLoader:  # pylint: disable=too-few-public-methods
     """ Reads configuration and returns configuration required to
     create the nodes for the project
     """
 
     def __init__(self) -> None:
-        self._master_node_config: Dict[str, Any] = {}
         self._rootdir = os.path.join(
             os.path.dirname(os.path.abspath(__file__))
         )
 
-        self._load_configs()
+    def _get_config_path(self, node: str) -> str:
+        """ Based on the node, return the corresponding node config path """
 
-    def _load_configs(self) -> None:
-        """ Loads all node configs from the configs folder"""
         configs_folder = os.path.join(self._rootdir, 'configs')
-        node_filepaths = [os.path.join(node_type_path, node)
-                          for node_type_path, _, nodes in os.walk(configs_folder)
-                          for node in nodes if node.endswith('.yml')]
-        for filepath in node_filepaths:
-            filepath_split = filepath.split('/')
-            node_type, node = filepath_split[-2], filepath_split[-1][:-4]
-            node_name = node_type + '.' + node
-            with open(filepath) as file:
-                node_config = yaml.load(file, Loader=yaml.FullLoader)
-                self._master_node_config[node_name] = node_config
+        node_type, node_name = node.split(".")
+        node_name = node_name + ".yml"
+        filepath = os.path.join(configs_folder, node_type, node_name)
 
-    def get(self, item: str) -> Dict[str, Any]:
+        return filepath
+
+    def get(self, node_name: str) -> Dict[str, Any]:
         """Get item from configuration read from the filepath,
         item refers to the node item configuration you are trying to get"""
 
-        node: Dict[str, Any] = self._master_node_config[item]
+        filepath = self._get_config_path(node_name)
+
+        with open(filepath) as file:
+            node_config = yaml.load(file, Loader=yaml.FullLoader)
 
         # some models require the knowledge of where the root is for loading
-        node['root'] = self._rootdir
-        return node
-
-    def get_master_configs(self) -> Dict[str, Any]:
-        """Returns the master configs for all nodes
-
-        Returns:
-            Dict[Any]: configs for all nodes.
-        """
-        return self._master_node_config
+        node_config['root'] = self._rootdir
+        return node_config
 
 
 class DeclarativeLoader:
