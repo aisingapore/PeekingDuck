@@ -14,30 +14,32 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
+from collections import Counter
 
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_tags
 
 
 class Node(AbstractNode):
-    """Node that draws tags above bounding boxes"""
+    """This node checks which groups have exceeded the group size threshold."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.tag_color = config["tag_color"]
+        self.group_size_thres = config["group_size_thres"]
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws a tag above each bounding box.
+    def run(self, inputs: Dict[str, List[int]]) -> Dict[str, List[int]]:
+        """ Checks which groups have exceeded the group size threshold,
+        and returns a list of such groups.
 
         Args:
-            inputs (dict): Dict with keys "bboxes", "obj_tags", "img".
+            inputs (dict): Dict with keys "obj_groups".
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs (dict): Dict with keys "large_groups".
         """
 
-        draw_tags(inputs["img"], inputs["bboxes"],
-                  inputs["obj_tags"], self.tag_color)
+        group_counter = Counter(inputs["obj_groups"])
+        large_groups = [group for group in group_counter if
+                        group_counter[group] > self.group_size_thres]
 
-        return {}
+        return {"large_groups": large_groups}

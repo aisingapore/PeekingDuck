@@ -7,4 +7,5 @@ requests == 2.24.0
 tensorflow == 2.2.0
 tqdm == 4.45.0
 mypy == 0.812
+numpy==1.17.4
 Keras==2.2.5
