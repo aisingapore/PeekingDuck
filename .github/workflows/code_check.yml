@@ -20,8 +20,6 @@ jobs:
       - name: Check for copyright and license headers in .py files
         run: bash ./scripts/check_headers.sh
       - name: Run type checker
-        run: |
-          pip install numpy==1.17.4
-          bash ./scripts/check_type.sh
+        run: bash ./scripts/check_type.sh
 
 
