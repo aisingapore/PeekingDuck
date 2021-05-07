@@ -107,16 +107,21 @@ def _get_connections_of_one_pose(coords, masks):
     connections = []
     for start_joint, end_joint in SKELETON:
         if masks[start_joint - 1] and masks[end_joint - 1]:
-            connections.append((coords[l1 - 1], coords[l2 - 1]))
+            connections.append((coords[start_joint - 1], coords[end_joint - 1]))
     return np.array(connections)
 
 
-def draw_human_poses(image: np.array, poses: List[Any]) -> None:
+def draw_human_poses(image: np.array,
+                     poses: List[Any],
+                     color: Tuple[int, int, int],
+                     thickness: int) -> None:
     '''draw pose estimates onto frame image'''
     image_size = _get_image_size(image)
     poses = add_plotter_details(poses)
     for pose in poses:
         if pose.bbox.shape == (2, 2):
+            bbox_top_left = _draw_bbox(image, pose.bbox,
+                                       image_size, color, thickness)
             _draw_connections(image, pose.connections,
                               image_size, KEYPOINT_CONNECT_COLOR)
             _draw_keypoints(image, pose.keypoints,
