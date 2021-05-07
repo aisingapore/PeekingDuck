@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import numpy as np
 import tensorflow as tf
 
 
@@ -22,7 +23,7 @@ class BatchNormalization(tf.keras.layers.BatchNormalization):  # pylint: disable
     Make trainable=False freeze BN for real (the og version is sad)
     """
 
-    def call(self, inputs, training=None):
+    def call(self, inputs: np.array, training: tf.Tensor = None) -> object:
         """Make trainable=False freeze BN for real (the og version is sad)
 
         Input:
