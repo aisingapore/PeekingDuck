@@ -14,11 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import List
 import tensorflow as tf
 
 
-def transform_images(x_image: List, size: int) -> List:
+def transform_images(x_image: tf.Tensor, size: int) -> tf.Tensor:
     """transform image to size x size
 
     Input:
