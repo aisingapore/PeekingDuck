@@ -24,9 +24,11 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
+        self.bbox_thickness = config["bbox_thickness"]
+        self.bbox_color = tuple(config["bbox_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
         draw_human_poses(inputs[self.inputs[1]],
-                         inputs[self.inputs[0]])
+                         inputs[self.inputs[0]], self.bbox_color, self.bbox_thickness)
         return {}
