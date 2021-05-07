@@ -52,7 +52,6 @@ class Detector:
             return model
 
         _, model = efficientdet(phi=self.model_type,
-                                weighted_bifpn=self.config['weighted_bifpn'],
                                 num_classes=self.config['num_classes'],
                                 score_threshold=self.config['score_threshold'])
         model_path = os.path.join(self.root_dir, self.config['model_files'][self.model_type])

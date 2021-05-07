@@ -3,7 +3,6 @@ output: ['bboxes', 'labels', 'score']
 
 efficientdet_graph_mode: True
 model_type: 0 # 0-4
-weighted_bifpn: True
 classes: ../weights/efficientdet/coco_90.json
 weights_dir: ['../weights/efficientdet']
 model_files:

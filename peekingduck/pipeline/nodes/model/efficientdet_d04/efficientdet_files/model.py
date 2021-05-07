@@ -462,7 +462,7 @@ class ClassNet(models.Model):
 
 
 def efficientdet(phi, num_classes=20, num_anchors=9,
-                 weighted_bifpn=False, score_threshold=0.01,
+                 weighted_bifpn=True, score_threshold=0.01,
                  detect_quadrangle=False, anchor_parameters=None,
                  separable_conv=True):
     """Function to build Efficientdet"""
