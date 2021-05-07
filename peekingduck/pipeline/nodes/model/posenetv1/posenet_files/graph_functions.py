@@ -16,6 +16,7 @@ limitations under the License.
 
 import os
 import logging
+from typing import Any, Dict
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -25,7 +26,7 @@ SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
 logger = logging.getLogger(__name__)
 
 
-def wrap_frozen_graph(graph_def,
+def wrap_frozen_graph(graph_def: dict,
                       inputs,
                       outputs):
     '''
@@ -81,7 +82,7 @@ def print_inputs(graph_def):
 
     input_list = []
     for graph_op in graph.get_operations():  # tensorflow.python.framework.ops.Operation
-        if op.type == "Placeholder":
+        if graph_op.type == "Placeholder":
             input_list.append(graph_op.name)
 
         logger.info('Inputs: %s', input_list)

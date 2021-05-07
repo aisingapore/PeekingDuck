@@ -15,7 +15,7 @@ limitations under the License.
 """
 import os
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List
 import tensorflow as tf
 import numpy as np
 
@@ -37,24 +37,18 @@ class Predictor:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config['root']
-
-        self.output_stride = self.config['output_stride']
-        self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
-        self.max_pose_detection = self.config['max_pose_detection']
         self.model_type = self.config['model_type']
-        self.score_threshold = self.config['score_threshold']
-        self.dst_scores = np.zeros(
-            (self.max_pose_detection, KEYPOINTS_NUM))
-        self.dst_keypoints = np.zeros(
-            (self.max_pose_detection, KEYPOINTS_NUM, 2))
 
         self.posenet_model = self._create_posenet_model()
 
     def _create_posenet_model(self):
-        # maybe should rename to graph_files instead of model_files
-        model_type = self.config['model_type']
-        model_path = os.path.join(self.root_dir, self.config['model_files'][model_type])
+        self.output_stride = self.config['output_stride']
+        self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
+        self.max_pose_detection = self.config['max_pose_detection']
+        self.score_threshold = self.config['score_threshold']
+
+        model_path = os.path.join(
+            self.config['root'], self.config['model_files'][self.model_type])
         model_func = self._load_posenet_graph(model_path)
 
         self.logger.info(
@@ -70,7 +64,7 @@ class Predictor:
 
     def _load_posenet_graph(self, filepath):
         model_id = 'mobilenet'
-        if self.config['model_type'] == 'resnet':
+        if self.model_type == 'resnet':
             model_id = 'resnet'
         model_nodes = self.config['MODEL_NODES'][model_id]
         model_path = os.path.join(filepath)
@@ -107,13 +101,8 @@ class Predictor:
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
                 self.posenet_model,
-                self.output_stride,
                 frame,
-                self.resolution,
-                self.dst_scores,
-                self.dst_keypoints,
-                self.model_type,
-                self.score_threshold)
+                self.model_type)
 
         poses = []
 
@@ -128,13 +117,8 @@ class Predictor:
     def _predict_all_poses(
             self,
             posenet_model,
-            output_stride: int,
             frame: List[List[float]],
-            resolution: Tuple[int],
-            dst_scores: float,
-            dst_keypoints: float,
-            model_type: str,
-            score_threshold: float):
+            model_type: str):
         """Predict relative coordinates, confident scores and validation masks
         for all detected poses
 
@@ -155,13 +139,17 @@ class Predictor:
                 poses
             full_masks (np.array): keypoints validation masks of detected poses
         """
-        input_res = resolution
         image, output_scale, image_size = self._create_image_from_frame(
-            output_stride, frame, input_res, model_type)
+            self.output_stride, frame, self.resolution, model_type)
+
+        dst_scores = np.zeros(
+            (self.max_pose_detection, KEYPOINTS_NUM))
+        dst_keypoints = np.zeros(
+            (self.max_pose_detection, KEYPOINTS_NUM, 2))
 
         pose_count = detect_keypoints(
-            posenet_model, image, output_stride, dst_scores, dst_keypoints,
-            model_type, score_threshold)
+            posenet_model, image, self.output_stride, dst_scores, dst_keypoints,
+            model_type, self.score_threshold)
         full_keypoint_scores = dst_scores[:pose_count]
         full_keypoint_coords = dst_keypoints[:pose_count]
 
