@@ -16,7 +16,7 @@ limitations under the License.
 Code of this file is mostly forked from
 [@xuannianz](https://github.com/xuannianz))
 """
-
+from typing import Any, Callable, Tuple, List
 from functools import reduce
 
 import tensorflow as tf
@@ -46,7 +46,7 @@ MOMENTUM = 0.997
 EPSILON = 1e-4
 
 
-def separable_conv_block(num_channels, kernel_size, strides, name):
+def separable_conv_block(num_channels: int, kernel_size: int, strides: int, name: str) -> Callable:
     """Separable conv block helper function"""
     f_1 = layers.SeparableConv2D(num_channels, kernel_size=kernel_size, strides=strides,
                                  padding='same', use_bias=True, name=f'{name}/conv')
@@ -54,7 +54,7 @@ def separable_conv_block(num_channels, kernel_size, strides, name):
     return reduce(lambda f, g: lambda *args, **kwargs: g(f(*args, **kwargs)), (f_1, f_2))
 
 
-def conv_block(num_channels, kernel_size, strides, name):
+def conv_block(num_channels: int, kernel_size: int, strides: int, name: str) -> Callable:
     """Conv block helper function"""
     f_1 = layers.Conv2D(num_channels, kernel_size=kernel_size, strides=strides, padding='same',
                         use_bias=True, name='{}_conv'.format(name))
@@ -63,8 +63,9 @@ def conv_block(num_channels, kernel_size, strides, name):
     return reduce(lambda f, g: lambda *args, **kwargs: g(f(*args, **kwargs)), (f_1, f_2, f_3))
 
 
-def build_wbi_fpn(features,
-                  num_channels, i_d):
+def build_wbi_fpn(features: List[tf.Tensor],
+                  num_channels: int,
+                  i_d: int) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor]:
     """Function to build weighted bi-directional fpn"""
     if i_d == 0:
         _, _, c_3, c_4, c_5 = features
@@ -202,7 +203,9 @@ def build_wbi_fpn(features,
     return p3_out, p4_td, p5_td, p6_td, p7_out
 
 
-def build_bifpn(features, num_channels, i_d):
+def build_bifpn(features: List[tf.Tensor],
+                num_channels: int,
+                i_d: int) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor]:
     """Function to build bi-directional fpn"""
     if i_d == 0:
         _, _, c_3, c_4, c_5 = features
@@ -343,8 +346,10 @@ def build_bifpn(features, num_channels, i_d):
 class BoxNet(models.Model):
     """Bbox regression network"""
 
-    def __init__(self, width, depth, num_anchors=9,
-                 separable_conv=True, detect_quadrangle=False, **kwargs):
+    def __init__(self, width: int, depth: int, num_anchors: int = 9,
+                 separable_conv: bool = True,
+                 detect_quadrangle: bool = False,
+                 **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.width = width
         self.depth = depth
@@ -387,7 +392,7 @@ class BoxNet(models.Model):
         self.reshape = layers.Reshape((-1, num_values))
         self.level = 0
 
-    def call(self, inputs):  # pylint: disable=arguments-differ,
+    def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=arguments-differ,
         feature, _ = inputs
         for i in range(self.depth):
             feature = self.convs[i](feature)
@@ -402,8 +407,8 @@ class BoxNet(models.Model):
 class ClassNet(models.Model):
     """Classification network"""
 
-    def __init__(self, width, depth, num_classes=20, num_anchors=9,
-                 separable_conv=True, **kwargs):
+    def __init__(self, width: int, depth: int, num_classes: int = 20, num_anchors: int = 9,
+                 separable_conv: bool = True, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.width = width
         self.depth = depth
@@ -448,7 +453,7 @@ class ClassNet(models.Model):
         self.activation = layers.Activation('sigmoid')
         self.level = 0
 
-    def call(self, inputs):  # pylint: disable=arguments-differ,
+    def call(self, inputs: tf.Tensor) -> tf.Tensor:  # pylint: disable=arguments-differ,
         feature, _ = inputs
         for i in range(self.depth):
             feature = self.convs[i](feature)
@@ -461,10 +466,10 @@ class ClassNet(models.Model):
         return outputs
 
 
-def efficientdet(phi, num_classes=20, num_anchors=9,
-                 weighted_bifpn=True, score_threshold=0.01,
-                 detect_quadrangle=False, anchor_parameters=None,
-                 separable_conv=True):
+def efficientdet(phi: int, num_classes: int = 20, num_anchors: int = 9,
+                 weighted_bifpn: bool = True, score_threshold: float = 0.01,
+                 detect_quadrangle: bool = False, anchor_parameters: Any = None,
+                 separable_conv: bool = True) -> Tuple[tf.keras.Model, tf.keras.Model]:
     """Function to build Efficientdet"""
     assert phi in range(7)
     input_size = image_sizes[phi]
@@ -499,7 +504,7 @@ def efficientdet(phi, num_classes=20, num_anchors=9,
     # apply predicted regression to anchors
     anchors = anchors_for_shape((input_size, input_size), anchor_params=anchor_parameters)
     anchors_input = np.expand_dims(anchors, axis=0)
-    boxes = RegressBoxes(name='boxes')([anchors_input, regression[..., :4]])
+    boxes = RegressBoxes(name='boxes')([anchors_input, regression[..., :4]])  # type:ignore
     boxes = ClipBoxes(name='clipped_boxes')([image_input, boxes])
 
     # filter detections (apply NMS / score threshold / select top-k)
@@ -508,7 +513,7 @@ def efficientdet(phi, num_classes=20, num_anchors=9,
             name='filtered_detections',
             score_threshold=score_threshold,
             detect_quadrangle=True
-        )([boxes, classification, regression[..., 4:8], regression[..., 8]])
+        )([boxes, classification, regression[..., 4:8], regression[..., 8]])  # type: ignore
     else:
         detections = FilterDetections(
             name='filtered_detections',

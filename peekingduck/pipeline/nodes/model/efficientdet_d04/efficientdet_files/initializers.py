@@ -17,6 +17,7 @@ Modifications copyright 2021 AI Singapore
 """
 
 # import keras
+from typing import Any, Dict
 import math
 import numpy as np
 from tensorflow import keras
@@ -26,15 +27,15 @@ class PriorProbability(keras.initializers.Initializer):
     """ Apply a prior probability to the weights.
     """
 
-    def __init__(self, probability=0.01):
+    def __init__(self, probability: float = 0.01) -> None:
         self.probability = probability
 
-    def get_config(self):
+    def get_config(self) -> Dict[str, Any]:
         return {
             'probability': self.probability
         }
 
-    def __call__(self, shape, dtype=None):
+    def __call__(self, shape: np.array, dtype: np.dtype = None) -> np.ndarray:
         # set bias to -log((1 - p)/p) for foreground
         result = np.ones(shape, dtype=np.float32) * - \
             math.log((1 - self.probability) / self.probability)

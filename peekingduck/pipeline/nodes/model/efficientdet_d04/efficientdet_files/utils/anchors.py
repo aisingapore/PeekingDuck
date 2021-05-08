@@ -17,7 +17,7 @@ Code of this file is mostly forked from
 [@xuannianz](https://github.com/xuannianz))
 """
 
-from typing import Tuple, List
+from typing import Tuple, List, Callable
 import numpy as np
 from tensorflow import keras
 
@@ -42,7 +42,7 @@ class AnchorParameters:
         self.ratios = np.array(ratios, dtype=keras.backend.floatx())
         self.scales = np.array(scales, dtype=keras.backend.floatx())
 
-    def num_anchors(self):
+    def num_anchors(self) -> int:
         """Function to get number of anchors
 
         Returns:
@@ -57,7 +57,7 @@ class AnchorParameters:
 
 
 # The default anchor parameters.
-AnchorParameters.default = AnchorParameters(
+AnchorParameters.default = AnchorParameters(  # type: ignore
     sizes=(32, 64, 128, 256, 512),
     strides=(8, 16, 32, 64, 128),
     ratios=np.array([1, 0.5, 2], keras.backend.floatx()),
@@ -65,7 +65,7 @@ AnchorParameters.default = AnchorParameters(
 )
 
 
-def guess_shapes(image_shape: List[int], pyramid_levels: List[int]) -> List[List]:
+def guess_shapes(image_shape: Tuple[int, int], pyramid_levels: List[int]) -> List[List]:
     """
     Guess shapes based on pyramid levels.
 
@@ -83,7 +83,7 @@ def guess_shapes(image_shape: List[int], pyramid_levels: List[int]) -> List[List
 
 def generate_anchors(base_size: int = 16,
                      ratios: Tuple[float] = None,
-                     scales: Tuple[float] = None):
+                     scales: Tuple[float] = None) -> np.ndarray:
     """
     Generate anchor windows by enumerating aspect ratios X scales w.r.t. a reference window.
 
@@ -96,10 +96,10 @@ def generate_anchors(base_size: int = 16,
 
     """
     if ratios is None:
-        ratios = AnchorParameters.default.ratios
+        ratios = AnchorParameters.default.ratios  # type: ignore
 
     if scales is None:
-        scales = AnchorParameters.default.scales
+        scales = AnchorParameters.default.scales  # type: ignore
 
     num_anchors = len(ratios) * len(scales)
 
@@ -120,7 +120,7 @@ def generate_anchors(base_size: int = 16,
     return anchors
 
 
-def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray):
+def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray) -> np.ndarray:
     """
     Produce shifted anchors based on shape of the map and stride size.
 
@@ -153,9 +153,9 @@ def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray):
 def anchors_for_shape(
         image_shape: Tuple[int, int],
         pyramid_levels: List[int] = None,
-        anchor_params=None,
-        shapes_callback=None,
-):
+        anchor_params: AnchorParameters = None,
+        shapes_callback: Callable = None,
+) -> np.ndarray:
     """
     Generators anchors for a given shape.
 
@@ -173,7 +173,7 @@ def anchors_for_shape(
         pyramid_levels = [3, 4, 5, 6, 7]
 
     if anchor_params is None:
-        anchor_params = AnchorParameters.default
+        anchor_params = AnchorParameters.default  # type: ignore
 
     if shapes_callback is None:
         shapes_callback = guess_shapes

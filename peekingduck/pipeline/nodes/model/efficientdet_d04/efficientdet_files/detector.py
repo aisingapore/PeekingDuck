@@ -37,7 +37,7 @@ class Detector:
 
         self.effdet = self._create_effdet_model()
 
-    def _create_effdet_model(self):
+    def _create_effdet_model(self) -> tf.keras.Model:
         self.model_type = self.config['model_type']
         if self.config['efficientdet_graph_mode']:
             graph_path = os.path.join(self.root_dir, self.config['graph_files'][self.model_type])

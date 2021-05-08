@@ -17,13 +17,15 @@ Code of this file is mostly forked from
 [@xuannianz](https://github.com/xuannianz))
 """
 
+from typing import Dict, Any, Tuple
+
 _KERAS_BACKEND = None
 _KERAS_LAYERS = None
 _KERAS_MODELS = None
 _KERAS_UTILS = None
 
 
-def get_submodules_from_kwargs(kwargs):
+def get_submodules_from_kwargs(kwargs: Dict[str, Any]) -> Tuple[Any, Any, Any, Any]:
     """Helper function to get keras submodules
 
     Args:

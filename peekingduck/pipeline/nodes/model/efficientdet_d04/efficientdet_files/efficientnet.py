@@ -34,8 +34,10 @@ import os
 import math
 import string
 import collections
+from typing import Any, Dict, Callable, List, Tuple, Union
 
 from six.moves import xrange
+import tensorflow as tf
 from keras_applications.imagenet_utils import _obtain_input_shape
 from keras_applications.imagenet_utils import preprocess_input as _preprocess_input
 
@@ -94,7 +96,8 @@ BlockArgs = collections.namedtuple('BlockArgs', [
 ])
 # defaults will be a public argument for namedtuple in Python 3.7
 # https://docs.python.org/3/library/collections.html#collections.namedtuple
-BlockArgs.__new__.__defaults__ = (None,) * len(BlockArgs._fields)
+# mypy: ignore-errors
+BlockArgs.__new__.__defaults__ = (None,) * len(BlockArgs._fields)  # type: ignore
 
 DEFAULT_BLOCKS_ARGS = (
     BlockArgs(kernel_size=3, num_repeat=1, input_filters=32, output_filters=16,
@@ -136,20 +139,20 @@ DENSE_KERNEL_INITIALIZER = {
 }
 
 
-def preprocess_input(model_input, **kwargs):
+def preprocess_input(model_input: tf.Tensor, **kwargs: Dict[str, Any]) -> tf.Tensor:
     """Preprocesses model input
     """
     kwargs = {k: v for k, v in kwargs.items() if k in ['backend', 'layers', 'models', 'utils']}
     return _preprocess_input(model_input, mode='torch', **kwargs)
 
 
-def get_swish(**kwargs):
+def get_swish(**kwargs: Dict[str, Any]) -> Callable:
     """Swish activation function: x * sigmoid(x).
         Reference: [Searching for Activation Functions](https://arxiv.org/abs/1710.05941)
         """
     backend, _, _, _ = get_submodules_from_kwargs(kwargs)
 
-    def swish(swish_x):
+    def swish(swish_x: tf.Tensor) -> tf.Tensor:
 
         if backend.backend() == 'tensorflow':
             try:
@@ -164,7 +167,7 @@ def get_swish(**kwargs):
     return swish
 
 
-def get_dropout(**kwargs):
+def get_dropout(**kwargs: Union[None, Dict[str, Any]]) -> Any:
     """Wrapper over custom dropout. Fix problem of ``None`` shape for tf.keras.
     It is not possible to define FixedDropout class as global object,
     because we do not have modules for inheritance at first time.
@@ -178,7 +181,7 @@ def get_dropout(**kwargs):
         """Fixed Dropout Class
         """
 
-        def _get_noise_shape(self, inputs):
+        def _get_noise_shape(self, inputs: tf.Tensor) -> Union[None, Tuple[Any, ...]]:
             if self.noise_shape is None:
                 return self.noise_shape
 
@@ -190,7 +193,7 @@ def get_dropout(**kwargs):
     return FixedDropout
 
 
-def round_filters(filters, width_coefficient, depth_divisor):
+def round_filters(filters: float, width_coefficient: float, depth_divisor: int) -> int:
     """Round number of filters based on width multiplier."""
 
     filters *= width_coefficient
@@ -202,13 +205,17 @@ def round_filters(filters, width_coefficient, depth_divisor):
     return int(new_filters)
 
 
-def round_repeats(repeats, depth_coefficient):
+def round_repeats(repeats: int, depth_coefficient: float) -> int:
     """Round number of repeats based on depth multiplier."""
 
     return int(math.ceil(depth_coefficient * repeats))
 
 
-def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix=''):
+def mb_conv_block(inputs: tf.Tensor,  # type:ignore
+                  block_args,
+                  activation: Callable,
+                  drop_rate: float = None,
+                  prefix: str = '') -> tf.Tensor:
     """Mobile Inverted Residual Bottleneck."""
 
     has_se = (block_args.se_ratio is not None) and (0 < block_args.se_ratio <= 1)
@@ -296,18 +303,18 @@ def mb_conv_block(inputs, block_args, activation, drop_rate=None, prefix=''):
     return x_in
 
 
-def efficientnet_base(width_coefficient,
-                      depth_coefficient,
-                      default_resolution,
-                      drop_connect_rate=0.2,
-                      depth_divisor=8,
+def efficientnet_base(width_coefficient: float,  # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+                      depth_coefficient: float,
+                      default_resolution: int,
+                      drop_connect_rate: float = 0.2,
+                      depth_divisor: int = 8,
                       blocks_args=DEFAULT_BLOCKS_ARGS,
-                      include_top=True,
-                      weights='imagenet',
-                      input_tensor=None,
-                      input_shape=None,
-                      classes=1000,
-                      **kwargs):  # pylint: disable=too-many-arguments, too-many-locals, too-many-branches
+                      include_top: bool = True,
+                      weights: str = 'imagenet',
+                      input_tensor: Union[None, tf.Tensor] = None,
+                      input_shape: Union[None, Tuple[int, int, int]] = None,
+                      classes: int = 1000,
+                      **kwargs: Any) -> List[tf.Tensor]:
     """Instantiates the EfficientNet architecture using given scaling coefficients.
     Optionally loads weights pre-trained on ImageNet.
     Note that the data format convention used by the model is
@@ -441,12 +448,12 @@ def efficientnet_base(width_coefficient,
     return features
 
 
-def efficientnet_b0(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b0(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B0 model
     """
     return efficientnet_base(1.0, 1.0, 224, 0.2,
@@ -456,12 +463,12 @@ def efficientnet_b0(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b1(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b1(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B1 model
     """
     return efficientnet_base(1.0, 1.1, 240, 0.2,
@@ -470,12 +477,12 @@ def efficientnet_b1(include_top=True,
                              classes=classes, **kwargs)
 
 
-def efficientnet_b2(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b2(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B2 model
     """
     return efficientnet_base(1.1, 1.2, 260, 0.3,
@@ -485,12 +492,12 @@ def efficientnet_b2(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b3(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b3(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B3 model
     """
     return efficientnet_base(1.2, 1.4, 300, 0.3,
@@ -500,12 +507,12 @@ def efficientnet_b3(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b4(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b4(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B4 model
     """
     return efficientnet_base(1.4, 1.8, 380, 0.4,
@@ -515,12 +522,12 @@ def efficientnet_b4(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b5(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b5(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B5 model
     """
     return efficientnet_base(1.6, 2.2, 456, 0.4,
@@ -530,12 +537,12 @@ def efficientnet_b5(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b6(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b6(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B6 model
     """
     return efficientnet_base(1.8, 2.6, 528, 0.5,
@@ -545,12 +552,12 @@ def efficientnet_b6(include_top=True,
                              **kwargs)
 
 
-def efficientnet_b7(include_top=True,
-                    weights='imagenet',
-                    input_tensor=None,
-                    input_shape=None,
-                    classes=1000,
-                    **kwargs):
+def efficientnet_b7(include_top: bool = True,
+                    weights: str = 'imagenet',
+                    input_tensor: Union[None, tf.Tensor] = None,
+                    input_shape: Union[None, Tuple[int, int, int]] = None,
+                    classes: int = 1000,
+                    **kwargs: Any) -> List[tf.Tensor]:
     """EfficientNet-B7 model
     """
     return efficientnet_base(2.0, 3.1, 600, 0.5,

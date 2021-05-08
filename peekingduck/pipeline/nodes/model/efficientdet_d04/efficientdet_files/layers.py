@@ -16,7 +16,7 @@ limitations under the License.
 Code of this file is mostly forked from
 [@xuannianz](https://github.com/xuannianz))
 """
-
+from typing import Any, Dict, List
 from tensorflow import keras
 import tensorflow as tf
 
@@ -25,13 +25,12 @@ class WBiFPNAdd(keras.layers.Layer):
     """Class for Weighted Bi-directional FPN
     """
 
-    def __init__(self, epsilon=1e-4, **kwargs):
-        # super(wBiFPNAdd, self).__init__(**kwargs)
+    def __init__(self, epsilon: float = 1e-4, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.epsilon = epsilon
         self.weight = None
 
-    def build(self, input_shape):
+    def build(self, input_shape: List[tf.TensorShape]) -> None:
         num_in = len(input_shape)
         self.weight = self.add_weight(name=self.name,
                                       shape=(num_in,),
@@ -39,17 +38,16 @@ class WBiFPNAdd(keras.layers.Layer):
                                       trainable=True,
                                       dtype=tf.float32)
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         weight = keras.activations.relu(self.weight)
         x_in = tf.reduce_sum([weight[i] * inputs[i] for i in range(len(inputs))], axis=0)
         x_in = x_in / (tf.reduce_sum(weight) + self.epsilon)
         return x_in
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: List[tf.TensorShape]) -> tf.TensorShape:
         return input_shape[0]
 
-    def get_config(self):
-        # config = super(wBiFPNAdd, self).get_config()
+    def get_config(self) -> Dict[str, Any]:
         config = super().get_config()
         config.update({
             'epsilon': self.epsilon
@@ -57,13 +55,15 @@ class WBiFPNAdd(keras.layers.Layer):
         return config
 
 
-def bbox_transform_inv(boxes, deltas, scale_factors=None):
+def bbox_transform_inv(boxes: tf.Tensor,
+                       deltas: tf.Tensor,
+                       scale_factors: List[float] = None) -> tf.Tensor:
     """Helper function to transform bboxes using offsets
 
     Args:
         boxes : detected bboxes]
         deltas : bbox offsets
-        scale_factors ([type], optional): [description]. Defaults to None.
+        scale_factors : List of scales for each dimension
 
     Returns:
         tf.Tensor: bboxes in xmin, ymin, xmax, ymax format
@@ -91,7 +91,7 @@ class ClipBoxes(keras.layers.Layer):
     """ClipBoxes class to limit the value of bbox coordinates to image height and width
     """
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         image, boxes = inputs
         shape = keras.backend.cast(keras.backend.shape(image), keras.backend.floatx())
         height = shape[1]
@@ -103,7 +103,7 @@ class ClipBoxes(keras.layers.Layer):
 
         return keras.backend.stack([x_1, y_1, x_2, y_2], axis=2)
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: List[tf.TensorShape]) -> tf.TensorShape:
         return input_shape[1]
 
 
@@ -111,33 +111,33 @@ class RegressBoxes(keras.layers.Layer):
     """RegressBoxes class to compute actual bbox coordinate using anchors and offsets
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         anchors, regression = inputs
         return bbox_transform_inv(anchors, regression)
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: List[tf.TensorShape]) -> tf.TensorShape:
         return input_shape[0]
 
-    def get_config(self):
+    def get_config(self) -> Dict[str, Any]:
         config = super().get_config()
         return config
 
 
-def filter_detections(
-        boxes,
-        classification,
-        alphas=None,
-        ratios=None,
-        class_specific_filter=True,
-        nms=True,
-        score_threshold=0.01,
-        max_detections=100,
-        nms_threshold=0.5,
-        detect_quadrangle=False,
-):  # pylint: disable=too-many-arguments, too-many-locals
+def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
+        boxes: tf.Tensor,
+        classification: tf.Tensor,
+        alphas: tf.Tensor = None,
+        ratios: tf.Tensor = None,
+        class_specific_filter: bool = True,
+        nms: bool = True,
+        score_threshold: float = 0.01,
+        max_detections: int = 100,
+        nms_threshold: float = 0.5,
+        detect_quadrangle: bool = False,
+) -> List[tf.Tensor]:
     """
     Filter detections using the boxes and classification values.
 
@@ -160,7 +160,7 @@ def filter_detections(
         In case there are less than max_detections detections, the tensors are padded with -1's.
     """
 
-    def _filter_detections(scores_, labels_):
+    def _filter_detections(scores_: tf.Tensor, labels_: tf.Tensor) -> tf.Tensor:
         # threshold based on score
         # (num_score_keeps, 1)
         indices_ = tf.where(keras.backend.greater(scores_, score_threshold))
@@ -261,17 +261,16 @@ class FilterDetections(keras.layers.Layer):
     Keras layer for filtering detections using score threshold and NMS.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
             self,
-            nms=True,
-            class_specific_filter=True,
-            nms_threshold=0.5,
-            score_threshold=0.01,
-            max_detections=100,
-            parallel_iterations=32,
-            detect_quadrangle=False,
-            **kwargs
-    ):  # pylint: disable=too-many-arguments
+            nms: bool = True,
+            class_specific_filter: bool = True,
+            nms_threshold: float = 0.5,
+            score_threshold: float = 0.01,
+            max_detections: int = 100,
+            parallel_iterations: int = 32,
+            detect_quadrangle: bool = False,
+            **kwargs: Any) -> None:
         """
         Filters detections using score threshold, NMS and selecting the top-k detections.
 
@@ -292,7 +291,7 @@ class FilterDetections(keras.layers.Layer):
         self.detect_quadrangle = detect_quadrangle
         super().__init__(**kwargs)
 
-    def call(self, inputs, **kwargs):
+    def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         """
         Constructs the NMS graph.
 
@@ -306,7 +305,7 @@ class FilterDetections(keras.layers.Layer):
             ratios = inputs[3]
 
         # wrap nms with our parameters
-        def _filter_detections(args):
+        def _filter_detections(args: List[tf.Tensor]) -> List[tf.Tensor]:
             boxes_ = args[0]
             classification_ = args[1]
             alphas_ = args[2] if self.detect_quadrangle else None
@@ -343,7 +342,7 @@ class FilterDetections(keras.layers.Layer):
 
         return outputs
 
-    def compute_output_shape(self, input_shape):
+    def compute_output_shape(self, input_shape: List[tf.TensorShape]) -> tf.TensorShape:
         """
         Computes the output shapes given the input shapes.
 
@@ -370,13 +369,13 @@ class FilterDetections(keras.layers.Layer):
             (input_shape[1][0], self.max_detections),
         ]
 
-    def compute_mask(self, inputs, mask=None):
+    def compute_mask(self, inputs: List[tf.Tensor], mask: tf.Tensor = None) -> tf.Tensor:
         """
         This is required in Keras when there is more than 1 output.
         """
         return (len(inputs) + 1) * [None]
 
-    def get_config(self):
+    def get_config(self) -> Dict[str, Any]:
         """
         Gets the configuration of this layer.
 
