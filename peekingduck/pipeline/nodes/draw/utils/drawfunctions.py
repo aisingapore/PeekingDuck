@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any, Optional, Iterable, Union
+from typing import List, Tuple, Any, Iterable, Union
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -25,11 +25,11 @@ BLACK_COLOR = (0, 0, 0)
 PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 OBJ_MASK_COLOR = (0, 100, 255)
-KEYPOINT_TEXT_COLOR = (255, 0, 255)
-KEYPOINT_DOT_COLOR = (0, 255, 0)
-KEYPOINT_CONNECT_COLOR = (0, 255, 255)
-HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
-HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
+# KEYPOINT_TEXT_COLOR = (255, 0, 255)
+# KEYPOINT_DOT_COLOR = (0, 255, 0)
+# KEYPOINT_CONNECT_COLOR = (0, 255, 255)
+# HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
+# HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
 COUNTING_TEXT_COLOR = (0, 0, 255)
 FONT_SCALE = 0.5
 FONT_THICKNESS = 1
@@ -103,7 +103,11 @@ def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.nd
 def draw_human_poses(image: np.array,
                      poses: List[PoseData],
                      color: Tuple[int, int, int],
-                     thickness: int) -> None:
+                     thickness: int,
+                     keypoint_dot_color: Tuple[int, int, int],
+                     keypoint_dot_radius: int,
+                     keypoint_connect_color: Tuple[int, int, int],
+                     keypoint_text_color: Tuple[int, int, int]) -> None:
     """Draw poses and bboxes onto an image frame.
 
     Args:
@@ -111,6 +115,10 @@ def draw_human_poses(image: np.array,
         poses (List[PoseData]): list of PoseData object
         color (Tuple[int, int, int]): color of bounding box
         thickness (int): thickness of bounding box
+        keypoint_dot_color (Tuple[int, int, int]): color of keypoint
+        keypoint_dot_radius (int): radius of keypoint
+        keypoint_connect_color (Tuple[int, int, int]): color of joint
+        keypoint_text_color (Tuple[int, int, int]): color of keypoint names
     """
     image_size = _get_image_size(image)
     poses = add_plotter_details(poses)
@@ -120,10 +128,10 @@ def draw_human_poses(image: np.array,
             bbox_top_left = _draw_bbox(image, pose.bbox,
                                        image_size, color, thickness)
             _draw_connections(image, pose.connections,
-                              image_size, KEYPOINT_CONNECT_COLOR)
+                              image_size, keypoint_connect_color)
             _draw_keypoints(image, pose.keypoints,
                             pose.keypoint_scores, image_size,
-                            KEYPOINT_DOT_COLOR)
+                            keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
 
 
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
@@ -147,33 +155,37 @@ def _draw_keypoints(frame: np.ndarray,
                     keypoints: np.ndarray,
                     scores: np.ndarray,
                     image_size: Tuple[int, int],
-                    keypoint_dot_color: Tuple[int, int, int]) -> None:
+                    keypoint_dot_color: Tuple[int, int, int],
+                    keypoint_dot_radius: int,
+                    keypoint_text_color: Tuple[int, int, int]) -> None:
     """ Draw detected keypoints """
     img_keypoints = _project_points_onto_original_image(
         keypoints, image_size)
 
     for idx, keypoint in enumerate(img_keypoints):
-        _draw_one_keypoint_dot(frame, keypoint, keypoint_dot_color)
+        _draw_one_keypoint_dot(frame, keypoint, keypoint_dot_color, keypoint_dot_radius)
         if scores is not None:
-            _draw_one_keypoint_text(frame, idx, keypoint)
+            _draw_one_keypoint_text(frame, idx, keypoint, keypoint_text_color)
 
 
 def _draw_one_keypoint_dot(frame: np.ndarray,
                            keypoint: np.ndarray,
-                           keypoint_dot_color: Tuple[int, int, int]) -> None:
+                           keypoint_dot_color: Tuple[int, int, int],
+                           keypoint_dot_radius: int) -> None:
     """ Draw single keypoint """
-    cv2.circle(frame, (keypoint[0], keypoint[1]), 5, keypoint_dot_color, -1)
+    cv2.circle(frame, (keypoint[0], keypoint[1]), keypoint_dot_radius, keypoint_dot_color, -1)
 
 
 def _draw_one_keypoint_text(frame: np.ndarray,
                             idx: int,
-                            keypoint: np.ndarray) -> None:
+                            keypoint: np.ndarray,
+                            keypoint_text_color: Tuple[int, int, int]) -> None:
     """ Draw name above keypoint """
     position = (keypoint[0], keypoint[1])
     text = str(SKELETON_SHORT_NAMES[idx])
 
     cv2.putText(frame, text, position, cv2.FONT_HERSHEY_SIMPLEX,
-                0.4, KEYPOINT_TEXT_COLOR, 1, cv2.LINE_AA)
+                0.4, keypoint_text_color, 1, cv2.LINE_AA)
 
 
 def _project_points_onto_original_image(points: np.ndarray,
