@@ -31,6 +31,7 @@ def decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor, 
                           score_threshold: float = 0.5,
                           nms_radius: int = 20,
                           min_pose_score: float = 0.5) -> int:
+    # pylint: disable=too-many-arguments
     """ Decodes the offsets and displacements map in yx order and return the keypoints
     in (x, y) format.
 
@@ -142,6 +143,7 @@ def _look_for_poses(scored_parts: List[Tuple[float, int, np.ndarray]],
                     output_stride: int,
                     nms_radius: int,
                     min_pose_score: float) -> int:
+    # pylint: disable=too-many-arguments, too-many-locals
     """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to allow return of
     complete coord array
     """

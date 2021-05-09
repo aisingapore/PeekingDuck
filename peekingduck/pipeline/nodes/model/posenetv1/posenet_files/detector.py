@@ -58,6 +58,7 @@ def detect_keypoints(
         dst_keypoints: np.ndarray,
         model_type: str,
         score_threshold: float) -> int:
+    # pylint: disable=too-many-arguments
     """ Evaluate image by model function to get detected keypoints info in yx format
 
     Args:

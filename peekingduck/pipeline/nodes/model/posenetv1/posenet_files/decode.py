@@ -30,6 +30,7 @@ def decode_pose(root_score: float,
                 displacements_bwd: np.ndarray,
                 keypoint_scores: np.ndarray,
                 keypoint_coords: np.ndarray) -> None:
+    # pylint: disable=too-many-arguments
     """ Decode pose's keypoints scores and coordinates from keypoints score,
     coordinates and displancements
 
@@ -89,6 +90,7 @@ def _calculate_instance_keypoints(edge: int,
                                   offsets: np.ndarray,
                                   output_stride: int,
                                   displacements: np.ndarray) -> None:
+    # pylint: disable=too-many-arguments
     """Obtain instance keypoints scores and coordinates"""
     if (instance_keypoint_scores[source_keypoint_id] > 0.0 and
             instance_keypoint_scores[target_keypoint_id] == 0.0):
@@ -127,6 +129,7 @@ def _traverse_to_target_keypoint(edge_id: int,
                                  offsets: np.ndarray,
                                  output_stride: int,
                                  displacements: np.ndarray) -> Tuple[float, float]:
+    # pylint: disable=too-many-arguments
     """Traverse to target keypoint and obtain keypoimt score and coordinates"""
     height = scores.shape[0] - 1
     width = scores.shape[1] - 1

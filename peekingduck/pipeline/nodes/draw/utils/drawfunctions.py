@@ -108,6 +108,7 @@ def draw_human_poses(image: np.array,
                      keypoint_text_color: Tuple[int, int, int],
                      color: Tuple[int, int, int],
                      thickness: int) -> None:
+    # pylint: disable=too-many-arguments
     """Draw poses and bboxes onto an image frame.
 
     Args:
@@ -125,8 +126,8 @@ def draw_human_poses(image: np.array,
     for pose in poses:
         if pose.bbox is not None:
             # is pose.bbox.shape == (2, 2):
-            bbox_top_left = _draw_bbox(image, pose.bbox,
-                                       image_size, color, thickness)
+            _draw_bbox(image, pose.bbox,
+                       image_size, color, thickness)
             _draw_connections(image, pose.connections,
                               image_size, keypoint_connect_color)
             _draw_keypoints(image, pose.keypoints,
@@ -158,6 +159,7 @@ def _draw_keypoints(frame: np.ndarray,
                     keypoint_dot_color: Tuple[int, int, int],
                     keypoint_dot_radius: int,
                     keypoint_text_color: Tuple[int, int, int]) -> None:
+    # pylint: disable=too-many-arguments
     """ Draw detected keypoints """
     img_keypoints = _project_points_onto_original_image(
         keypoints, image_size)
@@ -234,8 +236,6 @@ def _draw_bbox(frame: np.array,
     cv2.rectangle(frame, (top_left[0], top_left[1]),
                   (bottom_right[0], bottom_right[1]),
                   color, thickness)
-
-    return top_left
 
 
 def draw_tags(frame: np.array,
