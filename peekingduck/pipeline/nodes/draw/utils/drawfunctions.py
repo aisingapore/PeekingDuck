@@ -26,7 +26,7 @@ PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 OBJ_MASK_COLOR = (0, 100, 255)
 # KEYPOINT_TEXT_COLOR = (255, 0, 255)
-# KEYPOINT_DOT_COLOR = (0, 255, 0)
+KEYPOINT_DOT_COLOR = (0, 255, 0)
 # KEYPOINT_CONNECT_COLOR = (0, 255, 255)
 # HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
 # HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
@@ -102,23 +102,23 @@ def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.nd
 
 def draw_human_poses(image: np.array,
                      poses: List[PoseData],
-                     color: Tuple[int, int, int],
-                     thickness: int,
                      keypoint_dot_color: Tuple[int, int, int],
                      keypoint_dot_radius: int,
                      keypoint_connect_color: Tuple[int, int, int],
-                     keypoint_text_color: Tuple[int, int, int]) -> None:
+                     keypoint_text_color: Tuple[int, int, int],
+                     color: Tuple[int, int, int],
+                     thickness: int) -> None:
     """Draw poses and bboxes onto an image frame.
 
     Args:
         image (np.array): image of current frame
         poses (List[PoseData]): list of PoseData object
-        color (Tuple[int, int, int]): color of bounding box
-        thickness (int): thickness of bounding box
         keypoint_dot_color (Tuple[int, int, int]): color of keypoint
         keypoint_dot_radius (int): radius of keypoint
         keypoint_connect_color (Tuple[int, int, int]): color of joint
         keypoint_text_color (Tuple[int, int, int]): color of keypoint names
+        color (Tuple[int, int, int]): color of bounding box
+        thickness (int): thickness of bounding box
     """
     image_size = _get_image_size(image)
     poses = add_plotter_details(poses)
