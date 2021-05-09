@@ -51,29 +51,6 @@ def decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor, 
     Returns:
         pose_count (int): number of poses detected
     """
-    return _decode_multiple_poses(
-        model_output,
-        dst_keypoint_scores,
-        dst_keypoints,
-        output_stride,
-        score_threshold,
-        nms_radius,
-        min_pose_score,
-        decode_from_yx=True)
-
-
-def _decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor, tf.Tensor],
-                           dst_keypoint_scores: np.ndarray,
-                           dst_keypoints: np.ndarray,
-                           output_stride: int,
-                           score_threshold: float = 0.5,
-                           nms_radius: int = 20,
-                           min_pose_score: float = 0.5,
-                           decode_from_yx: bool = False) -> int:
-    """Decode multiple persons' poses from model outputs
-    Referenced from:
-    https://medium.com/@prajwalsingh_48273/posenet-for-android-8b6dede9fa2f
-    """
     scores, offsets, displacements_fwd, displacements_bwd = model_output
     scores = np.array(scores[0])
     offsets = np.array(offsets[0])
@@ -89,8 +66,7 @@ def _decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor,
         scores,
         offsets,
         displacements_fwd,
-        displacements_bwd,
-        decode_from_yx)
+        displacements_bwd)
 
     pose_count = _look_for_poses(
         scored_parts,
@@ -137,8 +113,7 @@ def _sort_scored_parts(
 def _change_dimensions(scores: np.ndarray,
                        offsets: np.ndarray,
                        displacements_fwd: np.ndarray,
-                       displacements_bwd: np.ndarray,
-                       decode_from_yx: bool):
+                       displacements_bwd: np.ndarray):
     """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to allow return of
     complete coord array
     """
@@ -150,10 +125,9 @@ def _change_dimensions(scores: np.ndarray,
     displacements_bwd = displacements_bwd.reshape(
         height, width, 2, -1).swapaxes(2, 3)
 
-    if decode_from_yx:
-        offsets = offsets[:, :, :, SWAP_AXES]
-        displacements_fwd = displacements_fwd[:, :, :, SWAP_AXES]
-        displacements_bwd = displacements_bwd[:, :, :, SWAP_AXES]
+    offsets = offsets[:, :, :, SWAP_AXES]
+    displacements_fwd = displacements_fwd[:, :, :, SWAP_AXES]
+    displacements_bwd = displacements_bwd[:, :, :, SWAP_AXES]
 
     return offsets, displacements_fwd, displacements_bwd
 
