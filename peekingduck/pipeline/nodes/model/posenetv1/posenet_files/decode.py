@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Callable, Tuple
+from typing import Tuple
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import POSE_CONNECTIONS

@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import Po
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
 
-class PoseNetModel:
+class PoseNetModel:  # pylint: disable=too-few-public-methods
     """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
 
     def __init__(self, config: Dict[str, Any]) -> None:

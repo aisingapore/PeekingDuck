@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing impo
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.graph_functions import load_graph
 
 
-class Predictor:
+class Predictor:  # pylint: disable=too-many-instance-attributes
     """Predictor class to handle detection of poses for posenet
     """
 

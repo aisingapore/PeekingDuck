@@ -19,7 +19,7 @@ from typing import List
 import numpy as np
 
 
-class PoseData:
+class PoseData:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
     """PoseData class containing information about predicted poses
 
        Args:

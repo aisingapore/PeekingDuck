@@ -36,7 +36,7 @@ def decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor, 
 
 
     Args:
-        model_output (Tuple[np.ndarray, tf.Tensor, tf.Tensor, tf.Tensor]): scores, 
+        model_output (Tuple[np.ndarray, tf.Tensor, tf.Tensor, tf.Tensor]): scores,
                 offsets, displacements_fwd, displacements_bwd from model predictions
         dst_scores (np.array): (nx17) buffer to store keypoint scores where n is
                         the max persons to be detected
