@@ -18,7 +18,8 @@ import logging
 import numpy as np
 
 
-class PoseData:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
+class PoseData:
+    # pylint: disable= too-few-public-methods
     """PoseData class containing information about predicted poses
 
        Args:
@@ -26,20 +27,16 @@ class PoseData:  # pylint: disable=too-many-instance-attributes, too-few-public-
            keypoint_scores (np.array): keypoints confidence scores
            masks (np.array): masks for low-confidence keypoints
            connections (np.array): list of connections
-           activity (str): activity class name
     """
 
     def __init__(self,
                  keypoints: np.ndarray = None,
                  keypoint_scores: np.ndarray = None,
                  masks: np.ndarray = None,
-                 connections: np.ndarray = None,
-                 activity: str = ''):
+                 connections: np.ndarray = None):
         self.logger = logging.getLogger(__name__)
         self.bbox = None
         self.keypoints = keypoints
         self.keypoint_scores = keypoint_scores
         self.masks = masks
         self.connections = connections
-        self.activity = activity
-        self.encode = None
