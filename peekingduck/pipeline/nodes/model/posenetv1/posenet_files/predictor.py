@@ -71,7 +71,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         if os.path.isfile(model_path):
             return load_graph(model_path, inputs=model_nodes['inputs'],
                               outputs=model_nodes['outputs'])
-        raise ValueError('Graph file does not exist. Please check that '
+        raise ValueError('Posenet graph file does not exist. Please check that '
                          '%s exists' % model_path)
 
     @staticmethod
