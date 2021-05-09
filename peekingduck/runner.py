@@ -16,7 +16,7 @@ limitations under the License.
 
 import sys
 import logging
-from typing import List, Dict, Any
+from typing import List
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -68,7 +68,7 @@ class Runner():
             self.pipeline.execute()
         del self.pipeline
 
-    def get_run_config(self) -> Dict[str, Any]:
+    def get_run_config(self) -> List[str]:
         """retrieve run configs
 
         Returns:
