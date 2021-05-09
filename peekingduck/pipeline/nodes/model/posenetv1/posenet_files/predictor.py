@@ -15,7 +15,7 @@ limitations under the License.
 """
 import os
 import logging
-from typing import Dict, Any, List
+from typing import Dict, List, Callable, Any, Tuple
 import tensorflow as tf
 import numpy as np
 
@@ -41,7 +41,7 @@ class Predictor:
 
         self.posenet_model = self._create_posenet_model()
 
-    def _create_posenet_model(self):
+    def _create_posenet_model(self) -> tf.keras.Model:
         self.output_stride = self.config['output_stride']
         self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
         self.max_pose_detection = self.config['max_pose_detection']
@@ -62,7 +62,7 @@ class Predictor:
 
         return model_func
 
-    def _load_posenet_graph(self, filepath):
+    def _load_posenet_graph(self, filepath: str) -> Callable:
         model_id = 'mobilenet'
         if self.model_type == 'resnet':
             model_id = 'resnet'
@@ -75,7 +75,7 @@ class Predictor:
                          '%s exists' % model_path)
 
     @staticmethod
-    def get_resolution_as_tuple(resolution: dict):
+    def get_resolution_as_tuple(resolution: dict) -> Tuple[int, int]:
         """ Convert resolution from dict to tuple format
 
         Args:
@@ -89,7 +89,7 @@ class Predictor:
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: List[List[float]]):
+                frame: np.ndarray) -> List[PoseData]:
         """ PoseNet prediction function
 
         Args:
@@ -116,22 +116,16 @@ class Predictor:
 
     def _predict_all_poses(
             self,
-            posenet_model,
-            frame: List[List[float]],
-            model_type: str):
+            posenet_model: tf.keras.Model,
+            frame: np.ndarray,
+            model_type: str) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predict relative coordinates, confident scores and validation masks
         for all detected poses
 
         Args:
             posenet model: tensorflow model
-            output_stride (int): output stride to convert output indices to image
-                coordinates
             frame (np.array): image for inference
-            resolution (int): resolution to scale frame for inference
-            dst_scores (np.array): 17x1 buffer to store keypoint scores
-            dst_keypoints (np.array): 17x2 buffer to store keypoint coordinates
             model_type (str): specified model type (refer to modelconfig.yml)
-            score_threshold (float): threshold for prediction
 
         Returns:
             full_keypoint_coords (np.array): keypoints coordinates of detected poses
@@ -162,10 +156,10 @@ class Predictor:
 
     @staticmethod
     def _create_image_from_frame(output_stride: int,
-                                 frame: List[List[float]],
-                                 input_res: int,
-                                 model_type: str):
-        """ Preprocess image for inference
+                                 frame: np.ndarray,
+                                 input_res: Tuple[int, int],
+                                 model_type: str) -> Tuple[tf.Tensor, np.ndarray, List[int]]:
+        """ Preprocess raw frame to image for inference
 
         Args:
             output_stride (int): output stride to convert output indices to image coordinates
@@ -190,14 +184,8 @@ class Predictor:
         return image, output_scale, image_size
 
     @staticmethod
-    def _get_full_masks_from_keypoint_scores(keypoint_scores: List[List[float]]):
-        """ PoseNet prediction function
-
-        Args:
-            keypoint_scores (np.array): keypoints confidence scores of detected poses
-
-        Returns:
-            masks (np.array): keypoints validation masks of detected poses
+    def _get_full_masks_from_keypoint_scores(keypoint_scores: np.ndarray) -> np.ndarray:
+        """ Obtain masks for keypoints with confidence scores above the detection threshold
         """
         masks = keypoint_scores > MIN_PART_SCORE
         return masks

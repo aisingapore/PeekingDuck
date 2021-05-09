@@ -16,7 +16,7 @@ limitations under the License.
 
 import os
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Callable, List
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
@@ -26,25 +26,25 @@ SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
 logger = logging.getLogger(__name__)
 
 
-def wrap_frozen_graph(graph_def: dict,
-                      inputs,
-                      outputs):
-    '''
+def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef,
+                      inputs: List,
+                      outputs: List) -> Callable:
+    """
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
     It will return your predicted values.
 
-    args:
+    Args:
         - graph_def: The frozen graph in graph_def format
         - inputs: The name(s) of the input nodes from your graph. e.g.['inputs']
         - outputs: The name(s) of your output nodes from your graph.
                     e.g. ['heatmap', 'offsets', 'displacement_fwd', 'displacement_bwd']
         - print_graph: Whether to print the graph
 
-    return:
+    Return:
         a wrapped_import function to perform your inference with.
-    '''
-    def _imports_graph_def():  # this needs to be here because of graph_def
+    """
+    def _imports_graph_def() -> None:  # this needs to be here because of graph_def
         tf.compat.v1.import_graph_def(graph_def, name="")
 
     wrapped_import = tf.compat.v1.wrap_function(_imports_graph_def, [])
@@ -55,12 +55,12 @@ def wrap_frozen_graph(graph_def: dict,
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename,
-               inputs,
-               outputs):
-    '''
+def load_graph(filename: str,
+               inputs: List,
+               outputs: List) -> Callable:
+    """
     Loads the graph
-    '''
+    """
     with tf.io.gfile.GFile(filename, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(graph_file.read())
@@ -72,10 +72,10 @@ def load_graph(filename,
         return frozen_func
 
 
-def print_inputs(graph_def):
-    '''
+def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
+    """
     Prints the input nodes of graph_def
-    '''
+    """
     # pylint: disable=not-context-manager
     with tf.Graph().as_default() as graph:
         tf.import_graph_def(graph_def, name='')
@@ -88,10 +88,10 @@ def print_inputs(graph_def):
         logger.info('Inputs: %s', input_list)
 
 
-def print_outputs(graph_def):
-    '''
+def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
+    """
     Prints the output nodes of graph_def
-    '''
+    """
     name_list = []
     input_list = []
     for node in graph_def.node:  # tensorflow.core.framework.node_def_pb2.NodeDef

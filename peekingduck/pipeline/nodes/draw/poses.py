@@ -30,5 +30,5 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
         draw_human_poses(inputs[self.inputs[1]],
-                         inputs[self.inputs[0]], self.bbox_color, self.bbox_thickness)
+                         inputs[self.inputs[0]], self.bbox_color, self.bbox_thickness)  # type: ignore
         return {}

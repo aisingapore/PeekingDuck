@@ -16,14 +16,15 @@ limitations under the License.
 """
 from typing import List
 import numpy as np
+import tensorflow as tf
 
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi import \
     decode_multiple_poses
 
 
-def get_keypoints_relative_coords(keypoint_coords: List[float],
-                                  output_scale: List[float],
-                                  image_size: List[int]):
+def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
+                                  output_scale: np.ndarray,
+                                  image_size: List[int]) -> np.ndarray:
     """ Get relative coordinates that percentage of a keypoints to image size (W x H).
     It swaps array columns to change from (row, col) coordinate to (x, y) coordinate.
 
@@ -31,7 +32,7 @@ def get_keypoints_relative_coords(keypoint_coords: List[float],
     Args:
         keypoints_coords (np.array): nx17x2 keypoints coordinates of n persons
         output_scale (np.array): output scale in hx2 format
-        image_size (np.array): image size in hxw format
+        image_size (List[int]): image size in hxw format
 
     Returns:
         keypoints_coords (np.array): nx17x2 keypoints coordinates of n persons
@@ -45,23 +46,23 @@ def get_keypoints_relative_coords(keypoint_coords: List[float],
     return keypoint_coords
 
 
-def _sigmoid(num: float):
-    return 1/(1 + np.exp(-num))
+def _sigmoid(array: np.ndarray) -> np.ndarray:
+    return 1/(1 + np.exp(-array))
 
 
 def detect_keypoints(
-        tf_model,
-        image: List[List[float]],
+        tf_model: tf.keras.Model,
+        image: tf.Tensor,
         output_stride: int,
-        dst_scores: List[float],
-        dst_keypoints: List[List[float]],
+        dst_scores: np.ndarray,
+        dst_keypoints: np.ndarray,
         model_type: str,
-        score_threshold: float):
-    """ Evaluate image by model function to get keypoints info in yx format
+        score_threshold: float) -> int:
+    """ Evaluate image by model function to get detected keypoints info in yx format
 
     Args:
         tf_model: tensorflow model
-        image (np.array): image for inference
+        image (tf.Tensor): image for inference
         output_stride (int): output stride to convert output indices to image coordinates
         dst_scores (np.array): (nx17) buffer to store keypoint scores where n is
             the max persons to be detected

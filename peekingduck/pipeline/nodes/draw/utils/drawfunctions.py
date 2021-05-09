@@ -13,10 +13,11 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Optional, Iterable, Union
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
 
 
 POSE_BBOX_COLOR = (255, 255, 0)
@@ -42,10 +43,15 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def add_plotter_details(poses):
-    '''
-    filters out low-confidence keypoints and adds bounding box and connections
-    '''
+def add_plotter_details(poses: List[PoseData]) -> List[PoseData]:
+    """ Filters out low-confidence keypoints and add bounding box and connections
+
+    Args:
+        poses (List[PoseData]): list of PoseData object
+
+    Return:
+        poses (List[PoseData]): list of PoseData object
+    """
     for pose in poses:
         pose.keypoints = get_valid_full_keypoints_coords(pose.keypoints, pose.masks)
         pose.bbox = _get_bbox_of_one_pose(pose.keypoints, pose.masks)
@@ -54,35 +60,25 @@ def add_plotter_details(poses):
     return poses
 
 
-def get_valid_full_keypoints_coords(coords, masks):
-    '''
-    apply masks to keep only valid (detected) keypoints' relative coordinates for a given pose
+def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
+    """ Apply masks to keep only valid (detected) keypoints' relative coordinates for a given pose
 
-    args:
-        - coords: relative coordinates as an (Nx2) array
-        - masks: masks of valid (with enough confidence) keypoints, as an (N,) array
+    Args:
+        coords (np.array): relative coordinates as an (Nx2) array
+        masks (np.array): masks of valid (with enough confidence) keypoints, as an (N,) array
 
-    return:
-        - a set of keypoints as a (Nx2) array
+    Return:
+        full_joints (np.array): a set of keypoints as a (Nx2) array
           undetected keypoints are assigned a (-1) value.
-    '''
+    """
     full_joints = coords.copy()
     full_joints[~masks] = -1
     return full_joints
 
 
-def _get_bbox_of_one_pose(coords, mask):
-    '''
-    Gets the bounding box bordering the keypoints of a single pose
-
-    args:
-        - coords: relative coordinates as an (Nx2) array
-        - masks: masks of valid (with enough confidence) keypoints, as an (N,) array
-
-    return:
-        - a 2x2 numpy array representing the bounding box corners
-        [[min_x, min_y], [max_x, max_y]]
-    '''
+def _get_bbox_of_one_pose(coords: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    """ Get the bounding box bordering the keypoints of a single pose
+    """
     coords = coords[mask, :]
     if coords.shape[0]:
         min_x, min_y, max_x, max_y = (coords[:, 0].min(),
@@ -94,15 +90,8 @@ def _get_bbox_of_one_pose(coords, mask):
     return np.zeros(0)
 
 
-def _get_connections_of_one_pose(coords, masks):
-    """Get connections from one pose's keypoints and masks
-    args:
-        - coords: 17 pairs of xy keypoint positions in normalized
-                    coordinates as a (17x2) array
-        - masks: 17 boolean masks that specify if keypoint was detected, as a (17,) array
-
-    return:
-        list of adjacent keypoint pairs where both ends are detected
+def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
+    """Get connections (adjacent keypoint pairs) if both joint ends are detected
     """
     connections = []
     for start_joint, end_joint in SKELETON:
@@ -112,14 +101,22 @@ def _get_connections_of_one_pose(coords, masks):
 
 
 def draw_human_poses(image: np.array,
-                     poses: List[Any],
+                     poses: List[PoseData],
                      color: Tuple[int, int, int],
                      thickness: int) -> None:
-    '''draw pose estimates onto frame image'''
+    """Draw poses and bboxes onto an image frame.
+
+    Args:
+        image (np.array): image of current frame
+        poses (List[PoseData]): list of PoseData object
+        color (Tuple[int, int, int]): color of bounding box
+        thickness (int): thickness of bounding box
+    """
     image_size = _get_image_size(image)
     poses = add_plotter_details(poses)
     for pose in poses:
-        if pose.bbox.shape == (2, 2):
+        if pose.bbox is not None:
+            # is pose.bbox.shape == (2, 2):
             bbox_top_left = _draw_bbox(image, pose.bbox,
                                        image_size, color, thickness)
             _draw_connections(image, pose.connections,
@@ -130,19 +127,28 @@ def draw_human_poses(image: np.array,
 
 
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
+    """ Obtain image size of input frame """
     image_size = (frame.shape[1], frame.shape[0])  # width, height
     return image_size
 
 
-def _draw_connections(frame: np.array, connections: List[float],
-                      image_size: Tuple[int, int], connection_color: Tuple[int, int, int]) -> None:
-    for connection in connections:
-        pt1, pt2 = _project_points_onto_original_image(connection, image_size)
-        cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
+def _draw_connections(frame: np.array,
+                      connections: Union[None, Iterable[Any]],
+                      image_size: Tuple[int, int],
+                      connection_color: Tuple[int, int, int]) -> None:
+    """ Draw connections between detected keypoints """
+    if connections is not None:
+        for connection in connections:
+            pt1, pt2 = _project_points_onto_original_image(connection, image_size)
+            cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
 
 
-def _draw_keypoints(frame: np.array, keypoints: List[float], scores: List[float],
-                    image_size: Tuple[int, int], keypoint_dot_color: Tuple[int, int, int]) -> None:
+def _draw_keypoints(frame: np.ndarray,
+                    keypoints: np.ndarray,
+                    scores: np.ndarray,
+                    image_size: Tuple[int, int],
+                    keypoint_dot_color: Tuple[int, int, int]) -> None:
+    """ Draw detected keypoints """
     img_keypoints = _project_points_onto_original_image(
         keypoints, image_size)
 
@@ -152,12 +158,17 @@ def _draw_keypoints(frame: np.array, keypoints: List[float], scores: List[float]
             _draw_one_keypoint_text(frame, idx, keypoint)
 
 
-def _draw_one_keypoint_dot(frame: np.array, keypoint: Tuple[float, float],
+def _draw_one_keypoint_dot(frame: np.ndarray,
+                           keypoint: np.ndarray,
                            keypoint_dot_color: Tuple[int, int, int]) -> None:
+    """ Draw single keypoint """
     cv2.circle(frame, (keypoint[0], keypoint[1]), 5, keypoint_dot_color, -1)
 
 
-def _draw_one_keypoint_text(frame: np.array, idx: int, keypoint: Tuple[float, float]) -> None:
+def _draw_one_keypoint_text(frame: np.ndarray,
+                            idx: int,
+                            keypoint: np.ndarray) -> None:
+    """ Draw name above keypoint """
     position = (keypoint[0], keypoint[1])
     text = str(SKELETON_SHORT_NAMES[idx])
 
@@ -165,22 +176,10 @@ def _draw_one_keypoint_text(frame: np.array, idx: int, keypoint: Tuple[float, fl
                 0.4, KEYPOINT_TEXT_COLOR, 1, cv2.LINE_AA)
 
 
-def _project_points_onto_original_image(points: np.array,
-                                        image_size: Tuple[int, int]) -> np.array:
-    """Project points from relative value to absolute values in original
-    image.  E.g. from (1, 0.5) to (1280, 400).  It use a coordinate with
-    original point (0, 0) at top-left.
-
-    args:
-        - points: np.array of (x, y) pairs of normalized joint coordinates.
-                    i.e X and Y are in the range [0.0, 1.0]
-        - image_size: image shape tuple to project (width, height)
-
-    return:
-        list of (x, y) pairs of joint coordinates transformed to image
-        coordinates. x will be in the range [0, image width]. y will be in
-        in the range [0, image height]
-    """
+def _project_points_onto_original_image(points: np.ndarray,
+                                        image_size: Tuple[int, int]) -> np.ndarray:
+    """ Project points from relative value (0, 1) to absolute values in original
+    image. Note that coordinate (0, 0) starts from image top-left. """
     if len(points) == 0:
         return []
 
@@ -282,7 +281,6 @@ def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
 
 def draw_fps(frame: np.array, current_fps: float) -> None:
     """ Draw FPS onto frame image
-
     args:
         - frame: array containing the RGB values of the frame image
         - current_fps: value of the calculated FPS

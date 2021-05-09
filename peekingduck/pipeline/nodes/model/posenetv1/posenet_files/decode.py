@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List
+from typing import List, Callable, Tuple
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import POSE_CONNECTIONS
@@ -22,14 +22,14 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import P
 
 def decode_pose(root_score: float,
                 root_id: int,
-                root_image_coord: List[float],
-                scores: List[List[List[float]]],
-                offsets: List[List[List[List[float]]]],
+                root_image_coord: np.ndarray,
+                scores: np.ndarray,
+                offsets: np.ndarray,
                 output_stride: int,
-                displacements_fwd: List[List[List[List[float]]]],
-                displacements_bwd: List[List[List[List[float]]]],
-                keypoint_scores: List[float],
-                keypoint_coords: List[List[float]]):
+                displacements_fwd: np.ndarray,
+                displacements_bwd: np.ndarray,
+                keypoint_scores: np.ndarray,
+                keypoint_coords: np.ndarray) -> None:
     """ Decode pose's keypoints scores and coordinates from keypoints score,
     coordinates and displancements
 
@@ -83,12 +83,13 @@ def decode_pose(root_score: float,
 def _calculate_instance_keypoints(edge: int,
                                   target_keypoint_id: int,
                                   source_keypoint_id: int,
-                                  instance_keypoint_scores: List[float],
-                                  instance_keypoint_coords: List[List[float]],
-                                  scores: List[List[List[float]]],
-                                  offsets: List[List[List[List[float]]]],
+                                  instance_keypoint_scores: np.ndarray,
+                                  instance_keypoint_coords: np.ndarray,
+                                  scores: np.ndarray,
+                                  offsets: np.ndarray,
                                   output_stride: int,
-                                  displacements: List[List[List[List[float]]]]):
+                                  displacements: np.ndarray) -> None:
+    """Obtain instance keypoints scores and coordinates"""
     if (instance_keypoint_scores[source_keypoint_id] > 0.0 and
             instance_keypoint_scores[target_keypoint_id] == 0.0):
         source_keypoint = instance_keypoint_coords[source_keypoint_id]
@@ -105,10 +106,10 @@ def _calculate_instance_keypoints(edge: int,
         instance_keypoint_coords[target_keypoint_id] = coords
 
 
-def _clip_to_indices(keypoints: List[float],
+def _clip_to_indices(keypoints: np.ndarray,
                      output_stride: int,
                      width: int,
-                     height: int):
+                     height: int) -> np.ndarray:
     """Clip keypoint coordinate to indices within dimension (width, height)"""
     keypoints = keypoints / output_stride
     keypoint_indices = np.zeros((2,), dtype=np.int32)
@@ -122,10 +123,11 @@ def _clip_to_indices(keypoints: List[float],
 def _traverse_to_target_keypoint(edge_id: int,
                                  source_keypoint: int,
                                  target_keypoint_id: int,
-                                 scores: List[float],
-                                 offsets: List[List[List[List[float]]]],
+                                 scores: np.ndarray,
+                                 offsets: np.ndarray,
                                  output_stride: int,
-                                 displacements: List[List[List[List[float]]]]):
+                                 displacements: np.ndarray) -> Tuple[float, float]:
+    """Traverse to target keypoint and obtain keypoimt score and coordinates"""
     height = scores.shape[0] - 1
     width = scores.shape[1] - 1
 

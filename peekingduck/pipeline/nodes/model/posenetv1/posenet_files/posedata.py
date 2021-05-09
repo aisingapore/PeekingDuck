@@ -16,6 +16,7 @@ limitations under the License.
 
 import logging
 from typing import List
+import numpy as np
 
 
 class PoseData:
@@ -30,18 +31,16 @@ class PoseData:
     """
 
     def __init__(self,
-                 keypoints: List[List[List[float]]] = None,
-                 keypoint_scores: List[List[float]] = None,
-                 masks: List[List[bool]] = None,
-                 connections: List[List[int]] = None,
+                 keypoints: np.ndarray = None,
+                 keypoint_scores: np.ndarray = None,
+                 masks: np.ndarray = None,
+                 connections: np.ndarray = None,
                  activity: str = ''):
         self.logger = logging.getLogger(__name__)
-
+        self.bbox = None
         self.keypoints = keypoints
         self.keypoint_scores = keypoint_scores
         self.masks = masks
         self.connections = connections
-    #    self.hand_bboxes = []
-    #    self.hands = []
         self.activity = activity
         self.encode = None
