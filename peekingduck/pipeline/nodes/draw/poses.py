@@ -26,21 +26,21 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = tuple(config["bbox_color"])
         self.keypoint_dot_color = tuple(config["keypoint_dot_color"])
         self.keypoint_dot_radius = config["keypoint_dot_radius"]
         self.keypoint_connect_color = tuple(config["keypoint_connect_color"])
         self.keypoint_text_color = tuple(config["keypoint_text_color"])
+        self.bbox_thickness = config["bbox_thickness"]
+        self.bbox_color = tuple(config["bbox_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
         draw_human_poses(inputs[self.inputs[1]],
                          inputs[self.inputs[0]],
-                         self.bbox_color,
-                         self.bbox_thickness,
                          self.keypoint_dot_color,
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,
-                         self.keypoint_text_color)  # type: ignore
+                         self.keypoint_text_color,
+                         self.bbox_color,
+                         self.bbox_thickness)  # type: ignore
         return {}
