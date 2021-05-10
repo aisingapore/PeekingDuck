@@ -16,7 +16,7 @@ limitations under the License.
 
 import sys
 import logging
-from typing import List, Dict, Any
+from typing import List
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import ConfigLoader, DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -48,7 +48,8 @@ class Runner():
         if not nodes:
             node_configs = ConfigLoader()
             # create Graph to run
-            self.node_loader = DeclarativeLoader(node_configs, RUN_PATH, CUSTOM_NODE_PATH)
+            self.node_loader = DeclarativeLoader(
+                node_configs, RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
 
             self.pipeline = self.node_loader.get_nodes()
 
@@ -67,7 +68,7 @@ class Runner():
             self.pipeline.execute()
         del self.pipeline
 
-    def get_run_config(self) -> Dict[str, Any]:
+    def get_run_config(self) -> List[str]:
         """retrieve run configs
 
         Returns:

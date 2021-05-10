@@ -26,7 +26,7 @@ from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class ConfigLoader: # pylint: disable=too-few-public-methods
+class ConfigLoader:  # pylint: disable=too-few-public-methods
     """ Reads configuration and returns configuration required to
     create the nodes for the project
     """
@@ -72,7 +72,7 @@ class DeclarativeLoader:
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str):
+    def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
             nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
@@ -107,7 +107,7 @@ class DeclarativeLoader:
                     self.logger.info(
                         "No associated configs found for %s. Skipping", node)
 
-    def _import_nodes(self) -> None:
+    def _import_nodes(self) -> List[Any]:
         """Given a list of nodes, import the appropriate nodes"""
         imported_nodes = []
         for node_str in self.node_list:
@@ -115,9 +115,9 @@ class DeclarativeLoader:
             if node_type == 'custom':
                 custom_node_path = os.path.join(
                     self.custom_folder_path, node + '.py')
-                spec = importlib.util.spec_from_file_location(
+                spec = importlib.util.spec_from_file_location(  # type: ignore
                     node, custom_node_path)
-                module = importlib.util.module_from_spec(spec)
+                module = importlib.util.module_from_spec(spec)  # type: ignore
                 spec.loader.exec_module(module)
                 imported_nodes.append(("custom", module))
             else:
