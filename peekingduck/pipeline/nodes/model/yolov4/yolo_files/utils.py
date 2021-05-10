@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import List, Dict, Tuple
+from typing import List, Dict, Tuple, Any
 import numpy as np
 import cv2
 
 
 def draw_outputs(img: np.array, outputs: Tuple[List[np.array], List[float], List[str]],
-                 class_names: Dict[str]) -> np.array:
+                 class_names: Dict[str, Any]) -> np.array:
     """Draw object bounding box, confident score, and class name on
     the object in the image.
 
