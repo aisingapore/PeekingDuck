@@ -14,8 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import pytest
-
 import numpy as np
 from peekingduck.pipeline.nodes.heuristic.bbox_to_3d_loc import Node
 
