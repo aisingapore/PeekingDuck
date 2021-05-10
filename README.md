@@ -1,83 +1,51 @@
-# PeekingDuck
+<div align="center">
+    <img src="images/peekingduck.JPG" width="30%">
+    <h1>PeekingDuck</h1>
+</div>
 
-PeekingDuck is a python framework dealing with model inference.
+[![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
+[![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-This toolkit provides state of the art computer vision models to make real time inference easy: *social distancing, people counting, license plate recognition etc.*. Customisability of the node modules ensures flexibility for unique usecases. Attached API server enables real time access to data analysis of the model pipe.
+## What is PeekingDuck?
 
-## Features
+PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
-### Models
+## Install PeekingDuck
 
-- Yolov4
-- EfficientDet
-- Blazepose
-
-### Use Cases
-
-- Social Distancing
-- People Counting
-- License Plate Recognition
-- Vehicle Counting
-- Privacy Filter
-
-## How to Use for Developers (Temporary)
-
-- `git clone` this repo
-- `cd PeekingDuck`
-- `pip install .`
-- Choose the required nodes in [run_config.yml](run_config.yml)
-- To run:
+1. Install PeekingDuck from [PyPI](https://pypi.org/project/peekingduck/).
     ```
-    peekingduck run --config_path <path_to_config>
+    pip install peekingduck
     ```
-- To create a new node, check out [CONTRIBUTING.md](CONTRIBUTING.md)
+
+2. Create a project folder at a convenient location.
+    ```
+    mkdir <project_name>
+    cd <project_name>
+    ```
+
+3. Pull default configurations and run a demo.
+    ```
+    peekingduck get-configs
+    peekingduck run
+    ```
+
+    If you have a webcam, you should be able to see the demo running live.
+
+    <img src="images/black.png" width="50%">
+
+## How PeekingDuck Works
+
+Nodes are the basic blocks of PeekingDuck. A node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it. 
+
+PeekingDuck has 5 types of nodes:
+- input: responsible for dealing with various types of inputs such as live video feeds, recorded videos/images, etc, and passing individual frames to other nodes
+- model: AI models for object detection, pose estimation, etc
+- heuristic: broad class of functions such as algorithms or approximations that transform model results into useful outputs
+- draw: draw results such as bounding boxes on frames
+- output: responsible for showing results on screen, saving output videos, posting to API endpoint etc
+
+A pipeline governs the behavior of a chain of nodes. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. The diagram below shows the pipeline used in the above demo.
 
 
-
-
-## Installation (WIP)
-
-Use python package manager (pip) to install PeekingDuck
-
-`pip install pkdk`
-
-## Usage (WIP)
-
-### Start New Projects with `init`
-For new projects, we suggest to use the PeekingDuck cookiecutter starter:
-
-```bash
-> mkdir <new_project>
-> cd <new_project>
-> peekingduck init
-```
-
-### `get-configs`
-Unless specified, all nodes in `peekingduck` will use the default configs for every node. To view and change these configs, you can use:
-
-``` bash
-> peekingduck get-configs
-```
-
-### `run`
-You can run the PeekingDuck runner via the following command:
-
-```bash
-peekingduck run --config_path <path_to_config>
-```
-
-If `config_path` is not provided, this command will look for `run_config.yml` in the current directory.
-
-
-For specific information on how to use peekingduck-cli, you can use `peekingduck --help`.
-
-## Contributing (WIP)
-
-We welcome contributions to the repository through pull requests. When making contributions, first create an issue to describe the problem and the intended changes.
-
-Please note that we have a code of conduct for contributions to the repository.
-
-## License
-
-Licensed under [Apache License, Version 2.0](LICENSE)
-
+![Example pipeline](diagrams/yolo_demo.drawio.svg)
