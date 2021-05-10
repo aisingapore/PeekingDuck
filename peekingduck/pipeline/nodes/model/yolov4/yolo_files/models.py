@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+from typing import Union, List, Tuple
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -43,7 +44,8 @@ YOLO_TINY_ANCHORS = np.array([(10, 14), (23, 27), (37, 58), (81, 82),
 YOLO_TINY_ANCHOR_MASKS = np.array([[3, 4, 5], [0, 1, 2]])
 
 
-def _darknet_conv(x, filters, size, strides=1, batch_norm=True):
+def _darknet_conv(x: np.array, filters: int, size: int,
+                  strides: int = 1, batch_norm: bool = True) -> tf.Tensor:
     """create 1 layer with [padding], conv2d, [bn and relu]"""
     if strides == 1:
         padding = 'same'
@@ -62,7 +64,7 @@ def _darknet_conv(x, filters, size, strides=1, batch_norm=True):
     return x
 
 
-def _darknet_residual(x, filters):
+def _darknet_residual(x: np.array, filters: int) -> tf.Tensor:
     """create 2 layers by given H(x) = F(x) + x"""
     prev = x
     x = _darknet_conv(x, filters // 2, 1)
@@ -71,7 +73,7 @@ def _darknet_residual(x, filters):
     return x
 
 
-def _darknet_block(x, filters, blocks):
+def _darknet_block(x: np.array, filters: int, blocks: int) -> tf.Tensor:
     """create (1 + 2 x blocks) layers"""
     x = _darknet_conv(x, filters, 3, strides=2)
     for _ in range(blocks):
@@ -79,7 +81,7 @@ def _darknet_block(x, filters, blocks):
     return x
 
 
-def _darknet(name=None):
+def _darknet(name: str = None) -> tf.keras.Model:
     """Create a Model with 52 layers
 
     This is different from classical Darknet, which shall be 53 layers,
@@ -99,7 +101,7 @@ def _darknet(name=None):
     return tf.keras.Model(inputs, (x_36, x_61, x), name=name)
 
 
-def _darknet_tiny(name=None):
+def _darknet_tiny(name: str = None) -> tf.keras.Model:
     """create 7 layers, return a Model with 2 outputs x_8 and x"""
     x = inputs = Input([None, None, 3])
     x = _darknet_conv(x, 16, 3)
@@ -118,7 +120,7 @@ def _darknet_tiny(name=None):
     return tf.keras.Model(inputs, (x_8, x), name=name)
 
 
-def _yolo_conv(filters, name=None):
+def _yolo_conv(filters: int, name: str = None) -> tf.keras.Model:
     """create convolution layers
 
     It has [1] + 5 layers
@@ -126,7 +128,7 @@ def _yolo_conv(filters, name=None):
     Return:
         - Model with 1 output x
     """
-    def _yolo_conv_imp(x_in):
+    def _yolo_conv_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
             x, x_skip = inputs
@@ -148,9 +150,9 @@ def _yolo_conv(filters, name=None):
     return _yolo_conv_imp
 
 
-def _yolo_conv_tiny(filters, name=None):
+def _yolo_conv_tiny(filters: int, name: str = None) -> tf.keras.Model:
     """create [1] layers, return a Model with 1 output x"""
-    def _yolo_conv_tiny_imp(x_in):
+    def _yolo_conv_tiny_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
             x, x_skip = inputs
@@ -168,9 +170,10 @@ def _yolo_conv_tiny(filters, name=None):
     return _yolo_conv_tiny_imp
 
 
-def _yolo_output(filters, anchors, classes, name=None):
+def _yolo_output(filters: int, anchors: int, classes: int,
+                 name: str = None) -> tf.keras.Model:
     """create 2 layers, return a model with 1 output x"""
-    def _yolo_output_imp(x_in):
+    def _yolo_output_imp(x_in: np.array) -> tf.keras.Model:
         x = inputs = Input(x_in.shape[1:])
         x = _darknet_conv(x, filters * 2, 3)
         x = _darknet_conv(x, anchors * (classes + 5), 1, batch_norm=False)
@@ -181,7 +184,8 @@ def _yolo_output(filters, anchors, classes, name=None):
     return _yolo_output_imp
 
 
-def _yolo_boxes(pred, anchors, classes):
+def _yolo_boxes(pred: tf.Tensor, anchors: int,
+                classes: int) -> Tuple[List[np.array], List[str], List[float], List[np.array]]:
     # pred: (batch_size, grid, grid, anchors, (x, y, w, h, obj, ...classes))
     grid_size = tf.shape(pred)[1]
     box_xy, box_wh, objectness, class_probs = tf.split(pred,
@@ -208,7 +212,8 @@ def _yolo_boxes(pred, anchors, classes):
     return bbox, objectness, class_probs, pred_box
 
 
-def _yolo_nms(outputs, classes):
+def _yolo_nms(outputs: List[tf.Tensor],
+              classes: tf.Tensor) -> Tuple[List[np.array], List[float], List[str], List[int]]:
     """non-maximum suppression"""
     # boxes, conf, type
     b, c, t = [], [], []
@@ -235,10 +240,10 @@ def _yolo_nms(outputs, classes):
     return boxes, scores, classes, valid_detections
 
 
-def yolov3(size=None,
-           channels=3,
-           classes=80,
-           training=False):
+def yolov3(size: int = None,
+           channels: int = 3,
+           classes: int = 80,
+           training: bool = False) -> tf.keras.Model:
     """Create a yolov3 model
 
     This model has 76 layers, which can be calcualted below:
@@ -291,10 +296,10 @@ def yolov3(size=None,
     return Model(inputs, outputs, name='yolov3')
 
 
-def yolov3_tiny(size=None,
-                channels=3,
-                classes=80,
-                training=False):
+def yolov3_tiny(size: int = None,
+                channels: int = 3,
+                classes: int = 80,
+                training: bool = False) -> tf.keras.Model:
     """Create Yolov3 tiny model
 
     This model has 23 layers, which can be calcualted below:
