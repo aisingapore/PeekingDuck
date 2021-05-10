@@ -48,4 +48,4 @@ PeekingDuck has 5 types of nodes:
 A pipeline governs the behavior of a chain of nodes. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. The diagram below shows the pipeline used in the above demo.
 
 
-![Example pipeline](diagrams/yolo_demo.drawio.svg)
+<img src="diagrams/yolo_demo.drawio.svg">
