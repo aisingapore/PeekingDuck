@@ -116,8 +116,7 @@ def _project_points_onto_original_image(points: np.array,
     return projected_points
 
 
-def draw_bboxes(frame: np.array,
-                bboxes: List[List[float]],
+def draw_bboxes(inputs,
                 color: Tuple[int, int, int],
                 thickness: int) -> None:
     """Draw bboxes onto an image frame.
@@ -128,24 +127,63 @@ def draw_bboxes(frame: np.array,
         color (Tuple[int, int, int]): color of bounding box
         thickness (int): thickness of bounding box
     """
+    frame = inputs["img"]
+    bboxes = inputs["bboxes"]
+    labels = inputs["labels"]
+    score = inputs["score"]
+
     image_size = _get_image_size(frame)
-    for bbox in bboxes:
-        _draw_bbox(frame, bbox, image_size, color, thickness)
+    for index, bbox in enumerate(bboxes):
+        _draw_bbox(frame, bbox, labels[index], score[index], image_size,
+                   color, thickness)
 
 
 def _draw_bbox(frame: np.array,
                bbox: List[float],
+               label: str,
+               score: float,
                image_size: Tuple[int, int],
                color: Tuple[int, int, int],
                thickness: int) -> np.array:
     """ Draw a single bounding box """
     top_left, bottom_right = _project_points_onto_original_image(
         bbox, image_size)
+
     cv2.rectangle(frame, (top_left[0], top_left[1]),
                   (bottom_right[0], bottom_right[1]),
                   color, thickness)
 
+    _draw_bbox_label(frame, top_left, label, score, color)
+
     return top_left
+
+
+def _draw_bbox_label(frame: np.array,
+                     bbox_top_left: Tuple[int, int],
+                     label: str,
+                     score: float,
+                     color: Tuple[int, int, int]) -> None:
+    label_top_left, label_bottom_right = _get_bbox_label_coord(bbox_top_left)
+    text_location = (label_top_left[0] + 5, label_top_left[1] + 30)
+    text = "Category: " + label + "  Score: " + str(round(score, 2))
+
+    cv2.rectangle(frame, label_top_left, label_bottom_right, color, -1)
+    cv2.putText(frame, text, text_location, FONT_HERSHEY_SIMPLEX, 1,
+                (255, 255, 255), 2, LINE_AA)
+
+
+def _get_bbox_label_coord(bbox_top_left:
+                          Tuple[int, int]) -> Union[Tuple[int, int],
+                                                    Tuple[int, int]]:
+    label_box_width = 550
+    label_box_height = 40
+
+    top_left_x = int(bbox_top_left[0])
+    top_left_y = int(bbox_top_left[1] - label_box_height)
+    bottom_right_x = int(bbox_top_left[0] + label_box_width)
+    bottom_right_y = int(bbox_top_left[1])
+
+    return (top_left_x, top_left_y), (bottom_right_x, bottom_right_y)
 
 
 def draw_tags(frame: np.array,
