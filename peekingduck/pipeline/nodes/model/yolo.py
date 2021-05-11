@@ -40,6 +40,11 @@ class Node(AbstractNode):
         """
         # Currently prototyped to return just the bounding boxes
         # without the scores
-        results, _, _ = self.model.predict(inputs[self.inputs[0]])
-        outputs = {self.outputs[0]: results}
+        bboxes, labels, scores = self.model.predict(inputs[self.inputs[0]])
+
+        outputs = {self.outputs[0]: bboxes,
+                   self.outputs[1]: labels,
+                   self.outputs[2]: scores,
+                   }
+
         return outputs
