@@ -20,7 +20,6 @@ import yaml
 import click
 
 from peekingduck.runner import Runner
-from peekingduck.loaders import DeclarativeLoader
 from peekingduck.utils.logger import setup_logger
 
 setup_logger()
@@ -89,14 +88,3 @@ def run(config_path: str) -> None:
 
     runner = Runner(config_path, custom_node_path)
     runner.run()
-
-
-@cli.command()
-@click.option('--run_config_path', default='./run_config.yml', type=click.Path(),
-              help="List of nodes to pull config ymls from. \
-                   If none, assumes a run_config.yml at current working directory")
-def get_configs(run_config_path: str) -> None:
-    """Creates node specific config ymls for usage. If no configs are specified, pull all"""
-
-    node_loader = DeclarativeLoader(run_config_path)
-    node_loader.compile_configrc()

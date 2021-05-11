@@ -58,7 +58,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         return node_config
 
 
-class DeclarativeLoader:
+class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     """Uses the declarative run_config.yml to load pipelines or compiled configs"""
 
     def __init__(self,
@@ -78,45 +78,44 @@ class DeclarativeLoader:
         with open(run_config) as node_yml:
             nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
 
-        self.logger.info(
-            'Successfully loaded run_config file.')
+        self.logger.info('Successfully loaded run_config file.')
         return nodes
 
-    def _import_nodes(self) -> List[Any]:
-        """Given a list of nodes, import the appropriate nodes"""
-        imported_nodes = []
-        for node_str in self.node_list:
-            node_type, node = node_str.split('.')
-            if node_type == 'custom':
-                custom_node_path = os.path.join(
-                    self.custom_folder_path, node + '.py')
-                spec = importlib.util.spec_from_file_location(  # type: ignore
-                    node, custom_node_path)
-                module = importlib.util.module_from_spec(spec)  # type: ignore
-                spec.loader.exec_module(module)
-                imported_nodes.append(("custom", module))
-            else:
-                imported_nodes.append((node_str, importlib.import_module(
-                    'peekingduck.pipeline.nodes.' + node_str)))
-            self.logger.info('%s added to pipeline.', node)
-        return imported_nodes
-
-    def _instantiate_nodes(self, imported_nodes: List[Any]) -> List[AbstractNode]:
+    def _instantiate_nodes(self) -> List[AbstractNode]:
         """ Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
-        for node_name, node in imported_nodes:
-            if node_name == 'custom':
-                config = self.custom_config_loader.get(node_name)
-                instantiated_nodes.append(node.Node(config))
+
+        for node_str in self.node_list:
+            node_str_split = node_str.split('.')
+
+            if len(node_str_split) == 3:
+                path_to_node = ".".join(self.custom_folder_path.split('/')[-1:]) + "."
+                node_name = ".".join(node_str_split[-2:])
+
+                instantiated_node = self._init_node(
+                    path_to_node, node_name, self.custom_config_loader)
             else:
-                config = self.config_loader.get(node_name)
-                instantiated_nodes.append(node.Node(config))
+                path_to_node = 'peekingduck.pipeline.nodes.'
+
+                instantiated_node = self._init_node(
+                    path_to_node, node_str, self.config_loader)
+
+            instantiated_nodes.append(instantiated_node)
+
         return instantiated_nodes
+
+    @staticmethod
+    def _init_node(path_to_node: str, node_name: str,
+                   config_loader: ConfigLoader) -> AbstractNode:
+        """ Import node to filepath and initialise node with config """
+
+        node = importlib.import_module(path_to_node + node_name)
+        config = config_loader.get(node_name)
+        return node.Node(config) # type: ignore
 
     def get_nodes(self) -> Pipeline:
         """Returns a compiled Pipeline for PeekingDuck runner to execute"""
-        imported_nodes = self._import_nodes()
-        instantiated_nodes = self._instantiate_nodes(imported_nodes)
+        instantiated_nodes = self._instantiate_nodes()
 
         try:
             return Pipeline(instantiated_nodes)
