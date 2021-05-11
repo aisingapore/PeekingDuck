@@ -18,9 +18,8 @@ import logging
 from typing import Dict, Any, List, Tuple
 import numpy as np
 import tensorflow as tf
+from peekingduck.utils.graph_functions import load_graph
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.graph_functions \
-    import load_graph
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process \
     import preprocess_image, postprocess_boxes
 
