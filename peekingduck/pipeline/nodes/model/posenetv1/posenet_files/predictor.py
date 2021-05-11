@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import de
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import SCALE_FACTOR, \
     KEYPOINTS_NUM, MIN_PART_SCORE
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
-from peekingduck.pipeline.nodes.model.utils.graph_functions import load_graph
+from peekingduck.utils.graph_functions import load_graph
 
 
 class Predictor:  # pylint: disable=too-many-instance-attributes
