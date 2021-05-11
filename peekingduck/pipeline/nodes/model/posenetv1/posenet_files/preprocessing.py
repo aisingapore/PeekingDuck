@@ -58,7 +58,7 @@ def rescale_image(source_img: np.ndarray,
 
 def _get_valid_resolution(width: float,
                           height: float,
-                          output_stride: int = 16):
+                          output_stride: int = 16) -> Tuple[int, int]:
     """Get valid height and width divisible by output stride
     """
     target_width = (int(width) // output_stride) * output_stride + 1
