@@ -1,4 +1,4 @@
-input: ["bboxes", "img"]
+input: ["bboxes", "img", "labels", "score"]
 output: ["img"]
 
 bbox_color: [255, 0, 255]
