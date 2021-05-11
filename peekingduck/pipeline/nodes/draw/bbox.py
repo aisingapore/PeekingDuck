@@ -29,6 +29,5 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
-        draw_bboxes(inputs["img"], inputs["bboxes"],
-                    self.bbox_color, self.bbox_thickness)  # type: ignore
+        draw_bboxes(inputs, self.bbox_color, self.bbox_thickness)  # type: ignore
         return {}
