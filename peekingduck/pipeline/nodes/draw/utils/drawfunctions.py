@@ -25,7 +25,6 @@ BLACK_COLOR = (0, 0, 0)
 PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 OBJ_MASK_COLOR = (0, 100, 255)
-KEYPOINT_DOT_COLOR = (0, 255, 0)
 COUNTING_TEXT_COLOR = (0, 0, 255)
 FONT_SCALE = 0.5
 FONT_THICKNESS = 1
@@ -39,7 +38,7 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def add_plotter_details(poses: List[PoseData]) -> List[PoseData]:
+def add_pose_details(poses: List[PoseData]) -> List[PoseData]:
     """ Filters out low-confidence keypoints and add bounding box and connections
 
     Args:
@@ -273,17 +272,6 @@ def draw_count(frame: np.array, count: int) -> None:
     text = 'COUNT: {0}'.format(count)
     cv2.putText(frame, text, (10, 50), FONT_HERSHEY_SIMPLEX,
                 0.75, COUNTING_TEXT_COLOR, 2, LINE_AA)
-
-
-def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
-    """draw pts of selected object onto frame
-
-    Args:
-        frame (List[List[float]]): image of current frame
-        pts (List[Tuple[float]]): bottom midpoints of bboxes
-    """
-    for point in pts:
-        cv2.circle(frame, point, 5, KEYPOINT_DOT_COLOR, -1)
 
 
 def draw_fps(frame: np.array, current_fps: float) -> None:
