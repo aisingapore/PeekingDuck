@@ -33,14 +33,14 @@ class Node(AbstractNode):
         self.bbox_thickness = config["bbox_thickness"]
         self.bbox_color = tuple(config["bbox_color"])
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
 
-        draw_human_poses(inputs[self.inputs[1]],
+        draw_human_poses(inputs[self.inputs[1]],  # type: ignore
                          inputs[self.inputs[0]],
                          self.keypoint_dot_color,
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,
                          self.keypoint_text_color,
                          self.bbox_color,
-                         self.bbox_thickness)  # type: ignore
+                         self.bbox_thickness)
         return {}
