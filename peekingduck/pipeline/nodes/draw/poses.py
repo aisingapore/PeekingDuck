@@ -38,8 +38,8 @@ class Node(AbstractNode):
             inputs (Dict): Dictionary of inputs
         """
 
-        draw_human_poses(inputs[self.inputs[1]],  # inputs["img"]
-                         inputs[self.inputs[0]],  # inputs["poses"]
+        draw_human_poses(inputs["img"],
+                         inputs["poses"],
                          self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,  # type: ignore

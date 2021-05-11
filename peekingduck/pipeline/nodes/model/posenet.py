@@ -36,8 +36,6 @@ class Node(AbstractNode):
         Returns:
             outputs (Dict): poses output in dictionary format
         """
-        results = self.model.predict(inputs[self.inputs[0]])
-        outputs = {self.outputs[0]: results}
-        # results = self.model.predict(inputs["img"])
-        # outputs = {"poses": results}
+        results = self.model.predict(inputs["img"])
+        outputs = {"poses": results}
         return outputs
