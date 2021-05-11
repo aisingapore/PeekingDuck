@@ -35,12 +35,12 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
 
-        draw_human_poses(inputs[self.inputs[1]],  # type: ignore
+        draw_human_poses(inputs[self.inputs[1]],
                          inputs[self.inputs[0]],
-                         self.keypoint_dot_color,
+                         self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
-                         self.keypoint_connect_color,
-                         self.keypoint_text_color,
-                         self.bbox_color,
+                         self.keypoint_connect_color,  # type: ignore
+                         self.keypoint_text_color,  # type: ignore
+                         self.bbox_color,  # type: ignore
                          self.bbox_thickness)
         return {}
