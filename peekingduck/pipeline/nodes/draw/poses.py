@@ -18,8 +18,6 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .utils.drawfunctions import draw_human_poses
 
-# pylint: disable=duplicate-code
-
 
 class Node(AbstractNode):
     """Node for drawing poses onto image"""
@@ -33,7 +31,7 @@ class Node(AbstractNode):
         self.bbox_thickness = config["bbox_thickness"]
         self.bbox_color = tuple(config["bbox_color"])
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
         draw_human_poses(inputs[self.inputs[1]],
                          inputs[self.inputs[0]],
