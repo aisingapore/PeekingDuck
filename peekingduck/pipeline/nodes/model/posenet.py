@@ -15,7 +15,7 @@ limitations under the License.
 """
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .posenetv1 import posenet_model
+from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
 
 
 class Node(AbstractNode):
@@ -38,4 +38,6 @@ class Node(AbstractNode):
         """
         results = self.model.predict(inputs[self.inputs[0]])
         outputs = {self.outputs[0]: results}
+        # results = self.model.predict(inputs["img"])
+        # outputs = {"poses": results}
         return outputs
