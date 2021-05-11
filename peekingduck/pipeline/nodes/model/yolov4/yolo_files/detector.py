@@ -30,11 +30,7 @@ from typing import Dict, Any, List, Tuple
 import logging
 import numpy as np
 import tensorflow as tf
-<<<<<<< HEAD
-from peekingduck.pipeline.nodes.model.utils.graph_functions import load_graph
-=======
 from peekingduck.utils.graph_functions import load_graph
->>>>>>> 20b4335c7052b40346e1c75ab9c35e65eb48af04
 from .dataset import transform_images
 
 
