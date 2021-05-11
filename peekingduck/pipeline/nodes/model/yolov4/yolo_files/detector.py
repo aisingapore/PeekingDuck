@@ -30,8 +30,8 @@ from typing import Dict, Any, List, Tuple
 import logging
 import numpy as np
 import tensorflow as tf
-from .graph_functions import load_graph
 from .dataset import transform_images
+from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
