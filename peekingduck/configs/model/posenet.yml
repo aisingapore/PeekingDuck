@@ -1,20 +1,18 @@
 input: ["img"]
-output: ["poses","img"]
+output: ["poses", "img"]
 
 model_type: resnet # 50, 75, 101 or resnet
 weights_dir: ["../weights/posenet/models"]
 weights_id: 0 # check and update weights id
-model_files: {
+model_files:
+  {
     50: ../weights/posenet/models/model-mobilenet_v1_050.pb,
     75: ../weights/posenet/models/model-mobilenet_v1_075.pb,
     101: ../weights/posenet/models/model-mobilenet_v1_101.pb,
-    resnet: ../weights/posenet/models/model-resnet.pb
-}
-# resolution: 225x225 # change to dictionary
-resolution: {
-  height: 225,
-  width: 225
-}
+    resnet: ../weights/posenet/models/model-resnet.pb,
+  }
+
+resolution: { height: 225, width: 225 }
 output_stride: 16
 max_pose_detection: 10
 score_threshold: 0.4
