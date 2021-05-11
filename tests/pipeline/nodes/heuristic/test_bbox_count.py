@@ -25,7 +25,7 @@ def create_node():
     return node
 
 
-class TestCheckLargeGroups:
+class TestBboxCount:
     def test_no_bboxes(self):
         input1 = {"bboxes": []}
         node = create_node()

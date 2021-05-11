@@ -1,0 +1,47 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+
+import numpy as np
+from peekingduck.pipeline.nodes.heuristic.bbox_to_btm_midpoint import Node
+
+SIZE = (400, 600, 3)
+
+
+def create_node():
+    node = Node({"input": ["bboxes", "img"],
+                 "output": ["btm_midpoint"],
+                 })
+    return node
+
+
+class TestBboxToBtmMidpoint:
+    def test_no_bboxes(self, create_image):
+        input1 = {"bboxes": [], "img": create_image(SIZE)}
+        node = create_node()
+        assert node.run(input1)["btm_midpoint"] == []
+
+    def test_multi_bboxes(self, create_image):
+        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4]),
+                             np.array([0.5, 0.6, 0.7, 0.8])],
+                  "img": create_image(SIZE)}
+        node = create_node()
+        assert len(node.run(input1)["btm_midpoint"]) == 2
+
+    def test_formula(self, create_image):
+        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4])],
+                  "img": create_image(SIZE)}
+        node = create_node()
+        assert node.run(input1)["btm_midpoint"] == [(120, 160)]
