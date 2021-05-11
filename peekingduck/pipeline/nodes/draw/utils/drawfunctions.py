@@ -117,7 +117,7 @@ def draw_human_poses(image: np.array,
         thickness (int): thickness of bounding box
     """
     image_size = _get_image_size(image)
-    poses = add_plotter_details(poses)
+    poses = add_pose_details(poses)
     for pose in poses:
         if pose.bbox is not None:
             _draw_bbox(image, pose.bbox,
