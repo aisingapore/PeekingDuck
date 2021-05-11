@@ -16,19 +16,16 @@ limitations under the License.
 
 import os
 import logging
-from typing import Callable, List
+from typing import List, Callable
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
-SAVE_DIR = os.path.join(os.getcwd(), 'data', 'posenet')
-
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef,
-                      inputs: List,
-                      outputs: List) -> Callable:
+def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
+                      outputs: List[str]) -> Callable:
     """
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -55,9 +52,7 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef,
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename: str,
-               inputs: List,
-               outputs: List) -> Callable:
+def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> Callable:
     """
     Loads the graph
     """
