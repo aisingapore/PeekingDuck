@@ -25,11 +25,7 @@ BLACK_COLOR = (0, 0, 0)
 PINK_COLOR = (255, 0, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 OBJ_MASK_COLOR = (0, 100, 255)
-# KEYPOINT_TEXT_COLOR = (255, 0, 255)
 KEYPOINT_DOT_COLOR = (0, 255, 0)
-# KEYPOINT_CONNECT_COLOR = (0, 255, 255)
-# HAND_KEYPOINT_DOT_COLOR = (0, 255, 0)
-# HAND_KEYPOINT_CONNECT_COLOR = (0, 0, 255)
 COUNTING_TEXT_COLOR = (0, 0, 255)
 FONT_SCALE = 0.5
 FONT_THICKNESS = 1
@@ -50,7 +46,7 @@ def add_plotter_details(poses: List[PoseData]) -> List[PoseData]:
         poses (List[PoseData]): list of PoseData object
 
     Return:
-        poses (List[PoseData]): list of PoseData object
+        poses (List[PoseData]): list of PoseData object with details for plotting
     """
     for pose in poses:
         pose.keypoints = get_valid_full_keypoints_coords(pose.keypoints, pose.masks)
@@ -61,15 +57,15 @@ def add_plotter_details(poses: List[PoseData]) -> List[PoseData]:
 
 
 def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
-    """ Apply masks to keep only valid (detected) keypoints' relative coordinates for a given pose
+    """ Apply masks to keep only valid keypoints' relative coordinates
 
     Args:
-        coords (np.array): relative coordinates as an (Nx2) array
-        masks (np.array): masks of valid (with enough confidence) keypoints, as an (N,) array
+        coords (np.array): Nx2 array of keypoints' relative coordinates
+        masks (np.array): masks for valid (> min confidence score) keypoints
 
     Return:
-        full_joints (np.array): a set of keypoints as a (Nx2) array
-          undetected keypoints are assigned a (-1) value.
+        full_joints (np.array): Nx2 array of keypoints where undetected
+            keypoints are assigned a (-1) value.
     """
     full_joints = coords.copy()
     full_joints[~masks] = -1
@@ -91,7 +87,7 @@ def _get_bbox_of_one_pose(coords: np.ndarray, mask: np.ndarray) -> np.ndarray:
 
 
 def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
-    """Get connections (adjacent keypoint pairs) if both joint ends are detected
+    """Get connections between adjacent keypoint pairs if both keypoints are detected
     """
     connections = []
     for start_joint, end_joint in SKELETON:
@@ -125,7 +121,6 @@ def draw_human_poses(image: np.array,
     poses = add_plotter_details(poses)
     for pose in poses:
         if pose.bbox is not None:
-            # is pose.bbox.shape == (2, 2):
             _draw_bbox(image, pose.bbox,
                        image_size, color, thickness)
             _draw_connections(image, pose.connections,
