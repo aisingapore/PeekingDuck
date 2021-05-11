@@ -214,4 +214,5 @@ class Detector:
         classes = [class_names[int(i)] for i in classes]  # type: ignore
 
         boxes = np.array(boxes)
+        scores = np.array(scores)
         return boxes, classes, scores  # type: ignore
