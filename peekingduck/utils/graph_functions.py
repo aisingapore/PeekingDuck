@@ -53,7 +53,7 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> Callable:
+def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> tf.function:
     '''
     Loads the graph
     '''
