@@ -16,15 +16,17 @@ limitations under the License.
 
 import os
 import logging
-from typing import List
+from typing import List, Callable
 import tensorflow as tf
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 SAVE_DIR = os.path.join(os.getcwd(), 'data', 'yolov3')
 
-logger = logging.getLogger(__name__) #pylint: disable=invalid-name
+logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List, outputs: List):
+
+def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
+                      outputs: List[str]) -> Callable:
     '''
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -40,7 +42,7 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List, outputs: L
     return:
         a wrapped_import function to perform your inference with.
     '''
-    def _imports_graph_def():  # this needs to be here because of graph_def
+    def _imports_graph_def() -> None:  # this needs to be here because of graph_def
         tf.compat.v1.import_graph_def(graph_def, name="")
 
     wrapped_import = tf.compat.v1.wrap_function(_imports_graph_def, [])
@@ -51,7 +53,7 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List, outputs: L
         tf.nest.map_structure(import_graph.as_graph_element, outputs))
 
 
-def load_graph(filename: str, inputs: List, outputs: List):
+def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> tf.function:
     '''
     Loads the graph
     '''
@@ -69,7 +71,7 @@ def load_graph(filename: str, inputs: List, outputs: List):
         return frozen_func
 
 
-def print_inputs(graph_def: tf.compat.v1.GraphDef):
+def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
     '''
     Prints the input nodes of graph_def
     '''
@@ -85,7 +87,7 @@ def print_inputs(graph_def: tf.compat.v1.GraphDef):
         logger.info('Inputs: %s', input_list)
 
 
-def print_outputs(graph_def: tf.compat.v1.GraphDef):
+def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
     '''
     Prints the output nodes of graph_def
     '''

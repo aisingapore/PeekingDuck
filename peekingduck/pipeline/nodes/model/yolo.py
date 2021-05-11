@@ -23,7 +23,8 @@ class Node(AbstractNode):
     """Yolo node class that initialises and use yolo model to infer bboxes
     from image frame
     """
-    def __init__(self, config):
+
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.model = yolo_model.YoloModel(config)
 

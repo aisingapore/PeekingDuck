@@ -25,17 +25,19 @@ Commands:
     python src/yolov3/detector.py --tiny
 """
 import os
+import builtins
+from typing import Dict, Any, List, Tuple
 import logging
 import numpy as np
 import tensorflow as tf
-from .graph_functions import load_graph
+from peekingduck.utils.graph_functions import load_graph
 from .dataset import transform_images
 
 
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
@@ -43,14 +45,14 @@ class Detector:
 
         self.yolo = self._create_yolo_model()
 
-    def _setup_gpu(self):
+    def _setup_gpu(self) -> None:
         physical_devices = tf.config.experimental.list_physical_devices('GPU')
         if len(physical_devices) > 0:
             self.logger.info('GPU setup with %d devices', len(physical_devices))
         else:
             self.logger.info('use CPU')
 
-    def _create_yolo_model(self):
+    def _create_yolo_model(self) -> tf.keras.Model:
         '''
         Creates yolo model for human detection
         '''
@@ -62,7 +64,7 @@ class Detector:
         model = tf.keras.models.load_model(model_path)
         return model
 
-    def _load_yolo_graph(self, filepath):
+    def _load_yolo_graph(self, filepath: str) -> tf.compat.v1.GraphDef:
         '''
         When loading a graph model, you need to explicitly state the input
         and output nodes of the graph. It is usually x:0 for input and Identity:0
@@ -77,19 +79,22 @@ class Detector:
         raise ValueError('Graph file does not exist. Please check that '
                          '%s exists' % model_path)
 
-    def _load_image(self, image_file):
+    def _load_image(self, image_file: str) -> builtins.bytes:
         img = open(image_file, 'rb').read()
         self.logger.info('image file %s loaded', image_file)
         return img
 
     @staticmethod
-    def _reshape_image(image, image_size):
+    def _reshape_image(image: tf.Tensor, image_size: int) -> tf.Tensor:
         image = tf.expand_dims(image, 0)
         image = transform_images(image, image_size)
         return image
 
     @staticmethod
-    def _shrink_dimension_and_length(boxes, scores, classes, nums, object_ids):
+    def _shrink_dimension_and_length(boxes: tf.Tensor, scores: tf.Tensor,
+                                     classes: tf.Tensor, nums: List[int],
+                                     object_ids: List[int]
+                                     ) -> Tuple[List[np.array], List[float], List[str]]:
         len0 = nums[0]
 
         classes = classes.numpy()[0]
@@ -107,7 +112,10 @@ class Detector:
 
         return boxes, scores, classes
 
-    def _evaluate_image_by_yolo(self, image):
+    def _evaluate_image_by_yolo(self, image: np.array) -> Tuple[List[np.array],
+                                                                List[float],
+                                                                List[float],
+                                                                List[int]]:
         '''
         Takes in the yolo model and image to perform inference with.
         It will return the following:
@@ -137,17 +145,17 @@ class Detector:
         return boxes, scores, classes, nums
 
     @staticmethod
-    def _prepare_image_from_camera(image):
+    def _prepare_image_from_camera(image: np.array) -> tf.Tensor:
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)
         return image
 
     @staticmethod
-    def _prepare_image_from_file(image):
+    def _prepare_image_from_file(image: np.array) -> tf.Tensor:
         image = tf.image.decode_image(image, channels=3)
         return image
 
-    def predict_person_bbox_from_image(self, image):
+    def predict_person_bbox_from_image(self, image: np.array) -> List[np.array]:
         """Detect all persons' bounding box from one image
 
         args:
@@ -168,14 +176,17 @@ class Detector:
         boxes, scores, classes, nums = self._evaluate_image_by_yolo(image)
 
         # 3. clean up return. Note that object id is [0] as index 0 is for person
-        boxes, scores, classes = self._shrink_dimension_and_length(
+        boxes, scores, classes = self._shrink_dimension_and_length(  # type: ignore
             boxes, scores, classes, nums, [0])
 
         boxes = np.array(boxes)
         return boxes
 
     # possible that we may want to control what is being detection
-    def predict_object_bbox_from_image(self, class_names, image, detect_ids):
+    def predict_object_bbox_from_image(self, class_names: List[str], image: np.array,
+                                       detect_ids: List[int]) -> Tuple[List[np.array],
+                                                                       List[str],
+                                                                       List[float]]:
         """Detect all objects' bounding box from one image
 
         args:
@@ -196,11 +207,11 @@ class Detector:
         boxes, scores, classes, nums = self._evaluate_image_by_yolo(image)
 
         # 3. clean up return
-        boxes, scores, classes = self._shrink_dimension_and_length(
+        boxes, scores, classes = self._shrink_dimension_and_length(  # type: ignore
             boxes, scores, classes, nums, detect_ids)
 
         # convert classes into class names
-        classes = [class_names[int(i)] for i in classes]
+        classes = [class_names[int(i)] for i in classes]  # type: ignore
 
         boxes = np.array(boxes)
-        return boxes, classes, scores
+        return boxes, classes, scores  # type: ignore
