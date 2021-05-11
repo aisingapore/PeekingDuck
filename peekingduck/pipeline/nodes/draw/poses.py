@@ -16,7 +16,7 @@ limitations under the License.
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_human_poses
+from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_human_poses
 
 
 class Node(AbstractNode):
@@ -32,9 +32,14 @@ class Node(AbstractNode):
         self.bbox_color = tuple(config["bbox_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """function that draws pose details onto input image
 
-        draw_human_poses(inputs[self.inputs[1]],
-                         inputs[self.inputs[0]],
+        Args:
+            inputs (Dict): Dictionary of inputs
+        """
+
+        draw_human_poses(inputs[self.inputs[1]],  # inputs["img"]
+                         inputs[self.inputs[0]],  # inputs["poses"]
                          self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,  # type: ignore
