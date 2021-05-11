@@ -114,7 +114,7 @@ def _sort_scored_parts(
 def _change_dimensions(scores: np.ndarray,
                        offsets: np.ndarray,
                        displacements_fwd: np.ndarray,
-                       displacements_bwd: np.ndarray):
+                       displacements_bwd: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
     """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to allow return of
     complete coord array
     """

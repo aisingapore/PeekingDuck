@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import Dict
+from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 from .posenetv1 import posenet_model
 
@@ -22,11 +22,11 @@ class Node(AbstractNode):
     """Node for PoseNet
     """
 
-    def __init__(self, config):
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.model = posenet_model.PoseNetModel(config)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the image input and returns the bboxes
         of the specified objects chosen to be detected
 
