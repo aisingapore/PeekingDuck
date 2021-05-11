@@ -70,7 +70,7 @@ def _rescale_image(source_img: np.ndarray,
                    target_width: int,
                    target_height: int,
                    model_type: str) -> np.ndarray:
-    """ Apply different preprocessing according to model type - mobilenet or resnet
+    """ Apply different preprocessing depending on model type - mobilenet or resnet
 
     For mobilenet version, RGB values were scaled (2.0 / 255.0) - 1.0
     For resnet version, IMAGE_NET_MEAN were added to the RGB values

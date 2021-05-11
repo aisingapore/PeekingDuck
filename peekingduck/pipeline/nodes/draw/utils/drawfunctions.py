@@ -45,7 +45,7 @@ def add_plotter_details(poses: List[PoseData]) -> List[PoseData]:
     Args:
         poses (List[PoseData]): list of PoseData object
 
-    Return:
+    Returns:
         poses (List[PoseData]): list of PoseData object with details for plotting
     """
     for pose in poses:
@@ -63,7 +63,7 @@ def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np
         coords (np.array): Nx2 array of keypoints' relative coordinates
         masks (np.array): masks for valid (> min confidence score) keypoints
 
-    Return:
+    Returns:
         full_joints (np.array): Nx2 array of keypoints where undetected
             keypoints are assigned a (-1) value.
     """

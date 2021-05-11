@@ -32,22 +32,21 @@ def decode_multiple_poses(model_output: Tuple[np.ndarray, tf.Tensor, tf.Tensor, 
                           nms_radius: int = 20,
                           min_pose_score: float = 0.5) -> int:
     # pylint: disable=too-many-arguments
-    """ Decodes the offsets and displacements map in yx order and return the keypoints
-    in (x, y) format.
+    """ Decodes the offsets and displacements map and return the keypoints
 
 
     Args:
         model_output (Tuple[np.ndarray, tf.Tensor, tf.Tensor, tf.Tensor]): scores,
                 offsets, displacements_fwd, displacements_bwd from model predictions
-        dst_scores (np.array): (nx17) buffer to store keypoint scores where n is
+        dst_scores (np.array): Nx17 buffer to store keypoint scores where N is
                         the max persons to be detected
-        dst_keypoints (np.array): (nx17x2) buffer to store keypoints coordinate
-                        where n is the max persons to be detected
+        dst_keypoints (np.array): Nx17x2 buffer to store keypoints coordinate
+                        where N is the max persons to be detected
         output_stride (int): output stride to convert output indices to image coordinates
-        score_threshold (float): return instance detections that have root part score
-                        greater or equal to this value
+        score_threshold (float): return instance detections if root part score
+                        >= threshold
         nms_radius (int): non-maximum suppression part distance in pixels
-        min_pose_score (float): minimum pose score of returned pose detection
+        min_pose_score (float): minimum pose score to return detected pose
 
     Returns:
         pose_count (int): number of poses detected
@@ -88,7 +87,7 @@ def _build_part_with_score_fast(
         score_threshold: float,
         local_max_radius: int,
         scores: np.ndarray) -> List[Tuple[float, int, np.ndarray]]:
-    """Return an array of parts with score, id and coordinate in each part"""
+    """ Returns an array of parts with score, id and coordinate in each part """
     parts = []
     lmd = 2 * local_max_radius + 1
 
@@ -106,7 +105,7 @@ def _build_part_with_score_fast(
 
 def _sort_scored_parts(
         parts: List[Tuple[float, int, np.ndarray]]) -> List[Tuple[float, int, np.ndarray]]:
-    """ Sort parts by confidence scores"""
+    """ Sort parts by confidence scores """
     parts = sorted(parts, key=lambda x: x[0], reverse=True)
     return parts
 
@@ -115,8 +114,8 @@ def _change_dimensions(scores: np.ndarray,
                        offsets: np.ndarray,
                        displacements_fwd: np.ndarray,
                        displacements_bwd: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to allow return of
-    complete coord array
+    """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to return a
+    complete coordinate array
     """
     height = scores.shape[0]
     width = scores.shape[1]
@@ -144,8 +143,8 @@ def _look_for_poses(scored_parts: List[Tuple[float, int, np.ndarray]],
                     nms_radius: int,
                     min_pose_score: float) -> int:
     # pylint: disable=too-many-arguments, too-many-locals
-    """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to allow return of
-    complete coord array
+    """ Change dimensions from (h, w, x) to (h, w, x//2, 2) to return a
+    complete coordinate array
     """
     pose_count = 0
     dst_keypoint_scores[:] = 0
@@ -195,8 +194,8 @@ def _calculate_keypoint_coords_on_image(heatmap_positions: np.ndarray,
                                         output_stride: int,
                                         offsets: np.ndarray,
                                         keypoint_id: int) -> np.ndarray:
-    """Referenced from https://medium.com/@prajwalsingh_48273/posenet-for-android-8b6dede9fa2f
-    keypoint_positions = heatmap_positions * output_stride + offset_vectors
+    """ Calculate keypoint image coordinates from heatmap positions,
+        output_stride and offset_vectors
     """
     offset_vectors = offsets[heatmap_positions[1],
                              heatmap_positions[0],
@@ -207,7 +206,7 @@ def _calculate_keypoint_coords_on_image(heatmap_positions: np.ndarray,
 def _within_nms_radius_fast(pose_coords: np.ndarray,
                             squared_nms_radius: int,
                             point: np.ndarray) -> bool:
-    """ Check if keypoint within squared nms radius
+    """ Check if keypoint is within squared nms radius
     """
     if not pose_coords.shape[0]:
         return False
@@ -219,7 +218,7 @@ def _get_instance_score_fast(exist_pose_coords: np.ndarray,
                              squared_nms_radius: int,
                              keypoint_scores: np.ndarray,
                              keypoint_coords: np.ndarray) -> float:
-    """
+    """ Obtain instance scores for keypoints
     """
     if exist_pose_coords.shape[0]:
         score_sum = np.sum((exist_pose_coords - keypoint_coords) ** 2, axis=2)\

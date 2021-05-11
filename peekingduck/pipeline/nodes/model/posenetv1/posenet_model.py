@@ -40,11 +40,14 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame: List[List[float]]) -> List[PoseData]:
-        """predict poses from frame
+    def predict(self, frame: np.ndarray) -> List[PoseData]:
+        """ Predict poses from input frame
 
-        returns:
-        posedata object(List[PoseData]): list of PoseData containing poses info
+        Args:
+            frame (np.array): image in numpy array
+
+        Returns:
+            poses (List[PoseData]): list of PoseData object containing poses info
         """
         assert isinstance(frame, np.ndarray)
 

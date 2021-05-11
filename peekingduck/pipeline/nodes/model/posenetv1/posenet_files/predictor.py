@@ -71,7 +71,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         if os.path.isfile(model_path):
             return load_graph(model_path, inputs=model_nodes['inputs'],
                               outputs=model_nodes['outputs'])
-        raise ValueError('Posenet graph file does not exist. Please check that '
+        raise ValueError('PoseNet graph file does not exist. Please check that '
                          '%s exists' % model_path)
 
     @staticmethod
@@ -159,18 +159,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                                  frame: np.ndarray,
                                  input_res: Tuple[int, int],
                                  model_type: str) -> Tuple[tf.Tensor, np.ndarray, List[int]]:
-        """ Preprocess raw frame to image for inference
-
-        Args:
-            output_stride (int): output stride to convert output indices to image coordinates
-            frame (np.array): image for inference
-            input_res (int): input resolution to model
-            model_type (str): specified model type (refer to modelconfig.yml)
-
-        Returns:
-            image (np.array): image for inference
-            output_scale (np.array): output scale
-            image_size (list): list of frame shape in height and width format
+        """ Rescale raw frame and convert to tensor image for inference
         """
         image_size = [frame.shape[1], frame.shape[0]]
 

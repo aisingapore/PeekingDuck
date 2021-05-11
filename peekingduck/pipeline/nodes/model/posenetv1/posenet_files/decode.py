@@ -32,19 +32,19 @@ def decode_pose(root_score: float,
                 keypoint_coords: np.ndarray) -> None:
     # pylint: disable=too-many-arguments
     """ Decode pose's keypoints scores and coordinates from keypoints score,
-    coordinates and displancements
+    coordinates and displacements
 
     Args:
         root_score (float): a keypoint with highest score is selected as root
         root_id (int): root keypoint's index
         root_image_coord (np.array): relative coordinate of root keypoint
-        scores (np.array): (h x w x num_parts) heatmap scores of body parts
-        offsets (np.array): (h x w x num_parts x 2) short range offset vector of body parts
+        scores (np.array): HxWxNP heatmap scores of NP body parts
+        offsets (np.array): HxWxNPx2 short range offset vector of NP body parts
         output_stride (int): output stride to convert output indices to image coordinates
-        displacements_fwd (np.array): (h x w x num_edges x 2) forward displacements
-                of body connections
-        displacements_bwd (np.array): (h x w x num_edges x 2) backward displacements
-                of body connections
+        displacements_fwd (np.array): HxWxNEx2 forward displacements of NE body
+                connections
+        displacements_bwd (np.array): HxWxNEx2 backward displacements of NE body
+                connections
         keypoints_scores (np.array): 17x1 buffer to store keypoint scores
         keypoint_coords (np.array): 17x2 buffer to store keypoint coordinates
 
@@ -91,7 +91,8 @@ def _calculate_instance_keypoints(edge: int,
                                   output_stride: int,
                                   displacements: np.ndarray) -> None:
     # pylint: disable=too-many-arguments
-    """Obtain instance keypoints scores and coordinates"""
+    """ Obtain instance keypoints scores and coordinates
+    """
     if (instance_keypoint_scores[source_keypoint_id] > 0.0 and
             instance_keypoint_scores[target_keypoint_id] == 0.0):
         source_keypoint = instance_keypoint_coords[source_keypoint_id]
@@ -112,7 +113,8 @@ def _clip_to_indices(keypoints: np.ndarray,
                      output_stride: int,
                      width: int,
                      height: int) -> np.ndarray:
-    """Clip keypoint coordinate to indices within dimension (width, height)"""
+    """ Clip keypoint coordinate to indices within dimension (width, height)
+    """
     keypoints = keypoints / output_stride
     keypoint_indices = np.zeros((2,), dtype=np.int32)
 
@@ -130,7 +132,8 @@ def _traverse_to_target_keypoint(edge_id: int,
                                  output_stride: int,
                                  displacements: np.ndarray) -> Tuple[float, float]:
     # pylint: disable=too-many-arguments
-    """Traverse to target keypoint and obtain keypoimt score and coordinates"""
+    """ Traverse to target keypoint to obtain keypoint score and coordinates
+    """
     height = scores.shape[0] - 1
     width = scores.shape[1] - 1
 

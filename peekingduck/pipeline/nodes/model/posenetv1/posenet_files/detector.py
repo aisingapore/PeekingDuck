@@ -25,17 +25,15 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi impor
 def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
                                   output_scale: np.ndarray,
                                   image_size: List[int]) -> np.ndarray:
-    """ Get relative coordinates that percentage of a keypoints to image size (W x H).
-    It swaps array columns to change from (row, col) coordinate to (x, y) coordinate.
-
+    """ Get keypoints coordinates relative to image size
 
     Args:
-        keypoints_coords (np.array): nx17x2 keypoints coordinates of n persons
-        output_scale (np.array): output scale in hx2 format
-        image_size (List[int]): image size in hxw format
+        keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
+        output_scale (np.array): output scale in Hx2 format
+        image_size (List[int]): image size in HxW format
 
     Returns:
-        keypoints_coords (np.array): nx17x2 keypoints coordinates of n persons
+        keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
                 relative to image size
     """
     assert len(keypoint_coords.shape) == 3, "keypoint_coords should be 3D"
@@ -59,16 +57,16 @@ def detect_keypoints(
         model_type: str,
         score_threshold: float) -> int:
     # pylint: disable=too-many-arguments
-    """ Evaluate image by model function to get detected keypoints info in yx format
+    """ Evaluate image by model function to get detected keypoints
 
     Args:
         tf_model: tensorflow model
         image (tf.Tensor): image for inference
         output_stride (int): output stride to convert output indices to image coordinates
-        dst_scores (np.array): (nx17) buffer to store keypoint scores where n is
+        dst_scores (np.array): Nx17 buffer to store keypoint scores where N is
             the max persons to be detected
-        dst_keypoints (np.array): (nx17x2) buffer to store keypoints coordinate
-            where n is the max persons to be detected
+        dst_keypoints (np.array): Nx17x2 buffer to store keypoints coordinate
+            where N is the max persons to be detected
         model_type (str): specified model type (refer to modelconfig.yml)
         score_threshold (float): threshold for prediction
 
