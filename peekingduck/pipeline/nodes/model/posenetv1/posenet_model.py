@@ -18,7 +18,6 @@ from typing import Dict, Any, List
 import numpy as np
 
 from peekingduck.weights_utils import checker, downloader
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
 
@@ -40,16 +39,15 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame: np.ndarray) -> List[PoseData]:
+    def predict(self, frame: np.ndarray) -> List[Dict[str, Any]]:
         """ Predict poses from input frame
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
-            poses (List[PoseData]): list of PoseData object containing poses info
+            poses (List[Dict[str, Any]]): list of dict containing poseinfo
         """
         assert isinstance(frame, np.ndarray)
 
-        # posedata class
         return self.predictor.predict(frame)

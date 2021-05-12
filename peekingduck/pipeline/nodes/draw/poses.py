@@ -39,7 +39,8 @@ class Node(AbstractNode):
         """
 
         draw_human_poses(inputs["img"],
-                         inputs["poses"],
+                         inputs["pose_info"],
+                         inputs["bboxes"],
                          self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,  # type: ignore

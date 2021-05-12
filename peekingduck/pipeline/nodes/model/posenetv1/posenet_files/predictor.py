@@ -19,7 +19,6 @@ from typing import Dict, List, Callable, Any, Tuple
 import tensorflow as tf
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import detect_keypoints, \
     get_keypoints_relative_coords
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import SCALE_FACTOR, \
@@ -89,14 +88,14 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> List[PoseData]:
+                frame: np.ndarray) -> List[Dict[str, Any]]:
         """ PoseNet prediction function
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
-            poses (List[PoseData]): list of PoseData object
+            poses (List[Dict[str, Any]]): list of dict containing poseinfo
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
@@ -105,14 +104,32 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 self.model_type)
 
         poses = []
+        bboxes = []
 
         for coords, scores, masks in zip(full_keypoint_rel_coords,
                                          full_keypoint_scores, full_masks):
-            pose = PoseData(keypoints=coords, keypoint_scores=scores,
-                            masks=masks, connections=None)
+            pose = {"keypoints": coords, "keypoints_scores": scores,
+                    "masks": masks, "connections": None}
+            bbox = self._get_bbox_of_one_pose(coords=coords, mask=masks)
             poses.append(pose)
+            bboxes.append(bbox)
 
-        return poses
+        return bboxes, poses
+
+    @staticmethod
+    def _get_bbox_of_one_pose(coords: np.ndarray,
+                              mask: np.ndarray) -> np.ndarray:
+        """ Get the bounding box bordering the keypoints of a single pose
+        """
+        coords = coords[mask, :]
+        if coords.shape[0]:
+            min_x, min_y, max_x, max_y = (coords[:, 0].min(),
+                                          coords[:, 1].min(),
+                                          coords[:, 0].max(),
+                                          coords[:, 1].max())
+            bbox = [[min_x, min_y], [max_x, max_y]]
+            return np.array(bbox)
+        return np.zeros(0)
 
     def _predict_all_poses(
             self,
