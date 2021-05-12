@@ -13,11 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any, Iterable, Union
+from typing import List, Tuple, Any, Iterable, Union, Dict
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.posedata import PoseData
 
 
 POSE_BBOX_COLOR = (255, 255, 0)
@@ -39,19 +38,18 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def add_pose_details(poses: List[PoseData]) -> List[PoseData]:
+def add_pose_details(poses: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     """ Filters out low-confidence keypoints and add bounding box and connections
 
     Args:
-        poses (List[PoseData]): list of PoseData object
+        poses (List[Dict[str, Any]]): list of dict containing poseinfo
 
     Returns:
-        poses (List[PoseData]): list of PoseData object with details for plotting
+        poses (List[Dict[str, Any]]): list of dict containing poseinfo
     """
     for pose in poses:
-        pose.keypoints = get_valid_full_keypoints_coords(pose.keypoints, pose.masks)
-        pose.bbox = _get_bbox_of_one_pose(pose.keypoints, pose.masks)
-        pose.connections = _get_connections_of_one_pose(pose.keypoints, pose.masks)
+        pose['keypoints'] = get_valid_full_keypoints_coords(pose['keypoints'], pose['masks'])
+        pose['connections'] = _get_connections_of_one_pose(pose['keypoints'], pose['masks'])
 
     return poses
 
@@ -72,20 +70,6 @@ def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np
     return full_joints
 
 
-def _get_bbox_of_one_pose(coords: np.ndarray, mask: np.ndarray) -> np.ndarray:
-    """ Get the bounding box bordering the keypoints of a single pose
-    """
-    coords = coords[mask, :]
-    if coords.shape[0]:
-        min_x, min_y, max_x, max_y = (coords[:, 0].min(),
-                                      coords[:, 1].min(),
-                                      coords[:, 0].max(),
-                                      coords[:, 1].max())
-        bbox = [[min_x, min_y], [max_x, max_y]]
-        return np.array(bbox)
-    return np.zeros(0)
-
-
 def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
     """Get connections between adjacent keypoint pairs if both keypoints are detected
     """
@@ -97,7 +81,8 @@ def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.nd
 
 
 def draw_human_poses(image: np.array,
-                     poses: List[PoseData],
+                     poses: List[Dict[str, Any]],
+                     bboxes: List[np.ndarray],
                      keypoint_dot_color: Tuple[int, int, int],
                      keypoint_dot_radius: int,
                      keypoint_connect_color: Tuple[int, int, int],
@@ -109,7 +94,8 @@ def draw_human_poses(image: np.array,
 
     Args:
         image (np.array): image of current frame
-        poses (List[PoseData]): list of PoseData object
+        poses (List[Dict[str, Any]]): list of dict containing poseinfo
+        bboxes (List[np.ndarray]) : list of bboxes
         keypoint_dot_color (Tuple[int, int, int]): color of keypoint
         keypoint_dot_radius (int): radius of keypoint
         keypoint_connect_color (Tuple[int, int, int]): color of joint
@@ -119,14 +105,14 @@ def draw_human_poses(image: np.array,
     """
     image_size = _get_image_size(image)
     poses = add_pose_details(poses)
-    for pose in poses:
-        if pose.bbox is not None:
-            _draw_bbox(image, pose.bbox,
+    if len(bboxes) > 0:
+        for pose, bbox in zip(poses, bboxes):
+            _draw_bbox(image, bbox,
                        image_size, color, thickness)
-            _draw_connections(image, pose.connections,
+            _draw_connections(image, pose["connections"],
                               image_size, keypoint_connect_color)
-            _draw_keypoints(image, pose.keypoints,
-                            pose.keypoint_scores, image_size,
+            _draw_keypoints(image, pose["keypoints"],
+                            pose["keypoints_scores"], image_size,
                             keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
 
 
