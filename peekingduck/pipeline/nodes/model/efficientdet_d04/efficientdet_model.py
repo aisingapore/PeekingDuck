@@ -52,7 +52,7 @@ class EfficientDetModel:
 
         returns:
         object_bboxes(List[Numpy Array]): list of bboxes detected
-        object_labels(List[str]): list of string labels of the
+        object_labels(List[int]): list of index labels of the
             object detected for the corresponding bbox
         object_scores(List(float)): list of confidence scores of the
             object detected for the corresponding bbox
