@@ -6,7 +6,7 @@ on:
       - dev
 
 jobs:
-  check_code:
+  unit_test:
     runs-on: ubuntu-18.04
     steps:
       - name: Checkout code
