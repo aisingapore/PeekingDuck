@@ -35,7 +35,7 @@ class YoloModel:
                                    config['weights_dir']):
             self.logger.info('---no yolo weights detected. proceeding to download...---')
             downloader.download_weights(config['root'],
-                                        config['weights_id'])
+                                        config['blob_file'])
             self.logger.info('---yolo weights download complete.---')
 
         # get classnames path to read all the classes
