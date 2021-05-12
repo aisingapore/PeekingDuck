@@ -22,7 +22,7 @@ import numpy as np
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import detect_keypoints, \
     get_keypoints_relative_coords
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import SCALE_FACTOR, \
-    KEYPOINTS_NUM, MIN_PART_SCORE
+    KEYPOINTS_NUM, MIN_PART_SCORE, SKELETON
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
 from peekingduck.utils.graph_functions import load_graph
 
@@ -88,14 +88,15 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> Tuple[List[Any], List[Dict[str, Any]]]:
+                frame: np.ndarray) -> Tuple[List[Any], List[Any]]:
         """ PoseNet prediction function
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
-            poses (List[Dict[str, Any]]): list of dict containing poseinfo
+            bboxes and poses (Tuple[List[Any], Dict[List[Any]]]): list of
+                bboxes and dict containing poseinfo
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
@@ -103,18 +104,55 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 frame,
                 self.model_type)
 
-        poses = []
         bboxes = []
+        coords = []
+        scores = []
+        masks = []
+        connections = []
+        pose_info = {"keypoints": None, "keypoints_scores": None,
+                     "masks": None, "connections": None}
 
-        for coords, scores, masks in zip(full_keypoint_rel_coords,
-                                         full_keypoint_scores, full_masks):
-            pose = {"keypoints": coords, "keypoints_scores": scores,
-                    "masks": masks, "connections": None}
-            bbox = self._get_bbox_of_one_pose(coords=coords, mask=masks)
-            poses.append(pose)
+        for pose_coords, pose_scores, pose_masks in zip(full_keypoint_rel_coords,
+                                                        full_keypoint_scores, full_masks):
+            bbox = self._get_bbox_of_one_pose(pose_coords, pose_masks)
+            pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
+            pose_connections = self._get_connections_of_one_pose(pose_coords, pose_masks)
             bboxes.append(bbox)
+            coords.append(pose_coords)
+            scores.append(pose_scores)
+            masks.append(pose_masks)
+            connections.append(pose_connections)
 
-        return bboxes, poses
+        pose_info = {"keypoints": coords, "keypoints_scores": scores,
+                     "masks": masks, "connections": connections}
+
+        return bboxes, pose_info
+
+    @staticmethod
+    def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
+        """ Apply masks to keep only valid keypoints' relative coordinates
+
+        Args:
+            coords (np.array): Nx2 array of keypoints' relative coordinates
+            masks (np.array): masks for valid (> min confidence score) keypoints
+
+        Returns:
+            full_joints (np.array): Nx2 array of keypoints where undetected
+                keypoints are assigned a (-1) value.
+        """
+        full_joints = coords.copy()
+        full_joints[~masks] = -1
+        return full_joints
+
+    @staticmethod
+    def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
+        """Get connections between adjacent keypoint pairs if both keypoints are detected
+        """
+        connections = []
+        for start_joint, end_joint in SKELETON:
+            if masks[start_joint - 1] and masks[end_joint - 1]:
+                connections.append((coords[start_joint - 1], coords[end_joint - 1]))
+        return np.array(connections)
 
     @staticmethod
     def _get_bbox_of_one_pose(coords: np.ndarray,
