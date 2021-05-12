@@ -38,20 +38,42 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def add_pose_details(poses: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-    """ Filters out low-confidence keypoints and add bounding box and connections
+def draw_human_poses(image: np.array,
+                     poses: List[Any],
+                     bboxes: List[np.ndarray],
+                     keypoint_dot_color: Tuple[int, int, int],
+                     keypoint_dot_radius: int,
+                     keypoint_connect_color: Tuple[int, int, int],
+                     keypoint_text_color: Tuple[int, int, int],
+                     color: Tuple[int, int, int],
+                     thickness: int) -> None:
+    # pylint: disable=too-many-arguments
+    """Draw poses and bboxes onto an image frame.
 
     Args:
-        poses (List[Dict[str, Any]]): list of dict containing poseinfo
-
-    Returns:
-        poses (List[Dict[str, Any]]): list of dict containing poseinfo
+        image (np.array): image of current frame
+        poses (Dict[List[Any]]): dict containing poseinfo
+        bboxes (List[np.ndarray]) : list of bboxes
+        keypoint_dot_color (Tuple[int, int, int]): color of keypoint
+        keypoint_dot_radius (int): radius of keypoint
+        keypoint_connect_color (Tuple[int, int, int]): color of joint
+        keypoint_text_color (Tuple[int, int, int]): color of keypoint names
+        color (Tuple[int, int, int]): color of bounding box
+        thickness (int): thickness of bounding box
     """
-    for pose in poses:
-        pose['keypoints'] = get_valid_full_keypoints_coords(pose['keypoints'], pose['masks'])
-        pose['connections'] = _get_connections_of_one_pose(pose['keypoints'], pose['masks'])
-
-    return poses
+    image_size = _get_image_size(image)
+    num_persons = len(poses["keypoints"])
+    if num_persons > 0:
+        for i in range(0, num_persons):
+            # coords = get_valid_full_keypoints_coords(poses["keypoints"][i],
+            #                                          poses["masks"][i])
+            _draw_bbox(image, bboxes[i],
+                       image_size, color, thickness)
+            _draw_connections(image, poses["connections"][i],
+                              image_size, keypoint_connect_color)
+            _draw_keypoints(image, poses["keypoints"][i],
+                            poses["keypoints_scores"][i], image_size,
+                            keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
 
 
 def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
@@ -68,52 +90,6 @@ def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np
     full_joints = coords.copy()
     full_joints[~masks] = -1
     return full_joints
-
-
-def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
-    """Get connections between adjacent keypoint pairs if both keypoints are detected
-    """
-    connections = []
-    for start_joint, end_joint in SKELETON:
-        if masks[start_joint - 1] and masks[end_joint - 1]:
-            connections.append((coords[start_joint - 1], coords[end_joint - 1]))
-    return np.array(connections)
-
-
-def draw_human_poses(image: np.array,
-                     poses: List[Dict[str, Any]],
-                     bboxes: List[np.ndarray],
-                     keypoint_dot_color: Tuple[int, int, int],
-                     keypoint_dot_radius: int,
-                     keypoint_connect_color: Tuple[int, int, int],
-                     keypoint_text_color: Tuple[int, int, int],
-                     color: Tuple[int, int, int],
-                     thickness: int) -> None:
-    # pylint: disable=too-many-arguments
-    """Draw poses and bboxes onto an image frame.
-
-    Args:
-        image (np.array): image of current frame
-        poses (List[Dict[str, Any]]): list of dict containing poseinfo
-        bboxes (List[np.ndarray]) : list of bboxes
-        keypoint_dot_color (Tuple[int, int, int]): color of keypoint
-        keypoint_dot_radius (int): radius of keypoint
-        keypoint_connect_color (Tuple[int, int, int]): color of joint
-        keypoint_text_color (Tuple[int, int, int]): color of keypoint names
-        color (Tuple[int, int, int]): color of bounding box
-        thickness (int): thickness of bounding box
-    """
-    image_size = _get_image_size(image)
-    poses = add_pose_details(poses)
-    if len(bboxes) > 0:
-        for pose, bbox in zip(poses, bboxes):
-            _draw_bbox(image, bbox,
-                       image_size, color, thickness)
-            _draw_connections(image, pose["connections"],
-                              image_size, keypoint_connect_color)
-            _draw_keypoints(image, pose["keypoints"],
-                            pose["keypoints_scores"], image_size,
-                            keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
 
 
 def _get_image_size(frame: np.array) -> Tuple[int, int]:

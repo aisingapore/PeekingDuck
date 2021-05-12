@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import logging
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 import numpy as np
 
 from peekingduck.weights_utils import checker, downloader
@@ -39,14 +39,15 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame: np.ndarray) -> List[Dict[str, Any]]:
+    def predict(self, frame: np.ndarray) -> Tuple[List[Any], Dict[List[Any]]]:
         """ Predict poses from input frame
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
-            poses (List[Dict[str, Any]]): list of dict containing poseinfo
+            bboxes, pose_info (Tuple[List[Any], Dict[List[Any]]]): tuple containing
+                list of bboxes and poseinfo
         """
         assert isinstance(frame, np.ndarray)
 
