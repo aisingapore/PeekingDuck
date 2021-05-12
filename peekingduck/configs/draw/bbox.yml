@@ -3,4 +3,4 @@ output: ["img"]
 
 bbox_color: [255, 0, 255]
 bbox_thickness: 2
-draw_label: False
+draw_label: True
