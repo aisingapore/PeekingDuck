@@ -26,8 +26,10 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
         self.bbox_thickness = config["bbox_thickness"]
         self.bbox_color = tuple(config["bbox_color"])
+        self.draw_label = config["draw_label"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
-        draw_bboxes(inputs, self.bbox_color, self.bbox_thickness)  # type: ignore
+        draw_bboxes(inputs, self.bbox_color, self.bbox_thickness,
+                    self.draw_label)  # type: ignore
         return {}

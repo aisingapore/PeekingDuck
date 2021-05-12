@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any
+from typing import List, Tuple, Any, Union
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -22,6 +22,7 @@ from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 POSE_BBOX_COLOR = (255, 255, 0)
 BLACK_COLOR = (0, 0, 0)
 PINK_COLOR = (255, 0, 255)
+WHITE_COLOR = (255, 255, 255)
 ACTIVITY_COLOR = (100, 0, 255)
 OBJ_MASK_COLOR = (0, 100, 255)
 KEYPOINT_TEXT_COLOR = (255, 0, 255)
@@ -118,7 +119,8 @@ def _project_points_onto_original_image(points: np.array,
 
 def draw_bboxes(inputs,
                 color: Tuple[int, int, int],
-                thickness: int) -> None:
+                thickness: int,
+                draw_label: bool) -> None:
     """Draw bboxes onto an image frame.
 
     Args:
@@ -135,7 +137,7 @@ def draw_bboxes(inputs,
     image_size = _get_image_size(frame)
     for index, bbox in enumerate(bboxes):
         _draw_bbox(frame, bbox, labels[index], score[index], image_size,
-                   color, thickness)
+                   color, thickness, draw_label)
 
 
 def _draw_bbox(frame: np.array,
@@ -144,7 +146,8 @@ def _draw_bbox(frame: np.array,
                score: float,
                image_size: Tuple[int, int],
                color: Tuple[int, int, int],
-               thickness: int) -> np.array:
+               thickness: int,
+               draw_label: bool) -> np.array:
     """ Draw a single bounding box """
     top_left, bottom_right = _project_points_onto_original_image(
         bbox, image_size)
@@ -153,7 +156,8 @@ def _draw_bbox(frame: np.array,
                   (bottom_right[0], bottom_right[1]),
                   color, thickness)
 
-    _draw_bbox_label(frame, top_left, label, score, color)
+    if draw_label == True:
+        _draw_bbox_label(frame, top_left, label, score, color)
 
     return top_left
 
@@ -167,9 +171,13 @@ def _draw_bbox_label(frame: np.array,
     text_location = (label_top_left[0] + 5, label_top_left[1] + 30)
     text = "Category: " + label + "  Score: " + str(round(score, 2))
 
-    cv2.rectangle(frame, label_top_left, label_bottom_right, color, -1)
-    cv2.putText(frame, text, text_location, FONT_HERSHEY_SIMPLEX, 1,
-                (255, 255, 255), 2, LINE_AA)
+    fill_rect = -1
+    font_thickness = 2
+    font_scale = 1
+
+    cv2.rectangle(frame, label_top_left, label_bottom_right, color, fill_rect)
+    cv2.putText(frame, text, text_location, FONT_HERSHEY_SIMPLEX, font_scale,
+                WHITE_COLOR, font_thickness, LINE_AA)
 
 
 def _get_bbox_label_coord(bbox_top_left:
