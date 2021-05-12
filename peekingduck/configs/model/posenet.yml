@@ -1,7 +1,7 @@
 input: ["img"]
-output: ["poses", "img"]
+output: ["bboxes", "pose_info", "img"]
 
-model_type: resnet # 50, 75, 101 or resnet
+model_type: 75 # 50, 75, 101 or resnet
 weights_dir: ["../weights/posenet/models"]
 weights_id: 0 # check and update weights id
 model_files:

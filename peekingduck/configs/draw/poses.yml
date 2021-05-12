@@ -1,4 +1,4 @@
-input: ["poses", "img"]
+input: ["bboxes", "pose_info", "img"]
 output: ["img"]
 
 bbox_color: [255, 0, 255]
