@@ -85,10 +85,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         """ Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
 
-        for node_dict in self.node_list:  # {'input.live': [{'mirror_image': True}]}
-
-            node_str = list(node_dict.keys())[0]  # input.live
-            config_to_amend = node_dict[node_str]  # [{'mirror_image': True}]
+        for node_str in self.node_list:
             node_str_split = node_str.split('.')
 
             if len(node_str_split) == 3:
@@ -96,45 +93,25 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 node_name = ".".join(node_str_split[-2:])
 
                 instantiated_node = self._init_node(
-                    path_to_node, node_name, self.custom_config_loader, config_to_amend)
+                    path_to_node, node_name, self.custom_config_loader)
             else:
                 path_to_node = 'peekingduck.pipeline.nodes.'
 
                 instantiated_node = self._init_node(
-                    path_to_node, node_str, self.config_loader, config_to_amend)
+                    path_to_node, node_str, self.config_loader)
 
             instantiated_nodes.append(instantiated_node)
 
         return instantiated_nodes
 
-    def _init_node(self, path_to_node: str, node_name: str,
-                   config_loader: ConfigLoader,
-                   config_to_amend: List[Dict[str, Any]]) -> AbstractNode:
+    @staticmethod
+    def _init_node(path_to_node: str, node_name: str,
+                   config_loader: ConfigLoader) -> AbstractNode:
         """ Import node to filepath and initialise node with config """
 
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
-
-        if config_to_amend is not None:
-            config = self.edit_node_config(config, config_to_amend)
-
-        return node.Node(config)  # type: ignore
-
-    def edit_node_config(self, config: Dict[str, Any],
-                         config_to_amend: List[Dict[str, Any]]) -> Dict[str, Any]:
-
-        config_name = list(config.keys())
-
-        for param in config_to_amend:
-            name = list(param.keys())[0]
-            value = list(param.values())[0]
-
-            if name in config_name:
-                config[name] = value
-            else:
-                self.logger.info(name + " is not a configurable parameter")
-
-        return config
+        return node.Node(config) # type: ignore
 
     def get_nodes(self) -> Pipeline:
         """Returns a compiled Pipeline for PeekingDuck runner to execute"""
