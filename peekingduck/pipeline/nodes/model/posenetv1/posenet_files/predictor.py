@@ -88,7 +88,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> List[Dict[str, Any]]:
+                frame: np.ndarray) -> Tuple[List[Any], List[Dict[str, Any]]]:
         """ PoseNet prediction function
 
         Args:
