@@ -1,0 +1,2 @@
+input: ["zone_count", "img"]
+output: ["img"]
