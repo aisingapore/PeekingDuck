@@ -4,6 +4,7 @@ pylint==2.7.4
 pyyaml == 5.2
 pytest == 6.2.3
 requests == 2.24.0
+shapely == 1.7.1
 tensorflow == 2.2.0
 tqdm == 4.45.0
 mypy == 0.812
