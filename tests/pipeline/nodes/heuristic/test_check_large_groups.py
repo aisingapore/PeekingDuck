@@ -13,11 +13,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
+import pytest
 from peekingduck.pipeline.nodes.heuristic.check_large_groups import Node
 
 
-def create_node():
+@pytest.fixture
+def check_large_groups():
     node = Node({"input": ["obj_groups"],
                  "output": ["large_groups"],
                  "group_size_thres": 3
@@ -26,17 +27,14 @@ def create_node():
 
 
 class TestCheckLargeGroups:
-    def test_no_obj_groups(self):
+    def test_no_obj_groups(self, check_large_groups):
         input1 = {"obj_groups": []}
-        node = create_node()
-        assert node.run(input1)["large_groups"] == []
+        assert check_large_groups.run(input1)["large_groups"] == []
 
-    def test_no_large_groups(self):
+    def test_no_large_groups(self, check_large_groups):
         input1 = {"obj_groups": [0, 1, 2, 3, 4, 5]}
-        node = create_node()
-        assert node.run(input1)["large_groups"] == []
+        assert check_large_groups.run(input1)["large_groups"] == []
 
-    def test_multi_large_groups(self):
+    def test_multi_large_groups(self, check_large_groups):
         input1 = {"obj_groups": [0, 1, 0, 3, 1, 0, 1, 2, 1, 0]}
-        node = create_node()
-        assert node.run(input1)["large_groups"] == [0, 1]
+        assert check_large_groups.run(input1)["large_groups"] == [0, 1]
