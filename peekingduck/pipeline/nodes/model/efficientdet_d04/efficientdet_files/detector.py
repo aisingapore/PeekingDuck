@@ -118,7 +118,8 @@ class Detector:
         labels = labels[detect_filter]
         scores = scores[detect_filter]
 
-        labels = np.vectorize(self.class_names.get)(labels)
+        if labels.size:
+            labels = np.vectorize(self.class_names.get)(labels)
         return boxes, labels, scores
 
     def predict_bbox_from_image(self,
