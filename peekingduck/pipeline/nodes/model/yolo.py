@@ -38,8 +38,9 @@ class Node(AbstractNode):
         Returns:
             outputs (Dict): bbox output in dictionary format
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
-        results, _, _ = self.model.predict(inputs[self.inputs[0]])
-        outputs = {self.outputs[0]: results}
+
+        bboxes, labels, score = self.model.predict(inputs["img"])
+        outputs = {"bboxes": bboxes,
+                   "labels": labels,
+                   "score": score}
         return outputs
