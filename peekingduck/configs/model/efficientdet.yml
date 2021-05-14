@@ -1,5 +1,5 @@
 input: ['img']
-output: ['bboxes', 'labels', 'scores']
+output: ['bboxes', 'bbox_labels', 'bbox_scores']
 
 model_type: 0 # 0-4
 classes: ../weights/efficientdet/coco_90.json
