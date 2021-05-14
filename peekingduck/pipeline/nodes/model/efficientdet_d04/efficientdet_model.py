@@ -38,10 +38,6 @@ class EfficientDetModel:
                                         config['blob_file'])
             self.logger.info('---efficientdet weights download complete.---')
 
-        # get classnames path to read all the classes
-        classes_path = os.path.join(config['root'], config['classes'])
-        self.class_names = {value['id'] - 1: value['name']
-                            for value in json.load(open(classes_path, 'r')).values()}
         self.detect_ids = config['detect_ids']
         self.logger.info('efficientdet model detecting ids: %s', self.detect_ids)
 

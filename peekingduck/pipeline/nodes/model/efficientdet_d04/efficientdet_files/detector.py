@@ -15,6 +15,7 @@ limitations under the License.
 """
 import os
 import logging
+import json
 from typing import Dict, Any, List, Tuple
 import numpy as np
 import tensorflow as tf
@@ -37,6 +38,10 @@ class Detector:
         self.root_dir = config['root']
 
         self.effdet = self._create_effdet_model()
+
+        classes_path = os.path.join(config['root'], config['classes'])
+        self.class_names = {value['id'] - 1: value['name']
+                            for value in json.load(open(classes_path, 'r')).values()}
 
     def _create_effdet_model(self) -> tf.keras.Model:
         self.model_type = self.config['model_type']
@@ -113,6 +118,7 @@ class Detector:
         labels = labels[detect_filter]
         scores = scores[detect_filter]
 
+        labels = np.vectorize(self.class_names.get)(labels)
         return boxes, labels, scores
 
     def predict_bbox_from_image(self,
