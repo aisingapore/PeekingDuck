@@ -77,3 +77,11 @@ def tmp_dir():
     yield
     os.chdir(cwd)
     shutil.rmtree(newpath)
+
+
+@pytest.fixture
+def root_dir():
+    rootdir = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), '..', 'peekingduck'
+    )
+    return rootdir
