@@ -15,14 +15,15 @@ limitations under the License.
 """
 
 import os
-from typing import Any
 import zipfile
 import requests
 from tqdm import tqdm
 
+BASE_URL = "https://peekingduck.blob.core.windows.net/models"
 
-def download_weights(root: str, url: str) -> None:
-    """Download weights for specified url
+
+def download_weights(root: str, blob_file: str) -> None:
+    """Download weights for specified blob_file
 
     Args:
         root (str): root directory of peekingduck
@@ -32,7 +33,7 @@ def download_weights(root: str, url: str) -> None:
     extract_dir = os.path.join(root, "..", "weights")
     zip_path = os.path.join(root, "..", "weights", "temp.zip")
 
-    download_file_from_google_drive(url, zip_path)
+    download_file_from_blob(blob_file, zip_path)
 
     # search for downloaded .zip file and extract, then delete
     with zipfile.ZipFile(zip_path, "r") as temp:
@@ -42,41 +43,19 @@ def download_weights(root: str, url: str) -> None:
     os.remove(zip_path)
 
 
-def download_file_from_google_drive(file_id: str, destination: str) -> None:
-    """Method to download publicly shared files from google drive
+def download_file_from_blob(file_name: str, destination: str) -> None:
+    """Method to download publicly shared files from azure blob
 
     Args:
-        file_id (str): file id of google drive file
+        file_name (str): name of file to be downloaded
         destination (str): destination directory of download
     """
-    url = "https://docs.google.com/uc?export=download"
 
+    url = f"{BASE_URL}/{file_name}"
     session = requests.Session()
 
-    response = session.get(url, params={'id': file_id}, stream=True)
-    token = get_confirm_token(response)
-
-    if token:
-        params = {'id': file_id, 'confirm': token}
-        response = session.get(url, params=params, stream=True)
-
+    response = session.get(url, stream=True)
     save_response_content(response, destination)
-
-
-def get_confirm_token(response: requests.Response) -> Any:
-    """Method to get confirmation token
-
-    Args:
-        response (Response): html response from call
-
-    Returns:
-        value (str): confirmation token
-    """
-    for key, value in response.cookies.items():
-        if key.startswith('download_warning'):
-            return value
-
-    return None
 
 
 def save_response_content(response: requests.Response, destination: str) -> None:
