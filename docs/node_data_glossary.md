@@ -41,15 +41,15 @@ TO-DO: Add diagram showing flow of data for a use case.
 
 
 ### "bboxes"
-A list of lists, where each list contains the bounding box coordinates of an object:
+A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object:
 - x1: top left x-coordinate
 - y1: top left y-coordinate
 - x2: bottom right x-coordinate
 - y2: bottom right y-coordinate
 ```
-"bboxes":   [[x1, y1, x2, y2],
+"bboxes":   [np.array([x1, y1, x2, y2]),
                 ...
-            [x1, y1, x2, y2]]
+             np.array([x1, y1, x2, y2])]
 ```
 
 ### "end"
