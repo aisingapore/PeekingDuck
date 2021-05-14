@@ -46,4 +46,5 @@ class TestEfficientDet:
     def test_black_image(self, create_blank_image, efficientdet, root_dir):
         blank_image = create_blank_image()
         output = efficientdet.run({'img': blank_image})
-        # assert np.array_equal(blank_image, np.array([]))
+        expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32)}
+        assert np.array_equal(output['bboxes'], expected_output['bboxes'])
