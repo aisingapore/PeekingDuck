@@ -23,6 +23,8 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model 
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process \
     import preprocess_image, postprocess_boxes
 
+GRAPH_MODE = True
+
 
 class Detector:
     """Detector class to handle detection of bboxes for efficientdet
@@ -38,7 +40,7 @@ class Detector:
 
     def _create_effdet_model(self) -> tf.keras.Model:
         self.model_type = self.config['model_type']
-        if self.config['efficientdet_graph_mode']:
+        if GRAPH_MODE:
             graph_path = os.path.join(self.root_dir, self.config['graph_files'][self.model_type])
             model_nodes = self.config['MODEL_NODES']
             model = load_graph(
@@ -49,7 +51,7 @@ class Detector:
                 'Score Threshold: %s, ',
                 self.model_type, self.config['score_threshold'])
             return model
-
+        # For keras model
         _, model = efficientdet(phi=self.model_type,
                                 num_classes=self.config['num_classes'],
                                 score_threshold=self.config['score_threshold'])
@@ -133,7 +135,7 @@ class Detector:
         image, scale = self.preprocess(image, image_size=image_size)
 
         # run network
-        if self.config['efficientdet_graph_mode']:
+        if GRAPH_MODE:
             graph_input = tf.convert_to_tensor(np.expand_dims(image, axis=0), dtype=tf.float32)
             boxes, scores, labels = self.effdet(x=graph_input)
             network_output = np.squeeze(boxes.numpy()), np.squeeze(
