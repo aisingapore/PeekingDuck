@@ -13,30 +13,43 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from abc import ABCMeta, abstractmethod
-from typing import Any
+from typing import List, Tuple
+from shapely.geometry.polygon import Polygon, Point
 
 
-class Zone(metaclass=ABCMeta):
-    """An abstract class for zone methods used in zone counting
+class Zone:
+    """This class uses polygon area to create a zone for counting.
     """
 
-    def __init__(self, zoning_type: str) -> None:
-        self.zoning_type = zoning_type
+    def __init__(self, coord_list: List[List[float]]) -> None:
+        # Each zone is a polygon created by a list of x, y coordinates
+        self.polygon_points = [tuple(x) for x in coord_list]
+        self.polygon = Polygon(self.polygon_points)
 
-    @classmethod
-    def __subclasshook__(cls: Any, subclass: Any) -> bool:
-        return (hasattr(subclass, 'point_within_zone') and
-                callable(subclass.point_within_zone) and
-                hasattr(subclass, '_is_inside'))
-
-    @abstractmethod
     def point_within_zone(self, x_coord: float, y_coord: float) -> bool:
-        """Abstract method. Used to find whether any point is inside a zone.
+        """Function used to check whether the bottom middle point of the bounding box
+        is within the stipulated zone created by the divider.
+
+        Args:
+            x (float): middle x position of the bounding box
+            y (float): lowest y position of the bounding box
+
+        Returns:
+            boolean: whether the point given is within the zone.
         """
         return self._is_inside(x_coord, y_coord)
 
-    @abstractmethod
-    def _is_inside(self, x_coord: float, y_coord: float) -> bool:
-        """Abstact method. Implementation of point check for the zone.
+    def get_all_points_of_area(self) -> List[Tuple[float, ...]]:
+        """Function used to Get all (x, y) tuple points that form the area of the zone.
+
+        Args:
+            None
+
+        Returns:
+            list: returns a list of (x, y) points that form the zone area.
         """
+        return self.polygon_points
+
+    def _is_inside(self, x_coord: float, y_coord: float) -> bool:
+        point = Point((x_coord, y_coord))
+        return self.polygon.contains(point)
