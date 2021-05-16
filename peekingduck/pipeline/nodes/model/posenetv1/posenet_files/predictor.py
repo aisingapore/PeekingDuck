@@ -89,6 +89,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
 
     def predict(self,
                 frame: np.ndarray) -> Tuple[List[Any], List[Any]]:
+        # pylint: disable=too-many-locals
         """ PoseNet prediction function
 
         Args:
@@ -115,7 +116,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         for pose_coords, pose_scores, pose_masks in zip(full_keypoint_rel_coords,
                                                         full_keypoint_scores, full_masks):
             bbox = self._get_bbox_of_one_pose(pose_coords, pose_masks)
-            pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
+            #pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
             pose_connections = self._get_connections_of_one_pose(pose_coords, pose_masks)
             bboxes.append(bbox)
             coords.append(pose_coords)
