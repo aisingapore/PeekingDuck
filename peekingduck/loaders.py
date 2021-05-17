@@ -128,16 +128,16 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                           config_to_amend: List[Dict[str, Any]]) -> Dict[str, Any]:
         " Edit default node configuration"
 
-        config_name = list(config.keys())
+        configurable_paramters = list(config.keys())
 
-        for param in config_to_amend:
-            name = list(param.keys())[0]
-            value = list(param.values())[0]
+        for paramter in config_to_amend:
+            parameter_name = list(paramter.keys())[0]
+            parameter_state = list(paramter.values())[0]
 
-            if name in config_name:
-                config[name] = value
+            if parameter_name in configurable_paramters:
+                config[parameter_name] = parameter_state
             else:
-                msg = "'" + name + "' is not a valid configurable parameter"
+                msg = "'" + parameter_name + "' is not a valid configurable parameter"
                 self.logger.warning(msg)
 
         return config
