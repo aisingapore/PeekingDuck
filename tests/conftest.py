@@ -85,3 +85,32 @@ def root_dir():
         os.path.dirname(os.path.abspath(__file__)), '..', 'peekingduck'
     )
     return rootdir
+
+
+@pytest.fixture
+def test_human_images(root_dir):
+    test_dir = os.path.join(root_dir, '..', 'tests')
+    test_img_dir = os.path.join(test_dir, 'test_images', 'human')
+    TEST_IMAGES_NAMES = os.listdir(test_img_dir)
+
+    test_img_paths = [os.path.join(test_img_dir, img_name) for img_name in TEST_IMAGES_NAMES]
+
+    return test_img_paths
+
+
+@pytest.fixture
+def test_black_image(root_dir):
+    test_dir = os.path.join(root_dir, '..', 'tests')
+    test_img_dir = os.path.join(test_dir, 'test_images')
+    black_img_path = os.path.join(test_img_dir, 'black.jpeg')
+
+    return black_img_path
+
+
+@pytest.fixture
+def test_animal_image(root_dir):
+    test_dir = os.path.join(root_dir, '..', 'tests')
+    test_img_dir = os.path.join(test_dir, 'test_images')
+    black_img_path = os.path.join(test_img_dir, 't3.jpg')
+
+    return black_img_path
