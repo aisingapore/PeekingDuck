@@ -34,7 +34,7 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
                                    config['weights_dir']):
             print('---no posenet weights detected. proceeding to download...---')
             downloader.download_weights(config['root'],
-                                        config['weights_id'])
+                                        config['blob_file'])
             print('---posenet weights download complete.---')
 
         self.predictor = Predictor(config)
