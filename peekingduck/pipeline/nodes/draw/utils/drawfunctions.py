@@ -35,6 +35,17 @@ SKELETON_SHORT_NAMES = (
     "N", "LEY", "REY", "LEA", "REA", "LSH",
     "RSH", "LEL", "REL", "LWR", "RWR",
     "LHI", "RHI", "LKN", "RKN", "LAN", "RAN")
+COLOUR_SET_LENGTH = 10
+COLOUR_SET = [(255,0,0),
+              (0,255,0),
+              (0,0,255),
+              (255,255,0),
+              (0,255,255),
+              (255,0,255),
+              (255,165,0),
+              (128,0,128),
+              (255,20,147),
+              (255,250,250)]
 
 
 def draw_human_poses(image: np.array, poses: List[Any]) -> None:
@@ -214,15 +225,18 @@ def draw_fps(frame: np.array, current_fps: float) -> None:
                 PINK_COLOR, FONT_THICKNESS, LINE_AA)
 
 
-def _draw_zone_area(frame:np.array, points: List[Tuple[int]]) -> None:
+def _draw_zone_area(frame:np.array, points: List[Tuple[int]],
+                    zone_index:int) -> None:
     total_points = len(points)
     for i in range(total_points):
         if i == total_points-1:
             # for last point, link to first point
-            cv2.line(frame, points[i], points[0], (255, 0, 0), 3)
+            cv2.line(frame, points[i], points[0],
+                     COLOUR_SET[zone_index % COLOUR_SET_LENGTH], 3)
         else:
             # for all other points, link to next point in polygon
-            cv2.line(frame, points[i], points[i+1], (255, 0, 0), 3)
+            cv2.line(frame, points[i], points[i+1],
+                     COLOUR_SET[zone_index % COLOUR_SET_LENGTH], 3)
 
 
 def draw_zones(frame:np.array, zones: List[Any]) -> None:
@@ -233,8 +247,8 @@ def draw_zones(frame:np.array, zones: List[Any]) -> None:
         zones (Zone): zones used in the zoning analytics. possible
         classes are Area and Divider.
     """
-    for zone_pts in zones:
-        _draw_zone_area(frame, zone_pts)
+    for i, zone_pts in enumerate(zones):
+        _draw_zone_area(frame, zone_pts, i)
 
 
 def draw_zone_count(frame:np.array, zone_count: List[int]) -> None:
@@ -251,6 +265,6 @@ def draw_zone_count(frame:np.array, zone_count: List[int]) -> None:
                 COUNTING_TEXT_COLOR, 2, LINE_AA)
     for i, count in enumerate(zone_count):
         y_pos += 25
-        text = 'ZONE{0}: {1}'.format(i+1, count)
+        text = 'ZONE {0}: {1}'.format(i+1, count)
         cv2.putText(frame, text, (25, y_pos), FONT_HERSHEY_SIMPLEX, FONT_SCALE,
-                    COUNTING_TEXT_COLOR, 2, LINE_AA)
+                    COLOUR_SET[i % COLOUR_SET_LENGTH], 2, LINE_AA)
