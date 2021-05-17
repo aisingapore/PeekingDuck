@@ -245,8 +245,12 @@ def draw_zone_count(frame:np.array, zone_count: List[int]) -> None:
         zone_count (List[float]): object count, likely people, of each zone used
         in the zone analytics
     """
-    text = 'ZONE COUNTS: - '
-    for i, count in enumerate(zone_count):
-        text = text + 'ZONE{0} : {1} - '.format(i+1, count)
-    cv2.putText(frame, text, (150, 25), FONT_HERSHEY_SIMPLEX, FONT_SCALE,
+    y_pos = 50
+    text = '--ZONE COUNTS--'
+    cv2.putText(frame, text, (25, y_pos), FONT_HERSHEY_SIMPLEX, FONT_SCALE,
                 COUNTING_TEXT_COLOR, 2, LINE_AA)
+    for i, count in enumerate(zone_count):
+        y_pos += 25
+        text = 'ZONE{0}: {1}'.format(i+1, count)
+        cv2.putText(frame, text, (25, y_pos), FONT_HERSHEY_SIMPLEX, FONT_SCALE,
+                    COUNTING_TEXT_COLOR, 2, LINE_AA)
