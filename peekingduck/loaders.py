@@ -87,10 +87,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         for node_dict in self.node_list:
 
-            # {'input.live': [{'mirror_image': True}]}
-            # input.live
-            # [{'mirror_image': True}]
-
             node_str = list(node_dict.keys())[0]  # type: ignore
             config_to_amend = node_dict[node_str]
             node_str_split = node_str.split('.')
