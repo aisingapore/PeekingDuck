@@ -13,7 +13,6 @@ model_files:
   }
 
 resolution: { height: 225, width: 225 }
-output_stride: 16
 max_pose_detection: 10
 score_threshold: 0.4
 

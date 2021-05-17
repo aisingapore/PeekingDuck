@@ -41,7 +41,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         self.posenet_model = self._create_posenet_model()
 
     def _create_posenet_model(self) -> tf.keras.Model:
-        self.output_stride = self.config['output_stride']
+        self.output_stride = 16
         self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
         self.max_pose_detection = self.config['max_pose_detection']
         self.score_threshold = self.config['score_threshold']
