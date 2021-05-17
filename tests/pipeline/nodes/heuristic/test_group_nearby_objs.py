@@ -29,32 +29,45 @@ def group_nearby_objs():
 
 class TestGroupNearbyObjs:
     def test_no_3D_locs(self, group_nearby_objs):
-        input1 = {"obj_3D_locs": []}
+        array1 = []
+        input1 = {"obj_3D_locs": array1}
+
         assert group_nearby_objs.run(input1)["obj_groups"] == []
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_are_nearby(self, group_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.5, 0.5, 0.5]),
-                                  np.array([0.55, 0.55, 0.55])]}
+        array1 = [np.array([0.5, 0.5, 0.5]),
+                  np.array([0.55, 0.55, 0.55])]
+        input1 = {"obj_3D_locs": array1}
         output1 = group_nearby_objs.run(input1)
+
         assert output1["obj_groups"][0] == output1["obj_groups"][1]
+        assert input1["obj_3D_locs"] == array1
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_not_nearby(self, group_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.1, 0.1, 0.1]),
-                                  np.array([0.1, 0.1, 3.0]),
-                                  np.array([0.1, 0.1, 6.0])]}
+        array1 = [np.array([0.1, 0.1, 0.1]),
+                  np.array([0.1, 0.1, 3.0]),
+                  np.array([0.1, 0.1, 6.0])]
+        input1 = {"obj_3D_locs": array1}
         # all different groups, should get [0, 1, 2]
         output1 = group_nearby_objs.run(input1)
+
         assert output1["obj_groups"][0] != output1["obj_groups"][1]
         assert output1["obj_groups"][1] != output1["obj_groups"][2]
         assert output1["obj_groups"][2] != output1["obj_groups"][0]
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_multi_separate_groups(self, group_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.1, 0.1, 0.1]),
-                                  np.array([0.1, 0.1, 6.0]),
-                                  np.array([0.1, 0.1, 1.0]),
-                                  np.array([0.1, 0.1, 5.0])]}
+        array1 = [np.array([0.1, 0.1, 0.1]),
+                  np.array([0.1, 0.1, 6.0]),
+                  np.array([0.1, 0.1, 1.0]),
+                  np.array([0.1, 0.1, 5.0])]
+        input1 = {"obj_3D_locs": array1}
         # should get something like [0, 1, 0, 1]
         output1 = group_nearby_objs.run(input1)
+
         assert output1["obj_groups"][0] != output1["obj_groups"][1]
         assert output1["obj_groups"][0] == output1["obj_groups"][2]
         assert output1["obj_groups"][1] == output1["obj_groups"][3]
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)

@@ -17,7 +17,10 @@ import pytest
 import numpy as np
 from peekingduck.pipeline.nodes.heuristic.bbox_to_btm_midpoint import Node
 
-SIZE = (400, 600, 3)
+
+@pytest.fixture
+def size():
+    return (400, 600, 3)
 
 
 @pytest.fixture
@@ -29,17 +32,30 @@ def bbox_to_btm_midpoint():
 
 
 class TestBboxToBtmMidpoint:
-    def test_no_bboxes(self, create_image, bbox_to_btm_midpoint):
-        input1 = {"bboxes": [], "img": create_image(SIZE)}
+    def test_no_bboxes(self, create_image, bbox_to_btm_midpoint, size):
+        array1 = []
+        img1 = create_image(size)
+        input1 = {"bboxes": array1, "img": img1}
+
         assert bbox_to_btm_midpoint.run(input1)["btm_midpoint"] == []
+        np.testing.assert_equal(input1["img"], img1)
+        np.testing.assert_equal(input1["bboxes"], array1)
 
-    def test_multi_bboxes(self, create_image, bbox_to_btm_midpoint):
-        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4]),
-                             np.array([0.5, 0.6, 0.7, 0.8])],
-                  "img": create_image(SIZE)}
+    def test_multi_bboxes(self, create_image, bbox_to_btm_midpoint, size):
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
+                  np.array([0.5, 0.6, 0.7, 0.8])]
+        img1 = create_image(size)
+        input1 = {"bboxes": array1, "img": img1}
+
         assert len(bbox_to_btm_midpoint.run(input1)["btm_midpoint"]) == 2
+        np.testing.assert_equal(input1["img"], img1)
+        np.testing.assert_equal(input1["bboxes"], array1)
 
-    def test_formula(self, create_image, bbox_to_btm_midpoint):
-        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4])],
-                  "img": create_image(SIZE)}
+    def test_formula(self, create_image, bbox_to_btm_midpoint, size):
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4])]
+        img1 = create_image(size)
+        input1 = {"bboxes": array1, "img": img1}
+
         assert bbox_to_btm_midpoint.run(input1)["btm_midpoint"] == [(120, 160)]
+        np.testing.assert_equal(input1["img"], img1)
+        np.testing.assert_equal(input1["bboxes"], array1)

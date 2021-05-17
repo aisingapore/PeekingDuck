@@ -32,22 +32,34 @@ def check_nearby_objs():
 
 class TestCheckNearbyObjs:
     def test_no_3D_locs(self, check_nearby_objs):
-        input1 = {"obj_3D_locs": []}
+        array1 = []
+        input1 = {"obj_3D_locs": array1}
+
         assert check_nearby_objs.run(input1)["obj_tags"] == []
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_are_nearby(self, check_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.5, 0.5, 0.5]),
-                                  np.array([0.55, 0.55, 0.55])]}
+        array1 = [np.array([0.5, 0.5, 0.5]),
+                  np.array([0.55, 0.55, 0.55])]
+        input1 = {"obj_3D_locs": array1}
+
         assert check_nearby_objs.run(input1)["obj_tags"] == [TAG_MSG, TAG_MSG]
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_not_nearby(self, check_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.1, 0.1, 0.1]),
-                                  np.array([0.9, 0.9, 3.0])]}
+        array1 = [np.array([0.1, 0.1, 0.1]),
+                  np.array([0.9, 0.9, 3.0])]
+        input1 = {"obj_3D_locs": array1}
+
         assert check_nearby_objs.run(input1)["obj_tags"] == ["", ""]
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_some_nearby_some_not(self, check_nearby_objs):
-        input1 = {"obj_3D_locs": [np.array([0.1, 0.1, 0.1]),
-                                  np.array([0.1, 0.1, 6.0]),
-                                  np.array([0.1, 0.1, 1.0])]}
+        array1 = [np.array([0.1, 0.1, 0.1]),
+                  np.array([0.1, 0.1, 6.0]),
+                  np.array([0.1, 0.1, 1.0])]
+        input1 = {"obj_3D_locs": array1}
+
         assert check_nearby_objs.run(input1)["obj_tags"] == [
             TAG_MSG, "", TAG_MSG]
+        np.testing.assert_equal(input1["obj_3D_locs"], array1)

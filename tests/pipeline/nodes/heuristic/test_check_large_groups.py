@@ -28,13 +28,22 @@ def check_large_groups():
 
 class TestCheckLargeGroups:
     def test_no_obj_groups(self, check_large_groups):
-        input1 = {"obj_groups": []}
+        array1 = []
+        input1 = {"obj_groups": array1}
+
         assert check_large_groups.run(input1)["large_groups"] == []
+        assert input1["obj_groups"] == array1
 
     def test_no_large_groups(self, check_large_groups):
-        input1 = {"obj_groups": [0, 1, 2, 3, 4, 5]}
+        array1 = [0, 1, 2, 3, 4, 5]
+        input1 = {"obj_groups": array1}
+
         assert check_large_groups.run(input1)["large_groups"] == []
+        assert input1["obj_groups"] == array1
 
     def test_multi_large_groups(self, check_large_groups):
-        input1 = {"obj_groups": [0, 1, 0, 3, 1, 0, 1, 2, 1, 0]}
+        array1 = [0, 1, 0, 3, 1, 0, 1, 2, 1, 0]
+        input1 = {"obj_groups": array1}
+
         assert check_large_groups.run(input1)["large_groups"] == [0, 1]
+        assert input1["obj_groups"] == array1

@@ -28,10 +28,16 @@ def bbox_count():
 
 class TestBboxCount:
     def test_no_bboxes(self, bbox_count):
-        input1 = {"bboxes": []}
+        array1 = []
+        input1 = {"bboxes": array1}
+
         assert bbox_count.run(input1)["count"] == 0
+        np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_multi_bboxes(self, bbox_count):
-        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4]),
-                             np.array([0.5, 0.6, 0.7, 0.8])]}
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
+                  np.array([0.5, 0.6, 0.7, 0.8])]
+        input1 = {"bboxes": array1}
+
         assert bbox_count.run(input1)["count"] == 2
+        np.testing.assert_equal(input1["bboxes"], array1)

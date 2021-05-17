@@ -30,16 +30,25 @@ def bbox_to_3d_loc():
 
 class TestBboxTo3dLoc:
     def test_no_bbox(self, bbox_to_3d_loc):
-        input1 = {"bboxes": []}
+        array1 = []
+        input1 = {"bboxes": array1}
+
         assert bbox_to_3d_loc.run(input1)["obj_3D_locs"] == []
+        np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_multi_bboxes(self, bbox_to_3d_loc):
-        input1 = {"bboxes": [np.array([0.1, 0.2, 0.3, 0.4]),
-                             np.array([0.5, 0.6, 0.7, 0.8])]}
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
+                  np.array([0.5, 0.6, 0.7, 0.8])]
+        input1 = {"bboxes": array1}
+
         assert len(bbox_to_3d_loc.run(input1)["obj_3D_locs"]) == 2
+        np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_formula(self, bbox_to_3d_loc):
-        input1 = {"bboxes": [np.array([0.408, 0.277, 0.894, 1.0])]}
+        array1 = [np.array([0.408, 0.277, 0.894, 1.0])]
+        input1 = {"bboxes": array1}
         output1 = bbox_to_3d_loc.run(input1)["obj_3D_locs"]
-        correct_ans = np.array([0.522, 0.479, 3.942])
-        assert np.isclose(output1, correct_ans, atol=1e-3).all()
+        correct_ans = [np.array([0.522, 0.479, 3.942])]
+
+        np.testing.assert_almost_equal(output1, correct_ans, decimal=3)
+        np.testing.assert_equal(input1["bboxes"], array1)
