@@ -85,11 +85,18 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         """ Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
 
-        for node_dict in self.node_list:
+        for node_item in self.node_list:
+            admend_default_config = None
+            node_str = node_item
 
-            node_str = list(node_dict.keys())[0]  # type: ignore
-            config_to_amend = node_dict[node_str]
+            if isinstance(node_item, dict):
+                node_str = list(node_item.keys())[0]  # type: ignore
+                admend_default_config = {key: d[key] for d in node_item[node_str] for key in d}
+
             node_str_split = node_str.split('.')
+
+            msg = "Initialising " + node_str + " node..."
+            self.logger.info(msg)
 
             if len(node_str_split) == 3:
                 path_to_node = ".".join(self.custom_folder_path.split('/')[-1:]) + "."
@@ -98,14 +105,14 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 instantiated_node = self._init_node(path_to_node,
                                                     node_name,
                                                     self.custom_config_loader,
-                                                    config_to_amend)  # type: ignore
+                                                    admend_default_config)  # type: ignore
             else:
                 path_to_node = 'peekingduck.pipeline.nodes.'
 
                 instantiated_node = self._init_node(path_to_node,
                                                     node_str,
                                                     self.config_loader,
-                                                    config_to_amend)  # type: ignore
+                                                    admend_default_config)  # type: ignore
 
             instantiated_nodes.append(instantiated_node)
 
@@ -113,32 +120,27 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def _init_node(self, path_to_node: str, node_name: str,
                    config_loader: ConfigLoader,
-                   config_to_amend: List[Dict[str, Any]]) -> AbstractNode:
+                   admend_default_config: Dict[str, Any]) -> AbstractNode:
         """ Import node to filepath and initialise node with config """
 
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
-        if config_to_amend is not None:
-            config = self._edit_node_config(config, config_to_amend)
+        if admend_default_config is not None:
+            config = self._edit_node_config(config, admend_default_config)
 
         return node.Node(config)  # type: ignore
 
     def _edit_node_config(self, config: Dict[str, Any],
-                          config_to_amend: List[Dict[str, Any]]) -> Dict[str, Any]:
+                          admend_default_config: Dict[str, Any]) -> Dict[str, Any]:
         " Edit default node configuration"
 
-        configurable_paramters = list(config.keys())
-
-        for paramter in config_to_amend:
-            parameter_name = list(paramter.keys())[0]
-            parameter_state = list(paramter.values())[0]
-
-            if parameter_name in configurable_paramters:
-                config[parameter_name] = parameter_state
-            else:
-                msg = "'" + parameter_name + "' is not a valid configurable parameter"
-                self.logger.warning(msg)
+        params = set(admend_default_config.keys()) - set(config.keys())
+        for param in params:
+            admend_default_config.pop(param)
+            msg = "'" + param + "' is not a valid configurable parameter"
+            self.logger.warning(msg)
+        config.update(admend_default_config)
 
         return config
 
