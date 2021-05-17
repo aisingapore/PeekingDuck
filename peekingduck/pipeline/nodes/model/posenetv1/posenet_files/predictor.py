@@ -88,7 +88,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> Tuple[List[Any], List[Any]]:
+                frame: np.ndarray) -> Tuple[List[Any], Dict[str, List[Any]]]:
         # pylint: disable=too-many-locals
         """ PoseNet prediction function
 
@@ -116,7 +116,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         for pose_coords, pose_scores, pose_masks in zip(full_keypoint_rel_coords,
                                                         full_keypoint_scores, full_masks):
             bbox = self._get_bbox_of_one_pose(pose_coords, pose_masks)
-            #pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
+            pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
             pose_connections = self._get_connections_of_one_pose(pose_coords, pose_masks)
             bboxes.append(bbox)
             coords.append(pose_coords)
@@ -124,12 +124,12 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             masks.append(pose_masks)
             connections.append(pose_connections)
 
-        pose_info = {"keypoints": coords, "keypoints_scores": scores,
+        pose_info = {"keypoints": coords, "keypoints_scores": scores,  # type: ignore
                      "masks": masks, "connections": connections}
 
-        return bboxes, pose_info
+        return bboxes, pose_info  # type: ignore
 
-    @staticmethod
+    @ staticmethod
     def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
         """ Apply masks to keep only valid keypoints' relative coordinates
 
@@ -145,7 +145,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         full_joints[~masks] = -1
         return full_joints
 
-    @staticmethod
+    @ staticmethod
     def _get_connections_of_one_pose(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
         """Get connections between adjacent keypoint pairs if both keypoints are detected
         """
@@ -155,7 +155,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 connections.append((coords[start_joint - 1], coords[end_joint - 1]))
         return np.array(connections)
 
-    @staticmethod
+    @ staticmethod
     def _get_bbox_of_one_pose(coords: np.ndarray,
                               mask: np.ndarray) -> np.ndarray:
         """ Get the bounding box bordering the keypoints of a single pose
@@ -210,7 +210,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
 
         return full_keypoint_rel_coords, full_keypoint_scores, full_masks
 
-    @staticmethod
+    @ staticmethod
     def _create_image_from_frame(output_stride: int,
                                  frame: np.ndarray,
                                  input_res: Tuple[int, int],
@@ -228,7 +228,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         image = tf.convert_to_tensor(image)
         return image, output_scale, image_size
 
-    @staticmethod
+    @ staticmethod
     def _get_full_masks_from_keypoint_scores(keypoint_scores: np.ndarray) -> np.ndarray:
         """ Obtain masks for keypoints with confidence scores above the detection threshold
         """

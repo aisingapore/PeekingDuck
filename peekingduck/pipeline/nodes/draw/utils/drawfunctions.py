@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any, Iterable, Union
+from typing import List, Tuple, Any, Iterable, Union, Dict
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -39,7 +39,7 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
 
 
 def draw_human_poses(image: np.array,
-                     poses: List[Any],
+                     poses: Dict[str, List[Any]],
                      bboxes: List[np.ndarray],
                      keypoint_dot_color: Tuple[int, int, int],
                      keypoint_dot_radius: int,
