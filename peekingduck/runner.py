@@ -18,7 +18,7 @@ import sys
 import logging
 from typing import List
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.loaders import ConfigLoader, DeclarativeLoader
+from peekingduck.loaders import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 END_TYPE = 'process_end'
@@ -46,10 +46,10 @@ class Runner():
         self.logger = logging.getLogger(__name__)
 
         if not nodes:
-            node_configs = ConfigLoader()
+
             # create Graph to run
             self.node_loader = DeclarativeLoader(
-                node_configs, RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
+                RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
 
             self.pipeline = self.node_loader.get_nodes()
 
