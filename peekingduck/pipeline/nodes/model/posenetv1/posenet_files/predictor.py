@@ -125,7 +125,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             connections.append(pose_connections)
 
         pose_info = {"keypoints": coords, "keypoints_scores": scores,  # type: ignore
-                     "masks": masks, "connections": connections}
+                     "masks": masks, "connections": connections}  # type: ignore
 
         return bboxes, pose_info  # type: ignore
 
