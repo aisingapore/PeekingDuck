@@ -4,24 +4,18 @@ output: ["bboxes", "labels", "score"]
 yolo_graph_mode: True
 model_class: humanmodel
 model_type: v4tiny # v3, v3tiny, v4 or v4tiny
-classes: ../weights/yolov3/models/coco.names
-weights_dir: ["../weights/yolov3", "../weights/yolov4"]
+classes: ../weights/yolov4/coco.names
+weights_dir: ["../weights/yolov4"]
 blob_file: "yolo.zip"
 model_files: {
-    v3: ../weights/yolov3/models/yolov3.tf,
-    v3tiny: ../weights/yolov3/models/yolov3-tiny.tf,
     v4: ../weights/yolov4/yolov4.h5,
     v4tiny: ../weights/yolov4/yolov4-tiny-416
 }
 graph_files: {
-    v3: ../weights/yolov3/yolov3.pb,
-    v3tiny: ../weights/yolov3/yolov3-tiny.pb,
     v4: ../weights/yolov4/yolov4.pb,
     v4tiny: ../weights/yolov4/yolov4-tiny.pb
 }
 size: 416
-image: ../weights/yolov3/images/street.jpg
-output_dir: ../results/yolov3/output.jpg
 num_classes: 80
 detect_ids: [0]
 yolo_iou_threshold: 0.5
