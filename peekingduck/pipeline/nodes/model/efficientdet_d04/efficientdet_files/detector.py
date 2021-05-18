@@ -70,16 +70,16 @@ class Detector:
         return model
 
     @staticmethod
-    def preprocess(image: List[List[float]],
-                   image_size: int) -> Tuple[List[List[float]], float]:
+    def preprocess(image: np.ndarray,
+                   image_size: int) -> Tuple[np.ndarray, float]:
         """Preprocessing function for efficientdet
 
         Args:
-            image (np.array): image in numpy array
+            image (np.ndarray): image in numpy array
             image_size (int): image size as defined in efficientdet config
 
         Returns:
-            image (np.array): the preprocessed image
+            image (np.ndarray): the preprocessed image
             scale (float): the scale the image was resized to
         """
         image, scale = preprocess_image(image, image_size=image_size)
@@ -88,7 +88,7 @@ class Detector:
     def postprocess(self, network_output: Tuple[np.ndarray, np.ndarray, np.ndarray],
                     scale: float,
                     img_shape: List[int],
-                    detect_ids: List[int]) -> Tuple[List, List, List]:
+                    detect_ids: List[int]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes for efficientdet
 
         Args:
@@ -98,9 +98,9 @@ class Detector:
             detect_ids (list): list of label ids to be detected
 
         Returns:
-            boxes (np.array): postprocessed array of detected bboxes
-            scores (np.array): postprocessed array of scores
-            labels (np.array): postprocessed array of labels
+            boxes (np.ndarray): postprocessed array of detected bboxes
+            scores (np.ndarray): postprocessed array of scores
+            labels (np.ndarray): postprocessed array of labels
         """
         img_h, img_w = img_shape
         boxes, scores, labels = network_output
@@ -124,17 +124,17 @@ class Detector:
 
     def predict_bbox_from_image(self,
                                 image: np.ndarray,
-                                detect_ids: List[int]) -> Tuple[List, List, List]:
+                                detect_ids: List[int]) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Efficientdet bbox prediction function
 
         Args:
-            image (np.array): image in numpy array
+            image (np.ndarray): image in numpy array
             detect_ids (list): list of label ids to be detected
 
         Returns:
-            boxes (np.array): array of detected bboxes
-            scores (np.array): array of scores
-            labels (np.array): array of labels
+            boxes (np.ndarray): array of detected bboxes
+            scores (np.ndarray): array of scores
+            labels (np.ndarray): array of labels
         """
         img_shape = image.shape[:2]
 
