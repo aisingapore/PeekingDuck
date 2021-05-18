@@ -38,7 +38,7 @@ class Node(AbstractNode):
             inputs (Dict): Dict with key "img"
 
         Returns:
-            outputs (Dict): Dict with keys "bboxes", "bbox_scores" and "bbox_labels".
+            outputs (Dict): Dict with keys "bboxes".
         """
         # Currently prototyped to return just the bounding boxes
         # without the scores
