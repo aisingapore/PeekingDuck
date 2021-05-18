@@ -22,11 +22,11 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
     ```
     mkdir <project_name>
     cd <project_name>
+    peekingduck init
     ```
 
-3. Pull default configurations and run a demo.
+3. Run a demo.
     ```
-    peekingduck get-configs
     peekingduck run
     ```
 
