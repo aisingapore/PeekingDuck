@@ -13,6 +13,16 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    - name: Update Version Number
+      run: |
+        VERSION=${{github.event.release.tag_name}}
+        PLACEHOLDER='__version__ = "developer"'
+        VERSION_FILE='peekingduck/__init__.py'
+        echo "Publishing version $VERSION to PyPI..."
+
+        # checks to make sure that the placeholder and version file is present
+        grep "$PLACEHOLDER" "$VERSION_FILE"
+        sed -i "s/$PLACEHOLDER/__version__ = \"${VERSION}\"/g" "$VERSION_FILE"
     - name: Install pypa and build
       run: |
         echo "Building new version..."
