@@ -39,7 +39,8 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame: np.ndarray) -> Tuple[List[Any], List[Any], List[Any], List[Any], List[Any]]:
+    def predict(self, frame: np.ndarray) -> \
+            Tuple[List[Any], List[Any], List[Any], List[Any], List[Any]]:
         """ Predict poses from input frame
 
         Args:

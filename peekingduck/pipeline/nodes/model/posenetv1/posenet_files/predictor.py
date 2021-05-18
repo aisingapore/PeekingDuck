@@ -26,6 +26,8 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import S
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
 from peekingduck.utils.graph_functions import load_graph
 
+OUTPUT_STRIDE = 16
+
 
 class Predictor:  # pylint: disable=too-many-instance-attributes
     """Predictor class to handle detection of poses for posenet
@@ -41,7 +43,6 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         self.posenet_model = self._create_posenet_model()
 
     def _create_posenet_model(self) -> tf.keras.Model:
-        self.output_stride = 16
         self.resolution = self.get_resolution_as_tuple(self.config['resolution'])
         self.max_pose_detection = self.config['max_pose_detection']
         self.score_threshold = self.config['score_threshold']
@@ -53,10 +54,9 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         self.logger.info(
             'PoseNet model loaded with following configs: \n \
             Model type: %s, \n \
-            Output stride: %s, \n \
             Input resolution: %s, \n \
             Max pose detection: %s, \n \
-            Score threshold: %s', self.model_type, self.output_stride, self.resolution,
+            Score threshold: %s', self.model_type, self.resolution,
             self.max_pose_detection, self.score_threshold)
 
         return model_func
@@ -188,7 +188,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             full_masks (np.array): keypoints validation masks of detected poses
         """
         image, output_scale, image_size = self._create_image_from_frame(
-            self.output_stride, frame, self.resolution, model_type)
+            OUTPUT_STRIDE, frame, self.resolution, model_type)
 
         dst_scores = np.zeros(
             (self.max_pose_detection, KEYPOINTS_NUM))
@@ -196,7 +196,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             (self.max_pose_detection, KEYPOINTS_NUM, 2))
 
         pose_count = detect_keypoints(
-            posenet_model, image, self.output_stride, dst_scores, dst_keypoints,
+            posenet_model, image, OUTPUT_STRIDE, dst_scores, dst_keypoints,
             model_type, self.score_threshold)
         full_keypoint_scores = dst_scores[:pose_count]
         full_keypoint_coords = dst_keypoints[:pose_count]
