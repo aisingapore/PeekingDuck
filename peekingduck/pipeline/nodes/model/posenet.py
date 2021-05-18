@@ -19,7 +19,12 @@ from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
 
 
 class Node(AbstractNode):
-    """Node for PoseNet
+    """PoseNet node class that initalises a PoseNet model to detect poses from
+    an image
+
+    PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up,
+    Part-Based, Geometric Embedding Model
+    https://arxiv.org/abs/1803.08225
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
