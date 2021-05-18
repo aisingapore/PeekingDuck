@@ -20,12 +20,20 @@ from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_zone_count
 
 
 class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
+    """Draw node for drawing zone counts onto image"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Draws the chosen object count of objects in each specified zone.
+
+        Args:
+            inputs (dict): Dict with keys "btm_midpoint", "img".
+
+        Returns:
+            outputs (dict): Dict with keys "img".
+        """
 
         draw_zone_count(inputs['img'], inputs['zone_count']) # type: ignore
         return {}

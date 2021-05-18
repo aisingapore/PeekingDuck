@@ -20,12 +20,20 @@ from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_zones
 
 
 class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
+    """Draw node for drawing zones onto image"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Draws the boundaries of each specified zone onto the image.
+
+        Args:
+            inputs (dict): Dict with keys "zones", "img".
+
+        Returns:
+            outputs (dict): Dict with keys "img".
+        """
 
         draw_zones(inputs["img"], inputs["zones"])  # type: ignore
         return {}
