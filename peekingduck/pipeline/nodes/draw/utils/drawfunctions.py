@@ -13,7 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from typing import List, Tuple, Any, Iterable, Union, Dict
+from typing import List, Tuple, Any, Iterable, Union
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -39,40 +39,36 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
 
 
 def draw_human_poses(image: np.array,
-                     poses: Dict[str, List[Any]],
-                     bboxes: List[np.ndarray],
+                     keypoints: List[Any],
+                     keypoint_scores: List[Any],
+                     keypoint_conns: List[Any],
                      keypoint_dot_color: Tuple[int, int, int],
                      keypoint_dot_radius: int,
                      keypoint_connect_color: Tuple[int, int, int],
-                     keypoint_text_color: Tuple[int, int, int],
-                     color: Tuple[int, int, int],
-                     thickness: int) -> None:
+                     keypoint_text_color: Tuple[int, int, int]) -> None:
     # pylint: disable=too-many-arguments
-    """Draw poses and bboxes onto an image frame.
+    """Draw poses onto an image frame.
 
     Args:
         image (np.array): image of current frame
-        poses (Dict[List[Any]]): dict containing poseinfo
-        bboxes (List[np.ndarray]) : list of bboxes
+        keypoints (List[Any]): list of keypoint coordinates
+        keypoints_scores (List[Any]): list of keypoint scores
+        keypoints_conns (List[Any]): list of keypoint connections
         keypoint_dot_color (Tuple[int, int, int]): color of keypoint
         keypoint_dot_radius (int): radius of keypoint
         keypoint_connect_color (Tuple[int, int, int]): color of joint
         keypoint_text_color (Tuple[int, int, int]): color of keypoint names
-        color (Tuple[int, int, int]): color of bounding box
-        thickness (int): thickness of bounding box
     """
     image_size = _get_image_size(image)
-    num_persons = len(poses["keypoints"])
+    num_persons = len(keypoints)
     if num_persons > 0:
         for i in range(0, num_persons):
             # coords = get_valid_full_keypoints_coords(poses["keypoints"][i],
             #                                          poses["masks"][i])
-            _draw_bbox(image, bboxes[i],
-                       image_size, color, thickness)
-            _draw_connections(image, poses["connections"][i],
+            _draw_connections(image, keypoint_conns[i],
                               image_size, keypoint_connect_color)
-            _draw_keypoints(image, poses["keypoints"][i],
-                            poses["keypoints_scores"][i], image_size,
+            _draw_keypoints(image, keypoints[i],
+                            keypoint_scores[i], image_size,
                             keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
 
 

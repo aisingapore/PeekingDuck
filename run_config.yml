@@ -1,6 +1,7 @@
-- input.live
-- model.posenet
-- draw.poses
-- draw.bbox
-- custom.draw.fps
-- output.screen
+nodes:
+  - input.live
+  - model.posenet
+  - draw.poses
+  - draw.bbox
+  # - custom.draw.fps
+  - output.screen

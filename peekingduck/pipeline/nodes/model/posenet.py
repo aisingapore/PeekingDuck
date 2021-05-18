@@ -31,11 +31,17 @@ class Node(AbstractNode):
         of the specified objects chosen to be detected
 
         Args:
-            inputs (Dict): Dictionary of inputs
+            inputs (dict): Dict with keys "img".
 
         Returns:
-            outputs (Dict): poses output in dictionary format
+            outputs (dict): Dict with keys "bboxes", "keypoints", "keypoint_scores",
+            "keypoint_masks", "keypoint_conns"
         """
-        bboxes, poses = self.model.predict(inputs["img"])
-        outputs = {"bboxes": bboxes, "pose_info": poses}
+        bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns = self.model.predict(
+            inputs["img"])
+        outputs = {"bboxes": bboxes,
+                   "keypoints": keypoints,
+                   "keypoint_scores": keypoint_scores,
+                   "keypoint_masks": keypoint_masks,
+                   "keypoint_conns": keypoint_conns}
         return outputs

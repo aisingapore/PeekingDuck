@@ -28,23 +28,19 @@ class Node(AbstractNode):
         self.keypoint_dot_radius = config["keypoint_dot_radius"]
         self.keypoint_connect_color = tuple(config["keypoint_connect_color"])
         self.keypoint_text_color = tuple(config["keypoint_text_color"])
-        self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = tuple(config["bbox_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that draws pose details onto input image
 
         Args:
-            inputs (Dict): Dictionary of inputs
+            inputs (dict): Dict with keys "img", "keypoints", "keypoint_conns"
         """
-
         draw_human_poses(inputs["img"],
-                         inputs["pose_info"],
-                         inputs["bboxes"],
+                         inputs["keypoints"],
+                         inputs["keypoint_scores"],
+                         inputs["keypoint_conns"],
                          self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
                          self.keypoint_connect_color,  # type: ignore
-                         self.keypoint_text_color,  # type: ignore
-                         self.bbox_color,  # type: ignore
-                         self.bbox_thickness)
+                         self.keypoint_text_color)  # type: ignore
         return {}

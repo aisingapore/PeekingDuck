@@ -88,7 +88,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> Tuple[List[Any], Dict[str, List[Any]]]:
+                frame: np.ndarray) -> Tuple[List[Any], List[Any], List[Any], List[Any], List[Any]]:
         # pylint: disable=too-many-locals
         """ PoseNet prediction function
 
@@ -96,8 +96,11 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             frame (np.array): image in numpy array
 
         Returns:
-            bboxes and poses (Tuple[List[Any], Dict[List[Any]]]): list of
-                bboxes and dict containing poseinfo
+            bboxes (List[Any]): list of bboxes
+            keypoints (List[Any]): list of keypoint coordinates
+            keypoints_scores (List[Any]): list of keypoint scores
+            keypoints_masks (List[Any]): list of keypoint masks
+            keypoints_conns (List[Any]): list of keypoint connections
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
@@ -106,12 +109,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 self.model_type)
 
         bboxes = []
-        coords = []
-        scores = []
-        masks = []
-        connections = []
-        pose_info = {"keypoints": None, "keypoints_scores": None,
-                     "masks": None, "connections": None}
+        keypoints = []
+        keypoint_scores = []
+        keypoint_masks = []
+        keypoint_conns = []
 
         for pose_coords, pose_scores, pose_masks in zip(full_keypoint_rel_coords,
                                                         full_keypoint_scores, full_masks):
@@ -119,15 +120,12 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
             pose_connections = self._get_connections_of_one_pose(pose_coords, pose_masks)
             bboxes.append(bbox)
-            coords.append(pose_coords)
-            scores.append(pose_scores)
-            masks.append(pose_masks)
-            connections.append(pose_connections)
+            keypoints.append(pose_coords)
+            keypoint_scores.append(pose_scores)
+            keypoint_masks.append(pose_masks)
+            keypoint_conns.append(pose_connections)
 
-        pose_info = {"keypoints": coords, "keypoints_scores": scores,  # type: ignore
-                     "masks": masks, "connections": connections}  # type: ignore
-
-        return bboxes, pose_info  # type: ignore
+        return bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns
 
     @ staticmethod
     def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:

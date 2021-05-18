@@ -1,7 +1,8 @@
 input: ["img"]
-output: ["bboxes", "pose_info", "img"]
+output:
+  ["bboxes", "keypoints", "keypoint_scores", "keypoint_masks", "keypoint_conns"]
 
-model_type: 75 # 50, 75, 101 or resnet
+model_type: resnet # 50, 75, 101 or resnet
 weights_dir: ["../weights/posenet/models"]
 blob_file: "posenet.zip"
 model_files:

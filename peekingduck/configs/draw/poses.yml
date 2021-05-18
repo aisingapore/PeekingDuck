@@ -1,8 +1,7 @@
-input: ["bboxes", "pose_info", "img"]
+input:
+  ["keypoints", "keypoint_scores", "keypoint_masks", "keypoint_conns", "img"]
 output: ["img"]
 
-bbox_color: [255, 0, 255]
-bbox_thickness: 2
 keypoint_dot_color: [0, 255, 0]
 keypoint_dot_radius: 5
 keypoint_connect_color: [0, 255, 255]
