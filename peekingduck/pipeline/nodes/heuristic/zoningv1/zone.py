@@ -52,4 +52,4 @@ class Zone:
 
     def _is_inside(self, x_coord: float, y_coord: float) -> bool:
         point = Point((x_coord, y_coord))
-        return self.polygon.contains(point)
+        return self.polygon.buffer(1).contains(point)

@@ -56,18 +56,25 @@ class Node(AbstractNode):
     def _create_zone(self, zone: List[Any], resolution: List[int]) -> Zone:
         """creates the appropriate Zone given either the absolute pixel values or
         % of resolution as a fraction between [0, 1]"""
+        created_zone = None
+
         if all(all(0 <= i <= 1 for i in coords) for coords in zone):
             # coordinates are in fraction. Use resolution to get correct coords
             pixel_coords = [self._get_pixel_coords(coords, resolution) for coords in zone]
-            return Zone(pixel_coords)
-        if all(all(i >= 0 for i in coords) for coords in zone):
+            created_zone =  Zone(pixel_coords)
+        if all(all((isinstance(i, int) and i >= 0) for i in coords) for coords in zone):
             # when 1st-if fails and this statement passes, list is in pixel value.
-            return Zone(zone)
+            created_zone = Zone(zone)
+
         # if neither, something is wrong
-        raise TypeError("Zone Type Error: %s is neither pixel-wise points or \
-            fraction of frame between 0 and 1." % zone)
+        if not created_zone:
+            assert False, ("Zone %s needs to be all pixel-wise points or "
+            "all fractions of the frame between 0 and 1. "
+            "please check zone_count configs." % zone)
+
+        return created_zone
 
     @staticmethod
     def _get_pixel_coords(coords:List[float], resolution:List[int]) -> List[float]:
-        # returns the pixel position of the zone points
+        """returns the pixel position of the zone points"""
         return [int(coords[0] * resolution[0]), int(coords[1] * resolution[1])]
