@@ -54,8 +54,8 @@ class Node(AbstractNode):
                 "zone_count": zone_counts}
 
     def _create_zone(self, zone: List[Any], resolution: List[int]) -> Zone:
-        # creates the appropriate Zone given either the absolute pixel values or
-        # % of resolution as a fraction between [0, 1]
+        """creates the appropriate Zone given either the absolute pixel values or
+        % of resolution as a fraction between [0, 1]"""
         if all(all(0 <= i <= 1 for i in coords) for coords in zone):
             # coordinates are in fraction. Use resolution to get correct coords
             pixel_coords = [self._get_pixel_coords(coords, resolution) for coords in zone]

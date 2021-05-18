@@ -1,7 +1,7 @@
 input: ["btm_midpoint"]
 output: ["zones", "zone_count"]
 
-resolution: [1280, 720]
+resolution: [1280, 720] # Used only in fraction mode
 
 zones: [
   [[0, 0], [640, 0], [640, 720], [0, 720]],
