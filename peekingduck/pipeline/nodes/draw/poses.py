@@ -39,8 +39,8 @@ class Node(AbstractNode):
                          inputs["keypoints"],
                          inputs["keypoint_scores"],
                          inputs["keypoint_conns"],
-                         self.keypoint_dot_color,
+                         self.keypoint_dot_color,  # type: ignore
                          self.keypoint_dot_radius,
-                         self.keypoint_connect_color,
-                         self.keypoint_text_color)
+                         self.keypoint_connect_color,  # type: ignore
+                         self.keypoint_text_color)  # type: ignore
         return {}
