@@ -56,10 +56,11 @@ class Detector:
                 self.model_type, self.config['score_threshold'])
             return model
         # For keras model
-        _, model = efficientdet(phi=self.model_type,
-                                num_classes=self.config['num_classes'],
-                                score_threshold=self.config['score_threshold'])
-        model_path = os.path.join(self.root_dir, self.config['model_files'][self.model_type])
+        model = efficientdet(phi=self.model_type,
+                             num_classes=self.config['num_classes'],
+                             score_threshold=self.config['score_threshold'])
+        model_path = os.path.join(self.root_dir, self.config['graph_files'][self.model_type])
+        model_path = model_path.replace('.pb', '.h5')
         model.load_weights(model_path, by_name=True)
         self.logger.info(
             'Efficientdet keras model loaded with following configs:'

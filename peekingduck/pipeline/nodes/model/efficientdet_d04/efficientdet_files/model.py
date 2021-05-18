@@ -521,7 +521,7 @@ def efficientdet(phi: int, num_classes: int = 20, num_anchors: int = 9,
         )([boxes, classification])
 
     prediction_model = models.Model(inputs=[image_input], outputs=detections, name='efficientdet_p')
-    return model, prediction_model
+    return prediction_model
 
 
 if __name__ == '__main__':
