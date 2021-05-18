@@ -39,7 +39,7 @@ from typing import Any, Dict, Callable, List, Tuple, Union
 from six.moves import xrange
 import tensorflow as tf
 from keras_applications.imagenet_utils import _obtain_input_shape
-from keras_applications.imagenet_utils import preprocess_input as _preprocess_input
+from tensorflow.keras.applications.imagenet_utils import preprocess_input as _preprocess_input
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.submodule \
     import get_submodules_from_kwargs

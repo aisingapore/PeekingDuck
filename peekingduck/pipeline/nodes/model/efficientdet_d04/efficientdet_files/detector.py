@@ -20,9 +20,10 @@ from typing import Dict, Any, List, Tuple
 import numpy as np
 import tensorflow as tf
 from peekingduck.utils.graph_functions import load_graph
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process \
     import preprocess_image, postprocess_boxes
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model \
+    import efficientdet
 
 
 class Detector:
@@ -38,7 +39,7 @@ class Detector:
 
         self.effdet = self._create_effdet_model()
 
-        classes_path = os.path.join(config['root'], config['classes'])
+        classes_path = os.path.join(config['root'], config['classes_file'])
         self.class_names = {value['id'] - 1: value['name']
                             for value in json.load(open(classes_path, 'r')).values()}
 

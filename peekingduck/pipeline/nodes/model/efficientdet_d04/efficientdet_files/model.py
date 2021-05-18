@@ -498,8 +498,8 @@ def efficientdet(phi: int, num_classes: int = 20, num_anchors: int = 9,
     regression = [box_net([feature, i]) for i, feature in enumerate(fpn_features)]
     regression = layers.Concatenate(axis=1, name='regression')(regression)
 
-    model = models.Model(inputs=[image_input], outputs=[
-                         classification, regression], name='efficientdet')
+    # model = models.Model(inputs=[image_input], outputs=[
+    #                      classification, regression], name='efficientdet')
 
     # apply predicted regression to anchors
     anchors = anchors_for_shape((input_size, input_size), anchor_params=anchor_parameters)
@@ -525,4 +525,4 @@ def efficientdet(phi: int, num_classes: int = 20, num_anchors: int = 9,
 
 
 if __name__ == '__main__':
-    x, y = efficientdet(1)
+    x = efficientdet(1)

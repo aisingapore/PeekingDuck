@@ -2,7 +2,7 @@ input: ['img']
 output: ['bboxes', 'bbox_labels', 'bbox_scores']
 
 model_type: 0 # 0-4
-classes: ../weights/efficientdet/coco_90.json
+classes_file: ../weights/efficientdet/coco_90.json
 weights_dir: ['../weights/efficientdet']
 blob_file: 'efficientdet.zip'
 graph_files:
