@@ -73,6 +73,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         self.node_list = self._load_node_list(run_config)
         self.custom_folder_path = custom_folder_path
 
+        # add custom nodes path for module discovery
+        sys.path.append(custom_folder_path.split("/")[0])
+
     def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
