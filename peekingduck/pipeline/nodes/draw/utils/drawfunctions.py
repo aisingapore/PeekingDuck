@@ -62,30 +62,12 @@ def draw_human_poses(image: np.array,
     image_size = _get_image_size(image)
     num_persons = len(keypoints)
     if num_persons > 0:
-        for i in range(0, num_persons):
-            # coords = get_valid_full_keypoints_coords(poses["keypoints"][i],
-            #                                          poses["masks"][i])
+        for i in range(num_persons):
             _draw_connections(image, keypoint_conns[i],
                               image_size, keypoint_connect_color)
             _draw_keypoints(image, keypoints[i],
                             keypoint_scores[i], image_size,
                             keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
-
-
-def get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
-    """ Apply masks to keep only valid keypoints' relative coordinates
-
-    Args:
-        coords (np.array): Nx2 array of keypoints' relative coordinates
-        masks (np.array): masks for valid (> min confidence score) keypoints
-
-    Returns:
-        full_joints (np.array): Nx2 array of keypoints where undetected
-            keypoints are assigned a (-1) value.
-    """
-    full_joints = coords.copy()
-    full_joints[~masks] = -1
-    return full_joints
 
 
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
