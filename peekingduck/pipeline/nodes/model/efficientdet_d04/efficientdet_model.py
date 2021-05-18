@@ -41,14 +41,14 @@ class EfficientDetModel:
 
         self.detector = Detector(config)
 
-    def predict(self, frame: List[List[float]]) -> Tuple[List, List, List]:
+    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """predict the bbox from frame
 
         returns:
-        object_bboxes(List[Numpy Array]): list of bboxes detected
-        object_labels(List[int]): list of index labels of the
+        object_bboxes(np.ndarray): list of bboxes detected
+        object_labels(np.ndarray): list of index labels of the
             object detected for the corresponding bbox
-        object_scores(List(float)): list of confidence scores of the
+        object_scores(np.ndarray): list of confidence scores of the
             object detected for the corresponding bbox
         """
         assert isinstance(frame, np.ndarray)
@@ -56,7 +56,7 @@ class EfficientDetModel:
         # return bboxes, object_bboxes, object_labels, object_scores
         return self.detector.predict_bbox_from_image(frame, self.detect_ids)
 
-    def get_detect_ids(self) -> None:
+    def get_detect_ids(self) -> List[int]:
         """getter function for ids to be detected
         """
         return self.detect_ids

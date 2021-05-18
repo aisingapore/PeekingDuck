@@ -38,8 +38,8 @@ from typing import Any, Dict, Callable, List, Tuple, Union
 
 from six.moves import xrange
 import tensorflow as tf
-from keras_applications.imagenet_utils import _obtain_input_shape
-from keras_applications.imagenet_utils import preprocess_input as _preprocess_input
+from tensorflow.python.keras.applications.imagenet_utils import obtain_input_shape
+from tensorflow.keras.applications.imagenet_utils import preprocess_input as _preprocess_input
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.submodule \
     import get_submodules_from_kwargs
@@ -373,12 +373,12 @@ def efficientnet_base(width_coefficient: float,  # pylint: disable=too-many-argu
                          ' as true, `classes` should be 1000')
 
     # Determine proper input shape
-    input_shape = _obtain_input_shape(input_shape,
-                                      default_size=default_resolution,
-                                      min_size=32,
-                                      data_format=BACKEND.image_data_format(),
-                                      require_flatten=include_top,
-                                      weights=weights)
+    input_shape = obtain_input_shape(input_shape,
+                                     default_size=default_resolution,
+                                     min_size=32,
+                                     data_format=BACKEND.image_data_format(),
+                                     require_flatten=include_top,
+                                     weights=weights)
 
     if input_tensor is None:
         img_input = LAYERS.Input(shape=input_shape)

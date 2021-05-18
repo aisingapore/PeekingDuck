@@ -21,6 +21,9 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 class Node(AbstractNode):
     """EfficientDet node class that initializes and uses efficientdet model to detect
     bounding boxes from an image.
+
+    EfficientDet: Scalable and Efficient Object Detection
+    https://arxiv.org/abs/1911.09070
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -32,10 +35,10 @@ class Node(AbstractNode):
         in config.
 
         Args:
-            inputs (Dict): Dictionary of inputs
+            inputs (Dict): Dict with key "img"
 
         Returns:
-            outputs (Dict): bbox (x1,y1,x2,y2) output in dictionary
+            outputs (Dict): Dict with keys "bboxes".
         """
         # Currently prototyped to return just the bounding boxes
         # without the scores
