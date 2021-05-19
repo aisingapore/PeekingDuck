@@ -32,15 +32,20 @@ class QuickFind:
         for i in range(arr_size):
             self.group_alloc.append(i)
 
-    def union(self, node_1_idx: int, node_2_idx: int) -> List[int]:
+    def get_group_alloc(self) -> List[int]:
+        """Getter function for self.group_alloc
+
+        Returns:
+            (list): a list containing group numbers allocated to each node.
+        """
+        return self.group_alloc
+
+    def union(self, node_1_idx: int, node_2_idx: int) -> None:
         """Unites two nodes and other nodes that have been connected to them.
 
         Args:
             node_1_idx (int): index of the first node
             node_2_idx (int): index of the second node
-
-        Returns:
-            (list): a list containing group numbers allocated to each node
         """
 
         node_1_group = self.group_alloc[node_1_idx]
@@ -48,7 +53,6 @@ class QuickFind:
         for i in range(self.arr_size):
             if self.group_alloc[i] == node_1_group:
                 self.group_alloc[i] = node_2_group
-        return self.group_alloc
 
     def connected(self, node_1_idx: int, node_2_idx: int) -> bool:
         """Checks if two nodes are connected.

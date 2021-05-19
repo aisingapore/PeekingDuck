@@ -1,0 +1,38 @@
+input: ["img"]
+output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns"]
+
+model_type: resnet # 50, 75, 101 or resnet
+weights_dir: ["../weights/posenet/models"]
+blob_file: "posenet.zip"
+model_files:
+  {
+    50: ../weights/posenet/models/model-mobilenet_v1_050.pb,
+    75: ../weights/posenet/models/model-mobilenet_v1_075.pb,
+    101: ../weights/posenet/models/model-mobilenet_v1_101.pb,
+    resnet: ../weights/posenet/models/model-resnet.pb,
+  }
+
+resolution: { height: 225, width: 225 }
+max_pose_detection: 10
+score_threshold: 0.4
+
+MODEL_NODES:
+  {
+    mobilenet:
+      {
+        inputs: [image:0],
+        outputs:
+          [heatmap:0, offset_2:0, displacement_fwd_2:0, displacement_bwd_2:0],
+      },
+    resnet:
+      {
+        inputs: [sub_2:0],
+        outputs:
+          [
+            float_heatmaps:0,
+            float_short_offsets:0,
+            resnet_v1_50/displacement_fwd_2/BiasAdd:0,
+            resnet_v1_50/displacement_bwd_2/BiasAdd:0,
+          ],
+      },
+  }

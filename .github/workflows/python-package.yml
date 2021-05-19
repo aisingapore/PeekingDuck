@@ -1,0 +1,32 @@
+# This workflow does a local installation and perform a 
+# test to make sure that the package works as expected.
+
+name: System Testing
+
+on:
+  schedule:
+    # run at 8am and 6pm SGT
+    - cron: '0 2,10 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04]
+        python-version: [3.6]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install peekingduck
+      run: |
+        python -m pip install --upgrade pip
+        python -m pip install .
+    - name: Initialise peekingduck
+      run: |
+        peekingduck init

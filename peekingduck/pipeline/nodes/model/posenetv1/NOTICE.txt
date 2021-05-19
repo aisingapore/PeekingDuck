@@ -1,0 +1,2 @@
+PoseNet Python
+Copyright 2018 Ross Wightman

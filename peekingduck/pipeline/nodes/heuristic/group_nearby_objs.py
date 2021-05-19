@@ -45,13 +45,12 @@ class Node(AbstractNode):
         nearby_obj_pairs = self._find_nearby_obj_pairs(
             inputs["obj_3D_locs"], self.obj_dist_thres)
 
-        group_alloc = []
         quickfind = QuickFind(len(inputs["obj_3D_locs"]))
         for (idx_1, idx_2) in nearby_obj_pairs:
             if not quickfind.connected(idx_1, idx_2):
-                group_alloc = quickfind.union(idx_1, idx_2)
+                quickfind.union(idx_1, idx_2)
 
-        return {"obj_groups": group_alloc}
+        return {"obj_groups": quickfind.get_group_alloc()}
 
     @staticmethod
     def _find_nearby_obj_pairs(obj_locs: List[np.array],

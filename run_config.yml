@@ -1,5 +1,7 @@
 nodes:
-- input.live
-- model.yolo
-- draw.bbox
-- output.screen
+  - input.live
+  - model.posenet
+  - draw.poses
+  - draw.bbox
+  # - custom.draw.fps
+  - output.screen
