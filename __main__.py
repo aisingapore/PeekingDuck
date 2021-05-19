@@ -13,14 +13,14 @@
 # limitations under the License.
 
 import os
-import logging 
+import logging
 from peekingduck.utils.logger import setup_logger
 import peekingduck.runner as pkd
 
 if __name__ == "__main__":
     RUN_PATH = os.path.join(os.getcwd(), 'PeekingDuck/run_config.yml')
     CUSTOM_NODE_PATH = os.path.join(os.getcwd(), 'PeekingDuck/custom_nodes')
-    
+
     setup_logger()
     logger = logging.getLogger(__name__)
     logger.info("Run path: %s", RUN_PATH)
