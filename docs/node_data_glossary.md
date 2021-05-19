@@ -122,3 +122,24 @@ A list of strings called tags, each tag associated with a bounding box. The orde
 # for example
 "obj_tags": ["TOO CLOSE!", "", ... , "TOO CLOSE!"]
 ```
+
+### "zones"
+
+A list of coordinate lists, each coordinate list is made of a list of tuples of (x, y) coordinates that demarks the points that form the boundaries of a zone. The order of zones follow the order of "zone_counts".
+```
+"zones":[[(int, int), (int, int), ...], [(int, int), (int, int), ...], ...,]
+
+# for example
+"zones": [[(0,0), (0, 500), (500, 500), (500, 0)], [(500, 500), (500, 1000), (1000, 1000), (1000, 500)]]
+```
+
+### "zone_count"
+
+A list of integers that are counts of the number of chosen object (for example, people) detected in each specified zone. the order for the zone counts follow the order of "zones".
+
+```
+zone_count" [int, int, ..., int]
+
+# for example
+"zone_count": [1, 0, 5, 8, 4]
+```
