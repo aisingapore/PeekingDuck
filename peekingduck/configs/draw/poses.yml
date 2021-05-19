@@ -1,0 +1,7 @@
+input: ["keypoints", "keypoint_scores", "keypoint_conns", "img"]
+output: ["img"]
+
+keypoint_dot_color: [0, 255, 0]
+keypoint_dot_radius: 5
+keypoint_connect_color: [0, 255, 255]
+keypoint_text_color: [255, 0, 255]
