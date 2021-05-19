@@ -56,7 +56,7 @@ class TestPredictor:
     def test_predict(self, posenet_predictor):
         frame = cv2.imread(os.path.join(TEST_DIR, 't2.jpg'))
         output = posenet_predictor.predict(frame)
-        assert len(output) == 5, "Predicted output has missing keys"
+        assert len(output) == 4, "Predicted output has missing keys"
         for i in output:
             assert len(i) == 1, "Unexpected number of outputs"
 

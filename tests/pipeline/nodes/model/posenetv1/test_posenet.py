@@ -58,7 +58,6 @@ class TestPoseNet:
         expected_output = {"bboxes": [],
                            "keypoints": [],
                            "keypoint_scores": [],
-                           "keypoint_masks": [],
                            "keypoint_conns": []}
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():
@@ -71,7 +70,7 @@ class TestPoseNet:
         assert posenet_model is not None
         output = posenet_model.run({'img': pose_image})
         expected_output = dict.fromkeys(['bboxes', 'keypoints', 'keypoint_scores',
-                                         'keypoint_masks', 'keypoint_conns'])
+                                         'keypoint_conns'])
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():
             assert len(output[i]) >= 1, "unexpected number of outputs for {}".format(i)
