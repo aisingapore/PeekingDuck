@@ -125,7 +125,7 @@ def _clip_to_indices(keypoints: np.ndarray,
 
 
 def _traverse_to_target_keypoint(edge_id: int,
-                                 source_keypoint: int,
+                                 source_keypoint: np.ndarray,
                                  target_keypoint_id: int,
                                  scores: np.ndarray,
                                  offsets: np.ndarray,

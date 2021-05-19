@@ -39,9 +39,9 @@ def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
     assert len(keypoint_coords.shape) == 3, "keypoint_coords should be 3D"
     assert keypoint_coords.shape[
         2], "keypoint_coords should be a 2D matrix of 2D offsets"
-    keypoint_coords *= output_scale
-    keypoint_coords /= image_size
-    return keypoint_coords
+    rel_keypoint_coords = keypoint_coords * output_scale
+    rel_keypoint_coords = rel_keypoint_coords / image_size
+    return rel_keypoint_coords
 
 
 def _sigmoid(array: np.ndarray) -> np.ndarray:
