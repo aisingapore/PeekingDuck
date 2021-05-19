@@ -1,5 +1,4 @@
-input:
-  ["keypoints", "keypoint_scores", "keypoint_masks", "keypoint_conns", "img"]
+input: ["keypoints", "keypoint_scores", "keypoint_conns", "img"]
 output: ["img"]
 
 keypoint_dot_color: [0, 255, 0]

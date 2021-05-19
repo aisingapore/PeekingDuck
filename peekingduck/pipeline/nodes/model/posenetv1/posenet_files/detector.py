@@ -1,13 +1,10 @@
 """
 Copyright 2018 Ross Wightman
 Modifications copyright 2021 AI Singapore
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
      https://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -26,12 +23,10 @@ def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
                                   output_scale: np.ndarray,
                                   image_size: List[int]) -> np.ndarray:
     """ Get keypoints coordinates relative to image size
-
     Args:
         keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
         output_scale (np.array): output scale in Hx2 format
         image_size (List[int]): image size in HxW format
-
     Returns:
         keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
                 relative to image size
@@ -58,7 +53,6 @@ def detect_keypoints(
         score_threshold: float) -> int:
     # pylint: disable=too-many-arguments
     """ Evaluate image by model function to get detected keypoints
-
     Args:
         tf_model: tensorflow model
         image (tf.Tensor): image for inference
@@ -69,7 +63,6 @@ def detect_keypoints(
             where N is the max persons to be detected
         model_type (str): specified model type (refer to modelconfig.yml)
         score_threshold (float): threshold for prediction
-
     Returns:
         pose_count (int): number of poses detected
     """

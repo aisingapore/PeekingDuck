@@ -1,13 +1,10 @@
 """
 Copyright 2018 Ross Wightman
 Modifications copyright 2021 AI Singapore
-
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
-
      https://www.apache.org/licenses/LICENSE-2.0
-
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,7 +30,6 @@ def decode_pose(root_score: float,
     # pylint: disable=too-many-arguments
     """ Decode pose's keypoints scores and coordinates from keypoints score,
     coordinates and displacements
-
     Args:
         root_score (float): a keypoint with highest score is selected as root
         root_id (int): root keypoint's index
@@ -47,7 +43,6 @@ def decode_pose(root_score: float,
                 connections
         keypoints_scores (np.array): 17x1 buffer to store keypoint scores
         keypoint_coords (np.array): 17x2 buffer to store keypoint coordinates
-
     Returns:
         pose_count (int): number of poses detected
     """
