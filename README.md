@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="images/peekingduck.JPG" width="30%">
+    <img src="images/readme/peekingduck.png" width="30%">
     <h1>PeekingDuck</h1>
 </div>
 
@@ -39,7 +39,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     If you have a webcam, you should be able to see the demo running live.
 
-    <img src="images/black.png" width="50%">
+    <img src="images/testing/black.jpg" width="50%">
 
 ## How PeekingDuck Works
 
@@ -82,7 +82,7 @@ nodes:
 
 If you have a webcam, you should be able to see the demo running live.
 
-<img src="images/black.png" width="50%">
+<img src="images/testing/black.jpg" width="50%">
 
 Now let's try changing node settings. We were using webcam for previous demos, and now let's try inferencing on a recorded video. We'll use the `input.recorded` and `output.media_writer` nodes for that, and you'll have to change the directory where the video is stored.
 
