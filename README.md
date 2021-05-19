@@ -84,17 +84,21 @@ If you have a webcam, you should be able to see the demo running live.
 
 <img src="images/testing/black.jpg" width="50%">
 
-Now let's try changing node settings. We were using webcam for previous demos, and now let's try inferencing on a recorded video. We'll use the `input.recorded` and `output.media_writer` nodes for that, and you'll have to change the directory where the video is stored.
+Now let's try changing node settings. We were using webcam for previous demos, and now let's try inferencing on a recorded video. You can use any video you like (as long as it's a supported video format), or download a sample [here](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip). We'll use the `input.recorded` and `output.media_writer` nodes for that, and you'll have to change the directory where the video is stored.
+
 
 ```
 nodes:
   - input.recorded:
     - input_source: <path of video>
-  - model.posenet
-  - draw.poses
-  - output.media_writer
+  - model.yolo:
+    - model_type: v4
+  - draw.bbox
+  - output.media_writer:
     - outputdir: <directory to save video result>
 ```
+
+<img src="images/readme/yolo_running.gif" width="50%">
 
 ## Explore PeekingDuck Nodes
 
@@ -102,6 +106,15 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 PeekingDuck can be used for many real life use cases. To see what other use cases are available, check out the [use case glossary](use_case_glossary.md).
 
+| | |
+|-|-|
+| Group Size Checking | Social Distancing |
+|<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| Zone Counting | People Counting |
+|<img src="images/testing/black.jpg" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| Vehicle Counting |  |
+|<img src="images/testing/black.jpg" width="100%">| |
+| | |
 
 ## Create Custom Nodes
 

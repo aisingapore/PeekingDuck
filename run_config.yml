@@ -1,7 +1,8 @@
 nodes:
-  - input.live
-  - model.posenet
-  - draw.poses
+  - input.recorded:
+    - input_source: "/Users/ngleeping/Downloads/running.mp4"
+  - model.yolo:
+    - model_type: v4
   - draw.bbox
-  # - custom.draw.fps
-  - output.screen
+  - output.media_writer:
+    - outputdir: "/Users/ngleeping/Desktop/"
