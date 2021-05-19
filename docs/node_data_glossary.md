@@ -68,15 +68,16 @@ A list of numpy arrays, where each numpy array contains the bounding box coordin
 
 ### "keypoints"
 
-A list of numpy arrays, where each numpy array contains an NxKx2 keypoint coordinates of N detected pose and K keypoints
+A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
 
 ### "keypoint_scores"
 
-A list of numpy arrays, where each numpy array contains NxKx1 keypoint scores of N detected pose and K keypoints
+A list of N numpy arrays, where each numpy array (Kx1) contains the keypoint scores of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
 
 ### "keypoint_conns"
 
-A list of numpy arrays, where each numpy array contains NxEx2 keypoint connections of N detected pose and E edges
+A list of N numpy arrays, where each numpy array contains the keypoint connections
+between adjacent keypoint pairs if both keypoints are detected.
 
 ### "end"
 
