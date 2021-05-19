@@ -1,6 +1,5 @@
 input: ["img"]
-output:
-  ["bboxes", "keypoints", "keypoint_scores", "keypoint_masks", "keypoint_conns"]
+output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns"]
 
 model_type: resnet # 50, 75, 101 or resnet
 weights_dir: ["../weights/posenet/models"]

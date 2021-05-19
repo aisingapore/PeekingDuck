@@ -40,13 +40,12 @@ class Node(AbstractNode):
 
         Returns:
             outputs (dict): Dict with keys "bboxes", "keypoints", "keypoint_scores",
-            "keypoint_masks", "keypoint_conns"
+            "keypoint_conns"
         """
-        bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns = self.model.predict(
+        bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"])
         outputs = {"bboxes": bboxes,
                    "keypoints": keypoints,
                    "keypoint_scores": keypoint_scores,
-                   "keypoint_masks": keypoint_masks,
                    "keypoint_conns": keypoint_conns}
         return outputs

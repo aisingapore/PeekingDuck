@@ -88,7 +88,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> Tuple[List[Any], List[Any], List[Any], List[Any], List[Any]]:
+                frame: np.ndarray) -> Tuple[List[Any], List[Any], List[Any], List[Any]]:
         # pylint: disable=too-many-locals
         """ PoseNet prediction function
 
@@ -99,7 +99,6 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             bboxes (List[Any]): list of bboxes
             keypoints (List[Any]): list of keypoint coordinates
             keypoints_scores (List[Any]): list of keypoint scores
-            keypoints_masks (List[Any]): list of keypoint masks
             keypoints_conns (List[Any]): list of keypoint connections
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
@@ -111,7 +110,6 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         bboxes = []
         keypoints = []
         keypoint_scores = []
-        keypoint_masks = []
         keypoint_conns = []
 
         for pose_coords, pose_scores, pose_masks in zip(full_keypoint_rel_coords,
@@ -122,10 +120,9 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             bboxes.append(bbox)
             keypoints.append(pose_coords)
             keypoint_scores.append(pose_scores)
-            keypoint_masks.append(pose_masks)
             keypoint_conns.append(pose_connections)
 
-        return bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns
+        return bboxes, keypoints, keypoint_scores, keypoint_conns
 
     @ staticmethod
     def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
