@@ -12,34 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-from peekingduck.loaders import ConfigLoader
-import pytest
-from typing import Dict
 import os
-import tempfile
+import shutil
 import yaml
 
+from peekingduck.loaders import ConfigLoader
 
-RUN_PATH = os.path.dirname(os.path.realpath(__file__))
-CONFIG_FOLDER_PATH = os.path.join(RUN_PATH, "configs")
+
+CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
+CONFIG_PATH = os.path.join(CURRENT_PATH, 'configs')
 
 
 def create_configloader():
-    config_loader = ConfigLoader(RUN_PATH)
+    config_loader = ConfigLoader(CURRENT_PATH)
 
     return config_loader
 
 
-def create_config_yaml(data):
-    temp_dir = tempfile.TemporaryDirectory(dir=CONFIG_FOLDER_PATH)
-    temp_file = tempfile.NamedTemporaryFile(dir=temp_dir.name,
-                                            suffix=".yml",
-                                            delete=False)
-    with open(temp_file.name, 'w') as outfile:
+def create_config_yaml(node, data):
+    node_type, node_name = node.split(".")
+
+    node_config_path = os.path.join(CONFIG_PATH, node_type)
+    os.makedirs(node_config_path)
+    config_file = node_name + ".yml"
+    full_path = os.path.join(node_config_path, config_file)
+
+    with open(full_path, 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
 
-    return temp_file.name
+    return CONFIG_PATH
 
 
 class TestConfigLoader():
@@ -50,23 +51,24 @@ class TestConfigLoader():
         config_loader = create_configloader()
         filepath = config_loader._get_config_path(node)
 
-        ground_truth = os.path.join(CONFIG_FOLDER_PATH,
+        ground_truth = os.path.join(CURRENT_PATH,
+                                    "configs",
                                     node.replace(".", "/"))
         ground_truth = ground_truth + ".yml"
 
         assert filepath == ground_truth
 
-    def test_config_loader_load_correct_node_config(self):
+    def test_config_loader_load_correct_yaml(self):
+        node = "input.test"
         data = {"input": "img",
                 "output": "img"}
 
-        yaml_file_path = create_config_yaml(data)
-
-        yaml_file_path = yaml_file_path.replace("/", ".")
-        yaml_file_path = yaml_file_path.split(".")
-        node = yaml_file_path[-3] + "." + yaml_file_path[-2]
+        config_folder_dir = create_config_yaml(node, data)
 
         config_loader = create_configloader()
-        node_config = config_loader.get(node)
+        config = config_loader.get(node)
 
-        assert yaml_file_path == 'test'
+        shutil.rmtree(config_folder_dir)
+
+        for key in data.keys():
+            assert data[key] == config[key]
