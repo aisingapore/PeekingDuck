@@ -37,7 +37,7 @@ class Node(AbstractNode):
 
         Returns:
             outputs (Dict): bbox output in dictionary format with keys
-            "bboxes", "labels" and "scores"
+            "bboxes", "bbox_labels" and "bbox_scores"
         """
         # Currently prototyped to return just the bounding boxes
         # without the scores
