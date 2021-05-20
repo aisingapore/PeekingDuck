@@ -42,7 +42,6 @@ class YoloModel:
         classes_path = os.path.join(config['root'], config['classes'])
         self.class_names = [c.strip() for c in open(classes_path).readlines()]
         self.detect_ids = config['detect_ids']
-        self.logger.info('yolo model detecting ids: %s', self.detect_ids)
 
         self.detector = Detector(config)
 

@@ -68,7 +68,7 @@ The order of the bboxes corresponds to the order of "labels" and "scores".
              np.array([x1, y1, x2, y2])]
 ```
 
-### "labels"
+### "bbox_labels"
 
 A list of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
 
@@ -78,7 +78,7 @@ A list of labels of the name of classes of object detected. The order of the lab
 example:    ["person", "person", ...]
 ```
 
-### "scores"
+### "bbox_scores"
 
 A tf tensor of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
 

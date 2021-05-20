@@ -58,6 +58,18 @@ class Detector:
         '''
         model_type = self.config['model_type']
         model_path = os.path.join(self.root_dir, self.config['graph_files'][model_type])
+
+        self.logger.info(
+            'Yolo model loaded with following configs: \n \
+            Model type: %s, \n \
+            Input resolution: %s, \n \
+            Max Detections per class: %s, \n \
+            Max Total Detections: %s, \n \
+            IOU threshold: %s, \n \
+            Score threshold: %s', self.config["model_type"], self.config["size"],
+            self.config['max_output_size_per_class'], self.config['max_total_size'],
+            self.config['yolo_iou_threshold'], self.config['yolo_score_threshold'])
+
         return self._load_yolo_graph(model_path)
 
     def _load_yolo_graph(self, filepath: str) -> tf.compat.v1.GraphDef:
@@ -133,8 +145,8 @@ class Detector:
             boxes=tf.reshape(bboxes, (tf.shape(bboxes)[0], -1, 1, 4)),
             scores=tf.reshape(
                 pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            max_output_size_per_class=50,
-            max_total_size=50,
+            max_output_size_per_class=self.config['max_output_size_per_class'],
+            max_total_size=self.config['max_total_size'],
             iou_threshold=self.config['yolo_iou_threshold'],
             score_threshold=self.config['yolo_score_threshold']
         )
