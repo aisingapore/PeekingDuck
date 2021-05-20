@@ -1,3 +1,20 @@
+"""
+Copyright 2021 AI Singapore
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+     https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+"""
+import os
+import yaml
 import pytest
 import numpy as np
 import numpy.testing as npt
@@ -6,69 +23,46 @@ from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import Detector
 
 
-@pytest.fixture
-def efficientdet_config(root_dir):
-    config = {'input': ['img'],
-              'output': ['bboxes', 'bbox_labels', 'bbox_scores'],
-              'root': root_dir,
-              'model_type': 0,
-              'classes': '../weights/efficientdet/coco_90.json',
-              'weights_dir': ['../weights/efficientdet'],
-              'blob_file': 'efficientdet.zip',
-              'graph_files':
-              {
-        0: '../weights/efficientdet/efficientdet-d0.pb',
-        1: '../weights/efficientdet/efficientdet-d1.pb',
-        2: '../weights/efficientdet/efficientdet-d2.pb',
-        3: '../weights/efficientdet/efficientdet-d3.pb',
-        4: '../weights/efficientdet/efficientdet-d4.pb',
-    },
-        'size': [512, 640, 768, 896, 1024, 1280, 1408],
-        'num_classes': 90,
-        'score_threshold': 0.3,
-        'detect_ids': [0],
-        'MODEL_NODES':
-        {'inputs': ['x:0'],
-         'outputs': ['Identity:0', 'Identity_1:0', 'Identity_2:0']}
-    }
-    return config
-
-
-@pytest.fixture
-def efficientdet(efficientdet_config):
-    node = Node(efficientdet_config)
+@pytest.fixture(params=[0, 1, 2, 3, 4])
+def efficientdet(request):
+    filepath = os.path.join(os.getcwd(), 'tests', 'pipeline', 'nodes',
+                            'model', 'efficientdet_d04', 'test_efficientdet.yml')
+    with open(filepath) as file:
+        node_config = yaml.load(file, Loader=yaml.FullLoader)
+    node_config['root'] = os.getcwd()
+    node_config['model_type'] = request.param
+    node = Node(node_config)
 
     return node
 
 
 @pytest.fixture
-def efficientdet_detector(efficientdet_config):
-    detector = Detector(efficientdet_config)
+def efficientdet_detector(request):
+    filepath = os.path.join(os.getcwd(), 'tests', 'pipeline', 'nodes',
+                            'model', 'efficientdet_d04', 'test_efficientdet.yml')
+    with open(filepath) as file:
+        node_config = yaml.load(file, Loader=yaml.FullLoader)
+    node_config['root'] = os.getcwd()
+    node_config['model_type'] = 0
+    detector = Detector(node_config)
 
     return detector
 
 
 class TestEfficientDet:
-    def test_black_image(self, test_black_image, efficientdet):
-        blank_image = cv2.imread(test_black_image)
-        output = efficientdet.run({'img': blank_image})
-        expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32)}
-        assert output.keys() == expected_output.keys()
-        npt.assert_equal(output['bboxes'], expected_output['bboxes'])
 
-    def test_no_human_image(self, test_animal_image, efficientdet):
-        blank_image = cv2.imread(test_animal_image)
+    def test_no_human_image(self, test_no_human_images, efficientdet):
+        blank_image = cv2.imread(test_no_human_images)
         output = efficientdet.run({'img': blank_image})
         expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32)}
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output['bboxes'], expected_output['bboxes'])
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, efficientdet):
-        for img in test_human_images:
-            test_img = cv2.imread(img)
-            output = efficientdet.run({'img': test_img})
-            assert 'bboxes' in output
-            assert output['bboxes'].size != 0
+        test_img = cv2.imread(test_human_images)
+        output = efficientdet.run({'img': test_img})
+        assert 'bboxes' in output
+        assert output['bboxes'].size != 0
 
     def test_efficientdet_preprocess(self, create_image, efficientdet_detector):
         test_img1 = create_image((720, 1280, 3))
