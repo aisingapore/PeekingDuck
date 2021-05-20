@@ -33,13 +33,14 @@ class Node(AbstractNode):
         of the specified objects chosen to be detected
 
         Args:
-            inputs (Dict): Dictionary of inputs
+            inputs (Dict): Dictionary of inputs with key "img"
 
         Returns:
-            outputs (Dict): bbox output in dictionary format
+            outputs (Dict): bbox output in dictionary format with keys
+            "bboxes", "labels" and "scores"
         """
         # Currently prototyped to return just the bounding boxes
         # without the scores
-        results, _, _ = self.model.predict(inputs[self.inputs[0]])
-        outputs = {self.outputs[0]: results}
+        bboxes, labels, scores = self.model.predict(inputs[inputs["img"]])
+        outputs = {"bboxes": bboxes, "labels": labels, "scores": scores}
         return outputs
