@@ -41,7 +41,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     If you have a webcam, you should see the demo running live:
 
-    <img src="images/testing/black.jpg" width="50%">
+    <img src="images/readme/yolo_demo.gif" width="50%">
 
     The previous command looks for a `run_config.yml` in the current directory. You can also specify the path of a different config file to be used, as follows:
     ```
@@ -106,7 +106,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
   ```
 - Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. If you've used the short sample video, open the processed file and you should get this:
 
-  <img src="images/readme/yolo_running.gif" width="50%">
+  <img src="images/readme/posenet_running.gif" width="50%">
 
 - To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](node_glossary.md).
 
