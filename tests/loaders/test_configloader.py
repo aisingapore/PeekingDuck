@@ -13,62 +13,53 @@
 # limitations under the License.
 
 import os
-import shutil
 import yaml
 
+import pytest
 from peekingduck.loaders import ConfigLoader
 
 
-CURRENT_PATH = os.path.dirname(os.path.realpath(__file__))
-CONFIG_PATH = os.path.join(CURRENT_PATH, 'configs')
-
-
-def create_configloader():
-    config_loader = ConfigLoader(CURRENT_PATH)
+@pytest.fixture
+def configloader():
+    config_loader = ConfigLoader("tmp_dir")
 
     return config_loader
 
 
 def create_config_yaml(node, data):
     node_type, node_name = node.split(".")
+    config_path = os.path.join("tmp_dir", 'configs')
 
-    node_config_path = os.path.join(CONFIG_PATH, node_type)
+    node_config_path = os.path.join(config_path, node_type)
     os.makedirs(node_config_path)
     config_file = node_name + ".yml"
-    full_path = os.path.join(node_config_path, config_file)
 
+    full_path = os.path.join(node_config_path, config_file)
     with open(full_path, 'w') as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
 
-    return CONFIG_PATH
 
+@pytest.mark.usefixtures("tmp_dir")
+class TestConfigLoader:
 
-class TestConfigLoader():
-
-    def test_config_loader_returns_correct_config_filepath(self):
+    def test_config_loader_returns_correct_config_filepath(self, configloader):
 
         node = 'type.node'
-        config_loader = create_configloader()
-        filepath = config_loader._get_config_path(node)
+        filepath = configloader._get_config_path(node)
 
-        ground_truth = os.path.join(CURRENT_PATH,
+        ground_truth = os.path.join("tmp_dir",
                                     "configs",
-                                    node.replace(".", "/"))
-        ground_truth = ground_truth + ".yml"
+                                    node.replace(".", "/") + ".yml")
 
         assert filepath == ground_truth
 
-    def test_config_loader_load_correct_yaml(self):
+    def test_config_loader_load_correct_yaml(self, configloader):
         node = "input.test"
         data = {"input": "img",
                 "output": "img"}
+        create_config_yaml(node, data)
 
-        config_folder_dir = create_config_yaml(node, data)
-
-        config_loader = create_configloader()
-        config = config_loader.get(node)
-
-        shutil.rmtree(config_folder_dir)
+        config = configloader.get(node)
 
         for key in data.keys():
             assert data[key] == config[key]
