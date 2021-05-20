@@ -4,6 +4,7 @@
 name: System Testing
 
 on:
+  workflow_dispatch:
   schedule:
     # run at 8am and 6pm SGT
     - cron: '0 2,10 * * *'
