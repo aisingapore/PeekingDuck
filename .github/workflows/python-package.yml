@@ -1,4 +1,4 @@
-# This workflow does a local installation and perform a 
+# This workflow does a installation from pypi and perform a 
 # test to make sure that the package works as expected.
 
 name: System Testing
@@ -26,7 +26,7 @@ jobs:
     - name: Install peekingduck
       run: |
         python -m pip install --upgrade pip
-        python -m pip install .
+        pip install peekingduck
     - name: Initialise peekingduck
       run: |
         peekingduck init
