@@ -89,7 +89,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
   - If you have a webcam, you should see the demo running live:
 
-    <img src="images/testing/black.jpg" width="50%">
+    <img src="images/readme/posenet_demo.gif" width="50%">
 
 **2. Configuring node behaviour**:
 - If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it. 
