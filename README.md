@@ -52,7 +52,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 ## How PeekingDuck Works
 
-**Nodes** are the LEGO blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it. 
+**Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it. 
 
 PeekingDuck has 5 types of nodes:
 
@@ -66,7 +66,7 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 Earlier on, the `peekingduck init` command created the `run_config.yml` file, which is PeekingDuck's main configuration file and is responsible for:
 - Selecting which nodes to include in the pipeline
-- Selecting the settings of each node
+- Configuring node behaviour
 
 **1. Selecting which nodes to include in the pipeline**:
 
@@ -91,7 +91,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
     <img src="images/testing/black.jpg" width="50%">
 
-**2. Selecting the settings of each node**:
+**2. Configuring node behaviour**:
 - If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it. 
 
 - We'll need to change the settings of these 2 nodes, in order to set the input and output directories, as follows:
@@ -128,9 +128,9 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 ## Create Custom Nodes
 
-You might need to create your own custom nodes sometimes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint. Or perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's input, draw, and output nodes. 
+You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes. 
 
-We've developed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/guide_custom_nodes.md) provides more details on how to do that.
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/guide_custom_nodes.md) provides more details on how to do that.
 
 
 
