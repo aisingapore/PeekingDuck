@@ -1,0 +1,8 @@
+nodes:
+- input.live
+- model.yolo
+- heuristic.bbox_count
+- draw.bbox
+- draw.bbox_count
+- draw.fps
+- output.screen

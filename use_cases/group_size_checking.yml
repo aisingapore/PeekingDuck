@@ -1,0 +1,10 @@
+nodes:
+- input.live
+- model.yolo
+- heuristic.bbox_to_3d_loc
+- heuristic.group_nearby_objs
+- heuristic.check_large_groups
+- draw.bbox
+- draw.group_bbox_and_tag
+- draw.fps
+- output.screen
