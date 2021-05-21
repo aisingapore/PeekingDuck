@@ -91,7 +91,15 @@ example:
 
 ### "keypoints"
 
-A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
+A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively. If the keypoint has a low confidence score, the coordinates would be "masked" and replaced by "-1." as shown below.
+
+```
+[array([[ 0.58670201,  0.47576586],
+       [ 0.60951909,  0.44109605],
+                  ...
+       [-1.        , -1.        ],
+       [-1.        , -1.        ]])]
+```       
 
 ### "keypoint_scores"
 
