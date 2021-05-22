@@ -13,10 +13,9 @@
 # limitations under the License.
 
 import os
-
 import sys
-import yaml
 
+import yaml
 import pytest
 from unittest import mock
 from peekingduck.loaders import DeclarativeLoader
@@ -85,6 +84,10 @@ def declarativeloader():
 
 def replace_init_node(path_to_node, node_name, config_loader, config_updates):
     return [path_to_node, node_name, config_loader, config_updates]
+
+
+def replace_instantiate_nodes():
+    return None
 
 
 @ pytest.mark.usefixtures("tmp_dir")
@@ -173,176 +176,10 @@ class TestDeclarativeLoader:
         for key in config.keys():
             assert config[key] == ground_truth[key]
 
-  # with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes') as mock_subprocess:
+    def test_get_nodes(self, declarativeloader):
 
-        # mock_subprocess.call().return_value = True
-        # mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes')
-        # mock.return_value.
+        with pytest.raises(TypeError):
+            with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+                            wraps=replace_instantiate_nodes):
 
- #     node_config_folder = os.path.join(base_dir, 'configs')
-    #     temp_folder = tempfile.TemporaryDirectory(dir=node_config_folder)
-    #     temp_folder_name = temp_folder.name.split("/")[-1]
-
-    #     # hold = os.path.exists(temp_folder.name)
-
-    #     tempfile._get_candidate_names = lambda: itertools.repeat(NODE_NAME)
-    #     hold = tempfile.NamedTemporaryFile(dir=temp_folder.name, prefix='', suffix='.yml', delete=False)
-    #     with open(hold.name, 'w') as fp:
-    #         pass
-
-    #     return temp_folder_name, hold.name
-
-    # if not os.path.exists(node_config_folder):
-    #     tempfile.mkstemp(dir=node_config_folder)
-    #     os.makedirs(node_config_folder)
-
-    # node_config = NODE_NAME + ".yml"
-    # with open(os.path.join(node_config_folder,  node_config), 'w') as fp:
-    #     pass
-#    def create_node_config():
-
-#     node_config_folder = os.path.join(dir_path, 'peekingduck', 'configs',
-#                                       'nodes', NODE_TYPE)
-
-#     if not os.path.exists(node_config_folder):
-#         os.makedirs(node_config_folder)
-
-#     node_config = NODE_NAME + ".yml"
-#     with open(os.path.join(node_config_folder,  node_config), 'w') as fp:
-#         pass
-
-    # def test_instantiate_nodes(self, declarativeloader, mocker):
-
-    #     # assert 0 == 0
-
-    #     # ground_truth = ["peekingduck", 'custom', 'custom']
-
-    #     mocker.patch('peekingduck.loaders.DeclarativeLoader._init_node',
-    #                  spec=True)
-    #     #  return_value=True)
-
-    #     instantiated_nodes = declarativeloader._instantiate_nodes()
-
-    #     assert instantiated_nodes == "I dont know"
-
-        # assert instantiated_nodes == 0
-
-        # for idx, node in enumerate(instantiated_nodes):
-        #     assert node == ground_truth[idx]
-
-    # def test_edit_node_config(self, declarativeloader):
-
-    #     config = {'input': False,
-    #               'output': True}
-    #     config_update = {'input': True}
-    #     ground_truth = {'input': True,
-    #                     'output': True}
-
-    #     config = declarativeloader._edit_node_config(config, config_update)
-
-    #     for key in config.keys():
-    #         assert config[key] == ground_truth[key]
-
-    # def test_init_node(self, declarativeloader):
-
-    #     path_to_node = "loaders.temp.pipeline.nodes."
-    #     node_name = NODE_TYPE + "." + NODE_NAME
-    #     config_loader = declarativeloader.config_loader
-    #     config_updates = None
-
-    #     hold = declarativeloader._init_node(path_to_node,
-    #                                         node_name,
-    #                                         config_loader,
-    #                                         config_updates)
-
-    #     # shutil.rmtree(dir_path)
-
-    #     assert 0 == 0
-
-    # def test_edit_node_config(self, declarativeloader):
-
-    #     config = {'input': False,
-    #               'output': True}
-    #     config_update = {'input': True}
-    #     ground_truth = {'input': True,
-    #                     'output': True}
-
-    #     config = declarativeloader._edit_node_config(config, config_update)
-
-    #     for key in config.keys():
-    #         assert config[key] == ground_truth[key]
-
-# NODES = {"nodes": [{'input.live': [{"mirror_image": False}]},
-#                    'model.yolo',
-#                    'draw.bbox',
-#                    'custom.draw.fps',
-#                    'output.screen']
-#          }
-
-# def create_config_yaml(node, data):
-#     node_type, node_name = node.split(".")
-#     config_path = os.path.join("tmp_dir", 'configs')
-
-#     node_config_path = os.path.join(config_path, node_type)
-#     os.makedirs(node_config_path)
-#     config_file = node_name + ".yml"
-
-#     full_path = os.path.join(node_config_path, config_file)
-#     with open(full_path, 'w') as outfile:
-#         yaml.dump(data, outfile, default_flow_style=False)
-
-# @pytest.fixture
-# def declarativeloader():
-
-#     # create_run_config_yaml(NODES)
-#     # create_node_file()
-#     # create_node_config_file()
-
-#     config_loader = DeclarativeLoader(RUN_PATH, CUSTOM_NODE_PATH)
-
-#     return config_loader
-
-
-# def create_run_config_yaml(nodes):
-
-#     if not os.path.exists(dir_path):
-#         os.makedirs(dir_path)
-
-#     with open(RUN_PATH, 'w') as outfile:
-#         yaml.dump(nodes, outfile, default_flow_style=False)
-
-
-# def create_node_file():
-
-#     node_folder = os.path.join(NODES_PATH, NODE_TYPE)
-#     if not os.path.exists(node_folder):
-#         os.makedirs(node_folder)
-
-#     node_file = NODE_NAME + ".py"
-#     with open(os.path.join(node_folder,  node_file), 'w') as fp:
-#         pass
-
-#     init_file = "__init__.py"
-#     with open(os.path.join(node_folder,  init_file), 'w') as fp:
-#         pass
-
-
-# def create_node_config_file():
-
-#     node_config_folder = os.path.join(NODE_CONFIG_PATH)
-#     if not os.path.exists(node_config_folder):
-#         os.makedirs(node_config_folder)
-
-#     node_config_file = NODE_NAME + ".yml"
-#     with open(os.path.join(node_config_folder,  node_config_file), 'w') as fp:
-#         pass
-
-# dir_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'temp')
-# # dir_path = "tmp_dir"
-# NODE_TYPE = "input"
-# NODE_NAME = "live"
-# NODES = {"nodes": [NODE_TYPE + "." + NODE_NAME]}
-# RUN_PATH = os.path.join(dir_path, "run_config.yml")
-# CUSTOM_NODE_PATH = os.path.join(dir_path, "custom_nodes")
-# NODES_PATH = os.path.join(dir_path, "pipeline", "nodes")
-# NODE_CONFIG_PATH = os.path.join(dir_path, "configs", NODE_TYPE)
+                declarativeloader.get_nodes()
