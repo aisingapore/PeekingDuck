@@ -2,7 +2,7 @@ name: Stand-up Bot
 on:
   schedule:
     # runs at 2:30am UTC (10:30am SGT) on Weekdays only
-    - cron: '30 2 * * 0-5'
+    - cron: '30 2 * * 1-5'
 
 jobs:
   build-publish-test:
