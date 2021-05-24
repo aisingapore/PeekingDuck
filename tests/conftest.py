@@ -21,6 +21,12 @@ import pytest
 
 import cv2
 
+TEST_HUMAN_IMAGES = ['t1.jpg', 't2.jpg', 't4.jpg']
+TEST_NO_HUMAN_IMAGES = ['black.jpg', 't3.jpg']
+PKD_DIR = os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), '..', 'peekingduck'
+)
+
 
 @pytest.fixture
 def create_image():
@@ -77,3 +83,17 @@ def tmp_dir():
     yield
     os.chdir(cwd)
     shutil.rmtree(newpath)
+
+
+@pytest.fixture(params=TEST_HUMAN_IMAGES)
+def test_human_images(request):
+    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+
+    yield os.path.join(test_img_dir, request.param)
+
+
+@pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
+def test_no_human_images(request):
+    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+
+    yield os.path.join(test_img_dir, request.param)
