@@ -16,31 +16,31 @@ limitations under the License.
 
 import pytest
 import numpy as np
-from tensorflow import Tensor
+import tensorflow as tf
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.dataset import transform_images
 
 
 @pytest.fixture
 def large_image_array():
-    return Tensor(np.ones((1280, 720, 3)))
+    return tf.convert_to_tensor(np.ones((1280, 720, 3)))
 
 @pytest.fixture
 def small_image_array():
-    return Tensor(np.ones((1, 1, 3)))
+    return tf.convert_to_tensor(np.ones((1, 1, 3)))
 
 def test_transform_images_larger_images(large_image_array):
     transformed_img = transform_images(large_image_array, 416)
     assert transformed_img.shape == (416, 416, 3)
-    assert transformed_img.dtype == np.float64
+    assert transformed_img.dtype == tf.float32
 
     all_elements_combinations = zip(range(416), range(416), range(3))
     assert [transformed_img[i][j][k] == 1/255 for i, j, k in all_elements_combinations]
 
 def test_transform_images_smaller_images(small_image_array):
-    transformed_img = transform_images(large_image_array, 416)
+    transformed_img = transform_images(small_image_array, 416)
     assert transformed_img.shape == (416, 416, 3)
-    assert transformed_img.dtype == np.float64
-    assert transformed_img[0][0][0] == 1/225
+    assert transformed_img.dtype == tf.float32
+    assert pytest.approx(transformed_img.numpy()[0][0][0], 1/225)
 
     all_elements_combinations = zip(range(1, 416), range(1, 416), range(3))
     assert [transformed_img[i][j][k] == 0 for i, j, k in all_elements_combinations]
