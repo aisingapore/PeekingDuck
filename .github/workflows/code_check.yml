@@ -21,5 +21,7 @@ jobs:
         run: bash ./scripts/check_headers.sh
       - name: Run type checker
         run: bash ./scripts/check_type.sh
+      - name: Run Bandit Linter
+        run: bash ./scripts/bandit.sh
 
 
