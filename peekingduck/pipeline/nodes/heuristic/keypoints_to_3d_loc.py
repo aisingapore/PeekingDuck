@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -49,7 +49,12 @@ class Node(AbstractNode):
         locations = []
 
         for keypoints in inputs["keypoints"]:
-            bbox = self._get_torso_bbox(keypoints)
+            torso_keypoints = self._get_torso_keypoints(keypoints)
+            if self._enough_torso_keypoints(torso_keypoints):
+                bbox = self._get_bbox(torso_keypoints)
+            else:
+                bbox = self._get_bbox(keypoints)
+
             # Subtraction is to make the camera the origin of the coordinate system
             center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
             torso_height = bbox[3] - bbox[1]
@@ -66,15 +71,29 @@ class Node(AbstractNode):
         return outputs
 
     @staticmethod
-    def _get_torso_bbox(keypoints):
-        """Get coordinates of a bbox around selected pose keypoints"""
+    def _get_torso_keypoints(keypoints: List[np.array]) -> np.array:
+        """Filter keypoints to get only selected keypoints for torso"""
 
-        torso_keypoints = keypoints[TORSO_KEYPOINTS, :]
+        torso_keypoints = keypoints[TORSO_KEYPOINTS, :]  # type: ignore
         # ignore keypoints that are '-1.' as below confidence score and are masked
         torso_keypoints = np.reshape(
             torso_keypoints[torso_keypoints != -1.], (-1, 2))
 
-        top_left_x, top_left_y = torso_keypoints.min(axis=0)
-        btm_right_x, btm_right_y = torso_keypoints.max(axis=0)
+        return torso_keypoints
+
+    @staticmethod
+    def _enough_torso_keypoints(torso_keypoints: np.array) -> bool:
+        """Returns False if not enough keypoints to represent torso"""
+
+        if torso_keypoints.shape[0] >= 2:
+            return True
+        return False
+
+    @staticmethod
+    def _get_bbox(keypoints: np.array) -> np.array:
+        """Get coordinates of a bbox around keypoints"""
+
+        top_left_x, top_left_y = keypoints.min(axis=0)
+        btm_right_x, btm_right_y = keypoints.max(axis=0)
 
         return np.array([top_left_x, top_left_y, btm_right_x, btm_right_y])
