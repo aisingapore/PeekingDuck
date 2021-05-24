@@ -20,33 +20,34 @@ import pytest
 from unittest import mock
 from peekingduck.loaders import DeclarativeLoader
 
-dir_path = "tmp_dir"
-RUN_PATH = os.path.join(dir_path, "run_config.yml")
-CUSTOM_NODE_PATH = os.path.join(dir_path, "custom_nodes")
-NODE_TYPE = "test_type"
-NODE_NAME = "test_name"
-CUSTOM_NODE = 'custom_nodes.'
-CUSTOM_NODE_NAME = 'output.test'
-NODES = {"nodes": [NODE_TYPE + "." + NODE_NAME,
-                   CUSTOM_NODE + CUSTOM_NODE_NAME]}
+TEMP_BASE_PATH = "tmp_dir"
+RUN_CONFIG_PATH = os.path.join(TEMP_BASE_PATH, "run_config.yml")
+CUSTOM_FOLDER_PATH = os.path.join(TEMP_BASE_PATH, "custom_nodes")
+
+PKD_NODE_TYPE = "pkd_node_type"
+PKD_NODE_NAME = "pkd_node_name"
+CUSTOM_NODE_TYPE = "custom_node_type"
+CUSTOM_NODE_NAME = "custom_node_name"
+NODES = {"nodes": [PKD_NODE_TYPE + "." + PKD_NODE_NAME,
+                   "custom_nodes." + CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME]}
 
 
 def create_run_config_yaml(nodes):
 
-    if not os.path.exists(dir_path):
-        os.makedirs(dir_path)
+    if not os.path.exists(TEMP_BASE_PATH):
+        os.makedirs(TEMP_BASE_PATH)
 
-    with open(RUN_PATH, 'w') as outfile:
+    with open(RUN_CONFIG_PATH, 'w') as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
-def create_node_python():
+def create_node_python(folder, node_type, node_name):
 
-    node_folder_path = os.path.join(dir_path, NODE_TYPE)
+    node_folder_path = os.path.join(folder, node_type)
     if not os.path.exists(node_folder_path):
         os.makedirs(node_folder_path)
 
-    node_file = NODE_NAME + ".py"
+    node_file = node_name + ".py"
     with open(os.path.join(node_folder_path,  node_file), 'w') as fp:
         fp.write("from peekingduck.pipeline.nodes.node import AbstractNode\
                  \nclass Node(AbstractNode):\
@@ -56,8 +57,8 @@ def create_node_python():
                  \n  return {}")
 
 
-def create_node_config():
-    node_config_folder = os.path.join(dir_path, 'configs', NODE_TYPE)
+def create_node_config(folder, node_type, node_name):
+    node_config_folder = os.path.join(folder, 'configs', node_type)
     if not os.path.exists(node_config_folder):
         os.makedirs(node_config_folder)
 
@@ -65,19 +66,29 @@ def create_node_config():
                    "input": False,
                    "output": False}
 
-    node_config_file = NODE_NAME + ".yml"
+    node_config_file = node_name + ".yml"
     with open(os.path.join(node_config_folder,  node_config_file), 'w') as fp:
         yaml.dump(config_text, fp)
+
+
+def setup():
+    sys.path.append(TEMP_BASE_PATH)
+
+    create_run_config_yaml(NODES)
+
+    create_node_python(TEMP_BASE_PATH, PKD_NODE_TYPE, PKD_NODE_NAME)
+    create_node_python(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE, CUSTOM_NODE_NAME)
+
+    create_node_config(TEMP_BASE_PATH, PKD_NODE_TYPE, PKD_NODE_NAME)
+    create_node_config(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE, CUSTOM_NODE_NAME)
 
 
 @ pytest.fixture
 def declarativeloader():
 
-    sys.path.append(dir_path)
+    setup()
 
-    create_run_config_yaml(NODES)
-
-    config_loader = DeclarativeLoader(RUN_PATH, CUSTOM_NODE_PATH)
+    config_loader = DeclarativeLoader(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH)
 
     return config_loader
 
@@ -95,24 +106,24 @@ class TestDeclarativeLoader:
 
     def test_load_node_list(self, declarativeloader):
 
-        loaded_nodes = declarativeloader._load_node_list(RUN_PATH)
+        loaded_nodes = declarativeloader._load_node_list(RUN_CONFIG_PATH)
 
         for idx, node in enumerate(loaded_nodes):
             assert node == NODES["nodes"][idx]
 
     def test_instantiate_nodes(self, declarativeloader):
 
-        node_one = ['peekingduck.pipeline.nodes.',
-                    NODE_TYPE + "." + NODE_NAME,
+        pkd_node = ['peekingduck.pipeline.nodes.',
+                    PKD_NODE_TYPE + "." + PKD_NODE_NAME,
                     declarativeloader.config_loader,
                     None]
 
-        node_two = [CUSTOM_NODE,
-                    CUSTOM_NODE_NAME,
-                    declarativeloader.custom_config_loader,
-                    None]
+        custom_node = ["custom_nodes.",
+                       CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME,
+                       declarativeloader.custom_config_loader,
+                       None]
 
-        ground_truth = [node_one, node_two]
+        ground_truth = [pkd_node, custom_node]
 
         with mock.patch('peekingduck.loaders.DeclarativeLoader._init_node',
                         wraps=replace_init_node):
@@ -123,14 +134,12 @@ class TestDeclarativeLoader:
                 for idx, output in enumerate(node):
                     assert output == ground_truth[node_num][idx]
 
-    def test_init_node(self, declarativeloader):
-        create_node_python()
-        create_node_config()
+    def test_init_node_pkd(self, declarativeloader):
 
-        declarativeloader.config_loader._basedir = dir_path
+        declarativeloader.config_loader._basedir = TEMP_BASE_PATH
 
         path_to_node = ""
-        node_name = NODE_TYPE + "." + NODE_NAME
+        node_name = PKD_NODE_TYPE + "." + PKD_NODE_NAME
         config_loader = declarativeloader.config_loader
         config_updates = None
 
@@ -143,14 +152,30 @@ class TestDeclarativeLoader:
         assert init_node._inputs == False
         assert init_node._outputs == False
 
-    def test_init_node_edit(self, declarativeloader):
-        create_node_python()
-        create_node_config()
+    def test_init_node_custom(self, declarativeloader):
 
-        declarativeloader.config_loader._basedir = dir_path
+        declarativeloader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH
+
+        path_to_node = "custom_nodes."
+        node_name = CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME
+        config_loader = declarativeloader.custom_config_loader
+        config_updates = None
+
+        init_node = declarativeloader._init_node(path_to_node,
+                                                 node_name,
+                                                 config_loader,
+                                                 config_updates)
+
+        assert init_node._name == path_to_node + node_name
+        assert init_node._inputs == False
+        assert init_node._outputs == False
+
+    def test_init_node_edit(self, declarativeloader):
+
+        declarativeloader.config_loader._basedir = TEMP_BASE_PATH
 
         path_to_node = ""
-        node_name = NODE_TYPE + "." + NODE_NAME
+        node_name = PKD_NODE_TYPE + "." + PKD_NODE_NAME
         config_loader = declarativeloader.config_loader
         config_updates = {"input": True}
 
@@ -176,7 +201,7 @@ class TestDeclarativeLoader:
         for key in config.keys():
             assert config[key] == ground_truth[key]
 
-    def test_get_nodes(self, declarativeloader):
+    def test_get_nodes_raise_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
             with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
