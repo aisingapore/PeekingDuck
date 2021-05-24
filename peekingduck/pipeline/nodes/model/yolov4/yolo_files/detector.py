@@ -57,12 +57,22 @@ class Detector:
         Creates yolo model for human detection
         '''
         model_type = self.config['model_type']
-        if self.config['yolo_graph_mode']:
-            model_path = os.path.join(self.root_dir, self.config['graph_files'][model_type])
-            return self._load_yolo_graph(model_path)
-        model_path = os.path.join(self.root_dir, self.config['model_files'][model_type])
-        model = tf.keras.models.load_model(model_path)
-        return model
+        model_path = os.path.join(self.root_dir, self.config['graph_files'][model_type])
+
+        self.logger.info(
+            'Yolo model loaded with following configs: \n \
+            Model type: %s, \n \
+            Input resolution: %s, \n \
+            IDs being detected: %s \n \
+            Max Detections per class: %s, \n \
+            Max Total Detections: %s, \n \
+            IOU threshold: %s, \n \
+            Score threshold: %s', self.config["model_type"], self.config["size"],
+            self.config['detect_ids'], self.config['max_output_size_per_class'],
+            self.config['max_total_size'], self.config['yolo_iou_threshold'],
+            self.config['yolo_score_threshold'])
+
+        return self._load_yolo_graph(model_path)
 
     def _load_yolo_graph(self, filepath: str) -> tf.compat.v1.GraphDef:
         '''
@@ -137,8 +147,8 @@ class Detector:
             boxes=tf.reshape(bboxes, (tf.shape(bboxes)[0], -1, 1, 4)),
             scores=tf.reshape(
                 pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            max_output_size_per_class=50,
-            max_total_size=50,
+            max_output_size_per_class=self.config['max_output_size_per_class'],
+            max_total_size=self.config['max_total_size'],
             iou_threshold=self.config['yolo_iou_threshold'],
             score_threshold=self.config['yolo_score_threshold']
         )

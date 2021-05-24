@@ -1,0 +1,9 @@
+nodes:
+- input.live
+- model.yolo
+- heuristic.bbox_to_3d_loc
+- heuristic.check_nearby_objs
+- draw.bbox
+- draw.tag
+- draw.fps
+- output.screen
