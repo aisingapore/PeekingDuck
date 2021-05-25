@@ -113,11 +113,14 @@ def replace_instantiate_nodes():
 
 
 @ pytest.mark.usefixtures("tmp_dir")
+# NOTE To ensure a robust and comprehensible test casess, private functions,
+# which are utilised in public function with essential complex logic,
+# are tested.
 class TestDeclarativeLoader:
 
-    def test_load_node_list(self, declarativeloader):
+    def test_loaded_node_list(self, declarativeloader):
 
-        loaded_nodes = declarativeloader._load_node_list(RUN_CONFIG_PATH)
+        loaded_nodes = declarativeloader.node_list
 
         for idx, node in enumerate(loaded_nodes):
             assert node == NODES["nodes"][idx]
