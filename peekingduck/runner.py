@@ -51,7 +51,7 @@ class Runner():
             self.node_loader = DeclarativeLoader(
                 RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
 
-            self.pipeline = self.node_loader.get_nodes()
+            self.pipeline = self.node_loader.get_pipeline()
 
         # If Runner given nodes, instantiated_nodes is created differently
         else:
