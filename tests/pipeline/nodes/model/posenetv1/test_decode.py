@@ -16,6 +16,7 @@ limitations under the License.
 import os
 import pytest
 import numpy as np
+import numpy.testing as npt
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode import \
     _clip_to_indices, _traverse_to_target_keypoint
 
@@ -54,8 +55,8 @@ class TestDecode:
     def test_clip_to_indices(self, source_keypoint):
         source_keypoint_indices = _clip_to_indices(
             keypoints=source_keypoint, output_stride=16, width=14, height=14)
-        assert source_keypoint_indices == pytest.approx(np.array([5, 4])), \
-            "Unexpected output from clipping to indices"
+        npt.assert_almost_equal(source_keypoint_indices, np.array([5, 4]),
+                                4), "Unexpected output from clipping to indices"
 
     def test_traverse_to_target_keypoint(self, source_keypoint, scores, offsets,
                                          displacements_bwd, displacements_fwd):
@@ -69,8 +70,10 @@ class TestDecode:
                                          displacements=displacements_bwd)
         assert score == pytest.approx(0.9706, 0.01), \
             "Score did not meet expected value"
-        assert coords == pytest.approx(np.array([74.90, 72.22]), 0.01), \
-            "Coordinates of incorrect values"
+        npt.assert_almost_equal(score, 0.9706,
+                                4), "Score did not meet expected value"
+        npt.assert_almost_equal(coords, np.array([74.90, 72.22]),
+                                2), "Coordinates of incorrect values"
 
         score, coords = \
             _traverse_to_target_keypoint(edge_id=1,
@@ -80,7 +83,7 @@ class TestDecode:
                                          offsets=offsets,
                                          output_stride=16,
                                          displacements=displacements_fwd)
-        assert score == pytest.approx(0.4393, 0.01), \
-            "Score did not meet expected value"
-        assert coords == pytest.approx(np.array([77.11, 71.62]), 0.01), \
-            "Coordinates of incorrect values"
+        npt.assert_almost_equal(score, 0.4393,
+                                4), "Score did not meet expected value"
+        npt.assert_almost_equal(coords, np.array([77.11, 71.62]),
+                                2), "Coordinates of incorrect values"

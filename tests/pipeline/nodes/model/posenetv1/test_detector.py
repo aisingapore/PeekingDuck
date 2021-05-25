@@ -16,6 +16,7 @@ limitations under the License.
 import os
 import pytest
 import numpy as np
+import numpy.testing as npt
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import \
     _sigmoid, get_keypoints_relative_coords
 
@@ -39,9 +40,9 @@ class TestDetector:
     def test_sigmoid(self):
         x = np.array([[1, 2], [-1, -2]])
         f = _sigmoid(x)
-        assert f == pytest.approx(np.array([[0.731, 0.881],
-                                            [0.269, 0.119]]), 0.01), \
-            "Incorrect output after applying sigmoid"
+        npt.assert_almost_equal(f, np.array([[0.731, 0.881],
+                                             [0.269, 0.119]]),
+                                3), "Incorrect output after applying sigmoid"
 
     def test_get_keypoints_relative_coords(self, full_coords, rel_coords):
         full_keypoint_rel_coords = get_keypoints_relative_coords(
@@ -50,5 +51,5 @@ class TestDetector:
         assert len(full_keypoint_rel_coords.shape) == 3, "Output keypoint coords should be 3D"
         assert full_keypoint_rel_coords.shape[
             2], "Keypoint coords should be a 2D matrix of 2D offsets"
-        assert full_keypoint_rel_coords == pytest.approx(rel_coords, 0.01), \
-            "Unexpected output value"
+        npt.assert_almost_equal(full_keypoint_rel_coords, rel_coords,
+                                2), "Unexpected output value"

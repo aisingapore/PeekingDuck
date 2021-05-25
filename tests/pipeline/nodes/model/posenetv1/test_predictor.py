@@ -17,6 +17,7 @@ import os
 import pytest
 import yaml
 import numpy as np
+import numpy.testing as npt
 import cv2
 from peekingduck.pipeline.nodes.model.posenet import Node
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
@@ -41,7 +42,6 @@ def posenet(posenet_config):
 @pytest.fixture
 def posenet_predictor(posenet_config):
     predictor = Predictor(posenet_config)
-    print(predictor.__dict__)
     return predictor
 
 
@@ -75,7 +75,8 @@ class TestPredictor:
         assert type(image_size) is list, "Image size must be a list"
         assert image_size == [439, 640], "Incorrect image size"
         assert type(output_scale) is np.ndarray, "Output scale must be a numpy array"
-        assert output_scale == pytest.approx(np.array([1.95, 2.84]), 0.01), "Incorrect scale"
+        npt.assert_almost_equal(output_scale, np.array([1.95, 2.84]),
+                                2), "Incorrect scale"
 
     def test_model_instantiation(self, posenet_predictor):
         self.posenet_model = posenet_predictor._create_posenet_model()

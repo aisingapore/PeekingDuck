@@ -53,8 +53,8 @@ class TestDecodeMulti:
                                                           output_stride=16,
                                                           offsets=offsets,
                                                           keypoint_id=6)
-        assert root_coords == pytest.approx(root_image_coords, 0.01), \
-            "Incorrect image coordinates"
+        npt.assert_almost_equal(root_coords, root_image_coords,
+                                2), "Incorrect image coordinates"
 
     def test_within_nms_radius_fast(self, root_image_coords):
         squared_nms_radius = 400
@@ -82,8 +82,8 @@ class TestDecodeMulti:
                                               squared_nms_radius,
                                               keypoint_scores,
                                               keypoint_coords)
-        assert pose_score == pytest.approx(0.726, 0.01), \
-            "Instance score did not meet expected value"
+        npt.assert_almost_equal(pose_score, 0.726,
+                                3), "Instance score did not meet expected value"
 
     def test_change_dimensions(self):
         scores = np.tile(np.array([1, 2, 3]), (2, 2, 1))
@@ -93,13 +93,15 @@ class TestDecodeMulti:
                                                              offsets,
                                                              displacements_fwd,
                                                              displacements_bwd)
-        assert new_offsets == pytest.approx(
-            np.tile(np.array([[2, 1], [1, 2], [2, 1]]), (2, 2, 1, 1)), 0.01), \
-            "Outputs are incorrect after dimension change"
-        assert new_dfwd == pytest.approx(np.tile(np.array([[1, 1], [2, 2]]), (2, 2, 1, 1))), \
-            "Outputs are incorrect after dimension change"
-        assert new_dbwd == pytest.approx(np.tile(np.array([[1, 1], [2, 2]]), (2, 2, 1, 1))), \
-            "Outputs are incorrect after dimension change"
+        npt.assert_almost_equal(new_offsets,
+                                np.tile(np.array([[2, 1], [1, 2], [2, 1]]), (2, 2, 1, 1)),
+                                4), "Outputs are incorrect after dimension change"
+        npt.assert_almost_equal(new_dfwd,
+                                np.tile(np.array([[1, 1], [2, 2]]), (2, 2, 1, 1)),
+                                4), "Outputs are incorrect after dimension change"
+        npt.assert_almost_equal(new_dbwd,
+                                np.tile(np.array([[1, 1], [2, 2]]), (2, 2, 1, 1)),
+                                4), "Outputs are incorrect after dimension change"
 
     def test_sort_scored_parts(self):
         sample_parts = [(0.058, 15, np.array([10,  0])),
