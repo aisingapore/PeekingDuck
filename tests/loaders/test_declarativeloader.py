@@ -14,6 +14,7 @@
 
 import os
 import sys
+import importlib
 import textwrap
 from unittest import mock
 
@@ -66,8 +67,8 @@ def create_node_python(node_dir, node_name):
 def create_node_config(config_dir, node_name):
 
     config_text = {"root": None,
-                   "input": False,
-                   "output": False}
+                   "input": ["source"],
+                   "output": ["end"]}
 
     node_config_file = node_name + ".yml"
     with open(os.path.join(config_dir,  node_config_file), 'w') as fp:
@@ -108,14 +109,30 @@ def replace_init_node(path_to_node, node_name, config_loader, config_updates):
     return [path_to_node, node_name, config_loader, config_updates]
 
 
-def replace_instantiate_nodes():
+def replace_instantiate_nodes_return_none():
     return None
 
 
+def replace_instantiate_nodes():
+    instantiated_nodes = []
+
+    node_path = PKD_NODE
+    node_config_path = os.path.join(PKD_NODE_CONFIG_DIR,
+                                    PKD_NODE_NAME + ".yml")
+
+    node = importlib.import_module(node_path)
+    with open(node_config_path) as file:
+        node_config = yaml.load(file, Loader=yaml.FullLoader)
+
+    instantiated_nodes.append(node.Node(node_config))
+
+    return instantiated_nodes
+
+
 @ pytest.mark.usefixtures("tmp_dir")
-# NOTE To ensure a robust and comprehensible test casess, private functions,
-# which are utilised in public function with essential complex logic,
-# are tested.
+# NOTE Due to essential code logic, private functions are separately tested
+# from public function to ensure simple, yet robust and comprehensive unit
+# testings.
 class TestDeclarativeLoader:
 
     def test_loaded_node_list(self, declarativeloader):
@@ -161,8 +178,8 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == node_name
-        assert init_node._inputs == False
-        assert init_node._outputs == False
+        assert init_node._inputs == ['source']
+        assert init_node._outputs == ['end']
 
     def test_init_node_custom(self, declarativeloader):
 
@@ -177,15 +194,15 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == path_to_node + node_name
-        assert init_node._inputs == False
-        assert init_node._outputs == False
+        assert init_node._inputs == ['source']
+        assert init_node._outputs == ['end']
 
     def test_init_node_edit(self, declarativeloader):
 
         path_to_node = ""
         node_name = PKD_NODE
         config_loader = declarativeloader.config_loader
-        config_updates = {"input": True}
+        config_updates = {"input": ['img']}
 
         init_node = declarativeloader._init_node(path_to_node,
                                                  node_name,
@@ -193,8 +210,8 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == node_name
-        assert init_node._inputs == True
-        assert init_node._outputs == False
+        assert init_node._inputs == ['img']
+        assert init_node._outputs == ['end']
 
     def test_edit_node_config(self, declarativeloader):
 
@@ -209,10 +226,21 @@ class TestDeclarativeLoader:
         for key in config.keys():
             assert config[key] == ground_truth[key]
 
+    def test_get_nodes(self, declarativeloader):
+
+        with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+                        wraps=replace_instantiate_nodes):
+
+            pipeline = declarativeloader.get_nodes()
+
+            assert pipeline.nodes[0]._name == PKD_NODE
+            assert pipeline.nodes[0]._inputs == ['source']
+            assert pipeline.nodes[0]._outputs == ['end']
+
     def test_get_nodes_raise_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
             with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
-                            wraps=replace_instantiate_nodes):
+                            wraps=replace_instantiate_nodes_return_none):
 
                 declarativeloader.get_nodes()
