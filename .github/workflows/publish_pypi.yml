@@ -13,6 +13,10 @@ jobs:
       uses: actions/setup-python@v2
       with:
         python-version: 3.7
+    - name: Update Version Number
+      run: |
+        VERSION=${{github.event.release.tag_name}}
+        bash ./scripts/update_version.sh $VERSION
     - name: Install pypa and build
       run: |
         echo "Building new version..."

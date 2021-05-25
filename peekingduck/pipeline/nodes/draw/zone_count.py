@@ -14,33 +14,26 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .yolov4 import yolo_model
+from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_zone_count
 
 
 class Node(AbstractNode):
-    """Yolo node class that initialises and use yolo model to infer bboxes
-    from image frame
-    """
+    """Draw node for drawing zone counts onto image"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.model = yolo_model.YoloModel(config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """Draws the chosen object count of objects in each specified zone.
 
         Args:
-            inputs (Dict): Dictionary of inputs with key "img"
+            inputs (dict): Dict with keys "btm_midpoint", "img".
 
         Returns:
-            outputs (Dict): bbox output in dictionary format with keys
-            "bboxes", "bbox_labels" and "bbox_scores"
+            outputs (dict): Dict with keys "img".
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
-        bboxes, labels, scores = self.model.predict(inputs["img"])
-        outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
-        return outputs
+
+        draw_zone_count(inputs['img'], inputs['zone_count']) # type: ignore
+        return {}

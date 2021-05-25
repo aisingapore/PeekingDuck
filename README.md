@@ -1,83 +1,138 @@
-# PeekingDuck
+<div align="center">
+    <img src="images/readme/peekingduck.png" width="30%">
+    <h1>PeekingDuck</h1>
+</div>
 
-PeekingDuck is a python framework dealing with model inference.
+[![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
+[![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
 
-This toolkit provides state of the art computer vision models to make real time inference easy: *social distancing, people counting, license plate recognition etc.*. Customisability of the node modules ensures flexibility for unique usecases. Attached API server enables real time access to data analysis of the model pipe.
+## What is PeekingDuck?
 
-## Features
+PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
-### Models
+## Install and Run PeekingDuck
 
-- Yolov4
-- EfficientDet
-- Blazepose
-
-### Use Cases
-
-- Social Distancing
-- People Counting
-- License Plate Recognition
-- Vehicle Counting
-- Privacy Filter
-
-## How to Use for Developers (Temporary)
-
-- `git clone` this repo
-- `cd PeekingDuck`
-- `pip install .`
-- Choose the required nodes in [run_config.yml](run_config.yml)
-- To run:
+1. Install PeekingDuck from [PyPI](https://pypi.org/project/peekingduck/).
     ```
-    peekingduck run --config_path <path_to_config>
+    > pip install peekingduck
     ```
-- To create a new node, check out [CONTRIBUTING.md](CONTRIBUTING.md)
+
+2. Create a project folder at a convenient location, and initialize a PeekingDuck project.
+    ```
+    > mkdir <project_dir>
+    > cd <project_dir>
+    > peekingduck init
+    ```
+    The following files and folders will be created upon running `peekingduck init`:
+    - `run_config.yml` is the main configuration file for PeekingDuck. It currently contains the [default configuration](run_config.yml), and we'll show you how to modify it in a [later section](#changing-nodes-and-settings). 
+    - `custom_nodes` is an optional feature that is discussed in a [subsequent section](#create-custom-nodes).
+    ```
+    <project_dir>
+     ├── run_config.yml
+     └── src
+          └── custom_nodes
+    ``` 
+
+3. Run a demo.
+    ```
+    > peekingduck run
+    ```
+
+    If you have a webcam, you should see the demo running live:
+
+    <img src="images/readme/yolo_demo.gif" width="50%">
+
+    The previous command looks for a `run_config.yml` in the current directory. You can also specify the path of a different config file to be used, as follows:
+    ```
+    > peekingduck run --config_path <path_to_config>
+    ```
+
+4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
+
+## How PeekingDuck Works
+
+**Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it. 
+
+PeekingDuck has 5 types of nodes:
+
+<img src="diagrams/node_types.drawio.svg">
+
+A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`.
+
+<img src="diagrams/yolo_demo.drawio.svg">
+
+## Changing Nodes and Settings
+
+Earlier on, the `peekingduck init` command created the `run_config.yml` file, which is PeekingDuck's main configuration file and is responsible for:
+- Selecting which nodes to include in the pipeline
+- Configuring node behaviour
+
+**1. Selecting which nodes to include in the pipeline**:
+
+  - In the earlier object detection demo, `run_config.yml` used the following nodes:
+    ```
+    nodes:
+      - input.live
+      - model.yolo
+      - draw.bbox
+      - output.screen
+    ```
+  - Now, let's modify it to run a pose estimation demo using the following nodes:
+    ```
+    nodes:
+      - input.live
+      - model.posenet
+      - draw.poses
+      - output.screen
+    ```
+
+  - If you have a webcam, you should see the demo running live:
+
+    <img src="images/readme/posenet_demo.gif" width="50%">
+
+**2. Configuring node behaviour**:
+- If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it. 
+
+- We'll need to change the settings of these 2 nodes, in order to set the input and output directories, as follows:
+  ```
+  nodes:
+    - input.recorded:   # note the ":"
+      - input_source: <directory where videos/images are stored>
+    - model.posenet
+    - draw.poses
+    - output.media_writer:  # note the ":"
+      - outputdir: <directory to save results>
+  ```
+- Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. If you've used the short sample video, open the processed file and you should get this:
+
+  <img src="images/readme/posenet_running.gif" width="50%">
+
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](node_glossary.md).
+
+## Explore PeekingDuck Nodes
+
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat Covid-19. For more details, check out our [use case glossary](use_case_glossary.md).
+
+| | |
+|-|-|
+| Group Size Checking | Social Distancing |
+|<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/social_distancing.gif" width="100%"> |
+| Zone Counting | People Counting |
+|<img src="images/testing/black.jpg" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| Vehicle Counting |  |
+|<img src="images/testing/black.jpg" width="100%">| |
+| | |
+
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
+
+## Create Custom Nodes
+
+You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes. 
+
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/guide_custom_nodes.md) provides more details on how to do that.
 
 
 
 
-## Installation (WIP)
-
-Use python package manager (pip) to install PeekingDuck
-
-`pip install pkdk`
-
-## Usage (WIP)
-
-### Start New Projects with `init`
-For new projects, we suggest to use the PeekingDuck cookiecutter starter:
-
-```bash
-> mkdir <new_project>
-> cd <new_project>
-> peekingduck init
-```
-
-### `get-configs`
-Unless specified, all nodes in `peekingduck` will use the default configs for every node. To view and change these configs, you can use:
-
-``` bash
-> peekingduck get-configs
-```
-
-### `run`
-You can run the PeekingDuck runner via the following command:
-
-```bash
-peekingduck run --config_path <path_to_config>
-```
-
-If `config_path` is not provided, this command will look for `run_config.yml` in the current directory.
-
-
-For specific information on how to use peekingduck-cli, you can use `peekingduck --help`.
-
-## Contributing (WIP)
-
-We welcome contributions to the repository through pull requests. When making contributions, first create an issue to describe the problem and the intended changes.
-
-Please note that we have a code of conduct for contributions to the repository.
-
-## License
-
-Licensed under [Apache License, Version 2.0](LICENSE)
 

@@ -53,12 +53,14 @@ TO-DO: Add diagram showing flow of data for a use case.
 
 ### "bboxes"
 
-A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object:
+A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
 - x2: bottom right x-coordinate
 - y2: bottom right y-coordinate
+
+The order of the bboxes corresponds to the order of "labels" and "scores".
 
 ```
 "bboxes":   [np.array([x1, y1, x2, y2]),
@@ -66,17 +68,47 @@ A list of numpy arrays, where each numpy array contains the bounding box coordin
              np.array([x1, y1, x2, y2])]
 ```
 
+### "bbox_labels"
+
+A list of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
+
+```
+"labels":   [str, str, ..., str]
+
+example:    ["person", "person", ...]
+```
+
+### "bbox_scores"
+
+A tf tensor of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
+
+```
+"scores": tf.Tensor([float, float, ..., float])
+
+example:
+"scores": tf.Tensor([0.847334, 0.7039472, 0.243511])
+```
+
 ### "keypoints"
 
-A list of numpy arrays, where each numpy array contains an NxKx2 keypoint coordinates of N detected pose and K keypoints
+A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively. If the keypoint has a low confidence score, the coordinates would be "masked" and replaced by "-1." as shown below.
+
+```
+[array([[ 0.58670201,  0.47576586],
+       [ 0.60951909,  0.44109605],
+                  ...
+       [-1.        , -1.        ],
+       [-1.        , -1.        ]])]
+```       
 
 ### "keypoint_scores"
 
-A list of numpy arrays, where each numpy array contains NxKx1 keypoint scores of N detected pose and K keypoints
+A list of N numpy arrays, where each numpy array (Kx1) contains the keypoint scores of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
 
 ### "keypoint_conns"
 
-A list of numpy arrays, where each numpy array contains NxEx2 keypoint connections of N detected pose and E edges
+A list of N numpy arrays, where each numpy array contains the keypoint connections
+between adjacent keypoint pairs if both keypoints are detected.
 
 ### "end"
 
@@ -120,4 +152,25 @@ A list of strings called tags, each tag associated with a bounding box. The orde
 
 # for example
 "obj_tags": ["TOO CLOSE!", "", ... , "TOO CLOSE!"]
+```
+
+### "zones"
+
+A list of coordinate lists, each coordinate list is made of a list of tuples of (x, y) coordinates that demarks the points that form the boundaries of a zone. The order of zones follow the order of "zone_counts".
+```
+"zones":[[(int, int), (int, int), ...], [(int, int), (int, int), ...], ...,]
+
+# for example
+"zones": [[(0,0), (0, 500), (500, 500), (500, 0)], [(500, 500), (500, 1000), (1000, 1000), (1000, 500)]]
+```
+
+### "zone_count"
+
+A list of integers that are counts of the number of chosen object (for example, people) detected in each specified zone. the order for the zone counts follow the order of "zones".
+
+```
+zone_count" [int, int, ..., int]
+
+# for example
+"zone_count": [1, 0, 5, 8, 4]
 ```

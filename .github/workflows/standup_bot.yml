@@ -1,0 +1,21 @@
+name: Stand-up Bot
+on:
+  schedule:
+    # runs at 2:30am UTC (10:30am SGT) on Weekdays only
+    - cron: '30 2 * * 1-5'
+
+jobs:
+  build-publish-test:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Post to Discord
+      run: |
+        pip install requests
+        bash ./scripts/trigger_standupbot.sh ${{ secrets.DISCORD_WEBHOOK }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -51,7 +51,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         filepath = self._get_config_path(node_name)
 
         with open(filepath) as file:
-            node_config = yaml.load(file, Loader=yaml.FullLoader)
+            node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading
         node_config['root'] = self._basedir
@@ -79,7 +79,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
-            nodes = yaml.load(node_yml, Loader=yaml.FullLoader)['nodes']
+            nodes = yaml.safe_load(node_yml)['nodes']
 
         self.logger.info('Successfully loaded run_config file.')
         return nodes
