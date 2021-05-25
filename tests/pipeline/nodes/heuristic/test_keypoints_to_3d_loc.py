@@ -69,6 +69,21 @@ def torso_one():
     return np.array([[0.2187, 0.999]])
 
 
+@pytest.fixture
+def bbox():
+    return np.array([0.6041, 0.5281, 0.7009, 0.5484])
+
+
+@pytest.fixture
+def focal_length():
+    return 1.14
+
+
+@pytest.fixture
+def torso_factor():
+    return 0.9
+
+
 class TestKeypointsTo3dLoc:
     def test_no_keypoints(self, node):
         array1 = []
@@ -113,3 +128,9 @@ class TestKeypointsTo3dLoc:
         ans_bbox = np.array([0.6041, 0.5131, 0.7984, 0.6989])
 
         np.testing.assert_equal(node._get_bbox(torso_full), ans_bbox)
+
+    def test_get_3d_point_from_bbox(self, node, bbox, focal_length, torso_factor):
+        ans_3d_point = np.array([6.7610,  1.6958, 50.5418])
+
+        np.testing.assert_almost_equal(node._get_3d_point_from_bbox(
+            bbox, focal_length, torso_factor), ans_3d_point, 3)

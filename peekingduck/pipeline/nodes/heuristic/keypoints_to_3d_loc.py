@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any, List
+from typing import Dict, Any
 import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -55,15 +55,8 @@ class Node(AbstractNode):
             else:
                 bbox = self._get_bbox(keypoints)
 
-            # Subtraction is to make the camera the origin of the coordinate system
-            center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
-            torso_height = bbox[3] - bbox[1]
-
-            z_coord = (self.focal_length * self.torso_factor) / torso_height
-            x_coord = (center_2d[0] * self.torso_factor) / torso_height
-            y_coord = (center_2d[1] * self.torso_factor) / torso_height
-
-            point = np.array([x_coord, y_coord, z_coord])
+            point = self._get_3d_point_from_bbox(
+                bbox, self.focal_length, self.torso_factor)
             locations.append(point)
 
         outputs = {"obj_3D_locs": locations}
@@ -71,7 +64,7 @@ class Node(AbstractNode):
         return outputs
 
     @staticmethod
-    def _get_torso_keypoints(keypoints: List[np.array]) -> np.array:
+    def _get_torso_keypoints(keypoints: np.array) -> np.array:
         """Filter keypoints to get only selected keypoints for torso"""
 
         torso_keypoints = keypoints[TORSO_KEYPOINTS, :]  # type: ignore
@@ -97,3 +90,18 @@ class Node(AbstractNode):
         btm_right_x, btm_right_y = keypoints.max(axis=0)
 
         return np.array([top_left_x, top_left_y, btm_right_x, btm_right_y])
+
+    @staticmethod
+    def _get_3d_point_from_bbox(bbox: np.array, focal_length: float,
+                                torso_factor: float) -> np.array:
+        """Get the 3d coordinates of the centre of a bounding box"""
+
+        # Subtraction is to make the camera the origin of the coordinate system
+        center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
+        torso_height = bbox[3] - bbox[1]
+
+        z_coord = (focal_length * torso_factor) / torso_height
+        x_coord = (center_2d[0] * torso_factor) / torso_height
+        y_coord = (center_2d[1] * torso_factor) / torso_height
+
+        return np.array([x_coord, y_coord, z_coord])
