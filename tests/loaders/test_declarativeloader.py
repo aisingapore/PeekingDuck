@@ -130,10 +130,10 @@ def replace_instantiate_nodes():
 
 
 @ pytest.mark.usefixtures("tmp_dir")
-# NOTE Due to essential code logic, private functions are separately tested
-# from public function to ensure simple, yet robust and comprehensive unit
-# testings.
 class TestDeclarativeLoader:
+    # NOTE Due to essential code logic, private functions are separately tested
+    # from public function to ensure simple, yet robust and comprehensive unit
+    # testings.
 
     def test_loaded_node_list(self, declarativeloader):
 
@@ -226,21 +226,21 @@ class TestDeclarativeLoader:
         for key in config.keys():
             assert config[key] == ground_truth[key]
 
-    def test_get_nodes(self, declarativeloader):
+    def test_get_pipeline(self, declarativeloader):
 
         with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
                         wraps=replace_instantiate_nodes):
 
-            pipeline = declarativeloader.get_nodes()
+            pipeline = declarativeloader.get_pipeline()
 
             assert pipeline.nodes[0]._name == PKD_NODE
             assert pipeline.nodes[0]._inputs == ['source']
             assert pipeline.nodes[0]._outputs == ['end']
 
-    def test_get_nodes_raise_error(self, declarativeloader):
+    def test_get_pipeline_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
             with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
                             wraps=replace_instantiate_nodes_return_none):
 
-                declarativeloader.get_nodes()
+                declarativeloader.get_pipeline()
