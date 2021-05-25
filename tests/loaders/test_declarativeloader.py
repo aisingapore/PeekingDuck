@@ -122,7 +122,7 @@ def replace_instantiate_nodes():
 
     node = importlib.import_module(node_path)
     with open(node_config_path) as file:
-        node_config = yaml.load(file, Loader=yaml.FullLoader)
+        node_config = yaml.safe_load(file)
 
     instantiated_nodes.append(node.Node(node_config))
 
