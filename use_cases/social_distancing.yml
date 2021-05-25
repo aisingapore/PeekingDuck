@@ -1,9 +1,14 @@
 nodes:
 - input.live
-- model.yolo
-- heuristic.bbox_to_3d_loc
-- heuristic.check_nearby_objs
+- model.posenet
+- heuristic.keypoints_to_3d_loc:
+  - focal_length: 1.14
+  - torso_factor: 0.9
+- heuristic.check_nearby_objs:
+  - near_threshold: 2.0
+  - tag_msg: "TOO CLOSE!"
 - draw.bbox
+- draw.poses
 - draw.tag
 - draw.fps
 - output.screen
