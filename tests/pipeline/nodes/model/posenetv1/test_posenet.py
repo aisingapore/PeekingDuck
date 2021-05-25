@@ -41,7 +41,7 @@ def posenet_model(request):
     filepath = os.path.join(os.getcwd(), 'tests', 'pipeline', 'nodes',
                             'model', 'posenetv1', 'test_posenet.yml')
     with open(filepath) as file:
-        node_config = yaml.load(file, Loader=yaml.FullLoader)
+        node_config = yaml.safe_load(file)
     node_config['root'] = os.getcwd()
     node_config['model_type'] = request.param
     node = Node(node_config)
