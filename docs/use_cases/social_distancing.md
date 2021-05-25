@@ -89,5 +89,5 @@ The trade-off here is that the estimated distance between individuals will be le
 
 As part of COVID-19 measures, the Singapore Government has set restrictions on the group sizes of social gatherings. We've developed a [group size checker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that checks if the group size limit has been violated.
 
-The nodes for group size checker can be stacked with social distancing, to perform both at the same time. To find out which nodes are used, check out the [readme](./group_size_checking.md/#nodes-used) for group size checker.
+The nodes for group size checker can be stacked with social distancing, to perform both at the same time. To find out which nodes are used, check out the [readme](./group_size_checking.md) for group size checker.
 
