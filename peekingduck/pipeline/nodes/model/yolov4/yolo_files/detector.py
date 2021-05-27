@@ -45,13 +45,6 @@ class Detector:
 
         self.yolo = self._create_yolo_model()
 
-    def _setup_gpu(self) -> None:
-        physical_devices = tf.config.experimental.list_physical_devices('GPU')
-        if len(physical_devices) > 0:
-            self.logger.info('GPU setup with %d devices', len(physical_devices))
-        else:
-            self.logger.info('use CPU')
-
     def _create_yolo_model(self) -> tf.keras.Model:
         '''
         Creates yolo model for human detection
@@ -199,7 +192,12 @@ class Detector:
         boxes = np.array(boxes)
         return boxes, classes, scores  # type: ignore
 
-    @property
-    def yolo(self) -> tf.keras.Model:
-        """getter for input requirements"""
-        return self.yolo
+    def setup_gpu(self) -> None:
+        """Method to give info on whether the current device code is running on
+        Is using GPU or CPU.
+        """
+        physical_devices = tf.config.experimental.list_physical_devices('GPU')
+        if len(physical_devices) > 0:
+            self.logger.info('GPU setup with %d devices', len(physical_devices))
+        else:
+            self.logger.info('use CPU')
