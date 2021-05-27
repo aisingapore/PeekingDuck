@@ -198,3 +198,8 @@ class Detector:
 
         boxes = np.array(boxes)
         return boxes, classes, scores  # type: ignore
+
+    @property
+    def yolo(self) -> tf.keras.Model:
+        """getter for input requirements"""
+        return self.yolo
