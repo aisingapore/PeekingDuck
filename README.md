@@ -98,11 +98,11 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
   ```
   nodes:
     - input.recorded:   # note the ":"
-      - input_source: <directory where videos/images are stored>
+      - input_dir: <directory where videos/images are stored>
     - model.posenet
     - draw.poses
     - output.media_writer:  # note the ":"
-      - outputdir: <directory to save results>
+      - output_dir: <directory to save results>
   ```
 - Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. If you've used the short sample video, open the processed file and you should get this:
 

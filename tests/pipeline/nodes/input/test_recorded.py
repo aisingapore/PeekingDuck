@@ -29,7 +29,7 @@ def create_reader():
                              'height': 720
                          },
                          "mirror_image": False,
-                         "input_source": "."
+                         "input_dir": "."
                          })
     return media_reader
 
@@ -56,7 +56,7 @@ class TestMediaReader:
                                'height': 720
                            },
                   "mirror_image": False,
-                  "input_source": file_path
+                  "input_dir": file_path
                   })
 
     def test_reader_run_throws_error_on_empty_folder(self):

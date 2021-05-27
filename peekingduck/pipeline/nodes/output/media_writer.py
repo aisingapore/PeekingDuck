@@ -31,8 +31,8 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
 
         self._file_name = None
-        self._output_dir = config["outputdir"]
-        self._prepare_directory(config["outputdir"])
+        self._output_dir = config["output_dir"]
+        self._prepare_directory(config["output_dir"])
         self._fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self._image_type = None
         self._file_path = None
@@ -81,7 +81,8 @@ class Node(AbstractNode):
     def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
         self._file_name = filename  # type: ignore
-        self._file_path = os.path.join(self._output_dir, filename)  # type: ignore
+        self._file_path = os.path.join(  # type: ignore
+            self._output_dir, filename)  # type: ignore
 
         self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
@@ -92,5 +93,5 @@ class Node(AbstractNode):
                 self._file_path, self._fourcc, fps, resolution)
 
     @staticmethod
-    def _prepare_directory(outputdir) -> None:  # type: ignore
-        os.makedirs(outputdir, exist_ok=True)
+    def _prepare_directory(output_dir) -> None:  # type: ignore
+        os.makedirs(output_dir, exist_ok=True)

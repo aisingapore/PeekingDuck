@@ -25,12 +25,12 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi"]
-        input_source = config['input_source']
+        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov"]
+        input_dir = config['input_dir']
         self._resolution = config['resolution']
         self._mirror_image = config['mirror_image']
 
-        self._get_files(input_source)
+        self._get_files(input_dir)
         self._get_next_input()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
