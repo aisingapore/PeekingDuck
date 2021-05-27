@@ -43,13 +43,11 @@ Y<sub>1</sub> - Y<sub>2</sub> is a reference or “ground truth length” that i
 
 **3. Linking Individuals to Groups**
 
-WIP
-
-Once we have the 3D world coordinates of the individuals in the video, we can compare the distances between each pair of individuals and check if they are too close to each other.
+Once we have the 3D world coordinates of the individuals in the video, we can compare the distances between each pair of individuals. If they are close to each other, we assign them to the same group. This is a dynamic connectivity problem and we use the [quick find algorithm](https://regenerativetoday.com/union-find-data-structure-quick-find-algorithm/) to solve it.
 
 ## Nodes Used
 
-These are the nodes used in the earlier demo (also in [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml)):
+These are the nodes used in the earlier demo (also in [group_size_checking.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml)):
 ```
 nodes:
 - input.live
@@ -77,8 +75,8 @@ By default, we are using the PoseNet model with a Resnet backbone for pose estim
 
 Some common node behaviours that you might need to adjust are:
 - focal_length & torso_factor: We calibrated these settings using a Logitech c170 webcam, with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup and calibrate these accordingly.
-- tag_msg: The message to show when individuals are too close.
-- near_threshold: The acceptable distance between 2 individuals, in metres. For example, if the threshold is set at 1.5m, and 2 individuals are standing 2.0m apart, `tag_msg` doesn't show as they are standing further apart than the threshold. The larger this number, the stricter the social distancing.
+- obj_dist_thres: The distance between 2 individuals, in metres, below which they are considered to be part of a group. 
+- group_size_thres: The acceptable group size limit.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
 
@@ -92,7 +90,7 @@ The trade-off here is that the estimated distance between individuals will be le
 
 ## Using with Social Distancing
 
-To combat COVID-19, individuals are encouraged to maintain physical distance from each other. We've developed a [social distancing](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) tool that checks if individuals are too close to each other.
+To combat COVID-19, individuals are encouraged to maintain physical distance from each other. We've developed a social distancing tool that checks if individuals are too close to each other.
 
 The nodes for social distancing can be stacked with group size checker, to perform both at the same time. To find out which nodes are used, check out the [readme](./social_distancing.md) for social distancing.
 
