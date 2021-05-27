@@ -81,7 +81,7 @@ class Node(AbstractNode):
     def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
         self._file_name = filename  # type: ignore
-        self._file_path = os.path.join(
+        self._file_path = os.path.join(  # type: ignore
             self._output_dir, filename)  # type: ignore
 
         self._image_type = "video"  # type: ignore
@@ -93,5 +93,5 @@ class Node(AbstractNode):
                 self._file_path, self._fourcc, fps, resolution)
 
     @staticmethod
-    def _prepare_directory(outputdir) -> None:  # type: ignore
-        os.makedirs(outputdir, exist_ok=True)
+    def _prepare_directory(output_dir) -> None:  # type: ignore
+        os.makedirs(output_dir, exist_ok=True)
