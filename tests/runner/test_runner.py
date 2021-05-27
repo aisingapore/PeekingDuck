@@ -14,95 +14,77 @@
 
 import os
 import sys
-import yaml
-
-import pytest
 import importlib
+import textwrap
 from unittest import mock
-from peekingduck.runner import Runner
 
-TEMP_BASE_PATH = "tmp_dir"
-RUN_CONFIG_PATH = os.path.join(TEMP_BASE_PATH, "run_config.yml")
-CUSTOM_FOLDER_PATH = os.path.join(TEMP_BASE_PATH, "custom_nodes")
+import yaml
+import pytest
+from peekingduck.runner import Runner
 
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
-CUSTOM_NODE_TYPE = "custom_node_type"
-CUSTOM_NODE_NAME = "custom_node_name"
-NODES = {"nodes": [PKD_NODE_TYPE + "." + PKD_NODE_NAME,
-                   "custom_nodes." + CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME]}
+PKD_NODE = "pkd_node_type" + "." + "pkd_node_name"
+NODES = {"nodes": [PKD_NODE]}
+
+MODULE_PATH = "tmp_dir"
+RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
+CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
+PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
+PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
 
 
 def create_run_config_yaml(nodes):
-
-    if not os.path.exists(TEMP_BASE_PATH):
-        os.makedirs(TEMP_BASE_PATH)
 
     with open(RUN_CONFIG_PATH, 'w') as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
-def create_node_python(folder, node_type, node_name):
-
-    node_folder_path = os.path.join(folder, node_type)
-    if not os.path.exists(node_folder_path):
-        os.makedirs(node_folder_path)
+def create_node_python(node_dir, node_name):
 
     node_file = node_name + ".py"
-    with open(os.path.join(node_folder_path,  node_file), 'w') as fp:
-        fp.write("from peekingduck.pipeline.nodes.node import AbstractNode\
-                 \nclass Node(AbstractNode):\
-                 \n def __init__(self, config):\
-                 \n  super().__init__(config, node_path=__name__)\
-                 \n def run(self, inputs):\
-                 \n  return {}")
+    with open(os.path.join(node_dir,  node_file), 'w') as fp:
+        content = textwrap.dedent(
+            """\
+            from peekingduck.pipeline.nodes.node import AbstractNode
+            class Node(AbstractNode):
+                def __init__(self, config):
+                    super().__init__(config, node_path=__name__)
+                def run(self):
+                    return {}
+            """)
+
+        fp.write(content)
 
 
-def create_node_config(folder, node_type, node_name):
-    node_config_folder = os.path.join(folder, 'configs', node_type)
-    if not os.path.exists(node_config_folder):
-        os.makedirs(node_config_folder)
+def create_node_config(config_dir, node_name):
 
     config_text = {"root": None,
-                   "input": ["source", "end"],
-                   "output": ["end"]}
+                   "input": ["test_source"],
+                   "output": ["test_end"]}
 
     node_config_file = node_name + ".yml"
-    with open(os.path.join(node_config_folder,  node_config_file), 'w') as fp:
+    with open(os.path.join(config_dir,  node_config_file), 'w') as fp:
         yaml.dump(config_text, fp)
 
 
-@pytest.fixture
 def setup():
-    sys.path.append(TEMP_BASE_PATH)
+    sys.path.append(MODULE_PATH)
+
+    os.makedirs(PKD_NODE_DIR)
+    os.makedirs(PKD_NODE_CONFIG_DIR)
 
     create_run_config_yaml(NODES)
 
-    create_node_python(TEMP_BASE_PATH, PKD_NODE_TYPE, PKD_NODE_NAME)
-    create_node_python(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE, CUSTOM_NODE_NAME)
-
-    create_node_config(TEMP_BASE_PATH, PKD_NODE_TYPE, PKD_NODE_NAME)
-    create_node_config(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE, CUSTOM_NODE_NAME)
-
-
-def replace_declarativeloader_get_nodes():
-    return True
-
-
-def replace_pipeline_check_pipe(node):
-    pass
-
-
-def replace_pipeline_execute():
-    pass
-    # return "Ran pipeline execute"
+    create_node_python(PKD_NODE_DIR, PKD_NODE_NAME)
+    create_node_config(PKD_NODE_CONFIG_DIR, PKD_NODE_NAME)
 
 
 def instantiate_nodes():
     instantiated_nodes = []
 
     node_path = PKD_NODE_TYPE + "." + PKD_NODE_NAME
-    node_config_path = os.path.join(TEMP_BASE_PATH, "configs",
+    node_config_path = os.path.join(MODULE_PATH, "configs",
                                     PKD_NODE_TYPE, PKD_NODE_NAME + ".yml")
 
     node = importlib.import_module(node_path)
@@ -114,33 +96,59 @@ def instantiate_nodes():
     return instantiated_nodes
 
 
+def replace_declarativeloader_get_nodes():
+    return True
+
+
+def replace_pipeline_check_pipe(node):
+    pass
+
+
+@ pytest.fixture
+def runner():
+
+    setup()
+
+    with mock.patch('peekingduck.loaders.DeclarativeLoader.get_nodes',
+                    wraps=replace_declarativeloader_get_nodes):
+
+        test_runner = Runner(RUN_CONFIG_PATH,
+                             CUSTOM_FOLDER_PATH)
+
+        return test_runner
+
+
+@ pytest.fixture
+def runner_with_nodes():
+
+    setup()
+
+    instantiated_nodes = instantiate_nodes()
+
+    test_runner = Runner(RUN_CONFIG_PATH,
+                         CUSTOM_FOLDER_PATH,
+                         instantiated_nodes)
+
+    return test_runner
+
+
 @pytest.mark.usefixtures("tmp_dir")
 class TestRunner:
 
-    def test_init_nodes_none(self, setup):
+    def test_init_nodes_none(self, runner):
 
-        with mock.patch('peekingduck.loaders.DeclarativeLoader.get_nodes',
-                        wraps=replace_declarativeloader_get_nodes):
+        assert runner.pipeline == True
 
-            test_runner = Runner(RUN_CONFIG_PATH,
-                                 CUSTOM_FOLDER_PATH)
-
-            assert test_runner.pipeline == True
-
-    def test_init_nodes_empty(self, setup):
-
-        ground_truth = "pipeline"
+    def test_init_nodes_empty(self, runner_with_nodes):
 
         with mock.patch('peekingduck.pipeline.pipeline.Pipeline._check_pipe',
                         wraps=replace_pipeline_check_pipe):
 
-            test_runner = Runner(RUN_CONFIG_PATH,
-                                 CUSTOM_FOLDER_PATH,
-                                 [ground_truth])
+            assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
+            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["test_source"]
+            assert runner_with_nodes.pipeline.nodes[0]._outputs == ["test_end"]
 
-            assert test_runner.pipeline.nodes[0] == ground_truth
-
-    def test_init_nodes(self, setup):
+    def test_init_nodes(self):
 
         ground_truth = "pipeline"
 
@@ -148,55 +156,32 @@ class TestRunner:
 
             Runner(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH, [ground_truth])
 
-    def test_run_delete(self, setup):
-
-        instantiated_nodes = instantiate_nodes()
+    def test_run(self, runner_with_nodes):
 
         with mock.patch('peekingduck.pipeline.pipeline.Pipeline.execute',
-                        wraps=replace_pipeline_execute):
+                        side_effect=Exception("End infinite while loop")):
 
-            test_runner = Runner(RUN_CONFIG_PATH,
-                                 CUSTOM_FOLDER_PATH,
-                                 instantiated_nodes)
+            with pytest.raises(Exception):
 
-            assert isinstance(test_runner.pipeline, object) == True
+                runner_with_nodes.pipeline.video_end = False
+                runner_with_nodes.run()
 
-            test_runner.pipeline.video_end = True
+                assert isinstance(runner_with_nodes.pipeline, object) == True
 
-            test_runner.run()
+    def test_run_delete(self, runner_with_nodes):
 
-            with pytest.raises(AttributeError):
-                assert isinstance(test_runner.pipeline, object) == True
+        assert isinstance(runner_with_nodes.pipeline, object) == True
 
-    def test_run_delete(self, setup):
+        runner_with_nodes.pipeline.video_end = True
 
-        instantiated_nodes = instantiate_nodes()
+        runner_with_nodes.run()
 
-        with mock.patch('peekingduck.pipeline.pipeline.Pipeline.execute',
-                        wraps=replace_pipeline_execute):
+        with pytest.raises(AttributeError):
+            assert isinstance(runner_with_nodes.pipeline, object) == True
 
-            test_runner = Runner(RUN_CONFIG_PATH,
-                                 CUSTOM_FOLDER_PATH,
-                                 instantiated_nodes)
+    def test_get_run_config(self, runner):
 
-            assert isinstance(test_runner.pipeline, object) == True
+        node_list = runner.get_run_config()
 
-            test_runner.pipeline.video_end = True
-
-            test_runner.run()
-
-            with pytest.raises(AttributeError):
-                assert isinstance(test_runner.pipeline, object) == True
-
-    def test_get_run_config(self, setup):
-
-        with mock.patch('peekingduck.loaders.DeclarativeLoader.get_nodes',
-                        wraps=replace_declarativeloader_get_nodes):
-
-            test_runner = Runner(RUN_CONFIG_PATH,
-                                 CUSTOM_FOLDER_PATH)
-
-            node_list = test_runner.get_run_config()
-
-            for idx, node in enumerate(node_list):
-                assert node == NODES["nodes"][idx]
+        for idx, node in enumerate(node_list):
+            assert node == NODES["nodes"][idx]
