@@ -165,33 +165,6 @@ class Detector:
         image = tf.image.decode_image(image, channels=3)
         return image
 
-    def predict_person_bbox_from_image(self, image: np.array) -> List[np.array]:
-        """Detect all persons' bounding box from one image
-
-        args:
-            - yolo:  (Model) model like yolov3 or yolov3_tiny
-            - image: (np.array) input image
-
-        return:
-            - boxes: (np.array) an array of bounding box with
-                    definition like (x1, y1, x2, y2), in a
-                    coordinate system with original point in
-                    the left top corner
-        """
-        # 1. prepare image
-        image = self._prepare_image_from_camera(image)
-        image = self._reshape_image(image, image_size=self.config['size'])
-
-        # 2. evaluate image
-        boxes, scores, classes, nums = self._evaluate_image_by_yolo(image)
-
-        # 3. clean up return. Note that object id is [0] as index 0 is for person
-        boxes, scores, classes = self._shrink_dimension_and_length(  # type: ignore
-            boxes, scores, classes, nums, [0])
-
-        boxes = np.array(boxes)
-        return boxes
-
     # possible that we may want to control what is being detection
     def predict_object_bbox_from_image(self, class_names: List[str], image: np.array,
                                        detect_ids: List[int]) -> Tuple[List[np.array],
