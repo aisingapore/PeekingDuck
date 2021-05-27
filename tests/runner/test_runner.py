@@ -139,7 +139,7 @@ class TestRunner:
 
         assert runner.pipeline == True
 
-    def test_init_nodes_empty(self, runner_with_nodes):
+    def test_init_nodes_with_instantiated_nodes(self, runner_with_nodes):
 
         with mock.patch('peekingduck.pipeline.pipeline.Pipeline._check_pipe',
                         wraps=replace_pipeline_check_pipe):
@@ -148,7 +148,7 @@ class TestRunner:
             assert runner_with_nodes.pipeline.nodes[0]._inputs == ["test_source"]
             assert runner_with_nodes.pipeline.nodes[0]._outputs == ["test_end"]
 
-    def test_init_nodes(self):
+    def test_init_nodes_with_wrong_input(self):
 
         ground_truth = "pipeline"
 
