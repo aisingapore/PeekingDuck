@@ -5,5 +5,5 @@ resolution: {
             width: 1280,
             height: 720
         }
-input_source: 'PeekingDuck/data/original/groups'
+input_dir: 'PeekingDuck/data/input'
 mirror_image: False

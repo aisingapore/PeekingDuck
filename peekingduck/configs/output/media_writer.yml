@@ -1,3 +1,4 @@
 input: ["img", "filename", "fps"]
 output: ["end"]
-outputdir: 'PeekingDuck/output'
+
+output_dir: 'PeekingDuck/data/output'
