@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 from typing import List, Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -27,8 +28,8 @@ class Pipeline:
             nodes (:obj:'list' of :obj:'Node'): node stack as declared for use in
                 inference pipeline
         """
-        self._check_pipe(nodes)
         self.nodes = nodes
+        self._check_pipe(nodes)
         self._data = {}  # type: ignore
         self.video_end = False
 
@@ -75,6 +76,9 @@ class Pipeline:
             if all(item in data_pool for item in node.inputs):
                 data_pool.extend(node.outputs)
             else:
-                raise ValueError(
-                    'Graph nodes do not form proper channel. Please check nodes.'
-                )
+                msg = "Nodes in this pipeline do not form a proper channel:\n" + node.name + \
+                    " requires these inputs: " + str(node.inputs) + \
+                    " but the data pool only has these outputs from previous nodes: " + \
+                    str(data_pool) + ". Also, note that nodes run sequentially, " + \
+                    "in the order specified in the config file."
+                raise ValueError(msg)
