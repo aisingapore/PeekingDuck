@@ -17,6 +17,7 @@ import sys
 import importlib
 import textwrap
 from unittest import mock
+import unittest
 
 import yaml
 import pytest
@@ -104,6 +105,10 @@ def replace_pipeline_check_pipe(node):
     pass
 
 
+def replace_pipeline(node):
+    pass
+
+
 @ pytest.fixture
 def runner():
 
@@ -152,9 +157,11 @@ class TestRunner:
 
         ground_truth = "pipeline"
 
-        with pytest.raises(AttributeError):
+        with mock.patch('peekingduck.pipeline.pipeline.Pipeline.__init__',
+                        side_effect=ValueError):
 
-            Runner(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH, [ground_truth])
+            with pytest.raises(SystemExit):
+                Runner(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH, [ground_truth])
 
     def test_run(self, runner_with_nodes):
 
@@ -166,7 +173,7 @@ class TestRunner:
                 runner_with_nodes.pipeline.video_end = False
                 runner_with_nodes.run()
 
-                assert isinstance(runner_with_nodes.pipeline, object) == True
+        assert isinstance(runner_with_nodes.pipeline, object) == True
 
     def test_run_delete(self, runner_with_nodes):
 
