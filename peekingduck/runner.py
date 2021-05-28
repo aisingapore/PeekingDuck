@@ -58,7 +58,6 @@ class Runner():
             try:
                 self.pipeline = Pipeline(nodes)
             except ValueError as error:
-                print("Hiiiiii")
                 self.logger.error(str(error))
                 sys.exit(1)
 
