@@ -14,14 +14,13 @@
 
 import os
 import sys
-import importlib
-import textwrap
 from unittest import mock
 import unittest
 
 import yaml
 import pytest
 from peekingduck.runner import Runner
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
@@ -32,7 +31,19 @@ MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
-PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
+
+
+class MockedNode(AbstractNode):
+    def __init__(self, config):
+        super().__init__(config, node_path=PKD_NODE)
+
+    def run(self, inputs):
+        output = {}
+        for idx in range(len(self._outputs)):
+            output[self._outputs[idx]] = "test_output_" + str(idx)
+
+        print(output)
+        return output
 
 
 def create_run_config_yaml(nodes):
@@ -41,60 +52,12 @@ def create_run_config_yaml(nodes):
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
-def create_node_python(node_dir, node_name):
-
-    node_file = node_name + ".py"
-    with open(os.path.join(node_dir,  node_file), 'w') as fp:
-        content = textwrap.dedent(
-            """\
-            from peekingduck.pipeline.nodes.node import AbstractNode
-            class Node(AbstractNode):
-                def __init__(self, config):
-                    super().__init__(config, node_path=__name__)
-                def run(self):
-                    return {}
-            """)
-
-        fp.write(content)
-
-
-def create_node_config(config_dir, node_name):
-
-    config_text = {"root": None,
-                   "input": ["test_source"],
-                   "output": ["test_end"]}
-
-    node_config_file = node_name + ".yml"
-    with open(os.path.join(config_dir,  node_config_file), 'w') as fp:
-        yaml.dump(config_text, fp)
-
-
 def setup():
     sys.path.append(MODULE_PATH)
 
     os.makedirs(PKD_NODE_DIR)
-    os.makedirs(PKD_NODE_CONFIG_DIR)
 
     create_run_config_yaml(NODES)
-
-    create_node_python(PKD_NODE_DIR, PKD_NODE_NAME)
-    create_node_config(PKD_NODE_CONFIG_DIR, PKD_NODE_NAME)
-
-
-def instantiate_nodes():
-    instantiated_nodes = []
-
-    node_path = PKD_NODE_TYPE + "." + PKD_NODE_NAME
-    node_config_path = os.path.join(MODULE_PATH, "configs",
-                                    PKD_NODE_TYPE, PKD_NODE_NAME + ".yml")
-
-    node = importlib.import_module(node_path)
-    with open(node_config_path) as file:
-        node_config = yaml.load(file, Loader=yaml.FullLoader)
-
-    instantiated_nodes.append(node.Node(node_config))
-
-    return instantiated_nodes
 
 
 def replace_declarativeloader_get_nodes():
@@ -123,12 +86,21 @@ def runner():
         return test_runner
 
 
+@pytest.fixture
+def test_input_node():
+
+    config_node_input = {'input': ["source"],
+                         'output': ["test_output_1"]}
+
+    return MockedNode(config_node_input)
+
+
 @ pytest.fixture
-def runner_with_nodes():
+def runner_with_nodes(test_input_node):
 
     setup()
 
-    instantiated_nodes = instantiate_nodes()
+    instantiated_nodes = [test_input_node]
 
     test_runner = Runner(RUN_CONFIG_PATH,
                          CUSTOM_FOLDER_PATH,
@@ -150,8 +122,8 @@ class TestRunner:
                         wraps=replace_pipeline_check_pipe):
 
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
-            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["test_source"]
-            assert runner_with_nodes.pipeline.nodes[0]._outputs == ["test_end"]
+            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["source"]
+            assert runner_with_nodes.pipeline.nodes[0]._outputs == ["test_output_1"]
 
     def test_init_nodes_with_wrong_input(self):
 
