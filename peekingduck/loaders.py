@@ -136,7 +136,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def _edit_node_config(self, config: Dict[str, Any],
                           config_updates: Dict[str, Any]) -> Dict[str, Any]:
-        " Edit default node configuration"
+        """ Edit default node configuration """
 
         params = set(config_updates.keys()) - set(config.keys())
         for param in params:
@@ -147,7 +147,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         return config
 
-    def get_nodes(self) -> Pipeline:
+    def get_pipeline(self) -> Pipeline:
         """Returns a compiled Pipeline for PeekingDuck runner to execute"""
         instantiated_nodes = self._instantiate_nodes()
 

@@ -28,7 +28,7 @@ def directory_contents():
 
 @pytest.fixture
 def writer():
-    media_writer = Node({"outputdir": OUTPUT_PATH,
+    media_writer = Node({"output_dir": OUTPUT_PATH,
                          "input": "img",
                          "output": "end"
                          })

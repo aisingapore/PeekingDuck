@@ -162,7 +162,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                                           coords[:, 1].min(),
                                           coords[:, 0].max(),
                                           coords[:, 1].max())
-            bbox = [[min_x, min_y], [max_x, max_y]]
+            bbox = [min_x, min_y, max_x, max_y]
             return np.array(bbox)
         return np.zeros(0)
 
