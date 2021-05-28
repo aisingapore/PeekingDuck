@@ -137,6 +137,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 keypoints are assigned a (-1) value.
         """
         full_joints = coords.copy()
+        full_joints = np.clip(full_joints, 0, 1)
         full_joints[~masks] = -1
         return full_joints
 
