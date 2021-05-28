@@ -113,16 +113,14 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
 ## Explore PeekingDuck Nodes
 
-AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat Covid-19. For more details, check out our [use case glossary](use_case_glossary.md).
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
 | | |
 |-|-|
 | Group Size Checking | Social Distancing |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/social_distancing.gif" width="100%"> |
 | Zone Counting | People Counting |
-|<img src="images/testing/black.jpg" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
-| Vehicle Counting |  |
-|<img src="images/testing/black.jpg" width="100%">| |
+|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
 | | |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
