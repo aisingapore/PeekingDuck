@@ -42,7 +42,6 @@ class MockedNode(AbstractNode):
         for idx in range(len(self._outputs)):
             output[self._outputs[idx]] = "test_output_" + str(idx)
 
-        print(output)
         return output
 
 
