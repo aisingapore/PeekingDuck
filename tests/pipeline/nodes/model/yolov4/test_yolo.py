@@ -20,6 +20,7 @@ import numpy as np
 import numpy.testing as npt
 import cv2
 import tensorflow as tf
+from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 
@@ -51,6 +52,10 @@ def yolo_detector(yolo_config):
     return detector
 
 
+def replace_download_weights(root, blob_file):
+    return False
+
+
 class TestYolo:
 
     def test_no_human_image(self, test_no_human_images, yolo):
@@ -70,3 +75,22 @@ class TestYolo:
         output = yolo.run({'img': test_img})
         assert 'bboxes' in output
         assert output['bboxes'].size != 0
+
+    def test_no_weights(self, yolo_config):
+        with mock.patch('peekingduck.weights_utils.checker.has_weights',
+                        return_value=False):
+            with mock.patch('peekingduck.weights_utils.downloader.download_weights',
+                            wraps=replace_download_weights):
+                with TestCase.assertLogs(
+                    'peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger') \
+                    as captured:
+
+                    yolo = Node(yolo_config)
+
+                    assert captured.records[0].getMessage(
+                    ) == '---no yolo weights detected. proceeding to download...---'
+                    assert captured.records[1].getMessage(
+                    ) == '---yolo weights download complete.---'
+
+    def test_get_detect_ids(self, yolo):
+        assert yolo.model.get_detect_ids() == [0] 
