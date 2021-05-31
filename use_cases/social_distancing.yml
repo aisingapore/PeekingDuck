@@ -1,5 +1,6 @@
 nodes:
-- input.live
+- input.recorded:
+  - input_dir: "images/testing" 
 - model.posenet
 - heuristic.keypoints_to_3d_loc:
   - focal_length: 1.14
@@ -11,4 +12,3 @@ nodes:
 - draw.poses
 - draw.tag
 - draw.fps
-- output.screen
