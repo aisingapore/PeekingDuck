@@ -6,6 +6,9 @@ on:
 
 jobs:
   build-publish-test:
+    name: Build PeekingDuck on Test PyPI
+    env:
+      VERSION: ${{github.event.release.tag_name}}
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -15,7 +18,6 @@ jobs:
         python-version: 3.7
     - name: Update Version Number
       run: |
-        VERSION=${{github.event.release.tag_name}}
         bash ./scripts/update_version.sh $VERSION
     - name: Install pypa and build
       run: |
