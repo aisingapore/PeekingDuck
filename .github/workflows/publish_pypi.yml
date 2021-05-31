@@ -34,8 +34,7 @@ jobs:
       run: |
         sleep 30
         pip install click pyyaml
-      # no tensorflow
-        pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies
+        pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
         peekingduck
     - name: Publish distribution 📦 to PyPI
     # only pushes to actual PyPI if its a tag (i.e. on release: published)
@@ -56,6 +55,5 @@ jobs:
     - name: Test installation from PyPI
       run: |
         pip install click pyyaml
-    # no tensorflow
-        pip install peekingduck==$VERSION --no-dependencies
+        pip install peekingduck==$VERSION --no-dependencies # no tensorflow
         peekingduck
