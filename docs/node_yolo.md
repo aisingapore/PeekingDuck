@@ -1,20 +1,20 @@
-# Node YOLO Glossary
+# YOLO Node
 
-## 1. Overview
+## Overview
 
-“You Only Look Once,” or YOLO, is a family of convolutional neural netowrk models for object detection. The model is developed by Bochkovskiy et al and the original paper can be found [here](https://arxiv.org/pdf/2004.10934.pdf). The model is trained using the COCO dataset, which contains more than 200,000 images and [80 object categories](#Class-IDs-and-names).
+To facilitate object detection tasks, PeekingDuck offers a family of “You Only Look Once,” or YOLO models consisting of YOLOv4 and YOLOv4-tiny. YOLOv4 is developed by [Bochkovskiy et al](https://arxiv.org/pdf/2004.10934.pdf), while YOLOv4-tiny is developed by [Jiang et al.](https://arxiv.org/pdf/2011.04244.pdf) to facilitate edge deployment. Both models were trained using the MS COCO (Microsoft Common Objects in Context) dataset and are capable of detecting objects from [80 categories](#Class-IDs-and-names). The YOLO node uses the YOLOv4-tiny by default and can be changed to using YOLOv4, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
 
 ### Input and outputs
 
-For input, the model takes in an image that is stored as a 3 dimentional NumPy array.
+The YOLO node's input is an image stored as a three-dimensional NumPy array. For live or recorded videos, the input will be a single video frame per inference. In addition, any image/frame resolution is acceptable for the YOLO node.
 
-For outputs, the model returns the bounding boxes, classes and confident scores of the detected objects. All these results are stored in an dictionary and can be accessed using the dictionary keys shown below. Representation for each of the output is discussed next.
+The YOLO node's outputs are the bounding boxes' coordinates, categories and confident scores of the detected objects. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
 
-| Name of output   | Dictionary key |
-| ---------------- | -------------- |
-| Bounding box     | bboxes         |
-| Classes          | bbox_labels    |
-| Confident scores | bbox_scores    |
+| Name of output           | Dictionary key |
+| ------------------------ | -------------- |
+| Bounding box coordinates | bboxes         |
+| Category name            | bbox_labels    |
+| Confident score          | bbox_scores    |
 
 ```python
 
@@ -23,58 +23,58 @@ For outputs, the model returns the bounding boxes, classes and confident scores 
 outputs['bboxes'] = [[0.43037105 0.32492152 0.7751606  0.9728762 ]]
 ```
 
-#### Bounding box - "bboxes"
+#### Bounding box coordinates - "bboxes"
 
-A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
+A list of NumPy arrays, where each NumPy array contains the bounding box coordinates of an object detected:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
 - x2: bottom right x-coordinate
 - y2: bottom right y-coordinate
 
-The order of the bboxes corresponds to the order of "labels" and "scores".
+The order of the bounding box coordinates corresponds to the order of "labels" and "scores".
 
 ```python
 'bboxes' = array([[x1, y1, x2, y2]),
                   ...
                  [x1, y1, x2, y2]])
 
-# Example
+# Example of an output (bounding box coordinates) for a single detected object
 
-'bboxes': array([[0.27510923, 0.12325603, 0.8680737 , 1.        ]]
+'bboxes': array([[0.27510923, 0.12325603, 0.8680737 , 1.]]
 ```
 
-#### Classes - "bbox_labels"
+#### Category name - "bbox_labels"
 
-A list of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
+A list of labels of the name of classes of the object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
 
 ```python
 'bbox_labels' = [str, str, ..., str]
 
-# Example
+# Example of an output (name) for a single detected object
 
 'bbox_labels': ['person']
 ```
 
 #### Confident scores - "bbox_scores"
 
-A tf tensor of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
+A TF tensor that contains the confidence scores of the predicted objects. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
 
 ```python
 'bbox_scores' = <tf.Tensor: shape=(1,), dtype=float32, numpy=array([float, float, ..., float], dtype=float32)>
 
-# Example
+# Example of an output (confident scores) for a single detected object
 
 'bbox_scores':  <tf.Tensor: shape=(1,), dtype=float32, numpy=array([0.34761652], dtype=float32)>
 ```
 
-## 2. Configurable parameters
+## Configurable parameters
 
-The YOLO node can be configured in [run_config.yml](run_config.yml). Here are the configurable parameters for the YOLO node.
+The YOLO node comes with configurable parameters to provide a task-specified solution. To change a default parameter, specify the parameter name and the corresponding updated argument in the [run_config.yml](run_config.yml). Below are the configurable parameters together for the YOLO node.
 
 ### Model type
 
-The YOLO node allows user to choose between YOLOv4-tiny (default) and YOLOv4. YOLOv4-tiny is the compressed version of YOLOv4. YOLOv4-tiny has a faster inference speed while YOLOv4 has a higher precision and accuracy. To use YOLOv4, follow the example shown below:
+The YOLO node allows user to choose between YOLOv4-tiny (default) and YOLOv4. YOLOv4-tiny is the compressed version of YOLOv4. YOLOv4-tiny has a faster inference speed, while YOLOv4 has higher precision and accuracy. To use YOLOv4:
 
 ```yaml
 nodes:
@@ -87,7 +87,7 @@ nodes:
 
 ### Max Detections per class
 
-The maximum number of detected instances for each class in an image is set at _50_ by default. The maximum number per class can be adjusted as shown below:
+The maximum number of detected instances for each class in an image. The default number is _50_. The maximum number should be an integer. The number can be adjusted as shown below:
 
 ```yaml
 nodes:
@@ -100,7 +100,7 @@ nodes:
 
 ### Max Total Detections
 
-The maximum total number of detected instances in an image is set at _50_ by default. The maximum number of total detection can be adjusted as shown below:
+The maximum total number of detected instances in an image. The default number is _50_. The maximum number should be an integer. The number can be adjusted as shown below:
 
 ```yaml
 nodes:
