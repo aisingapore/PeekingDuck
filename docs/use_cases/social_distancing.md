@@ -10,9 +10,10 @@ The most accurate way to measure distance is to use a 3D sensor with depth perce
 
 ## Demo
 
-To try our social distancing solution on your own computer: if you haven't done so, follow the [instructions](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck) to install PeekingDuck. You'll be able to run a quick demo using by saving this configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml) and running PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml) and run PeekingDuck.
+
 ```
-> peekingduck run --config_path <path_to_config>
+> peekingduck run --config_path <path_to_social_distancing.yml>
 ```
 
 ## How it Works
@@ -21,13 +22,13 @@ There are two main components to obtain the distance between individuals: 1) hum
 
 **1. Human Pose Estimation**
 
-We use an open source human pose estimation model known as PoseNet to identify key human skeletal points. This allows the application to identify where individuals are located within the video feed. The coordinates of the various skeletal points will then be used to determine the distance between individuals.
+We use an open source human pose estimation model known as [PoseNet](https://arxiv.org/abs/1505.07427) to identify key human skeletal points. This allows the application to identify where individuals are located within the video feed. The coordinates of the various skeletal points will then be used to determine the distance between individuals.
 
 <img src="../../images/readme/posenet_demo.gif" width="70%">
 
 **2. Depth and Distance Approximation**
 
-To measure the distance between individuals, we have to convert the keypoints in 2D coordinates to keypoints in 3D world coordinates. To achieve this, we compute the depth (Z) from the XY coordinates using the relationship below:
+To measure the distance between individuals, we have to estimate the 3D world coordinates from the keypoints in 2D coordinates. To achieve this, we compute the depth (Z) from the XY coordinates using the relationship below:
 
 <img src="../../images/readme/distance_estimation.png" width="70%">
 
@@ -65,15 +66,15 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to a lighter PoseNet model with a mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](node_glossary.md).
+By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](node_glossary.md).
 
 
 **2. Adjusting Nodes**
 
 Some common node behaviours that you might need to adjust are:
-- focal_length & torso_factor: We calibrated these settings using a Logitech c170 webcam, with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup and calibrate these accordingly.
-- tag_msg: The message to show when individuals are too close.
-- near_threshold: The acceptable distance between 2 individuals, in metres. For example, if the threshold is set at 1.5m, and 2 individuals are standing 2.0m apart, `tag_msg` doesn't show as they are standing further apart than the threshold. The larger this number, the stricter the social distancing.
+- `focal_length` & `torso_factor`: We calibrated these settings using a Logitech c170 webcam, with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup and calibrate these accordingly.
+- `tag_msg`: The message to show when individuals are too close.
+- `near_threshold`: The minimum acceptable distance between 2 individuals, in metres. For example, if the threshold is set at 1.5m, and 2 individuals are standing 2.0m apart, `tag_msg` doesn't show as they are standing further apart than the threshold. The larger this number, the stricter the social distancing.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
 
