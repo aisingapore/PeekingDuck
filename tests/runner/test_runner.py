@@ -59,7 +59,7 @@ def setup():
     create_run_config_yaml(NODES)
 
 
-def replace_declarativeloader_get_nodes():
+def replace_declarativeloader_get_pipeline():
     return True
 
 
@@ -77,7 +77,7 @@ def runner():
     setup()
 
     with mock.patch('peekingduck.loaders.DeclarativeLoader.get_pipeline',
-                    wraps=replace_declarativeloader_get_nodes):
+                    wraps=replace_declarativeloader_get_pipeline):
 
         test_runner = Runner(RUN_CONFIG_PATH,
                              CUSTOM_FOLDER_PATH)
