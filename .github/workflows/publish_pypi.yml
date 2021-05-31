@@ -34,6 +34,7 @@ jobs:
       run: |
         sleep 30
         pip install click pyyaml
+      # no tensorflow
         pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies
         peekingduck
     - name: Publish distribution 📦 to PyPI
@@ -55,5 +56,6 @@ jobs:
     - name: Test installation from PyPI
       run: |
         pip install click pyyaml
+    # no tensorflow
         pip install peekingduck==$VERSION --no-dependencies
         peekingduck
