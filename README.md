@@ -131,6 +131,9 @@ You may need to create your own custom nodes. Perhaps you'd like to take a snaps
 
 We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/guide_custom_nodes.md) provides more details on how to do that.
 
+## Acknowledgements
+
+This project is supported by the National Research Foundation, Singapore under its AI Singapore Programme (AISG-RP-2019-050). Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
 
 
 
