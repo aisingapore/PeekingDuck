@@ -54,6 +54,7 @@ jobs:
         python-version: 3.7
     - name: Test installation from PyPI
       run: |
+        sleep 60
         pip install click pyyaml
         pip install peekingduck==$VERSION --no-dependencies # no tensorflow
         peekingduck
