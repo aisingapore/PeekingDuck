@@ -1,0 +1,8 @@
+nodes:
+- input.recorded:
+  - input_dir: "images/testing" 
+- model.yolo
+- heuristic.bbox_count
+- draw.bbox
+- draw.bbox_count
+- draw.fps

@@ -29,5 +29,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install peekingduck
     - name: Initialise peekingduck
-      run: |
-        peekingduck init
+      run: peekingduck init
+    - name: Test Usecases
+      run: ./scripts/usecase_tests.sh
