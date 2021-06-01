@@ -10,7 +10,7 @@ echo "Getting issues after $date_filter"
 
 open_issues=$(gh issue list --state all --search "created:>=$date_filter"  --json number,title,url)
 
-merged_pr=$(gh pr list --state merged --search "merged:>=$date_filter" --json number,title,url,mergedBy)
+merged_pr=$(gh pr list --state merged --search "merged:>=$date_filter" --json number,title,url,mergedBy,mergedAt)
 
 opened_pr=$(gh pr list --state open --search "created:>=$date_filter" --json number,title,url)
 
