@@ -18,6 +18,8 @@ import pytest
 import yaml
 import cv2
 import os
+import numpy as np
+import numpy.testing as npt
 
 
 TEST_DIR = os.path.join(os.getcwd(), 'images', 'testing')
@@ -55,13 +57,13 @@ class TestPoseNet:
         blank_image = cv2.imread(os.path.join(TEST_DIR, empty_image))
         assert posenet_model is not None
         output = posenet_model.run({'img': blank_image})
-        expected_output = {"bboxes": [],
-                           "keypoints": [],
-                           "keypoint_scores": [],
-                           "keypoint_conns": []}
+        expected_output = {"bboxes": np.zeros(0),
+                           "keypoints": np.zeros(0),
+                           "keypoint_scores": np.zeros(0),
+                           "keypoint_conns": np.zeros(0)}
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():
-            assert output[i] == expected_output[i], "unexpected output for {}".format(i)
+            npt.assert_array_equal(output[i], expected_output[i]), "unexpected output for {}".format(i)
 
     @pytest.mark.parametrize('posenet_model', models, indirect=True, ids=str)
     @pytest.mark.parametrize('person_image', person_image_list, indirect=True, ids=str)
