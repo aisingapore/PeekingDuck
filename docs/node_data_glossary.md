@@ -53,7 +53,7 @@ TO-DO: Add diagram showing flow of data for a use case.
 
 ### "bboxes"
 
-A numpy arrays of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
+A numpy array (N, 4) containing the bounding box information of detected objects. N corresponds to the number of object detected, and each detected bounding box is represented as (x1, y1, x2, y2) where:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
