@@ -188,6 +188,7 @@ class Detector:
 
         # convert classes into class names
         classes = [class_names[int(i)] for i in classes]  # type: ignore
+        classes = np.array(classes)
 
         return boxes, classes, scores  # type: ignore
 
