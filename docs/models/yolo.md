@@ -2,7 +2,7 @@
 
 ## Overview
 
-To facilitate object detection tasks, PeekingDuck offers a family of “You Only Look Once,” or YOLO models consisting of YOLOv4 and YOLOv4-tiny. The YOLOv4 is developed by [Bochkovskiy et al.](https://arxiv.org/pdf/2004.10934.pdf), while the YOLOv4-tiny is developed by [Jiang et al.](https://arxiv.org/pdf/2011.04244.pdf). Both models were trained using the MS COCO (Microsoft Common Objects in Context) dataset and are capable of detecting objects from [80 categories](#Class-IDs-and-names). The YOLO node uses the YOLOv4-tiny by default and can be changed to using YOLOv4, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
+To facilitate object detection tasks, PeekingDuck offers a family of “You Only Look Once,” or YOLO models consisting of YOLOv4 and YOLOv4-tiny. The YOLOv4 was developed by [Bochkovskiy et al.](https://arxiv.org/pdf/2004.10934.pdf), while the YOLOv4-tiny was developed by [Jiang et al.](https://arxiv.org/pdf/2011.04244.pdf). Both models were trained using the MS COCO (Microsoft Common Objects in Context) dataset and are capable of detecting objects from [80 categories](#Class-IDs-and-names). The YOLO node uses the YOLOv4-tiny by default and can be changed to using YOLOv4, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
 
 ### Input and outputs
 
@@ -18,7 +18,7 @@ The YOLO node's outputs are the bounding boxes' coordinates, classes name and co
 
 #### Bounding boxes' coordinates - "bboxes"
 
-A N x 4 NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
+A N by 4 NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
@@ -28,13 +28,13 @@ A N x 4 NumPy array, where N represents the number of detected bounding boxes an
 The order of the bounding boxes' coordinates corresponds to the order of "bbox_labels" and "bbox_scores".
 
 ```python
-outputs['bboxes'] = np.array(np.array([x1, y1, x2, y2]),
-                             ...
-                             np.array([x1, y1, x2, y2]))
+outputs['bboxes'] = np.array([[x1, y1, x2, y2],
+                              ...,
+                              [x1, y1, x2, y2]])
 
 # example
 
-outputs['bboxes'] = np.array(np.array([0.30856234 0.12405036 0.8565467  1.]))
+outputs['bboxes'] = np.array([[0.30856234 0.12405036 0.8565467  1.]])
 ```
 
 #### Classes name - "bbox_labels"
@@ -42,11 +42,11 @@ outputs['bboxes'] = np.array(np.array([0.30856234 0.12405036 0.8565467  1.]))
 A NumPy array of the detected objects' classes name. The order of the classes name corresponds to the order of "bboxes" and "bbox_scores".
 
 ```python
-outputs['bbox_labels'] = np.array(str, str, ..., str])
+outputs['bbox_labels'] = np.array([str, str, ..., str])
 
 # example
 
-outputs['bbox_labels'] = np.array('person')
+outputs['bbox_labels'] = np.array(['person'])
 ```
 
 #### Confidence scores - "bbox_scores"
@@ -54,11 +54,11 @@ outputs['bbox_labels'] = np.array('person')
 A NumPy array of the confidence scores of the predicted objects. The order of the confidence scores corresponds to the order of "bboxes" and "bbox_labels". Note that the score is between 0 and 1.
 
 ```python
-outputs['bbox_scores'] = np.array(float, float, ..., float)
+outputs['bbox_scores'] = np.array([float, float, ..., float])
 
 # example
 
-outputs['bbox_scores'] = np.array(0.34761652)
+outputs['bbox_scores'] = np.array([0.34761652])
 ```
 
 ## Configurable parameters
@@ -80,7 +80,7 @@ The table shown below is a list of commonly adjusted parameters for the YOLO nod
 
 | Parameter                 | Description                                                                                             | Variables                                                                                                            | Default  |
 | ------------------------- | ------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- | -------- |
-| model_type                | YOLOv4-tiny has a faster inference speed, while YOLOv4 has a higher precision and accuracy.             | _v4tiny_ or _v4_                                                                                                     | _v4tiny_ |
+| model_type                | YOLOv4-tiny has a faster inference speed, while YOLOv4 has a higher precision and accuracy.             | <ul><li>YOLOv4-tiny: _v4tiny_</li><li> YOLOv4: _v4_</li></ul>                                                        | _v4tiny_ |
 | max_output_size_per_class | Maximum number of detected instances for each class in an image.                                        | _int_                                                                                                                | _50_     |
 | max_total_size            | Maximum total number of detected instances in an image.                                                 | _int_                                                                                                                | _50_     |
 | yolo_iou_threshold        | Overlapping bounding boxes above the specified IoU (Intersection over Union) threshold are discarded.   | _0_ - _1_                                                                                                            | _0.5_    |
