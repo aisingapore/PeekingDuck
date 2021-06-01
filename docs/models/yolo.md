@@ -8,12 +8,12 @@ To facilitate object detection tasks, PeekingDuck offers a family of “You Only
 
 The YOLO node's input is an image stored as a three-dimensional NumPy array. For live or recorded videos, the input will be a single video frame per inference.
 
-The YOLO node's outputs are the bounding boxes' coordinates, class name and confidence scores of the detected objects. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
+The YOLO node's outputs are the bounding boxes' coordinates, classes name and confidence scores of the detected objects. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
 
 | Name of output              | Dictionary key |
 | --------------------------- | -------------- |
 | Bounding boxes' coordinates | bboxes         |
-| Class name                  | bbox_labels    |
+| Classes name                | bbox_labels    |
 | Confidence score            | bbox_scores    |
 
 #### Bounding boxes' coordinates - "bboxes"
