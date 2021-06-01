@@ -63,9 +63,7 @@ A numpy array (N, 4) containing the bounding box information of detected objects
 The order of the bboxes corresponds to the order of "labels" and "scores".
 
 ```
-"bboxes":   np.array(np.array([x1, y1, x2, y2]),
-                     ...
-                     np.array([x1, y1, x2, y2]))
+"bboxes":   [np.array(x1, y1, x2, y]), ..., np.array(x1, y1, x2, y2)]
 ```
 
 ### "bbox_labels"
