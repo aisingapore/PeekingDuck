@@ -107,11 +107,11 @@ class Detector:
 
         scores = scores.numpy()[0]
         scores = scores[:len0]
-        scores = tf.boolean_mask(scores, mask1)
+        scores = scores[mask1]
 
         boxes = boxes.numpy()[0]
         boxes = boxes[:len0]
-        boxes = tf.boolean_mask(boxes, mask1)
+        boxes = boxes[mask1]
 
         return boxes, scores, classes
 
@@ -189,7 +189,6 @@ class Detector:
         # convert classes into class names
         classes = [class_names[int(i)] for i in classes]  # type: ignore
 
-        boxes = np.array(boxes)
         return boxes, classes, scores  # type: ignore
 
     def setup_gpu(self) -> None:
