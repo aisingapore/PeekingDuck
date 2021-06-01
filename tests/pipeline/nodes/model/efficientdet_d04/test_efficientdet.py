@@ -55,15 +55,23 @@ class TestEfficientDet:
     def test_no_human_image(self, test_no_human_images, efficientdet):
         blank_image = cv2.imread(test_no_human_images)
         output = efficientdet.run({'img': blank_image})
-        expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32)}
+        expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32),
+                           'bbox_labels': np.empty((0)),
+                           'bbox_scores': np.empty((0), dtype=np.float32)}
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output['bboxes'], expected_output['bboxes'])
+        npt.assert_equal(output['bbox_labels'], expected_output['bbox_labels'])
+        npt.assert_equal(output['bbox_scores'], expected_output['bbox_scores'])
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, efficientdet):
         test_img = cv2.imread(test_human_images)
         output = efficientdet.run({'img': test_img})
         assert 'bboxes' in output
+        assert 'bbox_labels' in output
+        assert 'bbox_scores' in output
         assert output['bboxes'].size != 0
+        assert output['bbox_labels'].size != 0
+        assert output['bbox_scores'].size != 0
 
     def test_efficientdet_preprocess(self, create_image, efficientdet_detector):
         test_img1 = create_image((720, 1280, 3))
