@@ -53,7 +53,7 @@ TO-DO: Add diagram showing flow of data for a use case.
 
 ### "bboxes"
 
-A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
+A numpy arrays of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
@@ -63,30 +63,30 @@ A list of numpy arrays, where each numpy array contains the bounding box coordin
 The order of the bboxes corresponds to the order of "labels" and "scores".
 
 ```
-"bboxes":   [np.array([x1, y1, x2, y2]),
-                ...
-             np.array([x1, y1, x2, y2])]
+"bboxes":   np.array(np.array([x1, y1, x2, y2]),
+                     ...
+                     np.array([x1, y1, x2, y2]))
 ```
 
 ### "bbox_labels"
 
-A list of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
+A numpy array of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
 
 ```
-"labels":   [str, str, ..., str]
+"labels":   np.array(str, str, ..., str)
 
-example:    ["person", "person", ...]
+example:    np.array("person", "person", ...)
 ```
 
 ### "bbox_scores"
 
-A tf tensor of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
+A numpy array of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
 
 ```
-"scores": tf.Tensor([float, float, ..., float])
+"scores": np.array(float, float, ..., float)
 
 example:
-"scores": tf.Tensor([0.847334, 0.7039472, 0.243511])
+"scores": np.array(0.847334, 0.7039472, 0.243511)
 ```
 
 ### "keypoints"
