@@ -91,7 +91,10 @@ example:
 
 ### "keypoints"
 
-A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively. If the keypoint has a low confidence score, the coordinates would be "masked" and replaced by "-1." as shown below.
+A numpy array (NxKx2) containing the (x, y) coordinates for the detected posess.
+N and K corresponds to the number of detected poses and number of keypoints respectively.
+If the keypoint has a low confidence score, the coordinates would be "masked"
+and replaced by "-1." as shown below.
 
 ```
 [array([[ 0.58670201,  0.47576586],
@@ -99,16 +102,17 @@ A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coord
                   ...
        [-1.        , -1.        ],
        [-1.        , -1.        ]])]
-```       
+```
 
 ### "keypoint_scores"
 
-A list of N numpy arrays, where each numpy array (Kx1) contains the keypoint scores of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
+A numpy array (NxKx1) containing the keypoint scores of the detected pose. N and K
+corresponds to the number of detected poses and number of keypoints respectively.
 
 ### "keypoint_conns"
 
-A list of N numpy arrays, where each numpy array contains the keypoint connections
-between adjacent keypoint pairs if both keypoints are detected.
+A numpy array containing the keypoint connections between adjacent keypoint pairs
+if both keypoints are detected.
 
 ### "end"
 
@@ -157,6 +161,7 @@ A list of strings called tags, each tag associated with a bounding box. The orde
 ### "zones"
 
 A list of coordinate lists, each coordinate list is made of a list of tuples of (x, y) coordinates that demarks the points that form the boundaries of a zone. The order of zones follow the order of "zone_counts".
+
 ```
 "zones":[[(int, int), (int, int), ...], [(int, int), (int, int), ...], ...,]
 
