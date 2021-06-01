@@ -6,6 +6,9 @@ on:
 
 jobs:
   build-publish-test:
+    name: Build PeekingDuck on Test PyPI
+    env:
+      VERSION: ${{github.event.release.tag_name}}
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -15,7 +18,6 @@ jobs:
         python-version: 3.7
     - name: Update Version Number
       run: |
-        VERSION=${{github.event.release.tag_name}}
         bash ./scripts/update_version.sh $VERSION
     - name: Install pypa and build
       run: |
@@ -28,9 +30,31 @@ jobs:
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository_url: https://test.pypi.org/legacy/
+    - name: Test installation from Test PyPI
+      run: |
+        sleep 30
+        pip install click pyyaml
+        pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
+        peekingduck
     - name: Publish distribution 📦 to PyPI
     # only pushes to actual PyPI if its a tag (i.e. on release: published)
       if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@master
       with:
         password: ${{ secrets.PYPI_API_TOKEN }}
+
+  test-install-pypi:
+    name: Build PeekingDuck on Test PyPI
+    needs: build-publish-test
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Set up Python 3.7
+      uses: actions/setup-python@v2
+      with:
+        python-version: 3.7
+    - name: Test installation from PyPI
+      run: |
+        sleep 60
+        pip install click pyyaml
+        pip install peekingduck==$VERSION --no-dependencies # no tensorflow
+        peekingduck
