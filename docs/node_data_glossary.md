@@ -63,7 +63,7 @@ A numpy array (N, 4) containing the bounding box information of detected objects
 The order of the bboxes corresponds to the order of "labels" and "scores".
 
 ```
-"bboxes":   [np.array(x1, y1, x2, y), ..., np.array(x1, y1, x2, y2)]
+"bboxes":   np.array([[x1, y1, x2, y], ..., [x1, y1, x2, y2]])
 ```
 
 ### "bbox_labels"
@@ -71,9 +71,9 @@ The order of the bboxes corresponds to the order of "labels" and "scores".
 A numpy array of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
 
 ```
-"labels":   np.array(str, str, ..., str)
+"labels":   np.array([str, str, ..., str])
 
-example:    np.array("person", "person", ...)
+example:    np.array(["person", "person", ..., "person"])
 ```
 
 ### "bbox_scores"
@@ -81,10 +81,10 @@ example:    np.array("person", "person", ...)
 A numpy array of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
 
 ```
-"scores": np.array(float, float, ..., float)
+"scores": np.array([float, float, ..., float])
 
 example:
-"scores": np.array(0.847334, 0.7039472, 0.243511)
+"scores": np.array([0.847334, 0.7039472, 0.243511])
 ```
 
 ### "keypoints"
