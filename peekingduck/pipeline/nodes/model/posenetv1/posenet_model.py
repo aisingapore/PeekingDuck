@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, Tuple
 import numpy as np
 
 from peekingduck.weights_utils import checker, downloader

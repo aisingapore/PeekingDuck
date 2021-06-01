@@ -122,7 +122,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             keypoint_scores.append(pose_scores)
             keypoint_conns.append(pose_connections)
 
-        return np.array(bboxes), np.array(keypoints), np.array(keypoint_scores), np.array(keypoint_conns)
+        return np.array(bboxes), np.array(keypoints), np.array(keypoint_scores), \
+            np.array(keypoint_conns)
 
     @ staticmethod
     def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:
