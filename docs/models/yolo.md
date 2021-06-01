@@ -18,7 +18,7 @@ The YOLO node's outputs are the bounding boxes' coordinates, classes name and co
 
 #### Bounding boxes' coordinates - "bboxes"
 
-A list of NumPy arrays, where each NumPy array contains the bounding box coordinates of an object detected:
+A N x 4 NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
@@ -28,37 +28,37 @@ A list of NumPy arrays, where each NumPy array contains the bounding box coordin
 The order of the bounding boxes' coordinates corresponds to the order of "bbox_labels" and "bbox_scores".
 
 ```python
-outputs['bboxes'] = [np.array([x1, y1, x2, y2]),
-                     ...
-                     np.array([x1, y1, x2, y2])]
+outputs['bboxes'] = np.array(np.array([x1, y1, x2, y2]),
+                             ...
+                             np.array([x1, y1, x2, y2]))
 
 # example
 
-outputs['bboxes'] = [np.array([0.30856234 0.12405036 0.8565467  1.])]
+outputs['bboxes'] = np.array(np.array([0.30856234 0.12405036 0.8565467  1.]))
 ```
 
-#### Class name - "bbox_labels"
+#### Classes name - "bbox_labels"
 
-A list of the detected objects' classes name. The order of the labels corresponds to the order of "bboxes" and "bbox_scores".
+A NumPy array of the detected objects' classes name. The order of the classes name corresponds to the order of "bboxes" and "bbox_scores".
 
 ```python
-outputs['bbox_labels'] = [str, str, ..., str]
+outputs['bbox_labels'] = np.array(str, str, ..., str])
 
 # example
 
-outputs['bbox_labels'] = ['person']
+outputs['bbox_labels'] = np.array('person')
 ```
 
 #### Confidence scores - "bbox_scores"
 
-A TF tensor that contains the confidence scores of the predicted objects. The order of the confidence scores corresponds to the order of "bboxes" and "bbox_labels". Note that the score is between 0 and 1.
+A NumPy array of the confidence scores of the predicted objects. The order of the confidence scores corresponds to the order of "bboxes" and "bbox_labels". Note that the score is between 0 and 1.
 
 ```python
-outputs['bbox_scores'] = <tf.Tensor: shape=(1,), dtype=float32, numpy=array([float, float, ..., float], dtype=float32)>
+outputs['bbox_scores'] = np.array(float, float, ..., float)
 
 # example
 
-outputs['bbox_scores'] = <tf.Tensor: shape=(1,), dtype=float32, numpy=array([0.34761652], dtype=float32)>
+outputs['bbox_scores'] = np.array(0.34761652)
 ```
 
 ## Configurable parameters
