@@ -187,8 +187,7 @@ class Detector:
             boxes, scores, classes, nums, detect_ids)
 
         # convert classes into class names
-        classes = [class_names[int(i)] for i in classes]  # type: ignore
-        classes = np.array(classes)
+        classes = np.array([class_names[int(i)] for i in classes])  # type: ignore
 
         return boxes, classes, scores  # type: ignore
 
