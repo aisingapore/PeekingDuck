@@ -48,7 +48,4 @@ class Node(AbstractNode):
                    "keypoints": keypoints,
                    "keypoint_scores": keypoint_scores,
                    "keypoint_conns": keypoint_conns}
-
-        self.logger.info(outputs["keypoint_scores"])
-
         return outputs
