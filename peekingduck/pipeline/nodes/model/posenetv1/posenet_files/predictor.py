@@ -88,7 +88,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         return (int(res1), int(res2))
 
     def predict(self,
-                frame: np.ndarray) -> Tuple[List[Any], List[Any], List[Any], List[Any]]:
+                frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         # pylint: disable=too-many-locals
         """ PoseNet prediction function
 
@@ -96,10 +96,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             frame (np.array): image in numpy array
 
         Returns:
-            bboxes (List[Any]): list of bboxes
-            keypoints (List[Any]): list of keypoint coordinates
-            keypoints_scores (List[Any]): list of keypoint scores
-            keypoints_conns (List[Any]): list of keypoint connections
+            bboxes (np.ndarray): array of bboxes
+            keypoints (np.ndarray): array of keypoint coordinates
+            keypoints_scores (np.ndarray): array of keypoint scores
+            keypoints_conns (np.ndarray): array of keypoint connections
         """
         full_keypoint_rel_coords, full_keypoint_scores, full_masks = \
             self._predict_all_poses(
@@ -122,7 +122,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             keypoint_scores.append(pose_scores)
             keypoint_conns.append(pose_connections)
 
-        return bboxes, keypoints, keypoint_scores, keypoint_conns
+        return np.array(bboxes), np.array(keypoints), np.array(keypoint_scores), np.array(keypoint_conns)
 
     @ staticmethod
     def _get_valid_full_keypoints_coords(coords: np.ndarray, masks: np.ndarray) -> np.ndarray:

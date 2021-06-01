@@ -40,7 +40,7 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
         self.predictor = Predictor(config)
 
     def predict(self, frame: np.ndarray) -> \
-            Tuple[List[Any], List[Any], List[Any], List[Any]]:
+            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """ Predict poses from input frame
 
         Args:
@@ -48,7 +48,7 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         Returns:
             bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns
-            (Tuple[List[Any], List[Any], List[Any], List[Any]]): \
+            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
             tuple containing list of bboxes and pose related info i.e coordinates,
             scores, connections
         """
