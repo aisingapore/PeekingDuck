@@ -2,7 +2,7 @@
 
 ## Overview
 
-As part of COVID-19 measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we created a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control.
+As part of COVID-19 measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
 <img src="../../images/readme/zone_counting.gif" width="100%">
 
@@ -10,7 +10,7 @@ Zone counting is done by looking at the count of objects detected by the object 
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [object_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_social_distancing.yml>
@@ -32,7 +32,7 @@ To count the number of objects detected, we simply take the sum of the number of
 
 ## Nodes Used
 
-These are the nodes used in the earlier demo (also in [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml)):
+These are the nodes used in the earlier demo (also in [zone_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml)):
 ```
 nodes:
 - input.live

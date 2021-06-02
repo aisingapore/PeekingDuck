@@ -32,7 +32,7 @@ To count the number of objects detected, we simply take the sum of the number of
 
 ## Nodes Used
 
-These are the nodes used in the earlier demo (also in [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml)):
+These are the nodes used in the earlier demo (also in [object_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml)):
 ```
 nodes:
 - input.live
