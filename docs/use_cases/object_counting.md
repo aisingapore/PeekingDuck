@@ -2,7 +2,7 @@
 
 ## Overview
 
-One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control.
+One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control. For more advanced counting heuristics, checkout out [zoning](zoning.md).
 
 <img src="../../images/readme/zone_counting.gif" width="100%">
 
