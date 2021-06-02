@@ -2,15 +2,15 @@
 
 ## Overview
 
-One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control. For more advanced counting heuristics, checkout out [zoning](zoning.md).
+One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, checkout out [zoning](zoning.md).
 
-<img src="../../images/readme/zone_counting.gif" width="100%">
+<img src="../../images/readme/object_counting.gif" width="100%">
 
-Zones are created by providing the point coordinates that form each zone. These are used in conjunction with object detection models upstream to create heuristics that provide specific zone analytics. As an example, we can count the number of people in each particular zone. This is explained in a [subsequent section](#how-it-works).
+Counting is done by looking at the count of objects detected by the object detection models. As an example, we can count the number of people that appear in a video, as per our example above. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_count.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_social_distancing.yml>
