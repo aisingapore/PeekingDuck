@@ -44,7 +44,7 @@ NOTE: This tutorial excluded `__init__.py` from the above path for presentation 
 
 ## Step 2: Populate Run Config
 
-The `run_config.yml` will be created. Input the following lines of code into the file. Newly minted nodes needs to be identified by the following structure `<custom_nodes>.<node-type>.<node>` .
+The `run_config.yml` will be created. Input the following lines of code into the file. Newly minted nodes needs to be identified by the following structure `custom_nodes.<node-type>.<node>` .
 
 
 ```yaml
