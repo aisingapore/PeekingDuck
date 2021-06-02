@@ -6,7 +6,7 @@ One of the basic task in computer vision is object counting. AI Singapore develo
 
 <img src="../../images/readme/object_counting.gif" width="100%">
 
-Counting is done by looking at the count of objects detected by the object detection models. As an example, we can count the number of people that appear in a video, as per our example above. This is explained in a [subsequent section](#how-it-works).
+Counting is done by looking at the count of objects detected by the object detection models. As an example, we can count the number of people that appear in a video, as per our gif above. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
@@ -61,4 +61,3 @@ For more adjustable node behaviours not listed here, check out the [node glossar
 We have a more complex variant of object counting that is called zone counting which makes use of the zone count node. It allows for the creation of zones within a single image, and provides separate counts of the chosen objects detected for objects that fall inside the zones created.
 
 For more informatio, check out the [readme](zoning.md#zone-counting) for zone counting.
-

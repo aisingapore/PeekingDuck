@@ -4,13 +4,13 @@
 
 As part of COVID-19 measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
-<img src="../../images/readme/zone_counting.gif" width="100%">
+<img src="../../images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
 
-Zone counting is done by looking at the count of objects detected by the object detection models that fall within the zones specified. As an example, we can count the number of people in the blue and green zones, as per our example above. This is explained in a [subsequent section](#how-it-works).
+Zone counting is done by looking at the counts of objects detected by the object detection models that fall within the zones specified. As an example, we can count the number of people in the blue and green zones, as per our gif above. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [object_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [zone_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_social_distancing.yml>
@@ -18,17 +18,35 @@ To try our solution on your own computer with [PeekingDuck installed](https://gi
 
 ## How it Works
 
-The main component to obtain the count is the detection from the object detection model, which is the bbounding boxes.
+There are three main components to obtain the zone counts: 
+1. The detection from the object detection model, which is the bbounding boxes.
+1. The bottom midpoint of the bbounding boxes, deprived from the bounding boxes.
+1. The zones, which can be set in the zone count heuristic configurable parameters.
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top left corner of the bounding box, and (x2, y2) is the bottom right. These are used to form the bounding box of each object detected.
+We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected.
 
 <img src="../../images/readme/yolo_demo.gif" width="70%">
 
-**2. Object Counting**
+**2. Bounding Box to Bottom Midpoint**
 
-To count the number of objects detected, we simply take the sum of the number of bounding boxes detected for the object.
+given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bbounding box, can derive the bottom midpoint of each bbounding box. This is done by taking the 
+the lowest y coordinate (y2), and the midpoint of the x coordinates (x1 - x2 / 2). This forms our bottom midpoint. We found that using the bottom midpoint is the most efficient way of telling whether something is in the zone specified, as from the usual top-down or angled camera footages of the use cases, the bottom midpoint of the bounding boxes usually corresponds to the point at which the object is located.
+
+**3. Zones**
+
+Zones are created by specifying the (x, y) coordinates of all the corner points that form the area of the zone. These points **must be set clockwise**. As an example, blue zone in the [zone counting gif](#overview) was created but using the following zone:
+
+`[[0, 0], [0, 640], [640, 720], [0, 720]]`
+
+Given a resolution of 1280 by 720, these correspond to the top-left of the image, the top-middle of the frame, bottom-middle of the image, and the bottom-left of the image, points in a clockwise direction that form the rectangular blue zone. Zones do not have to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of the (x, y) coordinates set in a zone.
+
+Note that zones can also be created by configuring the resolution parameter in the zone counting configuration, then using fractions of the resolutions for the (x, y) coordinates. Eloboration for this adjustment can be found the section below for adjusting nodes.
+
+**4. Zone Counts**
+
+Given the bottom mid-points of all detected objects, we check if the points fall within the area of the specified zones. If it falls inside any zone, an object count is added for that specific zone. This continues until all objects detected are accounted for, which gives the final count of objects in each specified zone.
 
 ## Nodes Used
 
@@ -42,7 +60,8 @@ nodes:
 - heuristic.zone_count:
   - zones: [
     [[0, 0], [640, 0], [640, 720], [0, 720]],
-    [[640, 0], [1280, 0], [1280, 720], [640, 720]]]
+    [[640, 0], [1280, 0], [1280, 720], [640, 720]]
+    ]
 - draw.bbox
 - draw.btm_midpoint
 - draw.zones
@@ -54,16 +73,16 @@ nodes:
 
 By default, we are using the Yolov4-tiny model for object detection, set to detect people. Depending on the device you're using, you might want to switch to the more accurate Yolov4 model, or even the Effecientdet model that is include in our repo. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters). For more information on Efficientdet detection model in PeekingDuck, check out the [node glossary](node_glossary.md).
 
+**2. Bottom Midpoint Node**
 
-**2. Adjusting Nodes**
+The bottom midpoint node is called by including `heuristic.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
 
-The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation]() for adjustable behaviours that can influence the result of the object counting node.
+**3. Adjusting Nodes**
+
+The zone counting detections depend on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation]() for adjustable behaviours that can influence the result of the zone counting node.
+
+With regards to the zone counting node, some common node behaviours for the zone counting node that you might need to adjust are:
+- `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.
+- `zones`: Used to specify the different zones which you would like to set. Each zone coordinates should be set clock-wise in a list. See section on [nodes used](#nodes-used) on how to properly configure multiple zones.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
-
-## More Complex Counting Behaviour
-
-We have a more complex variant of object counting that is called zone counting which makes use of the zone count node. It allows for the creation of zones within a single image, and provides separate counts of the chosen objects detected for objects that fall inside the zones created.
-
-For more informatio, check out the [readme](zoning.md#zone-counting) for zone counting.
-
