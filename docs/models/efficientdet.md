@@ -1,6 +1,6 @@
 # EfficientDet Node
 
-See also [YOLO node](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/model/efficientdet.yml) for object detection.
+See also [YOLO](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/model/efficientdet.yml) for alternative object detection node.
 
 ## Overview
 
