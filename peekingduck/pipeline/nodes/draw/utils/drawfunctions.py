@@ -50,9 +50,9 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
 
 
 def draw_human_poses(image: np.array,
-                     keypoints: List[Any],
-                     keypoint_scores: List[Any],
-                     keypoint_conns: List[Any],
+                     keypoints: np.ndarray,
+                     keypoint_scores: np.ndarray,
+                     keypoint_conns: np.ndarray,
                      keypoint_dot_color: Tuple[int, int, int],
                      keypoint_dot_radius: int,
                      keypoint_connect_color: Tuple[int, int, int],
@@ -71,7 +71,7 @@ def draw_human_poses(image: np.array,
         keypoint_text_color (Tuple[int, int, int]): color of keypoint names
     """
     image_size = _get_image_size(image)
-    num_persons = len(keypoints)
+    num_persons = keypoints.shape[0]
     if num_persons > 0:
         for i in range(num_persons):
             _draw_connections(image, keypoint_conns[i],

@@ -53,45 +53,47 @@ TO-DO: Add diagram showing flow of data for a use case.
 
 ### "bboxes"
 
-A list of numpy arrays, where each numpy array contains the bounding box coordinates of an object detected:
+A numpy array (N, 4) containing the bounding box information of detected objects. N corresponds to the number of object detected, and each detected bounding box is represented as (x1, y1, x2, y2) where:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
 - x2: bottom right x-coordinate
 - y2: bottom right y-coordinate
 
-The order of the bboxes corresponds to the order of "labels" and "scores".
+The order of the bboxes corresponds to the order of "bbox_labels" and "bbox_scores".
 
 ```
-"bboxes":   [np.array([x1, y1, x2, y2]),
-                ...
-             np.array([x1, y1, x2, y2])]
+"bboxes":   np.array([[x1, y1, x2, y], ..., [x1, y1, x2, y2]])
 ```
 
 ### "bbox_labels"
 
-A list of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "scores".
+A numpy array of labels of the name of classes of object detected. The order of the labels corresponds to the order of "bboxes" and "bbox_scores".
 
 ```
-"labels":   [str, str, ..., str]
+"bbox_labels":   np.array([str, str, ..., str])
 
-example:    ["person", "person", ...]
+example:   
+"bbox_labels": np.array(["person", "person", ..., "person"])
 ```
 
 ### "bbox_scores"
 
-A tf tensor of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "labels". Note that the score is between 0 and 1.
+A numpy array of the confidence scores for the objects predicted. The order of the scores corresponds to the order of "bboxes" and "bbox_labels". Note that the score is between 0 and 1.
 
 ```
-"scores": tf.Tensor([float, float, ..., float])
+"bbox_scores": np.array([float, float, ..., float])
 
 example:
-"scores": tf.Tensor([0.847334, 0.7039472, 0.243511])
+"bbox_scores": np.array([0.847334, 0.7039472, 0.243511])
 ```
 
 ### "keypoints"
 
-A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coordinates of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively. If the keypoint has a low confidence score, the coordinates would be "masked" and replaced by "-1." as shown below.
+A numpy array (NxKx2) containing the (x, y) coordinates for the detected posess.
+N and K corresponds to the number of detected poses and number of keypoints respectively.
+If the keypoint has a low confidence score, the coordinates would be "masked"
+and replaced by "-1." as shown below.
 
 ```
 [array([[ 0.58670201,  0.47576586],
@@ -99,16 +101,17 @@ A list of N numpy arrays, where each numpy array (Kx2) contains the (x, y) coord
                   ...
        [-1.        , -1.        ],
        [-1.        , -1.        ]])]
-```       
+```
 
 ### "keypoint_scores"
 
-A list of N numpy arrays, where each numpy array (Kx1) contains the keypoint scores of the detected pose. N and K corresponds to the number of detected poses and number of keypoints respectively.
+A numpy array (NxKx1) containing the keypoint scores of the detected pose. N and K
+corresponds to the number of detected poses and number of keypoints respectively.
 
 ### "keypoint_conns"
 
-A list of N numpy arrays, where each numpy array contains the keypoint connections
-between adjacent keypoint pairs if both keypoints are detected.
+A numpy array containing the keypoint connections between adjacent keypoint pairs
+if both keypoints are detected.
 
 ### "end"
 
@@ -157,6 +160,7 @@ A list of strings called tags, each tag associated with a bounding box. The orde
 ### "zones"
 
 A list of coordinate lists, each coordinate list is made of a list of tuples of (x, y) coordinates that demarks the points that form the boundaries of a zone. The order of zones follow the order of "zone_counts".
+
 ```
 "zones":[[(int, int), (int, int), ...], [(int, int), (int, int), ...], ...,]
 

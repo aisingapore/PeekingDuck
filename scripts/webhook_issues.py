@@ -2,6 +2,7 @@ import requests
 import argparse
 import json
 import datetime
+import pytz
 
 from copy import deepcopy
 
@@ -50,12 +51,22 @@ class StandupBot:
         self.post_to_discord()
 
     @staticmethod
-    def _check_weekend(date):
+    def _check_friday(date):
         is_friday = datetime.datetime.strptime(date, "%Y-%m-%d").weekday() == 4
         return is_friday
 
+    @staticmethod
+    def _check_weekend(date):
+        date_dt = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+        now = pytz.timezone("UTC")
+        to_sg = pytz.timezone("Singapore")
+        date_converted = now.localize(date_dt).astimezone(to_sg)
+        weekday = date_converted.weekday()
+        return weekday == 5 or weekday == 6
+
     def _name_and_shame(self):
-        namelist = ', '.join(set(['@' + pr['mergedBy']['login'] for pr in self.merged_pr]))
+        namelist = ', '.join(set(['@' + pr['mergedBy']['login']
+                                  for pr in self.merged_pr if self._check_weekend(pr['mergedAt'])]))
         return f"Hi {namelist}, you shouldn't really be working over the weekends. \
                 The GIF below represents what I think of you"
 
