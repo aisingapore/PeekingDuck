@@ -18,7 +18,7 @@ To facilitate pose estimation tasks, PeekingDuck offers the PoseNet model. The P
 
 The PoseNet node's input is an image stored as a three-dimensional NumPy array. For live or recorded videos, the input will be a single video frame per inference.
 
-The PoseNet node's outputs are the keypoints' coordinates, keypoint scores and keypoint connections. In addition, the PoseNet node also outputs the bounding boxes' coordinates of the detected human figures, which is determined by the coordinates of the outermost keypoints that are not masked. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
+The PoseNet node's outputs are the keypoints' coordinates, keypoint scores, keypoint connections and bounding boxes' coordinates. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
 
 | Name of output              | Dictionary key  |
 | --------------------------- | --------------- |
@@ -89,7 +89,7 @@ outputs['keypoint_conns'] = np.array([[[[0.37138409, 0.98567304], [0.55192859, 0
 
 #### Bounding boxes' coordinates - "bboxes"
 
-A _N_ by _4_ NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
+A _N_ by _4_ NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The coordinates for each bounding box is determined by the coordinates of the outermost keypoints that are not masked for each detected human figure. The four coordinates correspond to:
 
 - x1: top left x-coordinate
 - y1: top left y-coordinate
