@@ -62,13 +62,12 @@ class TestYolo:
         blank_image = cv2.imread(test_no_human_images)
         output = yolo.run({'img': blank_image})
         expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32),
-                           'bbox_labels': [],
-                           'bbox_scores': tf.zeros((0,))}
+                           'bbox_labels': np.empty((0)),
+                           'bbox_scores': np.empty((0), dtype=np.float32)}
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output['bboxes'], expected_output['bboxes'])
-        assert output['bbox_labels'] == expected_output['bbox_labels']
-        tf.debugging.assert_equal(output['bbox_scores'],
-                                  expected_output['bbox_scores'])
+        npt.assert_equal(output['bbox_labels'], expected_output['bbox_labels'])
+        npt.assert_equal(output['bbox_scores'], expected_output['bbox_scores'])        
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, yolo):
         test_img = cv2.imread(test_human_images)
