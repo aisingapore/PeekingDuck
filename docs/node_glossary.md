@@ -16,11 +16,11 @@ Reads data from a given input
 ### `model`
 Deep Learning models
 
-| Node Name               | Description                             |
-| ----------------------- | --------------------------------------- |
-| [`model.yolo`]()        | Fast Object Detection model             |
-| [`model.posenet`]()     | Fast Pose Estimation model              |
-| [`model.efficientdet`]()| Slower, accurate Object Detection Model |
+| Node Name                              | Description                             |
+| -------------------------------------- | --------------------------------------- |
+| [`model.yolo`](./models/yolo.md)       | Fast Object Detection model             |
+| [`model.posenet`](./models/posenet.md) | Fast Pose Estimation model              |
+| [`model.efficientdet`]()               | Slower, accurate Object Detection Model |
 
 
 ### `heuristic`
