@@ -18,36 +18,14 @@ To facilitate pose estimation tasks, PeekingDuck offers the PoseNet model. The P
 
 The PoseNet node's input is an image stored as a three-dimensional NumPy array. For live or recorded videos, the input will be a single video frame per inference.
 
-The PoseNet node's outputs are the bounding boxes' coordinates, the keypoints' coordinates, keypoint scores and keypoint connections of the detected human figures. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
+The PoseNet node's outputs are the keypoints' coordinates, keypoint scores and keypoint connections. In addition, the PoseNet node also outputs the bounding boxes' coordinates of the detected human figures, which is determined by the coordinates of the outermost keypoints that are not masked. These results are stored in a dictionary and can be accessed using the dictionary keys shown below. Detailed descriptions of the outputs are in the following sub-section.
 
 | Name of output              | Dictionary key  |
 | --------------------------- | --------------- |
-| Bounding boxes' coordinates | bboxes          |
 | Keypoints' coordinates      | keypoints       |
 | Keypoint scores             | keypoint_scores |
 | Keypoint connections        | keypoint_conns  |
-
-#### Bounding boxes' coordinates - "bboxes"
-
-A _N_ by _4_ NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
-
-- x1: top left x-coordinate
-- y1: top left y-coordinate
-- x2: bottom right x-coordinate
-- y2: bottom right y-coordinate
-
-The order of the bounding boxes' coordinates corresponds to the order of "keypoints", "keypoint_scores" and 'keypoint_conns'.
-
-```python
-outputs['bboxes'] = np.array([[x1, y1, x2, y2],
-                              [x1, y1, x2, y2],
-                               ...,
-                              [x1, y1, x2, y2]])
-
-# example
-
-outputs['bboxes'] = np.array([[0.30856234 0.12405036 0.8565467  1.]])
-```
+| Bounding boxes' coordinates | bboxes          |
 
 #### Keypoints' coordinates - "keypoints"
 
@@ -109,6 +87,28 @@ outputs['keypoint_conns'] = np.array([[[[0.37138409, 0.98567304], [0.55192859, 0
                                        [[0.4532299, 0.58970387], [0.50471611, 0.63052403]]]])
 ```
 
+#### Bounding boxes' coordinates - "bboxes"
+
+A _N_ by _4_ NumPy array, where N represents the number of detected bounding boxes and 4 represents the four coordinates of each bounding box. The four coordinates correspond to:
+
+- x1: top left x-coordinate
+- y1: top left y-coordinate
+- x2: bottom right x-coordinate
+- y2: bottom right y-coordinate
+
+The order of the bounding boxes' coordinates corresponds to the order of "keypoints", "keypoint_scores" and 'keypoint_conns'.
+
+```python
+outputs['bboxes'] = np.array([[x1, y1, x2, y2],
+                              [x1, y1, x2, y2],
+                               ...,
+                              [x1, y1, x2, y2]])
+
+# example
+
+outputs['bboxes'] = np.array([[0.30856234 0.12405036 0.8565467  1.]])
+```
+
 ## Configurable parameters
 
 The full list of configurable parameters for the PoseNet node are listed in [posenet.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/model/posenet.yml). To change the default parameters, follow the instructions to configure node behaviour in the [main readme](https://github.com/aimakerspace/PeekingDuck). Below is an example of how the PoseNet node is configured to load MobileNetv1-101 as the backbone architecture.
@@ -134,4 +134,4 @@ The table shown below is a list of commonly adjusted parameters for the PoseNet 
 
 ## Acknowledgements
 
-The model weights were obtained from [Google](https://github.com/tensorflow/tfjs-models/tree/master/posenet) and the inference code are referenced from the work of [Ross Wightman](https://github.com/rwightman/posenet-python).
+The model weights are obtained from [Google](https://github.com/tensorflow/tfjs-models/tree/master/posenet) and the inference code is referenced from the work of [Ross Wightman](https://github.com/rwightman/posenet-python).
