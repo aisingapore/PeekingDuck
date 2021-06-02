@@ -15,7 +15,7 @@ jobs:
         python-version: 3.7
     - name: Post to Discord
       run: |
-        pip install requests
+        pip install requests pytz
         bash ./scripts/trigger_standupbot.sh ${{ secrets.DISCORD_WEBHOOK }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
