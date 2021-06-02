@@ -119,8 +119,8 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |-|-|
 | Group Size Checking | Social Distancing |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/social_distancing.gif" width="100%"> |
-| Zone Counting | People Counting |
-|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| Zone Counting | Object Counting |
+|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
