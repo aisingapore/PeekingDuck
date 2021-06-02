@@ -1,16 +1,16 @@
-# Zone Analytics
+# Zone Counting
 
 ## Overview
 
-As computer vision continue to be popularised into the retail and security industry, AI Singapore developed a solution to create zones in image inputs such as CCTV footages that can be used to improve the insights gathered from the image. This can be used in many places, such as in malls or retail shops to understand footfall, or to ensure that human traffic does not exceed a certain number in some areas (like the swimming pool) during the COVID-19 measures.
+As part of COVID-19 measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we created a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control.
 
 <img src="../../images/readme/zone_counting.gif" width="100%">
 
-Zones are created by providing the point coordinates that form each zone. These are used in conjunction with object detection models upstream to create heuristics that provide specific zone analytics. As an example, we can count the number of people in each particular zone. This is explained in a [subsequent section](#how-it-works).
+Zone counting is done by looking at the count of objects detected by the object detection models that fall within the zones specified. As an example, we can count the number of people in the blue and green zones, as per our example above. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_count.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_social_distancing.yml>
@@ -18,77 +18,52 @@ To try our solution on your own computer with [PeekingDuck installed](https://gi
 
 ## How it Works
 
-There are two main components to obtain the distance between individuals: 1) human pose estimation using AI; and 2) depth and distance approximation using heuristics.
+The main component to obtain the count is the detection from the object detection model, which is the bbounding boxes.
 
-**1. Human Pose Estimation**
+**1. Object Detection**
 
-We use an open source human pose estimation model known as [PoseNet](https://arxiv.org/abs/1505.07427) to identify key human skeletal points. This allows the application to identify where individuals are located within the video feed. The coordinates of the various skeletal points will then be used to determine the distance between individuals.
+We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top left corner of the bounding box, and (x2, y2) is the bottom right. These are used to form the bounding box of each object detected.
 
-<img src="../../images/readme/posenet_demo.gif" width="70%">
+<img src="../../images/readme/yolo_demo.gif" width="70%">
 
-**2. Depth and Distance Approximation**
+**2. Object Counting**
 
-To measure the distance between individuals, we have to estimate the 3D world coordinates from the keypoints in 2D coordinates. To achieve this, we compute the depth (Z) from the XY coordinates using the relationship below:
-
-<img src="../../images/readme/distance_estimation.png" width="70%">
-
-
-Where:
-- Z = depth or distance of scene point from camera
-- f = focal length of camera
-- y = y position of image point
-- Y = y position of scene point
-
-
-Y<sub>1</sub> - Y<sub>2</sub> is a reference or “ground truth length” that is required to obtain the depth. After numerous experiments, it was decided that the optimal reference length would be the average height of a human torso (height from human hip to center of face). Width was not used as this value has high variance due to the different body angles of an individual while facing the camera.
-
-Once we have the 3D world coordinates of the individuals in the video, we can compare the distances between each pair of individuals and check if they are too close to each other.
+To count the number of objects detected, we simply take the sum of the number of bounding boxes detected for the object.
 
 ## Nodes Used
 
-These are the nodes used in the earlier demo (also in [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml)):
+These are the nodes used in the earlier demo (also in [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml)):
 ```
 nodes:
 - input.live
-- model.posenet
-- heuristic.keypoints_to_3d_loc:
-  - focal_length: 1.14
-  - torso_factor: 0.9
-- heuristic.check_nearby_objs:
-  - near_threshold: 1.5
-  - tag_msg: "TOO CLOSE!"
+- model.yolo:
+  - detect_ids: [0]
+- heuristic.bbox_to_btm_midpoint
+- heuristic.zone_count:
+  - zones: [
+    [[0, 0], [640, 0], [640, 720], [0, 720]],
+    [[640, 0], [1280, 0], [1280, 720], [640, 720]]]
 - draw.bbox
-- draw.poses
-- draw.tag
-- draw.fps
+- draw.btm_midpoint
+- draw.zones
+- draw.zone_count
 - output.screen
 ```
 
-**1. Pose Estimation Model**
+**1. Object Detection Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](node_glossary.md).
+By default, we are using the Yolov4-tiny model for object detection, set to detect people. Depending on the device you're using, you might want to switch to the more accurate Yolov4 model, or even the Effecientdet model that is include in our repo. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters). For more information on Efficientdet detection model in PeekingDuck, check out the [node glossary](node_glossary.md).
 
 
 **2. Adjusting Nodes**
 
-Some common node behaviours that you might need to adjust are:
-- `focal_length` & `torso_factor`: We calibrated these settings using a Logitech c170 webcam, with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup and calibrate these accordingly.
-- `tag_msg`: The message to show when individuals are too close.
-- `near_threshold`: The minimum acceptable distance between 2 individuals, in metres. For example, if the threshold is set at 1.5m, and 2 individuals are standing 2.0m apart, `tag_msg` doesn't show as they are standing further apart than the threshold. The larger this number, the stricter the social distancing.
+The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation]() for adjustable behaviours that can influence the result of the object counting node.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
 
-**3. Using Object Detection (Optional)**
+## More Complex Counting Behaviour
 
-It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `heuristic.keypoints_to_3d_loc` with `heuristic.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
+We have a more complex variant of object counting that is called zone counting which makes use of the zone count node. It allows for the creation of zones within a single image, and provides separate counts of the chosen objects detected for objects that fall inside the zones created.
 
-You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models, and we find that lightweight object detectors are generally better than lightweight pose estimation models in detecting humans. 
-
-The trade-off here is that the estimated distance between individuals will be less accurate. This is because for object detectors, the bounding box will be compared with the average height of a human, but the bounding box height decreases if the person is sitting down or bending over.
-
-## Using with Group Size Checker
-
-As part of COVID-19 measures, the Singapore Government has set restrictions on the group sizes of social gatherings. We've developed a [group size checker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that checks if the group size limit has been violated.
-
-The nodes for group size checker can be stacked with social distancing, to perform both at the same time. To find out which nodes are used, check out the [readme](./group_size_checking.md) for group size checker.
+For more informatio, check out the [readme](zoning.md#zone-counting) for zone counting.
 
