@@ -20,21 +20,21 @@ Once PeekingDuck has been installed, use `peekingduck init` to initialise a new 
 ```
 
 ### Folder Structure
-Your project folder should look like this:
+Your project folder should look like this at the end of the tutorial.
 
 ```bash
 .
 ├── src
 │   └── custom_nodes
-│       ├── output
+│       ├── <node_type>               # <node_type> = "output" in this tutorial
 │       │    ├── utils
-│       │    │   └── csv.py           # manually created
-│       │    └── csv_writer.py        # manually created
+│       │    │   └── csv.py           
+│       │    └── csv_writer.py        
 │       └── configs
-│            └─  <node_type>          # <node_type> is named "output" in this tutorial
-│                └── csv_writer.yml   # manually created
+│            └── <node_type>          # <node_type> = "output" in this tutorial
+│                └── csv_writer.yml   
 ├── run_config.yml
-├── results                           # manually created
+├── results                           
 ```
 
 - `src/custom_nodes` is where custom nodes created for the project should be housed.
