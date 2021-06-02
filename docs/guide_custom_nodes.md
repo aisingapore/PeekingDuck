@@ -16,7 +16,7 @@ Once PeekingDuck has been installed, use `peekingduck init` to initialise a new 
 > mkdir <project_name>
 > cd <project_name>
 > peekingduck init
-> mkdir output
+> mkdir results
 ```
 
 ### Folder Structure
@@ -26,21 +26,21 @@ Your project folder should look like this:
 .
 ├── src
 │   └── custom_nodes
-│       ├── __init__.py
 │       ├── output
 │       │    ├── utils
-│       │    │    └── csv.py          # manually created
+│       │    │   └── csv.py           # manually created
 │       │    └── csv_writer.py        # manually created
 │       └── configs
 │            └── output
-│                 └── csv_writer.yml  # manually created
+│                └── csv_writer.yml   # manually created
 ├── run_config.yml
-├── output                            # manually created
+├── results                           # manually created
 ```
 
 - `src/custom_nodes` is where custom nodes created for the project should be housed.
 - `run_config.yml` is the basic yml file to select nodes in the pipeline. You will be using this to run your peekingduck pipeline.
-- `
+
+NOTE: This tutorial excluded `__init__.py` from the above path for presentation purposes. If you are building your own custom package, remember to add `__init__.py` to all relevant folders. 
 
 ## Step 2: Populate Run Config
 
@@ -54,6 +54,7 @@ nodes:
 - model.yolo
 - heuristic.bbox_count
 - draw.bbox
+- draw.bbox_count
 - output.screen
 - custom_nodes.output.csv_writer
 ```
@@ -70,7 +71,7 @@ Create a custom node config under `src/custom_nodes/configs/output/csv_writer.ym
 input: ["count"]                         # inputs required by the node
 output: ["end"]                          # outputs of the node
 period: 1                                # time interval (s) between logs
-filepath: 'output/stats.csv'             # output file location
+filepath: 'results/stats.csv'            # output file location
 ```
 
 ### Explanation
@@ -192,7 +193,7 @@ By default, PeekingDuck assumes that your custom nodes are found in `src/custom_
 
 Ensure that the files are in the correct [folder structure](#folder-structure).
 
-NOTE: Create an `output` folder at the same level as `src`!
+NOTE: Create a `results` folder at the same level as `src`!
 
 ### Running the Module
 
@@ -200,7 +201,9 @@ Now the setup is complete and ready to run! Run the setup using the following co
 
 `peekingduck run --config_path=run_config.yml`
 
-If the setup is working, you should see an output screen being displayed. 
+If the setup is working, you should see an output screen being displayed. Terminate the program by clicking on the output screen and pressing `q`.
+
+After the program finishes running, open the file at `results/stats.csv` to view the stored information.
 
 **NOTE:**
 
