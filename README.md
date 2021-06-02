@@ -119,8 +119,8 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |-|-|
 | Group Size Checking | Social Distancing |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/social_distancing.gif" width="100%"> |
-| Zone Counting | People Counting |
-|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| Zone Counting | Object Counting |
+|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
@@ -135,6 +135,15 @@ We've designed PeekingDuck to be very flexible - you can create your own nodes a
 
 This project is supported by the National Research Foundation, Singapore under its AI Singapore Programme (AISG-RP-2019-050). Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
 
+## License
 
+PeekingDuck is under the open source [Apache License 2.0](LICENSE) (:
+
+Even so, your organisation may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
+- Your organisation is using PeekingDuck in a jurisdiction that does not recognise this license
+- Your legal department requires a license to be purchased
+- Your organisation wants to hold a tangible legal document as evidence of the legal right to use and distribute PeekingDuck
+
+[Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 
