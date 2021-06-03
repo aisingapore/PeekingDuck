@@ -6,7 +6,7 @@ This document and the nodes available will be constantly updated; for now, these
 
 
 ### `input`
-Reads data from a given input. More details can be found [here](./io_draw_nodes.md#input-nodes)
+Reads data from a given input. More details can be found [here](./io_draw_nodes.md#input-nodes).
 | <img width=326 /> | <img width=654 />                             |
 | ----------------- | --------------------------------------------- |
 |  `input.live`     | Reads a videofeed from a stream (e.g. webcam) |
@@ -24,7 +24,7 @@ Deep Learning models
 
 
 ### `output`
-Writes/displays the outputs of the pipeline. More details can be found [here](./io_draw_nodes.md#output-nodes)
+Writes/displays the outputs of the pipeline. More details can be found [here](./io_draw_nodes.md#output-nodes).
 
 | <img width=326 />     | <img width=654 />                    |
 | --------------------- | ------------------------------------ |
@@ -33,7 +33,7 @@ Writes/displays the outputs of the pipeline. More details can be found [here](./
 
 
 ### `draw`
-Draws results/outputs to an image. More details on `draw.bbox`, `draw.poses` and `draw.fps` can be found [here](./io_draw_nodes.md#draw-nodes)
+Draws results/outputs to an image. More details on `draw.bbox`, `draw.poses` and `draw.fps` can be found [here](./io_draw_nodes.md#draw-nodes).
 
 | <img width=326 />          | <img width=654 />                                 |
 | -------------------------- | ------------------------------------------------- |
