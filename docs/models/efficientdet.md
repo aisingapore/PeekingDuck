@@ -1,10 +1,8 @@
 # EfficientDet Node
 
-See also [YOLO](https://github.com/aimakerspace/PeekingDuck/blob/docs/models/yolo.md) for alternative object detection node.
-
 ## Overview
 
-To facilitate object detection tasks, PeekingDuck offers the EfficientDet node. The EfficientDet model was developed by [Mingxing Tan _et al._](https://arxiv.org/pdf/1911.09070.pdf). The model was trained using the MS COCO (Microsoft Common Objects in Context) dataset and is capable of detecting objects from [80 categories](#Class-IDs-and-names). EfficientDet node has five levels of compound coefficient (0 - 5). A higher compound coefficient will scale up all dimensions of the backbone network width, depth, and input resolution, which results in better performance and slower inference time. The default compound coefficient is _0_ and can be changed to other values, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
+To facilitate object detection tasks, PeekingDuck offers the EfficientDet node. The EfficientDet model was developed by [Mingxing Tan _et al._](https://arxiv.org/pdf/1911.09070.pdf). The model was trained using the MS COCO (Microsoft Common Objects in Context) dataset and is capable of detecting objects from [80 categories](#Class-IDs-and-names). EfficientDet node has five levels of compound coefficient (0 - 5). A higher compound coefficient will scale up all dimensions of the backbone network width, depth, and input resolution, which results in better performance but slower inference time. The default compound coefficient is _0_ and can be changed to other values, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
 
 ### Input and outputs
 
@@ -114,3 +112,7 @@ The table shown below is a list of commonly adjusted parameters for the Efficien
 ## Acknowledgements
 
 The model weights and inference code are adapted from the work of [xuannianz](https://github.com/xuannianz/EfficientDet).
+
+## See also
+
+[YOLO](https://github.com/aimakerspace/PeekingDuck/blob/docs/models/yolo.md) for alternative object detection node.

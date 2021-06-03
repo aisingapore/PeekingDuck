@@ -1,7 +1,5 @@
 # YOLO Node
 
-See also [EfficientDet](https://github.com/aimakerspace/PeekingDuck/blob/dev/docs/models/efficientdet.md) for alternative object detection node.
-
 ## Overview
 
 To facilitate object detection tasks, PeekingDuck offers a family of “You Only Look Once,” or YOLO models consisting of YOLOv4 and YOLOv4-tiny. The YOLOv4 was developed by [Bochkovskiy _et al._](https://arxiv.org/pdf/2004.10934.pdf), while the YOLOv4-tiny was developed by [Jiang _et al._](https://arxiv.org/pdf/2011.04244.pdf). Both models were trained using the MS COCO (Microsoft Common Objects in Context) dataset and are capable of detecting objects from [80 categories](#Class-IDs-and-names). The YOLO node uses the YOLOv4-tiny by default and can be changed to using YOLOv4, with other configurable options, by following the steps illustrated [here](#Configurable-parameters).
@@ -117,3 +115,7 @@ The table shown below is a list of commonly adjusted parameters for the YOLO nod
 ## Acknowledgements
 
 The model weights are trained by [Việt Hùng](https://github.com/hunglc007/tensorflow-yolov4-tflite) and some of the inference code are adapted from the work of [Zihao Zhang](https://github.com/zzh8829/yolov3-tf2).
+
+## See also
+
+[EfficientDet](https://github.com/aimakerspace/PeekingDuck/blob/dev/docs/models/efficientdet.md) for alternative object detection node.
