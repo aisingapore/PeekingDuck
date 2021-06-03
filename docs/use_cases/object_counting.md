@@ -2,7 +2,7 @@
 
 ## Overview
 
-One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, check out [zoning](zoning.md#zone-counting).
+One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, check out [zone counting](zone_counting.md#zone-counting).
 
 <img src="../../images/readme/object_counting.gif" width="100%">
 
@@ -59,10 +59,10 @@ The object counting node is called by including `heuristic.bbox_count` in the ru
 
 The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation](../models/efficientdet.md) for adjustable behaviours that can influence the result of the object counting node.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
 
 ## More Complex Counting Behaviour
 
 We have a more complex variant of object counting that is called zone counting which makes use of the zone count node. It allows for the creation of zones within a single image, and provides separate counts of the chosen objects detected for objects that fall inside the zones created.
 
-For more information, check out the [readme](zoning.md#zone-counting) for zone counting.
+For more information, check out the [readme](zone_counting.md#zone-counting) for zone counting.

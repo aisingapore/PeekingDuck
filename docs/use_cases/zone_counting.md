@@ -84,7 +84,7 @@ nodes:
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo. More information on the object detection node can be found in the [node glossary](node_glossary.md).
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo. More information on the object detection node can be found in the [node glossary](../node_glossary.md).
 
 **2. Bottom Midpoint Node**
 
@@ -102,4 +102,4 @@ With regards to the zone counting node, some common node behaviours for the zone
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.
 - `zones`: Used to specify the different zones which you would like to set. Each zone coordinates should be set clock-wise in a list. See section on [nodes used](#nodes-used) on how to properly configure multiple zones.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).

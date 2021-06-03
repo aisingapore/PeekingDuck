@@ -69,7 +69,7 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](node_glossary.md).
+By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](../node_glossary.md).
 
 
 **2. Adjusting Nodes**
@@ -79,7 +79,7 @@ Some common node behaviours that you might need to adjust are:
 - `obj_dist_thres`: The maximum distance between 2 individuals, in metres, before they are considered to be part of a group. 
 - `group_size_thres`: The acceptable group size limit.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
 
 **3. Using Object Detection (Optional)**
 

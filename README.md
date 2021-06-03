@@ -49,6 +49,8 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
     > peekingduck run --config_path <path_to_config>
     ```
 
+    Terminate the program by clicking on the output screen and pressing `q`.
+
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
 ## How PeekingDuck Works
@@ -92,6 +94,8 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
     <img src="images/readme/posenet_demo.gif" width="50%">
 
+    Terminate the program by clicking on the output screen and pressing `q`.
+
 **2. Configuring node behaviour**:
 - If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it. 
 
@@ -117,9 +121,9 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 | | |
 |-|-|
-| Social Distancing | Zone Counting |
+| [Social Distancing](docs/use_cases/social_distancing.md) | [Zone Counting](docs/use_cases/zone_counting.md) |
 |<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
-| Group Size Checking | Object Counting |
+| [Group Size Checking]((docs/use_cases/group_size_checking.md)) | [Object Counting](docs/use_cases/object_counting.md) |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 

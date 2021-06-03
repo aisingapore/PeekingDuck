@@ -115,4 +115,4 @@ The model weights and inference code are adapted from the work of [xuannianz](ht
 
 ## See also
 
-[YOLO](https://github.com/aimakerspace/PeekingDuck/blob/docs/models/yolo.md) for alternative object detection node.
+[YOLO](https://github.com/aimakerspace/PeekingDuck/blob/dev/docs/models/yolo.md) for alternative object detection node.
