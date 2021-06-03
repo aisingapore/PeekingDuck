@@ -34,17 +34,27 @@ We can also use the [EfficientDet model](../models/efficientdet.md) as a more ac
 **2. Bounding Box to Bottom Midpoint**
 
 Given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bounding box, can derive the bottom midpoint of each bounding box. This is done by taking the 
-the lowest y coordinate (y2), and the midpoint of the x coordinates (x1 - x2 / 2). This forms our bottom midpoint. We found that using the bottom midpoint is the most efficient way of telling whether something is in the zone specified, as from the usual top-down or angled camera footages of the use cases, the bottom midpoint of the bounding boxes usually corresponds to the point at which the object is located.
+the lowest y-coordinate (y2), and the midpoint of the x-coordinates (x1 - x2 / 2). This forms our bottom midpoint. We found that using the bottom midpoint is the most efficient way of telling whether something is in the zone specified, as from the usual top-down or angled camera footages of the use cases, the bottom midpoint of the bounding boxes usually corresponds to the point at which the object is located.
 
 **3. Zones**
 
-Zones are created by specifying the (x, y) coordinates of all the corner points that form the area of the zone. These points **must be set clockwise**. As an example, blue zone in the [zone counting gif](#overview) was created but using the following zone:
+Zones are created by specifying the (x, y) coordinates of all the corner points that form the area of the zone, either 1) in fractions of the resolution, or 2) in pixel coordinates. These points **must be set clockwise**. As an example, blue zone in the [zone counting gif](#overview) was created but using the following zone:
 
-`[[0, 0], [0, 640], [640, 720], [0, 720]]`
+`[[0, 0], [0.6, 0], [0.6, 1], [0, 1]]`
 
-Given a resolution of 1280 by 720, these correspond to the top-left of the image, the top-middle of the frame, bottom-middle of the image, and the bottom-left of the image, points in a clockwise direction that form the rectangular blue zone. Zones do not have to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of the (x, y) coordinates set in a zone.
+<img src="../../images/readme/coordinates_explanation.png" width="100%">
 
-Note that zones can also be created by configuring the resolution parameter in the zone counting configuration, then using fractions of the resolutions for the (x, y) coordinates. Elaboration for this adjustment can be found the section below for adjusting nodes.
+Given a resolution of 1280 by 720, these correspond to the top-left of the image, 60% of the length at the top of the image, 60% of the length at the bottom of the image, and the bottom-left of the image. These points in a clockwise direction that form the rectangular blue zone. Zones do not have to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of the (x, y) coordinates set in a zone.
+
+Note that resolution parameter needs to be configured the resolution parameter to that of the image input before using fractions for the (x, y) coordinates. 
+
+For finer control over the exact coordinates, the pixelwise coordinates can be used instead. Using the example, the blue zone would be created using the following zone configuration:
+
+`[[0, 0], [768, 0], [768, 720], [0, 720]]`
+
+When using pixelwise coordinates, the resolution is not needed. However, user should check to ensure that the pixel coordinates given fall within the image resolution so that the zone will work as intended.
+
+Elaboration for this adjustment can be found the section below for adjusting nodes.
 
 **4. Zone Counts**
 
@@ -60,9 +70,10 @@ nodes:
   - detect_ids: [0]
 - heuristic.bbox_to_btm_midpoint
 - heuristic.zone_count:
+  - resolution: [1280, 720]
   - zones: [
-    [[0, 0], [640, 0], [640, 720], [0, 720]],
-    [[640, 0], [1280, 0], [1280, 720], [640, 720]]
+    [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
+    [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
 - draw.bbox
 - draw.btm_midpoint
