@@ -1,4 +1,6 @@
 name: Publish to pypi
+env:
+  VERSION: ${{github.event.release.tag_name}}
 on:
   workflow_dispatch:
   release:
@@ -7,8 +9,6 @@ on:
 jobs:
   build-publish-test:
     name: Build PeekingDuck on Test PyPI
-    env:
-      VERSION: ${{github.event.release.tag_name}}
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
