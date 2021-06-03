@@ -1,6 +1,6 @@
 # Node Glossary
 
-This is a glossary of all the nodes currently available in PeekingDuck. To learn more the parameters and the nodes, click on the link to read the docs.
+This is a glossary of all the nodes currently available in PeekingDuck. To learn more about the parameters and the nodes, click on the link to read the docs.
 
 
 
