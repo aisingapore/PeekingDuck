@@ -1,5 +1,5 @@
 # Input and Output Nodes
-For all Input and Output nodes, there is little users can do about its inputs and outputs. We recommend users to only change the parameters
+Note: Users should not be editing the inputs and outputs of these nodes. We recommend users to only change the parameters as required.
 
 
 ## `input` nodes
