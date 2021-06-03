@@ -2,7 +2,7 @@
 
 ## Overview
 
-As part of COVID-19 measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
+As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
 <img src="../../images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
 
@@ -25,7 +25,9 @@ There are three main components to obtain the zone counts:
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected.
+We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters).
+
+We can also use the [EfficientDet model](../models/efficientdet.md) as a more accurate but slower alternative.
 
 <img src="../../images/readme/yolo_demo.gif" width="70%">
 
@@ -69,17 +71,21 @@ nodes:
 - output.screen
 ```
 
-**1. Object Detection Model**
+**1. Object Detection Node**
 
-By default, we are using the Yolov4-tiny model for object detection, set to detect people. Depending on the device you're using, you might want to switch to the more accurate Yolov4 model, or even the Effecientdet model that is include in our repo. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters). For more information on Efficientdet detection model in PeekingDuck, check out the [node glossary](node_glossary.md).
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo. More information on the object detection node can be found in the [node glossary](node_glossary.md).
 
 **2. Bottom Midpoint Node**
 
 The bottom midpoint node is called by including `heuristic.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
 
-**3. Adjusting Nodes**
+**3. Zone Counting Node**
 
-The zone counting detections depend on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation]() for adjustable behaviours that can influence the result of the zone counting node.
+The zone counting node is called by including `heuristic.zone_count` in the run config declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of object counts in each specified zone. The node configurable parameters can be found below.
+
+**4. Adjusting Nodes**
+
+The zone counting detections depend on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation](../models/efficientdet.md) for adjustable behaviours that can influence the result of the zone counting node.
 
 With regards to the zone counting node, some common node behaviours for the zone counting node that you might need to adjust are:
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.

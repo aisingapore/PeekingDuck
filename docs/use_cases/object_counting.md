@@ -18,11 +18,13 @@ To try our solution on your own computer with [PeekingDuck installed](https://gi
 
 ## How it Works
 
-The main component to obtain the count is the detection from the object detection model, which is the bbounding boxes.
+The main component to obtain the count is the detection from the object detection model, which is the bounding boxes.
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top left corner of the bounding box, and (x2, y2) is the bottom right. These are used to form the bounding box of each object detected.
+We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters).
+
+We can also use the [EfficientDet model](../models/efficientdet.md) as a more accurate but slower alternative.
 
 <img src="../../images/readme/yolo_demo.gif" width="70%">
 
@@ -45,14 +47,17 @@ nodes:
 - output.screen
 ```
 
-**1. Object Detection Model**
+**1. Object Detection Node**
 
-By default, we are using the Yolov4-tiny model for object detection, set to detect people. Depending on the device you're using, you might want to switch to the more accurate Yolov4 model, or even the Effecientdet model that is include in our repo. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters). For more information on Efficientdet detection model in PeekingDuck, check out the [node glossary](node_glossary.md).
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo. More information on the object detection node can be found in the [node glossary](node_glossary.md).
 
+**2. Object Counting Node**
 
-**2. Adjusting Nodes**
+The object counting node is called by including `heuristic.bbox_count` in the run config declaration. This takes the detected bounding boxes and outputs the total count of bounding boxes. The node has no configurable parameters.
 
-The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation]() for adjustable behaviours that can influence the result of the object counting node.
+**3. Adjusting Nodes**
+
+The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation](../models/efficientdet.md) for adjustable behaviours that can influence the result of the object counting node.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](node_glossary.md).
 
