@@ -88,26 +88,26 @@ The table shown below is a list of commonly adjusted parameters for the Efficien
 
 | Class ID | Class name    | Class ID | Class name     | Class ID | Class name   | Class ID | Class name   |
 | -------- | ------------- | -------- | -------------- | -------- | ------------ | -------- | ------------ |
-| 0        | person        | 20       | elephant       | 40       | wine glass   | 60       | dining table |
-| 1        | bicycle       | 21       | bear           | 41       | cup          | 61       | toilet       |
-| 2        | car           | 22       | zebra          | 42       | fork         | 62       | tv           |
-| 3        | motorcycle    | 23       | giraffe        | 43       | knife        | 63       | laptop       |
-| 4        | aeroplane     | 24       | backpack       | 44       | spoon        | 64       | mouse        |
-| 5        | bus           | 25       | umbrella       | 45       | bowl         | 65       | remote       |
-| 6        | train         | 26       | handbag        | 46       | banana       | 66       | keyboard     |
-| 7        | truck         | 27       | tie            | 47       | apple        | 67       | cell phone   |
-| 8        | boat          | 28       | suitcase       | 48       | sandwich     | 68       | microwave    |
-| 9        | traffic light | 29       | frisbee        | 49       | orange       | 69       | oven         |
-| 10       | fire hydrant  | 30       | skis           | 50       | broccoli     | 70       | toaster      |
-| 11       | stop sign     | 31       | snowboard      | 51       | carrot       | 71       | sink         |
-| 12       | parking meter | 32       | sports ball    | 52       | hot dog      | 72       | refrigerator |
-| 13       | bench         | 33       | kite           | 53       | pizza        | 73       | book         |
-| 14       | bird          | 34       | baseball bat   | 54       | donut        | 74       | clock        |
-| 15       | cat           | 35       | baseball glove | 55       | cake         | 75       | vase         |
-| 16       | dog           | 36       | skateboard     | 56       | chair        | 76       | scissors     |
-| 17       | horse         | 37       | surfboard      | 57       | couch        | 77       | teddy bear   |
-| 18       | sheep         | 38       | tennis racket  | 58       | potted plant | 78       | hair drier   |
-| 19       | cow           | 39       | bottle         | 59       | bed          | 79       | toothbrush   |
+| 0        | person        | 21       | elephant       | 45       | wine glass   | 66       | dining table |
+| 1        | bicycle       | 22       | bear           | 46       | cup          | 69       | toilet       |
+| 2        | car           | 23       | zebra          | 47       | fork         | 71       | tv           |
+| 3        | motorcycle    | 24       | giraffe        | 48       | knife        | 72       | laptop       |
+| 4        | aeroplane     | 26       | backpack       | 49       | spoon        | 73       | mouse        |
+| 5        | bus           | 27       | umbrella       | 50       | bowl         | 74       | remote       |
+| 6        | train         | 30       | handbag        | 51       | banana       | 75       | keyboard     |
+| 7        | truck         | 31       | tie            | 52       | apple        | 76       | cell phone   |
+| 8        | boat          | 32       | suitcase       | 53       | sandwich     | 77       | microwave    |
+| 9        | traffic light | 33       | frisbee        | 54       | orange       | 78       | oven         |
+| 10       | fire hydrant  | 34       | skis           | 55       | broccoli     | 79       | toaster      |
+| 12       | stop sign     | 35       | snowboard      | 56       | carrot       | 80       | sink         |
+| 13       | parking meter | 36       | sports ball    | 57       | hot dog      | 81       | refrigerator |
+| 14       | bench         | 37       | kite           | 58       | pizza        | 83       | book         |
+| 15       | bird          | 38       | baseball bat   | 59       | donut        | 84       | clock        |
+| 16       | cat           | 39       | baseball glove | 60       | cake         | 85       | vase         |
+| 17       | dog           | 40       | skateboard     | 61       | chair        | 86       | scissors     |
+| 18       | horse         | 41       | surfboard      | 62       | couch        | 87       | teddy bear   |
+| 19       | sheep         | 42       | tennis racket  | 63       | potted plant | 88       | hair drier   |
+| 20       | cow           | 43       | bottle         | 64       | bed          | 89       | toothbrush   |
 
 ## Acknowledgements
 
