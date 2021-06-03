@@ -7,10 +7,10 @@ This is a glossary of all the nodes currently available in PeekingDuck. To learn
 ### `input`
 Reads data from a given input
 
-| Node Name           | Description                                   |
-| ------------------- | --------------------------------------------- |
-| [`input.live`]()    | Reads a videofeed from a stream (e.g. webcam) |
-| [`input.recorded`]()| Reads a video/image from a file               |
+| Node Name <img width=326 /> | Description <img width=654 />                   |
+| --------------------------- | ----------------------------------------------- |
+| [`input.live`]()            | Reads a videofeed from a stream (e.g. webcam)   |
+| [`input.recorded`]()        | Reads a video/image from a file                 |
 
 
 ### `model`
