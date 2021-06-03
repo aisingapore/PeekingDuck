@@ -7,7 +7,7 @@ This is a glossary of all the nodes currently available in PeekingDuck. To learn
 ### `input`
 Reads data from a given input
 
-| Node Name <img width=326 /> | Description <img width=654 />                   |
+| <img width=326 />           | <img width=654 />                               |
 | --------------------------- | ----------------------------------------------- |
 | [`input.live`]()            | Reads a videofeed from a stream (e.g. webcam)   |
 | [`input.recorded`]()        | Reads a video/image from a file                 |
@@ -16,7 +16,7 @@ Reads data from a given input
 ### `model`
 Deep Learning models
 
-| Node Name                              | Description                             |
+| <img width=326 />                      | <img width=654 />                       |
 | -------------------------------------- | --------------------------------------- |
 | [`model.yolo`](./models/yolo.md)       | Fast Object Detection model             |
 | [`model.posenet`](./models/posenet.md) | Fast Pose Estimation model              |
@@ -26,7 +26,7 @@ Deep Learning models
 ### `heuristic`
 Algorithms that performs calculations/heuristics on the outputs of `model`
 
-| Node Name                            | Description                                                       |
+| <img width=326 />                    | <img width=654 />                                                 |
 | ------------------------------------ | ----------------------------------------------------------------- |
 | [`heuristic.bbox_count`]()           | Counts the number of detected boxes                               |
 | [`heuristic.bbox_to_3d_loc`]()       | Estimates the 3D coordinates of an object given a 2D boundingbox  |
@@ -42,7 +42,7 @@ Algorithms that performs calculations/heuristics on the outputs of `model`
 ### `output`
 Writes/displays the outputs of the pipeline
 
-| Node Name                 | Description                          |
+| <img width=326 />         | <img width=654 />                    |
 | ------------------------- | ------------------------------------ |
 | [`output.media_writer`]() | Write the output image/video to file |
 | [`output.screen`]()       | Display the outputs on your display  |
@@ -52,7 +52,7 @@ Writes/displays the outputs of the pipeline
 ### `draw`
 Draws results/outputs to an image
 
-| Node Name                     | Description                                       |
+| <img width=326 />             | <img width=654 />                                 |
 | ----------------------------- | ------------------------------------------------- |
 | [`draw.bbox`]()               | Draw bounding boxes over detected object          |
 | [`draw.bbox_count`]()         | Displays the counts of detected objects           |
