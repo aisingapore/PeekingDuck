@@ -13,7 +13,7 @@ graph_files:
         3: ../weights/efficientdet/efficientdet-d3.pb,
         4: ../weights/efficientdet/efficientdet-d4.pb,
     }
-size: [512, 640, 768, 896, 1024, 1280, 1408]
+size: [512, 640, 768, 896, 1024]
 num_classes: 90
 score_threshold: 0.3
 detect_ids: [0]
