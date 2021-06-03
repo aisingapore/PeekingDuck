@@ -16,5 +16,5 @@ Input nodes reads from a data source and pushes it down a PeekingDuck pipeline
 Output nodes takes outputs from a PeekingDuck pipeline to write or display it.
 | Node name | Inputs | Outputs | Parameters |
 | - | - | - | - |
-|`output.media_writer` | img: a numpy array of pixel values, shape (width, height, 3) <br /> filename: filename of source <br /> fps: fps of source video | output_dir: output directory for files to be written locally |
-|`output.media_writer` | img: a numpy array of pixel values, shape (width, height, 3) |
+|`output.media_writer` | img: a numpy array of pixel values, shape (width, height, 3) <br /> filename: filename of source <br /> fps: fps of source video | end: placeholder to indicate end of the pipeline | output_dir: output directory for files to be written locally |
+|`output.media_writer` | img: a numpy array of pixel values, shape (width, height, 3) | end: placeholder to indicate end of the pipeline |
