@@ -1,4 +1,6 @@
 name: Publish to pypi
+env:
+  VERSION: ${{github.event.release.tag_name}}
 on:
   workflow_dispatch:
   release:
@@ -7,8 +9,6 @@ on:
 jobs:
   build-publish-test:
     name: Build PeekingDuck on Test PyPI
-    env:
-      VERSION: ${{github.event.release.tag_name}}
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -32,7 +32,7 @@ jobs:
         repository_url: https://test.pypi.org/legacy/
     - name: Test installation from Test PyPI
       run: |
-        sleep 30
+        sleep 300
         pip install click pyyaml
         pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
         peekingduck
