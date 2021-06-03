@@ -32,7 +32,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts all detected objects that falls within any specified zone,
-        and return the total object count in each zone. 
+        and return the total object count in each zone.
 
         Args:
             inputs (dict): Dict with keys "btm_midpoints".
