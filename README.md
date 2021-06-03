@@ -109,7 +109,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
   <img src="images/readme/posenet_running.gif" width="50%">
 
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](node_glossary.md).
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](docs/node_glossary.md).
 
 ## Explore PeekingDuck Nodes
 
@@ -123,7 +123,7 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
-We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/node_glossary.md).
 
 ## Create Custom Nodes
 
