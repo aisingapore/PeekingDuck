@@ -9,7 +9,7 @@ This document and the nodes available will be constantly updated; for now, these
 Reads data from a given input. More details can be found [here](./io_nodes.md#input-nodes)
 |                             |                                                 |
 | --------------------------- | ----------------------------------------------- |
-| <div style="width:326px">`input.live`</div> | <div style="width:654px">Reads a videofeed from a stream (e.g. webcam)</div>|
+| <span style="display: inline-block; width:326px">`input.live`</span> | <span style="display: inline-block; width:654px">Reads a videofeed from a stream (e.g. webcam)</span>|
 |  `input.recorded`                           | Reads video/images from a directory                                             |
 
 
@@ -18,7 +18,7 @@ Deep Learning models
 
 |                                        |                                         |
 | -------------------------------------- | --------------------------------------- |
-| <div style="width:326px">[`model.yolo`](./models/yolo.md)</div> | <div style="width:654px">Fast Object Detection model</div> |
+| <span style="display: inline-block; width:326px">[`model.yolo`](./models/yolo.md)</span> | <span style="display: inline-block; width:654px">Fast Object Detection model</span> |
 | [`model.posenet`](./models/posenet.md) | Fast Pose Estimation model              |
 |  `model.efficientdet`                  | Slower, accurate Object Detection Model |
 
@@ -28,7 +28,7 @@ Writes/displays the outputs of the pipeline. More details can be found [here](./
 
 |                           |                                      |
 | ------------------------- | ------------------------------------ |
-|  <div style="width:326px">`output.media_writer`</div>    | <div style="width:654px">Write the output image/video to file</div> |
+|  <span style="display: inline-block; width:326px">`output.media_writer`</span>    | <span style="display: inline-block; width:654px">Write the output image/video to file</span> |
 |  `output.screen`          | Show the outputs on your display  |
 
 
@@ -37,7 +37,7 @@ Draws results/outputs to an image
 
 |                               |                                                   |
 | ----------------------------- | ------------------------------------------------- |
-| <div style="width:326px">`draw.bbox`</div>                  | <div style="width:654px">Draw bounding boxes over detected object</div>     |
+| <span style="display: inline-block; width:326px">`draw.bbox`</span>                  | <span style="display: inline-block; width:654px">Draw bounding boxes over detected object</span>     |
 |  `draw.bbox_count`            | Displays the counts of detected objects           |
 |  `draw.fps`                   | Displays the FPS of video                         |
 |  `draw.group_bbox_and_tag`    | Draws detected groups and their tags              |
@@ -53,7 +53,7 @@ Algorithms that performs calculations/heuristics on the outputs of `model`
 
 |                                      |                                                                   |
 | ------------------------------------ | ----------------------------------------------------------------- |
-| <div style="width:326px">`heuristic.bbox_count`</div>          | <div style="width:654px">Counts the number of detected boxes </div> |
+| <span style="display: inline-block; width:326px">`heuristic.bbox_count`</span>          | <span style="display: inline-block; width:654px">Counts the number of detected boxes </span> |
 |  `heuristic.bbox_to_3d_loc`          | Estimates the 3D coordinates of an object given a 2D boundingbox  |
 |  `heuristic.bbox_to_btm_midpoint`    | Converts bounding boxes to a single point of reference            |
 |  `heuristic.check_large_groups`      | Check if number of objects in a group exceed a threshold          |
