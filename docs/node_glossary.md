@@ -7,18 +7,18 @@ This document and the nodes available will be constantly updated; for now, these
 
 ### `input`
 Reads data from a given input. More details can be found [here](./io_nodes.md#input-nodes)
-|                             |                                                 |
+| <div style="width:326px"></div>                     | <div style="width:654px"></div>                       |
 | --------------------------- | ----------------------------------------------- |
-| <span style="display: inline-block; width:326px">`input.live`</span> | <span style="display: inline-block; width:654px">Reads a videofeed from a stream (e.g. webcam)</span>|
+|  `input.live`   |  Reads a videofeed from a stream (e.g. webcam)  |
 |  `input.recorded`                           | Reads video/images from a directory                                             |
 
 
 ### `model`
 Deep Learning models
 
-|                                        |                                         |
+| <img width=326 />                      | <img width=654 />                       |
 | -------------------------------------- | --------------------------------------- |
-| <span style="display: inline-block; width:326px">[`model.yolo`](./models/yolo.md)</span> | <span style="display: inline-block; width:654px">Fast Object Detection model</span> |
+|  [`model.yolo`](./models/yolo.md)   |  Fast Object Detection model   |
 | [`model.posenet`](./models/posenet.md) | Fast Pose Estimation model              |
 |  `model.efficientdet`                  | Slower, accurate Object Detection Model |
 
@@ -26,18 +26,18 @@ Deep Learning models
 ### `output`
 Writes/displays the outputs of the pipeline. More details can be found [here](./io_nodes.md#output-nodes)
 
-|                           |                                      |
+| <img width=326 />                      | <img width=654 />                       |
 | ------------------------- | ------------------------------------ |
-|  <span style="display: inline-block; width:326px">`output.media_writer`</span>    | <span style="display: inline-block; width:654px">Write the output image/video to file</span> |
+|   `output.media_writer`      |  Write the output image/video to file   |
 |  `output.screen`          | Show the outputs on your display  |
 
 
 ### `draw`
 Draws results/outputs to an image
 
-|                               |                                                   |
+| <img width=326 />                      | <img width=654 />                       |
 | ----------------------------- | ------------------------------------------------- |
-| <span style="display: inline-block; width:326px">`draw.bbox`</span>                  | <span style="display: inline-block; width:654px">Draw bounding boxes over detected object</span>     |
+|  `draw.bbox`                    |  Draw bounding boxes over detected object       |
 |  `draw.bbox_count`            | Displays the counts of detected objects           |
 |  `draw.fps`                   | Displays the FPS of video                         |
 |  `draw.group_bbox_and_tag`    | Draws detected groups and their tags              |
@@ -51,9 +51,9 @@ Draws results/outputs to an image
 ### `heuristic`
 Algorithms that performs calculations/heuristics on the outputs of `model`
 
-|                                      |                                                                   |
+| <img width=326 />                      | <img width=654 />                       |
 | ------------------------------------ | ----------------------------------------------------------------- |
-| <span style="display: inline-block; width:326px">`heuristic.bbox_count`</span>          | <span style="display: inline-block; width:654px">Counts the number of detected boxes </span> |
+|  `heuristic.bbox_count`            |  Counts the number of detected boxes    |
 |  `heuristic.bbox_to_3d_loc`          | Estimates the 3D coordinates of an object given a 2D boundingbox  |
 |  `heuristic.bbox_to_btm_midpoint`    | Converts bounding boxes to a single point of reference            |
 |  `heuristic.check_large_groups`      | Check if number of objects in a group exceed a threshold          |
