@@ -13,7 +13,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-from __future__ import annotations
 from typing import Dict, List, Any
 from peekingduck.pipeline.nodes.heuristic.zoningv1.zone import Zone
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -53,7 +52,7 @@ class Node(AbstractNode):
         return {"zones": [zone.get_all_points_of_area() for zone in self.zones],
                 "zone_count": zone_counts}
 
-    def _create_zone(self, zone: List[Any], resolution: List[int]) -> Zone:
+    def _create_zone(self, zone: List[Any], resolution: List[int]) -> Any:
         """creates the appropriate Zone given either the absolute pixel values or
         % of resolution as a fraction between [0, 1]"""
         created_zone = None
