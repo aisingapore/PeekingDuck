@@ -13,14 +13,14 @@ Zone counting is done by looking at the counts of objects detected by the object
 To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [zone_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml) and run PeekingDuck.
 
 ```
-> peekingduck run --config_path <path_to_social_distancing.yml>
+> peekingduck run --config_path <path_to_zone_counting.yml>
 ```
 
 ## How it Works
 
 There are three main components to obtain the zone counts: 
-1. The detection from the object detection model, which is the bbounding boxes.
-1. The bottom midpoint of the bbounding boxes, deprived from the bounding boxes.
+1. The detection from the object detection model, which is the bounding boxes.
+1. The bottom midpoint of the bounding boxes, derived from the bounding boxes.
 1. The zones, which can be set in the zone count heuristic configurable parameters.
 
 **1. Object Detection**
@@ -31,7 +31,7 @@ We use an open source object detection estimation model known as [Yolov4](https:
 
 **2. Bounding Box to Bottom Midpoint**
 
-given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bbounding box, can derive the bottom midpoint of each bbounding box. This is done by taking the 
+Given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bounding box, can derive the bottom midpoint of each bounding box. This is done by taking the 
 the lowest y coordinate (y2), and the midpoint of the x coordinates (x1 - x2 / 2). This forms our bottom midpoint. We found that using the bottom midpoint is the most efficient way of telling whether something is in the zone specified, as from the usual top-down or angled camera footages of the use cases, the bottom midpoint of the bounding boxes usually corresponds to the point at which the object is located.
 
 **3. Zones**
@@ -42,7 +42,7 @@ Zones are created by specifying the (x, y) coordinates of all the corner points 
 
 Given a resolution of 1280 by 720, these correspond to the top-left of the image, the top-middle of the frame, bottom-middle of the image, and the bottom-left of the image, points in a clockwise direction that form the rectangular blue zone. Zones do not have to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of the (x, y) coordinates set in a zone.
 
-Note that zones can also be created by configuring the resolution parameter in the zone counting configuration, then using fractions of the resolutions for the (x, y) coordinates. Eloboration for this adjustment can be found the section below for adjusting nodes.
+Note that zones can also be created by configuring the resolution parameter in the zone counting configuration, then using fractions of the resolutions for the (x, y) coordinates. Elaboration for this adjustment can be found the section below for adjusting nodes.
 
 **4. Zone Counts**
 

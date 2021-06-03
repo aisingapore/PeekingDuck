@@ -2,7 +2,7 @@
 
 ## Overview
 
-One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, checkout out [zoning](zoning.md#zone-counting).
+One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, check out [zoning](zoning.md#zone-counting).
 
 <img src="../../images/readme/object_counting.gif" width="100%">
 
@@ -10,10 +10,10 @@ Counting is done by looking at the count of objects detected by the object detec
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [object_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml) and run PeekingDuck.
 
 ```
-> peekingduck run --config_path <path_to_social_distancing.yml>
+> peekingduck run --config_path <path_to_object_counting.yml>
 ```
 
 ## How it Works
@@ -60,4 +60,4 @@ For more adjustable node behaviours not listed here, check out the [node glossar
 
 We have a more complex variant of object counting that is called zone counting which makes use of the zone count node. It allows for the creation of zones within a single image, and provides separate counts of the chosen objects detected for objects that fall inside the zones created.
 
-For more informatio, check out the [readme](zoning.md#zone-counting) for zone counting.
+For more information, check out the [readme](zoning.md#zone-counting) for zone counting.
