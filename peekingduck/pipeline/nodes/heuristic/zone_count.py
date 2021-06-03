@@ -31,8 +31,8 @@ class Node(AbstractNode):
             self.logger.warning(error)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Compares the 3D locations of all objects to see which objects are close to each other.
-        If an object is close to another, tag it.
+        """Counts all detected objects that falls within any specified zone,
+        and return the total object count in each zone.
 
         Args:
             inputs (dict): Dict with keys "btm_midpoints".
