@@ -40,7 +40,7 @@ class HRNetModel:
         self.threshold_score = config['score_threshold']
 
     def predict(self, frame: np.ndarray, bboxes: np.ndarray) -> \
-            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """ Predict poses from input frame
 
         Args:
