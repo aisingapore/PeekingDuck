@@ -24,7 +24,7 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
 
 def scale_transform(keypoints: np.ndarray,
                     in_scale: List[int],
-                    out_scale: Tuple[int, int]) -> np.ndarray:
+                    out_scale: List[int]) -> np.ndarray:
     """Transform 2d points from input scale to out scale.
 
     Args:
@@ -35,9 +35,7 @@ def scale_transform(keypoints: np.ndarray,
     Returns:
         the 2d points scaled from input scale to output scale
     """
-    in_scale = np.array(in_scale)
-    out_scale = np.array(out_scale)
-    in_to_out_scale = out_scale / in_scale
+    in_to_out_scale = np.array(out_scale) / np.array(in_scale)
     keypoints = keypoints * in_to_out_scale
     return keypoints
 
@@ -116,7 +114,7 @@ def get_keypoint_conns(rel_keypoints: np.ndarray, masks: np.ndarray) -> np.ndarr
     return np.array(compiled_connections)
 
 
-def _get_keypoint_of_single_pose(keypoint, mask):
+def _get_keypoint_of_single_pose(keypoint: np.ndarray, mask: np.ndarray) -> np.ndarray:
     connections = []
     for start_joint, end_joint in SKELETON:
         if mask[start_joint - 1] and mask[end_joint - 1]:

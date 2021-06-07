@@ -16,7 +16,7 @@ limitations under the License.
 
 import os
 import logging
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Callable
 
 import tensorflow as tf
 import numpy as np
@@ -42,7 +42,7 @@ class Detector:
 
         self.hrnet = self._create_hrnet_model()
 
-    def _inference_function(self, person_frame: np.ndarray, training=False):  # pylint:disable=unused-argument
+    def _inference_function(self, person_frame: np.ndarray, training: bool = False) -> tf.Tensor:  # pylint:disable=unused-argument
         '''
         When graph is frozen, we need a different way to extract the
         arrays. We use this to return the values needed. The purpose
@@ -55,7 +55,7 @@ class Detector:
         heatmap = self.frozen_fn(tf.cast(person_frame, float))[0]
         return heatmap
 
-    def _create_hrnet_model(self):
+    def _create_hrnet_model(self) -> Callable:
         graph_path = os.path.join(self.root_dir, self.config['model_file'])
         model_nodes = self.config['MODEL_NODES']
         self.frozen_fn = load_graph(graph_path,
