@@ -15,4 +15,4 @@ limitations under the License.
 """
 
 
-__version__ = "developer"
+__version__ = "0.2.3a"
