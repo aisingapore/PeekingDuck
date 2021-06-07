@@ -27,7 +27,6 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @click.group()
-@click.version_option()
 def cli() -> None:
     """
     PeekingDuck is a python framework for dealing with Machine Learning model inferences.
