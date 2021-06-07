@@ -149,6 +149,7 @@ class Detector:
             network_output = np.squeeze(boxes.numpy()), np.squeeze(
                 scores.numpy()), np.squeeze(labels.numpy())
         else:
+            # pylint: disable=no-member
             boxes, scores, labels = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
             network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
 
