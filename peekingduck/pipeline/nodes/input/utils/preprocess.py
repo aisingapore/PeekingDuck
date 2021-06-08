@@ -18,6 +18,7 @@ import logging
 from typing import Any, Tuple
 import numpy as np
 import cv2
+from numpy.core.defchararray import array
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -52,3 +53,19 @@ def mirror(frame: np.array) -> np.array:
     Mirrors a video frame.
     '''
     return cv2.flip(frame, 1)
+
+
+def resize_image(frame: np.array, desired_width: int, desired_height: int) -> Any:
+    """function that resizes the image input
+    to the desired dimensions
+
+    Args:
+        frame (np.array): image
+        desired_width: width of the resized image
+        desired_height: height of the resized image
+
+    Returns:
+        image (np.array): returns a scaled image depending on the
+        desired wight and height
+    """
+    return cv2.resize(frame, (desired_width, desired_height))
