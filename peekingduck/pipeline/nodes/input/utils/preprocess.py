@@ -18,7 +18,6 @@ import logging
 from typing import Any, Tuple
 import numpy as np
 import cv2
-from numpy.core.defchararray import array
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
