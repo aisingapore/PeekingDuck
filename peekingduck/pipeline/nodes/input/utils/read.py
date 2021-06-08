@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Dict, Any, Union
+from typing import Any, Union
 from threading import Thread, Lock
 import cv2
-from peekingduck.pipeline.nodes.input.utils.preprocess import set_res, mirror
+from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
 class VideoThread:
@@ -68,14 +68,11 @@ class VideoNoThread:
     No threading to deal with recorded videos and images.
     '''
 
-    def __init__(self, res: Dict[str, Any], input_source: str, mirror_image: bool) -> None:
+    def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError("Video or image path incorrect: %s" % input_source)
-
-        width, height = res['width'], res['height']
-        set_res(self.stream, width, height)
 
     def __del__(self) -> None:
         self.stream.release()

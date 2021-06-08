@@ -87,7 +87,6 @@ class Node(AbstractNode):
 
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(
-                    self._resolution,
                     file_path,
                     self._mirror_image
                 )
