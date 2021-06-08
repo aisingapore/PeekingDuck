@@ -17,6 +17,7 @@ limitations under the License.
 import os
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
 
@@ -27,7 +28,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov"]
         input_dir = config['input_dir']
-        self._resolution = config['resolution']
+        self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
 
         self._get_files(input_dir)
@@ -54,6 +55,10 @@ class Node(AbstractNode):
                    "filename": self._file_name,
                    "fps": self._fps}
         if success:
+            if self.resize_info['do_resizing']:
+                img = resize_image(img,
+                                   self.resize_info['width'],
+                                   self.resize_info['height'])
             outputs = {"img": img,
                        "end": False,
                        "filename": self._file_name,
