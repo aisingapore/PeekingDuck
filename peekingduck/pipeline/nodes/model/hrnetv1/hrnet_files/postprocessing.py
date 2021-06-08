@@ -111,7 +111,7 @@ def get_keypoint_conns(rel_keypoints: np.ndarray, masks: np.ndarray) -> np.ndarr
     for keypoint, mask in zip(rel_keypoints, masks):
         single_conn = _get_keypoint_of_single_pose(keypoint, mask)
         compiled_connections.append(single_conn)
-    return np.array(compiled_connections)
+    return np.array(compiled_connections, dtype=object)
 
 
 def _get_keypoint_of_single_pose(keypoint: np.ndarray, mask: np.ndarray) -> np.ndarray:
