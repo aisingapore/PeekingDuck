@@ -25,14 +25,12 @@ class VideoThread:
     Videos will be threaded to prevent I/O blocking from affecting FPS.
     '''
 
-    def __init__(self, res: Dict[str, Any], input_source: str, mirror_image: bool) -> None:
+    def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError("Camera or video input not detected: %s" % input_source)
 
-        width, height = res['width'], res['height']
-        set_res(self.stream, width, height)
         self._lock = Lock()
 
         self.frame = None
