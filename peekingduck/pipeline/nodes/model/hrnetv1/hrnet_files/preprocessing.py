@@ -83,7 +83,6 @@ def crop_and_resize(frame: np.ndarray,
         to map a point in cropped image coordinate space to source frame
         coordinate space
     """
-    transformed_images = []
 
     translate_x = bboxes[:, 0] - (bboxes[:, 2] - 1) * 0.5
     translate_y = bboxes[:, 1] - (bboxes[:, 3] - 1) * 0.5
@@ -95,9 +94,10 @@ def crop_and_resize(frame: np.ndarray,
     y_mat = np.column_stack((zero_mat, scale_y, translate_y))
     affine_matrices = np.concatenate((x_mat, y_mat), axis=1)
     affine_matrices = affine_matrices.reshape((-1, 2, 3))
-    for affine_matrix in affine_matrices:
-        transformed_image = cv2.warpAffine(
-            frame, affine_matrix, out_size, flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP)
-        transformed_images.append(transformed_image)
 
+    transformed_images = [cv2.warpAffine(frame,
+                                         x,
+                                         out_size,
+                                         flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP)
+                          for x in affine_matrices]
     return transformed_images, affine_matrices
