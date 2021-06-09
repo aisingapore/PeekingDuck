@@ -37,16 +37,13 @@ class Node(AbstractNode):
 
         Returns:
             outputs (Dict): keypoints output in dictionary format with keys
-            "bboxes", "keypoints", "keypoint_scores", "keypoint_conns"
+            "keypoints", "keypoint_scores", "keypoint_conns"
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
-        keypoints, keypoint_scores, keypoint_conns, keypoint_bboxes = self.model.predict(
+        keypoints, keypoint_scores, keypoint_conns, _ = self.model.predict(
             inputs["img"], inputs["bboxes"])
 
-        # outputs = {"bboxes": bboxes,
         output = {"keypoints": keypoints,
                   "keypoint_scores": keypoint_scores,
-                  "keypoint_conns": keypoint_conns,
-                  "bboxes": keypoint_bboxes}
+                  "keypoint_conns": keypoint_conns}
+        #   "bboxes": keypoint_bboxes}
         return output

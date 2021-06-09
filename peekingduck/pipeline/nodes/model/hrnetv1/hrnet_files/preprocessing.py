@@ -19,15 +19,15 @@ import cv2
 
 
 def project_bbox(bboxes: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
-    """Project the normalized bbox to image coordinates.
+    """Project the normalized bbox to specified image coordinates.
 
     Args:
-        bboxes (np.array): Array of detected bboxes (top left, btm right)
+        bboxes (np.array): Array of detected bboxes in (top left, btm right) format
         size (tuple): width and height of image space
 
     Returns:
-        (x, y, w, h) tuple representing the bbox where (x, y) is top left coordinate
-        """
+        array of bboxes in (x, y, w, h) format where x,y is top left coordinate
+    """
     width, height = size[0] - 1, size[1] - 1
 
     bboxes[:, 0] = np.clip(bboxes[:, 0], 0, 1)
@@ -45,16 +45,15 @@ def project_bbox(bboxes: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
 
 
 def box2cs(bboxes: np.ndarray, aspect_ratio: float) -> np.ndarray:
-    """
-    Convert bounding box defined by top left x, y, w, h to its center x,y,w,h
+    """Convert bounding box defined by top left x, y, w, h to its center x,y,w,h
     The bounding box is also expanded to meet the input aspect ratio.
 
     Args:
-        bboxes (np.array): tuple of x, y, w, h
+        bboxes (np.array): Array of bboxes in of x, y, w, h (top left)
         aspect_ratio(float): W:H ratio for the new box
 
     Returns:
-        center and (w x h) size of new bbox that meets the aspect ratio
+        Array of bboxes in x, y, w, h (center) format that meets the aspect ratio
     """
 
     bboxes[:, 0] = bboxes[:, 0] + bboxes[:, 2] * 0.5
@@ -74,7 +73,7 @@ def crop_and_resize(frame: np.ndarray,
     cropped region is resized to out_size.
 
     Args:
-        frame (np.array): source data frame to crop
+        frame (np.array): Image in numpy array
         bboxes (np.array): bboxes (x,y,w,h) center coordinates
         out_size (tuple): cropped region will be resized to out_size
 

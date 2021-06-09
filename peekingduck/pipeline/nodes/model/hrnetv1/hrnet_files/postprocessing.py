@@ -25,7 +25,7 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
 def scale_transform(keypoints: np.ndarray,
                     in_scale: List[int],
                     out_scale: List[int]) -> np.ndarray:
-    """Transform 2d points from input scale to out scale.
+    """Transform points from input scale to out scale.
 
     Args:
         keypoints (np.array): array of detected keypoints
@@ -33,7 +33,7 @@ def scale_transform(keypoints: np.ndarray,
         out_scale (list): the output scale of xy
 
     Returns:
-        the 2d points scaled from input scale to output scale
+        the scaled points from input scale to output scale
     """
     in_to_out_scale = np.array(out_scale) / np.array(in_scale)
     keypoints = keypoints * in_to_out_scale
@@ -41,14 +41,14 @@ def scale_transform(keypoints: np.ndarray,
 
 
 def affine_transform_xy(keypoints: np.ndarray, affine_matrices: np.ndarray) -> np.ndarray:
-    """Apply affine transform t on 2d points in (x,y).
+    """Apply respective affine transform on array of points.
 
     Args:
         keypoints (np.array): array sequence of points (x, y)
-        t (np.array) - array of 2x3 affine transform matrix
+        affine_matrices (np.array) - array of 2x3 affine transform matrix
 
-    Return:
-        array of transfored points (x, y)
+    Returns:
+        array of transformed points
     """
     transformed_matrices = []
     keypoints = np.dstack((keypoints, np.ones((keypoints.shape[0], keypoints.shape[1], 1))))

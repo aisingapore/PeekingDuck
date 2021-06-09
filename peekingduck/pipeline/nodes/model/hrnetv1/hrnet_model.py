@@ -41,15 +41,15 @@ class HRNetModel:
 
     def predict(self, frame: np.ndarray, bboxes: np.ndarray) -> \
             Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """ Predict poses from input frame
+        """Predict poses from input frame and bboxes
 
         Args:
             frame (np.array): image in numpy array
             bboxes (np.array): detected bboxes in image
 
         Returns:
-            bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns, keypoint_bboxes
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
+            keypoints, keypoint_scores, keypoint_conns, keypoint_bboxes
+            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
             tuple containing list of bboxes and pose related info i.e coordinates,
             scores, connections
         """
@@ -65,6 +65,6 @@ class HRNetModel:
         return keypoints, keypoint_scores, keypoint_conns, keypoint_bboxes
 
     def get_score_threshold(self) -> float:
-        """getter function for ids to be detected
+        """getter function for min threshold score
         """
         return self.threshold_score
