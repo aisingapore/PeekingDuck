@@ -45,7 +45,7 @@ class StandupBot:
         self.discord_message = deepcopy(self.DISCORD_JSON)
         self.DISCORD_WEBHOOK = webhook_url
         self.date = date
-        self.is_friday = self._check_weekend(self.date)
+        self.is_friday = self._check_friday(self.date)
 
         self._add_date()
         self.post_to_discord()

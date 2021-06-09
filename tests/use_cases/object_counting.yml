@@ -1,7 +1,8 @@
 nodes:
 - input.recorded:
   - input_dir: "images/testing" 
-- model.yolo
+- model.yolo:
+  - detect_ids: [0]
 - heuristic.bbox_count
 - draw.bbox
 - draw.bbox_count

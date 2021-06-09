@@ -49,6 +49,8 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
     > peekingduck run --config_path <path_to_config>
     ```
 
+    Terminate the program by clicking on the output screen and pressing `q`.
+
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
 ## How PeekingDuck Works
@@ -92,6 +94,8 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
     <img src="images/readme/posenet_demo.gif" width="50%">
 
+    Terminate the program by clicking on the output screen and pressing `q`.
+
 **2. Configuring node behaviour**:
 - If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it. 
 
@@ -109,7 +113,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
   <img src="images/readme/posenet_running.gif" width="50%">
 
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](node_glossary.md).
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](docs/node_glossary.md).
 
 ## Explore PeekingDuck Nodes
 
@@ -117,13 +121,13 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 | | |
 |-|-|
-| Group Size Checking | Social Distancing |
-|<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/social_distancing.gif" width="100%"> |
-| Zone Counting | People Counting |
-|<img src="images/readme/zone_counting.gif" width="100%">|<img src="images/testing/black.jpg" width="100%"> |
+| [Social Distancing](docs/use_cases/social_distancing.md) | [Zone Counting](docs/use_cases/zone_counting.md) |
+|<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
+| [Group Size Checking](docs/use_cases/group_size_checking.md) | [Object Counting](docs/use_cases/object_counting.md) |
+|<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
-We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](node_glossary.md).
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/node_glossary.md).
 
 ## Create Custom Nodes
 
@@ -135,6 +139,15 @@ We've designed PeekingDuck to be very flexible - you can create your own nodes a
 
 This project is supported by the National Research Foundation, Singapore under its AI Singapore Programme (AISG-RP-2019-050). Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
 
+## License
 
+PeekingDuck is under the open source [Apache License 2.0](LICENSE) (:
+
+Even so, your organisation may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
+- Your organisation is using PeekingDuck in a jurisdiction that does not recognise this license
+- Your legal department requires a license to be purchased
+- Your organisation wants to hold a tangible legal document as evidence of the legal right to use and distribute PeekingDuck
+
+[Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 
