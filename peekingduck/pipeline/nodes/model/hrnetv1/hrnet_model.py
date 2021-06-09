@@ -55,9 +55,9 @@ class HRNetModel:
         """
         assert isinstance(frame, np.ndarray)
         assert isinstance(bboxes, np.ndarray)
-
+        detected_bboxes = bboxes.copy()
         if bboxes.size != 0:
-            return self.detector.predict(frame, bboxes)
+            return self.detector.predict(frame, detected_bboxes)
         keypoints = np.array([])
         keypoint_scores = np.array([])
         keypoint_conns = np.array([])
