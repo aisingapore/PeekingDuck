@@ -4,7 +4,8 @@
    contain the root `toctree` directive.
 
 .. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png
-   :scale: 30
+   :height: 300
+   :width: 300
    :align: center
    :alt: PeekingDuck logo
 

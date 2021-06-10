@@ -12,7 +12,5 @@ formats:
 # Optionally set the version of Python and requirements required to build your docs
 python:
    version: 3.7
-<<<<<<< HEAD
-=======
-   install: [myst-parser]
->>>>>>> 8ebe5e8... Fixed yaml
+      - requirements: sphinx_requirements.txt
+
