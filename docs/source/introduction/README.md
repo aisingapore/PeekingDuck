@@ -121,19 +121,19 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 | | |
 |-|-|
-| [Social Distancing](docs/use_cases/social_distancing.md) | [Zone Counting](docs/use_cases/zone_counting.md) |
+| [Social Distancing](docs/source/use_cases/social_distancing.md) | [Zone Counting](docs/source/use_cases/zone_counting.md) |
 |<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
-| [Group Size Checking](docs/use_cases/group_size_checking.md) | [Object Counting](docs/use_cases/object_counting.md) |
+| [Group Size Checking](docs/source/use_cases/group_size_checking.md) | [Object Counting](docs/source/use_cases/object_counting.md) |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
-We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/node_glossary.md).
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/source/node_glossary.md).
 
 ## Create Custom Nodes
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes.
 
-We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/guide_custom_nodes.md) provides more details on how to do that.
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/source/guide_custom_nodes.md) provides more details on how to do that.
 
 ## Acknowledgements
 
