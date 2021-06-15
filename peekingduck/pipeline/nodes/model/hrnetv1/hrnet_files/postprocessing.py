@@ -120,25 +120,3 @@ def _get_keypoint_of_single_pose(keypoint: np.ndarray, mask: np.ndarray) -> np.n
         if mask[start_joint - 1] and mask[end_joint - 1]:
             connections.append((keypoint[start_joint - 1], keypoint[end_joint - 1]))
     return np.array(connections)
-
-
-def get_bbox_of_poses(keypoints: np.ndarray, mask: np.ndarray) -> np.ndarray:
-    """Helper function to get bbox of detected pose
-
-    Args:
-        keypoints (np.ndarray): Array of detected key points
-        mask (np.ndarray): Array of keypoint masks
-
-    Returns:
-        np.ndarray: Array of bboxes using pose boundary
-    """
-    bbox_keypoints = keypoints.copy()
-    bbox_keypoints[~mask.astype(bool)] = None
-    min_x = np.nanmin(bbox_keypoints[:, :, 0], axis=1)
-    min_y = np.nanmin(bbox_keypoints[:, :, 1], axis=1)
-    max_x = np.nanmax(bbox_keypoints[:, :, 0], axis=1)
-    max_y = np.nanmax(bbox_keypoints[:, :, 1], axis=1)
-
-    bboxes = np.vstack((min_x, min_y, max_x, max_y)).transpose()
-
-    return bboxes
