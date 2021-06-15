@@ -40,7 +40,7 @@ class HRNetModel:
         self.threshold_score = config['score_threshold']
 
     def predict(self, frame: np.ndarray, bboxes: np.ndarray) -> \
-            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+            Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predict poses from input frame and bboxes
 
         Args:
@@ -61,8 +61,8 @@ class HRNetModel:
         keypoints = np.array([])
         keypoint_scores = np.array([])
         keypoint_conns = np.array([])
-        keypoint_bboxes = np.array([])
-        return keypoints, keypoint_scores, keypoint_conns, keypoint_bboxes
+
+        return keypoints, keypoint_scores, keypoint_conns
 
     def get_score_threshold(self) -> float:
         """getter function for min threshold score
