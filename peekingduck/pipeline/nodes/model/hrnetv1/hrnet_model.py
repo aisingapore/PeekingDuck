@@ -21,7 +21,7 @@ from peekingduck.weights_utils import checker, downloader
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
 
 
-class HRNetModel:
+class HRNetModel:  # pylint: disable=too-few-public-methods
     """HRNet model to detect poses from detected bboxes
     """
 
@@ -63,8 +63,3 @@ class HRNetModel:
         keypoint_conns = np.array([])
 
         return keypoints, keypoint_scores, keypoint_conns
-
-    def get_score_threshold(self) -> float:
-        """getter function for min threshold score
-        """
-        return self.threshold_score
