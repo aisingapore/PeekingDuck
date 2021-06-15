@@ -16,12 +16,15 @@ limitations under the License.
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .hrnetv1 import hrnet_model
+from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
 
 
 class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
     from detected bboxes
+
+    Deep High-Resolution Representation Learning for Visual Recognition
+    https://arxiv.org/abs/1908.07919
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -33,17 +36,15 @@ class Node(AbstractNode):
         and pose bbox of the specified objects chosen to be detected
 
         Args:
-            inputs (Dict): Dictionary of inputs with keys "img", "bboxes"
+            inputs (dict): Dict with keys "img", "bboxes"
 
         Returns:
-            outputs (Dict): keypoints output in dictionary format with keys
-            "keypoints", "keypoint_scores", "keypoint_conns"
+            outputs (dict): Dict with keys "keypoints", "keypoint_scores", "keypoint_conns"
         """
-        keypoints, keypoint_scores, keypoint_conns, _ = self.model.predict(
+        keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"], inputs["bboxes"])
 
-        output = {"keypoints": keypoints,
-                  "keypoint_scores": keypoint_scores,
-                  "keypoint_conns": keypoint_conns}
-        #   "bboxes": keypoint_bboxes}
-        return output
+        outputs = {"keypoints": keypoints,
+                   "keypoint_scores": keypoint_scores,
+                   "keypoint_conns": keypoint_conns}
+        return outputs

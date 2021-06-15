@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing \
     import project_bbox, box2cs, crop_and_resize
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing \
     import scale_transform, affine_transform_xy, reshape_heatmaps, \
-    get_valid_keypoints, get_keypoint_conns, get_bbox_of_poses
+    get_valid_keypoints, get_keypoint_conns
 
 
 class Detector:
@@ -96,7 +96,6 @@ class Detector:
                     cropped_frames_scale: List[int],
                     frame_size: Tuple[int, int]) -> Tuple[np.ndarray,
                                                           np.ndarray,
-                                                          np.ndarray,
                                                           np.ndarray]:
         """Postprocessing function to process output heatmaps to required keypoint arays
 
@@ -107,7 +106,7 @@ class Detector:
             frame_size (Tuple[int, int]): Size of original image
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: \
+            Tuple[np.ndarray, np.ndarray, np.ndarray]: \
             tuple containing array of bboxes and pose related info i.e coordinates,
             scores, connections
         """
@@ -130,11 +129,10 @@ class Detector:
         normalized_keypoints = keypoints / frame_size
 
         keypoint_conns = get_keypoint_conns(normalized_keypoints, kp_masks)
-        keypoint_bboxes = get_bbox_of_poses(normalized_keypoints, kp_masks)
-        return normalized_keypoints, kp_scores, keypoint_conns, keypoint_bboxes
+
+        return normalized_keypoints, kp_scores, keypoint_conns
 
     def predict(self, frame: np.ndarray, bboxes: np.ndarray) -> Tuple[np.ndarray,
-                                                                      np.ndarray,
                                                                       np.ndarray,
                                                                       np.ndarray]:
         """HRnet prediction function
@@ -144,7 +142,7 @@ class Detector:
             bboxes (np.ndarray): Array of detected bboxes
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]: \
+            Tuple[np.ndarray, np.ndarray, np.ndarray]: \
             tuple containing list of bboxes and pose related info i.e coordinates,
             scores, connections
         """
@@ -152,7 +150,7 @@ class Detector:
         heatmaps = self.hrnet(cropped_frames, training=False)
 
         cropped_frames_scale = [cropped_frames.shape[2], cropped_frames.shape[1]]
-        poses, kp_scores, kp_conns, kp_bboxes = self.postprocess(heatmaps.numpy(), affine_matrices,
-                                                                 cropped_frames_scale, frame_size)
+        poses, kp_scores, kp_conns = self.postprocess(heatmaps.numpy(), affine_matrices,
+                                                      cropped_frames_scale, frame_size)
 
-        return poses, kp_scores, kp_conns, kp_bboxes
+        return poses, kp_scores, kp_conns
