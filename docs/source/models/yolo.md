@@ -118,4 +118,4 @@ The model weights are trained by [Việt Hùng](https://github.com/hunglc007/ten
 
 ## See also
 
-[EfficientDet](https://github.com/aimakerspace/PeekingDuck/blob/dev/docs/models/efficientdet.md) for alternative object detection node.
+[EfficientDet](https://github.com/aimakerspace/PeekingDuck/blob/dev/docs/source/models/efficientdet.md) for alternative object detection node.

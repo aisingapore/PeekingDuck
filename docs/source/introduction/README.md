@@ -53,7 +53,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
-## How PeekingDuck Works
+### How PeekingDuck Works
 
 **Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it.
 
@@ -133,7 +133,7 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes.
 
-We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/source/introduction/guide_custom_nodes.md) provides more details on how to do that.
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/source/guide_custom_nodes.md) provides more details on how to do that.
 
 ## Acknowledgements
 
