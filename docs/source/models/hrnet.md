@@ -99,7 +99,7 @@ outputs['keypoint_conns'] = np.array([[[[0.37138409, 0.98567304], [0.55192859, 0
 
 ## Configurable parameters
 
-The full list of configurable parameters for the HRNet node are listed in [HRNet.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/model/hrnet.yml). To change the default parameters, follow the instructions to configure node behaviour in the [main readme](https://github.com/aimakerspace/PeekingDuck). Below is an example of how the HRNet node is configured to increase the score threshold.
+The full list of configurable parameters for the HRNet node are listed in [hrnet.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/model/hrnet.yml). To change the default parameters, follow the instructions to configure node behaviour in the [main readme](https://github.com/aimakerspace/PeekingDuck). Below is an example of how the HRNet node is configured to increase the score threshold.
 
 ```yaml
 # Example: Configure HRNet node to increase the score threshold
