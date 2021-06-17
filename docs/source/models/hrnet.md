@@ -114,10 +114,10 @@ nodes:
 
 The table shown below is a list of commonly adjusted parameters for the HRNet node.
 
-| Parameter       | Description                                                                                                                                                                     | Variables                                                                  | Default                         |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------- |
-| resolution      | The size of the image is resized and padded to before feeding into the model. A larger size will yield higher accuracy while decreasing the speed of inference. When specifying | { height: _int_, width: _int_ }<br> <br>where int must be divisible by 32. | { height: _192_, width: _256_ } |
-| score_threshold | Return instance detections that have score greater or equal to the score threshold.                                                                                             | _0_ - _1_                                                                  | _0.1_                           |
+| Parameter       | Description                                                                                                                                                     | Variables                                                                  | Default                         |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------- |
+| resolution      | The size of the image is resized and padded to before feeding into the model. A larger size will yield higher accuracy while decreasing the speed of inference. | { height: _int_, width: _int_ }<br> <br>where int must be divisible by 32. | { height: _192_, width: _256_ } |
+| score_threshold | Return instance detections that have score greater or equal to the score threshold.                                                                             | _0_ - _1_                                                                  | _0.1_                           |
 
 ## See also
 
