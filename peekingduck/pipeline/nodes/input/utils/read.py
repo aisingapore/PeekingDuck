@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Tuple, Union
+from typing import Any, Union
 from threading import Thread, Lock
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror

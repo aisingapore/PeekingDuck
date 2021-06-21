@@ -41,8 +41,8 @@ class Node(AbstractNode):
         if self.resize_info['do_resizing']:
             self.logger.info('Resizing set to true. '
                              'Resized image resolution: %s by %s',
-                             width,
-                             height)
+                             self.resize_info['width'],
+                             self.resize_info['height'])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
