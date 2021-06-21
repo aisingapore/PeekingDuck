@@ -26,7 +26,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov"]
+        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         input_dir = config['input_dir']
         self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
