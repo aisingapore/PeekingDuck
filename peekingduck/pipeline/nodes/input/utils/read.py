@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Union
+from typing import Any, Tuple, Union
 from threading import Thread, Lock
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
@@ -63,7 +63,7 @@ class VideoThread:
         return False, None
 
     @property
-    def resolution(self) -> Union[int, int]:
+    def resolution(self) -> Tuple[int, int]:
         """ Get resolution of the camera device used.
 
         Returns:
@@ -106,7 +106,7 @@ class VideoNoThread:
         return fps
 
     @property
-    def resolution(self) -> Union[int, int]:
+    def resolution(self) -> Tuple[int, int]:
         """ Get resolution of the file.
 
         Returns:
