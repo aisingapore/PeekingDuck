@@ -33,8 +33,8 @@ class Node(AbstractNode):
 
         self.videocap = VideoThread(input_source, mirror_image)
 
-        width, height = self.videocap.get_camera_resolution()
-        self.logger.info('Input Device Resolution: %s by %s',
+        width, height = self.videocap.resolution
+        self.logger.info('Input resolution: %s by %s',
                          width,
                          height)
         if self.resize_info['do_resizing']:

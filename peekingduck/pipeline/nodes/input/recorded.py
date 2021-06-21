@@ -34,6 +34,16 @@ class Node(AbstractNode):
         self._get_files(input_dir)
         self._get_next_input()
 
+        width, height = self.videocap.resolution
+        self.logger.info('Input resolution: %s by %s',
+                         width,
+                         height)
+        if self.resize_info['do_resizing']:
+            self.logger.info('Resizing set to true. '
+                             'Resized image resolution: %s by %s',
+                             width,
+                             height)
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
         input: ["source"],

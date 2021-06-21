@@ -62,16 +62,16 @@ class VideoThread:
         self._lock.release()
         return False, None
 
-    def get_camera_resolution(self) -> Union[int, int]:
-        """Returns the current resolution of the camera device used in integer.
+    @property
+    def resolution(self) -> Union[int, int]:
+        """ Get resolution of the camera device used.
 
         Returns:
-            width(int): width of the resolution.
-            height(int): height of the resolution.
+            width(int): width of input resolution
+            height(int): heigh of input resolution
         """
-        cap = cv2.VideoCapture(0)
-        width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
-        height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
         return width, height
 
 
@@ -104,3 +104,15 @@ class VideoNoThread:
         """
         fps = self.stream.get(cv2.CAP_PROP_FPS)
         return fps
+
+    @property
+    def resolution(self) -> Union[int, int]:
+        """ Get resolution of the file.
+
+        Returns:
+            width(int): width of resolution
+            height(int): heigh of resolution
+        """
+        width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        return width, height
