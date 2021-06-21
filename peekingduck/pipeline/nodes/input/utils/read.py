@@ -72,7 +72,7 @@ class VideoThread:
         """
         width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        return width, height
+        return int(width), int(height)
 
 
 class VideoNoThread:
@@ -115,4 +115,4 @@ class VideoNoThread:
         """
         width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
-        return width, height
+        return int(width), int(height)
