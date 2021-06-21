@@ -33,6 +33,16 @@ class Node(AbstractNode):
 
         self.videocap = VideoThread(input_source, mirror_image)
 
+        width, height = self.videocap.get_camera_resolution()
+        self.logger.info('Input Device Resolution: %s by %s',
+                         width,
+                         height)
+        if self.resize_info['do_resizing']:
+            self.logger.info('Resizing set to true. '
+                             'Resized image resolution: %s by %s',
+                             width,
+                             height)
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
         if success:

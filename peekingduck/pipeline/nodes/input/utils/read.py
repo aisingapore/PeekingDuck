@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Union
+from typing import Any, Tuple, Union
 from threading import Thread, Lock
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
@@ -61,6 +61,18 @@ class VideoThread:
 
         self._lock.release()
         return False, None
+
+    def get_camera_resolution(self) -> Union[int, int]:
+        """Returns the current resolution of the camera device used in integer.
+
+        Returns:
+            width(int): width of the resolution.
+            height(int): height of the resolution.
+        """
+        cap = cv2.VideoCapture(0)
+        width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+        height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+        return width, height
 
 
 class VideoNoThread:
