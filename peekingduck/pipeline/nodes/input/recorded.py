@@ -17,6 +17,7 @@ limitations under the License.
 import os
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
 
@@ -25,13 +26,22 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov"]
+        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         input_dir = config['input_dir']
-        self._resolution = config['resolution']
+        self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
 
         self._get_files(input_dir)
         self._get_next_input()
+
+        width, height = self.videocap.resolution
+        self.logger.info('Video/Image size: %s by %s',
+                         width,
+                         height)
+        if self.resize_info['do_resizing']:
+            self.logger.info('Resizing of input set to %s by %s',
+                             self.resize_info['width'],
+                             self.resize_info['height'])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
@@ -54,6 +64,10 @@ class Node(AbstractNode):
                    "filename": self._file_name,
                    "fps": self._fps}
         if success:
+            if self.resize_info['do_resizing']:
+                img = resize_image(img,
+                                   self.resize_info['width'],
+                                   self.resize_info['height'])
             outputs = {"img": img,
                        "end": False,
                        "filename": self._file_name,
@@ -82,7 +96,6 @@ class Node(AbstractNode):
 
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(
-                    self._resolution,
                     file_path,
                     self._mirror_image
                 )

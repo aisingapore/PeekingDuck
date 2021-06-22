@@ -1,7 +1,8 @@
 input: ["source"]
 output: ["img", "end", "filename", "fps"]
 
-resolution: {
+resize: {
+            do_resizing: False,
             width: 1280,
             height: 720
         }
