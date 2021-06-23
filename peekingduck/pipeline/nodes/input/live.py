@@ -35,8 +35,6 @@ class Node(AbstractNode):
 
         self.videocap = VideoThread(input_source, mirror_image)
 
-        self._get_fps()
-
         width, height = self.videocap.resolution
         self.logger.info('Device resolution used: %s by %s', width, height)
         if self.resize_info['do_resizing']:
@@ -56,10 +54,4 @@ class Node(AbstractNode):
 
         raise Exception("An issue has been encountered reading the Image")
 
-    def _get_fps(self):
-        start_time = time.time()
-        for _ in range(10):
-           success, img = self.videocap.read_frame() 
-        end_time = time.time()
 
-        self.fps = 10/(end_time - start_time)
