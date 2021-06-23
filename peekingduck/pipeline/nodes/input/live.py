@@ -14,6 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import time
 from typing import Dict, Any
 
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -30,8 +31,11 @@ class Node(AbstractNode):
         self.resize_info = config['resize']
         input_source = config['input_source']
         mirror_image = config['mirror_image']
+        self.fps_saved_output_video = config["fps_saved_output_video"]
 
         self.videocap = VideoThread(input_source, mirror_image)
+
+        self._get_fps()
 
         width, height = self.videocap.resolution
         self.logger.info('Device resolution used: %s by %s', width, height)
@@ -47,7 +51,15 @@ class Node(AbstractNode):
                 img = resize_image(img,
                                    self.resize_info['width'],
                                    self.resize_info['height'])
-            outputs = {self.outputs[0]: img}
+            outputs = {self.outputs[0]: img, "fps":self.fps_saved_output_video,"filename":"webcamfeed.mp4"}
             return outputs
 
         raise Exception("An issue has been encountered reading the Image")
+
+    def _get_fps(self):
+        start_time = time.time()
+        for _ in range(10):
+           success, img = self.videocap.read_frame() 
+        end_time = time.time()
+
+        self.fps = 10/(end_time - start_time)
