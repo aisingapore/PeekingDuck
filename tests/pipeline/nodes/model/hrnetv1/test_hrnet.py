@@ -43,6 +43,8 @@ def hrnet(request, hrnet_config):
 class TestHrnet:
 
     def test_no_human_image(self, test_no_human_images, hrnet):
+        """Testing HRnet on images with no humans present.
+        """
         blank_image = cv2.imread(test_no_human_images)
         output = hrnet.run({'img': blank_image, 'bboxes': np.empty((0, 4))})
         expected_output = {"keypoints": np.zeros(0),
@@ -55,6 +57,9 @@ class TestHrnet:
                                    ), "unexpected output for {}".format(i)
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, hrnet):
+        """Testing HRnet on images with at least one human present. Bbox coordinates is set
+        as the entire image.
+        """
         test_img = cv2.imread(test_human_images)
         img_h, img_w, _ = test_img.shape
         output = hrnet.run({'img': test_img,

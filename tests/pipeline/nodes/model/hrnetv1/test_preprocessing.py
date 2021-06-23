@@ -48,5 +48,16 @@ class TestPreprocessing:
 
         npt.assert_almost_equal(actual_output, expected_output)
 
-    def test_crop_and_resize(self):
-        pass
+    def test_crop_and_resize(self, create_image, projected_bbox_arr):
+        test_img = create_image((720, 480))
+        test_bboxes = projected_bbox_arr
+        test_out_size = (256, 192)
+        expected_output = np.array([[[0.56171875, 0, 288.1],
+                                     [0.0, 0.49895833, 192.1]],
+                                    [[2.80859375, 0.0, -359.0],
+                                     [0.0, 0.49895833, 192.1]],
+                                    [[0.56171875, 0.0, 288.1],
+                                     [0.0, 2.49479167, -239.0]]])
+        _, actual_output = crop_and_resize(test_img, test_bboxes, test_out_size)
+
+        npt.assert_almost_equal(actual_output, expected_output)
