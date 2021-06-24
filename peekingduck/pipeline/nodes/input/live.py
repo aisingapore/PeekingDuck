@@ -31,6 +31,7 @@ class Node(AbstractNode):
         input_source = config['input_source']
         mirror_image = config['mirror_image']
         self.fps_saved_output_video = config["fps_saved_output_video"]
+        self.filename = config["filename"]
 
         self.videocap = VideoThread(input_source, mirror_image)
 
@@ -48,9 +49,11 @@ class Node(AbstractNode):
                 img = resize_image(img,
                                    self.resize_info['width'],
                                    self.resize_info['height'])
-            outputs = {self.outputs[0]: img, "fps":self.fps_saved_output_video,"filename":"webcamfeed.mp4"}
+            outputs = {
+                self.outputs[0]: img,
+                "fps":self.fps_saved_output_video,
+                "filename":self.filename}
             return outputs
 
         raise Exception("An issue has been encountered reading the Image")
-
-
+        
