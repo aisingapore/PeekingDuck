@@ -1,6 +1,8 @@
 input: ["source"]
-output: ["img"]
+output: ["img","filename","fps"]
 
+fps_saved_output_video: 10   #may need to change depending on user machine performance
+filename: webcamfeed.mp4
 resize: {
             do_resizing: False,
             width: 1280,
