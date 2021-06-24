@@ -24,10 +24,10 @@ from peekingduck.pipeline.nodes.input.recorded import Node
 def create_reader():
     media_reader = Node({"input": "source",
                          "output": "img",
-                         "resolution": {
-                             'width': 1280,
-                             'height': 720
-                         },
+                         "resize": {
+                            "do_resizing": False,
+                            "width": 1280,
+                            "height": 720},
                          "mirror_image": False,
                          "input_dir": "."
                          })
@@ -50,11 +50,11 @@ class TestMediaReader:
         with pytest.raises(FileNotFoundError):
             file_path = 'path_that_does_not_exist'
             Node({"input": "source",
-                           "output": "img",
-                           "resolution": {
-                               'width': 1280,
-                               'height': 720
-                           },
+                  "output": "img",
+                  "resize": {
+                      "do_resizing": False,
+                      "width": 1280,
+                      "height": 720},
                   "mirror_image": False,
                   "input_dir": file_path
                   })
