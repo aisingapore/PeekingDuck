@@ -83,9 +83,6 @@ class Node(AbstractNode):
 
     def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
-        self._file_name = filename  # type: ignore
-        self._file_path = os.path.join(  # type: ignore
-            self._output_dir, filename)  # type: ignore
         self.file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
 
         self._image_type = "video"  # type: ignore
@@ -102,19 +99,13 @@ class Node(AbstractNode):
 
     def _append_datetime_filename(self,filename: str) -> str:
 
+        self._file_name = filename  # type: ignore
         current_time = datetime.datetime.now()
-        time_str=str(current_time)  #output as '2021-06-24 15:09:13.742140'
-        year = time_str[2:4]
-        mth = time_str[5:7]
-        day = time_str[8:10]
-        hour = time_str[11:13]
-        mins = time_str[14:16]
-        sec = time_str[17:19]
+        time_str=current_time.strftime("%d%m%y-%H-%M-%S")  #output as '240621-15-09-13'
 
         #append timestamp to filename before extension Format: filename_timestamp.extension
         filename_with_timestamp = filename.split(".")[-2] \
-            + "_" + day + mth + year \
-            + "-"+ hour + "-" + mins + "-" + sec \
+            + "_" + time_str \
             + "."+filename.split(".")[-1]
         file_path_with_timestamp = os.path.join(  # type: ignore
             self._output_dir, filename_with_timestamp)
