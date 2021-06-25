@@ -86,7 +86,7 @@ class Node(AbstractNode):
         self._file_name = filename  # type: ignore
         self._file_path = os.path.join(  # type: ignore
             self._output_dir, filename)  # type: ignore
-        self.file_path_with_timestamp = self._append_datetime_filename(filename)
+        self.file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
 
         self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
