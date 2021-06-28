@@ -1,2 +1,2 @@
 input: ["img"]
-output: ["end"]
+output: ["pipeline_end"]

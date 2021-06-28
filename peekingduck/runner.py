@@ -24,8 +24,6 @@ from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.loaders import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-END_TYPE = 'process_end'
-
 
 class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
@@ -63,7 +61,7 @@ class Runner():
     def run(self) -> None:
         """execute single or continuous inference
         """
-        while not self.pipeline.video_end:
+        while not self.pipeline.terminate:
             self.pipeline.execute()
         del self.pipeline
 
