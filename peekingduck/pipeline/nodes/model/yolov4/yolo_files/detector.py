@@ -1,29 +1,17 @@
-"""
-Copyright 2021 AI Singapore
+# Copyright 2021 AI Singapore
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 
-     https://www.apache.org/licenses/LICENSE-2.0
+#      https://www.apache.org/licenses/LICENSE-2.0
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-This is detection file that will be used to detect person bounding box with
-the confident score.
-
-Public function:
-    - detect_person(): return bounding box, score for person
-    - detect_person_and_plot_to_output_image(): plot output image
-
-Commands:
-    python src/yolov3/detector.py
-    python src/yolov3/detector.py --tiny
-"""
 import os
 import builtins
 from typing import Dict, Any, List, Tuple
