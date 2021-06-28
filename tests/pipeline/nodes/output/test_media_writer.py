@@ -68,7 +68,7 @@ class TestMediaWriter:
         
         #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
         #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
-        #listed in input.live.py
+        #listed in input.recorded.py
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
         
         assert re.search(pattern,directory_contents()[0])
@@ -86,7 +86,7 @@ class TestMediaWriter:
 
         #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
         #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
-        #listed in input.live.py
+        #listed in input.recorded.py
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
         for filename in directory_contents():
