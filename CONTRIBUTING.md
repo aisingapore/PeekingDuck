@@ -8,6 +8,7 @@
 - [Code Styles](#code-styles)
   - [Git Commit Messages](#git-commit-messages)
   - [Project Conventions](#project-conventions)
+- [Test Suites](#test-suites)
 
 ## Code of Conduct
 
@@ -45,7 +46,7 @@ To contribute to our codebase:
 4. In your forked repository, create a descriptive git branch to work on your issue
 5. Make the required changes within the branch
 6. Add tests (if possible)
-7. Run our tests and ensure that it is passing
+7. Run the [test suite](#test-suites) and check that it passes
 8. Push your changes to github
 9. Send us a pull request to PeekingDuck/main
 10. Make changes as requested by your reviewer (if any)
@@ -82,3 +83,17 @@ The following conventions are adopted to help maintain code consistency within t
 - PEP8 convention
 - PEP484 type hinting for functions and methods
 - Absolute imports instead of relative imports 
+
+## Test Suites
+
+The project uses tools like pylint, pytest and bandit to maintain project quality. To run the test in mac. (for linux use `bash` instead of `sh`)
+
+```shell
+sh scripts/linter.sh        # pylint for pep8 and code consistency
+sh scripts/bandit.sh        # bandit to check for security related issues on dependencies
+sh scripts/check_type.sh    # mypy to check for type hints on function/method level
+sh scripts/unit_tests.sh    # pytest unit test for individual components
+sh scripts/usecase_tests.sh # check standard usecase to ensure it is not broken
+```
+
+NOTE - linter, bandit, check_type runs on every pull request
