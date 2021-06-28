@@ -12,6 +12,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License."""
 
+import datetime
 import os
 from typing import Any, Dict
 import numpy as np
@@ -37,6 +38,7 @@ class Node(AbstractNode):
         self._image_type = None
         self._file_path = None
         self.writer = None
+        self.file_path_with_timestamp = None
 
     def __del__(self) -> None:
         if self.writer:
@@ -47,6 +49,7 @@ class Node(AbstractNode):
         self._file_path = None
         self._image_type = None
         self.writer = None
+        self.file_path_with_timestamp = None
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath
@@ -80,9 +83,7 @@ class Node(AbstractNode):
 
     def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
-        self._file_name = filename  # type: ignore
-        self._file_path = os.path.join(  # type: ignore
-            self._output_dir, filename)  # type: ignore
+        self.file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
 
         self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
@@ -90,8 +91,23 @@ class Node(AbstractNode):
         else:
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
-                self._file_path, self._fourcc, fps, resolution)
+                self.file_path_with_timestamp, self._fourcc, fps, resolution)
 
     @staticmethod
     def _prepare_directory(output_dir) -> None:  # type: ignore
         os.makedirs(output_dir, exist_ok=True)
+
+    def _append_datetime_filename(self,filename: str) -> str:
+
+        self._file_name = filename  # type: ignore
+        current_time = datetime.datetime.now()
+        time_str=current_time.strftime("%d%m%y-%H-%M-%S")  #output as '240621-15-09-13'
+
+        #append timestamp to filename before extension Format: filename_timestamp.extension
+        filename_with_timestamp = filename.split(".")[-2] \
+            + "_" + time_str \
+            + "."+filename.split(".")[-1]
+        file_path_with_timestamp = os.path.join(  # type: ignore
+            self._output_dir, filename_with_timestamp)
+
+        return file_path_with_timestamp
