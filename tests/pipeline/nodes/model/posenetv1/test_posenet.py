@@ -49,7 +49,7 @@ def posenet_model(request):
     node = Node(node_config)
     yield node
 
-
+@pytest.mark.mlmodel
 class TestPoseNet:
     @pytest.mark.parametrize('empty_image', empty_image_list, indirect=True, ids=str)
     @pytest.mark.parametrize('posenet_model', models, indirect=True, ids=str)
