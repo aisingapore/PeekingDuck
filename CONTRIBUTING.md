@@ -37,19 +37,26 @@ Join us in our [discussion board](https://github.com/aimakerspace/PeekingDuck/di
 
 ### Code Contributions
 
-To contribute to our codebase:
+Here is a guide of the general steps to contribute code to PeekingDuck.
 
-0. !!Before working on the issue, do read our [code styles guidelines](#code-styles)
-1. Pick an issue from our [issues tracker](https://github.com/aimakerspace/PeekingDuck/issues) and indicate your interest to work on the issue.
-2. After receiving a confirmation from the maintainer, you may begin work on the issue
-3. [Fork](https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo) the aimakerspace/PeekingDuck repository
-4. In your forked repository, create a descriptive git branch to work on your issue
-5. Make the required changes within the branch
-6. Add tests (if possible)
-7. Run the [test suite](#test-suites) and check that it passes
-8. Push your changes to github
-9. Send us a pull request to PeekingDuck/main
-10. Make changes as requested by your reviewer (if any)
+- Own an issue from the issues board. This is to prevent duplicate work.
+
+  1. Pick an issue from our [issues tracker](https://github.com/aimakerspace/PeekingDuck/issues) and indicate your interest to work on the issue.
+  2. If there are no one else working on the issue, the maintainer will assign the issue to you.
+  3. After receiving the confirmation from the maintainer, you may begin work on the issue.
+
+- Contributing Code 
+  1. Do read our [code styles guidelines](#code-styles).
+  2. [Fork](https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo) the aimakerspace/PeekingDuck repository. For more details in this process, Jake Jarvis has a [useful guide](https://jarv.is/notes/how-to-pull-request-fork-github/) that describes steps 2-6 and 10 in more detail.
+  3. Clone the forked branch to your local machine.
+  4. \[Recommended\] track the original repository as another remote. After which you will be able to receive updates using `git fetch`. This is useful for long term contributions to the repository.
+  5. In your local repository, create a descriptive branch to work on your issue.
+  6. Make the required changes within the branch.
+  7. Add tests (if possible).
+  8. Run the [test suite](#test-suites) and check that it passes.
+  9. Push your changes to github.
+  10. Send us a pull request to PeekingDuck/main.
+  11. Make changes requested by your reviewer (if any).
 
 Thank you for your contribution!!
 
