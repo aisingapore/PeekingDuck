@@ -12,11 +12,11 @@
 
 ## Code of Conduct
 
-Please take a look at our [code of conduct](CODE_OF_CONDUCT.md) and adhere to the rules before contributing.
+Please take a look at our [code of conduct](CODE_OF_CONDUCT.md) and adhere to the rules. Note that actions will be taken against individuals who violate our rules.
 
 ## Types of Contribution
 
-Help us keep discussions focused by checking if there already exists a thread pertaining to your issue before creating a thread. We reserve the right to reject contributions if there 
+Help us keep discussions focused by checking if there already exists a thread pertaining to your issue before creating a thread. Duplicate threads will be redirected to existing ones.
 
 ### Report a Bug
 
@@ -25,7 +25,7 @@ Create an issue on our [issues tracker](https://github.com/aimakerspace/PeekingD
 Useful Information 
 - Operating System   (mac/win/linux)
 - Python Environment (venv/pyenv)
-- Step by step information to recreate the bug.
+- Step by step information to recreate the bug
 
 ### Community Discussions
 
@@ -66,9 +66,9 @@ Help us maintain the quality of our project by following the conventions we take
 
 ### Git Commit Messages
 
-This is a shortened version is inspired by [angular's contributing docs](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit-message-header).
+This is a shortened version inspired by [angular's contributing docs](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit-message-header).
 
-A standard git commit message helps us to better structure the project. 
+A standard git commit message helps us structure the project. 
 
 ```bash
 <type>(<scope>): <short summary>
@@ -85,7 +85,7 @@ The `<type>` and `<summary>` fields are required, we encourage filling the `(<sc
 
 ### Project Conventions
 
-The following conventions are adopted to help maintain code consistency within the project.
+The following conventions are adopted to help maintain code consistency.
 
 - PEP8 convention
 - PEP484 type hinting for functions and methods
@@ -93,7 +93,7 @@ The following conventions are adopted to help maintain code consistency within t
 
 ## Test Suites
 
-The project uses tools like pylint, pytest and bandit to maintain project quality. To run the test in mac. (for linux use `bash` instead of `sh`)
+The project uses tools like pylint, pytest and bandit to maintain project quality. To run the test in mac use `sh` (for linux use `bash`). 
 
 ```shell
 sh scripts/linter.sh        # pylint for pep8 and code consistency
