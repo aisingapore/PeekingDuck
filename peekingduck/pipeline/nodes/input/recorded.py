@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
-
+# pylint: disable=R0902
 class Node(AbstractNode):
     """Node to receive videos/image as inputs."""
 

@@ -46,7 +46,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
-        
+
         if success:
             if self.resize_info['do_resizing']:
                 img = resize_image(img,
@@ -62,7 +62,6 @@ class Node(AbstractNode):
                         "filename": self.filename,
                         "fps": self.fps_saved_output_video}
             self.logger.warning("No video frames available for processing.")
-        
-        return outputs
 
+        return outputs
         

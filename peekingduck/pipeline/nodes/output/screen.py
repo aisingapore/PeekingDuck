@@ -16,7 +16,6 @@
 Show the outputs on your display
 """
 
-import sys
 from typing import Any, Dict
 import cv2
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -30,8 +29,8 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         cv2.imshow('PeekingDuck', inputs["img"])
-        
+
         if cv2.waitKey(1) & 0xFF == ord('q'):
             return {"pipeline_end": True}
-            
+
         return {"pipeline_end": False}

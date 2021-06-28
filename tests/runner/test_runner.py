@@ -141,7 +141,7 @@ class TestRunner:
 
             with pytest.raises(Exception):
 
-                runner_with_nodes.pipeline.video_end = False
+                runner_with_nodes.pipeline.terminate = False
                 runner_with_nodes.run()
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
@@ -150,7 +150,7 @@ class TestRunner:
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
-        runner_with_nodes.pipeline.video_end = True
+        runner_with_nodes.pipeline.terminate = True
 
         runner_with_nodes.run()
 
