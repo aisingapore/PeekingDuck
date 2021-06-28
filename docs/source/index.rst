@@ -40,3 +40,13 @@ Welcome to PeekingDuck's documentation!
    node_glossary.md
    node_data_mapping.md
    io_draw_nodes.md
+
+API documentation
+=======================================
+
+.. autosummary::
+   :toctree:
+   :caption: API documentation
+   :recursive:
+
+   peekingduck
