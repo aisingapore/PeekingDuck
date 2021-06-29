@@ -54,8 +54,8 @@ Here is a guide of the general steps to contribute code to PeekingDuck.
   6. Make the required changes within the branch.
   7. Add tests (if possible).
   8. Run the [test suite](#test-suites) and check that it passes.
-  9. Push your changes to github.
-  10. Send us a pull request to PeekingDuck/main.
+  9. Push the changes to your github remote.
+  10. Send us a pull request to PeekingDuck/dev.
   11. Make changes requested by your reviewer (if any).
 
 Thank you for your contribution!!
