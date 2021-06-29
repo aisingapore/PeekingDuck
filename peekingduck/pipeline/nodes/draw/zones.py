@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Draws the 2D boundaries of a zone
+"""
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode

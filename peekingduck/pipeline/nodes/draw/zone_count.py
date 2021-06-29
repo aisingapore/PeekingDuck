@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Displays counts of detected objects within a zone
+"""
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode

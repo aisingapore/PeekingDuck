@@ -11,6 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""
+Pipeline class that stores nodes and manages the data information used during inference
+"""
+
 import copy
 import textwrap
 from typing import List, Dict, Any

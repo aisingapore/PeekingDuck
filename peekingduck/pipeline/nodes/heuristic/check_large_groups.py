@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Check if number of objects in a group exceed a threshold
+"""
 
 from typing import Any, Dict, List
 from collections import Counter

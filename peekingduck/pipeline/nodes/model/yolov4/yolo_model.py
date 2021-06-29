@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Yolo model with model types: v3 and v3tiny
+"""
 
 import os
 import logging

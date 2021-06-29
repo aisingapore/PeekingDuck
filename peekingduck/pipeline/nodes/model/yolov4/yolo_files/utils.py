@@ -32,6 +32,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+Drawing functions for yolo
+"""
+
 from typing import List, Dict, Tuple, Any
 import numpy as np
 import cv2

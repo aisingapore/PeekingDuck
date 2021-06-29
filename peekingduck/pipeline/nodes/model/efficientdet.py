@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Slower, accurate Object Detection model
+"""
+
+
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model

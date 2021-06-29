@@ -10,6 +10,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Core functions to use posenet to detect poses
+"""
+
+
 from typing import List
 import numpy as np
 import tensorflow as tf

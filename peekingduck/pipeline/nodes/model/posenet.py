@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Fast Pose Estimation model
+"""
+
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model

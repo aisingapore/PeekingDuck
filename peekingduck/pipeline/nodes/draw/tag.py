@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Displays a tag on bounding box
+"""
 
 from typing import Any, Dict
 

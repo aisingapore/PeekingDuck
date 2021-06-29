@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Assign objects in close proximity to groups
+"""
 
 from typing import Any, Dict, List, Tuple
 

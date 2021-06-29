@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Check if detected objects are near each other
+"""
+
 from typing import Dict, Any
 
 import numpy as np

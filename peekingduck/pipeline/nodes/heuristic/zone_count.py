@@ -11,6 +11,11 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""
+Counts the number of detected objects within a boundary
+"""
+
 from typing import Dict, List, Any
 from peekingduck.pipeline.nodes.heuristic.zoningv1.zone import Zone
 from peekingduck.pipeline.nodes.node import AbstractNode

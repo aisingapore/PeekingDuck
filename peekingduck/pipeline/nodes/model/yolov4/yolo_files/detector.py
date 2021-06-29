@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Object detection class using yolo model to find object bboxes
+"""
+
 import os
 import builtins
 from typing import Dict, Any, List, Tuple

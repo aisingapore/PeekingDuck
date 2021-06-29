@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Predictor class to handle detection of poses for posenet
+"""
+
 import os
 import logging
 from typing import Dict, List, Callable, Any, Tuple

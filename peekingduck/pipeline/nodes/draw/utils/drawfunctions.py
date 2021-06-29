@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+"""
+Utils, constants, and functions for drawing
+"""
+
 from typing import List, Tuple, Any, Iterable, Union
 import numpy as np
 import cv2

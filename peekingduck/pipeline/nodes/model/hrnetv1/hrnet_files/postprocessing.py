@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Postprocessing functions for HRNet
+"""
+
+
 from typing import List, Tuple
 import numpy as np
 

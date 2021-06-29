@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Estimates the 3D coordinates of a human given 2D pose coordinates
+"""
 
 from typing import Dict, Any
 import numpy as np

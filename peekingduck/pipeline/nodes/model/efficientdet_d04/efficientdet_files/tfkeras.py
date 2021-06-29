@@ -15,6 +15,10 @@
 # Code of this file is mostly forked from
 # [@xuannianz](https://github.com/xuannianz))
 
+"""
+Inject Tensorflow Keras into model workloads
+"""
+
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.keras_utils \
     import inject_tfkeras_modules, init_tfkeras_custom_objects

@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Converts bounding boxes to a single point of reference
+"""
+
 
 from typing import Dict, Any, Tuple
 from peekingduck.pipeline.nodes.node import AbstractNode

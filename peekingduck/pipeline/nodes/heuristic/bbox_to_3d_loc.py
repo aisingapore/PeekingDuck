@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Estimates the 3D coordinates of an object given a 2D boundingbox
+"""
 
 from typing import Dict, Any
 import numpy as np

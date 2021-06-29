@@ -12,10 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Functions to download model weights
+"""
+
 import os
 import zipfile
 import requests
 from tqdm import tqdm
+
 
 BASE_URL = "https://peekingduck.blob.core.windows.net/models"
 

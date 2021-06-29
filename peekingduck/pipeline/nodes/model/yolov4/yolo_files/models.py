@@ -32,6 +32,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+"""
+Core Yolo model files
+"""
+
 from typing import Union, List, Tuple
 import numpy as np
 import tensorflow as tf

@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
+
 import logging
 from typing import Dict, Any, Tuple
 import numpy as np

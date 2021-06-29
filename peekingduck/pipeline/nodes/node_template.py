@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Node template for creating custom nodes
+"""
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode

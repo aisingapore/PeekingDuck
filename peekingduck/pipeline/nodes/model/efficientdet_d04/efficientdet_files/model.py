@@ -15,6 +15,10 @@
 # Code of this file is mostly forked from
 # [@xuannianz](https://github.com/xuannianz))
 
+"""
+EfficientDet models
+"""
+
 from typing import Any, Callable, Tuple, List
 from functools import reduce
 

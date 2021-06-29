@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Counts the number of detected boxes
+"""
 
 from typing import Dict, Any
 

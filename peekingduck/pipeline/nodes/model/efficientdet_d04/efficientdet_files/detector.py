@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Detector class to handle detection of bboxes for efficientdet
+"""
+
 import os
 import logging
 import json

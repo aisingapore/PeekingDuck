@@ -15,6 +15,10 @@
 # Code of this file is mostly forked from
 # [@xuannianz](https://github.com/xuannianz))
 
+"""
+EfficientDet layers
+"""
+
 from typing import Any, Dict, List
 from tensorflow import keras
 import tensorflow as tf

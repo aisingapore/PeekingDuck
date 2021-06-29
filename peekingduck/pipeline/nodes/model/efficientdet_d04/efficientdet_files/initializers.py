@@ -14,6 +14,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Functions to control weights initialisation
+"""
+
+
 # import keras
 from typing import Any, Dict
 import math

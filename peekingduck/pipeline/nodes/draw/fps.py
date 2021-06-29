@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Displays the FPS of video
+"""
 
 from typing import Any, Dict
 from time import perf_counter

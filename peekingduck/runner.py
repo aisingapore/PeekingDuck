@@ -12,6 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Main engine for Peekingduck processes
+"""
+
+
 import sys
 import logging
 from typing import List
@@ -20,10 +25,6 @@ from peekingduck.loaders import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 END_TYPE = 'process_end'
-
-"""
-Combine runner at this level. Use this to create the graph, and waddle is loop or once
-"""
 
 
 class Runner():

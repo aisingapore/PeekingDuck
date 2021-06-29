@@ -12,6 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Detector class to handle detection of poses for hrnet
+"""
 
 import os
 import logging

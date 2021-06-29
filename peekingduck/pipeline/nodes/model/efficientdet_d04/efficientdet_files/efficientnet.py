@@ -23,6 +23,9 @@
 # Code of this model implementation is mostly written by
 # Björn Barz ([@Callidior](https://github.com/Callidior))
 
+"""
+EfficientNet parameters and constants
+"""
 
 from __future__ import absolute_import
 from __future__ import division

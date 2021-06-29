@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Slower, accurate Pose Estimation model. Requires a object detector
+"""
+
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode

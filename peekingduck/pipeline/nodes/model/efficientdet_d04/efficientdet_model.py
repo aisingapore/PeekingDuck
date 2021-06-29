@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+EfficientDet model with model types: D0-D4
+"""
+
 import logging
 from typing import Dict, Any, List, Tuple
 import numpy as np

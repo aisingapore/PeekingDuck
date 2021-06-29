@@ -12,6 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Show the outputs on your display
+"""
+
 import sys
 from typing import Any, Dict
 import cv2
