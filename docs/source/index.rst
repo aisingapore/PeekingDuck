@@ -47,6 +47,7 @@ API documentation
 .. autosummary::
    :toctree:
    :caption: API documentation
+   :template: autosummary/module.rst
    :recursive:
 
    peekingduck
