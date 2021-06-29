@@ -4,5 +4,5 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 markers = [
-    "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not ml\"')",
+    "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not mlmodel\"')",
 ]
