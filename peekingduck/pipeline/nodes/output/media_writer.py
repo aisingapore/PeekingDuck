@@ -77,13 +77,13 @@ class Node(AbstractNode):
 
     def _write(self, img: np.array) -> None:
         if self._image_type == "image":
-            cv2.imwrite(self._file_path, img)
+            cv2.imwrite(self._file_path_with_timestamp, img)
         else:
             self.writer.write(img)  # type: ignore
 
     def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
 
-        self.file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
+        self._file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
 
         self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
@@ -91,7 +91,7 @@ class Node(AbstractNode):
         else:
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
-                self.file_path_with_timestamp, self._fourcc, fps, resolution)
+                self._file_path_with_timestamp, self._fourcc, fps, resolution)
 
     @staticmethod
     def _prepare_directory(output_dir) -> None:  # type: ignore
