@@ -12,7 +12,7 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -40,9 +40,10 @@ extensions = ['myst_parser',
 
 
 autosummary_generate = True
+master_doc = "index"
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
+templates_path = ['../_templates']
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
