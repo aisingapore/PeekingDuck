@@ -48,7 +48,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
-        input: ["source"],
+        input: ["none"],
         output: ["img", "pipeline_end"]
         '''
         outputs = self._run_single_file()

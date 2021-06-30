@@ -33,7 +33,7 @@ class MockedNode(AbstractNode):
 
 @pytest.fixture
 def config_node_input():
-    return {'input': ["source"],
+    return {'input': ["none"],
             'output': ["test_output_1"]}
 
 

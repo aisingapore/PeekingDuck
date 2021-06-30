@@ -31,7 +31,7 @@ def directory_contents():
 def writer():
     media_writer = Node({"output_dir": OUTPUT_PATH,
                          "input": "img",
-                         "output": "end"
+                         "output": "none"
                          })
     return media_writer
 

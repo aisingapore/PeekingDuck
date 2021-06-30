@@ -76,7 +76,7 @@ class Pipeline:
 
         data_pool = []
 
-        if nodes[0].inputs[0] == 'source':
+        if nodes[0].inputs[0] == 'none':
             data_pool.extend(nodes[0].outputs)
 
         for node in nodes[1:]:
