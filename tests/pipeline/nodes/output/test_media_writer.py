@@ -14,6 +14,7 @@
 
 
 import os
+import re
 
 import pytest
 from peekingduck.pipeline.nodes.output.media_writer import Node
@@ -47,8 +48,16 @@ class TestMediaWriter:
     def test_writer_writes_single_image(self, writer, create_image):
         image = create_image(size)
         writer.run({"filename": "test.jpg", "img": image, "fps": 1})
-        assert directory_contents() == set(["test.jpg"])
+        
+        #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
+        #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
+        #listed in input.recorded.py
+        pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
+        assert len(directory_contents()) == 1
+        assert list(directory_contents())[0].split(".")[-1] == "jpg"
+        assert re.search(pattern,list(directory_contents())[0])
+        
     def test_writer_writes_multi_image(self, writer, create_image):
         image1 = create_image(size)
         image2 = create_image(size)
@@ -57,14 +66,30 @@ class TestMediaWriter:
         writer.run({"filename": "test2.jpg", "img": image2, "fps": 1})
         writer.run({"filename": "test3.jpg", "img": image3, "fps": 1})
 
-        assert directory_contents() == set(
-            ["test1.jpg", "test2.jpg", "test3.jpg"])
+        assert len(directory_contents()) == 3
+
+        #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
+        #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
+        #listed in input.recorded.py
+        pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
+
+        for filename in directory_contents():
+            assert filename.split(".")[-1] == "jpg"
+            assert re.search(pattern,filename)
 
     def test_writer_writes_single_video(self, writer, create_video):
         video = create_video(size, nframes=20)
         for frame in video:
             writer.run({"filename": "test.mp4", "img": frame, "fps": 30})
-        assert directory_contents() == set(["test.mp4"])
+
+        #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
+        #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
+        #listed in input.recorded.py
+        pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
+        
+        assert len(directory_contents()) == 1
+        assert list(directory_contents())[0].split(".")[-1] == "mp4"
+        assert re.search(pattern,list(directory_contents())[0])
 
     def test_writer_writes_multi_video(self, writer, create_video):
         video1 = create_video(size, nframes=20)
@@ -75,4 +100,14 @@ class TestMediaWriter:
         for frame in video2:
             writer.run({"filename": "test2.mp4", "img": frame, "fps": 10})
 
-        assert directory_contents() == set(['test1.mp4', 'test2.mp4'])
+        assert len(directory_contents()) == 2
+
+        #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
+        #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
+        #listed in input.recorded.py
+        pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
+
+        for filename in directory_contents():
+            assert filename.split(".")[-1] == "mp4"
+            assert re.search(pattern,filename)
+
