@@ -82,7 +82,7 @@ def tmp_dir():
     os.chdir(newpath)
     yield
     os.chdir(cwd)
-    shutil.rmtree(newpath)
+    shutil.rmtree(newpath, ignore_errors=True)
 
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES)

@@ -56,7 +56,7 @@ class TestMediaWriter:
 
         assert len(directory_contents()) == 1
         assert list(directory_contents())[0].split(".")[-1] == "jpg"
-        assert re.search(pattern,directory_contents()[0])
+        assert re.search(pattern,list(directory_contents())[0])
         
     def test_writer_writes_multi_image(self, writer, create_image):
         image1 = create_image(size)
@@ -81,7 +81,7 @@ class TestMediaWriter:
         video = create_video(size, nframes=20)
         for frame in video:
             writer.run({"filename": "test.mp4", "img": frame, "fps": 30})
-        
+
         #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
         #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         #listed in input.recorded.py
@@ -89,7 +89,7 @@ class TestMediaWriter:
         
         assert len(directory_contents()) == 1
         assert list(directory_contents())[0].split(".")[-1] == "mp4"
-        assert re.search(pattern,directory_contents()[0])
+        assert re.search(pattern,list(directory_contents())[0])
 
     def test_writer_writes_multi_video(self, writer, create_video):
         video1 = create_video(size, nframes=20)

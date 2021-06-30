@@ -38,7 +38,7 @@ class Node(AbstractNode):
         self._image_type = None
         self._file_path = None
         self.writer = None
-        self.file_path_with_timestamp = None
+        self._file_path_with_timestamp = None
 
     def __del__(self) -> None:
         if self.writer:
@@ -49,7 +49,7 @@ class Node(AbstractNode):
         self._file_path = None
         self._image_type = None
         self.writer = None
-        self.file_path_with_timestamp = None
+        self._file_path_with_timestamp = None
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath
