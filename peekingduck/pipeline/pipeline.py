@@ -1,18 +1,22 @@
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
-Copyright 2021 AI Singapore
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Pipeline class that stores nodes and manages the data information used during inference
 """
+
+import copy
 import textwrap
 from typing import List, Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -42,8 +46,12 @@ class Pipeline:
         """
 
         for node in self.nodes:
-            inputs = {key: self._data[key]
-                      for key in node.inputs if key in self._data}
+            if "all" in node.inputs:
+                inputs = copy.deepcopy(self._data)
+            else:
+                inputs = {key: self._data[key]
+                          for key in node.inputs if key in self._data}
+
             outputs = node.run(inputs)
 
             if 'end' in outputs and outputs['end']:  # type: ignore
@@ -73,7 +81,7 @@ class Pipeline:
 
         for node in nodes[1:]:
 
-            if all(item in data_pool for item in node.inputs):
+            if all(item in data_pool for item in node.inputs) or "all" in node.inputs:
                 data_pool.extend(node.outputs)
             else:
                 msg = textwrap.dedent(f"""\

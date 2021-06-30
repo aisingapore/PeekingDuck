@@ -49,7 +49,7 @@ def efficientdet_detector(efficientdet_config):
 
     return detector
 
-
+@pytest.mark.mlmodel
 class TestEfficientDet:
 
     def test_no_human_image(self, test_no_human_images, efficientdet):
