@@ -55,7 +55,7 @@ def yolo_detector(yolo_config):
 def replace_download_weights(root, blob_file):
     return False
 
-
+@pytest.mark.mlmodel
 class TestYolo:
 
     def test_no_human_image(self, test_no_human_images, yolo):

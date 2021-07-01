@@ -4,7 +4,7 @@
 
 To support the fight against COVID-19, AI Singapore developed a solution to encourage individuals to maintain physical distance from each other. This can be used in many places, such as in malls to encourage social distancing in long queues, or in workplaces to ensure employees' well-being. An example of the latter is [HP Inc.](https://aisingapore.org/2020/06/hp-social-distancing/), which collaborated with us to deploy this solution on edge devices in its manufacturing facility in Singapore.
 
-<img src="../../images/readme/social_distancing.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="70%">
 
 The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
 
@@ -24,13 +24,13 @@ There are two main components to obtain the distance between individuals: 1) hum
 
 We use an open source human pose estimation model known as [PoseNet](https://arxiv.org/abs/1505.07427) to identify key human skeletal points. This allows the application to identify where individuals are located within the video feed. The coordinates of the various skeletal points will then be used to determine the distance between individuals.
 
-<img src="../../images/readme/posenet_demo.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif" width="70%">
 
 **2. Depth and Distance Approximation**
 
 To measure the distance between individuals, we have to estimate the 3D world coordinates from the keypoints in 2D coordinates. To achieve this, we compute the depth (Z) from the XY coordinates using the relationship below:
 
-<img src="../../images/readme/distance_estimation.png" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/distance_estimation.png" width="70%">
 
 
 Where:
@@ -82,7 +82,7 @@ For more adjustable node behaviours not listed here, check out the [node glossar
 
 It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `heuristic.keypoints_to_3d_loc` with `heuristic.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
 
-You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models, and we find that lightweight object detectors are generally better than lightweight pose estimation models in detecting humans. 
+You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models, and we find that lightweight object detectors are generally better than lightweight pose estimation models in detecting humans.
 
 The trade-off here is that the estimated distance between individuals will be less accurate. This is because for object detectors, the bounding box will be compared with the average height of a human, but the bounding box height decreases if the person is sitting down or bending over.
 
