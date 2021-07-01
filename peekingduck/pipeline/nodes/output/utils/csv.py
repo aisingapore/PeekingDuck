@@ -21,7 +21,7 @@ from typing import Any, Dict, List
 
 class CSVLogger:
 
-    def __init__(self,filepath: str,headers: List[str],logging_interval=1) -> None:
+    def __init__(self,filepath: str,headers: List[str],logging_interval: int=1) -> None:
         headers.insert(0,"Time")
         self.headers = headers
         self.filepath = filepath
@@ -39,7 +39,7 @@ class CSVLogger:
         time_str = curr_time.strftime("%H:%M:%S")
         content.update({"Time":time_str})
 
-        if (curr_time - self.last_write).seconds >= int(self.logging_interval):
+        if (curr_time - self.last_write).seconds >= self.logging_interval:
             self.writer.writerow(content)
             self.last_write = curr_time
 

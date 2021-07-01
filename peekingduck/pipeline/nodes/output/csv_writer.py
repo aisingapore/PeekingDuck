@@ -21,7 +21,7 @@ import textwrap
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.output.utils.csv import CSVLogger
+from peekingduck.pipeline.nodes.output.utils.CSV import CSVLogger
 
 class Node(AbstractNode):
     """Node that output a csv with user input choice of statistics to track"""
@@ -30,12 +30,15 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
 
         self._stats_to_track = config["stats_to_track"]
-        self._logging_interval = config["logging_interval"]
+        self._logging_interval = int(config["logging_interval"])
         self._filepath = config["filepath"]
         self._filepath_datetime = self._append_datetime_filepath(
             config["filepath"])
         self._stats_checked = False
-        self.csv_logger = None
+        self.csv_logger = CSVLogger(
+                self._filepath_datetime,
+                self._stats_to_track,
+                self._logging_interval)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
