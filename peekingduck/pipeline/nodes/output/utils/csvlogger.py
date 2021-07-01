@@ -22,8 +22,8 @@ from typing import Any, Dict, List
 class CSVLogger:
 
     def __init__(self,filepath: str,headers: List[str],logging_interval: int=1) -> None:
-        headers.insert(0,"Time")
-        self.headers = headers
+        self.headers = headers.copy()
+        self.headers.insert(0,"Time")
         self.filepath = filepath
         self.logging_interval = logging_interval
         self.csv_file = open(self.filepath, mode="a+",newline='')

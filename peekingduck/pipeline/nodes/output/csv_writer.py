@@ -17,17 +17,20 @@ Record the nodes outputs to csv file
 """
 
 from datetime import datetime
+import logging
 import textwrap
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.output.utils.csv import CSVLogger
+from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 class Node(AbstractNode):
     """Node that output a csv with user input choice of statistics to track"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
+
+        self.logger = logging.getLogger(__name__)
 
         self._stats_to_track = config["stats_to_track"]
         self._logging_interval = int(config["logging_interval"])
@@ -44,6 +47,7 @@ class Node(AbstractNode):
 
         if not self._stats_checked:
             self._check_tracked_stats(inputs)
+            #self._stats_to_track might change after the check
             self.csv_logger = CSVLogger(
                 self._filepath_datetime,
                 self._stats_to_track,
@@ -71,6 +75,7 @@ class Node(AbstractNode):
                     Only {valid} will be logged in the csv file""")
             self.logger.info(msg)
 
+        #update _stats_to_track with valid stats found in data pool
         self._stats_to_track = valid
         self._stats_checked = True
 
