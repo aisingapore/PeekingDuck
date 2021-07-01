@@ -40,6 +40,7 @@ def hrnet(request, hrnet_config):
     return node
 
 
+@pytest.mark.mlmodel
 class TestHrnet:
 
     def test_no_human_image(self, test_no_human_images, hrnet):
