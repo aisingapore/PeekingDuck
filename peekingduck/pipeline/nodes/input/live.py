@@ -64,4 +64,3 @@ class Node(AbstractNode):
             self.logger.warning("No video frames available for processing.")
 
         return outputs
-        
