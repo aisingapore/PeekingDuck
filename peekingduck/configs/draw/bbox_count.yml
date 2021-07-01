@@ -1,2 +1,2 @@
 input: ["count", "img"]
-output: ["img"]
+output: ["none"]

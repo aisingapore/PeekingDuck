@@ -42,7 +42,7 @@ class Node(AbstractNode):
                 "large_groups".
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs (dict): Dict with keys "none".
         """
 
         group_bboxes = self._get_group_bbox_coords(

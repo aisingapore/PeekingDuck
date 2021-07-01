@@ -1,5 +1,5 @@
 input: ["bboxes", "img"]
-output: ["img"]
+output: ["none"]
 
 bbox_color: [255, 0, 255]
 bbox_thickness: 2

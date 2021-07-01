@@ -34,7 +34,7 @@ class Node(AbstractNode):
             inputs (dict): Dict with keys "zones", "img".
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs (dict): Dict with keys "none".
         """
 
         draw_zones(inputs["img"], inputs["zones"])  # type: ignore

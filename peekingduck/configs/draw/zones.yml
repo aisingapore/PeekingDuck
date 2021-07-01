@@ -1,2 +1,2 @@
 input: ["zones", "img"]
-output: ["img"]
+output: ["none"]
