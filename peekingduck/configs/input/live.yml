@@ -10,3 +10,4 @@ resize: {
         }
 input_source: 0    # 0 for webcam, rtsp URL for CCTV
 mirror_image: False
+frames_log_freq: 100
