@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="images/readme/peekingduck.png" width="30%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="30%">
     <h1>PeekingDuck</h1>
 </div>
 
