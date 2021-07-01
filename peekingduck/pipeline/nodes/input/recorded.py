@@ -33,6 +33,8 @@ class Node(AbstractNode):
         self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
         self.file_end = False
+        self.frame_counter = 0
+        self.tens_count = 10
 
         self._get_files(input_dir)
         self._get_next_input()
@@ -45,17 +47,27 @@ class Node(AbstractNode):
             self.logger.info('Resizing of input set to %s by %s',
                              self.resize_info['width'],
                              self.resize_info['height'])
-
+        
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
         input: ["none"],
         output: ["img", "pipeline_end"]
         '''
         outputs = self._run_single_file()
+        
+        _processing = round((self.frame_counter/self.videocap.frame_count)*100)
+        self.frame_counter += 1
+        
+        if _processing > self.tens_count:
+            self.logger.info(f"Approximate Processed: {self.tens_count}% ...")
+            self.tens_count += 10
 
         if self.file_end:
+            self.logger.info(f"Completed processing file: {self._file_name}")
             self._get_next_input()
             outputs = self._run_single_file()
+            self.frame_counter = 0
+            self.tens_count = 10
 
         return outputs
 
