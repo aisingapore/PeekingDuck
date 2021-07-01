@@ -2,9 +2,9 @@
 
 ## Overview
 
-As part of COVID-19 measures, the Singapore Government has set restrictions on the group sizes of social gatherings. AI Singapore has developed a vision-based [group size checker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that checks if the group size limit has been violated. This can be used in many places, such as in malls to ensure that visitors adhere to guidelines, or in workplaces to ensure employees' safety. 
+As part of COVID-19 measures, the Singapore Government has set restrictions on the group sizes of social gatherings. AI Singapore has developed a vision-based [group size checker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that checks if the group size limit has been violated. This can be used in many places, such as in malls to ensure that visitors adhere to guidelines, or in workplaces to ensure employees' safety.
 
-<img src="../../images/readme/group_size_check_2.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="70%">
 
 To check if individuals belong to a group, we check if the physical distance between them is close. The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
 
@@ -24,13 +24,13 @@ There are three main components to obtain the distance between individuals: 1) h
 
 We use an open source human pose estimation model known as [PoseNet](https://arxiv.org/abs/1505.07427) to identify key human skeletal points. This allows the application to identify where individuals are located within the video feed. The coordinates of the various skeletal points will then be used to determine the distance between individuals.
 
-<img src="../../images/readme/posenet_demo.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif" width="70%">
 
 **2. Depth and Distance Approximation**
 
 To measure the distance between individuals, we have to estimate the 3D world coordinates from the keypoints in 2D coordinates. To achieve this, we compute the depth (Z) from the XY coordinates using the relationship below:
 
-<img src="../../images/readme/distance_estimation.png" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/distance_estimation.png" width="70%">
 
 
 Where:
@@ -76,7 +76,7 @@ By default, we are using the PoseNet model with a Resnet backbone for pose estim
 
 Some common node behaviours that you might need to adjust are:
 - `focal_length` & `torso_factor`: We calibrated these settings using a Logitech c170 webcam, with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup and calibrate these accordingly.
-- `obj_dist_thres`: The maximum distance between 2 individuals, in metres, before they are considered to be part of a group. 
+- `obj_dist_thres`: The maximum distance between 2 individuals, in metres, before they are considered to be part of a group.
 - `group_size_thres`: The acceptable group size limit.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
@@ -85,7 +85,7 @@ For more adjustable node behaviours not listed here, check out the [node glossar
 
 It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `heuristic.keypoints_to_3d_loc` with `heuristic.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
 
-You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models; we find lightweight object detectors are generally better than lightweight pose estimation models in detecting humans. 
+You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models; we find lightweight object detectors are generally better than lightweight pose estimation models in detecting humans.
 
 The trade-off here is that the estimated distance between individuals will be less accurate. This is because for object detectors, the bounding box will be compared with the average height of a human, but the bounding box height decreases if the person is sitting down or bending over.
 
