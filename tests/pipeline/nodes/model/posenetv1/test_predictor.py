@@ -47,7 +47,7 @@ def posenet_predictor(posenet_config):
 
 TEST_DIR = os.path.join(os.getcwd(), 'images', 'testing')
 
-
+@pytest.mark.mlmodel
 class TestPredictor:
 
     def test_predictor(self):
