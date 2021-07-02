@@ -61,7 +61,7 @@ class Node(AbstractNode):
             self.frame_counter += 1
             if self.frame_counter%self.frames_log_freq == 0:
                 self.logger.info(f"Frames Processed: {self.frame_counter} ...")
-            
+
         else:
             outputs = { "img": None,
                         "pipeline_end": True,
