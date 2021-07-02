@@ -34,6 +34,7 @@ def hrnet_detector(hrnet_config):
     return detector
 
 
+@pytest.mark.mlmodel
 class TestDetector:
 
     def test_create_model(self, hrnet_detector):
