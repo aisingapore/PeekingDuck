@@ -43,6 +43,8 @@ class Node(AbstractNode):
             self.logger.info('Resizing of input set to %s by %s',
                              self.resize_info['width'],
                              self.resize_info['height'])
+        self.frame_counter = 0
+        self.frames_log_freq = config['frames_log_freq']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
@@ -56,6 +58,10 @@ class Node(AbstractNode):
                         "pipeline_end": False,
                         "filename": self.filename,
                         "fps": self.fps_saved_output_video}
+            self.frame_counter += 1
+            if self.frame_counter%self.frames_log_freq == 0:
+                self.logger.info(f"Frames Processed: {self.frame_counter} ...")
+
         else:
             outputs = { "img": None,
                         "pipeline_end": True,
