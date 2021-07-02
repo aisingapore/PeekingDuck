@@ -60,7 +60,7 @@ class Node(AbstractNode):
                         "fps": self.fps_saved_output_video}
             self.frame_counter += 1
             if self.frame_counter%self.frames_log_freq == 0:
-                self.logger.info(f"Frames Processed: {self.frame_counter} ...")
+                self.logger.info('Frames Processed: %s ...', self.frame_counter)
 
         else:
             outputs = { "img": None,
