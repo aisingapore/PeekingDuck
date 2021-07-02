@@ -47,17 +47,17 @@ class Node(AbstractNode):
             self.logger.info('Resizing of input set to %s by %s',
                              self.resize_info['width'],
                              self.resize_info['height'])
-        
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
         input: ["none"],
         output: ["img", "pipeline_end"]
         '''
         outputs = self._run_single_file()
-        
+
         _processing = round((self.frame_counter/self.videocap.frame_count)*100)
         self.frame_counter += 1
-        
+
         if _processing > self.tens_count:
             self.logger.info(f"Approximate Processed: {self.tens_count}% ...")
             self.tens_count += 10
