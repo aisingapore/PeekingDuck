@@ -59,11 +59,11 @@ class Node(AbstractNode):
         self.frame_counter += 1
 
         if _processing > self.tens_count:
-            self.logger.info(f"Approximate Processed: {self.tens_count}% ...")
+            self.logger.info('Approximate Processed: %s ...', self.tens_count)
             self.tens_count += 10
 
         if self.file_end:
-            self.logger.info(f"Completed processing file: {self._file_name}")
+            self.logger.info('Completed processing file: %s', self._file_name)
             self._get_next_input()
             outputs = self._run_single_file()
             self.frame_counter = 0
