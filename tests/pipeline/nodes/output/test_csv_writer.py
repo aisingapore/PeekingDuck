@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import csv
+import datetime
 import os
 import re
 
@@ -25,13 +26,24 @@ def directory_contents():
     return res
 
 @pytest.fixture
-def writer():  
+def writer(): #difference in logging interval
     csv_writer = Node({
         "input": "all",
         "output": "end",
-        "filepath": os.path.join(os.getcwd(),"test.csv"), 
+        "filepath": os.path.join(os.getcwd(),"test1.csv"), 
         "stats_to_track":["bbox","bbox_labels"],
-        "logging_interval":"2"
+        "logging_interval":"1"
+    }) #use the absolute filepath in the temp dir created for the test
+    return csv_writer
+
+@pytest.fixture
+def writer2(): #difference in logging interval
+    csv_writer = Node({
+        "input": "all",
+        "output": "end",
+        "filepath": os.path.join(os.getcwd(),"test2.csv"), 
+        "stats_to_track":["bbox","bbox_labels"],
+        "logging_interval":"5"
     }) #use the absolute filepath in the temp dir created for the test
     return csv_writer
 
@@ -46,7 +58,10 @@ class TestCSVWriter:
             "bbox":[[1,2,3,4]],
             "bbox_labels":["person"]
         }
-        writer.run(inputs)
+        for _ in range(10):
+            writer.run(inputs) #write a few entries
+
+        del writer #close the csv file
 
         #check timestamp is appended to filename
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z]{3}$"
@@ -60,12 +75,72 @@ class TestCSVWriter:
             "bbox":[[1,2,3,4]],
             "bbox_labels":["person"]
         }
-        writer.run(inputs)
+        for _ in range(10):
+            writer.run(inputs) #write a few entries
+
+        del writer #close the csv file
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
             header = reader.fieldnames
+            for row in reader: #read all row entries in the reader
+                pass
 
         assert header == ["Time","bbox","bbox_labels"]
 
     
+    def test_check_logging_interval(self, writer2):
+        inputs={
+            "bbox":[[1,2,3,5]],
+            "bbox_labels":["person"]
+        }
+
+        time_lapse =0
+
+        start_time = datetime.datetime.now()
+
+        while(time_lapse<15):
+            curr_time = datetime.datetime.now()
+
+            #Run wrtier with input arriving in 1 sec intervals
+            #total 14 secs with logging interval of 5 sec
+            #should have 2 entries
+            if (curr_time - start_time).seconds >= 1:
+                time_lapse +=1
+                start_time=curr_time
+                writer2.run(inputs)
+
+        del writer2 #close the csv file
+
+        with open(directory_contents()[0], newline="") as csvfile:
+            reader=csv.DictReader(csvfile, delimiter=",")
+            header = reader.fieldnames
+            for row in reader: #read all row entries in the reader
+                pass
+            
+            # includes header plus total data entry
+            num_lines = reader.line_num 
+
+        assert header == ["Time","bbox","bbox_labels"]
+        assert len(directory_contents()) == 1
+        assert num_lines == 3 #include header
+    
+    def test_check_invalid_stats(self, writer):
+        #data pool did not include bbox_labels
+        #But stats to track include bbox_labels
+        inputs={
+            "bbox":[[1,2,3,5]]
+        }
+
+        for _ in range(10):
+            writer.run(inputs) #write a few entries
+
+        del writer #close the csv file
+
+        with open(directory_contents()[0], newline="") as csvfile:
+            reader=csv.DictReader(csvfile, delimiter=",")
+            header = reader.fieldnames
+            for row in reader: #read all row entries in the reader
+                pass
+
+        assert header == ["Time","bbox"]

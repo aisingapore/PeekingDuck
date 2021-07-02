@@ -30,10 +30,11 @@ class CSVLogger:
         self.writer = csv.DictWriter(self.csv_file, fieldnames=self.headers)
         self.last_write = datetime.now()
 
-        # if file is empty write header
-        if self.csv_file.tell() == 0: self.writer.writeheader()
-
     def write(self,data_pool: Dict[str, Any],specific_data: List[str]) -> None:
+        # if file is empty write header
+        if self.csv_file.tell() == 0:
+            self.writer.writeheader()
+        
         content = {k:v for k,v in data_pool.items() if k in specific_data}
         curr_time = datetime.now()
         time_str = curr_time.strftime("%H:%M:%S")
