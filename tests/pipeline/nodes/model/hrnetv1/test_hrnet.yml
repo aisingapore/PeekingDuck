@@ -1,9 +1,0 @@
-input: ['img', 'bboxes']
-output: ['keypoints', 'keypoint_scores', 'keypoint_conns']
-
-weights_dir: ['../weights/hrnet']
-blob_file: 'hrnet.zip'
-model_file: '../weights/hrnet/hrnet_frozen.pb'
-resolution: { height: 192, width: 256 }
-score_threshold: 0.1
-MODEL_NODES: { inputs: [x:0], outputs: [Identity:0] }
