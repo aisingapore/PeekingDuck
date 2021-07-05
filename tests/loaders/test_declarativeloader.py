@@ -29,6 +29,7 @@ CUSTOM_NODE_TYPE = "custom_node_type"
 CUSTOM_NODE_NAME = "custom_node_name"
 CUSTOM_NODE = CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME
 NODES = {"nodes": [PKD_NODE,
+                   {PKD_NODE: [{'setting': True}]},
                    CUSTOM_NODE_NAME + "." + CUSTOM_NODE]}
 
 MODULE_PATH = "tmp_dir"
@@ -151,17 +152,22 @@ class TestDeclarativeLoader:
 
     def test_instantiate_nodes(self, declarativeloader):
 
-        pkd_node = ['peekingduck.pipeline.nodes.',
-                    PKD_NODE,
-                    declarativeloader.config_loader,
-                    None]
+        pkd_node_default = ['peekingduck.pipeline.nodes.',
+                            PKD_NODE,
+                            declarativeloader.config_loader,
+                            None]
+
+        pkd_node_edit = ['peekingduck.pipeline.nodes.',
+                         PKD_NODE,
+                         declarativeloader.config_loader,
+                         {'setting': True}]
 
         custom_node = [CUSTOM_NODE_NAME + ".",
                        CUSTOM_NODE,
                        declarativeloader.custom_config_loader,
                        None]
 
-        ground_truth = [pkd_node, custom_node]
+        ground_truth = [pkd_node_default, pkd_node_edit, custom_node]
 
         with mock.patch('peekingduck.loaders.DeclarativeLoader._init_node',
                         wraps=replace_init_node):
