@@ -17,6 +17,7 @@ import os
 import yaml
 import pytest
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
+from peekingduck.weights_utils import checker, downloader
 
 
 @pytest.fixture
@@ -30,6 +31,10 @@ def hrnet_config():
 
 @pytest.fixture
 def hrnet_detector(hrnet_config):
+
+    if not checker.has_weights(hrnet_config['root'], hrnet_config['weights_dir']):
+        downloader.download_weights(hrnet_config['root'], hrnet_config['blob_file'])
+
     detector = Detector(hrnet_config)
     return detector
 
