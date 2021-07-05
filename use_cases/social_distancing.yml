@@ -2,11 +2,11 @@ nodes:
 - input.live
 - model.posenet
 - heuristic.keypoints_to_3d_loc:
-  - focal_length: 1.14
-  - torso_factor: 0.9
+    focal_length: 1.14
+    torso_factor: 0.9
 - heuristic.check_nearby_objs:
-  - near_threshold: 1.5
-  - tag_msg: "TOO CLOSE!"
+    near_threshold: 1.5
+    tag_msg: "TOO CLOSE!"
 - draw.bbox
 - draw.poses
 - draw.tag

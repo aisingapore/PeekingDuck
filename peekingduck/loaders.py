@@ -20,6 +20,7 @@ import sys
 import os
 import importlib
 import logging
+import collections.abc
 from typing import Any, Dict, List
 
 import yaml
@@ -96,7 +97,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
             if isinstance(node_item, dict):
                 node_str = list(node_item.keys())[0]  # type: ignore
-                config_updates = {key: d[key] for d in node_item[node_str] for key in d}
+                config_updates = node_item[node_str]
 
             node_str_split = node_str.split('.')
 
@@ -104,7 +105,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             self.logger.info(msg)
 
             if len(node_str_split) == 3:
-                path_to_node = ".".join(self.custom_folder_path.split('/')[-1:]) + "."
+                path_to_node = ".".join(
+                    self.custom_folder_path.split('/')[-1:]) + "."
                 node_name = ".".join(node_str_split[-2:])
 
                 instantiated_node = self._init_node(path_to_node,
@@ -132,22 +134,21 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config = config_loader.get(node_name)
 
         if config_updates is not None:
-            config = self._edit_node_config(config, config_updates)
+            config = self._edit_config(config, config_updates)
 
         return node.Node(config)  # type: ignore
 
-    def _edit_node_config(self, config: Dict[str, Any],
-                          config_updates: Dict[str, Any]) -> Dict[str, Any]:
-        """ Edit default node configuration """
-
-        params = set(config_updates.keys()) - set(config.keys())
-        for param in params:
-            config_updates.pop(param)
-            msg = "'" + param + "' is not a valid configurable parameter"
-            self.logger.warning(msg)
-        config.update(config_updates)
-
-        return config
+    def _edit_config(self, dict_orig, dict_update):
+        """ Update value of a nested dictionary of varying depth using
+            recursion
+        """
+        for key, value in dict_update.items():
+            if isinstance(value, collections.abc.Mapping):
+                dict_orig[key] = self._edit_config(
+                    dict_orig.get(key, {}), value)
+            else:
+                dict_orig[key] = value
+        return dict_orig
 
     def get_pipeline(self) -> Pipeline:
         """Returns a compiled Pipeline for PeekingDuck runner to execute"""

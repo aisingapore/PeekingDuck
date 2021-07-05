@@ -1,11 +1,11 @@
 nodes:
 - input.live
 - model.yolo:
-  - detect_ids: [0]
+    detect_ids: [0]
 - heuristic.bbox_to_btm_midpoint
 - heuristic.zone_count:
-  - resolution: [1280, 720]
-  - zones: [
+    resolution: [1280, 720]
+    zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]

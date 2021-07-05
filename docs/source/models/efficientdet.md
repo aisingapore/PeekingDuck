@@ -70,8 +70,8 @@ The full list of configurable parameters for the EfficientDet node are listed in
 nodes:
   - input.live
   - model.efficientdet:
-      - model_type: 4
-      - detect_ids: [0, 4, 41]
+      model_type: 4
+      detect_ids: [0, 4, 41]
   - draw.bbox
   - output.screen
 ```
