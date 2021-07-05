@@ -29,12 +29,12 @@ class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
 
-    def __init__(self, RUN_PATH: str, CUSTOM_NODE_PATH: str = None,
+    def __init__(self, RUN_PATH: str, CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
         """
         Args:
             RUN_PATH (str): path to yaml file of node pipeine declaration.
-            CUSTOM_NODE_PATH (str): path to custom nodes folder if used.
+            CUSTOM_NODE_PARENT_FOLDER (str): parent folder of the custom nodes folder.
             nodes (:obj:'list' of :obj:'Node'): if not using declarations via yaml,
                 initialize by giving the node stack as a list
 
@@ -46,7 +46,7 @@ class Runner():
 
             # create Graph to run
             self.node_loader = DeclarativeLoader(
-                RUN_PATH, CUSTOM_NODE_PATH)  # type: ignore
+                RUN_PATH, CUSTOM_NODE_PARENT_FOLDER)  # type: ignore
 
             self.pipeline = self.node_loader.get_pipeline()
 
