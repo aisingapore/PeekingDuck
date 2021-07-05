@@ -144,7 +144,9 @@ class TestDeclarativeLoader:
             assert node == NODES["nodes"][idx]
 
     def test_get_custom_name_from_node_list(self, declarativeloader):
+
         custom_folder_name = declarativeloader._get_custom_name_from_node_list()
+
         assert custom_folder_name == CUSTOM_NODE_NAME
 
     def test_instantiate_nodes(self, declarativeloader):
