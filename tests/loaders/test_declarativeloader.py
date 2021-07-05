@@ -184,16 +184,21 @@ class TestDeclarativeLoader:
         path_to_node = ""
         node_name = PKD_NODE
         config_loader = declarativeloader.config_loader
-        config_updates = None
+        config_updates = {'setting': True}
 
-        init_node = declarativeloader._init_node(path_to_node,
-                                                 node_name,
-                                                 config_loader,
-                                                 config_updates)
+        with mock.patch('logging.Logger.warning') as mock_logger:
 
-        assert init_node._name == node_name
-        assert init_node._inputs == ['source']
-        assert init_node._outputs == ['end']
+            init_node = declarativeloader._init_node(path_to_node,
+                                                     node_name,
+                                                     config_loader,
+                                                     config_updates)
+
+            msg = "'setting' is not a valid configurable parameter"
+            mock_logger.assert_called_with(msg)
+
+            assert init_node._name == node_name
+            assert init_node._inputs == ['source']
+            assert init_node._outputs == ['end']
 
     def test_init_node_custom(self, declarativeloader):
 
