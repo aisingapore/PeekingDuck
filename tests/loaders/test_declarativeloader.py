@@ -22,14 +22,14 @@ import yaml
 import pytest
 from peekingduck.loaders import DeclarativeLoader
 
-PKD_NODE_TYPE = "pkd_node_type"
+PKD_NODE_TYPE = "input"
 PKD_NODE_NAME = "pkd_node_name"
-PKD_NODE = "pkd_node_type" + "." + "pkd_node_name"
+PKD_NODE = PKD_NODE_TYPE + "." + PKD_NODE_NAME
 CUSTOM_NODE_TYPE = "custom_node_type"
 CUSTOM_NODE_NAME = "custom_node_name"
-CUSTOM_NODE = "custom_node_type" + "." + "custom_node_name"
+CUSTOM_NODE = CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME
 NODES = {"nodes": [PKD_NODE,
-                   "custom_nodes." + CUSTOM_NODE]}
+                   CUSTOM_NODE_NAME + "." + CUSTOM_NODE]}
 
 MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
@@ -98,7 +98,7 @@ def declarativeloader():
 
     setup()
 
-    declarative_loader = DeclarativeLoader(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH)
+    declarative_loader = DeclarativeLoader(RUN_CONFIG_PATH, MODULE_PATH)
 
     declarative_loader.config_loader._basedir = MODULE_PATH
     declarative_loader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH
@@ -143,6 +143,10 @@ class TestDeclarativeLoader:
         for idx, node in enumerate(loaded_nodes):
             assert node == NODES["nodes"][idx]
 
+    def test_get_custom_name_from_node_list(self, declarativeloader):
+        custom_folder_name = declarativeloader._get_custom_name_from_node_list()
+        assert custom_folder_name == CUSTOM_NODE_NAME
+
     def test_instantiate_nodes(self, declarativeloader):
 
         pkd_node = ['peekingduck.pipeline.nodes.',
@@ -150,7 +154,7 @@ class TestDeclarativeLoader:
                     declarativeloader.config_loader,
                     None]
 
-        custom_node = ["custom_nodes.",
+        custom_node = [CUSTOM_NODE_NAME + ".",
                        CUSTOM_NODE,
                        declarativeloader.custom_config_loader,
                        None]
@@ -164,6 +168,7 @@ class TestDeclarativeLoader:
 
             for node_num, node in enumerate(instantiated_nodes):
                 for idx, output in enumerate(node):
+                    print(output)
                     assert output == ground_truth[node_num][idx]
 
     def test_init_node_pkd(self, declarativeloader):
