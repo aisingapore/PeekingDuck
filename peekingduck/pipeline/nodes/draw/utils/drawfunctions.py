@@ -243,16 +243,10 @@ def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
 
 def draw_fps(frame: np.array, current_fps: float) -> None:
     """ Draw FPS onto frame image
-<<<<<<< HEAD
-    args:
-        - frame: array containing the RGB values of the frame image
-        - current_fps: value of the calculated FPS
-=======
 
     Args:
         frame (np.array): image of current frame
         current_fps (float): value of the calculated FPS
->>>>>>> 823b177166ef1f40faab8e8611001c73a6b634c7
     """
     text = "FPS: {:.05}".format(current_fps)
     text_location = (25, 25)
