@@ -26,17 +26,17 @@ from peekingduck.loaders import DeclarativeLoader
 
 PKD_NODE_TYPE = "input"
 PKD_NODE_NAME = "pkd_node_name"
-PKD_NODE = PKD_NODE_TYPE + "." + PKD_NODE_NAME
+PKD_NODE = f"{PKD_NODE_TYPE}.{PKD_NODE_NAME}"
 CUSTOM_NODE_TYPE = "custom_node_type"
 CUSTOM_NODE_NAME = "custom_node_name"
-CUSTOM_NODE = CUSTOM_NODE_TYPE + "." + CUSTOM_NODE_NAME
+CUSTOM_NODE = f"{CUSTOM_NODE_TYPE}.{CUSTOM_NODE_NAME}"
 NODES = {"nodes": [PKD_NODE,
                    {PKD_NODE: [{'setting': True}]},
-                   CUSTOM_NODE_NAME + "." + CUSTOM_NODE]}
+                   f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}"]}
 
 MODULE_PATH = "tmp_dir"
-UNIQUE_SUFFIX = '_'.join(random.choice(string.ascii_lowercase) for x in range(8))
-CUSTOM_FOLDER_NAME = "custom_nodes" + UNIQUE_SUFFIX
+UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase) for x in range(8))
+CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
@@ -54,7 +54,7 @@ def create_run_config_yaml(nodes):
 
 def create_node_python(node_dir, node_name):
 
-    node_file = node_name + ".py"
+    node_file = f"{node_name}.py"
     with open(os.path.join(node_dir, node_file), 'w') as fp:
         content = textwrap.dedent(
             """\
@@ -76,7 +76,8 @@ def create_node_config(config_dir, node_name):
                    "input": ["source"],
                    "output": ["end"]}
 
-    node_config_file = node_name + ".yml"
+    node_config_file = f"{node_name}.yml"
+
     with open(os.path.join(config_dir, node_config_file), 'w') as fp:
         yaml.dump(config_text, fp)
 
@@ -124,7 +125,7 @@ def replace_instantiate_nodes():
 
     node_path = PKD_NODE
     node_config_path = os.path.join(PKD_NODE_CONFIG_DIR,
-                                    PKD_NODE_NAME + ".yml")
+                                    f"{PKD_NODE_NAME}.yml")
 
     node = importlib.import_module(node_path)
     with open(node_config_path) as file:
@@ -166,7 +167,7 @@ class TestDeclarativeLoader:
                          declarativeloader.config_loader,
                          [{'setting': True}]]
 
-        custom_node = [CUSTOM_NODE_NAME + ".",
+        custom_node = [f"{CUSTOM_NODE_NAME}.",
                        CUSTOM_NODE,
                        declarativeloader.custom_config_loader,
                        None]
@@ -200,7 +201,7 @@ class TestDeclarativeLoader:
 
     def test_init_node_custom(self, declarativeloader):
 
-        path_to_node = CUSTOM_FOLDER_NAME + "."
+        path_to_node = f"{CUSTOM_FOLDER_NAME}."
         node_name = CUSTOM_NODE
         config_loader = declarativeloader.custom_config_loader
         config_updates = None
@@ -210,7 +211,7 @@ class TestDeclarativeLoader:
                                                  config_loader,
                                                  config_updates)
 
-        assert init_node._name == path_to_node + node_name
+        assert init_node._name == f"{path_to_node}{node_name}"
         assert init_node._inputs == ['source']
         assert init_node._outputs == ['end']
 
