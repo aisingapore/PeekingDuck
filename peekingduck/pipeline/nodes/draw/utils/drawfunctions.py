@@ -140,24 +140,6 @@ def _draw_one_keypoint_text(frame: np.ndarray,
                 0.4, keypoint_text_color, 1, cv2.LINE_AA)
 
 
-def _project_points_onto_original_image(points: np.ndarray,
-                                        image_size: Tuple[int, int]) -> np.ndarray:
-    """ Project points from relative value (0, 1) to absolute values in original
-    image. Note that coordinate (0, 0) starts from image top-left. """
-    if len(points) == 0:
-        return []
-
-    points = points.reshape((-1, 2))
-
-    projected_points = np.array(points, dtype=np.float32)
-
-    width, height = image_size[0], image_size[1]
-    projected_points[:, 0] *= width
-    projected_points[:, 1] *= height
-
-    return projected_points
-
-
 def draw_bboxes(frame: np.array,
                 bboxes: List[List[float]],
                 color: Tuple[int, int, int],
