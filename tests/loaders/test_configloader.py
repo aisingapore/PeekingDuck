@@ -45,11 +45,13 @@ class TestConfigLoader:
     def test_config_loader_returns_correct_config_filepath(self, configloader):
 
         node = 'type.node'
-        filepath = configloader._get_config_path(node)
+        #.replace("\\","/") for windows where os.path.join uses "\\"
+        filepath = configloader._get_config_path(node).replace("\\","/")
 
+        #.replace("\\","/") for windows where os.path.join uses "\\"
         ground_truth = os.path.join("tmp_dir",
                                     "configs",
-                                    node.replace(".", "/") + ".yml")
+                                    node.replace(".", "/") + ".yml").replace("\\","/")
 
         assert filepath == ground_truth
 
