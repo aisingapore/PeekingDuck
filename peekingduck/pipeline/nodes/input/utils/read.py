@@ -120,7 +120,7 @@ class VideoNoThread:
         return int(width), int(height)
 
     @property
-    def frame_count(self) -> float:
+    def frame_count(self) -> int:
         """ Get total number of frames of file
 
         Returns:
