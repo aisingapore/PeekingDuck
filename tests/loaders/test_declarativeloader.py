@@ -164,7 +164,7 @@ class TestDeclarativeLoader:
         pkd_node_edit = ['peekingduck.pipeline.nodes.',
                          PKD_NODE,
                          declarativeloader.config_loader,
-                         {'setting': True}]
+                         [{'setting': True}]]
 
         custom_node = [CUSTOM_NODE_NAME + ".",
                        CUSTOM_NODE,
@@ -187,21 +187,16 @@ class TestDeclarativeLoader:
         path_to_node = ""
         node_name = PKD_NODE
         config_loader = declarativeloader.config_loader
-        config_updates = {'setting': True}
+        config_updates = None
 
-        with mock.patch('logging.Logger.warning') as mock_logger:
+        init_node = declarativeloader._init_node(path_to_node,
+                                                 node_name,
+                                                 config_loader,
+                                                 config_updates)
 
-            init_node = declarativeloader._init_node(path_to_node,
-                                                     node_name,
-                                                     config_loader,
-                                                     config_updates)
-
-            msg = "'setting' is not a valid configurable parameter"
-            mock_logger.assert_called_with(msg)
-
-            assert init_node._name == node_name
-            assert init_node._inputs == ['source']
-            assert init_node._outputs == ['end']
+        assert init_node._name == node_name
+        assert init_node._inputs == ['source']
+        assert init_node._outputs == ['end']
 
     def test_init_node_custom(self, declarativeloader):
 
