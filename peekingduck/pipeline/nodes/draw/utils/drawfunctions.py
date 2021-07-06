@@ -21,6 +21,8 @@ from typing import List, Tuple, Any, Iterable, Union
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+from peekingduck.pipeline.nodes.draw.utils.general \
+    import project_points_onto_original_image
 
 POSE_BBOX_COLOR = (255, 255, 0)
 BLACK_COLOR = (0, 0, 0)
@@ -98,7 +100,7 @@ def _draw_connections(frame: np.array,
     """ Draw connections between detected keypoints """
     if connections is not None:
         for connection in connections:
-            pt1, pt2 = _project_points_onto_original_image(connection, image_size)
+            pt1, pt2 = project_points_onto_original_image(connection, image_size)
             cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
 
 
@@ -111,7 +113,7 @@ def _draw_keypoints(frame: np.ndarray,
                     keypoint_text_color: Tuple[int, int, int]) -> None:
     # pylint: disable=too-many-arguments
     """ Draw detected keypoints """
-    img_keypoints = _project_points_onto_original_image(
+    img_keypoints = project_points_onto_original_image(
         keypoints, image_size)
 
     for idx, keypoint in enumerate(img_keypoints):
@@ -163,7 +165,7 @@ def _draw_bbox(frame: np.array,
                color: Tuple[int, int, int],
                thickness: int) -> np.array:
     """ Draw a single bounding box """
-    top_left, bottom_right = _project_points_onto_original_image(
+    top_left, bottom_right = project_points_onto_original_image(
         bbox, image_size)
     cv2.rectangle(frame, (top_left[0], top_left[1]),
                   (bottom_right[0], bottom_right[1]),
@@ -194,7 +196,7 @@ def _draw_tag(frame: np.array,
               color: Tuple[int, int, int]) -> None:
     """Draw a tag above a single bounding box.
     """
-    top_left, _ = _project_points_onto_original_image(bbox, image_size)
+    top_left, _ = project_points_onto_original_image(bbox, image_size)
     position = int(top_left[0]), int(top_left[1]-25)
     cv2.putText(frame, tag, position, FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
