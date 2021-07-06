@@ -59,7 +59,7 @@ class Node(AbstractNode):
         self.frame_counter += 1
 
         if approx_processed > self.tens_counter:
-            self.logger.info('Approximately Processed: %s%...', self.tens_counter)
+            self.logger.info('Approximately Processed: %s%%...', self.tens_counter)
             self.tens_counter += 10
 
         if self.file_end:
