@@ -107,7 +107,7 @@ nodes:
   - input.live
   - model.yolo
   - model.hrnet:
-      - score_threshold: 0.4
+      score_threshold: 0.4
   - draw.poses
   - output.screen
 ```

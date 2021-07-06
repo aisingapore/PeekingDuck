@@ -70,8 +70,8 @@ The full list of configurable parameters for the YOLO node are listed in [yolo.y
 nodes:
   - input.live
   - model.yolo:
-      - model_type: v4
-      - detect_ids: [0, 4, 41]
+      model_type: v4
+      detect_ids: [0, 4, 41]
   - draw.bbox
   - output.screen
 ```

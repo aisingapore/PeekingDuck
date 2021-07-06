@@ -37,7 +37,8 @@ CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
 CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
-CUSTOM_NODE_CONFIG_DIR = os.path.join(CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
+CUSTOM_NODE_CONFIG_DIR = os.path.join(
+    CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
 
 
 def create_run_config_yaml(nodes):
@@ -213,18 +214,33 @@ class TestDeclarativeLoader:
         assert init_node._inputs == ['img']
         assert init_node._outputs == ['end']
 
-    def test_edit_node_config(self, declarativeloader):
+    def test_edit_config(self, declarativeloader):
 
-        config = {'input': False,
-                  'output': True}
-        config_update = {'input': True}
-        ground_truth = {'input': True,
-                        'output': True}
+        orig_config = {
+            'mirror_image': True,
+            'resize': {
+                'do_resizing': False,
+                'width': 1280,
+                'height': 720
+            }}
+        config_update = {'mirror_image': False,
+                         'resize': {'do_resizing': True}}
+        ground_truth = {
+            'mirror_image': False,
+            'resize': {
+                'do_resizing': True,
+                'width': 1280,
+                'height': 720
+            }}
 
-        config = declarativeloader._edit_node_config(config, config_update)
+        orig_config = declarativeloader._edit_config(
+            orig_config, config_update)
 
-        for key in config.keys():
-            assert config[key] == ground_truth[key]
+        assert orig_config['mirror_image'] == ground_truth['mirror_image']
+        assert orig_config['resize']['do_resizing'] == ground_truth['resize']['do_resizing']
+        # Ensure that config_update does not replace the "resize" sub-dict completely and
+        # erase "width" or "height"
+        assert "width" in orig_config["resize"]
 
     def test_get_pipeline(self, declarativeloader):
 
