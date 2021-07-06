@@ -14,6 +14,8 @@
 
 import os
 import sys
+import string
+import random
 import importlib
 import textwrap
 from unittest import mock
@@ -33,8 +35,10 @@ NODES = {"nodes": [PKD_NODE,
                    CUSTOM_NODE_NAME + "." + CUSTOM_NODE]}
 
 MODULE_PATH = "tmp_dir"
+UNIQUE_SUFFIX = '_'.join(random.choice(string.ascii_lowercase) for x in range(8))
+CUSTOM_FOLDER_NAME = "custom_nodes" + UNIQUE_SUFFIX
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
-CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
+CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
 CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
@@ -51,7 +55,7 @@ def create_run_config_yaml(nodes):
 def create_node_python(node_dir, node_name):
 
     node_file = node_name + ".py"
-    with open(os.path.join(node_dir,  node_file), 'w') as fp:
+    with open(os.path.join(node_dir, node_file), 'w') as fp:
         content = textwrap.dedent(
             """\
             from peekingduck.pipeline.nodes.node import AbstractNode
@@ -73,7 +77,7 @@ def create_node_config(config_dir, node_name):
                    "output": ["end"]}
 
     node_config_file = node_name + ".yml"
-    with open(os.path.join(config_dir,  node_config_file), 'w') as fp:
+    with open(os.path.join(config_dir, node_config_file), 'w') as fp:
         yaml.dump(config_text, fp)
 
 
@@ -176,7 +180,6 @@ class TestDeclarativeLoader:
 
             for node_num, node in enumerate(instantiated_nodes):
                 for idx, output in enumerate(node):
-                    print(output)
                     assert output == ground_truth[node_num][idx]
 
     def test_init_node_pkd(self, declarativeloader):
@@ -202,7 +205,7 @@ class TestDeclarativeLoader:
 
     def test_init_node_custom(self, declarativeloader):
 
-        path_to_node = "custom_nodes."
+        path_to_node = CUSTOM_FOLDER_NAME + "."
         node_name = CUSTOM_NODE
         config_loader = declarativeloader.custom_config_loader
         config_updates = None
