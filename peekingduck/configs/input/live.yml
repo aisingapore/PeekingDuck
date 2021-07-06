@@ -10,4 +10,4 @@ resize: {
         }
 input_source: 0    # 0 for webcam, rtsp URL for CCTV
 mirror_image: False
-frames_log_freq: 100    # Showcases every number of frames passed
+frames_log_freq: 100    # Logs frequency of frames passed in cli
