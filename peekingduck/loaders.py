@@ -138,14 +138,15 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         return node.Node(config)  # type: ignore
 
-    def _edit_config(self, dict_orig, dict_update):
+    def _edit_config(self, dict_orig: Dict[str, Any],
+                     dict_update: Dict[str, Any]) -> Dict[str, Any]:
         """ Update value of a nested dictionary of varying depth using
             recursion
         """
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value)
+                    dict_orig.get(key, {}), value)  # type: ignore
             else:
                 dict_orig[key] = value
         return dict_orig
