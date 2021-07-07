@@ -45,7 +45,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Write the current state of the tracked statistics into 
+        Write the current state of the tracked statistics into
         the csv file as a row entry
 
         Args:
@@ -101,7 +101,7 @@ class Node(AbstractNode):
     @staticmethod
     def _append_datetime_filepath(filepath: str) -> str:
         """
-        Append time stamp to the filename 
+        Append time stamp to the filename
         """
         current_time = datetime.now() # type: ignore
         time_str = current_time.strftime("%d%m%y-%H-%M-%S")  # output as '240621-15-09-13'
