@@ -35,17 +35,10 @@ NODES = {"nodes": [PKD_NODE,
                    f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}"]}
 
 MODULE_PATH = "tmp_dir"
-<<<<<<< HEAD
-#.replace("\\","/") for windows where os.path.join uses "\\"
-RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml").replace("\\","/")
-#.replace("\\","/") for windows where os.path.join uses "\\"
-CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes").replace("\\","/")
-=======
 UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase) for x in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
->>>>>>> 58ca15a1fdb30016b14ae69395e7d3199f1ac083
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
 CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
