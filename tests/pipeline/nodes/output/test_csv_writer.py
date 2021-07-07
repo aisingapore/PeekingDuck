@@ -26,25 +26,25 @@ def directory_contents():
     return res
 
 @pytest.fixture
-def writer(): #difference in logging interval
+def writer(): # logging interval of 1 second
     csv_writer = Node({
         "input": "all",
         "output": "end",
         "filepath": os.path.join(os.getcwd(),"test1.csv"), 
         "stats_to_track":["bbox","bbox_labels"],
         "logging_interval":"1"
-    }) #use the absolute filepath in the temp dir created for the test
+    }) # absolute filepath is used for the temp dir created for the test
     return csv_writer
 
 @pytest.fixture
-def writer2(): #difference in logging interval
+def writer2(): # logging interval of 5 second
     csv_writer = Node({
         "input": "all",
         "output": "end",
         "filepath": os.path.join(os.getcwd(),"test2.csv"), 
         "stats_to_track":["bbox","bbox_labels"],
         "logging_interval":"5"
-    }) #use the absolute filepath in the temp dir created for the test
+    }) # absolute filepath is used for the temp dir created for the test
     return csv_writer
 
 @pytest.mark.usefixtures("tmp_dir")
@@ -59,11 +59,11 @@ class TestCSVWriter:
             "bbox_labels":["person"]
         }
         for _ in range(10):
-            writer.run(inputs) #write a few entries
+            writer.run(inputs) # write a few entries
 
-        del writer #close the csv file
+        del writer # close the csv file
 
-        #check timestamp is appended to filename
+        # check timestamp is appended to filename
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z]{3}$"
 
         assert len(directory_contents()) == 1
@@ -76,14 +76,14 @@ class TestCSVWriter:
             "bbox_labels":["person"]
         }
         for _ in range(10):
-            writer.run(inputs) #write a few entries
+            writer.run(inputs) # write a few entries
 
-        del writer #close the csv file
+        del writer # close the csv file
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
             header = reader.fieldnames
-            for row in reader: #read all row entries in the reader
+            for row in reader: # read all row entries in the reader
                 pass
 
         assert header == ["Time","bbox","bbox_labels"]
@@ -102,20 +102,20 @@ class TestCSVWriter:
         while(time_lapse<15):
             curr_time = datetime.datetime.now()
 
-            #Run wrtier with input arriving in 1 sec intervals
-            #total 14 secs with logging interval of 5 sec
-            #should have 2 entries
+            # Run wrtier with input arriving in 1 sec intervals
+            # total 14 secs with logging interval of 5 sec
+            # should log 2 entries
             if (curr_time - start_time).seconds >= 1:
                 time_lapse +=1
                 start_time=curr_time
                 writer2.run(inputs)
 
-        del writer2 #close the csv file
+        del writer2 # close the csv file
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
             header = reader.fieldnames
-            for row in reader: #read all row entries in the reader
+            for row in reader: # read all row entries in the reader
                 pass
             
             # includes header plus total data entry
@@ -126,21 +126,21 @@ class TestCSVWriter:
         assert num_lines == 3 #include header
     
     def test_check_invalid_stats(self, writer):
-        #data pool did not include bbox_labels
-        #But stats to track include bbox_labels
+        # data pool did not include bbox_labels
+        # But stats to track include bbox_labels
         inputs={
             "bbox":[[1,2,3,5]]
         }
 
         for _ in range(10):
-            writer.run(inputs) #write a few entries
+            writer.run(inputs) # write a few entries
 
-        del writer #close the csv file
+        del writer # close the csv file
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
             header = reader.fieldnames
-            for row in reader: #read all row entries in the reader
+            for row in reader: # read all row entries in the reader
                 pass
 
         assert header == ["Time","bbox"]
