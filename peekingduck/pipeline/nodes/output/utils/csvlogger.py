@@ -20,8 +20,9 @@ from datetime import datetime
 from typing import Any, Dict, List
 
 class CSVLogger:
+    """Node that writes data into a csv """
 
-    def __init__(self,filepath: str,headers: List[str],logging_interval: int=1) -> None:
+    def __init__(self, filepath: str, headers: List[str], logging_interval: int=1) -> None:
         self.headers = headers.copy()
         self.headers.insert(0,"Time")
         self.filepath = filepath
@@ -30,11 +31,22 @@ class CSVLogger:
         self.writer = csv.DictWriter(self.csv_file, fieldnames=self.headers)
         self.last_write = datetime.now()
 
-    def write(self,data_pool: Dict[str, Any],specific_data: List[str]) -> None:
+    def write(self, data_pool: Dict[str, Any], specific_data: List[str]) -> None:
+        """
+        Writes a row of data in a csv file
+
+        Args:
+            data_pool(dict): the data pool of the pipeline
+            specific_data(list): list of data to track
+
+        Returns:
+            None
+        """
+
         # if file is empty write header
         if self.csv_file.tell() == 0:
             self.writer.writeheader()
-        
+
         content = {k:v for k,v in data_pool.items() if k in specific_data}
         curr_time = datetime.now()
         time_str = curr_time.strftime("%H:%M:%S")
