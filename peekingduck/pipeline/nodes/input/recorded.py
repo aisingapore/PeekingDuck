@@ -33,6 +33,8 @@ class Node(AbstractNode):
         self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
         self.file_end = False
+        self.frame_counter = 0
+        self.tens_counter = 10
 
         self._get_files(input_dir)
         self._get_next_input()
@@ -53,9 +55,19 @@ class Node(AbstractNode):
         '''
         outputs = self._run_single_file()
 
+        approx_processed = round((self.frame_counter/self.videocap.frame_count)*100)
+        self.frame_counter += 1
+
+        if approx_processed > self.tens_counter:
+            self.logger.info('Approximately Processed: %s%%...', self.tens_counter)
+            self.tens_counter += 10
+
         if self.file_end:
+            self.logger.info('Completed processing file: %s', self._file_name)
             self._get_next_input()
             outputs = self._run_single_file()
+            self.frame_counter = 0
+            self.tens_counter = 10
 
         return outputs
 
