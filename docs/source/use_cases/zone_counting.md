@@ -4,7 +4,7 @@
 
 As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
-<img src="../../images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
 
 Zone counting is done by looking at the counts of objects detected by the object detection models that fall within the zones specified. As an example, we can count the number of people in the blue and green zones, as per our gif above. This is explained in a [subsequent section](#how-it-works).
 
@@ -18,7 +18,7 @@ To try our solution on your own computer with [PeekingDuck installed](https://gi
 
 ## How it Works
 
-There are three main components to obtain the zone counts: 
+There are three main components to obtain the zone counts:
 1. The detection from the object detection model, which is the bounding boxes.
 1. The bottom midpoint of the bounding boxes, derived from the bounding boxes.
 1. The zones, which can be set in the zone count heuristic configurable parameters.
@@ -29,11 +29,11 @@ We use an open source object detection estimation model known as [Yolov4](https:
 
 We can also use the [EfficientDet model](../models/efficientdet.md) as a more accurate but slower alternative.
 
-<img src="../../images/readme/yolo_demo.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="70%">
 
 **2. Bounding Box to Bottom Midpoint**
 
-Given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bounding box, can derive the bottom midpoint of each bounding box. This is done by taking the 
+Given the top-left (x1, y1) and bottom-right (x2, y2) coordinates of every bounding box, can derive the bottom midpoint of each bounding box. This is done by taking the
 the lowest y-coordinate (y2), and the midpoint of the x-coordinates (x1 - x2 / 2). This forms our bottom midpoint. We found that using the bottom midpoint is the most efficient way of telling whether something is in the zone specified, as from the usual top-down or angled camera footages of the use cases, the bottom midpoint of the bounding boxes usually corresponds to the point at which the object is located.
 
 **3. Zones**
@@ -42,11 +42,11 @@ Zones are created by specifying the (x, y) coordinates of all the corner points 
 
 `[[0, 0], [0.6, 0], [0.6, 1], [0, 1]]`
 
-<img src="../../images/readme/coordinates_explanation.png" width="100%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/coordinates_explanation.png" width="100%">
 
 Given a resolution of 1280 by 720, these correspond to the top-left of the image, 60% of the length at the top of the image, 60% of the length at the bottom of the image, and the bottom-left of the image. These points in a clockwise direction that form the rectangular blue zone. Zones do not have to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of the (x, y) coordinates set in a zone.
 
-Note that resolution parameter needs to be configured the resolution parameter to that of the image input before using fractions for the (x, y) coordinates. 
+Note that resolution parameter needs to be configured the resolution parameter to that of the image input before using fractions for the (x, y) coordinates.
 
 For finer control over the exact coordinates, the pixelwise coordinates can be used instead. Using the example, the blue zone would be created using the following zone configuration:
 

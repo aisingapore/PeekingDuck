@@ -1,5 +1,5 @@
 input: ["img", "bboxes", "obj_groups", "large_groups"]
-output: ["img"]
+output: ["none"]
 
 bbox_color: [0, 140, 255]
 bbox_thickness: 4

@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
-
+# pylint: disable=R0902
 class Node(AbstractNode):
     """Node to receive videos/image as inputs."""
 
@@ -32,6 +32,9 @@ class Node(AbstractNode):
         input_dir = config['input_dir']
         self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
+        self.file_end = False
+        self.frame_counter = 0
+        self.tens_counter = 10
 
         self._get_files(input_dir)
         self._get_next_input()
@@ -47,33 +50,46 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
-        input: ["source"],
-        output: ["img", "end"]
+        input: ["none"],
+        output: ["img", "pipeline_end"]
         '''
         outputs = self._run_single_file()
 
-        if outputs["end"]:
+        approx_processed = round((self.frame_counter/self.videocap.frame_count)*100)
+        self.frame_counter += 1
+
+        if approx_processed > self.tens_counter:
+            self.logger.info('Approximately Processed: %s%%...', self.tens_counter)
+            self.tens_counter += 10
+
+        if self.file_end:
+            self.logger.info('Completed processing file: %s', self._file_name)
             self._get_next_input()
             outputs = self._run_single_file()
+            self.frame_counter = 0
+            self.tens_counter = 10
 
         return outputs
 
     def _run_single_file(self) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
 
+        self.file_end = True
         outputs = {"img": None,
-                   "end": True,
+                   "pipeline_end": True,
                    "filename": self._file_name,
                    "fps": self._fps}
         if success:
+            self.file_end = False
             if self.resize_info['do_resizing']:
                 img = resize_image(img,
                                    self.resize_info['width'],
                                    self.resize_info['height'])
             outputs = {"img": img,
-                       "end": False,
+                       "pipeline_end": False,
                        "filename": self._file_name,
                        "fps": self._fps}
+
         return outputs
 
     def _get_files(self, path: str) -> None:

@@ -34,7 +34,7 @@ class Node(AbstractNode):
             inputs (dict): Dict with keys "btm_midpoint", "img".
 
         Returns:
-            outputs (dict): Dict with keys "img".
+            outputs (dict): Dict with keys "none".
         """
 
         draw_zone_count(inputs['img'], inputs['zone_count'])  # type: ignore

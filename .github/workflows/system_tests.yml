@@ -32,3 +32,5 @@ jobs:
       run: peekingduck init
     - name: Test Usecases
       run: ./scripts/usecase_tests.sh
+    - name: Run all tests with coverage
+      run: bash ./scripts/run_tests.sh all

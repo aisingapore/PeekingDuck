@@ -33,14 +33,14 @@ class MockedNode(AbstractNode):
 
 @pytest.fixture
 def config_node_input():
-    return {'input': ["source"],
+    return {'input': ["none"],
             'output': ["test_output_1"]}
 
 
 @pytest.fixture
 def config_node_end():
     return {'input': ["test_output_1"],
-            'output': ["test_output_2", "end"]}
+            'output': ["test_output_2", "pipeline_end"]}
 
 
 @pytest.fixture
@@ -60,8 +60,9 @@ def pipeline_correct(test_input_node, test_node_end):
 
 class TestPipeline:
     def test_execute(self, pipeline_correct):
-        correct_data = {"test_output_1": "test_output_0"}
-
+        correct_data = {'test_output_1': 'test_output_0', 
+                        'test_output_2': 'test_output_0', 
+                        'pipeline_end': 'test_output_1'}
         pipeline_correct.execute()
 
         assert pipeline_correct._data == correct_data

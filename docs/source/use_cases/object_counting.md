@@ -4,7 +4,7 @@
 
 One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, check out [zone counting](zone_counting.md#zone-counting).
 
-<img src="../../images/readme/object_counting.gif" width="100%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%">
 
 Counting is done by looking at the count of objects detected by the object detection models. As an example, we can count the number of people that appear in a video, as per our gif above. This is explained in a [subsequent section](#how-it-works).
 
@@ -26,7 +26,7 @@ We use an open source object detection estimation model known as [Yolov4](https:
 
 We can also use the [EfficientDet model](../models/efficientdet.md) as a more accurate but slower alternative.
 
-<img src="../../images/readme/yolo_demo.gif" width="70%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="70%">
 
 **2. Object Counting**
 

@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="images/readme/peekingduck.png" width="30%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="30%">
     <h1>PeekingDuck</h1>
 </div>
 
@@ -42,7 +42,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     If you have a webcam, you should see the demo running live:
 
-    <img src="images/readme/yolo_demo.gif" width="50%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="50%">
 
     The previous command looks for a `run_config.yml` in the current directory. You can also specify the path of a different config file to be used, as follows:
     ```
@@ -59,11 +59,11 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 PeekingDuck has 5 types of nodes:
 
-<img src="diagrams/node_types.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg">
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`.
 
-<img src="diagrams/yolo_demo.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
 ## Changing Nodes and Settings
 
@@ -92,7 +92,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
   - If you have a webcam, you should see the demo running live:
 
-    <img src="images/readme/posenet_demo.gif" width="50%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif" width="50%">
 
     Terminate the program by clicking on the output screen and pressing `q`.
 
@@ -103,15 +103,15 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
   ```
   nodes:
     - input.recorded:   # note the ":"
-      - input_dir: <directory where videos/images are stored>
+        input_dir: <directory where videos/images are stored>
     - model.posenet
     - draw.poses
     - output.media_writer:  # note the ":"
-      - output_dir: <directory to save results>
+        output_dir: <directory to save results>
   ```
 - Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. If you've used the short sample video, open the processed file and you should get this:
 
-  <img src="images/readme/posenet_running.gif" width="50%">
+  <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_running.gif" width="50%">
 
 - To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](docs/node_glossary.md).
 
@@ -122,9 +122,9 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 | | |
 |-|-|
 | [Social Distancing](docs/source/use_cases/social_distancing.md) | [Zone Counting](docs/source/use_cases/zone_counting.md) |
-|<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
+|<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="100%"> |<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%">|
 | [Group Size Checking](docs/source/use_cases/group_size_checking.md) | [Object Counting](docs/source/use_cases/object_counting.md) |
-|<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
+|<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%">|<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
 | | |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/source/node_glossary.md).

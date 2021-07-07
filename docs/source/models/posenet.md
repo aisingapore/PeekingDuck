@@ -118,7 +118,7 @@ The full list of configurable parameters for the PoseNet node are listed in [pos
 nodes:
   - input.live
   - model.posenet:
-      - model_type: 101
+      model_type: 101
   - draw.poses
   - output.screen
 ```

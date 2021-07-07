@@ -1,5 +1,5 @@
-input: ["source"]
-output: ["img","filename","fps"]
+input: ["none"]
+output: ["img", "pipeline_end", "filename", "fps"]
 
 fps_saved_output_video: 10   #may need to change depending on user machine performance
 filename: webcamfeed.mp4
@@ -10,3 +10,4 @@ resize: {
         }
 input_source: 0    # 0 for webcam, rtsp URL for CCTV
 mirror_image: False
+frames_log_freq: 100    # Logs frequency of frames passed in cli
