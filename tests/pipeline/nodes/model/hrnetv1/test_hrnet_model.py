@@ -16,8 +16,7 @@ limitations under the License.
 
 import os
 import yaml
-from unittest import mock
-from unittest.mock import call
+from unittest.mock import patch, call
 
 import pytest
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model import HRNetModel
@@ -34,16 +33,16 @@ def hrnet_config():
 @pytest.mark.mlmodel
 class TestHrnetModel:
 
-    def test_no_weight(self):
+    @patch('peekingduck.weights_utils.checker.has_weights')
+    @patch('builtins.print')
+    def test_no_weight(self, mock_print, mock_has_weights):
+        
+        mock_has_weights.return_value = False
 
-        with mock.patch('peekingduck.weights_utils.checker.has_weights',
-                        return_value=False):
-            with mock.patch('builtins.print') as mocked_print:
+        msg_1 = '---no hrnet weights detected. proceeding to download...---'
+        msg_2 = '---hrnet weights download complete.---'
 
-                msg_1 = '---no hrnet weights detected. proceeding to download...---'
-                msg_2 = '---hrnet weights download complete.---'
+        config = hrnet_config()
+        HRNetModel(config)
 
-                config = hrnet_config()
-                HRNetModel(config)
-
-                assert mocked_print.mock_calls == [call(msg_1), call(msg_2)]
+        assert mock_print.mock_calls == [call(msg_1), call(msg_2)]
