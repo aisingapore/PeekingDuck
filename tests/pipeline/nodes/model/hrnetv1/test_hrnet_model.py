@@ -13,14 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import os
 import yaml
+from unittest.mock import patch, call
+
 import pytest
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model import HRNetModel
 
 
-@pytest.fixture
 def hrnet_config():
     filepath = os.path.join(os.getcwd(), 'tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml')
     with open(filepath) as file:
@@ -29,21 +30,19 @@ def hrnet_config():
     return node_config
 
 
-@pytest.fixture
-def hrnet_detector(hrnet_config):
-
-    if not checker.has_weights(hrnet_config['root'], hrnet_config['weights_dir']):
-        downloader.download_weights(hrnet_config['root'], hrnet_config['blob_file'])
-
-    detector = Detector(hrnet_config)
-    return detector
-
-
 @pytest.mark.mlmodel
-class TestDetector:
+class TestHrnetModel:
 
-    def test_create_model(self, hrnet_detector):
-        """Testing hrnet model instantiation.
-        """
-        hrnet_model = hrnet_detector._create_hrnet_model
-        assert hrnet_model is not None
+    @patch('peekingduck.weights_utils.checker.has_weights')
+    @patch('builtins.print')
+    def test_no_weight(self, mock_print, mock_has_weights):
+        
+        mock_has_weights.return_value = False
+
+        msg_1 = '---no hrnet weights detected. proceeding to download...---'
+        msg_2 = '---hrnet weights download complete.---'
+
+        config = hrnet_config()
+        HRNetModel(config)
+
+        assert mock_print.mock_calls == [call(msg_1), call(msg_2)]
