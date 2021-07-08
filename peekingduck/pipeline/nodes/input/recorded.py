@@ -33,7 +33,7 @@ class Node(AbstractNode):
         self.resize_info = config['resize']
         self._mirror_image = config['mirror_image']
         self.file_end = False
-        self.frame_counter = 0
+        self.frame_counter = -1
         self.tens_counter = 10
 
         self._get_files(input_dir)
