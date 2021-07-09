@@ -1,4 +1,4 @@
-name: ML Model Tests
+name: Post Merge Tests
 on:
   workflow_dispatch:
   push:

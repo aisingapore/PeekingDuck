@@ -1,4 +1,4 @@
-name: Premerge checks
+name: Premerge Checks
 on: [push, pull_request]
 
 jobs:
@@ -16,6 +16,6 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - name: Run lint checks
-        uses: actions/linting-checks@v1
+        uses: ./.github/actions/linting-checks  # note only works after checkout@v2
       - name: Run unit tests
         run: bash ./scripts/run_tests.sh unit

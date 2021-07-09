@@ -1,6 +1,3 @@
-# This workflow does a installation from pypi and perform a
-# test to make sure that the package works as expected.
-
 name: Daily Drift Checks
 
 on:
@@ -29,4 +26,4 @@ jobs:
           bash ./scripts/update_version.sh $VERSION
           pip install .
       - name: Run system-checks
-        uses: actions/system-test@v1
+        uses: ./.github/actions/system-test # note only works after checkout@v2
