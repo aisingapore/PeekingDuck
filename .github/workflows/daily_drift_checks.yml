@@ -1,0 +1,32 @@
+# This workflow does a installation from pypi and perform a
+# test to make sure that the package works as expected.
+
+name: Daily Drift Checks
+
+on:
+  workflow_dispatch:
+  schedule:
+    # run at 6am SGT
+    - cron: "0 8 * * *"
+
+jobs:
+  system-checks:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, windows-2019]
+        python-version: [3.6, 3.7, 3.8]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install peekingduck locally
+        run: |
+          python -m pip install --upgrade pip
+          bash ./scripts/update_version.sh $VERSION
+          pip install .
+      - name: Run system-checks
+        uses: actions/system-test@v1
