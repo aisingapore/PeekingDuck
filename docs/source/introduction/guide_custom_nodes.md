@@ -6,7 +6,7 @@ A step by step instruction to build this custom node is provided below.
 
 ## Install PeekingDuck (Prerequisite)
 
-1. Ensure that you have peekingduck installed by running `peekingduck --help`
+1. Ensure that you have PeekingDuck installed by running `peekingduck --help`
 2. If it wasn't already installed, follow the [installation guide](../README.md) 
 
 ## Step 1: Start a PeekingDuck Project
@@ -206,3 +206,27 @@ class CSVLogger:
 **NOTE:**
 
 While running, the csv file may be empty. This is because the implementation of this csv logger completes the writing at the end of the instruction.
+
+## Additional Note
+To provide you with greater customisation flexibility, PeekingDuck allows you to specify a unique folder name to house your custom nodes. When initializing PeekingDuck, use `peekingduck init --custom_nodes=<folder_name>`, where `<folder_name>` is your desired name for the housing folder. 
+
+```bash
+# Example
+> mkdir <project_name>
+> cd <project_name>
+> peekingduck init --custom_nodes=my_first_nodes
+> mkdir results
+```
+
+To allow PeekingDuck to identify your custom nodes, use the following structure `<folder_name>.<node-type>.<node>` in the `run_config.yml`.
+
+```yaml
+# Example to specify custom nodes housed in a unique folder name in run_config.yml
+nodes:
+- input.live # -- or `input.recorded` to use your videofiles
+- model.yolo
+- draw.bbox
+- output.screen
+- my_first_nodes.output.csv_writer
+```
+
