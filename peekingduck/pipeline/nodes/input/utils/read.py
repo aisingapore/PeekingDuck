@@ -118,3 +118,13 @@ class VideoNoThread:
         width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
         return int(width), int(height)
+
+    @property
+    def frame_count(self) -> int:
+        """ Get total number of frames of file
+
+        Returns:
+            int: number indicating frame count
+        """
+        num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        return int(num_frames)
