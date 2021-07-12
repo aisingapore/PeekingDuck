@@ -27,8 +27,6 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.show_labels = config['show_labels']
-        if self.show_labels:
-            self.inputs.append("bbox_labels")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         if self.show_labels:
