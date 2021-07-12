@@ -9,7 +9,7 @@ A step by step instruction to build this custom node is provided below.
 ## Install PeekingDuck (Prerequisite)
 
 1. Ensure that you have PeekingDuck installed by running `peekingduck --help`
-2. If it wasn't already installed, follow the [installation guide]()
+2. If it wasn't already installed, follow the [installation guide](../getting_started/01_installation.md)
 
 ## Step 1: Start a PeekingDuck Project
 

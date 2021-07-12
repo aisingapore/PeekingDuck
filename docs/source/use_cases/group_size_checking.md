@@ -10,7 +10,7 @@ To check if individuals belong to a group, we check if the physical distance bet
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [group_size_checking.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [group_size_checking.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_group_size_checking.yml>
@@ -69,7 +69,7 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](../node_glossary.md).
+By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy.
 
 
 **2. Adjusting Nodes**
@@ -79,7 +79,7 @@ Some common node behaviours that you might need to adjust are:
 - `obj_dist_thres`: The maximum distance between 2 individuals, in metres, before they are considered to be part of a group.
 - `group_size_thres`: The acceptable group size limit.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [API reference]().
 
 **3. Using Object Detection (Optional)**
 

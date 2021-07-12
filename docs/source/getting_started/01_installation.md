@@ -13,8 +13,8 @@
     > peekingduck init
     ```
     The following files and folders will be created upon running `peekingduck init`:
-    - `run_config.yml` is the main configuration file for PeekingDuck. It currently contains the [default configuration](run_config.yml), and we'll show you how to modify it in the [configuration guide]().
-    - `custom_nodes` is an optional feature that is discussed in the [custom nodes guide]().
+    - `run_config.yml` is the main configuration file for PeekingDuck. It currently contains the [default configuration](run_config.yml), and we'll show you how to modify it in the [configuration guide](../getting_started/02_configure_pkdk.md).
+    - `custom_nodes` is an optional feature that is discussed in the [custom nodes guide](../getting_started/03_custom_nodes.md).
     ```
     <project_dir>
      ├── run_config.yml
