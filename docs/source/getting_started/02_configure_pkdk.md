@@ -46,4 +46,4 @@
 
   <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_running.gif" width="50%">
 
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference]().
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).

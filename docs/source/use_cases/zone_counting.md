@@ -102,4 +102,4 @@ With regards to the zone counting node, some common node behaviours for the zone
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.
 - `zones`: Used to specify the different zones which you would like to set. Each zone coordinates should be set clock-wise in a list. See section on [nodes used](#nodes-used) on how to properly configure multiple zones.
 
-For more adjustable node behaviours not listed here, check out the [API Reference]().
+For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes.model).
