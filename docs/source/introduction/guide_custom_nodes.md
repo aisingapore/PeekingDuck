@@ -11,12 +11,12 @@ A step by step instruction to build this custom node is provided below.
 
 ## Step 1: Start a PeekingDuck Project
 
-Once PeekingDuck has been installed, initialise a new project with our template using `peekingduck init --custom_nodes=<custom_folder_name>`, where `<custom_folder_name>` is your desired folder name to house the custom nodes. If the argument is not provided, PeekingDuck will create the housing folder using the default name: `custom_nodes`.  
+Once PeekingDuck has been installed, initialise a new project with our template using `peekingduck init --custom_folder_name <custom_folder_name>`, where `<custom_folder_name>` is your desired folder name to house the custom nodes. If the argument is not provided, PeekingDuck will create the housing folder using the default name: `custom_nodes`.  
 
 ```bash
 > mkdir <project_name>
 > cd <project_name>
-> peekingduck init --custom_nodes=<custom_folder_name> # or peekingduck init
+> peekingduck init --custom_folder_name <custom_folder_name> # or peekingduck init
 > mkdir results
 ```
 
@@ -198,7 +198,7 @@ class CSVLogger:
 
 - Now the setup is complete and ready to run! Run the setup using the following code.
 
-    `peekingduck run --config_path=run_config.yml`
+    `peekingduck run --config_path run_config.yml`
 
 - If the setup is working, you should see an output screen being displayed. Terminate the program by clicking on the output screen and pressing `q`.
 
