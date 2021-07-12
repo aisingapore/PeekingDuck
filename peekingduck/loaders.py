@@ -20,6 +20,7 @@ import sys
 import os
 import importlib
 import logging
+import ast
 import collections.abc
 from typing import Any, Dict, List
 
@@ -68,6 +69,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(self,
                  run_config: str,
+                 config_updates_cli: tuple,
                  custom_node_parent_folder: str) -> None:
         self.logger = logging.getLogger(__name__)
 
@@ -75,6 +77,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         self.config_loader = ConfigLoader(pkdbasedir)
 
         self.node_list = self._load_node_list(run_config)
+        self.config_updates_cli = self._cli_configs_to_dict(config_updates_cli)
 
         custom_folder = self._get_custom_name_from_node_list()
         if custom_folder is not None:
@@ -85,6 +88,17 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             sys.path.append(custom_node_parent_folder)
 
             self.custom_folder_path = custom_folder_path
+
+    def _cli_configs_to_dict(self, config_updates_cli):
+        """ Convert a tuple into a dict where keys are node names and 
+        values are node configs to be updated"""
+
+        node_config_dict = {}
+        if config_updates_cli is not None:
+            for node in config_updates_cli:
+                node_name, node_param = node.split('@')
+                node_config_dict[node_name] = ast.literal_eval(node_param)
+        return node_config_dict
 
     def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
@@ -115,12 +129,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         instantiated_nodes = []
 
         for node_item in self.node_list:
-            config_updates = None
+            config_updates_yml = None
             node_str = node_item
 
             if isinstance(node_item, dict):
                 node_str = list(node_item.keys())[0]  # type: ignore
-                config_updates = node_item[node_str]
+                config_updates_yml = node_item[node_str]
 
             node_str_split = node_str.split('.')
 
@@ -135,14 +149,14 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 instantiated_node = self._init_node(path_to_node,
                                                     node_name,
                                                     self.custom_config_loader,
-                                                    config_updates)  # type: ignore
+                                                    config_updates_yml)  # type: ignore
             else:
                 path_to_node = 'peekingduck.pipeline.nodes.'
 
                 instantiated_node = self._init_node(path_to_node,
                                                     node_str,
                                                     self.config_loader,
-                                                    config_updates)  # type: ignore
+                                                    config_updates_yml)  # type: ignore
 
             instantiated_nodes.append(instantiated_node)
 
@@ -150,19 +164,26 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def _init_node(self, path_to_node: str, node_name: str,
                    config_loader: ConfigLoader,
-                   config_updates: Dict[str, Any]) -> AbstractNode:
+                   config_updates_yml: Dict[str, Any]) -> AbstractNode:
         """ Import node to filepath and initialise node with config """
 
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
-        if config_updates is not None:
-            config = self._edit_config(config, config_updates)
+        if config_updates_yml is not None:
+            config = self._edit_config(config, config_updates_yml, node_name)
+
+        print(self.config_updates_cli)
+        if self.config_updates_cli is not None and node_name in self.config_updates_cli.keys():
+            config = self._edit_config(
+                config, self.config_updates_cli[node_name], node_name)
+        print(config)
 
         return node.Node(config)  # type: ignore
 
     def _edit_config(self, dict_orig: Dict[str, Any],
-                     dict_update: Dict[str, Any]) -> Dict[str, Any]:
+                     dict_update: Dict[str, Any],
+                     node_name: str) -> Dict[str, Any]:
         """ Update value of a nested dictionary of varying depth using
             recursion
         """
@@ -171,7 +192,11 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 dict_orig[key] = self._edit_config(
                     dict_orig.get(key, {}), value)  # type: ignore
             else:
-                dict_orig[key] = value
+                if key not in dict_orig:
+                    self.logger.warning(
+                        "'%s' is not a valid key for %s", key, node_name)
+                else:
+                    dict_orig[key] = value
         return dict_orig
 
     def get_pipeline(self) -> Pipeline:

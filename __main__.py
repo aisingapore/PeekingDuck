@@ -24,5 +24,5 @@ if __name__ == "__main__":
     logger = logging.getLogger(__name__)
     logger.info("Run path: %s", RUN_PATH)
 
-    runner = pkd.Runner(RUN_PATH, "PeekingDuck")
+    runner = pkd.Runner(RUN_PATH, None, "PeekingDuck")
     runner.run()

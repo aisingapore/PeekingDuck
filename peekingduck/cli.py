@@ -31,7 +31,7 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 @click.group()
 def cli() -> None:
     """
-    PeekingDuck is a python framework for dealing with Machine Learning model inferences.
+    PeekingDuck is a modular computer vision inference framework..
 
     Developed by Computer Vision Hub at AI Singapore.
     """
@@ -75,17 +75,21 @@ def init(custom_folder_name: str) -> None:
     create_custom_folder(custom_folder_name)
     create_yml()
 
+# peekingduck run --node_config input.live@'{"resize":{"do_resizing":True,"width":320}}' --node_config model.yolo@'{"yolo_score_threshold": 0.8}'
+
 
 @cli.command()
 @click.option('--config_path', default=None, type=click.Path(),
-
               help="List of nodes to run. None assumes \
                    run_config.yml at current working directory")
-def run(config_path: str) -> None:
+@click.option('--node_config', default=None, multiple=True, help="Modify node \
+                configurations in this format <node name>@'<dictionary of configs>'")
+def run(config_path: str, node_config: tuple) -> None:
     """Runs PeekingDuck"""
+
     curdir = _get_cwd()
     if not config_path:
         config_path = os.path.join(curdir, "run_config.yml")
 
-    runner = Runner(config_path, "src")
+    runner = Runner(config_path, node_config, "src")
     runner.run()
