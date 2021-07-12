@@ -1,0 +1,11 @@
+name: 'ML Model Test'
+description: 'Run and test machine learning models in repository'
+runs:
+  using: "composite"
+  steps:
+    - name: Initialise peekingduck
+      run: peekingduck init
+      shell: bash
+    - name: Test Usecases
+      run: ./scripts/usecase_tests.sh
+      shell: bash

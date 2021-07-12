@@ -1,0 +1,17 @@
+name: "Linting and Unittest"
+description: "Run linting to check code quality: meant to run fast"
+runs:
+  using: "composite"
+  steps:
+    - name: Check for copyright and license headers in .py files
+      run: bash ./scripts/check_headers.sh
+      shell: bash
+    - name: Run Bandit Linter
+      run: bash ./scripts/bandit.sh
+      shell: bash
+    - name: Run linter
+      run: bash ./scripts/linter.sh
+      shell: bash
+    - name: Run type checker
+      run: bash ./scripts/check_type.sh
+      shell: bash

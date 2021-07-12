@@ -1,4 +1,4 @@
-name: Code Check
+name: Premerge Checks
 on: [push, pull_request]
 
 jobs:
@@ -15,14 +15,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-      - name: Check for copyright and license headers in .py files
-        run: bash ./scripts/check_headers.sh
-      - name: Run Bandit Linter
-        run: bash ./scripts/bandit.sh
-      - name: Run linter
-        run: bash ./scripts/linter.sh
-      - name: Run type checker
-        run: bash ./scripts/check_type.sh
+      - name: Run lint checks
+        uses: ./.github/actions/linting-checks  # note only works after checkout@v2
       - name: Run unit tests
         run: bash ./scripts/run_tests.sh unit
-
