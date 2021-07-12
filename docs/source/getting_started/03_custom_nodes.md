@@ -1,22 +1,24 @@
 # Guide: Building Custom Nodes to run with PeekingDuck
 
+PeekingDuck is designed to work with custom use cases. This guide will showcase how anyone can develop custom nodes to be used with PeekingDuck.
+
 In this tutorial, we'll be building a custom csv_logger which writes data into a file. It serves as a data collection step that stores useful metrics into a csv file. This csv file can be used for logging purposes and can serve as a base for data analytics.
 
-A step by step instruction to build this custom node is provided below. 
+A step by step instruction to build this custom node is provided below.
 
 ## Install PeekingDuck (Prerequisite)
 
 1. Ensure that you have PeekingDuck installed by running `peekingduck --help`
-2. If it wasn't already installed, follow the [installation guide](../README.md) 
+2. If it wasn't already installed, follow the [installation guide]()
 
 ## Step 1: Start a PeekingDuck Project
 
-Once PeekingDuck has been installed, initialise a new project with our template using `peekingduck init --custom_folder_name <custom_folder_name>`, where `<custom_folder_name>` is your desired folder name to house the custom nodes. If the argument is not provided, PeekingDuck will create the housing folder using the default name: `custom_nodes`.  
+Once PeekingDuck has been installed, initialise a new project with our template using `peekingduck init --custom_folder_name <custom_folder_name>`, where `<custom_folder_name>` is your desired folder name to house the custom nodes. If the argument is not provided, PeekingDuck will create the housing folder using the default name: `custom_nodes`.
 
 ```bash
 > mkdir <project_name>
 > cd <project_name>
-> peekingduck init --custom_folder_name <custom_folder_name> # or peekingduck init
+> peekingduck init --custom_folder_name <custom_folder_name> # default is 'custom_nodes'
 > mkdir results
 ```
 
@@ -29,21 +31,21 @@ Your project folder should look like this at the end of the tutorial.
 │   └── <custom_folder_name>
 │       ├── <node_type>               # <node_type> = "output" in this tutorial
 │       │    ├── utils
-│       │    │   └── csv.py           
-│       │    └── csv_writer.py        
+│       │    │   └── csv.py
+│       │    └── csv_writer.py
 │       └── configs
 │            └── <node_type>          # <node_type> = "output" in this tutorial
-│                └── csv_writer.yml   
+│                └── csv_writer.yml
 ├── run_config.yml
-├── results                           
+├── results
 ```
 
 - `src/<custom_folder_name>` is where custom nodes created for the project should be housed.
-- `run_config.yml` is the basic yml file to select nodes in the pipeline. You will be using this to run your peekingduck pipeline.
+- `run_config.yml` is the basic yaml file to select nodes in the pipeline. You will be using this to run your peekingduck pipeline.
 
-## Step 2: Populate Run Config
+## Step 2: Populate run_config
 
-The `run_config.yml` will be created. Input the following lines of code into the file. Newly minted nodes needs to be identified by the following structure `<custom_folder_name>.<node-type>.<node>`. In this project, the `<custom_folder_name>` is named `custom_nodes`. 
+The `run_config.yml` will be created. Input the following lines of code into the file. Newly minted nodes needs to be identified by the following structure `<custom_folder_name>.<node-type>.<node>`. In this project, the `<custom_folder_name>` is named `custom_nodes`.
 
 
 ```yaml
@@ -73,10 +75,8 @@ period: 1                                # time interval (s) between logs
 filepath: 'results/stats.csv'            # output file location
 ```
 
-### Explanation
-
 Node configs contains information on the input and outputs for PeekingDuck to manage.
-We recommend new users to use the [config template](../peekingduck/configs/node_template.yml) for reference.
+We recommend new users to use the [config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml) for reference.
 
 Your node config yaml file should contain the following:
 - `input` (list of str): the key(s) to the required inputs for your node
@@ -132,7 +132,7 @@ class Node(AbstractNode):
          """
 
         self.csv_logger.write(inputs)
-            
+
         return {}
 
     def __del__(self):
@@ -145,9 +145,9 @@ Note:
 - `run` must return a dictionary with the key-value pair defined as `{"out1": results_object}`. `out1` must be consistent with the outputs defined in the node configs. In this example, there is no output but we need to return an empty dictionary `{}`
 - Logging is added to all nodes. To access it, simply call `self.logger` (e.g. `self.logger.info("Model loaded!")`)
 
-## Step 5: Create Utilities
+## Step 5: Create Utilities (Optional)
 
-We recommend placing the utility files together with your node folder `src/<custom_folder_name>/<node_type>/utils/<your-util>.py`. For this tutorial we will place the following code under `src/custom_nodes/output/utils/csv.py`. 
+We recommend placing the utility files together with your node folder `src/<custom_folder_name>/<node_type>/utils/<your-util>.py`. For this tutorial we will place the following code under `src/custom_nodes/output/utils/csv.py`.
 
 The implementation below uses `period` which dictates the time interval (in seconds) between each log entry.
 

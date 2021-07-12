@@ -1,12 +1,12 @@
 ## Changing Nodes and Settings
 
-Earlier on, the `peekingduck init` command created the `run_config.yml` file, which is PeekingDuck's main configuration file and is responsible for:
+`peekingduck init` command created the `run_config.yml` file, which is PeekingDuck's main configuration file and is responsible for:
 - Selecting which nodes to include in the pipeline
 - Configuring node behaviour
 
 **1. Selecting which nodes to include in the pipeline**:
 
-  - In the earlier object detection demo, `run_config.yml` used the following nodes:
+  - By default, `run_config.yml` uses the following nodes:
     ```
     nodes:
       - input.live
@@ -23,7 +23,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
       - output.screen
     ```
 
-  - If you have a webcam, you should see the demo running live:
+  - Now run PeekingDuck with `peekingduck run`. If you have a webcam, you should see the demo running live:
 
     <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif" width="50%">
 
@@ -46,4 +46,4 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
   <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_running.gif" width="50%">
 
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](docs/node_glossary.md).
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference]().
