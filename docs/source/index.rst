@@ -16,15 +16,14 @@ Welcome to PeekingDuck's documentation!
    :titlesonly:
    :caption: Introduction
 
-   introduction/README.md
-   introduction/guide_custom_nodes.md
+   introduction/introduction.md
 
 .. toctree::
    :titlesonly:
    :glob:
-   :caption: Models
+   :caption: Getting Started
 
-   models/*
+   getting_started/*
 
 .. toctree::
    :titlesonly:
@@ -33,13 +32,22 @@ Welcome to PeekingDuck's documentation!
 
    use_cases/*
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Nodes
+Nodes
+=====================================
+Nodes are the core of PeekingDuck. See below for the readily-available nodes and their references.
 
-   node_glossary.md
-   node_data_mapping.md
-   io_draw_nodes.md
+.. autosummary::
+   :toctree:
+   :caption: API documentation
+   :template: module.rst
+   :recursive:
+
+   peekingduck.pipeline.nodes.input
+   peekingduck.pipeline.nodes.model
+   peekingduck.pipeline.nodes.heuristic
+   peekingduck.pipeline.nodes.draw
+   peekingduck.pipeline.nodes.output
+
 
 API documentation
 =======================================

@@ -10,7 +10,7 @@ The most accurate way to measure distance is to use a 3D sensor with depth perce
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [social_distancing.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_social_distancing.yml>
@@ -66,8 +66,7 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy. For more information on pose estimation models in PeekingDuck, check out the [node glossary](../node_glossary.md).
-
+By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy.
 
 **2. Adjusting Nodes**
 
@@ -76,7 +75,7 @@ Some common node behaviours that you might need to adjust are:
 - `tag_msg`: The message to show when individuals are too close.
 - `near_threshold`: The minimum acceptable distance between 2 individuals, in metres. For example, if the threshold is set at 1.5m, and 2 individuals are standing 2.0m apart, `tag_msg` doesn't show as they are standing further apart than the threshold. The larger this number, the stricter the social distancing.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes.model).
 
 **3. Using Object Detection (Optional)**
 
