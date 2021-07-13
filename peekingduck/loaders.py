@@ -77,7 +77,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         self.config_loader = ConfigLoader(pkdbasedir)
 
         self.node_list = self._load_node_list(run_config)
-        self.config_updates_cli = self._cli_configs_to_dict(config_updates_cli)
+        self.config_updates_cli = ast.literal_eval(
+            config_updates_cli)  # type: ignore
 
         custom_folder = self._get_custom_name_from_node_list()
         if custom_folder is not None:
@@ -88,17 +89,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             sys.path.append(custom_node_parent_folder)
 
             self.custom_folder_path = custom_folder_path
-
-    def _cli_configs_to_dict(self, config_updates_cli):
-        """ Convert a tuple into a dict where keys are node names and 
-        values are node configs to be updated"""
-
-        node_config_dict = {}
-        if config_updates_cli is not None:
-            for node in config_updates_cli:
-                node_name, node_param = node.split('@')
-                node_config_dict[node_name] = ast.literal_eval(node_param)
-        return node_config_dict
 
     def _load_node_list(self, run_config: str) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
@@ -170,14 +160,15 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
+        # First, override default configs with values from run_config.yml
         if config_updates_yml is not None:
             config = self._edit_config(config, config_updates_yml, node_name)
 
-        print(self.config_updates_cli)
-        if self.config_updates_cli is not None and node_name in self.config_updates_cli.keys():
-            config = self._edit_config(
-                config, self.config_updates_cli[node_name], node_name)
-        print(config)
+        # Second, override configs again with values from cli
+        if self.config_updates_cli is not None:
+            if node_name in self.config_updates_cli.keys():
+                config = self._edit_config(
+                    config, self.config_updates_cli[node_name], node_name)
 
         return node.Node(config)  # type: ignore
 
@@ -190,13 +181,17 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value)  # type: ignore
+                    dict_orig.get(key, {}), value, node_name)  # type: ignore
             else:
                 if key not in dict_orig:
                     self.logger.warning(
-                        "'%s' is not a valid key for %s", key, node_name)
+                        "Config for node %s does not have the key: %s.",
+                        node_name, key)
                 else:
                     dict_orig[key] = value
+                    self.logger.info(
+                        "Config for node %s is updated to: '%s': %s.",
+                        node_name, key, value)
         return dict_orig
 
     def get_pipeline(self) -> Pipeline:

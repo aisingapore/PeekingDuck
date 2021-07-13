@@ -30,13 +30,13 @@ class Runner():
     """
 
     def __init__(self, RUN_PATH: str,
-                 config_updates_cli: tuple,
+                 config_updates_cli: str,
                  CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
         """
         Args:
             RUN_PATH (str): path to yaml file of node pipeine declaration.
-            config_updates_cli (tuple): strings defining node names and configs to update.
+            config_updates_cli (str): strings defining node names and configs to update.
             CUSTOM_NODE_PARENT_FOLDER (str): parent folder of the custom nodes folder.
             nodes (:obj:'list' of :obj:'Node'): if not using declarations via yaml,
                 initialize by giving the node stack as a list

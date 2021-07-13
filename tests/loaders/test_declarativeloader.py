@@ -35,7 +35,8 @@ NODES = {"nodes": [PKD_NODE,
                    f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}"]}
 
 MODULE_PATH = "tmp_dir"
-UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase) for x in range(8))
+UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase)
+                        for x in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
@@ -233,6 +234,7 @@ class TestDeclarativeLoader:
 
     def test_edit_config(self, declarativeloader):
 
+        node_name = 'input.live'
         orig_config = {
             'mirror_image': True,
             'resize': {
@@ -251,7 +253,7 @@ class TestDeclarativeLoader:
             }}
 
         orig_config = declarativeloader._edit_config(
-            orig_config, config_update)
+            orig_config, config_update, node_name)
 
         assert orig_config['mirror_image'] == ground_truth['mirror_image']
         assert orig_config['resize']['do_resizing'] == ground_truth['resize']['do_resizing']
