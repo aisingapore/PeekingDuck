@@ -23,7 +23,6 @@ from peekingduck.pipeline.nodes.draw.utils.general import \
 
 def draw_human_poses(image: np.array,
                      keypoints: np.ndarray,
-                     keypoint_scores: np.ndarray,
                      keypoint_conns: np.ndarray) -> None:
     # pylint: disable=too-many-arguments
     """Draw poses onto an image frame.
@@ -31,7 +30,6 @@ def draw_human_poses(image: np.array,
     Args:
         image (np.array): image of current frame
         keypoints (List[Any]): list of keypoint coordinates
-        keypoints_scores (List[Any]): list of keypoint scores
         keypoints_conns (List[Any]): list of keypoint connections
     """
     image_size = get_image_size(image)

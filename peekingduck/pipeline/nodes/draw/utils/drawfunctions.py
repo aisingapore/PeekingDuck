@@ -17,7 +17,7 @@
 Utils, constants, and functions for drawing
 """
 
-from typing import List, Tuple, Any, Iterable, Union
+from typing import List, Tuple, Any
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
@@ -55,53 +55,10 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def draw_human_poses(image: np.array,
-                     keypoints: np.ndarray,
-                     keypoint_scores: np.ndarray,
-                     keypoint_conns: np.ndarray,
-                     keypoint_dot_color: Tuple[int, int, int],
-                     keypoint_dot_radius: int,
-                     keypoint_connect_color: Tuple[int, int, int],
-                     keypoint_text_color: Tuple[int, int, int]) -> None:
-    # pylint: disable=too-many-arguments
-    """Draw poses onto an image frame.
-
-    Args:
-        image (np.array): image of current frame
-        keypoints (List[Any]): list of keypoint coordinates
-        keypoints_scores (List[Any]): list of keypoint scores
-        keypoints_conns (List[Any]): list of keypoint connections
-        keypoint_dot_color (Tuple[int, int, int]): color of keypoint
-        keypoint_dot_radius (int): radius of keypoint
-        keypoint_connect_color (Tuple[int, int, int]): color of joint
-        keypoint_text_color (Tuple[int, int, int]): color of keypoint names
-    """
-    image_size = _get_image_size(image)
-    num_persons = keypoints.shape[0]
-    if num_persons > 0:
-        for i in range(num_persons):
-            _draw_connections(image, keypoint_conns[i],
-                              image_size, keypoint_connect_color)
-            _draw_keypoints(image, keypoints[i],
-                            keypoint_scores[i], image_size,
-                            keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
-
-
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
     """ Obtain image size of input frame """
     image_size = (frame.shape[1], frame.shape[0])  # width, height
     return image_size
-
-
-def _draw_connections(frame: np.array,
-                      connections: Union[None, Iterable[Any]],
-                      image_size: Tuple[int, int],
-                      connection_color: Tuple[int, int, int]) -> None:
-    """ Draw connections between detected keypoints """
-    if connections is not None:
-        for connection in connections:
-            pt1, pt2 = project_points_onto_original_image(connection, image_size)
-            cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
 
 
 def _draw_keypoints(frame: np.ndarray,

@@ -39,6 +39,5 @@ class Node(AbstractNode):
         """
         draw_human_poses(inputs["img"],  # type: ignore
                          inputs["keypoints"],
-                         inputs["keypoint_scores"],
                          inputs["keypoint_conns"])  # type: ignore
         return {}
