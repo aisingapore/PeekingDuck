@@ -45,6 +45,7 @@ CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
 CUSTOM_NODE_CONFIG_DIR = os.path.join(
     CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
+CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}, 'model.yolo': {'yolo_score_threshold': 0.8,'what':False}}"
 
 
 def create_run_config_yaml(nodes):
@@ -105,7 +106,8 @@ def declarativeloader():
 
     setup()
 
-    declarative_loader = DeclarativeLoader(RUN_CONFIG_PATH, MODULE_PATH)
+    declarative_loader = DeclarativeLoader(
+        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_PATH)
 
     declarative_loader.config_loader._basedir = MODULE_PATH
     declarative_loader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH

@@ -69,7 +69,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(self,
                  run_config: str,
-                 config_updates_cli: tuple,
+                 config_updates_cli: str,
                  custom_node_parent_folder: str) -> None:
         self.logger = logging.getLogger(__name__)
 
