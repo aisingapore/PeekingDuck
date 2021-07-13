@@ -82,7 +82,7 @@ def init(custom_folder_name: str) -> None:
                    run_config.yml at current working directory")
 @click.option('--node_config', default="None",
               help="""Modify node configs by wrapping desired configs in a JSON string.\n
-                    Example: --node_config '{"node_name": {"param_1": val_1}}' """)
+                    Example: --node_config '{"node_name": {"param_1": var_1}}' """)
 def run(config_path: str, node_config: str) -> None:
     """Runs PeekingDuck"""
 
