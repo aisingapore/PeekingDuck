@@ -36,7 +36,7 @@ class Runner():
         """
         Args:
             RUN_PATH (str): path to yaml file of node pipeine declaration.
-            config_updates_cli (str): strings defining node names and configs to update.
+            config_updates_cli (str): stringified nested dictionaries of configs.
             CUSTOM_NODE_PARENT_FOLDER (str): parent folder of the custom nodes folder.
             nodes (:obj:'list' of :obj:'Node'): if not using declarations via yaml,
                 initialize by giving the node stack as a list
