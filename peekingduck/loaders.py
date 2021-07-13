@@ -185,12 +185,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             else:
                 if key not in dict_orig:
                     self.logger.warning(
-                        "Config for node %s does not have the key: %s.",
+                        "Config for node %s does not have the key: %s",
                         node_name, key)
                 else:
                     dict_orig[key] = value
                     self.logger.info(
-                        "Config for node %s is updated to: '%s': %s.",
+                        "Config for node %s is updated to: '%s': %s",
                         node_name, key, value)
         return dict_orig
 

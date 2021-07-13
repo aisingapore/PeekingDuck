@@ -45,7 +45,7 @@ CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
 CUSTOM_NODE_CONFIG_DIR = os.path.join(
     CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
-CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}, 'model.yolo': {'yolo_score_threshold': 0.8,'what':False}}"
+CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
 def create_run_config_yaml(nodes):
@@ -245,7 +245,8 @@ class TestDeclarativeLoader:
                 'height': 720
             }}
         config_update = {'mirror_image': False,
-                         'resize': {'do_resizing': True}}
+                         'resize': {'do_resizing': True},
+                         'invalid_key': 123}
         ground_truth = {
             'mirror_image': False,
             'resize': {
@@ -262,6 +263,7 @@ class TestDeclarativeLoader:
         # Ensure that config_update does not replace the "resize" sub-dict completely and
         # erase "width" or "height"
         assert "width" in orig_config["resize"]
+        assert "invalid_key" not in ground_truth
 
     def test_get_pipeline(self, declarativeloader):
 
