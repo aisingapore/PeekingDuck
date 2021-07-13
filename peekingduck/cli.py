@@ -80,7 +80,7 @@ def init(custom_folder_name: str) -> None:
 @click.option('--config_path', default=None, type=click.Path(),
               help="List of nodes to run. None assumes \
                    run_config.yml at current working directory")
-@click.option('--node_config', default=None, help="Modify node \
+@click.option('--node_config', default="None", help="Modify node \
                 configurations with by wrapping desired configs in a \
                 JSON string")
 def run(config_path: str, node_config: str) -> None:
