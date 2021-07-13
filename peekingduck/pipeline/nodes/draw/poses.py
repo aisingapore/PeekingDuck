@@ -18,7 +18,7 @@ Draws keypoints on a detected pose
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_human_poses
+from peekingduck.pipeline.nodes.draw.utils.pose import draw_human_poses
 
 
 class Node(AbstractNode):
@@ -39,10 +39,5 @@ class Node(AbstractNode):
         """
         draw_human_poses(inputs["img"],  # type: ignore
                          inputs["keypoints"],
-                         inputs["keypoint_scores"],
-                         inputs["keypoint_conns"],
-                         self.keypoint_dot_color,  # type: ignore
-                         self.keypoint_dot_radius,
-                         self.keypoint_connect_color,  # type: ignore
-                         self.keypoint_text_color)  # type: ignore
+                         inputs["keypoint_conns"])  # type: ignore
         return {}
