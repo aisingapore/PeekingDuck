@@ -23,7 +23,7 @@ import click
 
 from peekingduck.runner import Runner
 from peekingduck.utils.logger import setup_logger
-from peekingduck.__init__ import __version__
+from peekingduck import __version__
 
 setup_logger()
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
