@@ -41,25 +41,6 @@ class Pipeline:
         for node in self.nodes:
             del node
 
-    def execute(self) -> None:
-        """ executes all node contained within the pipeline
-        """
-        for node in self.nodes:
-            if "pipeline_end" in self._data and self._data["pipeline_end"]:  # type: ignore
-                self.terminate = True
-                if "pipeline_end" not in node.inputs:
-                    continue
-
-            if "all" in node.inputs:
-                inputs = copy.deepcopy(self._data)
-            else:
-                inputs = {key: self._data[key]
-                          for key in node.inputs if key in self._data}
-
-            outputs = node.run(inputs)
-            self._data.update(outputs)  # type: ignore
-
-
     def get_pipeline_results(self) -> Dict[str, Any]:
         """get all results data of nodes in pipeline
 

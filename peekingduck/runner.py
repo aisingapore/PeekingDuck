@@ -16,7 +16,7 @@
 Main engine for Peekingduck processes
 """
 
-
+import copy
 import sys
 import logging
 from typing import List
@@ -64,7 +64,21 @@ class Runner():
         """execute single or continuous inference
         """
         while not self.pipeline.terminate:
-            self.pipeline.execute()
+            for node in self.pipeline.nodes:
+                if "pipeline_end" in self.pipeline._data and self.pipeline._data["pipeline_end"]:  # type: ignore
+                    self.pipeline.terminate = True
+                    if "pipeline_end" not in node.inputs:
+                        continue
+
+                if "all" in node.inputs:
+                    inputs = copy.deepcopy(self.pipeline._data)
+                else:
+                    inputs = {key: self.pipeline._data[key]
+                            for key in node.inputs if key in self.pipeline._data}
+
+                outputs = node.run(inputs)
+                self.pipeline._data.update(outputs)  # type: ignore
+
         del self.pipeline
 
     def get_run_config(self) -> List[str]:
