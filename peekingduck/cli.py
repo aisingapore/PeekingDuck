@@ -23,15 +23,17 @@ import click
 
 from peekingduck.runner import Runner
 from peekingduck.utils.logger import setup_logger
+from peekingduck.__init__ import __version__
 
 setup_logger()
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 @click.group()
+@click.version_option(__version__)
 def cli() -> None:
     """
-    PeekingDuck is a modular computer vision inference framework..
+    PeekingDuck is a modular computer vision inference framework.
 
     Developed by Computer Vision Hub at AI Singapore.
     """
