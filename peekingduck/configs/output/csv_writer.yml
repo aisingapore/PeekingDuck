@@ -1,5 +1,5 @@
 input: ["all"]
-output: ["end"]
+output: ["none"]
 
 stats_to_track: ["keypoints","bboxes","bbox_labels"]
 filepath: 'PeekingDuck/data/stats.csv'
