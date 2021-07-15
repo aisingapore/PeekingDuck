@@ -1,0 +1,4 @@
+input: ["pipeline_end"]
+output: ["fps"]
+
+moving_avg: False   # Enables cli logging of moving average FPS per frame
