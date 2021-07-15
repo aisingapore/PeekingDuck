@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 Adjusts brightness of an incoming image
 """
@@ -25,6 +26,7 @@ class Node(AbstractNode):
     """Node for changing image contrast and brightness"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
+
         super().__init__(config, node_path=__name__)
         self.brightness = config['brightness']
         self.contrast = config ['contrast']
