@@ -168,7 +168,7 @@ class TestRunner:
         
     #     runner_with_nodes.run()
 
-    #     assert runner_with_nodes.pipeline._data == correct_data
+    #     assert runner_with_nodes.pipeline.data == correct_data
     #     assert runner_with_nodes.pipeline.get_pipeline_results() == correct_data
 
     def test_run_delete(self, runner_with_nodes):
