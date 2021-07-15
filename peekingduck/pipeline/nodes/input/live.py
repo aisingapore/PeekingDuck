@@ -57,7 +57,7 @@ class Node(AbstractNode):
             outputs = { "img": img,
                         "pipeline_end": False,
                         "filename": self.filename,
-                        "fps": self.fps_saved_output_video}
+                        "saved_video_fps": self.fps_saved_output_video}
             self.frame_counter += 1
             if self.frame_counter%self.frames_log_freq == 0:
                 self.logger.info('Frames Processed: %s ...', self.frame_counter)
@@ -66,7 +66,7 @@ class Node(AbstractNode):
             outputs = { "img": None,
                         "pipeline_end": True,
                         "filename": self.filename,
-                        "fps": self.fps_saved_output_video}
+                        "saved_video_fps": self.fps_saved_output_video}
             self.logger.warning("No video frames available for processing.")
 
         return outputs
