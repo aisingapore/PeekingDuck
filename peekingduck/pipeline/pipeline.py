@@ -16,7 +16,6 @@
 Pipeline class that stores nodes and manages the data information used during inference
 """
 
-import copy
 import textwrap
 from typing import List, Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -34,7 +33,7 @@ class Pipeline:
         """
         self.nodes = nodes
         self._check_pipe(nodes)
-        self._data = {}  # type: ignore
+        self.data = {}  # type: ignore
         self.terminate = False
 
     def __del__(self) -> None:
@@ -47,7 +46,7 @@ class Pipeline:
         Returns:
             Dict[Any]: Dictionary of all pipeline node results
         """
-        return self._data
+        return self.data
 
     @staticmethod
     def _check_pipe(nodes: List[AbstractNode]) -> None:

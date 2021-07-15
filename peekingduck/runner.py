@@ -65,19 +65,21 @@ class Runner():
         """
         while not self.pipeline.terminate:
             for node in self.pipeline.nodes:
-                if "pipeline_end" in self.pipeline._data and self.pipeline._data["pipeline_end"]:  # type: ignore
+                if "pipeline_end" in self.pipeline.data and \
+                        self.pipeline.data["pipeline_end"]:  # type: ignore
+                    
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
                         continue
 
                 if "all" in node.inputs:
-                    inputs = copy.deepcopy(self.pipeline._data)
+                    inputs = copy.deepcopy(self.pipeline.data)
                 else:
-                    inputs = {key: self.pipeline._data[key]
-                            for key in node.inputs if key in self.pipeline._data}
+                    inputs = {key: self.pipeline.data[key]
+                            for key in node.inputs if key in self.pipeline.data}
 
                 outputs = node.run(inputs)
-                self.pipeline._data.update(outputs)  # type: ignore
+                self.pipeline.data.update(outputs)  # type: ignore
 
         del self.pipeline
 
