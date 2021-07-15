@@ -1,5 +1,5 @@
 input: ["none"]
-output: ["img", "pipeline_end", "filename", "fps"]
+output: ["img", "pipeline_end", "filename", "saved_video_fps"]
 
 fps_saved_output_video: 10   #may need to change depending on user machine performance
 filename: webcamfeed.mp4

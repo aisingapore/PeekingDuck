@@ -47,7 +47,7 @@ class TestMediaWriter:
 
     def test_writer_writes_single_image(self, writer, create_image):
         image = create_image(size)
-        writer.run({"filename": "test.jpg", "img": image, "fps": 1})
+        writer.run({"filename": "test.jpg", "img": image, "saved_video_fps": 1})
         
         #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
         #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
@@ -62,9 +62,9 @@ class TestMediaWriter:
         image1 = create_image(size)
         image2 = create_image(size)
         image3 = create_image(size)
-        writer.run({"filename": "test1.jpg", "img": image1, "fps": 1})
-        writer.run({"filename": "test2.jpg", "img": image2, "fps": 1})
-        writer.run({"filename": "test3.jpg", "img": image3, "fps": 1})
+        writer.run({"filename": "test1.jpg", "img": image1, "saved_video_fps": 1})
+        writer.run({"filename": "test2.jpg", "img": image2, "saved_video_fps": 1})
+        writer.run({"filename": "test3.jpg", "img": image3, "saved_video_fps": 1})
 
         assert len(directory_contents()) == 3
 
@@ -80,7 +80,7 @@ class TestMediaWriter:
     def test_writer_writes_single_video(self, writer, create_video):
         video = create_video(size, nframes=20)
         for frame in video:
-            writer.run({"filename": "test.mp4", "img": frame, "fps": 30})
+            writer.run({"filename": "test.mp4", "img": frame, "saved_video_fps": 30})
 
         #pattern to check for time stamp filename_DDMMYY-hh-mm-ss.extension
         #approved extension = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
@@ -95,10 +95,10 @@ class TestMediaWriter:
         video1 = create_video(size, nframes=20)
         video2 = create_video(size, nframes=20)
         for frame in video1:
-            writer.run({"filename": "test1.mp4", "img": frame, "fps": 10})
+            writer.run({"filename": "test1.mp4", "img": frame, "saved_video_fps": 10})
 
         for frame in video2:
-            writer.run({"filename": "test2.mp4", "img": frame, "fps": 10})
+            writer.run({"filename": "test2.mp4", "img": frame, "saved_video_fps": 10})
 
         assert len(directory_contents()) == 2
 
