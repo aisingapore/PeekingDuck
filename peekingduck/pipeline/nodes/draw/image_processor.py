@@ -17,9 +17,8 @@ Adjusts brightness of an incoming image
 
 
 from typing import Any, Dict
+import cv2
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.image_processor  \
-    import adjust_contrast_and_brightness
 
 
 class Node(AbstractNode):
@@ -36,7 +35,7 @@ class Node(AbstractNode):
         Args:
             inputs (dict): Dict with keys "img"
         """
-        img = adjust_contrast_and_brightness(inputs['img'],
-                                             self.contrast,
-                                             self.brightness)
+        img = cv2.convertScaleAbs(inputs['img'],
+                                  alpha=self.contrast,
+                                  beta=self.brightness)
         return {"img": img}
