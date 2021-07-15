@@ -40,7 +40,7 @@ class Node(AbstractNode):
             outputs: [None]
         """
 
-        draw_fps(inputs['img'], 
+        draw_fps(inputs['img'],
                  inputs['fps'])
 
         return {}
