@@ -33,7 +33,7 @@ class Node(AbstractNode):
         self.time_window = [float(0)]
 
         self.moving_avg_thres = config["moving_avg"]
-        self.moving_average_fps = []
+        self.moving_average_fps = [float]
         self.global_avg_fps = 0
         self.count = 0
 
@@ -71,14 +71,14 @@ class Node(AbstractNode):
 
         return {"fps": average_fps}
 
-    def _moving_average(self, average_fps):
+    def _moving_average(self, average_fps: float) -> float:
         self.moving_average_fps.append(average_fps)
         if len(self.moving_average_fps) > NUM_FRAMES:
             self.moving_average_fps.pop(0)
         moving_average_val = np.mean(self.moving_average_fps)
         return round(moving_average_val, 1)
 
-    def _global_average(self, average_fps):
+    def _global_average(self, average_fps: float) -> float:
         # Cumulative moving average formula
         global_average = \
             (average_fps + self.count*self.global_avg_fps) / (self.count + 1)
