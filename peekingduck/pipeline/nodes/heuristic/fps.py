@@ -16,7 +16,7 @@
 Calculates the FPS of video
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 from time import perf_counter
 import numpy as np
 
@@ -33,8 +33,8 @@ class Node(AbstractNode):
         self.time_window = [float(0)]
 
         self.moving_avg_thres = config["moving_avg"]
-        self.moving_average_fps = [float]
-        self.global_avg_fps = 0
+        self.moving_average_fps: List[float] = []
+        self.global_avg_fps = 0.0
         self.count = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
