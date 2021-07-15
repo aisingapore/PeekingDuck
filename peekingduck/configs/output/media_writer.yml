@@ -1,4 +1,4 @@
-input: ["img", "filename", "fps"]
+input: ["img", "filename", "saved_video_fps"]
 output: ["none"]
 
 output_dir: 'PeekingDuck/data/output'
