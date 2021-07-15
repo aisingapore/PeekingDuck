@@ -19,8 +19,6 @@ Calculates the FPS of video
 from typing import Any, Dict
 from time import perf_counter
 import numpy as np
-from numpy.core.defchararray import count
-from numpy.lib.type_check import real
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -40,7 +38,7 @@ class Node(AbstractNode):
         self.count = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """ Calculates FPS using the time difference between the current 
+        """ Calculates FPS using the time difference between the current
         frame and the previous frame.
 
         Args:
@@ -68,7 +66,7 @@ class Node(AbstractNode):
         self.global_avg_fps = self._global_average(average_fps)
         # Log global cumulative average when pipeline ends
         if inputs["pipeline_end"]:
-            self.logger.info('Approximate Global Average FPS: %s', 
+            self.logger.info('Approximate Global Average FPS: %s',
                 self.global_avg_fps)
 
         return {"fps": average_fps}
