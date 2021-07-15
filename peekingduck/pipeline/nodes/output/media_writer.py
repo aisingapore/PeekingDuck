@@ -59,7 +59,7 @@ class Node(AbstractNode):
         """ Writes media information to filepath
 
         Args:
-            inputs: ["filename", "img", "fps"]
+            inputs: ["filename", "img", "saved_video_fps"]
 
         Returns:
             outputs: [None]
@@ -68,12 +68,12 @@ class Node(AbstractNode):
         if not self._file_name:
             self._prepare_writer(inputs["filename"],
                                  inputs["img"],
-                                 inputs["fps"])
+                                 inputs["saved_video_fps"])
 
         if inputs["filename"] != self._file_name:
             self._prepare_writer(inputs["filename"],
                                  inputs["img"],
-                                 inputs["fps"])
+                                 inputs["saved_video_fps"])
 
         self._write(inputs["img"])
 
@@ -85,7 +85,7 @@ class Node(AbstractNode):
         else:
             self.writer.write(img)  # type: ignore
 
-    def _prepare_writer(self, filename: str, img: np.array, fps: int) -> None:
+    def _prepare_writer(self, filename: str, img: np.array, saved_video_fps: int) -> None:
 
         self._file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
 
@@ -95,7 +95,7 @@ class Node(AbstractNode):
         else:
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
-                self._file_path_with_timestamp, self._fourcc, fps, resolution)
+                self._file_path_with_timestamp, self._fourcc, saved_video_fps, resolution)
 
     @staticmethod
     def _prepare_directory(output_dir) -> None:  # type: ignore

@@ -1,5 +1,4 @@
-input: ["bboxes", "img"]
+input: ["bboxes", "img", "bbox_labels"]
 output: ["none"]
 
-bbox_color: [255, 0, 255]
-bbox_thickness: 2
+show_labels: False

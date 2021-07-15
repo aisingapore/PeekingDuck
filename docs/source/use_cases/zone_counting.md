@@ -2,7 +2,7 @@
 
 ## Overview
 
-As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
+As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](./object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
 
@@ -10,7 +10,7 @@ Zone counting is done by looking at the counts of objects detected by the object
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](https://github.com/aimakerspace/PeekingDuck/blob/dev/README.md/#install-and-run-peekingduck): use the following configuration file: [zone_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [zone_counting.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_zone_counting.yml>
@@ -84,7 +84,7 @@ nodes:
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo. More information on the object detection node can be found in the [node glossary](../node_glossary.md).
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo.
 
 **2. Bottom Midpoint Node**
 
@@ -102,4 +102,4 @@ With regards to the zone counting node, some common node behaviours for the zone
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.
 - `zones`: Used to specify the different zones which you would like to set. Each zone coordinates should be set clock-wise in a list. See section on [nodes used](#nodes-used) on how to properly configure multiple zones.
 
-For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
+For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes.model).

@@ -17,10 +17,12 @@
 Utils, constants, and functions for drawing
 """
 
-from typing import List, Tuple, Any, Iterable, Union
+from typing import List, Tuple, Any
 import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+from peekingduck.pipeline.nodes.draw.utils.general \
+    import project_points_onto_original_image
 
 POSE_BBOX_COLOR = (255, 255, 0)
 BLACK_COLOR = (0, 0, 0)
@@ -53,53 +55,10 @@ SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
             [3, 5], [4, 6], [5, 7]]
 
 
-def draw_human_poses(image: np.array,
-                     keypoints: np.ndarray,
-                     keypoint_scores: np.ndarray,
-                     keypoint_conns: np.ndarray,
-                     keypoint_dot_color: Tuple[int, int, int],
-                     keypoint_dot_radius: int,
-                     keypoint_connect_color: Tuple[int, int, int],
-                     keypoint_text_color: Tuple[int, int, int]) -> None:
-    # pylint: disable=too-many-arguments
-    """Draw poses onto an image frame.
-
-    Args:
-        image (np.array): image of current frame
-        keypoints (List[Any]): list of keypoint coordinates
-        keypoints_scores (List[Any]): list of keypoint scores
-        keypoints_conns (List[Any]): list of keypoint connections
-        keypoint_dot_color (Tuple[int, int, int]): color of keypoint
-        keypoint_dot_radius (int): radius of keypoint
-        keypoint_connect_color (Tuple[int, int, int]): color of joint
-        keypoint_text_color (Tuple[int, int, int]): color of keypoint names
-    """
-    image_size = _get_image_size(image)
-    num_persons = keypoints.shape[0]
-    if num_persons > 0:
-        for i in range(num_persons):
-            _draw_connections(image, keypoint_conns[i],
-                              image_size, keypoint_connect_color)
-            _draw_keypoints(image, keypoints[i],
-                            keypoint_scores[i], image_size,
-                            keypoint_dot_color, keypoint_dot_radius, keypoint_text_color)
-
-
 def _get_image_size(frame: np.array) -> Tuple[int, int]:
     """ Obtain image size of input frame """
     image_size = (frame.shape[1], frame.shape[0])  # width, height
     return image_size
-
-
-def _draw_connections(frame: np.array,
-                      connections: Union[None, Iterable[Any]],
-                      image_size: Tuple[int, int],
-                      connection_color: Tuple[int, int, int]) -> None:
-    """ Draw connections between detected keypoints """
-    if connections is not None:
-        for connection in connections:
-            pt1, pt2 = _project_points_onto_original_image(connection, image_size)
-            cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color)
 
 
 def _draw_keypoints(frame: np.ndarray,
@@ -111,7 +70,7 @@ def _draw_keypoints(frame: np.ndarray,
                     keypoint_text_color: Tuple[int, int, int]) -> None:
     # pylint: disable=too-many-arguments
     """ Draw detected keypoints """
-    img_keypoints = _project_points_onto_original_image(
+    img_keypoints = project_points_onto_original_image(
         keypoints, image_size)
 
     for idx, keypoint in enumerate(img_keypoints):
@@ -140,24 +99,6 @@ def _draw_one_keypoint_text(frame: np.ndarray,
                 0.4, keypoint_text_color, 1, cv2.LINE_AA)
 
 
-def _project_points_onto_original_image(points: np.ndarray,
-                                        image_size: Tuple[int, int]) -> np.ndarray:
-    """ Project points from relative value (0, 1) to absolute values in original
-    image. Note that coordinate (0, 0) starts from image top-left. """
-    if len(points) == 0:
-        return []
-
-    points = points.reshape((-1, 2))
-
-    projected_points = np.array(points, dtype=np.float32)
-
-    width, height = image_size[0], image_size[1]
-    projected_points[:, 0] *= width
-    projected_points[:, 1] *= height
-
-    return projected_points
-
-
 def draw_bboxes(frame: np.array,
                 bboxes: List[List[float]],
                 color: Tuple[int, int, int],
@@ -181,7 +122,7 @@ def _draw_bbox(frame: np.array,
                color: Tuple[int, int, int],
                thickness: int) -> np.array:
     """ Draw a single bounding box """
-    top_left, bottom_right = _project_points_onto_original_image(
+    top_left, bottom_right = project_points_onto_original_image(
         bbox, image_size)
     cv2.rectangle(frame, (top_left[0], top_left[1]),
                   (bottom_right[0], bottom_right[1]),
@@ -212,7 +153,7 @@ def _draw_tag(frame: np.array,
               color: Tuple[int, int, int]) -> None:
     """Draw a tag above a single bounding box.
     """
-    top_left, _ = _project_points_onto_original_image(bbox, image_size)
+    top_left, _ = project_points_onto_original_image(bbox, image_size)
     position = int(top_left[0]), int(top_left[1]-25)
     cv2.putText(frame, tag, position, FONT_HERSHEY_SIMPLEX, 1, color, 2)
 
@@ -243,16 +184,10 @@ def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
 
 def draw_fps(frame: np.array, current_fps: float) -> None:
     """ Draw FPS onto frame image
-<<<<<<< HEAD
-    args:
-        - frame: array containing the RGB values of the frame image
-        - current_fps: value of the calculated FPS
-=======
 
     Args:
         frame (np.array): image of current frame
         current_fps (float): value of the calculated FPS
->>>>>>> 823b177166ef1f40faab8e8611001c73a6b634c7
     """
     text = "FPS: {:.05}".format(current_fps)
     text_location = (25, 25)

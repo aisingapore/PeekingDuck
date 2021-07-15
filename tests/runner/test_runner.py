@@ -31,6 +31,7 @@ MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
+CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True}}}"
 
 
 class MockedNode(AbstractNode):
@@ -80,6 +81,7 @@ def runner():
                     wraps=replace_declarativeloader_get_pipeline):
 
         test_runner = Runner(RUN_CONFIG_PATH,
+                             CONFIG_UPDATES_CLI,
                              CUSTOM_FOLDER_PATH)
 
         return test_runner
@@ -102,6 +104,7 @@ def runner_with_nodes(test_input_node):
     instantiated_nodes = [test_input_node]
 
     test_runner = Runner(RUN_CONFIG_PATH,
+                         CONFIG_UPDATES_CLI,
                          CUSTOM_FOLDER_PATH,
                          instantiated_nodes)
 
@@ -122,7 +125,8 @@ class TestRunner:
 
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
             assert runner_with_nodes.pipeline.nodes[0]._inputs == ["source"]
-            assert runner_with_nodes.pipeline.nodes[0]._outputs == ["test_output_1"]
+            assert runner_with_nodes.pipeline.nodes[0]._outputs == [
+                "test_output_1"]
 
     def test_init_nodes_with_wrong_input(self):
 
@@ -132,7 +136,8 @@ class TestRunner:
                         side_effect=ValueError):
 
             with pytest.raises(SystemExit):
-                Runner(RUN_CONFIG_PATH, CUSTOM_FOLDER_PATH, [ground_truth])
+                Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI,
+                       CUSTOM_FOLDER_PATH, [ground_truth])
 
     def test_run(self, runner_with_nodes):
 

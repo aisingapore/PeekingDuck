@@ -35,7 +35,8 @@ NODES = {"nodes": [PKD_NODE,
                    f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}"]}
 
 MODULE_PATH = "tmp_dir"
-UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase) for x in range(8))
+UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase)
+                        for x in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
@@ -44,6 +45,7 @@ CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
 CUSTOM_NODE_CONFIG_DIR = os.path.join(
     CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
+CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
 def create_run_config_yaml(nodes):
@@ -104,7 +106,8 @@ def declarativeloader():
 
     setup()
 
-    declarative_loader = DeclarativeLoader(RUN_CONFIG_PATH, MODULE_PATH)
+    declarative_loader = DeclarativeLoader(
+        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_PATH)
 
     declarative_loader.config_loader._basedir = MODULE_PATH
     declarative_loader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH
@@ -233,6 +236,7 @@ class TestDeclarativeLoader:
 
     def test_edit_config(self, declarativeloader):
 
+        node_name = 'input.live'
         orig_config = {
             'mirror_image': True,
             'resize': {
@@ -241,7 +245,8 @@ class TestDeclarativeLoader:
                 'height': 720
             }}
         config_update = {'mirror_image': False,
-                         'resize': {'do_resizing': True}}
+                         'resize': {'do_resizing': True},
+                         'invalid_key': 123}
         ground_truth = {
             'mirror_image': False,
             'resize': {
@@ -251,13 +256,14 @@ class TestDeclarativeLoader:
             }}
 
         orig_config = declarativeloader._edit_config(
-            orig_config, config_update)
+            orig_config, config_update, node_name)
 
         assert orig_config['mirror_image'] == ground_truth['mirror_image']
         assert orig_config['resize']['do_resizing'] == ground_truth['resize']['do_resizing']
         # Ensure that config_update does not replace the "resize" sub-dict completely and
         # erase "width" or "height"
         assert "width" in orig_config["resize"]
+        assert "invalid_key" not in ground_truth
 
     def test_get_pipeline(self, declarativeloader):
 

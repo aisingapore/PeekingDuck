@@ -78,7 +78,7 @@ class Node(AbstractNode):
         outputs = {"img": None,
                    "pipeline_end": True,
                    "filename": self._file_name,
-                   "fps": self._fps}
+                   "saved_video_fps": self._fps}
         if success:
             self.file_end = False
             if self.resize_info['do_resizing']:
@@ -88,7 +88,7 @@ class Node(AbstractNode):
             outputs = {"img": img,
                        "pipeline_end": False,
                        "filename": self._file_name,
-                       "fps": self._fps}
+                       "saved_video_fps": self._fps}
 
         return outputs
 

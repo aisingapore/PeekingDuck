@@ -20,6 +20,7 @@ import sys
 import os
 import importlib
 import logging
+import ast
 import collections.abc
 from typing import Any, Dict, List
 
@@ -68,6 +69,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(self,
                  run_config: str,
+                 config_updates_cli: str,
                  custom_node_parent_folder: str) -> None:
         self.logger = logging.getLogger(__name__)
 
@@ -75,6 +77,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         self.config_loader = ConfigLoader(pkdbasedir)
 
         self.node_list = self._load_node_list(run_config)
+        self.config_updates_cli = ast.literal_eval(
+            config_updates_cli)  # type: ignore
 
         custom_folder = self._get_custom_name_from_node_list()
         if custom_folder is not None:
@@ -115,12 +119,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         instantiated_nodes = []
 
         for node_item in self.node_list:
-            config_updates = None
+            config_updates_yml = None
             node_str = node_item
 
             if isinstance(node_item, dict):
                 node_str = list(node_item.keys())[0]  # type: ignore
-                config_updates = node_item[node_str]
+                config_updates_yml = node_item[node_str]
 
             node_str_split = node_str.split('.')
 
@@ -135,14 +139,14 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 instantiated_node = self._init_node(path_to_node,
                                                     node_name,
                                                     self.custom_config_loader,
-                                                    config_updates)  # type: ignore
+                                                    config_updates_yml)  # type: ignore
             else:
                 path_to_node = 'peekingduck.pipeline.nodes.'
 
                 instantiated_node = self._init_node(path_to_node,
                                                     node_str,
                                                     self.config_loader,
-                                                    config_updates)  # type: ignore
+                                                    config_updates_yml)  # type: ignore
 
             instantiated_nodes.append(instantiated_node)
 
@@ -150,28 +154,44 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def _init_node(self, path_to_node: str, node_name: str,
                    config_loader: ConfigLoader,
-                   config_updates: Dict[str, Any]) -> AbstractNode:
+                   config_updates_yml: Dict[str, Any]) -> AbstractNode:
         """ Import node to filepath and initialise node with config """
 
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
-        if config_updates is not None:
-            config = self._edit_config(config, config_updates)
+        # First, override default configs with values from run_config.yml
+        if config_updates_yml is not None:
+            config = self._edit_config(config, config_updates_yml, node_name)
+
+        # Second, override configs again with values from cli
+        if self.config_updates_cli is not None:
+            if node_name in self.config_updates_cli.keys():
+                config = self._edit_config(
+                    config, self.config_updates_cli[node_name], node_name)
 
         return node.Node(config)  # type: ignore
 
     def _edit_config(self, dict_orig: Dict[str, Any],
-                     dict_update: Dict[str, Any]) -> Dict[str, Any]:
+                     dict_update: Dict[str, Any],
+                     node_name: str) -> Dict[str, Any]:
         """ Update value of a nested dictionary of varying depth using
             recursion
         """
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value)  # type: ignore
+                    dict_orig.get(key, {}), value, node_name)  # type: ignore
             else:
-                dict_orig[key] = value
+                if key not in dict_orig:
+                    self.logger.warning(
+                        "Config for node %s does not have the key: %s",
+                        node_name, key)
+                else:
+                    dict_orig[key] = value
+                    self.logger.info(
+                        "Config for node %s is updated to: '%s': %s",
+                        node_name, key, value)
         return dict_orig
 
     def get_pipeline(self) -> Pipeline:

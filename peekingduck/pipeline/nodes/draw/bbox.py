@@ -17,7 +17,8 @@ Draw bounding boxes over detected object
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_bboxes
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
+from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE
 
 
 class Node(AbstractNode):
@@ -25,11 +26,12 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = tuple(config["bbox_color"])
+        self.show_labels = config['show_labels']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-
-        draw_bboxes(inputs["img"], inputs["bboxes"],
-                    self.bbox_color, self.bbox_thickness)  # type: ignore
+        if self.show_labels:
+            draw_bboxes(inputs["img"], inputs["bboxes"],
+                        CHAMPAGNE, inputs["bbox_labels"])  # type: ignore
+        else:
+            draw_bboxes(inputs["img"], inputs["bboxes"], CHAMPAGNE)  # type: ignore
         return {}
