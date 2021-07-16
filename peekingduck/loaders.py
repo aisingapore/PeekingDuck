@@ -21,10 +21,10 @@ import os
 import importlib
 import logging
 import collections.abc
+import re
 from typing import Any, Dict, List
 
 import yaml
-import re
 
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.pipeline.nodes.node import AbstractNode
