@@ -59,14 +59,6 @@ def pipeline_correct(test_input_node, test_node_end):
 
 
 class TestPipeline:
-    def test_execute(self, pipeline_correct):
-        correct_data = {'test_output_1': 'test_output_0', 
-                        'test_output_2': 'test_output_0', 
-                        'pipeline_end': 'test_output_1'}
-        pipeline_correct.execute()
-
-        assert pipeline_correct._data == correct_data
-        assert pipeline_correct.get_pipeline_results() == correct_data
 
     def test_pipeline_wrong_order(self, test_input_node, test_node_end):
         with pytest.raises(ValueError):
