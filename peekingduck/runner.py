@@ -67,7 +67,7 @@ class Runner():
             for node in self.pipeline.nodes:
                 if "pipeline_end" in self.pipeline.data and \
                         self.pipeline.data["pipeline_end"]:  # type: ignore
-                    
+         
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
                         continue
