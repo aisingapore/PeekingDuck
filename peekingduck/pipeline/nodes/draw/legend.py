@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 
@@ -26,7 +26,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__)
         self.all_legend_items = config['all_legend_items']
         self.exclude = config['exclude']
-        self.legend_items = []
+        self.legend_items: List[str] = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws legend box with information from nodes
