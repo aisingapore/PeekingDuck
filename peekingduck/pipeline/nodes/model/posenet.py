@@ -22,7 +22,6 @@ from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
 
 
 class Node(AbstractNode):
-    # TODO: Add in glossary for keypoint indices
     """PoseNet node that initalises a PoseNet model to detect human poses from
     an image.
 
@@ -46,6 +45,7 @@ class Node(AbstractNode):
         |keypoints_conns|
 
 
+        |bbox_labels|
 
     Configs:
         model_type (:obj:`str`): **{"resnet", "50", "75", "101"}, default="resnet"**
