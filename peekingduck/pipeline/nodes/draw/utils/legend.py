@@ -1,0 +1,106 @@
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+functions for drawing legend related UI components
+"""
+
+from typing import Dict, List, Any
+import numpy as np
+import cv2
+from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+from peekingduck.pipeline.nodes.draw.utils.constants import \
+    THICK, WHITE, SMALL_FONTSCALE, BLACK, FILLED
+from peekingduck.pipeline.nodes.draw.utils.general import get_image_size
+
+
+class Legend:
+    """Legend class that uses available info to draw legend box on frame"""
+
+    def __init__(self) -> None:
+        self.func_reg = self._get_legend_registry()
+        self.legend_left_x = 15
+
+    def draw(self, inputs: Dict[str, Any], items: List[str]) -> np.array:
+        """ Draw legends onto image
+
+        Args:
+            inputs (dict): dictionary of all available inputs for drawing the legend
+            items (list): list of items to be drawn in legend
+        """
+        self.frame = inputs['img']
+        _, self.legend_btm_y = get_image_size(self.frame)
+        self.legend_btm_y -= 100
+        self.legend_height = self._get_legend_height(inputs, items)
+
+        self._draw_legend_box(self.frame)
+        y_pos = self.legend_btm_y - self.legend_height + 22
+        for item in items:
+            self.func_reg[item](self.frame, y_pos, inputs[item])
+            y_pos += 20
+
+    def _draw_count(self, frame: np.array, y_pos: int, count: int) -> None:
+        """draw count of selected object onto frame
+
+        Args:
+            frame (np.array): image of current frame
+            y_pos (int): y_position to draw the count text
+            count (int): total count of selected object
+                in current frame
+        """
+        text = 'COUNT: {0}'.format(count)
+        cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX,
+                    SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
+
+    def _draw_fps(self, frame: np.array, y_pos: int, current_fps: float) -> None:
+        """ Draw FPS onto frame image
+
+        Args:
+            frame (np.array): image of current frame
+            y_pos (int): y position to draw the count info text
+            current_fps (float): value of the calculated FPS
+        """
+        text = "FPS: {:.05}".format(current_fps)
+
+        cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX, SMALL_FONTSCALE,
+                    WHITE, THICK, LINE_AA)
+
+    def _draw_legend_box(self, frame: np.array) -> None:
+        """draw pts of selected object onto frame
+
+        Args:
+            frame (np.array): image of current frame
+            zone_count (List[float]): object count, likely people, of each zone used
+            in the zone analytics
+        """
+        assert self.legend_height is not None
+        overlay = frame.copy()
+        cv2.rectangle(overlay,
+                      (self.legend_left_x, self.legend_btm_y - self.legend_height),
+                      (self.legend_left_x + 150, self.legend_btm_y), BLACK, FILLED)
+        # apply the overlay
+        cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
+
+    def _get_legend_height(self, inputs: Dict[str, Any], items: List[str]) -> int:
+        """Get height of legend box needed to contain all items drawn"""
+        no_of_items = len(items)
+        return 12 * no_of_items + 5 * (no_of_items - 1) + 20
+
+    def _get_legend_registry(self) -> Dict[str, Any]:
+        """Get registry of functions that draw items
+        available in the legend"""
+        return {
+            'fps': self._draw_fps,
+            'count': self._draw_count
+        }
