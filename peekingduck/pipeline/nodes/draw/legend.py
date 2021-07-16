@@ -14,7 +14,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-from peekingduck.pipeline.nodes.draw.utils.constants import BLACK, THICK
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
@@ -30,13 +29,13 @@ class Node(AbstractNode):
         self.legend_items = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws legend box with information from nodes.
+        """Draws legend box with information from nodes
 
         Args:
-            inputs (dict): Dict with all available keys.
+            inputs (dict): Dict with all available keys
 
         Returns:
-            outputs (dict): Dict with keys "none".
+            outputs (dict): Dict with keys "none"
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw

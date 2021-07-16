@@ -32,6 +32,10 @@ class Legend:
         self.func_reg = self._get_legend_registry()
         self.legend_left_x = 15
 
+        self.frame = None
+        self.legend_btm_y = 0
+        self.legend_height = 0
+
     def draw(self, inputs: Dict[str, Any], items: List[str]) -> np.array:
         """ Draw legends onto image
 
@@ -42,7 +46,7 @@ class Legend:
         self.frame = inputs['img']
         _, self.legend_btm_y = get_image_size(self.frame)
         self.legend_btm_y -= 100
-        self.legend_height = self._get_legend_height(inputs, items)
+        self.legend_height = self._get_legend_height(items)
 
         self._draw_legend_box(self.frame)
         y_pos = self.legend_btm_y - self.legend_height + 22
@@ -73,8 +77,8 @@ class Legend:
         """
         text = "FPS: {:.05}".format(current_fps)
 
-        cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX, SMALL_FONTSCALE,
-                    WHITE, THICK, LINE_AA)
+        cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX,
+                    SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
 
     def _draw_legend_box(self, frame: np.array) -> None:
         """draw pts of selected object onto frame
@@ -92,7 +96,8 @@ class Legend:
         # apply the overlay
         cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
 
-    def _get_legend_height(self, inputs: Dict[str, Any], items: List[str]) -> int:
+    @staticmethod
+    def _get_legend_height(items: List[str]) -> int:
         """Get height of legend box needed to contain all items drawn"""
         no_of_items = len(items)
         return 12 * no_of_items + 5 * (no_of_items - 1) + 20
@@ -104,3 +109,13 @@ class Legend:
             'fps': self._draw_fps,
             'count': self._draw_count
         }
+
+    def add_register(self, name: str, method: Any) -> None:
+        """Add new legend drawing information to the registry
+
+        Args:
+            name (str): name of method, corresponding to key to get input
+            method (Any): function of the method. Note that take in 1) image frame
+            and 2) input needed for the method, taken in using inputs[<key>]
+        """
+        self.func_reg[name] = method
