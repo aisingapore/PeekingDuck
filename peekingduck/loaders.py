@@ -129,7 +129,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             self.logger.info(msg)
 
             if len(node_str_split) == 3:
-                path_to_node = ".".join(re.split('\\\\|/', self.custom_folder_path)[-1:]) + "."
+                # Replace any forward or backslash in path with .
+                path_to_node = ".".join(re.split('\\\\|\/', self.custom_folder_path)[-1:]) + "."
                 node_name = ".".join(node_str_split[-2:])
 
                 instantiated_node = self._init_node(path_to_node,
