@@ -23,15 +23,19 @@ from .utils.drawfunctions import draw_count
 
 
 class Node(AbstractNode):
-    """Bounding box count node counts detected objects.
+    """Draw bounding box count node that draws the count of detected objects.
     
-    The bbox_count node uses the bounding box prediction results from a pipeine and
-    counts the number of objects detected using the bounding box predictions. To understand more about
-    how the bbox_count node is used in a pipeline, refer to :term:`object counting usecase <object count>`.
+    Draws the count of detected objects onto the image. Uses the :term:`count <count>` from the 
+    bbox_count node to draw the information. For better understanding of the usecase, 
+    refer to :term:`object counting usecase <object count>`.
     Inputs:
-        |bboxes|
-    Outputs:
+        |img|
+
         |count|
+
+    Outputs:
+        |none|
+
     Configs:
         None.
     """

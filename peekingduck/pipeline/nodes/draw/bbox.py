@@ -22,7 +22,24 @@ from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE
 
 
 class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
+    """Draw bounding boxes on image.
+    
+    The draw bbox node uses the :term:`bboxes <bboxes>` from the model predictions to 
+    draw the bbox predictions onto the image. For better understanding of the usecase, 
+    refer to the :term:`object counting usecase <object count>`.
+    Inputs:
+        |img|
+
+        |bboxes|
+
+        |bbox_labels|
+
+    Outputs:
+        |none|
+
+    Configs:
+        None.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)

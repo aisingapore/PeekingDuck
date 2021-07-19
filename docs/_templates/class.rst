@@ -53,6 +53,9 @@
 .. |count| replace:: ``count`` (:obj:`int`): count of preselected objects (for example, people) detected. Uses ``bboxes``
    from model nodes for counting.
 
+.. |none| replace:: ``none`` (:obj:`none`): no results returned. Typically a situation where overwriting is done
+   directly on an existing output (for example, drawing onto ``img``) and no additional output is generated.
+
 
 {{ fullname | escape | underline }}
 
