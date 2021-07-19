@@ -21,6 +21,7 @@ from typing import List, Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
+# pylint: disable=R0903
 class Pipeline:
     """ Pipe class that stores nodes and manages the data information used during inference
     """

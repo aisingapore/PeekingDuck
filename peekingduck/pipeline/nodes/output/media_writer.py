@@ -55,7 +55,7 @@ class Node(AbstractNode):
         """
 
         # reset and terminate when there are no more data
-        if inputs["pipeline_end"] == True:
+        if inputs["pipeline_end"]:
             if self.writer: # images automatically releases writer
                 self.writer.release()
             return {}

@@ -56,7 +56,7 @@ class Node(AbstractNode):
         """
 
         # reset and terminate when there are no more data
-        if inputs["pipeline_end"] == True:
+        if inputs["pipeline_end"]:
             self._reset()
             return {}
 
