@@ -41,7 +41,7 @@ class Node(AbstractNode):
     Configs:
         fps_saved_output_video (:obj:`int`): **default = 10**
 
-            FPS of the mp4 file after livestream is exported and processed.
+            FPS of the mp4 file after livestream is processed and exported.
             FPS dependant on running machine performance.
 
         filename (:obj:`str`):  **default = "webcamfeed.mp4"**
@@ -50,15 +50,15 @@ class Node(AbstractNode):
 
         resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
 
-            User defined dimension of extracted image frame
+            Dimension of extracted image frame
 
-        input_source (:obj:`int`): **default = 0**
+        input_source (:obj:`int`): **default = 0 (for webcam)**
 
-            0 for webcam, refer to OpenCV doucmentation for list of source stream codes
+            Refer to OpenCV doucmentation for list of source stream codes
 
         mirror_image (:obj:`bool`): **default = False**
 
-            User's choice to set extracted image frame as mirror image of input stream
+            Boolean to set extracted image frame as mirror image of input stream
 
         frames_log_freq (:obj:`int`): **default = 100**
 
