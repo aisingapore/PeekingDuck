@@ -23,7 +23,18 @@ from .utils.drawfunctions import draw_count
 
 
 class Node(AbstractNode):
-    """Node that draws object counting"""
+    """Bounding box count node counts detected objects.
+    
+    The bbox_count node uses the bounding box prediction results from a pipeine and
+    counts the number of objects detected using the bounding box predictions. To understand more about
+    how the bbox_count node is used in a pipeline, refer to :term:`object counting usecase <object count>`.
+    Inputs:
+        |bboxes|
+    Outputs:
+        |count|
+    Configs:
+        None.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
