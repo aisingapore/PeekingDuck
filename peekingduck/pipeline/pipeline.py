@@ -36,10 +36,6 @@ class Pipeline:
         self.data = {}  # type: ignore
         self.terminate = False
 
-    def __del__(self) -> None:
-        for node in self.nodes:
-            del node
-
     def get_pipeline_results(self) -> Dict[str, Any]:
         """get all results data of nodes in pipeline
 
