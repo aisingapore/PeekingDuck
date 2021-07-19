@@ -55,6 +55,11 @@ class Node(AbstractNode):
             outputs: [None]
         """
 
+        # reset and terminate when there are no more data
+        if inputs["pipeline_end"] == True:
+            self._reset()
+            return {}
+
         if not self._stats_checked:
             self._check_tracked_stats(inputs)
             # self._stats_to_track might change after the check
@@ -92,7 +97,7 @@ class Node(AbstractNode):
         self._stats_to_track = valid
         self._stats_checked = True
 
-    def __del__(self) -> None:
+    def _reset(self) -> None:
         del self.csv_logger
 
         # initialize for use in run
