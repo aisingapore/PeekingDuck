@@ -24,7 +24,47 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoThread
 
 
 class Node(AbstractNode):
-    """Node to receive livestream as inputs."""
+    """Node to receive livestream as inputs.
+
+    Inputs:
+        None
+
+    Outputs:
+        |img|
+
+        |filename|
+
+        |pipeline_end|
+
+        |saved_video_fps|
+
+    Configs:
+        fps_saved_output_video (:obj:`int`): **default = 10**
+
+            FPS of the mp4 file after livestream is exported and processed.
+            FPS dependant on running machine performance.
+
+        filename (:obj:`str`):  **default = "webcamfeed.mp4"**
+
+            Filename of the mp4 file if livestream is exported.
+
+        resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
+
+            User defined dimension of extracted image frame
+
+        input_source (:obj:`int`): **default = 0**
+
+            0 for webcam, refer to OpenCV doucmentation for list of source stream codes
+
+        mirror_image (:obj:`bool`): **default = False**
+
+            User's choice to set extracted image frame as mirror image of input stream
+
+        frames_log_freq (:obj:`int`): **default = 100**
+
+            Logs frequency of frames passed in cli
+
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)

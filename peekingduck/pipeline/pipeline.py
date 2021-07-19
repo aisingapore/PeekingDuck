@@ -23,14 +23,17 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Pipeline:
     """ Pipe class that stores nodes and manages the data information used during inference
+
+    Args:
+        nodes (:obj: `List`): List of initiated nodes for the pipeline to run through
+
+    Returns:
+        None
+
     """
 
     def __init__(self, nodes: List[AbstractNode]) -> None:
-        """
-        Args:
-            nodes (:obj:'list' of :obj:'Node'): node stack as declared for use in
-                inference pipeline
-        """
+
         self.nodes = nodes
         self._check_pipe(nodes)
         self.data = {}  # type: ignore

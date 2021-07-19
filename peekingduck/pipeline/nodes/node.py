@@ -22,7 +22,10 @@ from typing import Any, Dict, List
 
 
 class AbstractNode(metaclass=ABCMeta):
-    """Abstract Node class that defines requirements for a node."""
+    """
+    Abstract Node class for inheritance by nodes.
+    It defines default attributes and methods of a node.
+    """
 
     def __init__(self, config: Dict[str, Any], node_path: str) -> None:
 
