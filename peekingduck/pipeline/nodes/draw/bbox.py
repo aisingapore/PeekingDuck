@@ -26,8 +26,10 @@ class Node(AbstractNode):
     
     The draw bbox node uses the :term:`bboxes <bboxes>` from the model predictions to 
     draw the bbox predictions onto the image. For better understanding of the usecase, 
-    refer to the :term:`object counting usecase <object count>`.
+    refer to the object counting usecase.
+    
     Inputs:
+
         |img|
 
         |bboxes|

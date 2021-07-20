@@ -27,8 +27,10 @@ class Node(AbstractNode):
     
     Draws the count of detected objects onto the image. Uses the :term:`count <count>` from the 
     bbox_count node to draw the information. For better understanding of the usecase, 
-    refer to :term:`object counting usecase <object count>`.
+    refer to the object counting usecase.
+    
     Inputs:
+
         |img|
 
         |count|
