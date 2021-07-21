@@ -25,7 +25,7 @@ from .utils.drawfunctions import draw_count
 class Node(AbstractNode):
     """Draw bounding box count node that draws the count of detected objects.
     
-    Draws the count of detected objects onto the image. Uses the :term:`count <count>` from the 
+    Draws the count of detected objects onto the image. Uses the count from the 
     bbox_count node to draw the information. For better understanding of the usecase, 
     refer to the object counting usecase.
     

@@ -25,7 +25,7 @@ from .utils.drawfunctions import draw_pts
 class Node(AbstractNode):
     """Draw the bottom middle point of detected bbounding boxes.
     
-    The draw btm_midpoint node uses the :term:`bboxes <bboxes>` from the model predictions to 
+    The draw btm_midpoint node uses the bboxes from the model predictions to 
     draw the bbox predictions onto the image. For better understanding of the usecase, 
     refer to the object counting usecase.
     
