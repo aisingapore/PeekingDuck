@@ -29,14 +29,14 @@ class Node(AbstractNode):
     YOLOv4-tiny by default and can be changed to using YOLOv4.
 
     Inputs:
-            |img|
+        |img|
 
     Outputs:
-            |bboxes|
+        |bboxes|
 
-            |bbox_labels|
+        |bbox_labels|
 
-            |bbox_scores|    
+        |bbox_scores|
 
     Configs:
         model_type (:obj:`str`): **{"v3", "v3tiny", "v4", "v4tiny"}, default="v4tiny"**
@@ -54,32 +54,32 @@ class Node(AbstractNode):
 
         size (:obj:`int`): **default = 416 **
 
-            image resolution passed to the YOLO model. 
-        
+            image resolution passed to the YOLO model.
+
         num_classes (:obj:`int`): **default = 80 **
 
             maximum number of objects to be detected.
 
         detect_ids (:obj:`int`): **default = 0 **
 
-            list of object class ids to be detected.    
+            list of object class ids to be detected.
 
         max_output_size_per_class (:obj:`int`): **default = 50 **
 
-            maximum number of detected instances for each class in an image.     
+            maximum number of detected instances for each class in an image.
 
         max_total_size (:obj:`int`): **default = 50 **
 
-            maximum total number of detected instances in an image.    
+            maximum total number of detected instances in an image.
 
         yolo_iou_threshold (:obj:`float`): **[0,1], default = 0.5**
 
-            overlapping bounding boxes above the specified IoU (Intersection 
-            over Union) threshold are discarded.     
+            overlapping bounding boxes above the specified IoU (Intersection
+            over Union) threshold are discarded.
 
         yolo_score_threshold (:obj:`float`): **[0,1], default = 0.2**
 
-            bounding box with confidence score less than the specified 
+            bounding box with confidence score less than the specified
             confidence score threshold is discarded.
 
     References:
