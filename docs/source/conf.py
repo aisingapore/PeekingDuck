@@ -39,6 +39,12 @@ extensions = ['myst_parser',
               ]
 
 
+napoleon_custom_sections = [('Configs', 'params_style'),
+                            ('Inputs', 'returns_style'),
+                            ('Outputs', 'returns_style')
+                            ]
+
+
 autosummary_generate = True
 master_doc = "index"
 

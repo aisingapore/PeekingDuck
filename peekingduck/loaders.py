@@ -22,6 +22,7 @@ import importlib
 import logging
 import ast
 import collections.abc
+import re
 from typing import Any, Dict, List
 
 import yaml
@@ -132,8 +133,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             self.logger.info(msg)
 
             if len(node_str_split) == 3:
-                path_to_node = ".".join(
-                    self.custom_folder_path.split('/')[-1:]) + "."
+                # convert windows/linux filepath to a module path
+                path_to_node = ".".join(re.split(r'\\|\/', self.custom_folder_path)[-1:]) + "."
                 node_name = ".".join(node_str_split[-2:])
 
                 instantiated_node = self._init_node(path_to_node,
