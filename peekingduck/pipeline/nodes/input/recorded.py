@@ -41,7 +41,7 @@ class Node(AbstractNode):
         Configs:
             resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
 
-                User defined dimension of extracted image frame
+                Dimension of extracted image frame
 
             input_dir (:obj: `str`): **default = 'PeekingDuck/data/input'**
 
@@ -49,7 +49,7 @@ class Node(AbstractNode):
 
             mirror_image (:obj:`bool`): **default = False**
 
-                User's choice to set extracted image frame as mirror image of input stream
+                Boolean to set extracted image frame as mirror image of input stream
 
     """
 

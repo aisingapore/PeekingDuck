@@ -42,7 +42,7 @@ class Node(AbstractNode):
         fps_saved_output_video (:obj:`int`): **default = 10**
 
             FPS of the mp4 file after livestream is processed and exported.
-            FPS dependant on running machine performance.
+            FPS dependent on running machine performance.
 
         filename (:obj:`str`):  **default = "webcamfeed.mp4"**
 
@@ -54,7 +54,9 @@ class Node(AbstractNode):
 
         input_source (:obj:`int`): **default = 0 (for webcam)**
 
-            Refer to OpenCV doucmentation for list of source stream codes
+            Refer to `OpenCV doucmentation
+            <https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d/>`_
+            for list of source stream codes
 
         mirror_image (:obj:`bool`): **default = False**
 

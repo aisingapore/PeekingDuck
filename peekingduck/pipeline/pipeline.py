@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Pipeline:
-    """ Pipe class that stores nodes and manages the data information used during inference
+    """ Pipe class that stores nodes and manages flow of data used during inference
 
     Args:
         nodes (:obj: `List`): List of initiated nodes for the pipeline to run through
