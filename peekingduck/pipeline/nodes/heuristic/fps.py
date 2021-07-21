@@ -34,7 +34,7 @@ class Node(AbstractNode):
 
         self.moving_avg_thres = config["moving_avg"]
         self.moving_average_fps: List[float] = []
-        self.prev_frame_timestamp = 0
+        self.prev_frame_timestamp = 0.0
         self.global_avg_fps = 0.0
         self.count = 0
 
