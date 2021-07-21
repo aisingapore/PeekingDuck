@@ -34,6 +34,7 @@ class Node(AbstractNode):
 
         self.moving_avg_thres = config["moving_avg"]
         self.moving_average_fps: List[float] = []
+        self.prev_frame_timestamp = 0
         self.global_avg_fps = 0.0
         self.count = 0
 
@@ -51,36 +52,41 @@ class Node(AbstractNode):
         if len(self.time_window) > NUM_FRAMES:
             self.time_window.pop(0)
 
-        self.time_window.append(perf_counter())
-
+        # "Dampened" FPS that reduces jitter effect of instantaneous FPS
+        curr_frame_timestamp = perf_counter()
+        self.time_window.append(curr_frame_timestamp)
         num_frames = len(self.time_window)
         time_diff = self.time_window[-1] - self.time_window[0]
         average_fps = num_frames / time_diff
 
+        # Frame level FPS
+        frame_fps = 1./(curr_frame_timestamp - self.prev_frame_timestamp)
+        self.prev_frame_timestamp = curr_frame_timestamp
+
         # Logs 14-frame moving average per frame
         if self.moving_avg_thres:
-            moving_average = self._moving_average(average_fps)
+            moving_average = self._moving_average(frame_fps)
             self.logger.info('14-frame Moving Average FPS: %s', moving_average)
 
         # Calculate global cumulative moving average
-        self.global_avg_fps = self._global_average(average_fps)
+        self.global_avg_fps = self._global_average(frame_fps)
         # Log global cumulative average when pipeline ends
         if inputs["pipeline_end"]:
-            self.logger.info('Approximate Global Average FPS: %s',
+            self.logger.info('Approximate Cumulative Average FPS: %s',
                 self.global_avg_fps)
 
         return {"fps": average_fps}
 
-    def _moving_average(self, average_fps: float) -> float:
-        self.moving_average_fps.append(average_fps)
+    def _moving_average(self, frame_fps: float) -> float:
+        self.moving_average_fps.append(frame_fps)
         if len(self.moving_average_fps) > NUM_FRAMES:
             self.moving_average_fps.pop(0)
         moving_average_val = np.mean(self.moving_average_fps)
         return round(moving_average_val, 1)
 
-    def _global_average(self, average_fps: float) -> float:
+    def _global_average(self, frame_fps: float) -> float:
         # Cumulative moving average formula
         global_average = \
-            (average_fps + self.count*self.global_avg_fps) / (self.count + 1)
+            (frame_fps + self.count*self.global_avg_fps) / (self.count + 1)
         self.count += 1
         return round(global_average, 1)
