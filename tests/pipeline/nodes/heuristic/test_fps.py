@@ -21,13 +21,15 @@ from peekingduck.pipeline.nodes.heuristic.fps import Node
 def fps_node():
     node = Node({"input": ["pipeline_end"],
                  "output": ["fps"],
-                 "moving_avg": False
+                 "fps_log_display": True,
+                 "fps_log_freq": 30,
+                 "dampen_fps": True
                  })
     return node
 
 
 class TestFPS:
-    def test_get_fps(self, fps_node):
+    def test_type_fps(self, fps_node):
         input1 = {"pipeline_end": False}
 
         assert isinstance(fps_node.run(input1)["fps"], float)
