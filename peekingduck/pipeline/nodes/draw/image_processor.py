@@ -23,7 +23,32 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node for changing image contrast and brightness"""
+    """Node for changing image contrast and brightness
+
+    The draw bbox node uses the bboxes and, optionally, the bbox labels from the model 
+    predictions to draw the bbox predictions onto the image. 
+    For better understanding of the usecase, refer to the object counting usecase.
+    
+    Inputs:
+
+        |img|
+
+        |bboxes|
+
+        |bbox_labels|
+
+    Outputs:
+        |none|
+
+    Configs:
+        brightness (:obj:`int`):
+            Adjusts the brightness of the image. Takes integer values -100 to 100.
+            Default value is 0 (no change in brightness).
+
+        contrast (:obj:`float`):
+            Adjusts the contrast of the image. Takes values 1 to 3.
+            Default value is 1 (no change in contrast).
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
 
