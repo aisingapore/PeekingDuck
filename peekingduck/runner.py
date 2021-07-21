@@ -81,8 +81,6 @@ class Runner():
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)  # type: ignore
 
-        del self.pipeline
-
     def get_run_config(self) -> List[str]:
         """retrieve run configs
 
