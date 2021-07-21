@@ -1,4 +1,6 @@
 input: ["pipeline_end"]
 output: ["fps"]
 
-moving_avg: False   # Enables cli logging of moving average FPS per frame
+fps_log_display: True   # Boolean to display logging of fps moving average
+fps_log_freq: 30   # Logging frequency of FPS every n frames in cli
+dampen_fps: True   # Returns average FPS if True, instantaneous if False
