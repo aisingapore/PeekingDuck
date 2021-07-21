@@ -17,12 +17,12 @@ Calculates the FPS of video
 """
 
 from typing import Any, Dict, List
+from statistics import mean
 from time import perf_counter
-import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-NUM_FRAMES = 14
+NUM_FRAMES = 10
 
 
 class Node(AbstractNode):
@@ -30,13 +30,19 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
-        self.time_window = [float(0)]
 
-        self.moving_avg_thres = config["moving_avg"]
-        self.moving_average_fps: List[float] = []
-        self.prev_frame_timestamp = 0.0
-        self.global_avg_fps = 0.0
+        self.fps_type = config["dampen_fps"]
+        self.fps_log_display = config["fps_log_display"]
+        self.average_fps_log_freq = config["fps_log_freq"]
+
         self.count = 0
+        self.global_avg_fps = 0.0
+        self.prev_frame_timestamp = 0.0
+        self.moving_average_fps: List[float] = []
+
+        if self.fps_log_display:
+            self.logger.info('FPS Moving Average will be logged every: %s frames', \
+                             self.average_fps_log_freq)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Calculates FPS using the time difference between the current
@@ -49,44 +55,39 @@ class Node(AbstractNode):
             outputs (dict): Dict with key "fps".
         """
 
-        if len(self.time_window) > NUM_FRAMES:
-            self.time_window.pop(0)
-
-        # "Dampened" FPS that reduces jitter effect of instantaneous FPS
         curr_frame_timestamp = perf_counter()
-        self.time_window.append(curr_frame_timestamp)
-        num_frames = len(self.time_window)
-        time_diff = self.time_window[-1] - self.time_window[0]
-        average_fps = num_frames / time_diff
 
         # Frame level FPS
         frame_fps = 1./(curr_frame_timestamp - self.prev_frame_timestamp)
         self.prev_frame_timestamp = curr_frame_timestamp
 
-        # Logs 14-frame moving average per frame
-        if self.moving_avg_thres:
-            moving_average = self._moving_average(frame_fps)
-            self.logger.info('14-frame Moving Average FPS: %s', moving_average)
-
         # Calculate global cumulative moving average
         self.global_avg_fps = self._global_average(frame_fps)
+
+        # Calculate moving average FPS (dampen_fps)
+        average_fps = self._moving_average(frame_fps)
+
+        if self.fps_log_display:
+            if self.count%self.average_fps_log_freq == 0:
+                self.logger.info('10-frame Moving Average FPS: %.2f', average_fps)
+
         # Log global cumulative average when pipeline ends
         if inputs["pipeline_end"]:
-            self.logger.info('Approximate Cumulative Average FPS: %s',
+            self.logger.info('Approximate Cumulative Average FPS: %.2f',
                 self.global_avg_fps)
 
-        return {"fps": average_fps}
+        return {"fps": average_fps} if self.fps_type else {"fps": frame_fps}
 
     def _moving_average(self, frame_fps: float) -> float:
         self.moving_average_fps.append(frame_fps)
         if len(self.moving_average_fps) > NUM_FRAMES:
             self.moving_average_fps.pop(0)
-        moving_average_val = np.mean(self.moving_average_fps)
-        return round(moving_average_val, 1)
+        moving_average_val = mean(self.moving_average_fps)
+        return moving_average_val
 
     def _global_average(self, frame_fps: float) -> float:
         # Cumulative moving average formula
         global_average = \
             (frame_fps + self.count*self.global_avg_fps) / (self.count + 1)
         self.count += 1
-        return round(global_average, 1)
+        return global_average
