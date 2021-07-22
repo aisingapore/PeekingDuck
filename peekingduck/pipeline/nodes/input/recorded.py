@@ -24,7 +24,34 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
 # pylint: disable=R0902
 class Node(AbstractNode):
-    """Node to receive videos/image as inputs."""
+    """Node to receive videos/image as inputs.
+
+        Inputs:
+            None
+
+        Outputs:
+            |img|
+
+            |pipeline_end|
+
+            |filename|
+
+            |saved_video_fps|
+
+        Configs:
+            resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
+
+                Dimension of extracted image frame
+
+            input_dir (:obj: `str`): **default = 'PeekingDuck/data/input'**
+
+                The directory to look for recorded video files and images
+
+            mirror_image (:obj:`bool`): **default = False**
+
+                Boolean to set extracted image frame as mirror image of input stream
+
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)

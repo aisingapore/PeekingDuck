@@ -56,12 +56,18 @@ class TestCSVWriter:
     def test_check_csv_name(self,writer):
         inputs={
             "bbox":[[1,2,3,4]],
-            "bbox_labels":["person"]
+            "bbox_labels":["person"],
+            "pipeline_end": False
         }
         for _ in range(10):
             writer.run(inputs) # write a few entries
 
-        del writer # close the csv file
+        final_frame = {
+            "bbox": None,
+            "bbox_labels": None,
+            "pipeline_end": True
+        }
+        writer.run(final_frame)
 
         # check timestamp is appended to filename
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z]{3}$"
@@ -73,12 +79,18 @@ class TestCSVWriter:
     def test_check_header_in_csv(self,writer):
         inputs={
             "bbox":[[1,2,3,4]],
-            "bbox_labels":["person"]
+            "bbox_labels":["person"],
+            "pipeline_end": False
         }
         for _ in range(10):
             writer.run(inputs) # write a few entries
 
-        del writer # close the csv file
+        final_frame = {
+            "bbox": None,
+            "bbox_labels": None,
+            "pipeline_end": True
+        }
+        writer.run(final_frame)
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
@@ -92,7 +104,8 @@ class TestCSVWriter:
     def test_check_logging_interval(self, writer2):
         inputs={
             "bbox":[[1,2,3,5]],
-            "bbox_labels":["person"]
+            "bbox_labels":["person"],
+            "pipeline_end": False
         }
 
         time_lapse =0
@@ -110,7 +123,12 @@ class TestCSVWriter:
                 start_time=curr_time
                 writer2.run(inputs)
 
-        del writer2 # close the csv file
+        final_frame = {
+            "bbox": None,
+            "bbox_labels": None,
+            "pipeline_end": True
+        }
+        writer2.run(final_frame)
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
@@ -129,13 +147,18 @@ class TestCSVWriter:
         # data pool did not include bbox_labels
         # But stats to track include bbox_labels
         inputs={
-            "bbox":[[1,2,3,5]]
+            "bbox":[[1,2,3,5]],
+            "pipeline_end": False
         }
 
         for _ in range(10):
             writer.run(inputs) # write a few entries
 
-        del writer # close the csv file
+        final_frame = {
+            "bbox": None,
+            "pipeline_end": True
+        }
+        writer.run(final_frame)
 
         with open(directory_contents()[0], newline="") as csvfile:
             reader=csv.DictReader(csvfile, delimiter=",")
