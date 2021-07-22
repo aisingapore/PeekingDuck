@@ -23,14 +23,14 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 
 
 class Node(AbstractNode):
-    """EfficientDet node that initalises a EfficientDet model to detect bounding 
+    """EfficientDet node that initalises a EfficientDet model to detect bounding
     boxes from an image.
 
-    The EfficientDet node is capable of detecting objects from 80 categories. The 
-    table of categories can be found :term:`here <object detection indices>`.  
-    EfficientDet node has five levels of compound coefficient (0 - 5). The 
-    default compound coefficient is 0 and can be changed to other values. 
-    
+    The EfficientDet node is capable of detecting objects from 80 categories. The
+    table of categories can be found :term:`here <object detection indices>`.
+    EfficientDet node has five levels of compound coefficient (0 - 5). The
+    default compound coefficient is 0 and can be changed to other values.
+
     Inputs:
         |img|
 
