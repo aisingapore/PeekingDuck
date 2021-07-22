@@ -30,10 +30,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that processes videos and images as primary source input
+    """Node that processes videos and images as primary source input.
 
     Inputs:
-        |img| 
+        |img|
 
         |filename|
 
