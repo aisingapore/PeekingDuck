@@ -24,8 +24,29 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
+
 class Node(AbstractNode):
-    """Node that output a csv with user input choice of statistics to track"""
+    """Node that output a csv with user input choice of statistics to track.
+
+    Inputs:
+        All
+
+    Outputs:
+        None
+
+    Configs:
+        stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
+
+            Paramters to log into the CSV file. 
+
+        filepath (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
+
+            Directory where CSV file is saved.
+
+        logging_interval (:obj:`int`): **default = 1**
+
+            Interval between each log, in terms of seconds.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
@@ -39,9 +60,9 @@ class Node(AbstractNode):
             config["filepath"])
         self._stats_checked = False
         self.csv_logger = CSVLogger(
-                self._filepath_datetime,
-                self._stats_to_track,
-                self._logging_interval)
+            self._filepath_datetime,
+            self._stats_to_track,
+            self._logging_interval)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -68,7 +89,7 @@ class Node(AbstractNode):
                 self._stats_to_track,
                 self._logging_interval)
 
-        self.csv_logger.write(inputs,self._stats_to_track)
+        self.csv_logger.write(inputs, self._stats_to_track)
 
         return {}
 
@@ -77,8 +98,8 @@ class Node(AbstractNode):
         Check whether user input statistics is present in the data pool of the pipeline
         Statistics not present in data pool will be ignored and dropped
         """
-        valid=[]
-        invalid=[]
+        valid = []
+        invalid = []
 
         for stat in self._stats_to_track:
             if stat in inputs:
@@ -108,7 +129,7 @@ class Node(AbstractNode):
         """
         Append time stamp to the filename
         """
-        current_time = datetime.now() # type: ignore
+        current_time = datetime.now()  # type: ignore
         time_str = current_time.strftime("%d%m%y-%H-%M-%S")  # output as '240621-15-09-13'
 
         file_name = filepath.split('.')[-2]
