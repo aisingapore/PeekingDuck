@@ -22,7 +22,31 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that checks if any objects are near to each other"""
+    """Node that checks if any objects are near to each other
+
+    Inputs:
+        |btm_midpoint|
+
+    Outputs:
+        |zones|
+
+
+        |zone_count|
+
+    Configs:
+        resolution (:obj:`List`): **default = [1280, 720]**
+
+            resolution of input array to calculate pixel coordinates of
+            zone points
+
+        zones (:obj:`Array`): **default = [ \
+                [[0, 0], [640, 0], [640, 720], [0, 720]], \
+                [[0.5, 0], [1, 0], [1, 1], [0.5, 1]] \
+            ]**
+
+            used for creation of specific zones with either the absolute
+            pixel values or % of resolution as a fraction between [0, 1]
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
