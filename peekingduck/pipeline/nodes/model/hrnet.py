@@ -24,9 +24,59 @@ from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
 
 class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
-    from detected bboxes
+    from detected bboxes.
 
-    Deep High-Resolution Representation Learning for Visual Recognition
+    The HRNet is a universal architecture for visual recognition. The 
+    HRNet has become a standard for human pose estimation since the paper 
+    was published in CVPR 2019. The HRNet applied to human pose estimation 
+    uses the representation head, called HRNetV1. HRNet outperforms ResNet 
+    in terms of estimation performance (AP), parameter complexity 
+    (#parameters), and computation complexity (GFLOPS).
+
+    The HRNet node is capable of detecting single human figures
+    simultaneously per inference and for each detected human figure, 17 keypoints
+    are estimated. The keypoint indices table can be found :term:`here <keypoint indices>`.
+
+
+    Inputs:
+        |img|
+
+        |bboxes|
+
+    Outputs:
+        |keypoints|
+
+
+        |keypoint_scores|
+
+
+        |keypoints_conns|
+
+    Configs:
+        weights_dir (:obj:`List`):
+            list of directories pointing to model weights
+
+        blob_file (:obj:`str`):
+            name of file to be downloaded, if weights are not found in `weights_dir`
+
+        model_files (:obj:`Dict`):
+            dictionary pointing to path of model weights file
+
+        resolution (:obj:`Dict`): **default = { height: 192, width: 256 }**
+
+            resolution of input array to HRNet model
+
+        score_threshold (:obj:`float`): **[0,1], default = 0.1**
+
+            threshold to determine if detection should be returned
+
+        model_nodes (:obj:`Dict`):  **default = { inputs: [x:0], outputs: [Identity:0] }**
+
+            names of input and output nodes from model graph for prediction
+
+
+    References:
+    Deep High-Resolution Representation Learning for Visual Recognition:
     https://arxiv.org/abs/1908.07919
     """
 
