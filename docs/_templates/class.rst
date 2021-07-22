@@ -31,7 +31,7 @@
 
 .. |filename| replace:: ``filename`` (:obj:`str`): the filename of video/image being read.
 
-.. |saved_video_fps| replace :: ``saved_video_fps`` (:obj:`float`): the FPS of recorded video, upon filming.
+.. |saved_video_fps| replace:: ``saved_video_fps`` (:obj:`float`): the FPS of recorded video, upon filming.
 
 .. |obj_3D_locs| replace:: ``obj_3D_locs`` (:obj:`list`): a list of numpy arrays (x,y,z) representing
    the 3D coordinates of an object associated with a detected bounding box.
