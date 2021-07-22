@@ -22,7 +22,17 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Counting node class that counts total number of detected objects"""
+    """Counting node class that counts total number of detected objects
+
+    Inputs:
+        |bboxes|
+
+    Outputs:
+        |count|
+
+    Configs:
+        None
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
