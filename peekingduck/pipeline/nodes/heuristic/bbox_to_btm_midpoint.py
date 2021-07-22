@@ -16,14 +16,27 @@
 Converts bounding boxes to a single point of reference
 """
 
-
 from typing import Dict, Any, Tuple
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This node converts bounding boxes to a singel pt which is
-    the bottom midpoint of the bounding box"""
+    """This node converts bounding boxes to a single point which is
+    the bottom midpoint of the bounding box
+
+    Inputs:
+        |img|
+
+
+        |bboxes|
+
+    Outputs:
+        |btm_midpoint|
+
+    Configs:
+        None
+
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
