@@ -49,7 +49,7 @@ class Legend:
         self.legend_height = self._get_legend_height(items)
 
         self._draw_legend_box(self.frame)
-        y_pos = self.legend_btm_y - self.legend_height + 22
+        y_pos = self.legend_btm_y - self.legend_height + 20
         for item in items:
             self.func_reg[item](self.frame, y_pos, inputs[item])
             y_pos += 20
