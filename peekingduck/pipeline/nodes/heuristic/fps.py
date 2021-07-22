@@ -69,11 +69,11 @@ class Node(AbstractNode):
 
         if self.fps_log_display:
             if self.count%self.average_fps_log_freq == 0:
-                self.logger.info('10-frame Moving Average FPS: %.2f', average_fps)
+                self.logger.info('Avg FPS over last 10 frames: %.2f', average_fps)
 
         # Log global cumulative average when pipeline ends
         if inputs["pipeline_end"]:
-            self.logger.info('Approximate Cumulative Average FPS: %.2f',
+            self.logger.info('Avg FPS over all processed frames: %.2f',
                 self.global_avg_fps)
 
         return {"fps": average_fps} if self.fps_type else {"fps": frame_fps}
