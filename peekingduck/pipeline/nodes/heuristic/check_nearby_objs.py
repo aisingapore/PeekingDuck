@@ -27,7 +27,8 @@ class Node(AbstractNode):
     """Node that checks if any objects are near each other.
 
     It does so by comparing the 3D location of all objects to see which ones are near
-    each other. If one object is near another, both would be tagged.
+    each other. If the distance between two objects is less than the minimum threshold,
+    both would be tagged as near.
 
     Inputs:
         |obj_3D_locs|

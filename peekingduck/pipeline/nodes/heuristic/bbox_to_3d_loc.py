@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that uses 2d bounding boxes information to estimate 3d location.
+    """Node that uses 2D bounding boxes information to estimate 3D location.
 
     Inputs:
         |bboxes|
