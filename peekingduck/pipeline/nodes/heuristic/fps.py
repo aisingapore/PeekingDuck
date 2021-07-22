@@ -28,7 +28,7 @@ NUM_FRAMES = 10
 class Node(AbstractNode):
     """ FPS node class that calculates the FPS of the image frame.
 
-    This node calculates instantaneous FPS and a 10 frame moving average 
+    This node calculates instantaneous FPS and a 10 frame moving average
     FPS. A preferred output setting can be set via the config file.
 
     Inputs:
