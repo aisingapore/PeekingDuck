@@ -26,11 +26,11 @@ class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
     from detected bboxes.
 
-    The HRNet is a universal architecture for visual recognition. The 
-    HRNet has become a standard for human pose estimation since the paper 
-    was published in CVPR 2019. The HRNet applied to human pose estimation 
-    uses the representation head, called HRNetV1. HRNet outperforms ResNet 
-    in terms of estimation performance (AP), parameter complexity 
+    The HRNet is a universal architecture for visual recognition. The
+    HRNet has become a standard for human pose estimation since the paper
+    was published in CVPR 2019. The HRNet applied to human pose estimation
+    uses the representation head, called HRNetV1. HRNet outperforms ResNet
+    in terms of estimation performance (AP), parameter complexity
     (#parameters), and computation complexity (GFLOPS).
 
     The HRNet node is capable of detecting single human figures
