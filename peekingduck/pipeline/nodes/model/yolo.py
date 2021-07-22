@@ -23,7 +23,73 @@ from .yolov4 import yolo_model
 
 class Node(AbstractNode):
     """Yolo node class that initialises and use yolo model to infer bboxes
-    from image frame
+    from image frame.
+
+    The yolo node is capable of detecting objects from 80 categories. It uses
+    YOLOv4-tiny by default and can be changed to using YOLOv4. The table of
+    categories can be found :term:`here <object detection indices>`.
+
+    Inputs:
+        |img|
+
+    Outputs:
+        |bboxes|
+
+        |bbox_labels|
+
+        |bbox_scores|
+
+    Configs:
+        model_type (:obj:`str`): **{"v3", "v3tiny", "v4", "v4tiny"}, default="v4tiny"**
+
+            defines the type of YOLO model to be used.
+
+        weights_dir (:obj:`List`):
+            directory pointing to the model weights.
+
+        blob_file (:obj:`str`):
+            name of file to be downloaded, if weights are not found in `weights_dir`.
+
+        graph_files (:obj:`Dict`):
+            dictionary pointing to path of the model weights file.
+
+        size (:obj:`int`): **default = 416 **
+
+            image resolution passed to the YOLO model.
+
+        num_classes (:obj:`int`): **default = 80 **
+
+            maximum number of objects to be detected.
+
+        detect_ids (:obj:`List`): **default = [0] **
+
+            list of object class ids to be detected.
+
+        max_output_size_per_class (:obj:`int`): **default = 50 **
+
+            maximum number of detected instances for each class in an image.
+
+        max_total_size (:obj:`int`): **default = 50 **
+
+            maximum total number of detected instances in an image.
+
+        yolo_iou_threshold (:obj:`float`): **[0,1], default = 0.5**
+
+            overlapping bounding boxes above the specified IoU (Intersection
+            over Union) threshold are discarded.
+
+        yolo_score_threshold (:obj:`float`): **[0,1], default = 0.2**
+
+            bounding box with confidence score less than the specified
+            confidence score threshold is discarded.
+
+    References:
+
+    YOLOv4: Optimal Speed and Accuracy of Object Detection:
+        https://arxiv.org/pdf/2004.10934v1.pdf
+
+    Model weights trained by https://github.com/hunglc007/tensorflow-yolov4-tflite
+    Inference code adapted from https://github.com/zzh8829/yolov3-tf2
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
