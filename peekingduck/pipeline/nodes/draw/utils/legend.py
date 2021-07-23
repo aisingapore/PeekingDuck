@@ -45,7 +45,7 @@ class Legend:
         """
         self.frame = inputs['img']
         _, self.legend_btm_y = get_image_size(self.frame)
-        self.legend_btm_y -= 100
+        self.legend_btm_y -= 10
         self.legend_height = self._get_legend_height(items)
 
         self._draw_legend_box(self.frame)
