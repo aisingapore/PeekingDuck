@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that livestream output on your display
+    """Node that streams the output on your display
 
     Inputs:
         |img|
