@@ -37,7 +37,7 @@ class Node(AbstractNode):
     Configs:
         stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
 
-            Paramters to log into the CSV file.
+            Parameters to log into the CSV file.
 
         filepath (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
 
