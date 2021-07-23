@@ -49,6 +49,9 @@
 .. |obj_groups| replace:: ``obj_groups`` (:obj:`list`): a list of integers, representing the assigned
    group number of an object associated with a detected bounding box.
 
+.. |large_groups| replace:: ``large_groups`` (:obj:`list`): a list of integers, representing the group IDs
+   of groups that have exceeded the size threshold.
+
 .. |obj_tags| replace:: ``obj_tags`` (:obj:`list`): a list of strings to be added to a bounding box,
    for display. The order of the tags follow the order of "bboxes".
 
