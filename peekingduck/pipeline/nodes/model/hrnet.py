@@ -26,20 +26,17 @@ class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
     from detected bboxes.
 
-    The HRNet is a universal architecture for visual recognition. The
-    HRNet has become a standard for human pose estimation since the paper
-    was published in CVPR 2019. The HRNet applied to human pose estimation
-    uses the representation head, called HRNetV1. HRNet outperforms ResNet
-    in terms of estimation performance (AP), parameter complexity
-    (#parameters), and computation complexity (GFLOPS).
+    The HRNet applied to human pose estimation uses the representation head,
+    called HRNetV1.
 
     The HRNet node is capable of detecting single human figures
-    simultaneously per inference and for each detected human figure, 17 keypoints
-    are estimated. The keypoint indices table can be found :term:`here <keypoint indices>`.
-
+    simultaneously per inference and for each detected human figure,
+    17 keypoints are estimated. The keypoint indices table can be found
+    :term:`here <keypoint indices>`.
 
     Inputs:
         |img|
+
 
         |bboxes|
 
@@ -86,14 +83,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the bbox input and returns the poses
-        and pose bbox of the specified objects chosen to be detected
-
-        Args:
-            inputs (dict): Dict with keys "img", "bboxes"
-
-        Returns:
-            outputs (dict): Dict with keys "keypoints", "keypoint_scores", "keypoint_conns"
-        """
+        and pose bbox of the specified objects chosen to be detected"""
         keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"], inputs["bboxes"])
 
