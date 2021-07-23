@@ -26,7 +26,9 @@ from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 
 class Node(AbstractNode):
-    """Node that output a csv with user input choice of statistics to track.
+    """Node that tracks user-specified parameters and outputs the results in a
+    CSV file. The chosen parameters must be present in the data pool and users
+    can specify the parameters using the configuration parameter: stats_to_track.
 
     Inputs:
         All
