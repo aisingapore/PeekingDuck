@@ -27,11 +27,12 @@ from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 class Node(AbstractNode):
     """Node that tracks user-specified parameters and outputs the results in a
-    CSV file. The chosen parameters must be present in the data pool and users
-    can specify the parameters using the configuration parameter: stats_to_track.
+    CSV file.
 
     Inputs:
-        All
+        ``All`` (:obj:`List`): A placeholder that represents a flexible input.
+        Actual inputs to be written into the csv can be configured in
+        `stats_to_track`.
 
     Outputs:
         None
@@ -39,7 +40,8 @@ class Node(AbstractNode):
     Configs:
         stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
 
-            Parameters to log into the CSV file.
+            Parameters to log into the CSV file. The chosen parameters must be
+            present in the data pool.
 
         filepath (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
 
