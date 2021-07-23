@@ -16,9 +16,12 @@
 Abstract Node class for all nodes
 """
 
+import pathlib
 import logging
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List
+
+from peekingduck.configloader import ConfigLoader
 
 
 class AbstractNode(metaclass=ABCMeta):
@@ -29,9 +32,17 @@ class AbstractNode(metaclass=ABCMeta):
 
     def __init__(self, config: Dict[str, Any], node_path: str) -> None:
 
-        self._inputs = config['input']
-        self._outputs = config['output']
         self._name = node_path
+
+        # load configuration
+        pkdbasedir = pathlib.Path(__file__).parents[2].resolve()
+        node_name = ".".join(node_path.split(".")[-2:])
+        self.config_loader = ConfigLoader(pkdbasedir)
+        loaded_config = self.config_loader.get(node_name)
+
+        # sets class attributes
+        for key in loaded_config:
+            setattr(self, key, loaded_config[key])
 
         self.logger = logging.getLogger(self._name)
 
@@ -48,12 +59,12 @@ class AbstractNode(metaclass=ABCMeta):
     @property
     def inputs(self) -> List[str]:
         """getter for input requirements"""
-        return self._inputs
+        return self.input
 
     @property
     def outputs(self) -> List[str]:
         """getter for node outputs"""
-        return self._outputs
+        return self.output
 
     @property
     def name(self) -> str:
