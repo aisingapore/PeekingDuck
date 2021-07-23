@@ -40,11 +40,5 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts bboxes of object chosen in the frame. Note that this method
         requires that the bbox returns all the same objects (for example, all people)
-
-        Args:
-            inputs (dict): Dict with keys "bboxes".
-
-        Returns:
-            outputs (dict): Dict with keys "count".
         """
         return {'count': len(inputs["bboxes"])}
