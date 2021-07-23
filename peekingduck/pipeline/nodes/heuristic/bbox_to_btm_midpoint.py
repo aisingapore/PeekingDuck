@@ -22,7 +22,12 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     """This node converts bounding boxes to a single point which is
-    the bottom midpoint of the bounding box
+    the bottom midpoint of the bounding box.
+
+    This node is used for zone counting. The bottom midpoint is the most
+    efficient way of telling whether something is in the zone specified,
+    as, the bottom midpoint of the bounding boxes usually corresponds to
+    the point at which the object is located.
 
     Inputs:
         |img|
@@ -45,12 +50,6 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts bounding boxes to a single point of reference
         for use in zone analytics
-
-        Args:
-            inputs (dict): Dict with keys "bboxes" and "img".
-        Returns:
-            outputs (dict): Dict with keys "btm_midpoint".
-
         """
         # get xy midpoint of each bbox (x1, y1, x2, y2)
         # This is calculated as x is (x1-x2)/2 and y is y2
