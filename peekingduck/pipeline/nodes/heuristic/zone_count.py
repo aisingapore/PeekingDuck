@@ -22,7 +22,13 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that checks if any objects are near to each other
+    """This node uses the bottom midpoints of all detected bounding boxes
+    and outputs the number of object counts in each specified zone.
+
+    Given the bottom mid-points of all detected objects, this script checks
+    if the points fall within the area of the specified zones.
+    The zone counting detections depend on the configuration set in the
+    object detection models, such as the type of object to detect.
 
     Inputs:
         |btm_midpoint|
@@ -39,7 +45,7 @@ class Node(AbstractNode):
             resolution of input array to calculate pixel coordinates of
             zone points
 
-        zones (:obj:`Array`): **default = [ \
+        zones (:obj:`List`): **default = [ \
                 [[0, 0], [640, 0], [640, 720], [0, 720]], \
                 [[0.5, 0], [1, 0], [1, 1], [0.5, 1]] \
             ]**
@@ -59,15 +65,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts all detected objects that falls within any specified zone,
-        and return the total object count in each zone.
-
-        Args:
-            inputs (dict): Dict with keys "btm_midpoints".
-
-        Returns:
-            outputs (dict): Dict with keys "zones" for tuple of (x, y) points that form zone,
-            and "zone_count" for the zone counting of all objects detected in the zone.
-        """
+        and return the total object count in each zone."""
         num_of_zones = len(self.zones)
         zone_counts = [0] * num_of_zones
 
