@@ -68,14 +68,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Calculates FPS using the time difference between the current
-        frame and the previous frame.
-
-        Args:
-            inputs: ["pipeline_end"]
-
-        Returns:
-            outputs (dict): Dict with key "fps".
-        """
+        frame and the previous frame."""
 
         curr_frame_timestamp = perf_counter()
 
