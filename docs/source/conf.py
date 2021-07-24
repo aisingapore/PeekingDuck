@@ -71,3 +71,10 @@ html_static_path = ['_static']
 html_sidebars = {
     '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html']
 }
+
+autosummary_mock_imports = [
+    'peekingduck.pipeline.nodes.model.yolov4',
+    'peekingduck.pipeline.nodes.model.posenetv1',
+    'peekingduck.pipeline.nodes.model.efficientdet_d04',
+    'peekingduck.pipeline.nodes.model.hrnetv1',
+]
