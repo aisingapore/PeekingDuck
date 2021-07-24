@@ -18,12 +18,14 @@ Abstract Node class for all nodes
 
 import pathlib
 import logging
+import collections
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List
 
 from peekingduck.configloader import ConfigLoader
 
-
+# TODO move this disable to pylintrc file
+# pylint: disable=E1101
 class AbstractNode(metaclass=ABCMeta):
     """
     Abstract Node class for inheritance by nodes.
@@ -33,6 +35,7 @@ class AbstractNode(metaclass=ABCMeta):
     def __init__(self, config: Dict[str, Any], node_path: str) -> None:
 
         self._name = node_path
+        self.logger = logging.getLogger(self._name)
 
         # load configuration
         pkdbasedir = pathlib.Path(__file__).parents[2].resolve()
@@ -40,11 +43,12 @@ class AbstractNode(metaclass=ABCMeta):
         self.config_loader = ConfigLoader(pkdbasedir)
         loaded_config = self.config_loader.get(node_name)
 
-        # sets class attributes
-        for key in loaded_config:
-            setattr(self, key, loaded_config[key])
+        updated_config = self._edit_config(loaded_config, config, node_name)
 
-        self.logger = logging.getLogger(self._name)
+        # sets class attributes
+        for key in updated_config:
+            setattr(self, key, updated_config[key])
+
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:
@@ -70,3 +74,28 @@ class AbstractNode(metaclass=ABCMeta):
     def name(self) -> str:
         """getter for node name"""
         return self._name
+
+    # TODO this updates the dictionary
+    # pylint: disable=R0801
+    def _edit_config(self,
+                     dict_orig: Dict[str, Any],
+                     dict_update: Dict[str, Any],
+                     node_name: str) -> Dict[str, Any]:
+        """ Update value of a nested dictionary of varying depth using
+            recursion
+        """
+        for key, value in dict_update.items():
+            if isinstance(value, collections.abc.Mapping):
+                dict_orig[key] = self._edit_config(
+                    dict_orig.get(key, {}), value, node_name)  # type: ignore
+            else:
+                if key not in dict_orig:
+                    self.logger.warning(
+                        "Config for node %s does not have the key: %s",
+                        node_name, key)
+                else:
+                    dict_orig[key] = value
+                    self.logger.info(
+                        "Config for node %s is updated to: '%s': %s",
+                        node_name, key, value)
+        return dict_orig
