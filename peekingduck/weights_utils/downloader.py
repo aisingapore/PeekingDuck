@@ -30,7 +30,7 @@ def download_weights(root: str, blob_file: str) -> None:
 
     Args:
         root (str): root directory of peekingduck
-        url (str): url to download weights from
+        blob_file (str): name of file to be downloaded
     """
 
     extract_dir = os.path.join(root, "..", "weights")

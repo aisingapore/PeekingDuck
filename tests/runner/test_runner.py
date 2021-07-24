@@ -25,7 +25,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
 PKD_NODE = "pkd_node_type" + "." + "pkd_node_name"
-NODES = {"nodes": [PKD_NODE]}
+PKD_NODE_2 = "pkd_node_type" + "." + "pkd_node_name" + "2"
+NODES = {"nodes": [PKD_NODE,PKD_NODE_2]}
 
 MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
@@ -90,18 +91,25 @@ def runner():
 @pytest.fixture
 def test_input_node():
 
-    config_node_input = {'input': ["source"],
+    config_node_input = {'input': ["none"],
                          'output': ["test_output_1"]}
 
     return MockedNode(config_node_input)
 
+@pytest.fixture
+def test_node_end():
+
+    config_node_end = {
+        'input': ["test_output_1"],
+        'output': ["test_output_2", "pipeline_end"]}
+    return MockedNode(config_node_end)
 
 @ pytest.fixture
-def runner_with_nodes(test_input_node):
+def runner_with_nodes(test_input_node, test_node_end):
 
     setup()
 
-    instantiated_nodes = [test_input_node]
+    instantiated_nodes = [test_input_node, test_node_end]
 
     test_runner = Runner(RUN_CONFIG_PATH,
                          CONFIG_UPDATES_CLI,
@@ -124,7 +132,7 @@ class TestRunner:
                         wraps=replace_pipeline_check_pipe):
 
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
-            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["source"]
+            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["none"]
             assert runner_with_nodes.pipeline.nodes[0]._outputs == [
                 "test_output_1"]
 
@@ -141,7 +149,7 @@ class TestRunner:
 
     def test_run(self, runner_with_nodes):
 
-        with mock.patch('peekingduck.pipeline.pipeline.Pipeline.execute',
+        with mock.patch('peekingduck.runner.Runner.run',
                         side_effect=Exception("End infinite while loop")):
 
             with pytest.raises(Exception):
@@ -151,7 +159,18 @@ class TestRunner:
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
-    def test_run_delete(self, runner_with_nodes):
+    def test_run_nodes(self, runner_with_nodes):
+        
+        correct_data = {'test_output_1': 'test_output_0', 
+                        'test_output_2': 'test_output_0', 
+                        'pipeline_end': 'test_output_1'}
+        
+        runner_with_nodes.run()
+
+        assert runner_with_nodes.pipeline.data == correct_data
+        assert runner_with_nodes.pipeline.get_pipeline_results() == correct_data
+
+    def test_pipeline_not_deleted_after_run(self, runner_with_nodes):
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
@@ -159,8 +178,7 @@ class TestRunner:
 
         runner_with_nodes.run()
 
-        with pytest.raises(AttributeError):
-            assert isinstance(runner_with_nodes.pipeline, object) == True
+        assert isinstance(runner_with_nodes.pipeline, object) == True
 
     def test_get_run_config(self, runner):
 

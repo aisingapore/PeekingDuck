@@ -44,17 +44,6 @@ class Node(AbstractNode):
         self.writer = None
         self._file_path_with_timestamp = None
 
-    def __del__(self) -> None:
-        if self.writer:
-            self.writer.release()
-
-        # initialize for use in run
-        self._file_name = None
-        self._file_path = None
-        self._image_type = None
-        self.writer = None
-        self._file_path_with_timestamp = None
-
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath
 
@@ -64,6 +53,12 @@ class Node(AbstractNode):
         Returns:
             outputs: [None]
         """
+
+        # reset and terminate when there are no more data
+        if inputs["pipeline_end"]:
+            if self.writer: # images automatically releases writer
+                self.writer.release()
+            return {}
 
         if not self._file_name:
             self._prepare_writer(inputs["filename"],

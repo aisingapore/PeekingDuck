@@ -19,7 +19,8 @@ Displays a tag on bounding box
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_tags
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
+from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
 
 
 class Node(AbstractNode):
@@ -39,7 +40,6 @@ class Node(AbstractNode):
             outputs (dict): Dict with keys "none".
         """
 
-        draw_tags(inputs["img"], inputs["bboxes"],
-                  inputs["obj_tags"], self.tag_color)
+        draw_tags(inputs["img"], inputs["bboxes"], inputs["obj_tags"], TOMATO)
 
         return {}
