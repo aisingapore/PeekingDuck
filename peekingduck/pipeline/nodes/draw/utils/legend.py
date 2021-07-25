@@ -33,10 +33,11 @@ class Legend:
         self.legend_left_x = 15
 
         self.frame = None
-        self.legend_btm_y = 0
+        self.legend_starting_y = 0
+        self.delta_y = 0
         self.legend_height = 0
 
-    def draw(self, inputs: Dict[str, Any], items: List[str]) -> np.array:
+    def draw(self, inputs: Dict[str, Any], items: List[str], position: str) -> np.array:
         """ Draw legends onto image
 
         Args:
@@ -44,12 +45,12 @@ class Legend:
             items (list): list of items to be drawn in legend
         """
         self.frame = inputs['img']
-        _, self.legend_btm_y = get_image_size(self.frame)
-        self.legend_btm_y -= 10
+
         self.legend_height = self._get_legend_height(items)
+        self._set_legend_variables(position)
 
         self._draw_legend_box(self.frame)
-        y_pos = self.legend_btm_y - self.legend_height + 20
+        y_pos = self.legend_starting_y + 20
         for item in items:
             self.func_reg[item](self.frame, y_pos, inputs[item])
             y_pos += 20
@@ -91,8 +92,11 @@ class Legend:
         assert self.legend_height is not None
         overlay = frame.copy()
         cv2.rectangle(overlay,
-                      (self.legend_left_x, self.legend_btm_y - self.legend_height),
-                      (self.legend_left_x + 150, self.legend_btm_y), BLACK, FILLED)
+                      (self.legend_left_x, self.legend_starting_y),
+                      (self.legend_left_x + 150,
+                       self.legend_starting_y + self.legend_height),
+                      BLACK,
+                      FILLED)
         # apply the overlay
         cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
 
@@ -109,6 +113,14 @@ class Legend:
             'fps': self._draw_fps,
             'count': self._draw_count
         }
+
+    def _set_legend_variables(self, position: str) -> None:
+        assert self.legend_height != 0
+        if position == "top":
+            self.legend_starting_y = 10
+        else:
+            _, image_height = get_image_size(self.frame)
+            self.legend_starting_y = image_height - 10 - self.legend_height
 
     def add_register(self, name: str, method: Any) -> None:
         """Add new legend drawing information to the registry

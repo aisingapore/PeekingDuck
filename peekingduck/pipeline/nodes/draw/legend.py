@@ -25,7 +25,8 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
         self.all_legend_items = config['all_legend_items']
-        self.exclude = config['exclude']
+        self.include: List[str] = config['include']
+        self.position = config['position']
         self.legend_items: List[str] = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -39,11 +40,16 @@ class Node(AbstractNode):
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw
+            if self.include[0] == 'all':
+                self.include = self.all_legend_items
             self._include(inputs)
-        Legend().draw(inputs, self.legend_items)  # type: ignore
+        if len(self.legend_items) != 0:
+            Legend().draw(inputs, self.legend_items, self.position)  # type: ignore
+        else:
+            return {}
         return {'img': inputs['img']}
 
     def _include(self, inputs: Dict[str, Any]) -> None:
         for item in self.all_legend_items:
-            if item in inputs.keys() and item not in self.exclude:
+            if item in inputs.keys() and item in self.include:
                 self.legend_items.append(item)

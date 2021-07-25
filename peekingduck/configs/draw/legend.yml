@@ -2,5 +2,5 @@ input: ["all"]
 output: ["img"]
 
 all_legend_items: ["fps", "count"]
-
-exclude: []
+position: "bottom"
+include: ["all"]
