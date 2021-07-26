@@ -55,11 +55,12 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any]={}, **kwargs) -> None:
         # TODO consider using **kwargs
         # TODO **kwargs attribute override needs to be safe (know what can override)
         # ! AVOID overriding class default like __init__ or something
-        super().__init__(config, node_path=__name__)
+
+        super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         self.file_end = False
         self.frame_counter = -1

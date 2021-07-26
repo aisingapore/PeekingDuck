@@ -29,8 +29,9 @@ class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
 
-    def __init__(self, RUN_PATH: str,
-                 config_updates_cli: str,
+    def __init__(self,
+                 RUN_PATH: str = "",
+                 config_updates_cli: str = {},
                  CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
         """
@@ -45,7 +46,7 @@ class Runner():
 
         self.logger = logging.getLogger(__name__)
 
-        if not nodes:
+        if not nodes and RUN_PATH:
             # create Graph to run
             self.node_loader = DeclarativeLoader(
                 RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER)  # type: ignore
@@ -76,7 +77,7 @@ class Runner():
                     inputs = copy.deepcopy(self.pipeline.data)
                 else:
                     inputs = {key: self.pipeline.data[key]
-                            for key in node.inputs if key in self.pipeline.data}
+                              for key in node.inputs if key in self.pipeline.data}
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)  # type: ignore

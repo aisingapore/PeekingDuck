@@ -32,7 +32,7 @@ class AbstractNode(metaclass=ABCMeta):
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any], node_path: str) -> None:
+    def __init__(self, config: Dict[str, Any]={}, node_path: str="", **kwargs) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
@@ -43,7 +43,10 @@ class AbstractNode(metaclass=ABCMeta):
         self.config_loader = ConfigLoader(pkdbasedir)
         loaded_config = self.config_loader.get(node_name)
 
+        # update configurations
         updated_config = self._edit_config(loaded_config, config, node_name)
+        updated_config = self._edit_config(updated_config, kwargs, node_name)
+        self.config = updated_config # !this variable is needed for yolo, recommend refactor
 
         # sets class attributes
         for key in updated_config:
