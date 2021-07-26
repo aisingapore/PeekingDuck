@@ -32,26 +32,18 @@ class AbstractNode(metaclass=ABCMeta):
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any]={}, node_path: str="", **kwargs) -> None:
+    def __init__(self, config: Dict[str, Any] = {}, node_path: str = "", **kwargs) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
-
-        # load configuration
         pkdbasedir = pathlib.Path(__file__).parents[2].resolve()
-        node_name = ".".join(node_path.split(".")[-2:])
+        self.node_name = ".".join(node_path.split(".")[-2:])
+
+        # NOTE: config and kwargs_config are similar but are from different inputs
+        # config is when users input a dictionary to update the node
+        # kwargs_config is when users input parameters to update the node
         self.config_loader = ConfigLoader(pkdbasedir)
-        loaded_config = self.config_loader.get(node_name)
-
-        # update configurations
-        updated_config = self._edit_config(loaded_config, config, node_name)
-        updated_config = self._edit_config(updated_config, kwargs, node_name)
-        self.config = updated_config # !this variable is needed for yolo, recommend refactor
-
-        # sets class attributes
-        for key in updated_config:
-            setattr(self, key, updated_config[key])
-
+        self.load_node_config(config, kwargs)
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:
@@ -78,27 +70,47 @@ class AbstractNode(metaclass=ABCMeta):
         """getter for node name"""
         return self._name
 
-    # TODO this updates the dictionary
+    def load_node_config(self,
+                         config: Dict[str, Any],
+                         kwargs_config: Dict[str, Any]):
+        """ loads node configuration 
+        NOTE: config and kwargs_config are similar but come from different inputs
+        config is when users input a dictionary to update the node
+        kwargs_config is when users input parameters to update the node
+
+        Args:
+            config (Dict[str, Any]): loads configuration from a dictionary input
+            kwargs_config (Dict[str, Any]): loads configuration from kwargs
+        """
+        loaded_config = self.config_loader.get(self.node_name)
+
+        # update configurations
+        updated_config = self._edit_config(loaded_config, config)
+        updated_config = self._edit_config(updated_config, kwargs_config)
+        self.config = updated_config # TODO add this as potential issue
+
+        # sets class attributes
+        for key in updated_config:
+            setattr(self, key, updated_config[key])
+
     # pylint: disable=R0801
     def _edit_config(self,
                      dict_orig: Dict[str, Any],
-                     dict_update: Dict[str, Any],
-                     node_name: str) -> Dict[str, Any]:
+                     dict_update: Dict[str, Any]) -> Dict[str, Any]:
         """ Update value of a nested dictionary of varying depth using
             recursion
         """
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value, node_name)  # type: ignore
+                    dict_orig.get(key, {}), value)  # type: ignore
+            elif key not in dict_orig:
+                self.logger.warning(
+                    "Config for node %s does not have the key: %s",
+                    self.node_name, key)
             else:
-                if key not in dict_orig:
-                    self.logger.warning(
-                        "Config for node %s does not have the key: %s",
-                        node_name, key)
-                else:
-                    dict_orig[key] = value
-                    self.logger.info(
-                        "Config for node %s is updated to: '%s': %s",
-                        node_name, key, value)
+                dict_orig[key] = value
+                self.logger.info(
+                    "Config for node %s is updated to: '%s': %s",
+                    self.node_name, key, value)
         return dict_orig
