@@ -3,4 +3,4 @@ output: ["img"]
 
 all_legend_items: ["fps", "count"]
 position: "bottom"
-include: ["all"]
+include: ["all_legend_items"]

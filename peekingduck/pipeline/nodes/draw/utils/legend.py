@@ -43,6 +43,7 @@ class Legend:
         Args:
             inputs (dict): dictionary of all available inputs for drawing the legend
             items (list): list of items to be drawn in legend
+            position (str): used to control whether legend box is drawn on top or bottom
         """
         self.frame = inputs['img']
 
