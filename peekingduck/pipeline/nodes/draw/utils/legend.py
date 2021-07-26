@@ -84,6 +84,13 @@ class Legend:
                     SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
 
     def _draw_zone_count(self, frame:np.array, y_pos: int, counts: List[int]) -> None:
+        """ Draw zone counts of all zones onto frame image
+
+        Args:
+            frame (np.array): image of current frame
+            y_pos (int): y position to draw the count info text
+            counts (list): list of zone counts
+        """
         text = '-ZONE COUNTS-'
         cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX,
                     SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
