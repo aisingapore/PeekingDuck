@@ -8,6 +8,6 @@ requests == 2.24.0
 shapely == 1.7.1
 tensorflow == 2.2.0
 tqdm == 4.45.0
-mypy == 0.812
+mypy == 0.910
 numpy == 1.17.4
 bandit == 1.7.0
