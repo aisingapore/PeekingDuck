@@ -31,7 +31,7 @@ class Runner():
 
     def __init__(self,
                  RUN_PATH: str = "",
-                 config_updates_cli: str = {},
+                 config_updates_cli: str = None,
                  CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
         """

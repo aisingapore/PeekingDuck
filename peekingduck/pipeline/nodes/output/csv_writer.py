@@ -24,6 +24,7 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
+
 class Node(AbstractNode):
     """Node that output a csv with user input choice of statistics to track"""
 

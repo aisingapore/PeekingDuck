@@ -24,15 +24,13 @@ from typing import Any, Dict, List
 
 from peekingduck.configloader import ConfigLoader
 
-# TODO move this disable to pylintrc file
-# pylint: disable=E1101
 class AbstractNode(metaclass=ABCMeta):
     """
     Abstract Node class for inheritance by nodes.
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any] = {}, node_path: str = "", **kwargs) -> None:
+    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", **kwargs) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
@@ -73,7 +71,7 @@ class AbstractNode(metaclass=ABCMeta):
     def load_node_config(self,
                          config: Dict[str, Any],
                          kwargs_config: Dict[str, Any]):
-        """ loads node configuration 
+        """ loads node configuration
         NOTE: config and kwargs_config are similar but come from different inputs
         config is when users input a dictionary to update the node
         kwargs_config is when users input parameters to update the node
@@ -87,7 +85,7 @@ class AbstractNode(metaclass=ABCMeta):
         # update configurations
         updated_config = self._edit_config(loaded_config, config)
         updated_config = self._edit_config(updated_config, kwargs_config)
-        self.config = updated_config # TODO add this as potential issue
+        self.config = updated_config
 
         # sets class attributes
         for key in updated_config:

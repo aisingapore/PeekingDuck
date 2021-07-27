@@ -22,8 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
-# TODO move this disable to pylintrc file
-# pylint: disable=E1101
+
 # pylint: disable=R0902
 class Node(AbstractNode):
     """Node to receive videos/image as inputs.
@@ -55,11 +54,7 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]={}, **kwargs) -> None:
-        # TODO consider using **kwargs
-        # TODO **kwargs attribute override needs to be safe (know what can override)
-        # ! AVOID overriding class default like __init__ or something
-
+    def __init__(self, config: Dict[str, Any]=None, **kwargs) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         self.file_end = False

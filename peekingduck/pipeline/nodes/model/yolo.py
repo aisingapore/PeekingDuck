@@ -92,7 +92,7 @@ class Node(AbstractNode):
     Inference code adapted from https://github.com/zzh8829/yolov3-tf2
     """
 
-    def __init__(self, config: Dict[str, Any]={}, **kwargs) -> None:
+    def __init__(self, config: Dict[str, Any]=None, **kwargs) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = yolo_model.YoloModel(self.config)
 
