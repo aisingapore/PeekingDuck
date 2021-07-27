@@ -11,3 +11,6 @@ tqdm == 4.45.0
 mypy == 0.910
 numpy == 1.17.4
 bandit == 1.7.0
+types-PyYAML==5.4.3
+types-requests==2.25.0
+types-six==0.1.7

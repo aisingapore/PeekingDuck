@@ -14,6 +14,5 @@ runs:
       shell: bash
     - name: Run type checker
       run: |
-        echo y | mypy --install-types peekingduck
         bash ./scripts/check_type.sh
       shell: bash
