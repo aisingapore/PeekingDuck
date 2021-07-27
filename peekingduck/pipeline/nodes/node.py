@@ -24,13 +24,15 @@ from typing import Any, Dict, List
 
 from peekingduck.configloader import ConfigLoader
 
+
 class AbstractNode(metaclass=ABCMeta):
     """
     Abstract Node class for inheritance by nodes.
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", pkdbasedir: str = None, **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None,
+                 node_path: str = "", pkdbasedir: str = None, **kwargs: Any) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
@@ -44,7 +46,7 @@ class AbstractNode(metaclass=ABCMeta):
         # config is when users input a dictionary to update the node
         # kwargs_config is when users input parameters to update the node
         self.config_loader = ConfigLoader(pkdbasedir)
-        self.load_node_config(config, kwargs) # type: ignore
+        self.load_node_config(config, kwargs)  # type: ignore
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:
