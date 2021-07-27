@@ -54,7 +54,7 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]=None, **kwargs) -> None:
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
         self.file_end = False

@@ -56,7 +56,7 @@ class Runner():
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:
-                self.pipeline = Pipeline(nodes)
+                self.pipeline = Pipeline(nodes) # type: ignore
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)

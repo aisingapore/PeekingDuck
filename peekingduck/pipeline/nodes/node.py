@@ -30,18 +30,18 @@ class AbstractNode(metaclass=ABCMeta):
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", **kwargs) -> None:
+    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", **kwargs: Any) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
-        pkdbasedir = pathlib.Path(__file__).parents[2].resolve()
+        pkdbasedir = str(pathlib.Path(__file__).parents[2].resolve())
         self.node_name = ".".join(node_path.split(".")[-2:])
 
         # NOTE: config and kwargs_config are similar but are from different inputs
         # config is when users input a dictionary to update the node
         # kwargs_config is when users input parameters to update the node
         self.config_loader = ConfigLoader(pkdbasedir)
-        self.load_node_config(config, kwargs)
+        self.load_node_config(config, kwargs) # type: ignore
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:
@@ -70,7 +70,7 @@ class AbstractNode(metaclass=ABCMeta):
 
     def load_node_config(self,
                          config: Dict[str, Any],
-                         kwargs_config: Dict[str, Any]):
+                         kwargs_config: Dict[str, Any]) -> None:
         """ loads node configuration
         NOTE: config and kwargs_config are similar but come from different inputs
         config is when users input a dictionary to update the node
