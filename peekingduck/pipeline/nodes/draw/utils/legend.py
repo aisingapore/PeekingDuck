@@ -21,7 +21,8 @@ import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 from peekingduck.pipeline.nodes.draw.utils.constants import \
-    THICK, WHITE, SMALL_FONTSCALE, BLACK, FILLED
+    THICK, WHITE, SMALL_FONTSCALE, BLACK, FILLED, \
+    PRIMARY_PALETTE, PRIMARY_PALETTE_LENGTH
 from peekingduck.pipeline.nodes.draw.utils.general import get_image_size
 
 
@@ -47,7 +48,7 @@ class Legend:
         """
         self.frame = inputs['img']
 
-        self.legend_height = self._get_legend_height(items)
+        self.legend_height = self._get_legend_height(inputs, items)
         self._set_legend_variables(position)
 
         self._draw_legend_box(self.frame)
@@ -82,6 +83,34 @@ class Legend:
         cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX,
                     SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
 
+    def _draw_zone_count(self, frame:np.array, y_pos: int, counts: List[int]) -> None:
+        """ Draw zone counts of all zones onto frame image
+
+        Args:
+            frame (np.array): image of current frame
+            y_pos (int): y position to draw the count info text
+            counts (list): list of zone counts
+        """
+        text = '-ZONE COUNTS-'
+        cv2.putText(frame, text, (self.legend_left_x + 10, y_pos), FONT_HERSHEY_SIMPLEX,
+                    SMALL_FONTSCALE, WHITE, THICK, LINE_AA)
+        for i, count in enumerate(counts):
+            y_pos += 20
+            cv2.rectangle(frame,
+                        (self.legend_left_x + 10, y_pos - 14),
+                        (self.legend_left_x + 30, y_pos + 5),
+                        PRIMARY_PALETTE[(i+1) % PRIMARY_PALETTE_LENGTH],
+                        FILLED)
+            text = ' ZONE-{0}: {1}'.format(i+1, count)
+            cv2.putText(frame,
+                        text,
+                        (40, y_pos),
+                        FONT_HERSHEY_SIMPLEX,
+                        SMALL_FONTSCALE,
+                        WHITE,
+                        THICK,
+                        LINE_AA)
+
     def _draw_legend_box(self, frame: np.array) -> None:
         """draw pts of selected object onto frame
 
@@ -102,17 +131,21 @@ class Legend:
         cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
 
     @staticmethod
-    def _get_legend_height(items: List[str]) -> int:
+    def _get_legend_height(inputs: Dict[str, Any], items: List[str]) -> int:
         """Get height of legend box needed to contain all items drawn"""
         no_of_items = len(items)
-        return 12 * no_of_items + 5 * (no_of_items - 1) + 20
+        if "zone_count" in items:
+            # increase the number of items according to number of zones
+            no_of_items += len(inputs["zone_count"])
+        return 12 * no_of_items + 8 * (no_of_items - 1) + 20
 
     def _get_legend_registry(self) -> Dict[str, Any]:
         """Get registry of functions that draw items
         available in the legend"""
         return {
             'fps': self._draw_fps,
-            'count': self._draw_count
+            'count': self._draw_count,
+            'zone_count': self._draw_zone_count
         }
 
     def _set_legend_variables(self, position: str) -> None:
