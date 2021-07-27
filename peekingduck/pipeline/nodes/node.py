@@ -30,11 +30,14 @@ class AbstractNode(metaclass=ABCMeta):
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, node_path: str = "", pkdbasedir: str = None, **kwargs: Any) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
-        pkdbasedir = str(pathlib.Path(__file__).parents[2].resolve())
+
+        if not pkdbasedir:
+            pkdbasedir = str(pathlib.Path(__file__).parents[2].resolve())
+
         self.node_name = ".".join(node_path.split(".")[-2:])
 
         # NOTE: config and kwargs_config are similar but are from different inputs
