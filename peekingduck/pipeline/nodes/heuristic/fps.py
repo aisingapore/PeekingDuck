@@ -26,7 +26,29 @@ NUM_FRAMES = 10
 
 
 class Node(AbstractNode):
-    """ FPS node class that calculates the FPS of the image frame """
+    """ FPS node class that calculates the FPS of the image frame.
+
+    This node calculates instantaneous FPS and a 10 frame moving average
+    FPS. A preferred output setting can be set via the config file.
+
+    Inputs:
+        |pipeline_end|
+
+    Outputs:
+        |fps|
+
+    Configs:
+        fps_log_display (:obj:`bool`): **default="False"**
+
+            Enables logging of 10 frame moving average FPS during execution of peekingduck
+
+        fps_log_freq (:obj:`int`): **default="100"**
+            Frequency of logging moving average FPS every n frames
+
+        dampen_fps (:obj:`bool`): **default="True"**
+            Returns moving average FPS if True, instantaneous FPS if False
+
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
@@ -46,14 +68,7 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Calculates FPS using the time difference between the current
-        frame and the previous frame.
-
-        Args:
-            inputs: ["pipeline_end"]
-
-        Returns:
-            outputs (dict): Dict with key "fps".
-        """
+        frame and the previous frame."""
 
         curr_frame_timestamp = perf_counter()
 

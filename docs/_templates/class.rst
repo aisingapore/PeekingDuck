@@ -9,8 +9,14 @@
 .. |bbox_labels| replace:: ``bbox_labels`` (:obj:`numpy.array`): a numpy array (N) strings,
    representing the labels of detected objects. The order corresponds to `bboxes` and `bbox_scores`.
 
-.. |bbox_scores| replace:: ``bbox_scores`` (:obj:`numpy.array`): a numpy array (N). [0,1]
+.. |bbox_scores| replace:: ``bbox_scores`` (:obj:`numpy.array`): a numpy array (N) [0,1]
    of the confidence scores for detected objects. The order corresponds to `bboxes` and `bbox_labels`.
+
+.. |btm_midpoint| replace:: ``btm_midpoint`` (:obj:`list`): a list of tuples (x,y)
+   of a single point of reference of bounding boxes for use in zone analytics
+
+.. |count| replace:: ``count`` (:obj:`list`): A list of integers that represent the count of
+   a pre-selected object (for example, people) detected in each frame through bboxes.
 
 .. |keypoints| replace:: ``keypoints`` (:obj:`numpy.array`): a numpy array (N, K, 2) with the last
    dimension representing the (x,y) coordinates for detected poses. N represents the number of detected poses, and
@@ -30,6 +36,10 @@
    be completed before running.
 
 .. |filename| replace:: ``filename`` (:obj:`str`): the filename of video/image being read.
+
+.. |fps| replace:: ``fps`` (:obj:`list`): a list of floats, representing the FPS per frame. The
+   FPS returned can either be a moving average or an instantaneous value. This setting can be changed in
+   configs/heuristic/fps file.
 
 .. |saved_video_fps| replace:: ``saved_video_fps`` (:obj:`float`): the FPS of recorded video, upon filming.
 
