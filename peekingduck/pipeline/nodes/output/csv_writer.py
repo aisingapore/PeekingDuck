@@ -32,7 +32,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)
-        self.logging_interval = int(self.logging_interval)
+        self.logging_interval = int(self.logging_interval) # type: ignore
         self._filepath_datetime = self._append_datetime_filepath(
             self.filepath)
         self._stats_checked = False
