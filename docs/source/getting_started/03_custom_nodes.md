@@ -134,9 +134,6 @@ class Node(AbstractNode):
         self.csv_logger.write(inputs)
 
         return {}
-
-    def __del__(self):
-        del self.csv_logger
 ```
 
 Note:

@@ -16,14 +16,32 @@
 Converts bounding boxes to a single point of reference
 """
 
-
 from typing import Dict, Any, Tuple
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This node converts bounding boxes to a singel pt which is
-    the bottom midpoint of the bounding box"""
+    """This node converts bounding boxes to a single point which is
+    the bottom midpoint of the bounding box.
+
+    This node is primarily used for zone counting. The bottom midpoint
+    is an unambiguous way of telling whether an object is in the zone
+    specified, as the bottom midpoint usually corresponds to the point
+    at which the object is located.
+
+    Inputs:
+        |img|
+
+
+        |bboxes|
+
+    Outputs:
+        |btm_midpoint|
+
+    Configs:
+        None
+
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
@@ -32,12 +50,6 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts bounding boxes to a single point of reference
         for use in zone analytics
-
-        Args:
-            inputs (dict): Dict with keys "bboxes" and "img".
-        Returns:
-            outputs (dict): Dict with keys "btm_midpoint".
-
         """
         # get xy midpoint of each bbox (x1, y1, x2, y2)
         # This is calculated as x is (x1-x2)/2 and y is y2

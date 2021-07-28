@@ -159,19 +159,18 @@ class TestRunner:
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
-    #Temporary commented as del self.pipeline in runner.run() delete pipeline
-    # def test_run_nodes(self, runner_with_nodes):
+    def test_run_nodes(self, runner_with_nodes):
         
-    #     correct_data = {'test_output_1': 'test_output_0', 
-    #                     'test_output_2': 'test_output_0', 
-    #                     'pipeline_end': 'test_output_1'}
+        correct_data = {'test_output_1': 'test_output_0', 
+                        'test_output_2': 'test_output_0', 
+                        'pipeline_end': 'test_output_1'}
         
-    #     runner_with_nodes.run()
+        runner_with_nodes.run()
 
-    #     assert runner_with_nodes.pipeline.data == correct_data
-    #     assert runner_with_nodes.pipeline.get_pipeline_results() == correct_data
+        assert runner_with_nodes.pipeline.data == correct_data
+        assert runner_with_nodes.pipeline.get_pipeline_results() == correct_data
 
-    def test_run_delete(self, runner_with_nodes):
+    def test_pipeline_not_deleted_after_run(self, runner_with_nodes):
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
@@ -179,8 +178,7 @@ class TestRunner:
 
         runner_with_nodes.run()
 
-        with pytest.raises(AttributeError):
-            assert isinstance(runner_with_nodes.pipeline, object) == True
+        assert isinstance(runner_with_nodes.pipeline, object) == True
 
     def test_get_run_config(self, runner):
 

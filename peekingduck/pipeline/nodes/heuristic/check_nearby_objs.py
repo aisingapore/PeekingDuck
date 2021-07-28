@@ -24,7 +24,28 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that checks if any objects are near to each other"""
+    """Node that checks if any objects are near each other.
+
+    It does so by comparing the 3D location of all objects to see which ones are near
+    each other. If the distance between two objects is less than the minimum threshold,
+    both would be tagged as near.
+
+    Inputs:
+        |obj_3D_locs|
+
+    Outputs:
+        |obj_tags|
+
+    Configs:
+        near_threshold (:obj:`float`): **default = 2.0**
+
+            Threshold of distance, in metres, between two objects, less than which they
+            would be considered 'near'.
+
+        tag_msg (:obj:`string`): **default = "TOO CLOSE!"**
+
+            Tag to identify objects which are near others.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
@@ -34,12 +55,6 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Compares the 3D locations of all objects to see which objects are close to each other.
         If an object is close to another, tag it.
-
-        Args:
-            inputs (dict): Dict with keys "obj_3D_locs".
-
-        Returns:
-            outputs (dict): Dict with keys "obj_tags".
         """
 
         obj_tags = [""]*len(inputs["obj_3D_locs"])
