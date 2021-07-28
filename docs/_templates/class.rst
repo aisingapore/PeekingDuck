@@ -69,8 +69,11 @@
 .. |btm_midpoint| replace:: ``btm_midpoint`` (:obj:`list`): (x ,y) coordinates of the bottom middle point of detected
    boxes. The order of btm_mipoint follows the order of `bboxes`.
 
-.. |none| replace:: ``none`` (:obj:`none`): no results returned. Typically a situation where overwriting is done
-   directly on an existing output (for example, drawing onto ``img``) and no additional output is generated.
+ .. |all| replace:: ``all`` (:obj:`Any`): Uses all inputs produced in previous nodes. For more information on inputs,
+    see section under node data mapping.
+
+.. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced. Used for
+   input nodes that require no prior inputs, or draw nodes that overwrite current input.
 
 
 {{ fullname | escape | underline }}
