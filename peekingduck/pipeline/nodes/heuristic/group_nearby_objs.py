@@ -27,10 +27,8 @@ from peekingduck.pipeline.nodes.heuristic.utils.quick_find import QuickFind
 class Node(AbstractNode):
     """This node groups objects that are near to each other."""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-
-        self.obj_dist_thres = config["obj_dist_thres"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Checks the distance between 3d locations of a pair of objects.

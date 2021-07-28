@@ -85,9 +85,9 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.model = posenet_model.PoseNetModel(config)
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self.model = posenet_model.PoseNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the image input and returns the bboxes

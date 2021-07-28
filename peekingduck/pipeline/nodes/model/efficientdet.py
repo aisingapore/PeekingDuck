@@ -30,9 +30,9 @@ class Node(AbstractNode):
     https://arxiv.org/abs/1911.09070
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.model = efficientdet_model.EfficientDetModel(config)
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self.model = efficientdet_model.EfficientDetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Function that takes an image as input and returns bboxes of objects specified

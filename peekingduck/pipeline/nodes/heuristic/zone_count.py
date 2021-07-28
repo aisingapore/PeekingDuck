@@ -24,12 +24,11 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Node that checks if any objects are near to each other"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        zones_info = config["zones"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
         try:
             self.zones = [self._create_zone(zone, config["resolution"])
-                          for zone in zones_info]
+                          for zone in self.zones]
         except TypeError as error:
             self.logger.warning(error)
 

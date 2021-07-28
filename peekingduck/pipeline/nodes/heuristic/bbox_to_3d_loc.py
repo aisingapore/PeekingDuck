@@ -24,11 +24,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Node that used 2d bounding boxes information to estimate 3d location"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-
-        self.height_factor = config['height_factor']
-        self.focal_length = config['focal_length']
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts 2D bounding boxes into 3D locations.
