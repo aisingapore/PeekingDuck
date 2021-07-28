@@ -25,9 +25,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Node for changing image contrast and brightness
 
-    The draw image processor node uses a mathematical algorithm to adjust the 
+    The draw image processor node uses a mathematical algorithm to adjust the
     contrast and brightness of the given image.
-    
+
     Inputs:
 
         |img|

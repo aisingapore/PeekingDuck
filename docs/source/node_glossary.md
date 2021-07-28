@@ -37,14 +37,15 @@ Draws results/outputs to an image. More details on `draw.bbox`, `draw.poses` and
 
 | <img width=326 />          | <img width=654 />                                 |
 | -------------------------- | ------------------------------------------------- |
-|  `draw.bbox`               | Draw bounding boxes over detected object          |
+|  `draw.bbox`               |  Draw bounding boxes over detected object         |
+|  `draw.bbox_count`         | Displays the counts of detected objects           |
+|  `draw.fps`                | Displays the FPS of video                         |
 |  `draw.group_bbox_and_tag` | Draws detected groups and their tags              |
 |  `draw.btm_midpoint`       | Draws the lowest middle point of a bounding box   |
 |  `draw.tag`                | Displays a tag on bounding box                    |
 |  `draw.poses`              | Draws keypoints on a detected pose                |
+|  `draw.zone_count`         | Displays counts of detected objects within a zone |
 |  `draw.zones`              | Draws the 2D boundaries of a zone                 |
-|  `draw.legend`             | Displays a legend box with heuristic info         |
-|  `draw.image_processor`    | Adjusts image brightness and/or contrast          |
 
 
 ### `heuristic`

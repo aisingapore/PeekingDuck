@@ -25,9 +25,9 @@ class Node(AbstractNode):
     """Node for drawing poses onto image
 
     The draw poses node uses the keypoints, keypoint_scores, and keypoint_conns
-    predictions from pose models to draw the human poses onto the image. 
+    predictions from pose models to draw the human poses onto the image.
     For better understanding, check out the pose models.
-    
+
     Inputs:
 
         |img|

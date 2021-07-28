@@ -24,9 +24,9 @@ from peekingduck.pipeline.nodes.draw.utils.zone import draw_zones
 class Node(AbstractNode):
     """Draws the boundaries of each specified zone onto the image.
 
-    The draw zones node uses the zones from zone_count heuristic to 
-    draw a bounding box that represents the zone boundaries onto the image. 
-    
+    The draw zones node uses the zones from zone_count heuristic to
+    draw a bounding box that represents the zone boundaries onto the image.
+
     Inputs:
 
         |img|

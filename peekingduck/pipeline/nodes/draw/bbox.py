@@ -23,11 +23,11 @@ from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE
 
 class Node(AbstractNode):
     """Draw bounding boxes on image.
-    
-    The draw bbox node uses the bboxes and, optionally, the bbox labels from the model 
-    predictions to draw the bbox predictions onto the image. 
+
+    The draw bbox node uses the bboxes and, optionally, the bbox labels from the model
+    predictions to draw the bbox predictions onto the image.
     For better understanding of the usecase, refer to the object counting usecase.
-    
+
     Inputs:
 
         |img|

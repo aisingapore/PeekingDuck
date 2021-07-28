@@ -23,11 +23,11 @@ from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 
 class Node(AbstractNode):
     """Draw node for drawing Legend box and info on image
-    
+
     The draw legend node dynamically pulls the output results of previous nodes
     And uses it to draw the information into a legend box. Currently draws fps,
     object counts and object count in zones.
-    
+
     Inputs:
 
         |all|
@@ -37,12 +37,12 @@ class Node(AbstractNode):
 
     Configs:
         position (:obj:`str`): **default = "bottom"**
-            Position to draw legend box. "top" draws it at the top-left position 
+            Position to draw legend box. "top" draws it at the top-left position
             while "bottom" draws it at bottom-left.
 
         include (:obj:`list`): **default = ["all_legend_items"]**
-            List of information to draw. Current can draw "fps", "count" and/or 
-            "zone_count". The default value "all_legend_items" draws everything 
+            List of information to draw. Current can draw "fps", "count" and/or
+            "zone_count". The default value "all_legend_items" draws everything
             dynamically depending on inputs.
     """
 
