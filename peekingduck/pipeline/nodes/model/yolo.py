@@ -92,9 +92,9 @@ class Node(AbstractNode):
     Inference code adapted from https://github.com/zzh8829/yolov3-tf2
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.model = yolo_model.YoloModel(config)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self.model = yolo_model.YoloModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the image input and returns the bboxes
