@@ -27,8 +27,8 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         try:
-            self.zones = [self._create_zone(zone, config["resolution"])
-                          for zone in self.zones]
+            self.zones = [self._create_zone(zone, config["resolution"]) # type: ignore
+                          for zone in self.zones]  # type: ignore
         except TypeError as error:
             self.logger.warning(error)
 

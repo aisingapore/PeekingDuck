@@ -36,6 +36,7 @@ class Node(AbstractNode):
         self._filepath_datetime = self._append_datetime_filepath(
             self.filepath)
         self._stats_checked = False
+        self.stats_to_track = self.stats_to_track  # type: ignore
         self.csv_logger = CSVLogger(
             self._filepath_datetime,
             self.stats_to_track,

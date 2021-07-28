@@ -80,7 +80,7 @@ class Node(AbstractNode):
                              self.resize['width'],
                              self.resize['height'])
         self.frame_counter = 0
-        self.frames_log_freq = config['frames_log_freq']
+        self.frames_log_freq = config['frames_log_freq'] # type: ignore
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
