@@ -63,9 +63,6 @@
    a pre-selected object (for example, people) detected in each specified zone. The order of counts
    follows the order of ``zones``.
 
-.. |count| replace:: ``count`` (:obj:`int`): count of preselected objects (for example, people) detected. Uses ``bboxes``
-   from model nodes for counting.
-
 .. |btm_midpoint| replace:: ``btm_midpoint`` (:obj:`list`): (x ,y) coordinates of the bottom middle point of detected
    boxes. The order of btm_mipoint follows the order of `bboxes`.
 

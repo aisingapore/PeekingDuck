@@ -43,8 +43,8 @@ Draws results/outputs to an image. More details on `draw.bbox`, `draw.poses` and
 |  `draw.tag`                | Displays a tag on bounding box                    |
 |  `draw.poses`              | Draws keypoints on a detected pose                |
 |  `draw.zones`              | Draws the 2D boundaries of a zone                 |
-|  `draw.utils`              | Utility files for draw nodes                      |
-|  `draw.legend`             | Displays a legend box with heuristic info.        |
+|  `draw.legend`             | Displays a legend box with heuristic info         |
+|  `draw.image_processor`    | Adjusts image brightness and/or contrast          |
 
 
 ### `heuristic`

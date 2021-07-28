@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
 class Node(AbstractNode):
     """Node that draws tags above bounding boxes
 
-    The draw tag node uses the `bboxes`, `obj_tags` predictions from
+    The draw tag node uses the bboxes, obj_tags predictions from
     heuristic and models to draw the heuristic tags of the bboxes onto the image. 
     
     Inputs:
