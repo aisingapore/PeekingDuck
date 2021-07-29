@@ -18,7 +18,6 @@ Draw bounding boxes over detected object
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
-from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE
 
 
 class Node(AbstractNode):
