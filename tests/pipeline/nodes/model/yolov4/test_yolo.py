@@ -84,11 +84,11 @@ class TestYolo:
                     'peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger') \
                     as captured:
 
-                    yolo = Node(yolo_config)
-
-                    assert captured.records[0].getMessage(
+                    yolo = Node(config=yolo_config)
+                    # records 0 - 20 records are updates to configs
+                    assert captured.records[21].getMessage(
                     ) == '---no yolo weights detected. proceeding to download...---'
-                    assert captured.records[1].getMessage(
+                    assert captured.records[22].getMessage(
                     ) == '---yolo weights download complete.---'
 
     def test_get_detect_ids(self, yolo):

@@ -68,34 +68,28 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
-        self.resize_info = config['resize']
-        input_source = config['input_source']
-        mirror_image = config['mirror_image']
-        self.fps_saved_output_video = config["fps_saved_output_video"]
-        self.filename = config["filename"]
-
-        self.videocap = VideoThread(input_source, mirror_image)
+        self.videocap = VideoThread(self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
         self.logger.info('Device resolution used: %s by %s', width, height)
-        if self.resize_info['do_resizing']:
+        if self.resize['do_resizing']:
             self.logger.info('Resizing of input set to %s by %s',
-                             self.resize_info['width'],
-                             self.resize_info['height'])
+                             self.resize['width'],
+                             self.resize['height'])
         self.frame_counter = 0
-        self.frames_log_freq = config['frames_log_freq']
+        self.frames_log_freq = config['frames_log_freq'] # type: ignore
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
 
         if success:
-            if self.resize_info['do_resizing']:
+            if self.resize['do_resizing']:
                 img = resize_image(img,
-                                   self.resize_info['width'],
-                                   self.resize_info['height'])
+                                   self.resize['width'],
+                                   self.resize['height'])
             outputs = { "img": img,
                         "pipeline_end": False,
                         "filename": self.filename,

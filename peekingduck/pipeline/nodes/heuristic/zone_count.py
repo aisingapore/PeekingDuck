@@ -54,12 +54,11 @@ class Node(AbstractNode):
             pixel values or % of resolution as a fraction between [0, 1]
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        zones_info = config["zones"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
         try:
-            self.zones = [self._create_zone(zone, config["resolution"])
-                          for zone in zones_info]
+            self.zones = [self._create_zone(zone, config["resolution"]) # type: ignore
+                          for zone in self.zones]  # type: ignore
         except TypeError as error:
             self.logger.warning(error)
 

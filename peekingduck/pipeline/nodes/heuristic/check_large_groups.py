@@ -38,9 +38,8 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.group_size_thres = config["group_size_thres"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, List[int]]) -> Dict[str, List[int]]:
         """ Checks which groups have exceeded the group size threshold,
