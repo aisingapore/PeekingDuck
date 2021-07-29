@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Estimates the 3D coordinates of an object given a 2D boundingbox
+Estimates the 3D coordinates of an object given a 2D bounding box
 """
 
 from typing import Dict, Any
@@ -22,19 +22,33 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that used 2d bounding boxes information to estimate 3d location"""
+    """Node that uses 2D bounding boxes information to estimate 3D location.
+
+    Inputs:
+        |bboxes|
+
+    Outputs:
+        |obj_3D_locs|
+
+    Configs:
+        focal_length (:obj:`float`): **default = 1.14**
+
+            Approximate focal length of webcam used, in metres. Example on measuring focal length:
+            https://learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
+
+
+        height_factor (:obj:`float`): **default = 2.5**
+
+            A factor used to estimate real-world distance from pixels, based on average human height
+            in metres. The value varies across different camera set-ups, and calibration may be
+            required.
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts 2D bounding boxes into 3D locations.
-
-        Args:
-            inputs (dict): Dict with keys "bboxes".
-
-        Returns:
-            outputs (dict): Dict with keys "obj_3D_locs".
         """
 
         locations = []

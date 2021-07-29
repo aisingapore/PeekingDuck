@@ -22,7 +22,17 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Counting node class that counts total number of detected objects"""
+    """Counting node class that counts total number of detected objects
+
+    Inputs:
+        |bboxes|
+
+    Outputs:
+        |count|
+
+    Configs:
+        None
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
@@ -30,11 +40,5 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts bboxes of object chosen in the frame. Note that this method
         requires that the bbox returns all the same objects (for example, all people)
-
-        Args:
-            inputs (dict): Dict with keys "bboxes".
-
-        Returns:
-            outputs (dict): Dict with keys "count".
         """
         return {'count': len(inputs["bboxes"])}

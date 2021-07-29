@@ -18,7 +18,7 @@ Draws the 2D boundaries of a zone
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_zones
+from peekingduck.pipeline.nodes.draw.utils.zone import draw_zones
 
 
 class Node(AbstractNode):

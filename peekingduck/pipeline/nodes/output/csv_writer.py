@@ -26,7 +26,31 @@ from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 
 class Node(AbstractNode):
-    """Node that output a csv with user input choice of statistics to track"""
+    """Node that tracks user-specified parameters and outputs the results in a
+    CSV file.
+
+    Inputs:
+        ``All`` (:obj:`List`): A placeholder that represents a flexible input.
+        Actual inputs to be written into the csv can be configured in
+        `stats_to_track`.
+
+    Outputs:
+        None
+
+    Configs:
+        stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
+
+            Parameters to log into the CSV file. The chosen parameters must be
+            present in the data pool.
+
+        filepath (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
+
+            Directory where CSV file is saved.
+
+        logging_interval (:obj:`int`): **default = 1**
+
+            Interval between each log, in terms of seconds.
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
