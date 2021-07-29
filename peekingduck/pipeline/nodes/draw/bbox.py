@@ -29,9 +29,6 @@ class Node(AbstractNode):
         self.show_labels = config['show_labels']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        if self.show_labels:
-            draw_bboxes(inputs["img"], inputs["bboxes"],
-                        CHAMPAGNE, inputs["bbox_labels"])  # type: ignore
-        else:
-            draw_bboxes(inputs["img"], inputs["bboxes"], CHAMPAGNE)  # type: ignore
+        draw_bboxes(inputs["img"], inputs["bboxes"],
+                    inputs["bbox_labels"], self.show_labels)  # type: ignore
         return {}
