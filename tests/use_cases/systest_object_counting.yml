@@ -4,6 +4,6 @@ nodes:
 - model.yolo:
     detect_ids: [0]
 - heuristic.bbox_count
+- heuristic.fps
 - draw.bbox
-- draw.bbox_count
-- draw.fps
+- draw.legend

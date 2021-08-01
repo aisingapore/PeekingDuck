@@ -9,8 +9,9 @@ nodes:
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
+- heuristic.fps
 - draw.bbox
 - draw.btm_midpoint
 - draw.zones
-- draw.zone_count
+- draw.legend
 - output.screen
