@@ -27,7 +27,7 @@ class Node(AbstractNode):
 
     The draw btm_midpoint node uses the bboxes from the model predictions to
     draw the bbox predictions onto the image. For better understanding of the usecase,
-    refer to the object counting usecase.
+    refer to the `zone counting usecase <use_cases/zone_counting.html>`_.
 
     Inputs:
 

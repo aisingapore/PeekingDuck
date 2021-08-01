@@ -26,7 +26,8 @@ class Node(AbstractNode):
 
     The draw bbox node uses the bboxes and, optionally, the bbox labels from the model
     predictions to draw the bbox predictions onto the image.
-    For better understanding of the usecase, refer to the object counting usecase.
+    For better understanding of the usecase, refer to the
+    `object counting usecase <use_cases/object_counting.html>`_.
 
     Inputs:
 

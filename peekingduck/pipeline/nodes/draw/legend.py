@@ -30,7 +30,8 @@ class Node(AbstractNode):
 
     Inputs:
 
-        |all|
+        all (:obj:`Any`): Receives inputs from all preceding outputs to use
+        ass dynamic input for legend creation.
 
     Outputs:
         |none|

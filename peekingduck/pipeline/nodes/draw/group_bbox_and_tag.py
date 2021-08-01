@@ -30,7 +30,8 @@ class Node(AbstractNode):
 
     The draw group_bbox_and_tage node uses the obj_groups and large_groups from the
     heuristic predictions to draw group bboxes and the large group message tag onto the image.
-    For better understanding of the usecase, refer to the group size checking usecase.
+    For better understanding, refer to
+    `group size checking usecase <use_cases/group_size_checking.html>`_.
 
     Inputs:
 
@@ -46,9 +47,8 @@ class Node(AbstractNode):
         |none|
 
     Configs:
-        tag (:obj:`str`):
+        tag (:obj:`str`): **default = "LARGE GROUP!"**
             string message printed in the case of a large group detected.
-            Default message is "LARGE GROUP!"
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
