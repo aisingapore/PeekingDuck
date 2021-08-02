@@ -1,10 +1,5 @@
 nodes:
-- input.recorded:
-    input_dir: 'data/original/twovideo'
+- input.live
 - model.yolo
 - draw.bbox
-- output.media_writer:
-    output_dir: 'data/output/jogging'
-- output.csv_writer:
-    filepath: 'data/output/jogging/stats.csv'
-    stats_to_track: ["filename", "bboxes"]
+- output.screen
