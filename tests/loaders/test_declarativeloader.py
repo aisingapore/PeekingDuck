@@ -22,8 +22,7 @@ from unittest import mock
 
 import yaml
 import pytest
-from peekingduck.configloader import ConfigLoader
-from peekingduck.loaders import DeclarativeLoader
+from peekingduck.declarative_loader import DeclarativeLoader
 
 PKD_NODE_TYPE = "input"
 PKD_NODE_NAME = "pkd_node_name"

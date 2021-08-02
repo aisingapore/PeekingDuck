@@ -21,7 +21,7 @@ import sys
 import logging
 from typing import List
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.loaders import DeclarativeLoader
+from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
