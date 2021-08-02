@@ -51,8 +51,8 @@ class MockedNode(AbstractNode):
 def create_node_config(config_dir, node_name):
     
     config_text = {"root": None,
-                   "input": ["source"],
-                   "output": ["end"]}
+                   "input": ["none"],
+                   "output": ["pipeline_end"]}
 
     node_config_file = f"{node_name}.yml"
 
