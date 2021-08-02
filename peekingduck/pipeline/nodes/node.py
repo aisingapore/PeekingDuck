@@ -85,16 +85,19 @@ class AbstractNode(metaclass=ABCMeta):
             config (Dict[str, Any]): loads configuration from a dictionary input
             kwargs_config (Dict[str, Any]): loads configuration from kwargs
         """
-        loaded_config = self.config_loader.get(self.node_name)
 
-        # update configurations
-        updated_config = self._edit_config(loaded_config, config)
-        updated_config = self._edit_config(updated_config, kwargs_config)
-        self.config = updated_config
+        # if full set of configuration is not included in config
+        # load configuration and update node with **kwargs where possible
+        # else load from kwargs only
+        self.config = config
+        if not self.config:
+            loaded_config = self.config_loader.get(self.node_name)
+            updated_config = self._edit_config(loaded_config, kwargs_config)
+            self.config = updated_config
 
         # sets class attributes
-        for key in updated_config:
-            setattr(self, key, updated_config[key])
+        for key in self.config:
+            setattr(self, key, self.config[key])
 
     # pylint: disable=R0801
     def _edit_config(self,
