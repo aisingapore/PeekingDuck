@@ -16,7 +16,7 @@ import os
 import yaml
 
 import pytest
-from peekingduck.loaders import ConfigLoader
+from peekingduck.declarative_loader import ConfigLoader
 
 
 @pytest.fixture

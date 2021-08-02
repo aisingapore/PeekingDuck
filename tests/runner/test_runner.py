@@ -91,7 +91,7 @@ def runner():
 
     setup()
 
-    with mock.patch('peekingduck.loaders.DeclarativeLoader.get_pipeline',
+    with mock.patch('peekingduck.declarative_loader.DeclarativeLoader.get_pipeline',
                     wraps=replace_declarativeloader_get_pipeline):
 
         test_runner = Runner(RUN_CONFIG_PATH,

@@ -180,7 +180,7 @@ class TestDeclarativeLoader:
 
         ground_truth = [pkd_node_default, pkd_node_edit, custom_node]
 
-        with mock.patch('peekingduck.loaders.DeclarativeLoader._init_node',
+        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._init_node',
                         wraps=replace_init_node):
 
             instantiated_nodes = declarativeloader._instantiate_nodes()
@@ -270,7 +270,7 @@ class TestDeclarativeLoader:
 
     def test_get_pipeline(self, declarativeloader):
 
-        with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
                         wraps=replace_instantiate_nodes):
 
             pipeline = declarativeloader.get_pipeline()
@@ -281,7 +281,7 @@ class TestDeclarativeLoader:
     def test_get_pipeline_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
-            with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+            with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
                             wraps=replace_instantiate_nodes_return_none):
 
                 declarativeloader.get_pipeline()
