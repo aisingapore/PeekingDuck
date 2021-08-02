@@ -1,17 +1,19 @@
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 """
-Copyright 2021 AI Singapore
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Displays heuristic info such as fps, object count and zone counts in a legend box
 """
 
 from typing import Any, Dict, List
@@ -20,7 +22,30 @@ from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 
 
 class Node(AbstractNode):
-    """Draw node for drawing Legend box and info on image"""
+    """Draw node for drawing Legend box and info on image
+
+    The draw legend node dynamically pulls the output results of previous nodes
+    And uses it to draw the information into a legend box. Currently draws fps,
+    object counts and object count in zones.
+
+    Inputs:
+
+        all (:obj:`Any`): Receives inputs from all preceding outputs to use
+        ass dynamic input for legend creation.
+
+    Outputs:
+        |none|
+
+    Configs:
+        position (:obj:`str`): **default = "bottom"**
+            Position to draw legend box. "top" draws it at the top-left position
+            while "bottom" draws it at bottom-left.
+
+        include (:obj:`list`): **default = ["all_legend_items"]**
+            List of information to draw. Current can draw "fps", "count" and/or
+            "zone_count". The default value "all_legend_items" draws everything
+            dynamically depending on inputs.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)

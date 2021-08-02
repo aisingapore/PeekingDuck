@@ -13,7 +13,8 @@
    of the confidence scores for detected objects. The order corresponds to `bboxes` and `bbox_labels`.
 
 .. |btm_midpoint| replace:: ``btm_midpoint`` (:obj:`list`): a list of tuples (x,y)
-   of a single point of reference of bounding boxes for use in zone analytics
+   of a single point of reference of bounding boxes for use in zone analytics. The order of btm_mipoint
+   follows the order of `bboxes`
 
 .. |count| replace:: ``count`` (:obj:`list`): A list of integers that represent the count of
    a pre-selected object (for example, people) detected in each frame through bboxes.
@@ -62,6 +63,9 @@
 .. |zone_count| replace:: ``zone_count`` (:obj:`list`): A list of integers that represent the count of
    a pre-selected object (for example, people) detected in each specified zone. The order of counts
    follows the order of ``zones``.
+
+.. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced. Used for
+   input nodes that require no prior inputs, or draw nodes that overwrite current input.
 
 
 {{ fullname | escape | underline }}

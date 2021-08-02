@@ -26,7 +26,30 @@ from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
 
 class Node(AbstractNode):
     """This node draws large bounding boxes over multiple object bounding boxes
-    which have been identified as belonging to large groups."""
+    which have been identified as belonging to large groups.
+
+    The draw group_bbox_and_tage node uses the obj_groups and large_groups from the
+    heuristic predictions to draw group bboxes and the large group message tag onto the image.
+    For better understanding, refer to
+    `group size checking usecase <use_cases/group_size_checking.html>`_.
+
+    Inputs:
+
+        |img|
+
+        |bboxes|
+
+        |obj_groups|
+
+        |large_groups|
+
+    Outputs:
+        |none|
+
+    Configs:
+        tag (:obj:`str`): **default = "LARGE GROUP!"**
+            string message printed in the case of a large group detected.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)

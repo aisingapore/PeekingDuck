@@ -21,7 +21,27 @@ from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
 
 
 class Node(AbstractNode):
-    """Draw node for drawing bboxes onto image"""
+    """Draw bounding boxes on image.
+
+    The draw bbox node uses the bboxes and, optionally, the bbox labels from the model
+    predictions to draw the bbox predictions onto the image.
+    For better understanding of the usecase, refer to the
+    `object counting usecase <use_cases/object_counting.html>`_.
+
+    Inputs:
+
+        |img|
+
+        |bboxes|
+
+        |bbox_labels|
+
+    Outputs:
+        |none|
+
+    Configs:
+        None.
+    """
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config, node_path=__name__)
