@@ -59,7 +59,7 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 
 
 ## Additional References
-#### Object Detection
+**Object Detection**
 
 PeekingDuck utilises the 4th version of the YOLO model [1]. PeekingDuck's YOLO model weights are trained by [2] and the inference code is adapted from [3].
 
@@ -73,7 +73,7 @@ In addition, PeekingDuck also employs EfficientDet [4] with code that is adapted
 6. WU, Xiongwei; SAHOO, Doyen; and HOI, Steven C. H.. Recent advances in deep learning for object detection. (2020). Neurocomputing. Research Collection School Of Information Systems.
    Available at: [https://ink.library.smu.edu.sg/sis_research/5096](https://ink.library.smu.edu.sg/sis_research/5096)
 
-#### Pose Estimation
+**Pose Estimation**
 
 PeekingDuck taps into HRNet [1] and PoseNet [2] to perform human pose estimation with the latter's code being adapted from [3]. The team referred to [4] during the development of PeekingDuck.
 
