@@ -6,3 +6,4 @@ build-backend = "setuptools.build_meta"
 markers = [
     "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not mlmodel\"')",
 ]
+log_cli = true

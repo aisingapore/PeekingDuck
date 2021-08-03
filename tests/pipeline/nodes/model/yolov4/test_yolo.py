@@ -23,7 +23,9 @@ import tensorflow as tf
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
+import logging
 
+logger = logging.getLogger(__name__)
 
 @pytest.fixture
 def yolo_config():
@@ -70,8 +72,10 @@ class TestYolo:
         npt.assert_equal(output['bbox_scores'], expected_output['bbox_scores'])        
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, yolo):
+        logger.warning(f"i reached here {test_human_images}")
         test_img = cv2.imread(test_human_images)
         output = yolo.run({'img': test_img})
+        logger.warning(f"i reached here {output}")
         assert 'bboxes' in output
         assert output['bboxes'].size != 0
 
