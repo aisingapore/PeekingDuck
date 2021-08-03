@@ -26,26 +26,27 @@ from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 
 
-# Yolo model has some issue(Windows fatal exception) with pytest that 
-# limits the number of image tested to 2 for windows, no issue with linux (ubuntu)
+# Yolo model has some issue(Windows fatal exception) with pytest on Github actions
+# that limits the number of image tested to 2 for windows (Windows server 2019 and 2016),
+# no issue with linux (ubuntu). No issue when pytest run locally on Windows
 # Only for yolo_test, use the test_human_images_yolo and test_no_human_images_yolo
 # For other model's unit test use the test_human_images and test_no_human_images
 # in conftest.py
 
-TEST_HUMAN_IMAGES_yolo = ['t1.jpg']
-TEST_NO_HUMAN_IMAGES_yolo = ['black.jpg']
+TEST_HUMAN_IMAGES_YOLO = ['t1.jpg']
+TEST_NO_HUMAN_IMAGES_YOLO = ['black.jpg']
 PKD_DIR = os.path.join(
     Path(__file__).parents[4]
 )# path to reach 5 file levels up from yolo_test.py
 
-@pytest.fixture(params=TEST_HUMAN_IMAGES_yolo)
+@pytest.fixture(params=TEST_HUMAN_IMAGES_YOLO)
 def test_human_images_yolo(request):
     test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
 
     yield os.path.join(test_img_dir, request.param)
 
 
-@pytest.fixture(params=TEST_NO_HUMAN_IMAGES_yolo)
+@pytest.fixture(params=TEST_NO_HUMAN_IMAGES_YOLO)
 def test_no_human_images_yolo(request):
     test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
 
