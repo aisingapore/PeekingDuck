@@ -34,7 +34,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 TEST_HUMAN_IMAGES_yolo = ['t1.jpg']
 TEST_NO_HUMAN_IMAGES_yolo = ['black.jpg']
 PKD_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..', 'peekingduck'
+    os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','..', 'peekingduck'
 )
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES_yolo)
