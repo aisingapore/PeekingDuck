@@ -97,23 +97,24 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
     Terminate the program by clicking on the output screen and pressing `q`.
 
 **2. Configuring node behaviour**:
-- If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. You can use any video or image file as long as it's a supported format, or [download](https://peekingduck.blob.core.windows.net/videos/running.mp4.zip) a short sample video (credit: [PoseTrack](https://posetrack.net/)) to test it.
+- If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://peekingduck.blob.core.windows.net/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
 
-- We'll need to change the settings of these 2 nodes, in order to set the input and output directories, as follows:
+- We'll need to change the settings of 3 nodes, in order to set the input and output directories, and also to alter the object to be detected from a human to a bird, as follows:
   ```
   nodes:
-    - input.recorded:   # note the ":"
+    - input.recorded:       # note the ":"
         input_dir: <directory where videos/images are stored>
-    - model.posenet
-    - draw.poses
+    - model.yolo:           # note the ":"
+        detect_ids: [14]    # ID to detect the "bird" class is 14 for this model
+    - draw.bbox
     - output.media_writer:  # note the ":"
         output_dir: <directory to save results>
   ```
-- Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. If you've used the short sample video, open the processed file and you should get this:
+- Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. Open the processed file and you should get this:
 
-  <img src="images/readme/posenet_running.gif" width="50%">
+  <img src="images/readme/ducks_demo.gif" width="50%">
 
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [node glossary](docs/node_glossary.md).
+- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
 ## Explore PeekingDuck Nodes
 
@@ -127,7 +128,7 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
-We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes available, check out the [node glossary](docs/source/node_glossary.md).
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
 ## Create Custom Nodes
 

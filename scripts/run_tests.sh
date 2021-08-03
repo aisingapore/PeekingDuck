@@ -11,10 +11,9 @@ allowedExt=(all unit mlmodel)
 
 
 show_coverage(){
-    """
-    shows coverage if parameter is set to true and echos information.
-    showCoverage: type(bool) - shows coverage if set to true
-    """
+    # shows coverage if parameter is set to true and echos information.
+    # showCoverage: type(bool) - shows coverage if set to true
+
     showCoverage=$1
     if [[ $showCoverage = true ]]; then
         echo "Coverage report printed." 
@@ -26,21 +25,19 @@ show_coverage(){
 }
 
 run_test(){
-    """
-    runs pytest together with coverage, allows multiple configurations
-    testType: type(str) - type of test suite to run
-    showCoverage: type(bool) - whether to show coverage
-    """
+    # runs pytest together with coverage, allows multiple configurations
+    # testType: type(str) - type of test suite to run
+    # showCoverage: type(bool) - whether to show coverage
 
     testType=$1
     showCoverage=$2
 
     if ! (coverage run --source="$test_dir" -m pytest -m "$testType"); then
-        show_coverage showCoverage
+        show_coverage $showCoverage
         echo "TEST FAILED."
         exit 1
     else
-        show_coverage showCoverage
+        show_coverage $showCoverage
         echo "TEST PASSED!"
     fi
 

@@ -23,7 +23,28 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node for changing image contrast and brightness"""
+    """Node for changing image contrast and brightness
+
+    The draw image processor node adjusts contrast and brightness of the given image.
+    Uses alogrithm by OpenCV. An article providing a good overview of the algorithm
+    can be found `here <https://programmer.ink/think/
+    adjusting-the-brightness-and-contrast-of-an-image-with-opencv4.3.0-tutorial
+    .html#3、API-convertScaleAbs>`_.
+
+    Inputs:
+
+        |img|
+
+    Outputs:
+        |img|
+
+    Configs:
+        brightness (:obj:`int`): **[-100,100], default = 0**
+            Adjusts the brightness of the image.
+
+        contrast (:obj:`float`): **[1,3], default = 1**
+            Adjusts the contrast of the image.
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
