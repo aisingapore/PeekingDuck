@@ -28,11 +28,8 @@ class Node(AbstractNode):
     """This node draws large bounding boxes over multiple object bounding boxes
     which have been identified as belonging to large groups."""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.tag = config["tag"]
-        self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = tuple(config["bbox_color"])
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Draws large bounding boxes over multiple object bounding boxes

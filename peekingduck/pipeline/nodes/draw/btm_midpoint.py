@@ -25,8 +25,8 @@ from peekingduck.pipeline.nodes.draw.utils.bbox import draw_pts
 class Node(AbstractNode):
     """This draw node draws the bottom midpoints"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Methods that draws btm midpoint of bounding bboxes
