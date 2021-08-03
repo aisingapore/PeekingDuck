@@ -27,7 +27,7 @@ class Node(AbstractNode):
     The draw legend node dynamically pulls the output results of previous nodes
     And uses it to draw the information into a legend box. Currently draws fps,
     object counts and object count in zones.
-    
+
     all_legend_item: config is all possible items that can be drawn in legend box
     include: is used to select which information would be drawn
     This is so we can have the outputs but choose not to drawn on screen
