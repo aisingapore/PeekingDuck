@@ -26,7 +26,6 @@ from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 
 
-
 # Yolo model has some issue(Windows fatal exception) with pytest that 
 # limits the number of image tested to 2 for windows, no issue with linux (ubuntu)
 # Only for yolo_test, use the test_human_images_yolo and test_no_human_images_yolo
@@ -36,7 +35,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 TEST_HUMAN_IMAGES_yolo = ['t1.jpg']
 TEST_NO_HUMAN_IMAGES_yolo = ['black.jpg']
 PKD_DIR = os.path.join(
-    Path(__file__).parents[4] 
+    Path(__file__).parents[4]
 )# path to reach 5 file levels up from yolo_test.py
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES_yolo)
