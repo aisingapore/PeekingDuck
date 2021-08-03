@@ -46,11 +46,8 @@ class Node(AbstractNode):
             Adjusts the contrast of the image.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-
-        super().__init__(config, node_path=__name__)
-        self.brightness = config['brightness']
-        self.contrast = config ['contrast']
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that draws pose details onto input image

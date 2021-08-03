@@ -52,11 +52,8 @@ class Node(AbstractNode):
             be required.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-
-        self.torso_factor = config['torso_factor']
-        self.focal_length = config['focal_length']
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts pose keypoints into 3D locations.

@@ -77,9 +77,9 @@ class Node(AbstractNode):
     https://arxiv.org/abs/1908.07919
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.model = hrnet_model.HRNetModel(config)
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self.model = hrnet_model.HRNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the bbox input and returns the poses

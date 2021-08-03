@@ -44,9 +44,8 @@ class Node(AbstractNode):
         None.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.tag_color = config["tag_color"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.

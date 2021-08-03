@@ -47,10 +47,8 @@ class Node(AbstractNode):
             Tag to identify objects which are near others.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.near_thres = config["near_threshold"]
-        self.tag_msg = config["tag_msg"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Compares the 3D locations of all objects to see which objects are close to each other.
@@ -65,7 +63,7 @@ class Node(AbstractNode):
                     continue
 
                 dist_bet = np.linalg.norm(loc_1 - loc_2)
-                if dist_bet < self.near_thres:
+                if dist_bet < self.near_threshold:
                     obj_tags[idx_1] = self.tag_msg
                     break
 

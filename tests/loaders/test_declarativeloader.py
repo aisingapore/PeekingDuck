@@ -22,7 +22,7 @@ from unittest import mock
 
 import yaml
 import pytest
-from peekingduck.loaders import DeclarativeLoader
+from peekingduck.declarative_loader import DeclarativeLoader
 
 PKD_NODE_TYPE = "input"
 PKD_NODE_NAME = "pkd_node_name"
@@ -60,11 +60,14 @@ def create_node_python(node_dir, node_name):
     with open(os.path.join(node_dir, node_file), 'w') as fp:
         content = textwrap.dedent(
             """\
+            import pathlib
             from peekingduck.pipeline.nodes.node import AbstractNode
-
+            
             class Node(AbstractNode):
-                def __init__(self, config):
-                    super().__init__(config, node_path=__name__)
+                def __init__(self, config, pkdbasedir=None):
+                    pkdbasedir = str(pathlib.Path(__file__).parents[1].resolve())
+                    super().__init__(config, node_path=__name__, pkdbasedir=pkdbasedir)
+
                 def run(self):
                     return {}
             """)
@@ -134,7 +137,7 @@ def replace_instantiate_nodes():
     with open(node_config_path) as file:
         node_config = yaml.safe_load(file)
 
-    instantiated_nodes.append(node.Node(node_config))
+    instantiated_nodes.append(node.Node(node_config, pkdbasedir=MODULE_PATH))
 
     return instantiated_nodes
 
@@ -177,7 +180,7 @@ class TestDeclarativeLoader:
 
         ground_truth = [pkd_node_default, pkd_node_edit, custom_node]
 
-        with mock.patch('peekingduck.loaders.DeclarativeLoader._init_node',
+        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._init_node',
                         wraps=replace_init_node):
 
             instantiated_nodes = declarativeloader._instantiate_nodes()
@@ -199,8 +202,8 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == node_name
-        assert init_node._inputs == ['source']
-        assert init_node._outputs == ['end']
+        assert init_node.inputs == ['source']
+        assert init_node.outputs == ['end']
 
     def test_init_node_custom(self, declarativeloader):
 
@@ -215,8 +218,8 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == f"{path_to_node}{node_name}"
-        assert init_node._inputs == ['source']
-        assert init_node._outputs == ['end']
+        assert init_node.inputs == ['source']
+        assert init_node.outputs == ['end']
 
     def test_init_node_edit(self, declarativeloader):
 
@@ -231,8 +234,8 @@ class TestDeclarativeLoader:
                                                  config_updates)
 
         assert init_node._name == node_name
-        assert init_node._inputs == ['img']
-        assert init_node._outputs == ['end']
+        assert init_node.inputs == ['img']
+        assert init_node.outputs == ['end']
 
     def test_edit_config(self, declarativeloader):
 
@@ -267,19 +270,18 @@ class TestDeclarativeLoader:
 
     def test_get_pipeline(self, declarativeloader):
 
-        with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
                         wraps=replace_instantiate_nodes):
 
             pipeline = declarativeloader.get_pipeline()
-
             assert pipeline.nodes[0]._name == PKD_NODE
-            assert pipeline.nodes[0]._inputs == ['source']
-            assert pipeline.nodes[0]._outputs == ['end']
+            assert pipeline.nodes[0].inputs == ['source']
+            assert pipeline.nodes[0].outputs == ['end']
 
     def test_get_pipeline_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
-            with mock.patch('peekingduck.loaders.DeclarativeLoader._instantiate_nodes',
+            with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
                             wraps=replace_instantiate_nodes_return_none):
 
                 declarativeloader.get_pipeline()

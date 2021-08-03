@@ -28,6 +28,10 @@ class Node(AbstractNode):
     And uses it to draw the information into a legend box. Currently draws fps,
     object counts and object count in zones.
 
+    all_legend_item: config is all possible items that can be drawn in legend box
+    include: is used to select which information would be drawn
+    This is so we can have the outputs but choose not to drawn on screen
+
     Inputs:
 
         all (:obj:`Any`): Receives inputs from all preceding outputs to use
@@ -47,14 +51,8 @@ class Node(AbstractNode):
             dynamically depending on inputs.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        # all_legend_item config is all possible items that can be drawn in legend box
-        # include is used to select which information would be drawn
-        # This is so we can have the outputs but choose not to drawn on screen
-        self.all_legend_items = config['all_legend_items']
-        self.include: List[str] = config['include']
-        self.position = config['position']
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
         self.legend_items: List[str] = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -68,8 +66,8 @@ class Node(AbstractNode):
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw
-            if self.include[0] == 'all_legend_items':
-                self.include = self.all_legend_items
+            if self.include[0] == 'all_legend_items': # type: ignore
+                self.include = self.all_legend_items # type: ignore
             self._include(inputs)
         if len(self.legend_items) != 0:
             Legend().draw(inputs, self.legend_items, self.position)  # type: ignore

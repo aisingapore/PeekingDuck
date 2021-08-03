@@ -21,7 +21,7 @@ import sys
 import logging
 from typing import List
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.loaders import DeclarativeLoader
+from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -29,8 +29,9 @@ class Runner():
     """Runner class that uses the declared nodes to create pipeline to run inference
     """
 
-    def __init__(self, RUN_PATH: str,
-                 config_updates_cli: str,
+    def __init__(self,
+                 RUN_PATH: str = "",
+                 config_updates_cli: str = None,
                  CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
         """
@@ -45,7 +46,7 @@ class Runner():
 
         self.logger = logging.getLogger(__name__)
 
-        if not nodes:
+        if not nodes and RUN_PATH:
             # create Graph to run
             self.node_loader = DeclarativeLoader(
                 RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER)  # type: ignore
@@ -55,7 +56,7 @@ class Runner():
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:
-                self.pipeline = Pipeline(nodes)
+                self.pipeline = Pipeline(nodes) # type: ignore
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)
@@ -76,7 +77,7 @@ class Runner():
                     inputs = copy.deepcopy(self.pipeline.data)
                 else:
                     inputs = {key: self.pipeline.data[key]
-                            for key in node.inputs if key in self.pipeline.data}
+                              for key in node.inputs if key in self.pipeline.data}
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)  # type: ignore

@@ -20,8 +20,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class ConcreteNode(AbstractNode):
-    def __init__(self, config):
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config={}, **kwargs):
+        super().__init__(config=config, node_path="input.recorded", **kwargs)
 
     def run(self, inputs: Dict):
         return {"data1": 1, "data2": 42}
@@ -43,9 +43,17 @@ class TestNode():
         assert results == {"data1": 1, "data2": 42}
 
 
-    def test_node_init_raises_error(self):
-        with pytest.raises(KeyError):
-            ConcreteNode({})
+    def test_node_init_takes_empty_dictionary(self):
+        ConcreteNode({})
+        assert True
+
+    def test_node_init_able_to_override_using_kwargs(self):
+        tmp_node = ConcreteNode(input_dir="path_to_input")
+        assert tmp_node.config['input_dir'] == "path_to_input"
+
+    def test_node_init_able_to_override_using_dict(self):
+        tmp_node = ConcreteNode(config={"input_dir": "path_to_input"})
+        assert tmp_node.config['input_dir'] == "path_to_input"
 
 
     def test_node_gives_correct_inputs(self, c_node):

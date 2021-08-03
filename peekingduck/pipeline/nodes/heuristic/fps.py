@@ -50,12 +50,8 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-
-        self.fps_type = config["dampen_fps"]
-        self.fps_log_display = config["fps_log_display"]
-        self.average_fps_log_freq = config["fps_log_freq"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
         self.count = 0
         self.global_avg_fps = 0.0
@@ -64,7 +60,7 @@ class Node(AbstractNode):
 
         if self.fps_log_display:
             self.logger.info('FPS Moving Average will be logged every: %s frames', \
-                             self.average_fps_log_freq)
+                             self.fps_log_freq)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Calculates FPS using the time difference between the current
@@ -83,7 +79,7 @@ class Node(AbstractNode):
         average_fps = self._moving_average(frame_fps)
 
         if self.fps_log_display:
-            if self.count%self.average_fps_log_freq == 0:
+            if self.count%self.fps_log_freq == 0:
                 self.logger.info('Avg FPS over last 10 frames: %.2f', average_fps)
 
         # Log global cumulative average when pipeline ends
@@ -91,7 +87,7 @@ class Node(AbstractNode):
             self.logger.info('Avg FPS over all processed frames: %.2f',
                 self.global_avg_fps)
 
-        return {"fps": average_fps} if self.fps_type else {"fps": frame_fps}
+        return {"fps": average_fps} if self.dampen_fps else {"fps": frame_fps}
 
     def _moving_average(self, frame_fps: float) -> float:
         self.moving_average_fps.append(frame_fps)

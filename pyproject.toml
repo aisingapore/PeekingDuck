@@ -6,3 +6,12 @@ build-backend = "setuptools.build_meta"
 markers = [
     "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not mlmodel\"')",
 ]
+
+[tool.pylint]
+    [tool.pylint.'MESSAGES CONTROL']
+    disable=['no-member','attribute-defined-outside-init','access-member-before-definition']
+
+[tool.mypy]
+ignore_missing_imports = true
+disallow_untyped_defs = true
+disable_error_code = ['override', 'attr-defined']

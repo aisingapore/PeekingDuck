@@ -32,8 +32,8 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Show the outputs on your display"""
