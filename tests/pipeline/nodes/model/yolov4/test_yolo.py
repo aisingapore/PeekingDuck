@@ -21,8 +21,10 @@ import numpy.testing as npt
 import cv2
 import tensorflow as tf
 from unittest import mock, TestCase
+from pathlib import Path
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
+
 
 
 # Yolo model has some issue(Windows fatal exception) with pytest that 
@@ -34,8 +36,8 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 TEST_HUMAN_IMAGES_yolo = ['t1.jpg']
 TEST_NO_HUMAN_IMAGES_yolo = ['black.jpg']
 PKD_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..','..','..','..','..', 'peekingduck'
-)
+    Path(__file__).parents[4] 
+)# path to reach 5 file levels up from yolo_test.py
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES_yolo)
 def test_human_images_yolo(request):
