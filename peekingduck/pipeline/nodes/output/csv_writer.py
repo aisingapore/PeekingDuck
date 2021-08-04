@@ -56,17 +56,17 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)
-        self._stats_to_track = config["stats_to_track"]  # type: ignore
-        self._logging_interval = int(config["logging_interval"])
-        self._filepath = config["filepath"]
-        if not ".csv" in self._filepath:
+        self.logging_interval = int(self.logging_interval) # type: ignore
+        # check if filepath has a '.csv' extension
+        if not ".csv" in config['filepath']:
             raise ValueError("Filepath must have a '.csv' extension.")
 
-        self._filepath_datetime = self._append_datetime_filepath(config["filepath"])
+        self._filepath_datetime = self._append_datetime_filepath(self.filepath)
         self._stats_checked = False
+        self.stats_to_track = self.stats_to_track  # type: ignore
         self.csv_logger = CSVLogger(self._filepath_datetime,
-                                    self._stats_to_track,
-                                    self._logging_interval)
+                                    self.stats_to_track,
+                                    self.logging_interval)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -89,8 +89,8 @@ class Node(AbstractNode):
             self._check_tracked_stats(inputs)
             # self._stats_to_track might change after the check
             self.csv_logger = CSVLogger(self._filepath_datetime,
-                                        self._stats_to_track,
-                                        self._logging_interval)
+                                        self.stats_to_track,
+                                        self.logging_interval)
 
         self.csv_logger.write(inputs, self.stats_to_track)
 
