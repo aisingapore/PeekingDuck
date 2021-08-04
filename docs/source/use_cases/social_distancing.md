@@ -51,7 +51,7 @@ These are the nodes used in the earlier demo (also in [social_distancing.yml](ht
 nodes:
 - input.live
 - model.posenet
-- heuristic.keypoints_to_3d_loc:
+- peek.keypoints_to_3d_loc:
   - focal_length: 1.14
   - torso_factor: 0.9
 - peek.check_nearby_objs:
