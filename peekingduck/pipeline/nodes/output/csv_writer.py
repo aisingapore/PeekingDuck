@@ -58,7 +58,7 @@ class Node(AbstractNode):
         self.logger = logging.getLogger(__name__)
         self.logging_interval = int(self.logging_interval) # type: ignore
         # check if filepath has a '.csv' extension
-        if not ".csv" in config['filepath']:
+        if not ".csv" in self.filepath:
             raise ValueError("Filepath must have a '.csv' extension.")
 
         self._filepath_datetime = self._append_datetime_filepath(self.filepath)
