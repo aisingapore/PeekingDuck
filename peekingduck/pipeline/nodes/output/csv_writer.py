@@ -56,15 +56,17 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)
-        self.logging_interval = int(self.logging_interval) # type: ignore
-        self._filepath_datetime = self._append_datetime_filepath(
-            self.filepath)
+        self._stats_to_track = config["stats_to_track"]  # type: ignore
+        self._logging_interval = int(config["logging_interval"])
+        self._filepath = config["filepath"]
+        if not ".csv" in self._filepath:
+            raise ValueError("Filepath must have a '.csv' extension.")
+
+        self._filepath_datetime = self._append_datetime_filepath(config["filepath"])
         self._stats_checked = False
-        self.stats_to_track = self.stats_to_track  # type: ignore
-        self.csv_logger = CSVLogger(
-            self._filepath_datetime,
-            self.stats_to_track,
-            self.logging_interval)
+        self.csv_logger = CSVLogger(self._filepath_datetime,
+                                    self._stats_to_track,
+                                    self._logging_interval)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -85,11 +87,10 @@ class Node(AbstractNode):
 
         if not self._stats_checked:
             self._check_tracked_stats(inputs)
-            # self.stats_to_track might change after the check
-            self.csv_logger = CSVLogger(
-                self._filepath_datetime,
-                self.stats_to_track,
-                self.logging_interval)
+            # self._stats_to_track might change after the check
+            self.csv_logger = CSVLogger(self._filepath_datetime,
+                                        self._stats_to_track,
+                                        self._logging_interval)
 
         self.csv_logger.write(inputs, self.stats_to_track)
 
@@ -97,8 +98,9 @@ class Node(AbstractNode):
 
     def _check_tracked_stats(self, inputs: Dict[str, Any]) -> None:
         """
-        Check whether user input statistics is present in the data pool of the pipeline
-        Statistics not present in data pool will be ignored and dropped
+        Check whether user input statistics is present in the data pool
+        of the pipeline. Statistics not present in data pool will be
+        ignored and dropped.
         """
         valid = []
         invalid = []
@@ -138,7 +140,8 @@ class Node(AbstractNode):
         file_name = filepath.split('.')[-2]
         file_ext = filepath.split('.')[-1]
 
-        # append timestamp to filename before extension Format: filename_timestamp.extension
+        # append timestamp to filename before extension
+        # Format: filename_timestamp.extension
         filepath_with_timestamp = f"{file_name}_{time_str}.{file_ext}"
 
         return filepath_with_timestamp
