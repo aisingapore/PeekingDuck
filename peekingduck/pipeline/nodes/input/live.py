@@ -79,6 +79,9 @@ class Node(AbstractNode):
             self.logger.info('Resizing of input set to %s by %s',
                              self.resize['width'],
                              self.resize['height'])
+        if not any(ext in config['filename'] for ext in ['.mov', '.avi', '.mp4']):
+            raise ValueError("filename extension must be one of: .avi, .mov, .mp4")
+
         self.frame_counter = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
