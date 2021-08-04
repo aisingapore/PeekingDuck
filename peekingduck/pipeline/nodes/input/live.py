@@ -80,7 +80,7 @@ class Node(AbstractNode):
                              self.resize['width'],
                              self.resize['height'])
         if self.filename.split('.')[-1] not in self._allowed_extensions:
-            raise ValueError("filename extension must be one of: %s", \
+            raise ValueError("filename extension must be one of: ", \
                              self._allowed_extensions)
 
         self.frame_counter = 0
