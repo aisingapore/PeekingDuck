@@ -56,7 +56,7 @@ Algorithms that performs calculations/heuristics on the outputs of `model`
 |  `peek.bbox_count`           | Counts the number of detected boxes                               |
 |  `peek.bbox_to_3d_loc`       | Estimates the 3D coordinates of an object given a 2D boundingbox  |
 |  `peek.bbox_to_btm_midpoint` | Converts bounding boxes to a single point of reference            |
-|  `peek.check_large_groups`   | Check if number of objects in a group exceed a threshold          |
+|  `peek.check_group_size`   | Check if number of objects in a group exceed a threshold          |
 |  `peek.check_nearby_objs`    | Check if detected objects are near each other                     |
 |  `peek.group_nearby_objs`    | Assign objects in close proximity to groups                       |
 |  `peek.keypoints_to_3d_loc`  | Estimates the 3D coordinates of a human given 2D pose coordinates |

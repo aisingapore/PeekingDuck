@@ -6,7 +6,7 @@ As part of COVID-19 measures, the Singapore Government has set restrictions on t
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="70%">
 
-To check if individuals belong to a group, we check if the physical distance between them is close. The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
+To check if individuals belong to a group, we check if the physical distance between them is close. The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed peeks that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
@@ -53,12 +53,12 @@ These are the nodes used in the earlier demo (also in [group_size_checking.yml](
 nodes:
 - input.live
 - model.posenet
-- heuristic.keypoints_to_3d_loc:
+- peek.keypoints_to_3d_loc:
   - focal_length: 1.14
   - torso_factor: 0.9
-- heuristic.group_nearby_objs:
+- peek.group_nearby_objs:
   - obj_dist_thres: 1.5
-- heuristic.check_large_groups:
+- peek.check_group_size:
   - group_size_thres: 2
 - draw.bbox
 - draw.poses
@@ -83,7 +83,7 @@ For more adjustable node behaviours not listed here, check out the [API referenc
 
 **3. Using Object Detection (Optional)**
 
-It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `heuristic.keypoints_to_3d_loc` with `heuristic.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
+It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `peek.keypoints_to_3d_loc` with `peek.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
 
 You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models; we find lightweight object detectors are generally better than lightweight pose estimation models in detecting humans.
 
