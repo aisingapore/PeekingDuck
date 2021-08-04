@@ -2,7 +2,7 @@ nodes:
 - input.live
 - model.yolo:
     detect_ids: [0]
-- heuristic.bbox_count
+- peek.bbox_count
 - draw.bbox
 - draw.bbox_count
 - draw.fps
