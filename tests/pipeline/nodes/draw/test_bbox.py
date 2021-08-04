@@ -1,21 +1,21 @@
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 """
-Copyright 2021 AI Singapore
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Test for draw bbox node
 """
 import os
 from pathlib import Path
-from tests.conftest import create_image
 import pytest
 import numpy as np
 import cv2
@@ -83,13 +83,15 @@ class TestBbox:
         }
         draw_bbox_no_labels.run(input1)
         # after running draw, should not be equal
+        assert original_img.shape == output_img_no_label.shape
         np.testing.assert_raises(AssertionError, np.testing.assert_equal,
-                         original_img, output_img_no_label)
+                                 original_img, output_img_no_label)
         # assert the top left pixel is replaced with bbox color
         np.testing.assert_equal(output_img_no_label[0][0], np.array([156, 223, 244]))
 
         # test with labels
         draw_bbox_show_labels.run(input2)
+        assert original_img.shape == output_img_show_label.shape
         np.testing.assert_raises(AssertionError, np.testing.assert_equal,
-                         original_img, output_img_show_label)
+                                 original_img, output_img_show_label)
         np.testing.assert_equal(output_img_no_label[0][0], np.array([156, 223, 244]))
