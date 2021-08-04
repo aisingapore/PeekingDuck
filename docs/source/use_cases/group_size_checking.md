@@ -6,7 +6,7 @@ As part of COVID-19 measures, the Singapore Government has set restrictions on t
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="70%">
 
-To check if individuals belong to a group, we check if the physical distance between them is close. The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed peeks that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
+To check if individuals belong to a group, we check if the physical distance between them is close. The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give an approximate measure of physical distance from 2D videos, circumventing this limitation. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
