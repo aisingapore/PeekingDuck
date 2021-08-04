@@ -15,12 +15,8 @@
 """
 Test for draw legend node
 """
-import os
-from pathlib import Path
-from tests.conftest import create_image
 import pytest
 import numpy as np
-import cv2
 from peekingduck.pipeline.nodes.draw.legend import Node
 
 @pytest.fixture

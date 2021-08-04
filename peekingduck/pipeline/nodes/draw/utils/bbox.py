@@ -121,9 +121,9 @@ def _draw_tag(frame: np.array,
 
     # Find offset to centralize text
     (text_width, _), baseline = cv2.getTextSize(tag,
-                                                        FONT_HERSHEY_SIMPLEX,
-                                                        NORMAL_FONTSCALE,
-                                                        THICK)
+                                                FONT_HERSHEY_SIMPLEX,
+                                                NORMAL_FONTSCALE,
+                                                THICK)
     bbox_width = btm_right[0] - top_left[0]
     offset = int((bbox_width - text_width) / 2)
     position = (int(top_left[0] + offset), int(top_left[1] - baseline))
