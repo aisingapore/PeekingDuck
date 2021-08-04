@@ -21,7 +21,7 @@ To try our solution on your own computer with [PeekingDuck installed](../getting
 There are three main components to obtain the zone counts:
 1. The detection from the object detection model, which is the bounding boxes.
 1. The bottom midpoint of the bounding boxes, derived from the bounding boxes.
-1. The zones, which can be set in the zone count heuristic configurable parameters.
+1. The zones, which can be set in the zone count peek configurable parameters.
 
 **1. Object Detection**
 
@@ -68,8 +68,8 @@ nodes:
 - input.live
 - model.yolo:
   - detect_ids: [0]
-- heuristic.bbox_to_btm_midpoint
-- heuristic.zone_count:
+- peek.bbox_to_btm_midpoint
+- peek.zone_count:
   - resolution: [1280, 720]
   - zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
@@ -88,11 +88,11 @@ By default, the node uses the Yolov4-tiny model for object detection, set to det
 
 **2. Bottom Midpoint Node**
 
-The bottom midpoint node is called by including `heuristic.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
+The bottom midpoint node is called by including `peek.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
 
 **3. Zone Counting Node**
 
-The zone counting node is called by including `heuristic.zone_count` in the run config declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of object counts in each specified zone. The node configurable parameters can be found below.
+The zone counting node is called by including `peek.zone_count` in the run config declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of object counts in each specified zone. The node configurable parameters can be found below.
 
 **4. Adjusting Nodes**
 

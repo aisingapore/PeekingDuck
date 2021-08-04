@@ -2,4 +2,5 @@ nodes:
 - input.live
 - model.yolo
 - draw.bbox
+- custom_nodes.draw.fps
 - output.screen
