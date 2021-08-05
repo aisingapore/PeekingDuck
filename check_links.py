@@ -50,11 +50,11 @@ def check_files(lst_filepaths):
                 except Exception as e:
                     # here i filter only 404 error
                     # if u want catch all then u remove if statement
-                    #if e.code == 404: 
+                    if e.code == 404: 
                         # filepath is the current file being parsed
                         # link is the link found in the current parsed file
                         # e.code is the execption code such as 404,403...
-                    faulty_links.append((filepath , link, e.code))
+                        faulty_links.append((filepath , link, e.code))
             
             else: 
                 check = os.path.exists(os.path.join(root, link))
@@ -63,7 +63,12 @@ def check_files(lst_filepaths):
                     # filepath is the current file being parsed
                     # link is the link found in the current parsed file
                     # root is the root folder of the filepath of current file
-                    faulty_links.append((filepath , link, root))
+                    condition = ["/peekingduck", "pipeline", "nodes"]
+                    if link.split(".")[0:3] == condition:
+                        pass
+                    
+                    else:
+                        faulty_links.append((filepath , link, root))
 
         print(f"complete {filepath}")
     
@@ -76,3 +81,4 @@ if __name__ == '__main__':
     faulty_links = check_files(mds_rst_filepaths)
 
     print(faulty_links)
+
