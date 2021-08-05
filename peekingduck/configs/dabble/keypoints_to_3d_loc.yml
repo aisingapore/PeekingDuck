@@ -1,0 +1,5 @@
+input: ["keypoints"]
+output: ["obj_3D_locs"]
+
+focal_length: 1.14
+torso_factor: 0.9

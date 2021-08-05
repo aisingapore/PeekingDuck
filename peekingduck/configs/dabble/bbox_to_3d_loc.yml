@@ -1,0 +1,5 @@
+input: ["bboxes"]
+output: ["obj_3D_locs"]
+
+focal_length: 1.14
+height_factor: 2.5

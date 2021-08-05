@@ -1,0 +1,2 @@
+input: ["bboxes", "img"]
+output: ["btm_midpoint"]
