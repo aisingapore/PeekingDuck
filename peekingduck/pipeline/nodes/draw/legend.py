@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Displays heuristic info such as fps, object count and zone counts in a legend box
+Displays info from dabble nodes such as fps, object count and zone counts in a legend box
 """
 
 from typing import Any, Dict, List
