@@ -56,7 +56,7 @@ Algorithms that performs calculations/heuristics on the outputs of `model`
 |  `dabble.bbox_count`              | Counts the number of detected boxes                               |
 |  `dabble.bbox_to_3d_loc`          | Estimates the 3D coordinates of an object given a 2D boundingbox  |
 |  `dabble.bbox_to_btm_midpoint`    | Converts bounding boxes to a single point of reference            |
-|  `dabble.check_large_groups`        | Check if number of objects in a group exceed a threshold          |
+|  `dabble.check_large_groups`      | Check if number of objects in a group exceed a threshold          |
 |  `dabble.check_nearby_objs`       | Check if detected objects are near each other                     |
 |  `dabble.group_nearby_objs`       | Assign objects in close proximity to groups                       |
 |  `dabble.keypoints_to_3d_loc`     | Estimates the 3D coordinates of a human given 2D pose coordinates |
