@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import pytest
-from peekingduck.pipeline.nodes.heuristic.check_large_groups import Node
+from peekingduck.pipeline.nodes.dabble.check_large_groups import Node
 
 
 @pytest.fixture

@@ -17,7 +17,7 @@ Counts the number of detected objects within a boundary
 """
 
 from typing import Dict, List, Any
-from peekingduck.pipeline.nodes.heuristic.zoningv1.zone import Zone
+from peekingduck.pipeline.nodes.dabble.zoningv1.zone import Zone
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
