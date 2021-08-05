@@ -118,7 +118,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
 ## Explore PeekingDuck Nodes
 
-AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
 | | |
 |-|-|
