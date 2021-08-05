@@ -24,7 +24,8 @@ from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
 
 class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
-    from detected bboxes.
+    from detected bboxes. Note that HRNet must be used in conjunction with
+    a object detector applied prior.
 
     The HRNet applied to human pose estimation uses the representation head,
     called HRNetV1.

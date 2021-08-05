@@ -72,6 +72,8 @@ class Node(AbstractNode):
                              self.resize['width'],
                              self.resize['height'])
 
+        self.logger.info('Filepath used: %s', self.input_dir)
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
         input: ["none"],
