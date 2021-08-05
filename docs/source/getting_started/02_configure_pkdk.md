@@ -45,6 +45,6 @@
   ```
 - Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. Open the processed file and you should get this:
 
-  <img src="https://github.com/aimakerspace/PeekingDuck/blob/dev/images/readme/ducks_demo.gif" width="50%">
+  <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/ducks_demo.gif" width="50%">
 
 - To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
