@@ -1,5 +1,0 @@
-input: ["obj_3D_locs"]
-output: ["obj_tags"]
-
-near_threshold: 2.0
-tag_msg: "TOO CLOSE!"

@@ -1,4 +1,0 @@
-input: ["obj_groups"]
-output: ["large_groups"]
-
-group_size_thres: 5
