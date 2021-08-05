@@ -30,14 +30,31 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that processes videos and images as primary source input"""
+    """Node that outputs the processed image or video to a file.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    Inputs:
+        |img|
+
+        |filename|
+
+        |saved_video_fps|
+
+        |pipeline_end|
+
+    Outputs:
+        None
+
+    Configs:
+        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**
+
+            Output directory for files to be written locally.
+    """
+
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
         self._file_name = None
-        self._output_dir = config["output_dir"]
-        self._prepare_directory(config["output_dir"])
+        self._prepare_directory(self.output_dir)
         self._fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self._image_type = None
         self._file_path = None
@@ -45,18 +62,11 @@ class Node(AbstractNode):
         self._file_path_with_timestamp = None
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """ Writes media information to filepath
-
-        Args:
-            inputs: ["filename", "img", "saved_video_fps"]
-
-        Returns:
-            outputs: [None]
-        """
+        """ Writes media information to filepath"""
 
         # reset and terminate when there are no more data
         if inputs["pipeline_end"]:
-            if self.writer: # images automatically releases writer
+            if self.writer:  # images automatically releases writer
                 self.writer.release()
             return {}
 
@@ -82,7 +92,7 @@ class Node(AbstractNode):
 
     def _prepare_writer(self, filename: str, img: np.array, saved_video_fps: int) -> None:
 
-        self._file_path_with_timestamp = self._append_datetime_filename(filename) #type: ignore
+        self._file_path_with_timestamp = self._append_datetime_filename(filename)  # type: ignore
 
         self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
@@ -96,17 +106,17 @@ class Node(AbstractNode):
     def _prepare_directory(output_dir) -> None:  # type: ignore
         os.makedirs(output_dir, exist_ok=True)
 
-    def _append_datetime_filename(self,filename: str) -> str:
+    def _append_datetime_filename(self, filename: str) -> str:
 
         self._file_name = filename  # type: ignore
         current_time = datetime.datetime.now()
-        time_str=current_time.strftime("%d%m%y-%H-%M-%S")  #output as '240621-15-09-13'
+        time_str = current_time.strftime("%d%m%y-%H-%M-%S")  # output as '240621-15-09-13'
 
-        #append timestamp to filename before extension Format: filename_timestamp.extension
+        # append timestamp to filename before extension Format: filename_timestamp.extension
         filename_with_timestamp = filename.split(".")[-2] \
             + "_" + time_str \
             + "."+filename.split(".")[-1]
         file_path_with_timestamp = os.path.join(  # type: ignore
-            self._output_dir, filename_with_timestamp)
+            self.output_dir, filename_with_timestamp)
 
         return file_path_with_timestamp

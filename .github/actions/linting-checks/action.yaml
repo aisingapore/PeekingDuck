@@ -13,5 +13,6 @@ runs:
       run: bash ./scripts/linter.sh
       shell: bash
     - name: Run type checker
-      run: bash ./scripts/check_type.sh
+      run: |
+        bash ./scripts/check_type.sh
       shell: bash

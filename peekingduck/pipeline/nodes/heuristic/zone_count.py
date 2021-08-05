@@ -22,28 +22,49 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that checks if any objects are near to each other"""
+    """This node uses the bottom midpoints of all detected bounding boxes
+    and outputs the number of object counts in each specified zone.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        zones_info = config["zones"]
+    Given the bottom mid-points of all detected objects, this script checks
+    if the points fall within the area of the specified zones.
+    The zone counting detections depend on the configuration set in the
+    object detection models, such as the type of object to detect.
+
+    Inputs:
+        |btm_midpoint|
+
+    Outputs:
+        |zones|
+
+
+        |zone_count|
+
+    Configs:
+        resolution (:obj:`List`): **default = [1280, 720]**
+
+            resolution of input array to calculate pixel coordinates of
+            zone points
+
+        zones (:obj:`List`): **default = [ \
+                [[0, 0], [640, 0], [640, 720], [0, 720]], \
+                [[0.5, 0], [1, 0], [1, 1], [0.5, 1]] \
+            ]**
+
+            used for creation of specific zones with either the absolute
+            pixel values or % of resolution as a fraction between [0, 1]
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
         try:
-            self.zones = [self._create_zone(zone, config["resolution"])
-                          for zone in zones_info]
+            self.zones = [self._create_zone(zone, config["resolution"]) # type: ignore
+                          for zone in self.zones]  # type: ignore
         except TypeError as error:
             self.logger.warning(error)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts all detected objects that falls within any specified zone,
-        and return the total object count in each zone.
-
-        Args:
-            inputs (dict): Dict with keys "btm_midpoints".
-
-        Returns:
-            outputs (dict): Dict with keys "zones" for tuple of (x, y) points that form zone,
-            and "zone_count" for the zone counting of all objects detected in the zone.
-        """
+        and return the total object count in each zone."""
         num_of_zones = len(self.zones)
         zone_counts = [0] * num_of_zones
 

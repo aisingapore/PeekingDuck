@@ -22,12 +22,22 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Livestream output node"""
+    """Node that streams the output on your display
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    Inputs:
+        |img|
+
+    Outputs:
+        |pipeline_end|
+
+    """
+
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """ Show the outputs on your display"""
+
         cv2.imshow('PeekingDuck', inputs["img"])
 
         if cv2.waitKey(1) & 0xFF == ord('q'):

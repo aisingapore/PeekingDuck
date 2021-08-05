@@ -25,23 +25,31 @@ from peekingduck.pipeline.nodes.heuristic.utils.quick_find import QuickFind
 
 
 class Node(AbstractNode):
-    """This node groups objects that are near to each other."""
+    """Node that groups objects that are near each other.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    It does so by comparing the 3D location of all objects, and assigning objects
+    near each other to the same group.
 
-        self.obj_dist_thres = config["obj_dist_thres"]
+    Inputs:
+        |obj_3D_locs|
+
+    Outputs:
+        |obj_groups|
+
+    Configs:
+        obj_dist_thres (:obj:`float`): **default = 1.5**
+
+            Threshold of distance, in metres, between two objects, less than which they
+            would be assigned to the same group.
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Checks the distance between 3d locations of a pair of objects.
         If distance is less than threshold, assign the objects to the same group.
         Repeat for all object pairs.
-
-        Args:
-            inputs (dict): Dict with keys "obj_3D_locs".
-
-        Returns:
-            outputs (dict): Dict with keys "obj_groups".
         """
 
         nearby_obj_pairs = self._find_nearby_obj_pairs(

@@ -8,8 +8,8 @@ nodes:
     obj_dist_thres: 1.5
 - heuristic.check_large_groups:
     group_size_thres: 2
-- draw.bbox
+- heuristic.fps
 - draw.poses
 - draw.group_bbox_and_tag
-- draw.fps
+- draw.legend
 - output.screen

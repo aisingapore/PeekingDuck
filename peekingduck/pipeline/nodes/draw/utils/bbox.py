@@ -22,15 +22,16 @@ import numpy as np
 import cv2
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 from peekingduck.pipeline.nodes.draw.utils.constants import \
-    CHAMPAGNE, BLACK, THICK, VERY_THICK, NORMAL_FONTSCALE, POINT_RADIUS, FILLED
+    CHAMPAGNE, BLACK, THICK, VERY_THICK, NORMAL_FONTSCALE, \
+    POINT_RADIUS, FILLED, PRIMARY_PALETTE, PRIMARY_PALETTE_LENGTH as TOTAL_COLOURS
 from peekingduck.pipeline.nodes.draw.utils.general import \
     get_image_size, project_points_onto_original_image
 
 
 def draw_bboxes(frame: np.array,
                 bboxes: List[List[float]],
-                colour: Tuple[int, int, int],
-                bbox_labels: List[str] = None) -> None:
+                bbox_labels: List[str],
+                show_labels: bool) -> None:
     """Draw bboxes onto an image frame.
 
     Args:
@@ -40,10 +41,14 @@ def draw_bboxes(frame: np.array,
         bbox_labels (List[str]): labels of object detected
     """
     image_size = get_image_size(frame)
+    # Get unique label colour indexes
+    colour_indx = {label: indx for indx, label in enumerate(set(bbox_labels))}
 
     for i, bbox in enumerate(bboxes):
-        if bbox_labels is not None:
-            _draw_bbox(frame, bbox, image_size, colour, bbox_labels[i])
+        colour = PRIMARY_PALETTE[colour_indx[bbox_labels[i]] % TOTAL_COLOURS]
+        if show_labels:
+            _draw_bbox(frame, bbox, image_size,
+                       colour, bbox_labels[i])
         else:
             _draw_bbox(frame, bbox, image_size, colour)
 
@@ -116,9 +121,9 @@ def _draw_tag(frame: np.array,
 
     # Find offset to centralize text
     (text_width, _), baseline = cv2.getTextSize(tag,
-                                                        FONT_HERSHEY_SIMPLEX,
-                                                        NORMAL_FONTSCALE,
-                                                        THICK)
+                                                FONT_HERSHEY_SIMPLEX,
+                                                NORMAL_FONTSCALE,
+                                                THICK)
     bbox_width = btm_right[0] - top_left[0]
     offset = int((bbox_width - text_width) / 2)
     position = (int(top_left[0] + offset), int(top_left[1] - baseline))

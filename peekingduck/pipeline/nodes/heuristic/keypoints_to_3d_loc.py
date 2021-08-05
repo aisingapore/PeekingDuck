@@ -30,22 +30,33 @@ TORSO_KEYPOINTS = [
 
 
 class Node(AbstractNode):
-    """Node that uses pose keypoint information of torso to estimate 3d location"""
+    """Node that uses pose keypoint information of torso to estimate 3d location.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    Inputs:
+        |keypoints|
 
-        self.torso_factor = config['torso_factor']
-        self.focal_length = config['focal_length']
+    Outputs:
+        |obj_3D_locs|
+
+    Configs:
+        focal_length (:obj:`float`): **default = 1.14**
+
+            Approximate focal length of webcam used, in metres. Example on measuring focal length:
+            https://learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
+
+
+        torso_factor (:obj:`float`): **default = 0.9**
+
+            A factor used to estimate real-world distance from pixels, based on average human torso
+            length in metres. The value varies across different camera set-ups, and calibration may
+            be required.
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts pose keypoints into 3D locations.
-
-        Args:
-            inputs (dict): Dict with keys "keypoints".
-
-        Returns:
-            outputs (dict): Dict with keys "obj_3D_locs".
         """
 
         locations = []

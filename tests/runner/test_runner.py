@@ -21,6 +21,7 @@ import yaml
 import pytest
 from peekingduck.runner import Runner
 from peekingduck.pipeline.nodes.node import AbstractNode
+from pathlib import Path
 
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
@@ -31,20 +32,32 @@ NODES = {"nodes": [PKD_NODE,PKD_NODE_2]}
 MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, "custom_nodes")
+CUSTOM_CONFIG_FOLDER_PATH = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
 CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True}}}"
 
 
 class MockedNode(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, node_path=PKD_NODE)
+        super().__init__(config, node_path=PKD_NODE, pkdbasedir=MODULE_PATH)
 
     def run(self, inputs):
         output = {}
-        for idx in range(len(self._outputs)):
-            output[self._outputs[idx]] = "test_output_" + str(idx)
+        for idx in range(len(self.outputs)):
+            output[self.outputs[idx]] = "test_output_" + str(idx)
 
         return output
+
+def create_node_config(config_dir, node_name):
+    
+    config_text = {"root": None,
+                   "input": ["none"],
+                   "output": ["pipeline_end"]}
+
+    node_config_file = f"{node_name}.yml"
+
+    with open(os.path.join(config_dir, node_config_file), 'w') as fp:
+        yaml.dump(config_text, fp)
 
 
 def create_run_config_yaml(nodes):
@@ -57,7 +70,7 @@ def setup():
     sys.path.append(MODULE_PATH)
 
     os.makedirs(PKD_NODE_DIR)
-
+    
     create_run_config_yaml(NODES)
 
 
@@ -78,7 +91,7 @@ def runner():
 
     setup()
 
-    with mock.patch('peekingduck.loaders.DeclarativeLoader.get_pipeline',
+    with mock.patch('peekingduck.declarative_loader.DeclarativeLoader.get_pipeline',
                     wraps=replace_declarativeloader_get_pipeline):
 
         test_runner = Runner(RUN_CONFIG_PATH,
@@ -90,6 +103,8 @@ def runner():
 
 @pytest.fixture
 def test_input_node():
+    Path(CUSTOM_CONFIG_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
+    create_node_config(CUSTOM_CONFIG_FOLDER_PATH, PKD_NODE_NAME)
 
     config_node_input = {'input': ["none"],
                          'output': ["test_output_1"]}
@@ -98,6 +113,8 @@ def test_input_node():
 
 @pytest.fixture
 def test_node_end():
+    Path(CUSTOM_CONFIG_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
+    create_node_config(CUSTOM_CONFIG_FOLDER_PATH, "pkd_node_name2")
 
     config_node_end = {
         'input': ["test_output_1"],
@@ -132,8 +149,8 @@ class TestRunner:
                         wraps=replace_pipeline_check_pipe):
 
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
-            assert runner_with_nodes.pipeline.nodes[0]._inputs == ["none"]
-            assert runner_with_nodes.pipeline.nodes[0]._outputs == [
+            assert runner_with_nodes.pipeline.nodes[0].inputs == ["none"]
+            assert runner_with_nodes.pipeline.nodes[0].outputs == [
                 "test_output_1"]
 
     def test_init_nodes_with_wrong_input(self):

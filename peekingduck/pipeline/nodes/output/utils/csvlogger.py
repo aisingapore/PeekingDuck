@@ -19,6 +19,7 @@ import csv
 from datetime import datetime
 from typing import Any, Dict, List
 
+
 class CSVLogger:
     """Node that writes data into a csv """
 

@@ -19,14 +19,31 @@ Draws the lowest middle point of a bounding box
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.drawfunctions import draw_pts
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_pts
 
 
 class Node(AbstractNode):
-    """This draw node draws the bottom midpoints"""
+    """Draw the bottom middle point of detected bbounding boxes.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    The draw btm_midpoint node uses the bboxes from the model predictions to
+    draw the bbox predictions onto the image. For better understanding of the usecase,
+    refer to the `zone counting usecase <use_cases/zone_counting.html>`_.
+
+    Inputs:
+
+        |img|
+
+        |btm_midpoint|
+
+    Outputs:
+        |none|
+
+    Configs:
+        None.
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Methods that draws btm midpoint of bounding bboxes

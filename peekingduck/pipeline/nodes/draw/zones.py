@@ -18,14 +18,30 @@ Draws the 2D boundaries of a zone
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.drawfunctions import draw_zones
+from peekingduck.pipeline.nodes.draw.utils.zone import draw_zones
 
 
 class Node(AbstractNode):
-    """Draw node for drawing zones onto image"""
+    """Draws the boundaries of each specified zone onto the image.
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    The draw zones node uses the zones from zone_count heuristic to
+    draw a bounding box that represents the zone boundaries onto the image.
+
+    Inputs:
+
+        |img|
+
+        |zones|
+
+    Outputs:
+        |none|
+
+    Configs:
+        None.
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws the boundaries of each specified zone onto the image.

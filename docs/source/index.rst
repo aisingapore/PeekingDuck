@@ -16,7 +16,7 @@ Welcome to PeekingDuck's documentation!
    :titlesonly:
    :caption: Introduction
 
-   introduction/introduction.md
+   introduction/01_introduction.md
 
 .. toctree::
    :titlesonly:

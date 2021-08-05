@@ -8,7 +8,8 @@ nodes:
 - heuristic.check_nearby_objs:
     near_threshold: 1.5
     tag_msg: "TOO CLOSE!"
-- draw.bbox
+- heuristic.fps
 - draw.poses
+- draw.bbox     # not in demo config, but included here
 - draw.tag
-- draw.fps
+- draw.legend

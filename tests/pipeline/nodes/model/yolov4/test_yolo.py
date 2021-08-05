@@ -21,9 +21,36 @@ import numpy.testing as npt
 import cv2
 import tensorflow as tf
 from unittest import mock, TestCase
+from pathlib import Path
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 
+
+# Yolo model has some issue(Windows fatal exception) with pytest on Github actions
+# that limits the number of image tested to 2 for windows (Windows server 2019 and 2016),
+# no issue with linux (ubuntu). No issue when pytest run locally on Windows
+# Only for yolo_test, use the test_human_images_yolo and test_no_human_images_yolo
+# For other model's unit test use the test_human_images and test_no_human_images
+# in conftest.py
+
+TEST_HUMAN_IMAGES_YOLO = ['t1.jpg']
+TEST_NO_HUMAN_IMAGES_YOLO = ['black.jpg']
+PKD_DIR = os.path.join(
+    Path(__file__).parents[4]
+)# path to reach 5 file levels up from yolo_test.py
+
+@pytest.fixture(params=TEST_HUMAN_IMAGES_YOLO)
+def test_human_images_yolo(request):
+    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+
+    yield os.path.join(test_img_dir, request.param)
+
+
+@pytest.fixture(params=TEST_NO_HUMAN_IMAGES_YOLO)
+def test_no_human_images_yolo(request):
+    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+
+    yield os.path.join(test_img_dir, request.param)
 
 @pytest.fixture
 def yolo_config():
@@ -58,8 +85,8 @@ def replace_download_weights(root, blob_file):
 @pytest.mark.mlmodel
 class TestYolo:
 
-    def test_no_human_image(self, test_no_human_images, yolo):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, test_no_human_images_yolo, yolo):
+        blank_image = cv2.imread(test_no_human_images_yolo)
         output = yolo.run({'img': blank_image})
         expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32),
                            'bbox_labels': np.empty((0)),
@@ -69,8 +96,8 @@ class TestYolo:
         npt.assert_equal(output['bbox_labels'], expected_output['bbox_labels'])
         npt.assert_equal(output['bbox_scores'], expected_output['bbox_scores'])        
 
-    def test_return_at_least_one_person_and_one_bbox(self, test_human_images, yolo):
-        test_img = cv2.imread(test_human_images)
+    def test_return_at_least_one_person_and_one_bbox(self, test_human_images_yolo, yolo):
+        test_img = cv2.imread(test_human_images_yolo)
         output = yolo.run({'img': test_img})
         assert 'bboxes' in output
         assert output['bboxes'].size != 0
@@ -84,8 +111,8 @@ class TestYolo:
                     'peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger') \
                     as captured:
 
-                    yolo = Node(yolo_config)
-
+                    yolo = Node(config=yolo_config)
+                    # records 0 - 20 records are updates to configs
                     assert captured.records[0].getMessage(
                     ) == '---no yolo weights detected. proceeding to download...---'
                     assert captured.records[1].getMessage(
