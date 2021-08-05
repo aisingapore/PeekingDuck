@@ -2,7 +2,7 @@
 
 ## Overview
 
-As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed the [object counting](./object_counting.md) heuristic, we further developed a more complex variation called the zone counting heuristic. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
+As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large event gatherings. Guidelines stipulate that large events can be held but attendees should be split into different groups that are of some distance apart and cannot interact with the other groups. Since AI Singapore developed [object counting](./object_counting.md), we further developed a more complex variation for zone counting. Zone counting allows us to create different zones within a single image and count the number of chosen objects detected in each zone. This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the above mentioned guidelines.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%" name="zone_counting_gif">
 
@@ -21,7 +21,7 @@ To try our solution on your own computer with [PeekingDuck installed](../getting
 There are three main components to obtain the zone counts:
 1. The detection from the object detection model, which is the bounding boxes.
 1. The bottom midpoint of the bounding boxes, derived from the bounding boxes.
-1. The zones, which can be set in the zone count peek configurable parameters.
+1. The zones, which can be set in the zone count dabble configurable parameters.
 
 **1. Object Detection**
 
@@ -68,8 +68,8 @@ nodes:
 - input.live
 - model.yolo:
   - detect_ids: [0]
-- peek.bbox_to_btm_midpoint
-- peek.zone_count:
+- dabble.bbox_to_btm_midpoint
+- dabble.zone_count:
   - resolution: [1280, 720]
   - zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
@@ -88,11 +88,11 @@ By default, the node uses the Yolov4-tiny model for object detection, set to det
 
 **2. Bottom Midpoint Node**
 
-The bottom midpoint node is called by including `peek.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
+The bottom midpoint node is called by including `dabble.bbox_to_btm_midpoint` in the run config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node has no configurable parameters
 
 **3. Zone Counting Node**
 
-The zone counting node is called by including `peek.zone_count` in the run config declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of object counts in each specified zone. The node configurable parameters can be found below.
+The zone counting node is called by including `dabble.zone_count` in the run config declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of object counts in each specified zone. The node configurable parameters can be found below.
 
 **4. Adjusting Nodes**
 
