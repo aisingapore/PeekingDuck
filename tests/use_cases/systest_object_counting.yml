@@ -3,7 +3,7 @@ nodes:
     input_dir: "images/testing" 
 - model.yolo:
     detect_ids: [0]
-- heuristic.bbox_count
-- heuristic.fps
+- dabble.bbox_count
+- dabble.fps
 - draw.bbox
 - draw.legend

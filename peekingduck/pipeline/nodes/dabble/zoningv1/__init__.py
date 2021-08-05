@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Utility functions for heuristic nodes
+Utility functions for zoning
 """

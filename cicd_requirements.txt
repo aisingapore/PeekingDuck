@@ -1,0 +1,12 @@
+pylint ==2.7.4
+pytest == 6.2.3
+coverage == 5.5
+mypy == 0.910
+bandit == 1.7.0
+types-PyYAML==5.4.3
+types-requests==2.25.0
+types-six==0.1.7
+beautifulsoup4
+myst-parser
+sphinx-autodoc-typehints
+-r requirements.txt

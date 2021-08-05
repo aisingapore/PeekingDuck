@@ -31,6 +31,13 @@ class EfficientDetModel:
         super().__init__()
 
         self.logger = logging.getLogger(__name__)
+
+        # check threshold values
+        if not 0 <= config['score_threshold'] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
+        if not 0 <= config['model_type'] <= 4:
+            raise ValueError("model_type must be an integer in [0, 4]")
+
         # check for efficientdet weights, if none then download into weights folder
         if not checker.has_weights(config['root'],
                                    config['weights_dir']):

@@ -2,7 +2,7 @@
 
 ## Overview
 
-One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For more advanced counting heuristics, check out [zone counting](zone_counting.md#zone-counting).
+One of the basic task in computer vision is object counting. AI Singapore developed a simple solution built in conjunction with our object detection models. This can be used with CCTVs in malls, shops or factories for crowd control, or other general object counting. For advanced counting, check out [zone counting](zone_counting.md#zone-counting).
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%">
 
@@ -40,7 +40,7 @@ nodes:
 - input.live
 - model.yolo:
   - detect_ids: [0]
-- heuristic.bbox_count
+- dabble.bbox_count
 - draw.bbox
 - draw.bbox_count
 - draw.fps
@@ -53,7 +53,7 @@ By default, the node uses the Yolov4-tiny model for object detection, set to det
 
 **2. Object Counting Node**
 
-The object counting node is called by including `heuristic.bbox_count` in the run config declaration. This takes the detected bounding boxes and outputs the total count of bounding boxes. The node has no configurable parameters.
+The object counting node is called by including `dabble.bbox_count` in the run config declaration. This takes the detected bounding boxes and outputs the total count of bounding boxes. The node has no configurable parameters.
 
 **3. Adjusting Nodes**
 

@@ -15,7 +15,7 @@ limitations under the License.
 """
 import pytest
 import numpy as np
-from peekingduck.pipeline.nodes.heuristic.bbox_to_3d_loc import Node
+from peekingduck.pipeline.nodes.dabble.bbox_to_3d_loc import Node
 
 
 @pytest.fixture

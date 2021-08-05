@@ -14,7 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 import pytest
-from peekingduck.pipeline.nodes.heuristic.fps import Node
+from peekingduck.pipeline.nodes.dabble.fps import Node
 
 
 @pytest.fixture

@@ -40,7 +40,7 @@
 
 .. |fps| replace:: ``fps`` (:obj:`list`): a list of floats, representing the FPS per frame. The
    FPS returned can either be a moving average or an instantaneous value. This setting can be changed in
-   configs/heuristic/fps file.
+   configs/dabble/fps file.
 
 .. |saved_video_fps| replace:: ``saved_video_fps`` (:obj:`float`): the FPS of recorded video, upon filming.
 
