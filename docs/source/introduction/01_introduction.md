@@ -56,12 +56,3 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 - Your organisation wants to hold a tangible legal document as evidence of the legal right to use and distribute PeekingDuck
 
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
-
-**Pose Estimation**
-
-PeekingDuck taps into HRNet [1] and PoseNet [2] to perform human pose estimation with the latter's code being adapted from [3]. The team referred to [4] during the development of PeekingDuck.
-
-1. Wang, Jingdong, et al. “Deep High-Resolution Representation Learning for Visual Recognition.” ArXiv:1908.07919 [Cs], Mar. 2020. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/1908.07919](http://arxiv.org/abs/1908.07919).
-2. Papandreou, George, et al. “PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up, Part-Based, Geometric Embedding Model.” ArXiv:1803.08225 [Cs], Mar. 2018. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/1803.08225](http://arxiv.org/abs/1803.08225).
-3. “GitHub - Rwightman/Posenet-Python: A Python Port of Google TensorFlow.Js PoseNet (Real-Time Human Pose Estimation).” GitHub, [https://github.com/rwightman/posenet-python](https://github.com/rwightman/posenet-python)
-4. “Action Recognition.” Rapid-Rich Object Search Lab (ROSE), [https://www.ntu.edu.sg/rose/research-focus/deep-learning-video-analytics/action-recognition](https://www.ntu.edu.sg/rose/research-focus/deep-learning-video-analytics/action-recognition)
