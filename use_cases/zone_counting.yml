@@ -2,8 +2,8 @@ nodes:
 - input.live
 - model.yolo:
     detect_ids: [0]
-- peek.bbox_to_btm_midpoint
-- peek.zone_count:
+- dabble.bbox_to_btm_midpoint
+- dabble.zone_count:
     resolution: [1280, 720]
     zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],

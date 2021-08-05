@@ -2,12 +2,12 @@ nodes:
 - input.recorded:
     input_dir: "images/testing" 
 - model.posenet
-- peek.keypoints_to_3d_loc:
+- dabble.keypoints_to_3d_loc:
     focal_length: 1.14
     torso_factor: 0.9
-- peek.group_nearby_objs:
+- dabble.group_nearby_objs:
     obj_dist_thres: 1.5
-- peek.check_group_size:
+- dabble.check_large_groups:
     group_size_thres: 2
 - draw.bbox
 - draw.poses

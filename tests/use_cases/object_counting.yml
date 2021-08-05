@@ -3,7 +3,7 @@ nodes:
     input_dir: "images/testing" 
 - model.yolo:
     detect_ids: [0]
-- peek.bbox_count
+- dabble.bbox_count
 - draw.bbox
 - draw.bbox_count
 - draw.fps
