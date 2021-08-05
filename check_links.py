@@ -16,20 +16,20 @@ def get_html():
                 lst_html.append((filepath, root))
     return lst_html
 
-def get_md():
-    lst_md=[]
+def get_md_rst():
+    lst_md_rst=[]
     # search path is hard coded with ref of this script locaiton
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
-            if name[-2:] == "md":
+            if name[-2:] == "md" or name[-3:] == "rst":
                 filepath = os.path.join(root, name)
                 print(filepath)
-                lst_md.append((filepath, root))
-    return lst_md
+                lst_md_rst.append((filepath, root))
+    return lst_md_rst
 
-def check_htmls(lst_html):
+def check_files(lst_filepaths):
     faulty_links =[]
-    for filepath, root in lst_html:
+    for filepath, root in lst_filepaths:
     
         with open(filepath, "r", encoding='utf-8') as f:
             file = f.read()
@@ -42,22 +42,6 @@ def check_htmls(lst_html):
             final = img_links+href_links
             final = [txt for txt in final if ("." in txt) and ("#" not in txt)] # remove leftover artifacts
 
-        # for link in final:
-        #     # if filepath is relative path to a html file or to _source/_static/_module folder
-        #     # or to a local yml file such as run_config.yml
-        #     if link.startswith(".") or link[-4:] == "html" \
-        #         or link.startswith("_") or link[-3:] == "yml": 
-        #        check = os.path.exists(os.path.join(root, link))
-
-        #        if not check:
-        #            faulty_links.append((filepath , link))
-
-        #     else:
-        #         try:
-        #             resp = urllib.request.urlopen(link)
-        #         except Exception as e:
-        #             faulty_links.append((filepath , link, e.code))
-
         for link in final:
             # if link is a https link, run request.urlopen
             if link[:5] == "https":
@@ -66,11 +50,11 @@ def check_htmls(lst_html):
                 except Exception as e:
                     # here i filter only 404 error
                     # if u want catch all then u remove if statement
-                    if e.code == 404: 
+                    #if e.code == 404: 
                         # filepath is the current file being parsed
                         # link is the link found in the current parsed file
                         # e.code is the execption code such as 404,403...
-                        faulty_links.append((filepath , link, e.code))
+                    faulty_links.append((filepath , link, e.code))
             
             else: 
                 check = os.path.exists(os.path.join(root, link))
@@ -85,13 +69,10 @@ def check_htmls(lst_html):
     
     return faulty_links
 
-htmls = get_html()
-mds = get_md()
-faulty_links_htmls = check_htmls(htmls)
-faulty_links_mds = check_htmls(mds)
 
-faulty_link_final = faulty_links_htmls + faulty_links_mds
+if __name__ == '__main__':
+    
+    mds_rst_filepaths = get_md_rst()
+    faulty_links = check_files(mds_rst_filepaths)
 
-# print(faulty_links_htmls)
-# print(faulty_links_mds)
-print(faulty_link_final)
+    print(faulty_links)
