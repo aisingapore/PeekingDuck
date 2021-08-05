@@ -27,7 +27,6 @@ from peekingduck.pipeline.nodes.draw.utils.constants import \
 from peekingduck.pipeline.nodes.draw.utils.general import \
     get_image_size, project_points_onto_original_image
 
-
 def draw_bboxes(frame: np.array,
                 bboxes: List[List[float]],
                 bbox_labels: List[str],
@@ -51,6 +50,8 @@ def draw_bboxes(frame: np.array,
                        colour, bbox_labels[i])
         else:
             _draw_bbox(frame, bbox, image_size, colour)
+
+    return frame
 
 def _draw_bbox(frame: np.array,
                bbox: List[float],

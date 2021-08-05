@@ -45,11 +45,23 @@ class Runner():
             node = Node.Node()
             inputs_needed = node.input
 
+            # p1-live: img1, img2
+            # p3-draw: img1*, img2*
+            # p4-out : 
+
             # take required data and run
-            while True:
-                if inputs_needed[0] == "none" or inputs_needed[0] in shared_data:
+            # {"img": [img1, img2, img3]}
+            #  img1, img2, img3, img4
+            #Y:img1, ...   ... , img4          ...     ... 
+            #D: ...  ...   ... , BBimg1+img4                 BBimg4+img7
+            #O:img1, img2, img3, BBimg1+img4   BBimg1+img5 
+            while True: # when live cannot get frame img:None
+                if inputs_needed[0] == "none" or (inputs_needed[0] in shared_data and (shared_data[inputs_needed[0]] is not None)):
+                    # retrieve next required data
                     results = node.run(shared_data)
                     shared_data.update(results)
+                    # add results into queue
+                    # check for last usage of data and delete when used
     
         return node_runner
 
