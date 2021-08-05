@@ -134,7 +134,7 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes.
 
-We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/source/introduction/guide_custom_nodes.md) provides more details on how to do that.
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html) provides more details on how to do that.
 
 ## Acknowledgements
 
