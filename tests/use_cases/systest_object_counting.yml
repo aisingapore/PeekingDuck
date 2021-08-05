@@ -1,0 +1,9 @@
+nodes:
+- input.recorded:
+    input_dir: "images/testing" 
+- model.yolo:
+    detect_ids: [0]
+- dabble.bbox_count
+- draw.bbox
+- draw.bbox_count
+- draw.fps
