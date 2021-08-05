@@ -27,7 +27,7 @@ class Node(AbstractNode):
     """Node that draws tags above bounding boxes
 
     The draw tag node uses the bboxes, obj_tags predictions from
-    dabble and models to draw the dabble tags of the bboxes onto the image.
+    dabble nodes and models to draw the tags of the bboxes onto the image.
 
     Inputs:
 
