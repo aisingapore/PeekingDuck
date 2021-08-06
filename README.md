@@ -122,9 +122,9 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 | | |
 |-|-|
-| [Social Distancing](docs/source/use_cases/social_distancing.md) | [Zone Counting](docs/source/use_cases/zone_counting.md) |
+| [Social Distancing](https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html) | [Zone Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html) |
 |<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
-| [Group Size Checking](docs/source/use_cases/group_size_checking.md) | [Object Counting](docs/source/use_cases/object_counting.md) |
+| [Group Size Checking](https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html) | [Object Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting.html) |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
@@ -152,4 +152,4 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 ## Additional References
-Additional references can be found [here](https://peekingduck.readthedocs.io/en/latest/introduction/02_bibliography.html).
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/introduction/02_bibliography.html).
