@@ -67,18 +67,19 @@ These are the nodes used in the earlier demo (also in [zone_counting.yml](https:
 nodes:
 - input.live
 - model.yolo:
-  - detect_ids: [0]
+    detect_ids: [0]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
-  - resolution: [1280, 720]
-  - zones: [
+    resolution: [1280, 720]
+    zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
+- dabble.fps
 - draw.bbox
 - draw.btm_midpoint
 - draw.zones
-- draw.zone_count
+- draw.legend
 - output.screen
 ```
 

@@ -52,15 +52,15 @@ nodes:
 - input.live
 - model.posenet
 - dabble.keypoints_to_3d_loc:
-  - focal_length: 1.14
-  - torso_factor: 0.9
+    focal_length: 1.14
+    torso_factor: 0.9
 - dabble.check_nearby_objs:
-  - near_threshold: 1.5
-  - tag_msg: "TOO CLOSE!"
-- draw.bbox
+    near_threshold: 1.5
+    tag_msg: "TOO CLOSE!"
+- dabble.fps
 - draw.poses
 - draw.tag
-- draw.fps
+- draw.legend
 - output.screen
 ```
 

@@ -39,11 +39,11 @@ These are the nodes used in the earlier demo (also in [object_counting.yml](http
 nodes:
 - input.live
 - model.yolo:
-  - detect_ids: [0]
+    detect_ids: [0]
 - dabble.bbox_count
+- dabble.fps
 - draw.bbox
-- draw.bbox_count
-- draw.fps
+- draw.legend
 - output.screen
 ```
 
