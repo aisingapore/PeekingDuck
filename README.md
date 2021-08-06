@@ -152,4 +152,4 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 ## Additional References
-Additional references can be found [here](https://peekingduck.readthedocs.io/en/latest/introduction/02_bibliography.html).
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/introduction/02_bibliography.html).
