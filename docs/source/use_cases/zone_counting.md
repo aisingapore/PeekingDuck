@@ -25,9 +25,9 @@ There are three main components to obtain the zone counts:
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](../models/yolo.md#configurable-parameters).
+We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](/peekingduck.pipeline.nodes.model.yolo.Node).
 
-We can also use the [EfficientDet model](../models/efficientdet.md) as a more accurate but slower alternative.
+We can also use the [EfficientDet model](/peekingduck.pipeline.nodes.model.efficientdet.Node) as a more accurate but slower alternative.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="70%">
 
@@ -67,24 +67,25 @@ These are the nodes used in the earlier demo (also in [zone_counting.yml](https:
 nodes:
 - input.live
 - model.yolo:
-  - detect_ids: [0]
+    detect_ids: [0]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
-  - resolution: [1280, 720]
-  - zones: [
+    resolution: [1280, 720]
+    zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
+- dabble.fps
 - draw.bbox
 - draw.btm_midpoint
 - draw.zones
-- draw.zone_count
+- draw.legend
 - output.screen
 ```
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo.
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](/peekingduck.pipeline.nodes.model.yolo.Node), or the [EfficientDet model](/peekingduck.pipeline.nodes.model.efficientdet.Node) that is included in our repo.
 
 **2. Bottom Midpoint Node**
 
@@ -96,7 +97,7 @@ The zone counting node is called by including `dabble.zone_count` in the run con
 
 **4. Adjusting Nodes**
 
-The zone counting detections depend on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation](../models/efficientdet.md) for adjustable behaviours that can influence the result of the zone counting node.
+The zone counting detections depend on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](/peekingduck.pipeline.nodes.model.yolo.Node) or the [Efficientdet node documentation](/peekingduck.pipeline.nodes.model.efficientdet.Node) for adjustable behaviours that can influence the result of the zone counting node.
 
 With regards to the zone counting node, some common node behaviours for the zone counting node that you might need to adjust are:
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.

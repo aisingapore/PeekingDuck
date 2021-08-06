@@ -39,17 +39,17 @@ These are the nodes used in the earlier demo (also in [object_counting.yml](http
 nodes:
 - input.live
 - model.yolo:
-  - detect_ids: [0]
+    detect_ids: [0]
 - dabble.bbox_count
+- dabble.fps
 - draw.bbox
-- draw.bbox_count
-- draw.fps
+- draw.legend
 - output.screen
 ```
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](../models/yolo.md), or the [EfficientDet model](../models/efficientdet.md) that is included in our repo.
+By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](/peekingduck.pipeline.nodes.model.yolo.Node), or the [EfficientDet model](/peekingduck.pipeline.nodes.model.efficientdet.Node) that is included in our repo.
 
 **2. Object Counting Node**
 
@@ -57,7 +57,7 @@ The object counting node is called by including `dabble.bbox_count` in the run c
 
 **3. Adjusting Nodes**
 
-The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](../models/yolo.md) or the [Efficientdet node documentation](../models/efficientdet.md) for adjustable behaviours that can influence the result of the object counting node.
+The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](/peekingduck.pipeline.nodes.model.yolo.Node) or the [Efficientdet node documentation](/peekingduck.pipeline.nodes.model.efficientdet.Node) for adjustable behaviours that can influence the result of the object counting node.
 
 For more adjustable node behaviours not listed here, check out the [node glossary](../node_glossary.md).
 
