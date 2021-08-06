@@ -61,7 +61,7 @@ PeekingDuck has 5 types of nodes:
 
 <img src="diagrams/node_types.drawio.svg">
 
-A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`.
+A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
 <img src="diagrams/yolo_demo.drawio.svg">
 
@@ -118,7 +118,7 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
 ## Explore PeekingDuck Nodes
 
-AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
 | | |
 |-|-|
@@ -151,4 +151,5 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
-
+## Additional References
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/latest/introduction/01_introduction.html#additional-references).

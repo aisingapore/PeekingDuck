@@ -21,7 +21,7 @@ PeekingDuck has 5 types of nodes:
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg">
 
-A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`.
+A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
@@ -29,7 +29,7 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 ## Explore PeekingDuck Nodes
 
-AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
 | | |
 |-|-|
@@ -58,3 +58,26 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 
+## Additional References
+**Object Detection**
+
+PeekingDuck utilises the 4th version of the YOLO model [1]. PeekingDuck's YOLO model weights are trained by [2] and the inference code is adapted from [3].
+
+In addition, PeekingDuck also employs EfficientDet [4] with code that is adapted from [5]. The team referred to [6] during the development of PeekingDuck.
+
+1. Bochkovskiy, Alexey, et al. “YOLOv4: Optimal Speed and Accuracy of Object Detection.” ArXiv:2004.10934 [Cs, Eess], Apr. 2020. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/2004.10934](http://arxiv.org/abs/2004.10934).
+2. “GitHub - Hunglc007/Tensorflow-Yolov4-Tflite: YOLOv4, YOLOv4-Tiny, YOLOv3, YOLOv3-Tiny Implemented in Tensorflow 2.0, Android. Convert YOLO v4 .Weights Tensorflow, Tensorrt and Tflite.” GitHub, [https://github.com/hunglc007/tensorflow-yolov4-tflite](https://github.com/hunglc007/tensorflow-yolov4-tflite)
+3. “GitHub - Zzh8829/Yolov3-Tf2: YoloV3 Implemented in Tensorflow 2.0.” GitHub, [https://github.com/zzh8829/yolov3-tf2](https://github.com/zzh8829/yolov3-tf2)
+4. Tan, Mingxing, et al. “EfficientDet: Scalable and Efficient Object Detection.” ArXiv:1911.09070 [Cs, Eess], July 2020. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/1911.09070](http://arxiv.org/abs/1911.09070).
+5. “GitHub - Xuannianz/EfficientDet: EfficientDet (Scalable and Efficient Object Detection) Implementation in Keras and Tensorflow.” GitHub, [https://github.com/xuannianz/EfficientDet](https://github.com/xuannianz/EfficientDet)
+6. WU, Xiongwei; SAHOO, Doyen; and HOI, Steven C. H.. Recent advances in deep learning for object detection. (2020). Neurocomputing. Research Collection School Of Information Systems.
+   Available at: [https://ink.library.smu.edu.sg/sis_research/5096](https://ink.library.smu.edu.sg/sis_research/5096)
+
+**Pose Estimation**
+
+PeekingDuck taps into HRNet [1] and PoseNet [2] to perform human pose estimation with the latter's code being adapted from [3]. The team referred to [4] during the development of PeekingDuck.
+
+1. Wang, Jingdong, et al. “Deep High-Resolution Representation Learning for Visual Recognition.” ArXiv:1908.07919 [Cs], Mar. 2020. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/1908.07919](http://arxiv.org/abs/1908.07919).
+2. Papandreou, George, et al. “PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up, Part-Based, Geometric Embedding Model.” ArXiv:1803.08225 [Cs], Mar. 2018. [arXiv.org](http://arxiv.org/), [http://arxiv.org/abs/1803.08225](http://arxiv.org/abs/1803.08225).
+3. “GitHub - Rwightman/Posenet-Python: A Python Port of Google TensorFlow.Js PoseNet (Real-Time Human Pose Estimation).” GitHub, [https://github.com/rwightman/posenet-python](https://github.com/rwightman/posenet-python)
+4. “Action Recognition.” Rapid-Rich Object Search Lab (ROSE), [https://www.ntu.edu.sg/rose/research-focus/deep-learning-video-analytics/action-recognition](https://www.ntu.edu.sg/rose/research-focus/deep-learning-video-analytics/action-recognition)

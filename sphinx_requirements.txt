@@ -1,3 +1,0 @@
-myst-parser
-sphinx-autodoc-typehints
--r requirements.txt

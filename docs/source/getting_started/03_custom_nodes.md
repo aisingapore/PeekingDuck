@@ -53,7 +53,7 @@ The `run_config.yml` will be created. Input the following lines of code into the
 nodes:
 - input.live # -- or `input.recorded` to use your videofiles
 - model.yolo
-- heuristic.bbox_count
+- dabble.bbox_count
 - draw.bbox
 - draw.bbox_count
 - output.screen
@@ -154,7 +154,7 @@ import csv
 from datetime import datetime
 
 class CSVLogger:
-    """A class to log the chosen information into csv heuristic results"""
+    """A class to log the chosen information into csv dabble results"""
 
     def __init__(self, file_path, headers, period=1):
         headers.extend(["date"])

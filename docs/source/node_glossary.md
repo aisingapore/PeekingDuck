@@ -48,16 +48,16 @@ Draws results/outputs to an image. More details on `draw.bbox`, `draw.poses` and
 |  `draw.zones`              | Draws the 2D boundaries of a zone                 |
 
 
-### `heuristic`
+### `dabble`
 Algorithms that performs calculations/heuristics on the outputs of `model`
 
 | <img width=326 />                 | <img width=654 />                                                 |
 | --------------------------------- | ----------------------------------------------------------------- |
-|  `heuristic.bbox_count`           |  Counts the number of detected boxes                              |
-|  `heuristic.bbox_to_3d_loc`       | Estimates the 3D coordinates of an object given a 2D boundingbox  |
-|  `heuristic.bbox_to_btm_midpoint` | Converts bounding boxes to a single point of reference            |
-|  `heuristic.check_large_groups`   | Check if number of objects in a group exceed a threshold          |
-|  `heuristic.check_nearby_objs`    | Check if detected objects are near each other                     |
-|  `heuristic.group_nearby_objs`    | Assign objects in close proximity to groups                       |
-|  `heuristic.keypoints_to_3d_loc`  | Estimates the 3D coordinates of a human given 2D pose coordinates |
-|  `heuristic.zone_count`           | Counts the number of detected objects within a boundary           |
+|  `dabble.bbox_count`              | Counts the number of detected boxes                               |
+|  `dabble.bbox_to_3d_loc`          | Estimates the 3D coordinates of an object given a 2D boundingbox  |
+|  `dabble.bbox_to_btm_midpoint`    | Converts bounding boxes to a single point of reference            |
+|  `dabble.check_large_groups`      | Check if number of objects in a group exceed a threshold          |
+|  `dabble.check_nearby_objs`       | Check if detected objects are near each other                     |
+|  `dabble.group_nearby_objs`       | Assign objects in close proximity to groups                       |
+|  `dabble.keypoints_to_3d_loc`     | Estimates the 3D coordinates of a human given 2D pose coordinates |
+|  `dabble.zone_count`              | Counts the number of detected objects within a boundary           |
