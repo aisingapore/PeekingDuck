@@ -37,7 +37,7 @@ extensions = ['myst_parser',
               'sphinx.ext.viewcode',
               'sphinx_autodoc_typehints'
               ]
-
+myst_heading_anchors = 2
 
 napoleon_custom_sections = [('Configs', 'params_style'),
                             ('Inputs', 'returns_style'),
