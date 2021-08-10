@@ -1,9 +1,9 @@
-# Mastering the Python API
+# PeekingDuck Python API
 
 PeekingDuck is designed to be flexible enough for users to deploy PeekingDuck as an app,
 extend it for custom use cases, or just use part of it for prototyping purposes.
 
-This may be particularly useful in the following situations:
+Here are some examples where the Python API will come in handry:
 
 1. Wrap a FastAPI app around a Object Detection module
 2. Integrate PeekingDuck into your existing python codebase
@@ -14,7 +14,7 @@ This may be particularly useful in the following situations:
 To understand the building blocks, refer to the Introduction [here.](../introduction/01_introduction.md#how-peekingduck-works)
 
 
-You may also refer to our API Reference to understand PeekingDuck's capabilities [here](/peekingduck.pipeline.nodes)
+You may also refer to our API Reference to understand PeekingDuck's capabilities [here](/peekingduck.pipeline.nodes).
 
 Running it in your python scripts can be simple:
 
@@ -42,4 +42,4 @@ runner.pipeline.data
 
 ## Demonstration
 
-We have an in-depth demonstration for running PeekingDuck on Colab [here](https://colab.research.google.com/drive/1gC_qaBSZsyGM1T-L_Vzo_3il44sJBJ2M).
+We have an in-depth demonstration for running PeekingDuck on Google Colab [here](https://colab.research.google.com/drive/1gC_qaBSZsyGM1T-L_Vzo_3il44sJBJ2M).

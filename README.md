@@ -53,7 +53,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
-### Mastering the Python API
+### PeekingDuck Python API
 
 Apart from running it via CLI, PeekingDuck can be ran as a python module as well. See our [guide](docs/source/getting_started/04_python_mode.md) on using PeekingDuck via the Python API.
 
