@@ -24,6 +24,7 @@ from unittest import mock, TestCase
 from pathlib import Path
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import yolov3, yolov3_tiny
 
 
 # Yolo model has some issue(Windows fatal exception) with pytest on Github actions
@@ -117,6 +118,12 @@ class TestYolo:
                     ) == '---no yolo weights detected. proceeding to download...---'
                     assert captured.records[1].getMessage(
                     ) == '---yolo weights download complete.---'
+                    assert yolo is not None
 
     def test_get_detect_ids(self, yolo):
         assert yolo.model.get_detect_ids() == [0] 
+
+    def test_yolo_model_initialization(self):
+        model1 = yolov3()
+        model2 = yolov3_tiny()
+        assert model1 is not None and model2 is not None
