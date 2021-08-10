@@ -25,3 +25,6 @@ jobs:
           pip install -r cicd_requirements.txt
       - name: Run all tests
         run: bash ./scripts/run_tests.sh all
+      - name: Run broken link report
+        run: python ./scripts/check_links.py
+

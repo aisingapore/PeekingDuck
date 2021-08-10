@@ -22,5 +22,5 @@ jobs:
         uses: ./.github/actions/linting-checks  # note only works after checkout@v2
       - name: Run unit tests
         run: bash ./scripts/run_tests.sh unit
-      - name: Run Link Check tests
+      - name: Run broken link report
         run: python ./scripts/check_links.py
