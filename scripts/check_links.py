@@ -51,7 +51,7 @@ def check_files(lst_filepaths):
             ]
             total_list_of_links = img_links + href_links
             final_list_of_links = [txt for txt in total_list_of_links if ("." in txt)]
-            # to extract the link from txt such as [here](./io_draw_nodes.md#input-nodes)
+            # to extract the valid link from some links such as [here](./io_draw_nodes.md#input-nodes)
             final_list_of_links = [link.split("#")[0] for link in final_list_of_links]
 
         for link in final_list_of_links:
