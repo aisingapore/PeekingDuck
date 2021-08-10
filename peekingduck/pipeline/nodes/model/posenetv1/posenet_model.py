@@ -30,6 +30,12 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
 
         self.logger = logging.getLogger(__name__)
 
+        # check threshold values
+        if not 0 <= config['score_threshold'] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
+        if config['model_type'] not in [50, 75, 101, 'resnet']:
+            raise ValueError("model_type must be one of [50, 75, 101, resnet]")
+
         # check for posenet weights, if none then download into weights folder
         if not checker.has_weights(config['root'],
                                    config['weights_dir']):

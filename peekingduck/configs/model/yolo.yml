@@ -1,8 +1,7 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
-model_class: humanmodel
-model_type: v4tiny # v3, v3tiny, v4 or v4tiny
+model_type: v4tiny # v4 or v4tiny
 classes: ../weights/yolov4/coco.names
 weights_dir: ["../weights/yolov4"]
 blob_file: "yolo.zip"

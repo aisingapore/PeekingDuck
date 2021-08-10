@@ -50,17 +50,17 @@ class Node(AbstractNode):
             Output directory for files to be written locally.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
         self._file_name = None
-        self._output_dir = config["output_dir"]
-        self._prepare_directory(config["output_dir"])
+        self._prepare_directory(self.output_dir)
         self._fourcc = cv2.VideoWriter_fourcc(*'mp4v')
         self._image_type = None
         self._file_path = None
         self.writer = None
         self._file_path_with_timestamp = None
+        self.logger.info('Output directory used is: %s', self.output_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath"""
@@ -118,6 +118,6 @@ class Node(AbstractNode):
             + "_" + time_str \
             + "."+filename.split(".")[-1]
         file_path_with_timestamp = os.path.join(  # type: ignore
-            self._output_dir, filename_with_timestamp)
+            self.output_dir, filename_with_timestamp)
 
         return file_path_with_timestamp

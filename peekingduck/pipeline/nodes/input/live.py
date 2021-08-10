@@ -68,34 +68,31 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-
-        self.resize_info = config['resize']
-        input_source = config['input_source']
-        mirror_image = config['mirror_image']
-        self.fps_saved_output_video = config["fps_saved_output_video"]
-        self.filename = config["filename"]
-
-        self.videocap = VideoThread(input_source, mirror_image)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
+        self.videocap = VideoThread(self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
         self.logger.info('Device resolution used: %s by %s', width, height)
-        if self.resize_info['do_resizing']:
+        if self.resize['do_resizing']:
             self.logger.info('Resizing of input set to %s by %s',
-                             self.resize_info['width'],
-                             self.resize_info['height'])
+                             self.resize['width'],
+                             self.resize['height'])
+        if self.filename.split('.')[-1] not in self._allowed_extensions:
+            raise ValueError("filename extension must be one of: ", \
+                             self._allowed_extensions)
+
         self.frame_counter = 0
-        self.frames_log_freq = config['frames_log_freq']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         success, img = self.videocap.read_frame()  # type: ignore
 
         if success:
-            if self.resize_info['do_resizing']:
+            if self.resize['do_resizing']:
                 img = resize_image(img,
-                                   self.resize_info['width'],
-                                   self.resize_info['height'])
+                                   self.resize['width'],
+                                   self.resize['height'])
             outputs = { "img": img,
                         "pipeline_end": False,
                         "filename": self.filename,

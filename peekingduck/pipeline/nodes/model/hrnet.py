@@ -24,7 +24,8 @@ from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
 
 class Node(AbstractNode):
     """HRNet node class that initialises and use hrnet model to infer poses
-    from detected bboxes.
+    from detected bboxes. Note that HRNet must be used in conjunction with
+    a object detector applied prior.
 
     The HRNet applied to human pose estimation uses the representation head,
     called HRNetV1.
@@ -77,9 +78,9 @@ class Node(AbstractNode):
     https://arxiv.org/abs/1908.07919
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.model = hrnet_model.HRNetModel(config)
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self.model = hrnet_model.HRNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the bbox input and returns the poses

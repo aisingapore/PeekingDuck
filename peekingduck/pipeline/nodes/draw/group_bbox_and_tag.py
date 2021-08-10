@@ -29,7 +29,7 @@ class Node(AbstractNode):
     which have been identified as belonging to large groups.
 
     The draw group_bbox_and_tage node uses the obj_groups and large_groups from the
-    heuristic predictions to draw group bboxes and the large group message tag onto the image.
+    dabble nodes to draw group bboxes and the large group message tag onto the image.
     For better understanding, refer to
     `group size checking usecase <use_cases/group_size_checking.html>`_.
 
@@ -51,11 +51,8 @@ class Node(AbstractNode):
             string message printed in the case of a large group detected.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.tag = config["tag"]
-        self.bbox_thickness = config["bbox_thickness"]
-        self.bbox_color = tuple(config["bbox_color"])
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Draws large bounding boxes over multiple object bounding boxes

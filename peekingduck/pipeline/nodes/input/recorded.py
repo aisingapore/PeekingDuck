@@ -22,6 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 
+
 # pylint: disable=R0902
 class Node(AbstractNode):
     """Node to receive videos/image as inputs.
@@ -53,27 +54,25 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
+    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
-        input_dir = config['input_dir']
-        self.resize_info = config['resize']
-        self._mirror_image = config['mirror_image']
         self.file_end = False
         self.frame_counter = -1
         self.tens_counter = 10
-
-        self._get_files(input_dir)
+        self._get_files(self.input_dir)
         self._get_next_input()
 
         width, height = self.videocap.resolution
         self.logger.info('Video/Image size: %s by %s',
                          width,
                          height)
-        if self.resize_info['do_resizing']:
+        if self.resize['do_resizing']:
             self.logger.info('Resizing of input set to %s by %s',
-                             self.resize_info['width'],
-                             self.resize_info['height'])
+                             self.resize['width'],
+                             self.resize['height'])
+
+        self.logger.info('Filepath used: %s', self.input_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         '''
@@ -108,10 +107,10 @@ class Node(AbstractNode):
                    "saved_video_fps": self._fps}
         if success:
             self.file_end = False
-            if self.resize_info['do_resizing']:
+            if self.resize['do_resizing']:
                 img = resize_image(img,
-                                   self.resize_info['width'],
-                                   self.resize_info['height'])
+                                   self.resize['width'],
+                                   self.resize['height'])
             outputs = {"img": img,
                        "pipeline_end": False,
                        "filename": self._file_name,
@@ -142,7 +141,7 @@ class Node(AbstractNode):
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(
                     file_path,
-                    self._mirror_image
+                    self.mirror_image
                 )
                 self._fps = self.videocap.fps
             else:

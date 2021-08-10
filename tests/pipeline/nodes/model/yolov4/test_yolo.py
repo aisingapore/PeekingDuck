@@ -111,8 +111,8 @@ class TestYolo:
                     'peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger') \
                     as captured:
 
-                    yolo = Node(yolo_config)
-
+                    yolo = Node(config=yolo_config)
+                    # records 0 - 20 records are updates to configs
                     assert captured.records[0].getMessage(
                     ) == '---no yolo weights detected. proceeding to download...---'
                     assert captured.records[1].getMessage(

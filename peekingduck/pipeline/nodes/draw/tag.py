@@ -27,7 +27,7 @@ class Node(AbstractNode):
     """Node that draws tags above bounding boxes
 
     The draw tag node uses the bboxes, obj_tags predictions from
-    heuristic and models to draw the heuristic tags of the bboxes onto the image.
+    dabble nodes and models to draw the tags of the bboxes onto the image.
 
     Inputs:
 
@@ -44,9 +44,8 @@ class Node(AbstractNode):
         None.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__(config, node_path=__name__)
-        self.tag_color = config["tag_color"]
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.
