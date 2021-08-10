@@ -19,12 +19,8 @@ Draws utilities regarding zoning functions
 from typing import List, Tuple, Any
 import numpy as np
 import cv2
-from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 from peekingduck.pipeline.nodes.draw.utils.constants import \
-    BLACK, WHITE, FILLED, PRIMARY_PALETTE, PRIMARY_PALETTE_LENGTH, \
-        SMALL_FONTSCALE, THICK, VERY_THICK
-from peekingduck.pipeline.nodes.draw.utils.general import \
-    get_image_size
+    PRIMARY_PALETTE, PRIMARY_PALETTE_LENGTH, VERY_THICK
 
 
 def _draw_zone_area(frame: np.array, points: List[Tuple[int]],
