@@ -2,11 +2,10 @@ import os
 import urllib.request
 from bs4 import BeautifulSoup
 import markdown
-from pprint import pprint, PrettyPrinter
 from texttable import Texttable
 
 
-# Currently not in used because Sphinx generated html files
+# Currently not in use because Sphinx generated html files
 # do not show in the Peekingduck repo on github
 #
 # def get_html():
@@ -86,9 +85,6 @@ def check_files(lst_filepaths):
 def print_output(faulty_links):
 
     print("\nTable of broken links\n")
-    # # print("Filepath"+" "*10+"|" )
-    # for filepath, link, root_folder in faulty_links:
-    #     pprint(f"{filepath},{link},{root_folder}")
     t = Texttable()
     t.set_cols_width([25, 25, 20])
     t.add_rows(
@@ -100,7 +96,7 @@ def print_output(faulty_links):
 if __name__ == "__main__":
 
     mds_rst_filepaths = get_md_rst()
-    print("CHECKING FILES")
+    print("\nCHECKING FILES")
     print("-" * 50)
     faulty_links = check_files(mds_rst_filepaths)
 
