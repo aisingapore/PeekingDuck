@@ -13,5 +13,5 @@ formats:
 python:
    version: 3.7
    install:
-      - requirements: sphinx_requirements.txt
+      - requirements: cicd_requirements.txt
 

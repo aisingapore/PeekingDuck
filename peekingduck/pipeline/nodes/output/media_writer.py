@@ -60,6 +60,7 @@ class Node(AbstractNode):
         self._file_path = None
         self.writer = None
         self._file_path_with_timestamp = None
+        self.logger.info('Output directory used is: %s', self.output_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """ Writes media information to filepath"""

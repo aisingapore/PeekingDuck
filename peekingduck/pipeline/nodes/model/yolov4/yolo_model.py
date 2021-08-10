@@ -25,12 +25,16 @@ from .yolo_files.detector import Detector
 
 
 class YoloModel:
-    """Yolo model with model types: v3 and v3tiny"""
+    """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
 
         self.logger = logging.getLogger(__name__)
+
+        # check threshold values
+        if not 0 <= config['yolo_score_threshold'] <= 1:
+            raise ValueError("yolo_score_threshold must be in [0, 1]")
 
         # check for yolo weights, if none then download into weights folder
         if not checker.has_weights(config['root'],

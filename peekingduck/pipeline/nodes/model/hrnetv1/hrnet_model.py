@@ -34,6 +34,10 @@ class HRNetModel:  # pylint: disable=too-few-public-methods
 
         self.logger = logging.getLogger(__name__)
 
+        # check threshold values
+        if not 0 <= config['score_threshold'] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
+
         # check for hrnet weights, if none then download into weights folder
         if not checker.has_weights(config['root'], config['weights_dir']):
             print('---no hrnet weights detected. proceeding to download...---')

@@ -15,7 +15,7 @@ limitations under the License.
 """
 import pytest
 import numpy as np
-from peekingduck.pipeline.nodes.heuristic.check_nearby_objs import Node
+from peekingduck.pipeline.nodes.dabble.check_nearby_objs import Node
 
 TAG_MSG = "TOO CLOSE!"
 

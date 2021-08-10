@@ -70,7 +70,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-
+        self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
         self.videocap = VideoThread(self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
@@ -79,6 +79,10 @@ class Node(AbstractNode):
             self.logger.info('Resizing of input set to %s by %s',
                              self.resize['width'],
                              self.resize['height'])
+        if self.filename.split('.')[-1] not in self._allowed_extensions:
+            raise ValueError("filename extension must be one of: ", \
+                             self._allowed_extensions)
+
         self.frame_counter = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

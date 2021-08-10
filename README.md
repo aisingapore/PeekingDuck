@@ -61,7 +61,7 @@ PeekingDuck has 5 types of nodes:
 
 <img src="diagrams/node_types.drawio.svg">
 
-A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`.
+A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
 <img src="diagrams/yolo_demo.drawio.svg">
 
@@ -118,13 +118,13 @@ Earlier on, the `peekingduck init` command created the `run_config.yml` file, wh
 
 ## Explore PeekingDuck Nodes
 
-AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined heuristic nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
+AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
 | | |
 |-|-|
-| [Social Distancing](docs/source/use_cases/social_distancing.md) | [Zone Counting](docs/source/use_cases/zone_counting.md) |
+| [Social Distancing](https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html) | [Zone Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html) |
 |<img src="images/readme/social_distancing.gif" width="100%"> |<img src="images/readme/zone_counting.gif" width="100%">|
-| [Group Size Checking](docs/source/use_cases/group_size_checking.md) | [Object Counting](docs/source/use_cases/object_counting.md) |
+| [Group Size Checking](https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html) | [Object Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting.html) |
 |<img src="images/readme/group_size_check_2.gif" width="100%">|<img src="images/readme/object_counting.gif" width="100%"> |
 | | |
 
@@ -134,7 +134,7 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes.
 
-We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](docs/source/introduction/guide_custom_nodes.md) provides more details on how to do that.
+We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html) provides more details on how to do that.
 
 ## Acknowledgements
 
@@ -151,4 +151,5 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
-
+## Additional References
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/introduction/02_bibliography.html).
