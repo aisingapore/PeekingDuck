@@ -39,29 +39,35 @@ def check_files(lst_filepaths):
 
         with open(filepath, "r", encoding="utf-8") as f:
             file = f.read()
-            file_2_html = markdown.markdown(file)
-            soup = BeautifulSoup(file_2_html, "html.parser")
-            img_soup = soup.find_all("img")
-            href_soup = soup.find_all("a")
-            img_links = [tag["src"] for tag in img_soup if tag.has_attr("src")]
-            href_links = [tag["href"] for tag in href_soup if tag.has_attr("href")]
-            final = img_links + href_links
-            final = [
-                txt for txt in final if ("." in txt) and ("#" not in txt)
+            file_as_html = markdown.markdown(file)
+            soup = BeautifulSoup(file_as_html, "html.parser")
+            filtered_by_img_tags = soup.find_all("img")
+            filtered_by_href_tags = soup.find_all("a")
+            img_links = [
+                tag["src"] for tag in filtered_by_img_tags if tag.has_attr("src")
+            ]
+            href_links = [
+                tag["href"] for tag in filtered_by_href_tags if tag.has_attr("href")
+            ]
+            total_list_of_links = img_links + href_links
+            final_list_of_links = [
+                txt for txt in total_list_of_links if ("." in txt) and ("#" not in txt)
             ]  # remove leftover artifacts
 
-        for link in final:
+        for link in final_list_of_links:
             # if link is a https link, run request.urlopen
             if link[:4] == "http":
                 try:
                     resp = urllib.request.urlopen(link)  # nosec
                 except Exception as e:
-                    # here i filter only 404 error
-                    # if u want catch all then u remove if statement
+                    # In this implementation only 404 is flagged for broken links
+                    # 404 = http page not found error
+                    # if statement can be removed/adjusted to flag multiple error codes
+                    # such as 404,403,408...
                     if e.code == 404:
                         # filepath is the current file being parsed
                         # link is the link found in the current parsed file
-                        # e.code is the execption code such as 404,403...
+                        # e.code is the execption code
                         faulty_links.append([filepath, link, e.code])
 
             else:
