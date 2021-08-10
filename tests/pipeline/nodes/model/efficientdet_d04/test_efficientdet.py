@@ -107,8 +107,12 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(['person']), labels)
 
-    def test_efficientdet_model(self):
-        model1 = edet(1)
-        model2 = edet(1, weighted_bifpn=False)
-        model3 = edet(1, detect_quadrangle=True)
-        assert model1 is not None and model2 is not None and model3 is not None
+    def test_efficientdet_model_initializations(self):
+        test_models = {}
+        test_models['normal'] = edet(1)
+        test_models['weighted'] = edet(1, weighted_bifpn=False)
+        test_models['detect_quadrangle'] = edet(1, detect_quadrangle=True)
+        test_models['no_sepearable_conv'] = edet(1, separable_conv=False)
+
+        for key in test_models:
+            assert test_models[key] is not None
