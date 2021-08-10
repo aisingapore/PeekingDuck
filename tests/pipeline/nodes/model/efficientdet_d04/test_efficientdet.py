@@ -21,6 +21,7 @@ import numpy.testing as npt
 import cv2
 from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import Detector
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet as edet
 
 
 @pytest.fixture
@@ -105,3 +106,13 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(['person']), labels)
+
+    def test_efficientdet_model_initializations(self):
+        test_models = {}
+        test_models['normal'] = edet(1)
+        test_models['weighted'] = edet(1, weighted_bifpn=False)
+        test_models['detect_quadrangle'] = edet(1, detect_quadrangle=True)
+        test_models['no_sepearable_conv'] = edet(1, separable_conv=False)
+
+        for key in test_models:
+            assert test_models[key] is not None
