@@ -50,9 +50,9 @@ def check_files(lst_filepaths):
                 tag["href"] for tag in filtered_by_href_tags if tag.has_attr("href")
             ]
             total_list_of_links = img_links + href_links
-            final_list_of_links = [
-                txt for txt in total_list_of_links if ("." in txt) and ("#" not in txt)
-            ]  # remove leftover artifacts
+            final_list_of_links = [txt for txt in total_list_of_links if ("." in txt)]
+            # to extract the valid link from some links such as ./io_draw_nodes.md#input-nodes
+            final_list_of_links = [link.split("#")[0] for link in final_list_of_links]
 
         for link in final_list_of_links:
             # if link is a https link, run request.urlopen
