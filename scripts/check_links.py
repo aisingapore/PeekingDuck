@@ -23,7 +23,8 @@ from texttable import Texttable
 
 def get_md_rst():
     lst_md_rst = []
-    # search path is hard coded with ref of this script locaiton
+    # search path is hard coded with ref to github actions
+    # will ref to Peekingduck root folder
     for root, dirs, files in os.walk(".", topdown=False):
         for name in files:
             if name[-2:] == "md" or name[-3:] == "rst":
