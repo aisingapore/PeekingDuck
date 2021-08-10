@@ -21,6 +21,7 @@ import numpy.testing as npt
 import cv2
 from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import Detector
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import efficientdet as edet
 
 
 @pytest.fixture
@@ -105,3 +106,9 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(['person']), labels)
+
+    def test_efficientdet_model(self):
+        model1 = edet(1)
+        model2 = edet(1, weighted_bifpn=False)
+        model3 = edet(1, detect_quadrangle=True)
+        assert model1 is not None and model2 is not None and model3 is not None
