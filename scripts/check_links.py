@@ -2,21 +2,24 @@ import os
 import urllib.request
 from bs4 import BeautifulSoup
 import markdown
-import re
+from pprint import pprint, PrettyPrinter
+from texttable import Texttable
 
 
-def get_html():
-    lst_html = []
-    # search path is hard coded with ref of this script locaiton
-    for root, dirs, files in os.walk(
-        os.path.join(".", "docs", "build", "html"), topdown=False
-    ):
-        for name in files:
-            if name[-4:] == "html":
-                filepath = os.path.join(root, name)
-                print(filepath)
-                lst_html.append((filepath, root))
-    return lst_html
+# Currently not in used because Sphinx generated html files
+# do not show in the Peekingduck repo on github
+#
+# def get_html():
+#     lst_html = []
+#     # search path is hard coded with ref of this script locaiton
+#     for root, dirs, files in os.walk(
+#         os.path.join(".", "docs", "build", "html"), topdown=False
+#     ):
+#         for name in files:
+#             if name[-4:] == "html":
+#                 filepath = os.path.join(root, name)
+#                 lst_html.append((filepath, root))
+#     return lst_html
 
 
 def get_md_rst():
@@ -26,7 +29,6 @@ def get_md_rst():
         for name in files:
             if name[-2:] == "md" or name[-3:] == "rst":
                 filepath = os.path.join(root, name)
-                print(filepath)
                 lst_md_rst.append((filepath, root))
     return lst_md_rst
 
@@ -50,7 +52,7 @@ def check_files(lst_filepaths):
 
         for link in final:
             # if link is a https link, run request.urlopen
-            if link[:5] == "https":
+            if link[:4] == "http":
                 try:
                     resp = urllib.request.urlopen(link)  # nosec
                 except Exception as e:
@@ -60,7 +62,7 @@ def check_files(lst_filepaths):
                         # filepath is the current file being parsed
                         # link is the link found in the current parsed file
                         # e.code is the execption code such as 404,403...
-                        faulty_links.append((filepath, link, e.code))
+                        faulty_links.append([filepath, link, e.code])
 
             else:
                 check = os.path.exists(os.path.join(root, link))
@@ -74,17 +76,33 @@ def check_files(lst_filepaths):
                         pass
 
                     else:
-                        faulty_links.append((filepath, link, root))
+                        faulty_links.append([filepath, link, root])
 
-        print(f"complete {filepath}")
+        print(f"Checked {filepath}")
 
     return faulty_links
+
+
+def print_output(faulty_links):
+
+    print("\nTable of broken links\n")
+    # # print("Filepath"+" "*10+"|" )
+    # for filepath, link, root_folder in faulty_links:
+    #     pprint(f"{filepath},{link},{root_folder}")
+    t = Texttable()
+    t.set_cols_width([25, 25, 20])
+    t.add_rows(
+        [["Filepath", "Broken_Link", "Root_Folder / Request Error Code"]] + faulty_links
+    )
+    print(t.draw())
 
 
 if __name__ == "__main__":
 
     mds_rst_filepaths = get_md_rst()
+    print("CHECKING FILES")
+    print("-" * 50)
     faulty_links = check_files(mds_rst_filepaths)
 
-    print(faulty_links)
+    print_output(faulty_links)
 
