@@ -35,7 +35,30 @@ PEEKINGDUCK_NODE_TYPE = ["input", "model", "draw", "dabble", "output"]
 
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods
-    """Uses the declarative run_config.yml to load pipelines or compiled configs"""
+    """
+    Declarative loader class is a helper class to create pipeline.
+
+    The declarative loader class creates the specified nodes according to any
+    modfications provided in the configs and returns the pipeline needed for
+    inference
+
+    Args:
+
+        run_config (:obj:`str`): Path to yaml file of node pipeine declaration
+
+        config_updates_cli (:obj:`str`): stringified nested dictionaries of
+        config changes passed as part of cli command. Used to modify the node
+        configurations direct from cli.
+
+        custom_node_parent_folder (:obj:`str`): path to parent folder which contains
+        custom nodes that users have created to be used with PeekingDuck.
+        For more information on using custom nodes, please refer to
+        `getting started <getting_started/03_custom_nodes.html>`_.
+
+    Outputs:
+        None. Creates pipeline by using DeclarativeLoader.get_pipeline()
+
+    """
 
     def __init__(self,
                  run_config: str,
