@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """This is a template class of how to write a node for peekingduck."""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         # initialize/load any configs and models here
