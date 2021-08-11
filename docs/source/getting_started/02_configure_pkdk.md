@@ -16,7 +16,7 @@ nodes:
 - output.screen
 ```
 
-## Changing to a pose estimation pipeline
+## Changing Nodes
 
 1. Let's modify the default `run_config.yml` to run a pose estimation demo using the following nodes:
     ```yaml
@@ -69,12 +69,12 @@ By default, `model.yolo` detects humans. We can change its behavior either by 1)
   ```
 2. Run PeekingDuck with `--node_config` and the new configurations in a JSON-like structure:
  ```bash
- peekingduck run --node_config "{'input.live': {'input_dir': <directory where videos/images are stores}, \
+ peekingduck run --node_config "{'input.live': {'input_dir': <directory where videos/images are stored}, \
                                  'model.yolo': {'detect_ids': [14]}, \
                                  'output.media_writer': {'output_dir': <directory to save results>}}"
  ```
 
-  Notice that the configs are structured in a {<node_name>: {<param_name>:<param_value>}}
+  Notice that the configs are structured in a {<node_name>: {<param_name>:<param_value>}} format.
 
 
 Regardless of the method you choose to configure PeekingDuck, the processed files will be saved to the specified output directory once PeekingDuck is finished running. You should get this in your output file:
@@ -84,5 +84,5 @@ Regardless of the method you choose to configure PeekingDuck, the processed file
 
 
 ## PeekingDuck API Reference
-We have highlight the basic configurations for different use case that you may encounter while running a PeekingDuck project.
+We have highlighted the basic configurations for different nodes that you may wish to use for your project.
 To find out what other settings can be tweaked for different nodes, check out the individual node configurations in PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
