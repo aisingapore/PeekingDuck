@@ -40,19 +40,19 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     The declarative loader class creates the specified nodes according to any
     modfications provided in the configs and returns the pipeline needed for
-    inference
+    inference.
 
     Args:
 
         run_config (:obj:`str`): Path to yaml file of node pipeine declaration
 
-        config_updates_cli (:obj:`str`): stringified nested dictionaries of
-        config changes passed as part of cli command. Used to modify the node
+        config_updates_cli (:obj:`str`): stringified nested dictionaries of \
+        config changes passed as part of cli command. Used to modify the node \
         configurations direct from cli.
 
-        custom_node_parent_folder (:obj:`str`): path to parent folder which contains
-        custom nodes that users have created to be used with PeekingDuck.
-        For more information on using custom nodes, please refer to
+        custom_node_parent_folder (:obj:`str`): path to parent folder which contains \
+        custom nodes that users have created to be used with PeekingDuck. \
+        For more information on using custom nodes, please refer to \
         `getting started <getting_started/03_custom_nodes.html>`_.
 
     Outputs:

@@ -27,7 +27,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Runner():
     """
-    The runner class for creation of pipeline using declared/given nodes
+    The runner class for creation of pipeline using declared/given nodes.
 
     The runner node situationally, depending on different inputs, use the
     provided configurations to setup a node pipeline whih is used to run single
@@ -35,20 +35,20 @@ class Runner():
 
     Args:
 
-        RUN_PATH (:obj:`str`): If path to a run_config.yml is provided, uses
-        our declarative loader to load the yaml file according to our specified
-        schema to obtain the declared nodes that would be sequentially
-        initialized and used to create the pipeline for running inference.
+        RUN_PATH (:obj:`str`): If path to a run_config.yml is provided, uses \
+        our declarative loader to load the yaml file according to our specified \
+        schema to obtain the declared nodes that would be sequentially \
+        initialized and used to create the pipeline for running inference. \
 
-        config_updates_cli (:obj:`str`): config changes passed as part of the
-        cli command. Used to modify the node configurations direct from cli.
+        config_updates_cli (:obj:`str`): config changes passed as part of the \
+        cli command sed to modify the node configurations direct from cli.
 
-        CUSTOM_NODE_PARENT_FOLDER (:obj:`str`): path to folder which contains
-        custom nodes that users have created to be used with PeekingDuck.
-        For more information on using custom nodes, please refer to
+        CUSTOM_NODE_PARENT_FOLDER (:obj:`str`): path to folder which contains \
+        custom nodes that users have created to be used with PeekingDuck. \
+        For more information on using custom nodes, please refer to \
         `getting started <getting_started/03_custom_nodes.html>`_.
 
-        nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml,
+        nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml, \
         initialize by giving the node stack directly as a list.
 
     Outputs:
