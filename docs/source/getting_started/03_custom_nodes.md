@@ -92,7 +92,7 @@ We recommend new users to use the node template below.
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
-    def __init__(self, config, **kwargs):
+    def __init__(self, config = None, **kwargs):
         super().__init__(config, node_path =__name__)
 
     def run(self, inputs):
@@ -110,7 +110,7 @@ from .utils.csv import CSVLogger
 class Node(AbstractNode):
     """Node that logs outputs of PeekingDuck and writes to a CSV"""
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         file_path = self.filepath
         inputs = self.input.copy()
