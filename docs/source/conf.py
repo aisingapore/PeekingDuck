@@ -81,4 +81,6 @@ autosummary_mock_imports = [
     'peekingduck.pipeline.nodes.dabble.utils',
     'peekingduck.pipeline.nodes.draw.utils',
     'peekingduck.pipeline.nodes.output.utils',
+    'peekingduck.pipeline.nodes.dabble.zoningv1',
+    'peekingduck.utils'
 ]
