@@ -76,7 +76,7 @@ We recommend new users to use the [config template](https://github.com/aimakersp
 Your node config yaml file should contain the following:
 - `input` (list of str): the key(s) to the required inputs for your node
 - `output` (list of str): the key(s) to the outputs
-- (optional) node-specific parameters. In our case, it will be `period`.
+- (optional) node-specific parameters. In our case, it will be `period` and `filepath`.
 
 Note: While the keys for input and output can be arbitrary strings, keys should be consistent across all nodes in the pipeline.
 
