@@ -40,6 +40,8 @@ Your project folder should look like this:
 
 The `run_config.yml` will be created by `peekingduck init`. For this tutorial, replace its contents with the following node list. Notice that newly minted nodes are identified by the following structure `<custom_folder_name>.<node-type>.<node>`. In this project, the `<custom_folder_name>` is named `custom_nodes`.
 
+**IMPORTANT**: `<node_type>` needs to adhere to one of the five node types in PeekingDuck: `['input','output','model','dabble','draw']`
+
 
 ```yaml
 # run_config.yml
