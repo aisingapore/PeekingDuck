@@ -2,7 +2,7 @@
 
 PeekingDuck is designed to work with custom use cases. This guide will showcase how anyone can develop custom nodes to be used with PeekingDuck.
 
-In this tutorial, we'll be building a custom `csv_logger` which writes data into a file. It serves as a data collection step that stores useful metrics into a csv file. This csv file can be used for logging purposes and can serve as a base for data analytics. (We have a [`output.csv_logger`](/peekingduck.pipeline.nodes.output.csv_writer.Node), but we think a CSV logger example will be simple enough for new users.)
+In this tutorial, we'll be building a custom `csv_logger` which writes data into a file. It serves as a data collection step that stores useful metrics into a csv file. This csv file can be used for logging purposes and can serve as a base for data analytics. (PeekingDuck already has an [`output.csv_logger`](/peekingduck.pipeline.nodes.output.csv_writer.Node) node, but this is a good example for users to experience creating a custom node from scratch.)
 
 A step by step instruction to build this custom node is provided below.
 
