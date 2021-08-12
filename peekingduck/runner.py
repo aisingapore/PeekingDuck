@@ -29,9 +29,8 @@ class Runner():
     """
     The runner class for creation of pipeline using declared/given nodes.
 
-    The runner node situationally, depending on different inputs, use the
-    provided configurations to setup a node pipeline whih is used to run single
-    or continuous inference.
+    The runner node uses the provided configurations to setup a node pipeline
+    which is used to run single or continuous inference.
 
     Args:
 
@@ -50,9 +49,6 @@ class Runner():
 
         nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml, \
         initialize by giving the node stack directly as a list.
-
-    Outputs:
-        None. Runs the pipeilne using Runner.run()
 
     """
 

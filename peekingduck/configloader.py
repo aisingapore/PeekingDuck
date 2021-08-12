@@ -24,7 +24,7 @@ import yaml
 
 class ConfigLoader:  # pylint: disable=too-few-public-methods
     """
-    Config loader class is a helper class to create pipeline.
+    A helper class to create pipeline.
 
     The config loader class is used to allow for instantiation of Node classes
     directly instead of reading configurations from the run config yaml.
@@ -32,9 +32,6 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
     Args:
 
         basedir (:obj:`str`): base directory of peekingduck
-
-    Outputs:
-        None
 
     """
 
@@ -53,7 +50,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
     def get(self, node_name: str) -> Dict[str, Any]:
         """
-        Function to get node configuration for specified node.
+        Get node configuration for specified node.
 
         Args:
 
