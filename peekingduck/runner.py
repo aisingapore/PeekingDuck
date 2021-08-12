@@ -29,8 +29,8 @@ class Runner():
     """
     The runner class for creation of pipeline using declared/given nodes.
 
-    The runner node uses the provided configurations to setup a node pipeline
-    which is used to run single or continuous inference.
+    The runner class uses the provided configurations to setup a node pipeline
+    which is used to run inference.
 
     Args:
 
