@@ -59,7 +59,7 @@ class Node(AbstractNode):
         self.moving_average_fps: List[float] = []
 
         if self.fps_log_display:
-            self.logger.info('FPS Moving Average will be logged every: %s frames', \
+            self.logger.info('Moving average of FPS will be logged every: %s frames',
                              self.fps_log_freq)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -72,20 +72,22 @@ class Node(AbstractNode):
         frame_fps = 1./(curr_frame_timestamp - self.prev_frame_timestamp)
         self.prev_frame_timestamp = curr_frame_timestamp
 
-        # Calculate global cumulative moving average
-        self.global_avg_fps = self._global_average(frame_fps)
-
         # Calculate moving average FPS (dampen_fps)
         average_fps = self._moving_average(frame_fps)
 
-        if self.fps_log_display:
-            if self.count%self.fps_log_freq == 0:
-                self.logger.info('Avg FPS over last 10 frames: %.2f', average_fps)
+        # Ignore FPS of final frame to avoid skewing final average
+        if not inputs["pipeline_end"]:
+            if self.fps_log_display:
+                if self.count % self.fps_log_freq == 0 and self.count != 0:
+                    self.logger.info(
+                        'Avg FPS over last 10 frames: %.2f', average_fps)
 
-        # Log global cumulative average when pipeline ends
+            # Calculate FPS over all processed frames
+            self.global_avg_fps = self._global_average(frame_fps)
+
         if inputs["pipeline_end"]:
             self.logger.info('Avg FPS over all processed frames: %.2f',
-                self.global_avg_fps)
+                             self.global_avg_fps)
 
         return {"fps": average_fps} if self.dampen_fps else {"fps": frame_fps}
 
