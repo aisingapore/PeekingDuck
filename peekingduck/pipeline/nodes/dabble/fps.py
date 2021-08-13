@@ -59,7 +59,7 @@ class Node(AbstractNode):
         self.moving_average_fps: List[float] = []
 
         if self.fps_log_display:
-            self.logger.info('FPS will be logged every: %s frames',
+            self.logger.info('Moving average of FPS will be logged every: %s frames',
                              self.fps_log_freq)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -78,7 +78,7 @@ class Node(AbstractNode):
         # Ignore FPS of final frame to avoid skewing final average
         if not inputs["pipeline_end"]:
             if self.fps_log_display:
-                if self.count % self.fps_log_freq == 0:
+                if self.count % self.fps_log_freq == 0 and self.count != 0:
                     self.logger.info(
                         'Avg FPS over last 10 frames: %.2f', average_fps)
 
