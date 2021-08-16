@@ -20,17 +20,17 @@ Inference Speed
 Test Hardware
 -------------
 We ran FPS benchmarks on the following devices to compare CPU vs GPU performance:
-- MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
-- NVIDIA A100 GPU, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
+| - MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
+| - NVIDIA A100 GPU, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
 ---------------
 The following test conditions were followed:
-- ``input.recorded``, the model of interest, and ``dabble.fps`` nodes were used to perform inference on videos
-- 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other with multiple humans (``multiple``)
-- Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800 frames to process for each
-- 1280x720 (HD ready) resolution was used, as a bridge between 640x480 (VGA) of poorer quality webcams, and 1920x1080 (Full HD) of CCTVs
-- All unnecessary processes such as browsers were closed to prevent IO/resource contention
+| - ``input.recorded``, the model of interest, and ``dabble.fps`` nodes were used to perform inference on videos
+| - 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other with multiple humans (``multiple``)
+| - Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800 frames to process for each
+| - 1280x720 (HD ready) resolution was used, as a bridge between 640x480 (VGA) of poorer quality webcams, and 1920x1080 (Full HD) of CCTVs
+| - All unnecessary processes such as browsers were closed to prevent IO/resource contention
 
 Results
 -------
