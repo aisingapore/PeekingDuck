@@ -70,9 +70,7 @@ By default, `model.yolo` detects humans. We can change its behavior either by 1)
   ```
 2. Run PeekingDuck with `--node_config` and the new configurations in a JSON-like structure:
  ```bash
- peekingduck run --node_config "{'input.recorded': {'input_dir': '<directory where videos/images are stored>'}, \
-                                 'model.yolo': {'detect_ids': [14]}, \
-                                 'output.media_writer': {'output_dir': '<directory to save results>'}}"
+ peekingduck run --node_config "{'input.recorded': {'input_dir': '<directory where videos/images are stored>'}, 'model.yolo': {'detect_ids': [14]}, 'output.media_writer': {'output_dir': '<directory to save results>'}}"
  ```
 
   Note the following:
