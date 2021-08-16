@@ -2,16 +2,13 @@
 CV Model Benchmarks
 *******************
 
-At PeekingDuck, we aim to give users as much flexibility as possible to cater to every possible scenario.
-From real-time object detection to high-accuracy pose estimation, PeekingDuck houses a wide range of models.
-The full list of models can be found :mod:`here <peekingduck.pipeline.nodes.model>`.
+PeekingDuck is equipped with a wide range of models for different scenarios, from real-time object detection to high-accuracy
+pose estimation. The full list of models can be found :mod:`here <peekingduck.pipeline.nodes.model>`.
 
-Choosing the right model, given hardware constraints, is usually about making a trade-off between inference speed
-(FPS, or Frames Per Second, in the case of CV), and model performance (mAP, or mean average precision for some CV tasks).
-We would like to use our best performing models all the time, but in the real world, we are often limited by factors such
-as project costs and power/size requirements of the hardware.
-
-We hope that these benchmarks would help you choose the most suitable model for your application.
+Given various constraints, such as hardware and costs, users are often faced with a tough trade-off between 
+inference speed and model accuracy. Hence, we prepared the following benchmarks to help users choose the most suitable model for 
+their application. These benchmarks are obtained using PeekingDuck's ``model`` nodes, and are measured in Frames Per Second (FPS) for 
+inference speed and mean average precision (mAP) for model accuracy. 
 
 
 Inference Speed
@@ -20,22 +17,21 @@ Inference Speed
 Test Hardware
 -------------
 We ran FPS benchmarks on the following devices to compare CPU vs GPU performance:
- | - MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
- | - NVIDIA A100 GPU, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
+ | - CPU: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
+ | - GPU: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
 ---------------
 The following test conditions were followed:
  | - ``input.recorded``, the model of interest, and ``dabble.fps`` nodes were used to perform inference on videos
  | - 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other with multiple humans (``multiple``)
- | - Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800 frames to process for each
+ | - Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800 frames to process per video
  | - 1280x720 (HD ready) resolution was used, as a bridge between 640x480 (VGA) of poorer quality webcams, and 1920x1080 (Full HD) of CCTVs
- | - All unnecessary processes such as browsers were closed to prevent IO/resource contention
+ | - All unnecessary processes, such as browsers, were closed to prevent IO/resource contention
 
 Results
 -------
 The results below show the FPS (Frames Per Second) of each model type.
-It is quite clear that the FPS of pose estimation models significantly drops as the number of humans in the videos increase.
 
 +------------------------------------------+-------------------+-------------------+
 |                                          |  MacBook Pro 2017 |    NVIDIA A100    |
