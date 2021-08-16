@@ -70,7 +70,7 @@ period: 1                       # time interval (s) between logs
 filepath: 'results/stats.csv'   # output file location
 ```
 
-Do note that in this example, `<results>` directory is created and PeekingDuck will save the csv as `stats.csv` in the directory.
+`results` directory was manually created in Step 1 and PeekingDuck will save the csv as `stats.csv` in the directory.
 Node configs contains information on the input and outputs for PeekingDuck to manage.
 We recommend new users to use the [config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml) for reference.
 
@@ -181,9 +181,9 @@ class CSVLogger:
 
 ### Final Checks
 
-- [ ] By default, PeekingDuck assumes that your custom nodes are found in `src/<custom_folder_name>`.
-- [ ] NOTE: Create a `results` folder at the same level as `src`!
-- [ ] Ensure that the files are in the correct folder structure.
+- By default, PeekingDuck assumes that your custom nodes are found in `src/<custom_folder_name>`.
+- Create a `results` folder at the same level as `src`!
+- Ensure that the files are in the correct folder structure.
 
 
 Your repository should look similar to this:
