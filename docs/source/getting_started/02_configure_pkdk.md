@@ -78,7 +78,7 @@ By default, `model.yolo` detects humans. We can change its behavior either by 1)
   Note the following:
   1. configs are structured in a {<node_name>: {<param_name>:<param_value>}} format.
   2. Unlike the yaml files, filepaths, and strings need to be encased with quotation marks. e.g. `'input_dir': '<directory/filepath>'` .
-  3. For windows users, use `\\` for directorie/filepaths 
+  3. For Windows users, use `\\` for directories/filepaths.
   4. PeekingDuck will only accept updates to nodes that are declared in `run_config.yml`. For nodes that are not in the node list, or for configs that are not relevant to the nodes, PeekingDuck will raise a warning and use defaults where applicable. 
 
 
