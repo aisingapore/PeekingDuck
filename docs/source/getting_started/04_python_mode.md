@@ -26,10 +26,10 @@ from peekingduck.pipeline.nodes.draw import bbox
 from peekingduck.pipeline.nodes.output import media_writer
 
 # Initialise the nodes
-input_node = recorded.Node(input_dir="data/input/t1.jpg")
+input_node = recorded.Node(input_dir="<directory>")
 yolo_node = yolo.Node()
 draw_node = bbox.Node()
-output_node = media_writer.Node(output_dir="data/output")
+output_node = media_writer.Node(output_dir="<directory>")
 
 # Run it in the runner
 runner = Runner(nodes=[input_node, yolo_node, draw_node, output_node])
