@@ -75,11 +75,12 @@ By default, `model.yolo` detects humans. We can change its behavior either by 1)
                                  'output.media_writer': {'output_dir': '<directory to save results>'}}"
  ```
 
-  Notice that the configs are structured in a {<node_name>: {<param_name>:<param_value>}} format.
-  Note that for the `'<directory/filepath>'` do encase in apostrophe.
-  For windows users, do use `\\` in the directory/filepath when keyed in CLI
+  Note the following:
+  1. configs are structured in a {<node_name>: {<param_name>:<param_value>}} format.
+  2. Unlike the yaml files, filepaths, and strings need to be encased with quotation marks. e.g. `'input_dir': '<directory/filepath>'` .
+  3. For windows users, use `\\` for directorie/filepaths 
+  4. PeekingDuck will only accept updates to nodes that are declared in `run_config.yml`. For nodes that are not in the node list, or for configs that are not relevant to the nodes, PeekingDuck will raise a warning and use defaults where applicable. 
 
-For new configurations updates through CLI, updates can only be done for nodes that have been declared in `run_config.yml`. It is curently not possible to insert new nodes via `--node_config` in CLI
 
 Regardless of the method you choose to configure PeekingDuck, the processed files will be saved to the specified output directory once PeekingDuck is finished running. You should get this in your output file:
 
