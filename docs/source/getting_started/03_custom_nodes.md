@@ -70,6 +70,7 @@ period: 1                       # time interval (s) between logs
 filepath: 'results/stats.csv'   # output file location
 ```
 
+Do note that in this example, `<results>` directory is created and PeekingDuck will save the csv as `stats.csv` in the directory.
 Node configs contains information on the input and outputs for PeekingDuck to manage.
 We recommend new users to use the [config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml) for reference.
 

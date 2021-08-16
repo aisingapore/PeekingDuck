@@ -62,20 +62,24 @@ By default, `model.yolo` detects humans. We can change its behavior either by 1)
 1. From the default `run_config.yml`, update the nodes accordingly:
   ```yaml
     nodes:
-    - input.live
+    - input.recorded
     - model.yolo
     - draw.bbox
     - output.screen
+    - output.media_writer
   ```
 2. Run PeekingDuck with `--node_config` and the new configurations in a JSON-like structure:
  ```bash
- peekingduck run --node_config "{'input.live': {'input_dir': <directory where videos/images are stored}, \
+ peekingduck run --node_config "{'input.recorded': {'input_dir': '<directory where videos/images are stored>'}, \
                                  'model.yolo': {'detect_ids': [14]}, \
-                                 'output.media_writer': {'output_dir': <directory to save results>}}"
+                                 'output.media_writer': {'output_dir': '<directory to save results>'}}"
  ```
 
   Notice that the configs are structured in a {<node_name>: {<param_name>:<param_value>}} format.
+  Note that for the `'<directory/filepath>'` do encase in apostrophe.
+  For windows users, do use `\\` in the directory/filepath when keyed in CLI
 
+For new configurations updates through CLI, updates can only be done for nodes that have been declared in `run_config.yml`. It is curently not possible to insert new nodes via `--node_config` in CLI
 
 Regardless of the method you choose to configure PeekingDuck, the processed files will be saved to the specified output directory once PeekingDuck is finished running. You should get this in your output file:
 
