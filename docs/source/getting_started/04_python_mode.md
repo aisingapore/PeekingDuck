@@ -3,7 +3,7 @@
 PeekingDuck is designed to be flexible enough for users to deploy PeekingDuck as an app,
 extend it for custom use cases, or just use part of it for prototyping purposes.
 
-Here are some examples where the Python API will come in handry:
+Here are some examples where the Python API will come in handy:
 
 1. Wrap a FastAPI app around a Object Detection module
 2. Integrate PeekingDuck into your existing python codebase
