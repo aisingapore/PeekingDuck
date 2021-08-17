@@ -46,7 +46,7 @@ napoleon_custom_sections = [('Configs', 'params_style'),
 
 
 autosummary_generate = True
-master_doc = "index"
+master_doc = "master"
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['../_templates']
