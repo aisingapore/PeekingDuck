@@ -79,7 +79,7 @@ Some common node behaviours that you might need to adjust are:
 - `obj_dist_thres`: The maximum distance between 2 individuals, in metres, before they are considered to be part of a group.
 - `group_size_thres`: The acceptable group size limit.
 
-For more adjustable node behaviours not listed here, check out the [API reference](/peekingduck.pipeline.nodes.model).
+For more adjustable node behaviours not listed here, check out the [API reference](/peekingduck.pipeline.nodes).
 
 **3. Using Object Detection (Optional)**
 
