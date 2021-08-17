@@ -70,7 +70,7 @@ nodes:
     detect_ids: [0]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
-    resolution: [1280, 720]
+    resolution: [1280, 720]        # Adjust this to your camera's input resolution
     zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
