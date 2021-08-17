@@ -67,6 +67,9 @@
 .. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced. Used for
    input nodes that require no prior inputs, or draw nodes that overwrite current input.
 
+.. |video_cap| replace:: ``video_cap`` (:obj:`object`): VideoThread or VideoNoThread object that is primarily 
+   used by output.screen node to terminate threading. Will be deprecated in future versions.
+
 
 {{ fullname | escape | underline }}
 

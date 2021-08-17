@@ -39,6 +39,8 @@ class Node(AbstractNode):
 
             |saved_video_fps|
 
+            |video_cap|
+
         Configs:
             resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
 
@@ -54,9 +56,10 @@ class Node(AbstractNode):
 
     """
 
-    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self._allowed_extensions = ["jpg", "jpeg", "png", "mp4", "avi", "mov", "mkv"]
+        self._allowed_extensions = ["jpg", "jpeg",
+                                    "png", "mp4", "avi", "mov", "mkv"]
         self.file_end = False
         self.frame_counter = -1
         self.tens_counter = 10
@@ -75,17 +78,16 @@ class Node(AbstractNode):
         self.logger.info('Filepath used: %s', self.input_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        '''
-        input: ["none"],
-        output: ["img", "pipeline_end"]
-        '''
+
         outputs = self._run_single_file()
 
-        approx_processed = round((self.frame_counter/self.videocap.frame_count)*100)
+        approx_processed = round(
+            (self.frame_counter/self.videocap.frame_count)*100)
         self.frame_counter += 1
 
         if approx_processed > self.tens_counter:
-            self.logger.info('Approximately Processed: %s%%...', self.tens_counter)
+            self.logger.info(
+                'Approximately Processed: %s%%...', self.tens_counter)
             self.tens_counter += 10
 
         if self.file_end:
@@ -104,7 +106,8 @@ class Node(AbstractNode):
         outputs = {"img": None,
                    "pipeline_end": True,
                    "filename": self._file_name,
-                   "saved_video_fps": self._fps}
+                   "saved_video_fps": self._fps,
+                   "video_cap": self.videocap}
         if success:
             self.file_end = False
             if self.resize['do_resizing']:
@@ -114,7 +117,8 @@ class Node(AbstractNode):
             outputs = {"img": img,
                        "pipeline_end": False,
                        "filename": self._file_name,
-                       "saved_video_fps": self._fps}
+                       "saved_video_fps": self._fps,
+                       "video_cap": self.videocap}
 
         return outputs
 

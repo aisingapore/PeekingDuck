@@ -38,6 +38,8 @@ class Node(AbstractNode):
 
         |saved_video_fps|
 
+        |video_cap|
+
     Configs:
         fps_saved_output_video (:obj:`int`): **default = 10**
 
@@ -100,10 +102,12 @@ class Node(AbstractNode):
                 img = resize_image(img,
                                    self.resize['width'],
                                    self.resize['height'])
+
             outputs = {"img": img,
                        "pipeline_end": False,
                        "filename": self.filename,
-                       "saved_video_fps": self.fps_saved_output_video}
+                       "saved_video_fps": self.fps_saved_output_video,
+                       "video_cap": self.videocap}
             self.frame_counter += 1
             if self.frame_counter % self.frames_log_freq == 0:
                 self.logger.info('Frames Processed: %s ...',
@@ -113,7 +117,8 @@ class Node(AbstractNode):
             outputs = {"img": None,
                        "pipeline_end": True,
                        "filename": self.filename,
-                       "saved_video_fps": self.fps_saved_output_video}
+                       "saved_video_fps": self.fps_saved_output_video,
+                       "video_cap": self.videocap}
             self.logger.warning("No video frames available for processing.")
 
         return outputs

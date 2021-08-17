@@ -1,5 +1,5 @@
 input: ["none"]
-output: ["img", "pipeline_end", "filename", "saved_video_fps"]
+output: ["img", "pipeline_end", "filename", "saved_video_fps", "video_cap"]
 
 resize: {
             do_resizing: False,

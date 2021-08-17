@@ -1,2 +1,2 @@
-input: ["img"]
+input: ["img", "video_cap"]
 output: ["pipeline_end"]

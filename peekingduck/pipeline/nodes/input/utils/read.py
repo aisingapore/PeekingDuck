@@ -31,23 +31,30 @@ class VideoThread:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Camera or video input not detected: %s" % input_source)
+            raise ValueError(
+                "Camera or video input not detected: %s" % input_source)
 
+        self.started = True
         self._lock = Lock()
+        self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
+        self.thread.start()
 
-        self.frame = None
-        thread = Thread(target=self._reading_thread, args=(), daemon=True)
-        thread.start()
-
-    def __del__(self) -> None:
+    def release(self) -> None:
+        '''
+        Method to release resources when process is terminated.
+        '''
+        self.started = False
+        self.thread.join()
         self.stream.release()
 
     def _reading_thread(self) -> None:
         '''
         A thread that continuously polls the camera for frames.
         '''
-        while True:
+        while self.started:
             _, self.frame = self.stream.read()
+            self._lock.acquire()
+            self._lock.release()
 
     def read_frame(self) -> Union[bool, Any]:
         '''
@@ -86,9 +93,13 @@ class VideoNoThread:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Video or image path incorrect: %s" % input_source)
+            raise ValueError(
+                "Video or image path incorrect: %s" % input_source)
 
-    def __del__(self) -> None:
+    def release(self) -> None:
+        '''
+        Method to release resources when process is terminated.
+        '''
         self.stream.release()
 
     def read_frame(self) -> None:

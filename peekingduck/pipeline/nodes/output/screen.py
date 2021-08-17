@@ -27,12 +27,14 @@ class Node(AbstractNode):
     Inputs:
         |img|
 
+        |video_cap|
+
     Outputs:
         |pipeline_end|
 
     """
 
-    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -41,6 +43,7 @@ class Node(AbstractNode):
         cv2.imshow('PeekingDuck', inputs["img"])
 
         if cv2.waitKey(1) & 0xFF == ord('q'):
+            inputs["video_cap"].release()
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
