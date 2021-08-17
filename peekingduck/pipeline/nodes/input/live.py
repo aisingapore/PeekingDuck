@@ -66,9 +66,11 @@ class Node(AbstractNode):
 
             Logs frequency of frames passed in cli
 
-        threading (:obj:`bool`): **default = True**
+        threading (:obj:`bool`): **default = False**
 
-            Boolean to enable threading when reading frames from camera
+            Boolean to enable threading when reading frames from camera.
+            The FPS can increase up to 30% if this is enabled for Windows and MacOS.
+            This will also be supported in Linux in future PeekingDuck versions.
 
     """
 
@@ -76,9 +78,11 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
         if self.threading:
-            self.videocap = VideoThread(self.input_source, self.mirror_image)
+            self.videocap = VideoThread(                # type: ignore
+                self.input_source, self.mirror_image)
         else:
-            self.videocap = VideoNoThread(self.input_source, self.mirror_image)
+            self.videocap = VideoNoThread(              # type: ignore
+                self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
         self.logger.info('Device resolution used: %s by %s', width, height)
@@ -100,6 +104,7 @@ class Node(AbstractNode):
                 img = resize_image(img,
                                    self.resize['width'],
                                    self.resize['height'])
+
             outputs = {"img": img,
                        "pipeline_end": False,
                        "filename": self.filename,
