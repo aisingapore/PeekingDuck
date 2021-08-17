@@ -20,6 +20,7 @@
      ├── run_config.yml
      └── src
           └── custom_nodes
+               └── configs
     ```
 
 3. Run a demo.
