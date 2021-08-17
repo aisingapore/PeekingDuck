@@ -69,7 +69,7 @@ html_theme = 'nature'
 html_static_path = ['_static']
 
 html_sidebars = {
-    '**': ['globaltoc.html', 'sourcelink.html', 'searchbox.html']
+    '**': ['globaltoc.html', 'searchbox.html']
 }
 
 autosummary_mock_imports = [
