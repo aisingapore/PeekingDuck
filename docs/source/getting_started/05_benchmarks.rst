@@ -68,13 +68,13 @@ Model Accuracy
 
 We evaluated the accuracy of the models using the MS COCO (val 2017) dataset. We integrated the COCO API into the PeekingDuck pipeline
 for loading the annotations as well as evaluating the outputs from the models. 12 metrics are used for characterizing the performance
-of the models. The definition of these metrics can be found [here](https://cocodataset.org/#detection-eval). All values are reported
+of the models. The definition of these metrics can be found `here <https://cocodataset.org/#detection-eval>`. All values are reported
 in percentage.
 
 Results
 -------
 +------------------+--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
-| Task             | Model        | Type   | AP   | AP<sup>IoU=.50</sup> | AP<sup>IoU=.75</sup> | AP<sup>small</sup> | AP<sup>medium</sup> | AP<sup>large</sup>  | AR<sup>max=1</sup> | AR<sup>max=10</sup> | AR<sup>max=100</sup> | AR<sup>small</sup> | AR<sup>medium</sup> | AR<sup>large</sup> |
+| Task             | Model        | Type   | AP   | AP `IoU=.50`:super | AP<sup>IoU=.75</sup> | AP<sup>small</sup> | AP<sup>medium</sup> | AP<sup>large</sup>  | AR<sup>max=1</sup> | AR<sup>max=10</sup> | AR<sup>max=100</sup> | AR<sup>small</sup> | AR<sup>medium</sup> | AR<sup>large</sup> |
 +------------------+--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
 | Object Detection | YOLO         | v4tiny | 13.4 | 24.6                 | 13.1                 | 3.7                | 15.4                | 20.5                | 12.9               | 16.7                | 16.8                 | 4.2                | 18.7                | 26.6               |
 |                  +--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
