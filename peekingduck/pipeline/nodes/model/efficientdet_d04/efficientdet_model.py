@@ -46,7 +46,10 @@ class EfficientDetModel:
                                         config['blob_file'])
             self.logger.info('---efficientdet weights download complete.---')
 
-        self.detect_ids = config['detect_ids']
+        if config['detect_ids'][0] == 'all':
+            self.detect_ids = list(range(0,90))
+        else:
+            self.detect_ids = config['detect_ids']
         self.logger.info('efficientdet model detecting ids: %s', self.detect_ids)
 
         self.detector = Detector(config)

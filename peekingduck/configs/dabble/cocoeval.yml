@@ -1,0 +1,7 @@
+input: ["pipeline_end", "image_id", "coco_instance", "image_size"]
+output: []
+
+type: detection
+
+instances_dir: 'PeekingDuck/coco/annotations/instances_val2017.json'
+keypoints_dir: 'PeekingDuck/coco/annotations/person_keypoints_val2017.json'

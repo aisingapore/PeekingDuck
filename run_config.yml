@@ -1,5 +1,25 @@
 nodes:
-- input.live
-- model.yolo
-- draw.bbox
+- input.cocoeval:
+    type: keypoints
+    detect_class: ["person"]
+- model.yolo:
+    model_type: v4
+- model.hrnet
+- draw.poses
+- dabble.cocoeval:
+    type: keypoints
 - output.screen
+
+
+
+# - model.yolo:
+#     detect_ids: ["all"]
+#     model_type: v4
+# - model.efficientdet:
+#     detect_ids: [1]
+#     model_type: 4
+# - model.posenet:
+#     model_type: 101
+
+
+

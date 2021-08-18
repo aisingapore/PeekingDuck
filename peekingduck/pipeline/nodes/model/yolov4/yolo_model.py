@@ -47,7 +47,11 @@ class YoloModel:
         # get classnames path to read all the classes
         classes_path = os.path.join(config['root'], config['classes'])
         self.class_names = [c.strip() for c in open(classes_path).readlines()]
-        self.detect_ids = config['detect_ids']
+
+        if config['detect_ids'][0] == 'all':
+            self.detect_ids = list(range(0,79))
+        else:
+            self.detect_ids = config['detect_ids']
 
         self.detector = Detector(config)
 
