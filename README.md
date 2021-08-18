@@ -5,7 +5,9 @@
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
+[![PeekingDuck Discord](https://img.shields.io/discord/833614241160364043?label=PeekingDuck%20Discord&logo=discord)](https://discord.gg/7x2VyHVEGX)
 
 ## What is PeekingDuck?
 
