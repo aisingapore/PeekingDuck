@@ -26,7 +26,30 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Runner():
-    """Runner class that uses the declared nodes to create pipeline to run inference
+    """
+    The runner class for creation of pipeline using declared/given nodes.
+
+    The runner class uses the provided configurations to setup a node pipeline
+    which is used to run inference.
+
+    Args:
+
+        RUN_PATH (:obj:`str`): If path to a run_config.yml is provided, uses \
+        our declarative loader to load the yaml file according to our specified \
+        schema to obtain the declared nodes that would be sequentially \
+        initialized and used to create the pipeline for running inference. \
+
+        config_updates_cli (:obj:`str`): config changes passed as part of the \
+        cli command sed to modify the node configurations direct from cli.
+
+        CUSTOM_NODE_PARENT_FOLDER (:obj:`str`): path to folder which contains \
+        custom nodes that users have created to be used with PeekingDuck. \
+        For more information on using custom nodes, please refer to \
+        `getting started <getting_started/03_custom_nodes.html>`_.
+
+        nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml, \
+        initialize by giving the node stack directly as a list.
+
     """
 
     def __init__(self,
@@ -34,15 +57,6 @@ class Runner():
                  config_updates_cli: str = None,
                  CUSTOM_NODE_PARENT_FOLDER: str = None,
                  nodes: List[AbstractNode] = None):
-        """
-        Args:
-            RUN_PATH (str): path to yaml file of node pipeine declaration.
-            config_updates_cli (str): stringified nested dictionaries of configs.
-            CUSTOM_NODE_PARENT_FOLDER (str): parent folder of the custom nodes folder.
-            nodes (:obj:'list' of :obj:'Node'): if not using declarations via yaml,
-                initialize by giving the node stack as a list
-
-        """
 
         self.logger = logging.getLogger(__name__)
 
@@ -86,6 +100,6 @@ class Runner():
         """retrieve run configs
 
         Returns:
-            Dict[Any]: run configs being used for runner
+            (:obj:`Dict`: run configs being used for runner
         """
         return self.node_loader.node_list

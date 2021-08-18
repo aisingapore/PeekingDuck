@@ -70,7 +70,7 @@ nodes:
     detect_ids: [0]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
-    resolution: [1280, 720]
+    resolution: [1280, 720]        # Adjust this to your camera's input resolution
     zones: [
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
@@ -103,4 +103,4 @@ With regards to the zone counting node, some common node behaviours for the zone
 - `resolution`: If you are planning to use fractions to set the coordinates for the area of the zone, the resolution should be set to the image/video/livestream resolution used.
 - `zones`: Used to specify the different zones which you would like to set. Each zone coordinates should be set clock-wise in a list. See section on [nodes used](#nodes-used) on how to properly configure multiple zones.
 
-For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes.model).
+For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes).

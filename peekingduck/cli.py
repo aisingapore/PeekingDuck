@@ -48,9 +48,11 @@ def create_custom_folder(custom_folder_name: str) -> None:
     """
     curdir = _get_cwd()
     custom_folder_dir = os.path.join(curdir, "src", custom_folder_name)
+    custom_configs_dir = os.path.join(custom_folder_dir, 'configs')
 
     logger.info("Creating custom nodes folder in %s", custom_folder_dir)
     os.makedirs(custom_folder_dir, exist_ok=True)
+    os.makedirs(custom_configs_dir, exist_ok=True)
 
 
 def create_yml() -> None:

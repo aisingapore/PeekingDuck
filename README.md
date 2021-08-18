@@ -5,7 +5,7 @@
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
 
 ## What is PeekingDuck?
 
@@ -42,7 +42,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     If you have a webcam, you should see the demo running live:
 
-    <img src="images/readme/yolo_demo.gif" width="50%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="50%">
 
     The previous command looks for a `run_config.yml` in the current directory. You can also specify the path of a different config file to be used, as follows:
     ```
@@ -64,62 +64,17 @@ Apart from running it via CLI, PeekingDuck can be ran as a python module as well
 
 PeekingDuck has 5 types of nodes:
 
-<img src="diagrams/node_types.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg">
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
-<img src="diagrams/yolo_demo.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
 ## Changing Nodes and Settings
 
-Earlier on, the `peekingduck init` command created the `run_config.yml` file, which is PeekingDuck's main configuration file and is responsible for:
-- Selecting which nodes to include in the pipeline
-- Configuring node behaviour
+PeekingDuck is designed to be flexible and able to suit different use cases. See our [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/02_configure_pkdk.html) on changing PeekingDuck Nodes and
+Settings for your project.
 
-**1. Selecting which nodes to include in the pipeline**:
-
-  - In the earlier object detection demo, `run_config.yml` used the following nodes:
-    ```
-    nodes:
-      - input.live
-      - model.yolo
-      - draw.bbox
-      - output.screen
-    ```
-  - Now, let's modify it to run a pose estimation demo using the following nodes:
-    ```
-    nodes:
-      - input.live
-      - model.posenet
-      - draw.poses
-      - output.screen
-    ```
-
-  - If you have a webcam, you should see the demo running live:
-
-    <img src="images/readme/posenet_demo.gif" width="50%">
-
-    Terminate the program by clicking on the output screen and pressing `q`.
-
-**2. Configuring node behaviour**:
-- If you're not using a webcam, don't worry about missing out! PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://peekingduck.blob.core.windows.net/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
-
-- We'll need to change the settings of 3 nodes, in order to set the input and output directories, and also to alter the object to be detected from a human to a bird, as follows:
-  ```
-  nodes:
-    - input.recorded:       # note the ":"
-        input_dir: <directory where videos/images are stored>
-    - model.yolo:           # note the ":"
-        detect_ids: [14]    # ID to detect the "bird" class is 14 for this model
-    - draw.bbox
-    - output.media_writer:  # note the ":"
-        output_dir: <directory to save results>
-  ```
-- Once PeekingDuck has finished running, the processed files will be saved to the specified output directory. Open the processed file and you should get this:
-
-  <img src="images/readme/ducks_demo.gif" width="50%">
-
-- To find out what other settings can be tweaked for different nodes, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
 ## Explore PeekingDuck Nodes
 
@@ -147,7 +102,7 @@ This project is supported by the National Research Foundation, Singapore under i
 
 ## License
 
-PeekingDuck is under the open source [Apache License 2.0](LICENSE) (:
+PeekingDuck is under the open source [Apache License 2.0](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE) (:
 
 Even so, your organisation may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
 - Your organisation is using PeekingDuck in a jurisdiction that does not recognise this license

@@ -59,7 +59,7 @@ The object counting node is called by including `dabble.bbox_count` in the run c
 
 The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](/peekingduck.pipeline.nodes.model.yolo.Node) or the [Efficientdet node documentation](/peekingduck.pipeline.nodes.model.efficientdet.Node) for adjustable behaviours that can influence the result of the object counting node.
 
-For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes.model).
+For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes).
 
 ## More Complex Counting Behaviour
 
