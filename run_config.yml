@@ -3,6 +3,3 @@ nodes:
 - model.yolo
 - draw.bbox
 - output.screen
-
-
-
