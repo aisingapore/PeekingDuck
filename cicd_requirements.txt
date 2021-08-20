@@ -9,5 +9,6 @@ types-six==0.1.7
 beautifulsoup4
 myst-parser
 sphinx-autodoc-typehints
+sphinx-rtd-theme
 texttable # for pretty print scripts/check_links.py output
 -r requirements.txt
