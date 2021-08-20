@@ -13,6 +13,9 @@
 
 PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
+## Documentation for PeekingDuck
+You will find the complete documentation for PeekingDuck at our [Read The Docs site.](https://peekingduck.readthedocs.io/en/stable/)
+
 ## Install and Run PeekingDuck
 
 1. Install PeekingDuck from [PyPI](https://pypi.org/project/peekingduck/).
@@ -35,6 +38,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
      ├── run_config.yml
      └── src
           └── custom_nodes
+              └── configs
     ```
 
 3. Run a demo.
