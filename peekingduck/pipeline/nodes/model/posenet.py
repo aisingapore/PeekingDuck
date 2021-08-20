@@ -48,7 +48,7 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Configs:
-        model_type (:obj:`str`): **{"resnet", "50", "75", "101"}, default="resnet"**
+        model_type (:obj:`str`): **{"resnet", "50", "75", "100"}, default="resnet"**
 
             Defines the backbone model for PoseNet.
 

@@ -23,7 +23,7 @@ import numpy.testing as npt
 
 
 TEST_DIR = os.path.join(os.getcwd(), 'images', 'testing')
-models = [50, 75, 101, 'resnet']
+models = [50, 75, 100, 'resnet']
 person_image_list = ['t1.jpg', 't2.jpg', 't4.jpg']
 empty_image_list = ['black.jpg', 't3.jpg']
 

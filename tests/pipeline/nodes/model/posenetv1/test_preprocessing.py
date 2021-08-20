@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing impo
 TEST_DIR = os.path.join(os.getcwd(), 'images', 'testing')
 NP_FILE = np.load(os.path.join(os.getcwd(), 'tests', 'pipeline', 'nodes',
                                'model', 'posenetv1', 'posenet.npz'))
-mobilenet_model_list = [50, 75, 101]
+mobilenet_model_list = [50, 75, 100]
 
 
 @pytest.fixture

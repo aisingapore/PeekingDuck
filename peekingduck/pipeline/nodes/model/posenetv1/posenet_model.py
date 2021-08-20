@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
+"""PoseNet model with model types: mobilenet50, mobilenet75, mobilenet100 and resnet"""
 
 import logging
 from typing import Dict, Any, Tuple
@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import P
 
 
 class PoseNetModel:  # pylint: disable=too-few-public-methods
-    """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet101 and resnet"""
+    """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet100 and resnet"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
@@ -33,8 +33,8 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
         # check threshold values
         if not 0 <= config['score_threshold'] <= 1:
             raise ValueError("score_threshold must be in [0, 1]")
-        if config['model_type'] not in [50, 75, 101, 'resnet']:
-            raise ValueError("model_type must be one of [50, 75, 101, resnet]")
+        if config['model_type'] not in [50, 75, 100, 'resnet']:
+            raise ValueError("model_type must be one of [50, 75, 100, resnet]")
 
         # check for posenet weights, if none then download into weights folder
         if not checker.has_weights(config['root'],
