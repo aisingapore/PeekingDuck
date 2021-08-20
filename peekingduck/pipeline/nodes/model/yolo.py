@@ -40,7 +40,7 @@ class Node(AbstractNode):
         |bbox_scores|
 
     Configs:
-        model_type (:obj:`str`): **{"v3", "v3tiny", "v4", "v4tiny"}, default="v4tiny"**
+        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**
 
             defines the type of YOLO model to be used.
 
@@ -92,7 +92,7 @@ class Node(AbstractNode):
     Inference code adapted from https://github.com/zzh8829/yolov3-tf2
     """
 
-    def __init__(self, config: Dict[str, Any]=None, **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = yolo_model.YoloModel(self.config)
 
