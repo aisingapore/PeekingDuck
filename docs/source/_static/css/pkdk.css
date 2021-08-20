@@ -1,0 +1,29 @@
+@import 'theme.css';
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap');
+
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+.wy-nav-side {
+    background: #383838;
+}
+.wy-side-nav-search {
+    background: #A76D60;
+}
+
+
+.wy-nav-content {
+    padding:1.618em 3.236em;
+    height:100%;
+    max-width:1000px;
+    margin:auto
+   }
+
+.wy-nav-content-wrap{
+    background: #fcfcfc;
+}
+
+.wy-menu-vertical p.caption {
+    color: #FFFFFF;
+}
