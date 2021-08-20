@@ -2,8 +2,8 @@
 
 .. _glossary:
 
-Glossary of Common Resources, Information
-=========================================
+Glossary
+========
 
 This glossary consolidates all the peripheral information required for a deeper
 understanding of how PeekingDuck works.
