@@ -23,6 +23,13 @@ Welcome to PeekingDuck's documentation!
 .. toctree::
    :titlesonly:
    :glob:
+   :caption: Model Resources & Information
+
+   resources/*
+
+.. toctree::
+   :titlesonly:
+   :glob:
    :caption: Use Cases
 
    use_cases/*
@@ -33,7 +40,7 @@ Nodes are the core of PeekingDuck. See below for the readily-available nodes and
 
 .. autosummary::
    :toctree:
-   :caption: API Documentation |version|
+   :caption: API Documentation
    :template: module.rst
    :recursive:
 
