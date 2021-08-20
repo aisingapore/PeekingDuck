@@ -67,13 +67,11 @@ Model Accuracy
 =================
 
 We evaluated the accuracy of the models using the MS COCO (val 2017) dataset. We integrated the COCO API into the PeekingDuck pipeline
-for loading the annotations and evaluating the outputs from the models. 12 metrics are used for characterizing the performance
-of the models. The definition of these metrics can be found `here <https://cocodataset.org/#detection-eval>`_. All values are reported
-in percentage.
+for loading the annotations and evaluating the outputs from the models. All values are reported in percentage.
 
 Results
 -------
-For object detection, all 80 object categories in the MS COCO (val 2017) dataset were processed. 
+The detection evaluation metrics from COCO were used to evaluate our object detection models. Description of these metrics can be found `here <https://cocodataset.org/#detection-eval>`_. All images from all 80 object categories in the MS COCO (val 2017) dataset were processed.
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Object Detection                                                                                                                                                                                                                                                              |
@@ -95,12 +93,12 @@ For object detection, all 80 object categories in the MS COCO (val 2017) dataset
 | EfficientDet | 4      | 40.0 | 54.4                 | 44.1                 | 21.3               | 44.3                | 57.2                | 31.8               | 45.4                | 46.0                 | 23.5               | 49.9                | 65.1               |
 +--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
 
-For pose estimation, all images in the 'person' category in the MS COCO (val 2017) dataset were processed. 
+The keypoint evaluation metrics from COCO were used to evaluate our pose estimation models. Description of these metrics can be found `here <https://cocodataset.org/#keypoints-eval>`_. All images in the 'person' category in the MS COCO (val 2017) dataset were processed to obtain the metrics.
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Pose Estimation                                                                                                                                                                                                                     |
 +--------------+--------+------+----------------------+----------------------+---------------------+---------------------+--------------------+---------------------+----------------------+---------------------+--------------------+
-| Model        | Type   | AP   | AP :sup:`IoU=.50`    | AP :sup:`IoU=.75`    | AP :sup:`medium`    | AP :sup:`large`     | AR :sup:`max=1`    | AR :sup:`max=10`    | AR :sup:`max=100`    | AR :sup:`medium`    | AR :sup:`large`    |
+| Model        | Type   | AP   | AP :sup:`OKS=.50`    | AP :sup:`OKS=.75`    | AP :sup:`medium`    | AP :sup:`large`     | AR                 | AR :sup:`OKS=.50`   | AR :sup:`OKS=.75`    | AR :sup:`medium`    | AR :sup:`large`    |
 +--------------+--------+------+----------------------+----------------------+---------------------+---------------------+--------------------+---------------------+----------------------+---------------------+--------------------+
 | PoseNet      | 50     | 5.2  | 15.4                 | 2.7                  | 0.8                 | 11.9                | 9.6                | 22.7                | 7.1                  | 1.4                 | 20.7               |
 +--------------+--------+------+----------------------+----------------------+---------------------+---------------------+--------------------+---------------------+----------------------+---------------------+--------------------+
