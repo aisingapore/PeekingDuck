@@ -5,11 +5,16 @@
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
+[![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
+[![PeekingDuck Discord](https://img.shields.io/discord/833614241160364043?label=PeekingDuck%20Discord&logo=discord)](https://discord.gg/7x2VyHVEGX)
 
 ## What is PeekingDuck?
 
 PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
+
+## Documentation for PeekingDuck
+You will find the complete documentation for PeekingDuck at our [Read The Docs site.](https://peekingduck.readthedocs.io/en/stable/)
 
 ## Install and Run PeekingDuck
 
@@ -33,6 +38,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
      ├── run_config.yml
      └── src
           └── custom_nodes
+              └── configs
     ```
 
 3. Run a demo.
