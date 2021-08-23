@@ -78,7 +78,7 @@ You can find the complete documentation for PeekingDuck at our [Read the Docs si
 - [Full list](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) of all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html)
-- `model` nodes [FPS and accuracy benchmarks](https://peekingduck.readthedocs.io/en/stable/resources/01_benchmarks.html), as well as details about [keypoints and class IDs](https://peekingduck.readthedocs.io/en/latest/resources/02_model_indices.html)
+- `model` nodes [FPS and accuracy benchmarks](https://peekingduck.readthedocs.io/en/stable/resources/01_benchmarks.html), as well as details about [keypoints and class IDs](https://peekingduck.readthedocs.io/en/stable/resources/02_model_indices.html)
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
