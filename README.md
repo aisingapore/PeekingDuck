@@ -13,8 +13,6 @@
 
 PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
-## Documentation for PeekingDuck
-You will find the complete documentation for PeekingDuck at our [Read The Docs site.](https://peekingduck.readthedocs.io/en/stable/)
 
 ## Install and Run PeekingDuck
 
@@ -59,10 +57,6 @@ You will find the complete documentation for PeekingDuck at our [Read The Docs s
 
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
-### PeekingDuck Python API
-
-Apart from running it via CLI, PeekingDuck can be ran as a python module as well. See our [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html) on using PeekingDuck via the Python API.
-
 
 ## How PeekingDuck Works
 
@@ -76,13 +70,22 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
-## Changing Nodes and Settings
 
-PeekingDuck is designed to be flexible and able to suit different use cases. See our [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/02_configure_pkdk.html) on changing PeekingDuck Nodes and
-Settings for your project.
+## Explore PeekingDuck's Features
+
+You can find the complete documentation for PeekingDuck at our [Read the Docs site](https://peekingduck.readthedocs.io/en/stable/). This includes information on:
+- [Changing PeekingDuck nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/02_configure_pkdk.html) and their settings
+- [Full list](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) of all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+- Creating your own [custom nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html), and using them with PeekingDuck nodes
+- Using PeekingDuck as an imported Python module within your project, via the [Python API](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html)
+- `model` nodes [FPS and accuracy benchmarks](https://peekingduck.readthedocs.io/en/stable/resources/01_benchmarks.html), as well as details about [keypoints and class IDs](https://peekingduck.readthedocs.io/en/latest/resources/02_model_indices.html)
+
+You are also welcome to join discussions about using PeekingDuck in the following channels:
+- [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
+- [PeekingDuck Discord server](https://discord.gg/7x2VyHVEGX)
 
 
-## Explore PeekingDuck Nodes
+## PeekingDuck Use Cases
 
 AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
@@ -96,11 +99,6 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
-## Create Custom Nodes
-
-You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's `input`, `draw`, and `output` nodes.
-
-We've designed PeekingDuck to be very flexible - you can create your own nodes and use them with ours. This [guide](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html) provides more details on how to do that.
 
 ## Acknowledgements
 
@@ -118,4 +116,4 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 ## Additional References
-Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/introduction/02_bibliography.html).
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/resources/03_bibliography.html).
