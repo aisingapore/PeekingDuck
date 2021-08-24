@@ -1,5 +1,7 @@
 # Contributing to PeekingDuck
 
+## Table of Contents
+
 - [Code of Conduct](#code-of-conduct)
 - [Types of Contributions](#types-of-contributions)
   - [Report a Bug](#report-a-bug)

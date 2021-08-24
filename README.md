@@ -75,7 +75,7 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 You can find the complete documentation for PeekingDuck at our [Read the Docs site](https://peekingduck.readthedocs.io/en/stable/). This includes information on:
 - [Changing PeekingDuck nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/02_configure_pkdk.html) and their settings
-- [Full list](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) of all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+- [Official documentation](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html)
 - `model` nodes [FPS and accuracy benchmarks](https://peekingduck.readthedocs.io/en/stable/resources/01_benchmarks.html), as well as details about [keypoints and class IDs](https://peekingduck.readthedocs.io/en/stable/resources/02_model_indices.html)
