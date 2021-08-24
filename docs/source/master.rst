@@ -11,7 +11,6 @@ Welcome to PeekingDuck's documentation!
    :caption: Introduction
 
    index.md
-   introduction/02_bibliography.md
 
 .. toctree::
    :titlesonly:

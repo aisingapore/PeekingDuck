@@ -27,8 +27,21 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
 
+## Explore PeekingDuck's Features
 
-## Explore PeekingDuck Nodes
+The rest of this webpage contains more details about using PeekingDuck, including information on:
+- [Changing PeekingDuck nodes](getting_started/02_configure_pkdk) and their settings
+- [Official documentation](peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+- Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
+- Using PeekingDuck as an imported Python module within your project, via the [Python API](getting_started/04_python_mode)
+- `model` nodes [FPS and accuracy benchmarks](resources/01_benchmarks), as well as details about [keypoints and class IDs](resources/02_model_indices)
+
+You are also welcome to join discussions about using PeekingDuck in the following channels:
+- [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
+- [PeekingDuck Discord server](https://discord.gg/7x2VyHVEGX)
+
+
+## PeekingDuck Use Cases
 
 AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 

@@ -11,7 +11,7 @@ Here are some examples where the Python API will come in handy:
 
 
 ## Sample Code
-To understand the building blocks, refer to the Introduction [here.](../introduction/01_introduction.md#how-peekingduck-works)
+To understand the building blocks, refer to the Introduction [here.](../index.md#how-peekingduck-works)
 
 
 You may also refer to our API Reference to understand PeekingDuck's capabilities [here](/peekingduck.pipeline.nodes).
