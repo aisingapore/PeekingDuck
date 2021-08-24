@@ -31,7 +31,7 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 The rest of this webpage contains more details about using PeekingDuck, including information on:
 - [Changing PeekingDuck nodes](getting_started/02_configure_pkdk) and their settings
-- [Official documentation](peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+- [Official documentation](/peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](getting_started/04_python_mode)
 - `model` nodes [FPS and accuracy benchmarks](resources/01_benchmarks), as well as details about [keypoints and class IDs](resources/02_model_indices)
@@ -47,9 +47,9 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 | | |
 |-|-|
-| [Social Distancing](../use_cases/social_distancing.md) | [Zone Counting](../use_cases/zone_counting.md) |
+| [Social Distancing](use_cases/social_distancing.md) | [Zone Counting](use_cases/zone_counting.md) |
 |<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="100%"> |<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%">|
-| [Group Size Checking](../use_cases/group_size_checking.md) | [Object Counting](../use_cases/object_counting.md) |
+| [Group Size Checking](use_cases/group_size_checking.md) | [Object Counting](use_cases/object_counting.md) |
 |<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%">|<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
 | | |
 
