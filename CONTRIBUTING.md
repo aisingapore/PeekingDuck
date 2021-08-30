@@ -64,7 +64,7 @@ Thank you for your contributions!!
 
 ## Community Discussions
 
-Join us in our [GitHub discussion board](https://github.com/aimakerspace/PeekingDuck/discussions) or [Discord server](https://discord.gg/7x2VyHVEGX).
+Join us in our [GitHub discussion board](https://github.com/aimakerspace/PeekingDuck/discussions) or [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/).
 
 . Post your thread regarding
 
