@@ -6,7 +6,6 @@
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
-[![PeekingDuck Discord](https://img.shields.io/discord/833614241160364043?label=PeekingDuck%20Discord&logo=discord)](https://discord.gg/7x2VyHVEGX)
 
 ## What is PeekingDuck?
 
@@ -38,7 +37,7 @@ The rest of this webpage contains more details about using PeekingDuck, includin
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
-- [PeekingDuck Discord server](https://discord.gg/7x2VyHVEGX)
+- [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/)
 
 
 ## PeekingDuck Use Cases
