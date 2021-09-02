@@ -30,6 +30,7 @@ DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'},
                         'levelname': {'color': 'blue', 'bold': True},
                         'name': {'color': 'magenta'}}
 
+
 def setup_logger():
     """
     Universal logging configuration
@@ -39,14 +40,5 @@ def setup_logger():
                         format='%(asctime)s %(name)s %(levelname)s:%(message)s',
                         datefmt="%Y-%m-%dT%H:%M:%S")
 
-    logger = logging.getLogger(__name__)
-
-    coloredlogs.install(level_styles = LEVEL_COLOR,
-                        field_styles = DEFAULT_FIELD_STYLES)
-
-    logger.info("Information!!!!")
-    logger.debug("Debug!!!!")
-    logger.warning("Warning!!!!")
-    logger.error("Error!!!!")
-    logger.critical("Critical!!!!")
-
+    coloredlogs.install(level_styles=LEVEL_COLOR,
+                        field_styles=DEFAULT_FIELD_STYLES)
