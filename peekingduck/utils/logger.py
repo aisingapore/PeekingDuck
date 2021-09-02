@@ -18,8 +18,19 @@ Universal logging configueration
 
 import logging
 
+import coloredlogs
 
-def setup_logger() -> None:
+LEVEL_COLOR = {'info': {'bold': True, 'color': 'green'},
+               'warning': {'bold': True, 'color': 'yellow'},
+               'error': {'bold': True, 'color': 'red'},
+               'critical': {'bold': True, 'color': 'red'}}
+
+DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'},
+                        'hostname': {'color': 'yellow'},
+                        'levelname': {'color': 'blue', 'bold': True},
+                        'name': {'color': 'magenta'}}
+
+def setup_logger():
     """
     Universal logging configuration
     """
@@ -27,3 +38,15 @@ def setup_logger() -> None:
     logging.basicConfig(level=logging.INFO,
                         format='%(asctime)s %(name)s %(levelname)s:%(message)s',
                         datefmt="%Y-%m-%dT%H:%M:%S")
+
+    logger = logging.getLogger(__name__)
+
+    coloredlogs.install(level_styles = LEVEL_COLOR,
+                        field_styles = DEFAULT_FIELD_STYLES)
+
+    logger.info("Information!!!!")
+    logger.debug("Debug!!!!")
+    logger.warning("Warning!!!!")
+    logger.error("Error!!!!")
+    logger.critical("Critical!!!!")
+
