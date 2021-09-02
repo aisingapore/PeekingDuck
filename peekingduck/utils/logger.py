@@ -31,7 +31,7 @@ DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'},
                         'name': {'color': 'magenta'}}
 
 
-def setup_logger():
+def setup_logger() -> None:
     """
     Universal logging configuration
     """
