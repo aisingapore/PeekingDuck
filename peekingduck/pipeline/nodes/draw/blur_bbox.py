@@ -42,8 +42,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    @staticmethod
-    def blur(bboxes, image):
+    def blur(self, bboxes, image):
         """
         Function that blur the area bounded by bbox in an image
         """
