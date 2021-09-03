@@ -16,8 +16,8 @@ Blur area bounded by bounding boxes over detected object
 """
 
 from typing import Any, Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
 from scipy.ndimage import gaussian_filter
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -42,23 +42,24 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    def blur(self, bboxes, image):
+    @staticmethod
+    def blur(bboxes, image):
         """
         Function that blur the area bounded by bbox in an image
         """
-        frameHeight = image.shape[0]
-        frameWidth = image.shape[1]
+        height = image.shape[0]
+        width = image.shape[1]
 
         for bbox in bboxes:
-            x1, y1, x2, y2 = bbox
-            x1, x2 = int(x1 * frameWidth), int(x2 * frameWidth)
-            y1, y2 = int(y1 * frameHeight), int(y2 * frameHeight)
+            x_1, y_1, x_2, y_2 = bbox
+            x_1, x_2 = int(x_1 * width), int(x_2 * width)
+            y_1, y_2 = int(y_1 * height), int(y_2 * height)
 
             # slice the image to get the area bounded by bbox
-            bbox_image = image[y1:y2, x1:x2, :].copy()
+            bbox_image = image[y_1:y_2, x_1:x_2, :].copy()
             # apply the blur using gaussian filter from scipy
             blur_bbox_image = gaussian_filter(bbox_image, sigma=5)
-            image[y1:y2, x1:x2, :] = blur_bbox_image
+            image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image
 

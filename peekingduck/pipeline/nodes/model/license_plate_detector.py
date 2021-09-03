@@ -16,9 +16,9 @@
 License Plate Detection model
 """
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from typing import Dict, Any
-from .licenseplate import LP_detector_model
+from peekingduck.pipeline.nodes.node import AbstractNode
+from .licenseplate import lp_detector_model
 
 
 class Node(AbstractNode):
@@ -60,7 +60,7 @@ class Node(AbstractNode):
 
             image resolution passed to the YOLO model.
 
-        confThreshold (:obj:`float`): **[0,1], default = 0.2**
+        confThreshold (:obj:`float`): **[0,1], default = 0.1**
 
             bounding box with confidence score less than the specified
             confidence score threshold is discarded.
@@ -83,7 +83,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = LP_detector_model.Yolov4(self.config)
+        self.model = lp_detector_model.Yolov4(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the image input and returns the bboxes
