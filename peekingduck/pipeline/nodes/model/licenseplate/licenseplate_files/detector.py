@@ -156,7 +156,8 @@ class Detector:
             right = left + width
             bot = top + height
             score = confidences[i]
-            label = self.class_labels[classIds[i]]
+            # label = self.class_labels[classIds[i]]
+            label = "license_plate"
             bboxes.append(
                 np.array(
                     [
