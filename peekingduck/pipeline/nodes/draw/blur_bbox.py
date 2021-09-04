@@ -19,8 +19,7 @@ from typing import Any, Dict
 from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-
-class Node(AbstractNode):
+class Node(AbstractNode): # pylint: disable=R0903
     """Blur area bounded by bounding boxes on image.
 
     The draw blur_bbox node uses the bboxes and blur the area of the image
@@ -42,7 +41,8 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    def blur(self, bboxes, image):
+    @staticmethod
+    def blur(bboxes, image):
         """
         Function that blur the area bounded by bbox in an image
         """
