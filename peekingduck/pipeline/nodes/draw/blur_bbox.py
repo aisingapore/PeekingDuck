@@ -19,12 +19,8 @@ from typing import Any, Dict
 from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-<<<<<<< HEAD
-class Node(AbstractNode): # pylint: disable=R0903
-=======
-# pylint: disable=R0903
-class Node(AbstractNode):
->>>>>>> a0c5d9c434f4bdee94b12bc6497d04d9940efb1d
+
+class Node(AbstractNode):  # pylint: disable=R0903
     """Blur area bounded by bounding boxes on image.
 
     The draw blur_bbox node uses the bboxes and blur the area of the image
