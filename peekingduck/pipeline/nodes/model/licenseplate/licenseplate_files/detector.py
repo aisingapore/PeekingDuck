@@ -35,14 +35,14 @@ class Detector:
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
-    def _get_class_labels(self):
+    def _get_class_labels(self) -> List[str]:
         classes_path = os.path.join(self.config["root"], self.config["classes"])
         with open(classes_path, "rt") as f:
             class_labels = f.read().rstrip("\n").split("\n")
 
         return class_labels
 
-    def _create_yolo_model(self):
+    def _create_yolo_model(self) -> cv.dnn_Net:
         """
         Creates yolo model for license plate detection
         """
@@ -73,7 +73,7 @@ class Detector:
 
         return model
 
-    def getOutputsNames(self):
+    def getOutputsNames(self) -> List[str]:
         """
         Returns the names of the output layers
         """
@@ -82,7 +82,9 @@ class Detector:
         # Get the names of the output layers, i.e. the layers with unconnected outputs
         return [layersNames[i[0] - 1] for i in self.yolo.getUnconnectedOutLayers()]
 
-    def predict_object_bbox_from_image(self, image: np.array):
+    def predict_object_bbox_from_image(
+        self, image: np.array
+    ) -> Tuple[List[np.array], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
         args:
