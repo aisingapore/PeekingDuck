@@ -26,9 +26,9 @@ from colorama import Fore, Style
 def setup_logger() -> None:
     """ Universal logging configuration """
 
-    msg_formatt = '{asctime} {name} {level_color} {levelname} {reset}: {msg_color} {message} {reset}'
-
-    formatter = ColoredFormatter(msg_formatt, style='{', datefmt='%Y-%m-%d %H:%M:%S',
+    formatter = ColoredFormatter('{asctime} {name} {level_color} {levelname}'
+                                 '{reset}: {msg_color} {message} {reset}',
+                                 style='{', datefmt='%Y-%m-%d %H:%M:%S',
                                  colors={'DEBUG': Fore.CYAN + Style.BRIGHT,
                                          'INFO': Fore.GREEN + Style.BRIGHT,
                                          'WARNING': Fore.YELLOW + Style.BRIGHT,
