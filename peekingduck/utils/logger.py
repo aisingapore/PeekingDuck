@@ -43,12 +43,6 @@ def setup_logger() -> None:
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
-    logger.info("Information!!!!")
-    logger.debug("Debug!!!!")
-    logger.warning("Warning!!!!")
-    logger.error("Error!!!!")
-    logger.critical("Critical!!!!")
-
 
 class ColoredFormatter(logging.Formatter):
     """This class formatt the color of logging messages"""
