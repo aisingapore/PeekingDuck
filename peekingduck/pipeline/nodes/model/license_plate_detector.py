@@ -75,7 +75,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     YOLOv4: Optimal Speed and Accuracy of Object Detection:
         https://arxiv.org/pdf/2004.10934v1.pdf
 
-    Model weights trained by AISG using pretrained weights from Darknet:
+    Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
     Inference code adapted from:
         https://github.com/GuiltyNeuron/ANPR/tree/master/Tunisian_anpr

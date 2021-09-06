@@ -15,8 +15,8 @@
 Blur area bounded by bounding boxes over detected object
 """
 
-import numpy as np
 from typing import Any, Dict, List
+import numpy as np
 from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
