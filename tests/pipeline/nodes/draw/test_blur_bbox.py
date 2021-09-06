@@ -21,10 +21,10 @@ import numpy as np
 import cv2
 from peekingduck.pipeline.nodes.draw.blur_bbox import Node
 
-TEST_IMAGE = ["t1car.jpg"]
+TEST_IMAGE = ["tcar1.jpg"]
 PKD_DIR = os.path.join(
     Path(__file__).parents[3]
-)  # path to reach 4 file levels up from test_bbox.py
+)  # path to reach 4 file levels up from test_blur_bbox.py
 
 
 @pytest.fixture(params=TEST_IMAGE)

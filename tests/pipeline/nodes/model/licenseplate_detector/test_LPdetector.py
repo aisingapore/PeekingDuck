@@ -4,7 +4,9 @@ import pytest
 import cv2
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.license_plate_detector import Node
-from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import Detector
+from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
+    Detector,
+)
 
 
 @pytest.fixture
@@ -85,6 +87,7 @@ class TestLPYolo:
                     )
                     assert LPyolo is not None
 
-    def test_model_initialization(self,LP_config):
-
-        model = 
+    # def test_model_initialization(self,LP_config):
+    #     detector = Detector(config = LP_config)
+    #     model = detector.yolo
+    #     assert model is not None
