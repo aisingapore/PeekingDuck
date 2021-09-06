@@ -23,7 +23,7 @@ from peekingduck.weights_utils import checker, downloader
 from .licenseplate_files.detector import Detector
 
 
-class Yolov4:
+class Yolov4:  # pylint: disable=too-few-public-methods
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
