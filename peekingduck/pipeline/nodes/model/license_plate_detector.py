@@ -21,7 +21,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from .licenseplate import lp_detector_model
 
 
-class Node(AbstractNode):
+class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Yolo node class that initialises and use yolo model to infer bboxes
     from image frame.
 
