@@ -61,7 +61,7 @@ class TestLPYolo:
         output = LPyolo.run({"img": test_img})
         assert "bboxes" in output
         assert len(output["bboxes"]) != 0
-        assert len(output["bboxes"]) == len(output["bboxes_labels"])
+        assert len(output["bboxes"]) == len(output["bbox_labels"])
 
     def test_no_weights(self, LP_config):
         with mock.patch(
@@ -87,7 +87,7 @@ class TestLPYolo:
                     )
                     assert LPyolo is not None
 
-    # def test_model_initialization(self,LP_config):
-    #     detector = Detector(config = LP_config)
-    #     model = detector.yolo
-    #     assert model is not None
+    def test_model_initialization(self, LP_config):
+        detector = Detector(config=LP_config)
+        model = detector.yolo
+        assert model is not None

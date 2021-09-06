@@ -15,7 +15,8 @@
 Blur area bounded by bounding boxes over detected object
 """
 
-from typing import Any, Dict
+import numpy as np
+from typing import Any, Dict, List
 from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -43,7 +44,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         super().__init__(config, node_path=__name__, **kwargs)
 
     @staticmethod
-    def blur(bboxes, image):
+    def blur(bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
         """
         Function that blur the area bounded by bbox in an image
         """
