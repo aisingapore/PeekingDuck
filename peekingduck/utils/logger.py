@@ -47,7 +47,8 @@ def setup_logger() -> None:
 class ColoredFormatter(logging.Formatter):
     """This class formatt the color of logging messages"""
 
-    def __init__(self, *args, colors: Optional[Dict[str, str]] = None, **kwargs) -> None:
+    def __init__(self, *args: str, colors: Optional[Dict[str, str]] = None,
+                 **kwargs: str) -> None:
         """Initialize the formatter with specified format strings"""
 
         super().__init__(*args, **kwargs)
