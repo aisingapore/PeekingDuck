@@ -11,27 +11,73 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 Universal logging configueration
 """
+
+import sys
 import logging
-import coloredlogs
-LEVEL_COLOR = {'info': {'bold': True, 'color': 'green'},
-               'warning': {'bold': True, 'color': 'yellow'},
-               'error': {'bold': True, 'color': 'red'},
-               'critical': {'bold': True, 'color': 'red'}}
-DEFAULT_FIELD_STYLES = {'asctime': {'color': 'green'},
-                        'hostname': {'color': 'yellow'},
-                        'levelname': {'color': 'blue', 'bold': True},
-                        'name': {'color': 'magenta'}}
+from typing import Optional, Dict
+
+from colorama import init, Fore, Style
+
 
 def setup_logger() -> None:
     """
     Universal logging configuration
     """
-    logging.basicConfig(level=logging.INFO,
-                        format='%(asctime)s %(name)s %(levelname)s:%(message)s',
-                        datefmt="%Y-%m-%dT%H:%M:%S")
-    
-    coloredlogs.install(level_styles=LEVEL_COLOR,
-                        field_styles=DEFAULT_FIELD_STYLES)
+
+    # logging.basicConfig(level=logging.INFO,
+    #                     format='%(asctime)s %(name)s %(levelname)s:%(message)s',
+    #                     datefmt="%Y-%m-%dT%H:%M:%S")
+
+    # logger = logging.getLogger(__name__)
+
+    init()
+
+    formatter = ColoredFormatter(
+        '{asctime}  {name} [{lineno}] {level_color} {levelname} {reset}: {msg_color} {message} {reset}',
+        style='{', datefmt='%Y-%m-%d %H:%M:%S',
+        colors={
+            'DEBUG': Fore.CYAN + Style.BRIGHT,
+            'INFO': Fore.GREEN + Style.BRIGHT,
+            'WARNING': Fore.YELLOW + Style.BRIGHT,
+            'ERROR': Fore.RED + Style.BRIGHT,
+            'CRITICAL': Fore.RED + Style.BRIGHT,
+        }
+    )
+
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+
+    logger = logging.getLogger()
+    logger.handlers[:] = []
+    logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+
+    logger.info("Information!!!!")
+    logger.debug("Debug!!!!")
+    logger.warning("Warning!!!!")
+    logger.error("Error!!!!")
+    logger.critical("Critical!!!!")
+
+
+class ColoredFormatter(logging.Formatter):
+    """Colored log formatter."""
+
+    def __init__(self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str) -> None:
+        """Initialize the formatter with specified format strings."""
+
+        super().__init__(*args, **kwargs)
+
+        self.colors = colors if colors else {}
+
+    def format(self, record) -> str:
+        """Format the specified record as text."""
+
+        record.level_color = self.colors.get(record.levelname, '')
+        record.reset = Style.RESET_ALL
+        record.msg_color = Fore.BLUE + Style.BRIGHT
+
+        return super().format(record)
