@@ -1,0 +1,18 @@
+input: ["img"]
+output: ["bboxes", "bbox_scores", "landmarks", "bbox_labels"]
+
+model_type: mtcnn
+weights_dir: ["../weights/mtcnn"]
+blob_file: "mtcnn.zip"
+graph_files: {
+    mtcnn: ../weights/mtcnn/mtcnn.pb
+}
+mtcnn_min_size: 40
+mtcnn_factors: [0.6, 0.7, 0.8]
+mtcnn_threshold: 0.7
+MODEL_NODES: {
+    mtcnn: {
+        inputs: [input:0, min_size:0, thresholds:0, factor:0],
+        outputs: [prob:0, landmarks:0, box:0]
+    }
+}
