@@ -61,7 +61,7 @@ class Detector:
         bboxes, scores, landmarks = self._process_outputs(image, bboxes, scores, landmarks)
 
         # 4. create bbox_labels
-        classes = [0]*len(bboxes)
+        classes = ['face']*len(bboxes)
 
         return bboxes, scores, landmarks, classes
 
