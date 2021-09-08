@@ -28,9 +28,10 @@ class Detector:
 
         self.config = config
         self.root_dir = config['root']
-        self.min_size = self.config['mtcnn_min_size'] 
-        self.threshold = self.config['mtcnn_threshold'] 
-        self.factors = self.config['mtcnn_factors']
+        self.min_size = self.config['mtcnn_min_size']
+        self.factor = self.config['mtcnn_factor'] 
+        self.thresholds = self.config['mtcnn_thresholds'] 
+        self.score = self.config['mtcnn_score']
 
         self.mtcnn = self._create_mtcnn_model()
 
@@ -52,10 +53,10 @@ class Detector:
                                                                  np.ndarray]:
         # 1. process inputs
         image = self._process_image(image)
-        min_size, threshold, factors = self._process_params()
+        min_size, factor, thresholds = self._process_params()
 
         # 2. evaluate image
-        bboxes, scores, landmarks = self.mtcnn(image, min_size, threshold, factors)
+        bboxes, scores, landmarks = self.mtcnn(image, min_size, factor, thresholds)
 
         # 3. process outputs
         bboxes, scores, landmarks = self._process_outputs(image, bboxes, scores, landmarks)
@@ -72,16 +73,22 @@ class Detector:
 
     def _process_params(self) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         min_size = tf.convert_to_tensor(float(self.min_size))
-        threshold = tf.convert_to_tensor(float(self.threshold))
-        factors = [float(integer) for integer in self.factors]
-        factors = tf.convert_to_tensor(factors)
-        return min_size, threshold, factors
+        factor = tf.convert_to_tensor(float(self.factor))
+        thresholds = [float(integer) for integer in self.thresholds]
+        thresholds = tf.convert_to_tensor(thresholds)
+        return min_size, factor, thresholds
 
     def _process_outputs(self, image: np.ndarray, bboxes: tf.Tensor, 
                          scores: tf.Tensor, landmarks: tf.Tensor) -> Tuple[np.ndarray,
                                                                            np.ndarray,
                                                                            np.ndarray]:
         bboxes, scores, landmarks = bboxes.numpy(), scores.numpy(), landmarks.numpy()
+
+        indices = np.where(scores > self.score)[0]
+        bboxes = bboxes[indices]
+        scores = scores[indices]
+        landmarks = landmarks[indices]
+
         bboxes[:,[0, 1]] = bboxes[:,[1, 0]]
         bboxes[:,[2, 3]] = bboxes[:,[3, 2]]
         bboxes[:, [0, 2]] = bboxes[:, [0, 2]]/image.shape[1]

@@ -8,8 +8,9 @@ graph_files: {
     mtcnn: ../weights/mtcnn/mtcnn.pb
 }
 mtcnn_min_size: 40
-mtcnn_factors: [0.6, 0.7, 0.8]
-mtcnn_threshold: 0.7
+mtcnn_factor: 0.709
+mtcnn_thresholds: [0.6, 0.7, 0.7]
+mtcnn_score: 0.7
 MODEL_NODES: {
     mtcnn: {
         inputs: [input:0, min_size:0, thresholds:0, factor:0],

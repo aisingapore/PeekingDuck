@@ -27,14 +27,9 @@ class MtcnnModel:
 
         self.logger = logging.getLogger(__name__)
 
-        # check factor values
-        for factor in config['mtcnn_factors']:
-            if not factor < 1:
-               raise ValueError("mtcnn_factors must be less than 1")             
-
-        # check threshold values
-        if not 0 <= config['mtcnn_threshold'] <= 1:
-            raise ValueError("mtcnn_threshold must be between 0 and 1")
+        # check score value
+        if not 0 <= config['mtcnn_score'] <= 1:
+            raise ValueError("mtcnn_score must be between 0 and 1")    
 
         # check for mtcnn weights, if none then download into weights folder
         if not checker.has_weights(config['root'],
