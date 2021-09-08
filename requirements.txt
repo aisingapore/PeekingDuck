@@ -6,5 +6,5 @@ tensorflow == 2.2.0
 tqdm == 4.45.0
 numpy == 1.17.3
 pyyaml >= 5.3.1
-scipy
 colorama == 0.4.4
+scipy
