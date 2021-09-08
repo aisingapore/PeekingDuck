@@ -16,6 +16,7 @@
 Universal logging configueration
 """
 
+import os
 import sys
 import logging
 from typing import Optional, Dict
@@ -24,29 +25,19 @@ from colorama import init, Fore, Style
 
 
 def setup_logger() -> None:
-    """
-    Universal logging configuration
-    """
+    """ Universal logging configuration """
 
-    # logging.basicConfig(level=logging.INFO,
-    #                     format='%(asctime)s %(name)s %(levelname)s:%(message)s',
-    #                     datefmt="%Y-%m-%dT%H:%M:%S")
+    if os.name == 'nt':
+        init()
 
-    # logger = logging.getLogger(__name__)
-
-    init()
-
-    formatter = ColoredFormatter(
-        '{asctime}  {name} [{lineno}] {level_color} {levelname} {reset}: {msg_color} {message} {reset}',
-        style='{', datefmt='%Y-%m-%d %H:%M:%S',
-        colors={
-            'DEBUG': Fore.CYAN + Style.BRIGHT,
-            'INFO': Fore.GREEN + Style.BRIGHT,
-            'WARNING': Fore.YELLOW + Style.BRIGHT,
-            'ERROR': Fore.RED + Style.BRIGHT,
-            'CRITICAL': Fore.RED + Style.BRIGHT,
-        }
-    )
+    formatter = ColoredFormatter('{asctime} {name} {level_color} {levelname}'
+                                 '{reset}: {msg_color} {message} {reset}',
+                                 style='{', datefmt='%Y-%m-%d %H:%M:%S',
+                                 colors={'DEBUG': Fore.CYAN + Style.BRIGHT,
+                                         'INFO': Fore.GREEN + Style.BRIGHT,
+                                         'WARNING': Fore.YELLOW + Style.BRIGHT,
+                                         'ERROR': Fore.RED + Style.BRIGHT,
+                                         'CRITICAL': Fore.RED + Style.BRIGHT})
 
     handler = logging.StreamHandler(sys.stdout)
     handler.setFormatter(formatter)
@@ -56,24 +47,19 @@ def setup_logger() -> None:
     logger.addHandler(handler)
     logger.setLevel(logging.INFO)
 
-    logger.info("Information!!!!")
-    logger.debug("Debug!!!!")
-    logger.warning("Warning!!!!")
-    logger.error("Error!!!!")
-    logger.critical("Critical!!!!")
-
 
 class ColoredFormatter(logging.Formatter):
-    """Colored log formatter."""
+    """This class formatt the color of logging messages"""
 
-    def __init__(self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str) -> None:
-        """Initialize the formatter with specified format strings."""
+    def __init__(self, *args: str, colors: Optional[Dict[str, str]] = None,
+                 **kwargs: str) -> None:
+        """Initialize the formatter with specified format strings"""
 
         super().__init__(*args, **kwargs)
 
         self.colors = colors if colors else {}
 
-    def format(self, record) -> str:
+    def format(self, record: logging.LogRecord) -> str:
         """Format the specified record as text."""
 
         record.level_color = self.colors.get(record.levelname, '')
