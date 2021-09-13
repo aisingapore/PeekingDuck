@@ -1,2 +1,0 @@
-input: ["bboxes", "img"]
-output: ["img"] 
