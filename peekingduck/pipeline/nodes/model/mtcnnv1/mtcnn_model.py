@@ -17,7 +17,7 @@ Main class for MTCNN Model
 """
 
 import logging
-from typing import Dict, Any, Tuple, List
+from typing import Dict, Any, Tuple
 
 import numpy as np
 
@@ -57,7 +57,7 @@ class MtcnnModel: # pylint: disable=too-few-public-methods
         self.detector = Detector(config)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
-                                                 List[str]]:
+                                                  np.ndarray]:
         """Predicts face bboxes, scores and landmarks
 
         Args:
