@@ -12,24 +12,51 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+Mosaics area bounded by bounding boxes over detected object
+"""
+
 from typing import Any, Dict, List
 import cv2
 import numpy as np
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
+    """Mosaics area bounded by bounding boxes on image
 
+    Inputs:
+
+        |img|
+
+        |bboxes|
+
+    Outputs:
+        |none|
+
+    Configs:
+        None
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        mosaic_img = self.mosaic_bbox(inputs["bboxes"], inputs["img"])
+        mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
         outputs = {"img": mosaic_img}
         return outputs
 
-    def mosaic_bbox(self, bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
+    def mosaic_bbox(self, image: np.ndarray, bboxes: List[np.ndarray]) -> np.ndarray:
+        """Mosaics areas bounded by bounding boxes on image
+
+        Args:
+            image (np.ndarray): image in numpy array
+            bboxes (np.ndarray): numpy array of detected bboxes
+
+        Returns:
+            image (np.ndarray): image in numpy array
+        """
         height = image.shape[0]
         width = image.shape[1]
 
@@ -46,20 +73,30 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         return image
 
     @staticmethod
-    def mosaic(image: np.ndarray, blocks=7) -> np.ndarray:
-        (h, w) = image.shape[:2]
-        xSteps = np.linspace(0, w, blocks + 1, dtype="int")
-        ySteps = np.linspace(0, h, blocks + 1, dtype="int")
-    
-        for i in range(1, len(ySteps)):
-            for j in range(1, len(xSteps)):
-                startX = xSteps[j - 1]
-                startY = ySteps[i - 1]
-                endX = xSteps[j]
-                endY = ySteps[i]
-            
-                roi = image[startY:endY, startX:endX]
-                (B, G, R) = [int(x) for x in cv2.mean(roi)[:3]]
-                cv2.rectangle(image, (startX, startY), (endX, endY), (B, G, R), -1)
-            
-        return image        
+    def mosaic(image: np.ndarray, blocks=7) -> np.ndarray: # pylint: disable-msg=too-many-locals
+        """Mosaics a given input image
+
+        Args:
+            image (np.ndarray): image in numpy array
+
+        Returns:
+            image (np.ndarray): image in numpy array
+        """
+        (height, width) = image.shape[:2]
+        x_steps = np.linspace(0, width, blocks + 1, dtype="int")
+        y_steps = np.linspace(0, height, blocks + 1, dtype="int")
+
+        for i in range(1, len(y_steps)):
+            for j in range(1, len(x_steps)):
+                start_x = x_steps[j - 1]
+                start_y = y_steps[i - 1]
+                end_x = x_steps[j]
+                end_y = y_steps[i]
+
+                roi = image[start_y:end_y, start_x:end_x]
+                (blue, green, red) = [int(x) for x in cv2.mean(roi)[:3]]
+                cv2.rectangle(image, (start_x, start_y), (end_x, end_y),
+                             (blue, green, red), -1)
+
+        return image
+       

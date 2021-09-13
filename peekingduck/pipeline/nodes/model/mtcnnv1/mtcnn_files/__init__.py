@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-MTCNN related files for mtcnn node
+MTCNN utilities
 """
