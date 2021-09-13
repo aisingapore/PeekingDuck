@@ -72,7 +72,8 @@ class Detector: # pylint: disable=too-many-instance-attributes
 
     def predict_bbox_landmarks(self, image: np.ndarray) -> Tuple[np.ndarray,
                                                                  np.ndarray,
-                                                                 np.ndarray]:
+                                                                 np.ndarray,
+                                                                 List[str]]:
         """Predicts face bboxes, scores and landmarks
 
         Args:
