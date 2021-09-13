@@ -34,8 +34,8 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef) -> Callable:
         wrapped_import (tensorflow.python.eager.wrap_function.WrappedFunction):
         A wrapped_import function to perform your inference with
     """
-    def _imports_graph_def(img, min_size: tf.Tensor, factor: tf.Tensor, thresholds: tf.Tensor) \
-                           -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+    def _imports_graph_def(img: tf.Tensor, min_size: tf.Tensor, factor: tf.Tensor,
+    thresholds: tf.Tensor) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         prob, landmarks, box = tf.compat.v1.import_graph_def(graph_def,
                                                              input_map={'input:0': img,
                                                                         'min_size:0': min_size,
