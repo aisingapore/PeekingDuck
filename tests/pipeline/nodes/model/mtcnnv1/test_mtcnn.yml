@@ -1,0 +1,31 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+model_type: v4tiny # v4 or v4tiny
+classes: ../weights/yolov4/coco.names
+weights_dir: ["../weights/yolov4"]
+blob_file: "yolo.zip"
+graph_files: {
+    v4: ../weights/yolov4/yolov4.pb,
+    v4tiny: ../weights/yolov4/yolov4-tiny.pb
+}
+size: 416
+num_classes: 80
+detect_ids: [0]
+max_output_size_per_class: 50
+max_total_size: 50
+yolo_iou_threshold: 0.5
+yolo_score_threshold: 0.2
+MODEL_NODES: {
+    yolov41: {
+        inputs: [x:0],
+        outputs: [model/tf_op_layer_split_2/split_2:0,
+        model/tf_op_layer_split_1/split_1:0,
+        model/tf_op_layer_split/split:0,
+        Identity:0]
+    },
+    yolov4: {
+        inputs: [x:0],
+        outputs: [Identity:0]
+    }
+}
