@@ -24,7 +24,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Mosaics area bounded by bounding boxes on image
+    """Mosaics areas bounded by bounding boxes on image.
+
+    The mosaic bbox node helps to anonymize detected objects by pixalating the
+    areas bounded by bounding boxes in an image.
 
     Inputs:
 
