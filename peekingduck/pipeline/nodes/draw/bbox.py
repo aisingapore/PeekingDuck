@@ -40,7 +40,8 @@ class Node(AbstractNode):
         |none|
 
     Configs:
-        None.
+        show_labels (:obj:`bool`): **default = False**
+            whether to show bbox class labels name.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
