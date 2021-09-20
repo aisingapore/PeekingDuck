@@ -21,7 +21,7 @@ from typing import Any, Dict, List
 import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes, draw_tags
-from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
+from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO, BLACK
 
 
 class Node(AbstractNode):
@@ -72,7 +72,7 @@ class Node(AbstractNode):
             inputs["large_groups"], self.tag)
 
         # show labels set to False to reduce clutter on display
-        draw_bboxes(inputs["img"], group_bboxes, TOMATO, False)   # type: ignore
+        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)   # type: ignore
         draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)  # type: ignore
 
         return {}
