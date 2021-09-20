@@ -41,7 +41,7 @@ class Node(AbstractNode):
 
     Configs:
         show_labels (:obj:`bool`): **default = False**
-            whether to show bbox class labels name.
+            Show class label, e.g. "person", above bounding box
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
