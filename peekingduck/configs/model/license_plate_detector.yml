@@ -1,17 +1,23 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
-model_type: v4tiny # v4 or v4tiny
+model_type: v4tiny # v4 or v4tiny v4tinytf
 classes: ../weights/yolo_license_plate/classes.names
 weights_dir: ["../weights/yolo_license_plate"]
 model_weights_dir: {
-    v4: ../weights/yolo_license_plate/LPyolov4,
-    v4tiny: ../weights/yolo_license_plate/LPyolov4tiny,
+    v4: ../weights/yolov4/LPv4,
+    v4tiny: ../weights/yolov4/LPv4tiny,
 }
 blob_file: "yolo_license_plate.zip"
+model_configuration: {
+    v4tiny: ../weights/yolo_license_plate/yolov4tiny-LP.cfg,
+    v4: ../weights/yolo_license_plate/yolov4-LP.cfg
+}
+model_weights: {
+    v4tiny: ../weights/yolo_license_plate/yolov4tiny-LP.weights,
+    v4: ../weights/yolo_license_plate/yolov4-LP.weights
+}
 
 size: 416
-max_output_size_per_class: 50
-max_total_size: 50
 confThreshold: 0.1
 nmsThreshold: 0.3

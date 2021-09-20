@@ -77,9 +77,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
-
-    Guide for training YOLO models:
-        https://www.youtube.com/watch?v=mmj3nxGT2YQ&t=2089s
+    Inference code adapted from:
+        https://github.com/GuiltyNeuron/ANPR/tree/master/Tunisian_anpr
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
