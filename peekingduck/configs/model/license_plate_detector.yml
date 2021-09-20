@@ -15,4 +15,3 @@ max_output_size_per_class: 50
 max_total_size: 50
 confThreshold: 0.1
 nmsThreshold: 0.3
-
