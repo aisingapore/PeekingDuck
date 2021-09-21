@@ -43,7 +43,7 @@ class Detector: # pylint: disable=too-few-public-methods
 
         return class_labels
 
-    def _create_yolo_model(self):
+    def _create_yolo_model(self) -> cv.dnn_Net:
         model_type = self.config["model_type"]
         model_file = os.path.join(self.config['root'],
                                   self.config["model_weights_dir"][model_type])
