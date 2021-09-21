@@ -96,3 +96,42 @@ def run(config_path: str, node_config: str) -> None:
 
     runner = Runner(config_path, node_config, "src")
     runner.run()
+
+
+@cli.command()
+@click.option('--type',
+              help="Lists available nodes in the specified node type.\
+                   None will lists nodes from all types.")
+def nodes(type: str = None) -> None:
+    """Lists available nodes in PeekingDuck"""
+
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
+    url_postfix = ".Node.html#peekingduck.pipeline.nodes."
+
+    if type is None:
+        type_of_node = ["input", "model", "dabble", "draw", "output"]
+    else:
+        type_of_node = [type]
+
+    dir = os.path.join(os.getcwd(), 'peekingduck', 'configs')
+
+    for node_type in type_of_node:
+        type_dir = os.path.join(dir, node_type)
+        files_name = os.listdir(type_dir)
+
+        click.secho("\nPeekingDuck has the following ", bold=True, nl=False)
+        click.secho(f"{node_type} ", fg='red', bold=True, nl=False)
+        click.secho("nodes:", bold=True)
+
+        for num, file_name in enumerate(files_name):
+            node_name = file_name.split('.')[0]
+
+            url = f" {url_prefix}{node_type}.{node_name}{url_postfix}'"\
+                  f"{node_type}.{node_name}.Node"
+
+            click.secho(f"{num+1}:", nl=False)
+            click.secho(f"{node_name}", fg='blue', nl=False)
+            click.secho(f"      Info:", nl=False)
+            click.secho(url, fg='green')
+
+    click.secho("\n")
