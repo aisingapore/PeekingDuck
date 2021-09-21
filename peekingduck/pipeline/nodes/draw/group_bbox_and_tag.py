@@ -72,7 +72,7 @@ class Node(AbstractNode):
             inputs["large_groups"], self.tag)
 
         # show labels set to False to reduce clutter on display
-        draw_bboxes(inputs["img"], group_bboxes, TOMATO, False)   # type: ignore
+        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)   # type: ignore
         draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)  # type: ignore
 
         return {}
