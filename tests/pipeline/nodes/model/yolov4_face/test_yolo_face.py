@@ -92,3 +92,11 @@ class TestYolo:
                     assert captured.records[1].getMessage(
                     ) == '---yolo weights download complete.---'
                     assert yolo is not None
+
+    def test_get_detect_ids(self, yolo):
+        assert yolo.model.get_detect_ids() == [0,1] 
+
+    def test_model_initialization(self, yolo_config):
+        detector = Detector(config=yolo_config)
+        model = detector.yolo
+        assert model is not None

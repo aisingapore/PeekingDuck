@@ -17,7 +17,7 @@ Face detection model with model types: yolov4 and yolov4tiny
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import List, Dict, Any, Tuple
 import numpy as np
 from peekingduck.weights_utils import checker, downloader
 from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import Detector
@@ -60,3 +60,12 @@ class Yolov4:  # pylint: disable=too-few-public-methods
         assert isinstance(frame, np.ndarray)
 
         return self.detector.predict_object_bbox_from_image(frame)
+
+    def get_detect_ids(self) -> List[int]:
+        """Getter for selected ids for detection. This function is used in unit
+        testing.
+
+        Returns:
+            List[int]: list of selected detection ids
+        """
+        return self.detect_ids
