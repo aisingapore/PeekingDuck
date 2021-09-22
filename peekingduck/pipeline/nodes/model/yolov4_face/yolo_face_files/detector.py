@@ -53,10 +53,16 @@ class Detector: # pylint: disable=too-few-public-methods
             "Yolo model loaded with following configs: \n \
             Model type: %s, \n \
             Input resolution: %s, \n \
-            NMS threshold: %s, \n \
+            IDs being detected: %s, \n \
+            Max detections per class: %s, \n \
+            Max total detections: %s, \n \
+            IOU threshold: %s, \n \
             Score threshold: %s",
             self.config['model_type'],
             self.config['size'],
+            self.config['detect_ids'],
+            self.config['max_output_size_per_class'],
+            self.config['max_total_size'],
             self.config['yolo_iou_threshold'],
             self.config['yolo_score_threshold'],
         )
