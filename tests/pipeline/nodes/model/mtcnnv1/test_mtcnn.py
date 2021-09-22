@@ -68,7 +68,7 @@ class TestMtcnn:
         expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32),
                            'bbox_scores': np.empty((0), dtype=np.float32),
                            'landmarks': np.empty((0, 10), dtype=np.float32),
-                           'bbox_labels': np.empty((0), dtype=np.float32)
+                           'bbox_labels': np.empty((0))
                            }
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output['bboxes'], expected_output['bboxes'])
