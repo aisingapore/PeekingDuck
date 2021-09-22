@@ -1,0 +1,18 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+model_type: v4tiny # v4 or v4tiny
+classes: ../weights/yolov4_face/classes.names
+weights_dir: ["../weights/yolov4_face"]
+model_weights_dir: {
+    v4: ../weights/yolov4_face/yolov4,
+    v4tiny: ../weights/yolov4_face/yolov4tiny,
+}
+blob_file: "yolov4_face.zip"
+
+size: 416
+detect_ids: [0,1]
+max_output_size_per_class: 50
+max_total_size: 50
+yolo_score_threshold: 0.7
+yolo_iou_threshold: 0.1
