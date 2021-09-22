@@ -20,7 +20,7 @@ import logging
 import os
 from typing import Dict, Any, List, Tuple
 
-import cv2 as cv
+import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
@@ -43,7 +43,7 @@ class Detector: # pylint: disable=too-few-public-methods
 
         return class_labels
 
-    def _create_yolo_model(self) -> cv.dnn_Net:
+    def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
         model_file = os.path.join(self.config['root'],
                                   self.config["model_weights_dir"][model_type])
@@ -98,8 +98,8 @@ class Detector: # pylint: disable=too-few-public-methods
         return bboxes, classes, scores
 
     def _process_image(self, image: np.ndarray) -> np.ndarray:
-        image = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-        image = cv.resize(image , (self.config["size"], self.config["size"]))
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = cv2.resize(image , (self.config["size"], self.config["size"]))
         image = np.asarray([image]).astype(np.float32)/255.
 
         return image
