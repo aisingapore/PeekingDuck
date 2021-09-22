@@ -24,7 +24,7 @@ import numpy as np
 import numpy.testing as npt
 
 from peekingduck.pipeline.nodes.model.mtcnn import Node
-from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
+from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
 
 @pytest.fixture
