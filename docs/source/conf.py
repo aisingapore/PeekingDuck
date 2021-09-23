@@ -81,6 +81,7 @@ autosummary_mock_imports = [
     'peekingduck.pipeline.nodes.model.posenetv1',
     'peekingduck.pipeline.nodes.model.efficientdet_d04',
     'peekingduck.pipeline.nodes.model.hrnetv1',
+    'peekingduck.pipeline.nodes.model.yolov4_face',    
     'peekingduck.pipeline.nodes.input.utils',
     'peekingduck.pipeline.nodes.dabble.utils',
     'peekingduck.pipeline.nodes.draw.utils',
