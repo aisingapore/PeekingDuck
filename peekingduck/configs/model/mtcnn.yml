@@ -1,5 +1,5 @@
 input: ["img"]
-output: ["bboxes", "bbox_scores", "landmarks", "bbox_labels"]
+output: ["bboxes", "bbox_scores", "bbox_labels"]
 
 model_type: mtcnn
 weights_dir: ["../weights/mtcnn"]

@@ -38,8 +38,6 @@ class Node(AbstractNode):
 
         |bbox_scores|
 
-        |landmarks|
-
         |bbox_labels|
 
     Configs:
@@ -85,17 +83,16 @@ class Node(AbstractNode):
         self.model = mtcnn_model.MtcnnModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Function that reads the image input and returns the bboxes, scores,
-       landmarks and labels of faces detected
+        """Function that reads the image input and returns the bboxes, scores
+        and labels of faces detected
 
         Args:
             inputs (Dict): Dictionary of inputs with key "img"
 
         Returns:
             outputs (Dict): Outputs in dictionary format with keys "bboxes",
-            "bbox_scores", "landmarks" and "bbox_labels"
+            "bbox_scores" and "bbox_labels"
         """
-        bboxes, scores, landmarks, classes = self.model.predict(inputs["img"])
-        outputs = {"bboxes": bboxes, "bbox_scores": scores, "landmarks": landmarks,
-                   "bbox_labels": classes}
+        bboxes, scores, _, classes = self.model.predict(inputs["img"])
+        outputs = {"bboxes": bboxes, "bbox_scores": scores, "bbox_labels": classes}
         return outputs
