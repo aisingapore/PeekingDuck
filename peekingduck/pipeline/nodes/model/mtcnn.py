@@ -50,11 +50,11 @@ class Node(AbstractNode):
         graph_files (:obj:`Dict`):
             dictionary pointing to path of the model weights file.
 
-        mtcnn_min_size (:obj:`int`): **default = 40 **
+        mtcnn_min_size (:obj:`int`): **default = 40**
 
             minimum height and width of face in pixels to be detected.
 
-        mtcnn_factor (:obj:`float`): **default = 0.709 **
+        mtcnn_factor (:obj:`float`): **[0,1], **default = 0.709**
 
             scale factor to create the image pyramid. A larger scale factor
             produces more accurate detections at the expense of inference speed.
