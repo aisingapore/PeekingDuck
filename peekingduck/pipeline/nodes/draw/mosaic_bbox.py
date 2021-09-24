@@ -36,7 +36,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bboxes|
 
     Outputs:
-        |none|
+        |img|
 
     Configs:
         None
