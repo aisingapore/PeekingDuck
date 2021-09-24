@@ -45,6 +45,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
+        self.blocks=self.config['blocks']
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
         outputs = {"img": mosaic_img}
@@ -70,13 +72,13 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
             # slice the image to get the area bounded by bbox
             bbox_image = image[y_1:y_2, x_1:x_2, :].copy()
-            mosaic_bbox_image = self.mosaic(bbox_image)
+            mosaic_bbox_image = self.mosaic(bbox_image, self.blocks)
             image[y_1:y_2, x_1:x_2, :] = mosaic_bbox_image
 
         return image
 
     @staticmethod
-    def mosaic(image: np.ndarray, blocks:int=7) -> np.ndarray: # pylint: disable-msg=too-many-locals
+    def mosaic(image: np.ndarray, blocks:int) -> np.ndarray: # pylint: disable-msg=too-many-locals
         """Mosaics a given input image
 
         Args:
