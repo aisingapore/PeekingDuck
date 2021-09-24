@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Mosaics areas bounded by bounding boxes on image.
 
-    The mosaic bbox node helps to anonymize detected objects by pixalating the
+    The mosaic bbox node helps to anonymize detected objects by pixelating the
     areas bounded by bounding boxes in an image.
 
     Inputs:
@@ -39,13 +39,15 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        None
+        blocks (:obj:`int`): **default = 7**
+            controls the intensity of pixelation. Reducing the number of blocks
+            increases the level of opacity but decreases the number of pixels.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.blocks=self.config['blocks']
+        self.blocks=config['blocks']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
