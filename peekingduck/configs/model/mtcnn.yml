@@ -1,7 +1,6 @@
 input: ["img"]
 output: ["bboxes", "bbox_scores", "bbox_labels"]
 
-model_type: mtcnn
 weights_dir: ["../weights/mtcnn"]
 blob_file: "mtcnn.zip"
 graph_files: {

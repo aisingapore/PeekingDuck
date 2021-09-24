@@ -46,18 +46,18 @@ class Detector: # pylint: disable=too-many-instance-attributes
         '''
         Creates MTCNN model for face detection
         '''
-        model_type = self.config['model_type']
-        model_path = os.path.join(self.root_dir, self.config['graph_files'][model_type])
+        model_path = os.path.join(self.root_dir, self.config['graph_files']['mtcnn'])
 
         self.logger.info(
             'MTCNN model loaded with following configs: \n \
-            Model type: %s, \n \
             Min size: %s, \n \
             Scale Factor: %s, \n \
             Steps Thresholds: %s, \n \
-            Score Threshold: %s', self.config["model_type"],
-            self.config['mtcnn_min_size'], self.config['mtcnn_factor'],
-            self.config['mtcnn_thresholds'], self.config['mtcnn_score'])
+            Score Threshold: %s',
+            self.config['mtcnn_min_size'],
+            self.config['mtcnn_factor'],
+            self.config['mtcnn_thresholds'],
+            self.config['mtcnn_score'])
 
         return self._load_mtcnn_graph(model_path)
 

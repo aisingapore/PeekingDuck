@@ -41,10 +41,6 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Configs:
-        model_type (:obj:`str`): **{"mtcnn"}, default="mtcnn"**
-
-            name of the MTCNN model.
-
         weights_dir (:obj:`List`):
             directory pointing to the model weights.
 
