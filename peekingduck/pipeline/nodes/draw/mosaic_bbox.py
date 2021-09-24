@@ -47,7 +47,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.blocks=config['blocks']
+        self.blocks=self.config['blocks']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
