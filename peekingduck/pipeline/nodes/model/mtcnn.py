@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-MTCNN Detection model
+Fast face detection model that works best with unmasked faces
 """
 
 from typing import Dict, Any
@@ -27,8 +27,8 @@ class Node(AbstractNode):
     from image frame.
 
     The MTCNN node is a single-class model capable of detecting human faces. To
-    a certain extent, it is also capable of detecting humans wearing face masks
-    (e.g. surgical masks).
+    a certain extent, it is also capable of detecting bounding boxes around faces
+    with face masks (e.g. surgical masks).
 
     Inputs:
         |img|
@@ -52,20 +52,25 @@ class Node(AbstractNode):
 
         mtcnn_min_size (:obj:`int`): **default = 40 **
 
-            minimum size of face to be detected.
+            minimum height and width of face in pixels to be detected.
 
         mtcnn_factor (:obj:`float`): **default = 0.709 **
 
-            scale factor to build the image pyramid.
+            scale factor to create the image pyramid. A larger scale factor
+            produces more accurate detections at the expense of inference speed.
 
         mtcnn_thresholds (:obj:`List`): **[0,1], default = [0.6, 0.7, 0.7]**
 
-            threshold values for each of the networks in the MTCNN model.
+            threshold values for the Proposal Network (P-Net), Refine Network
+            (R-Net) and Output Network (O-Net) in the MTCNN model.
+
+            Calibration is performed at each stage in which bounding boxes with
+            confidence scores less than the specified threshold are discarded.
 
         mtcnn_score (:obj:`float`): **[0,1], default = 0.7**
 
-            bounding box with confidence score less than the specified
-            confidence score threshold is discarded.
+            bounding boxes with confidence scores less than the specified
+            threshold in the final output are discarded.
 
     References:
 
