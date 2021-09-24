@@ -39,9 +39,8 @@ def mtcnn_config():
     return node_config
 
 
-@pytest.fixture(params=['mtcnn'])
-def mtcnn(request, mtcnn_config):
-    mtcnn_config['model_type'] = request.param
+@pytest.fixture()
+def mtcnn(mtcnn_config):
     node = Node(mtcnn_config)
 
     return node
@@ -49,7 +48,6 @@ def mtcnn(request, mtcnn_config):
 
 @pytest.fixture()
 def mtcnn_detector(mtcnn_config):
-    mtcnn_config['model_type'] = 'mtcnn'
     detector = Detector(mtcnn_config)
 
     return detector
@@ -67,13 +65,11 @@ class TestMtcnn:
         output = mtcnn.run({'img': blank_image})
         expected_output = {'bboxes': np.empty((0, 4), dtype=np.float32),
                            'bbox_scores': np.empty((0), dtype=np.float32),
-                           'landmarks': np.empty((0, 10), dtype=np.float32),
                            'bbox_labels': np.empty((0))
                            }
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output['bboxes'], expected_output['bboxes'])
         npt.assert_equal(output['bbox_scores'], expected_output['bbox_scores'])
-        npt.assert_equal(output['landmarks'], expected_output['landmarks'])
         npt.assert_equal(output['bbox_labels'], expected_output['bbox_labels'])
 
     def test_return_at_least_one_face_and_one_bbox(self, test_human_images, mtcnn):
