@@ -2,13 +2,13 @@ input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
 model_type: v4tiny # v4 or v4tiny
-classes: ../weights/yolov4_face/classes.names
-weights_dir: ["../weights/yolov4_face"]
+classes: ../weights/yolo_face/classes.names
+weights_dir: ["../weights/yolo_face"]
 model_weights_dir: {
-    v4: ../weights/yolov4_face/yolov4,
-    v4tiny: ../weights/yolov4_face/yolov4tiny,
+    v4: ../weights/yolo_face/yolov4,
+    v4tiny: ../weights/yolo_face/yolov4tiny,
 }
-blob_file: "yolov4_face.zip"
+blob_file: "yolo_face.zip"
 
 size: 416
 detect_ids: [0,1]
