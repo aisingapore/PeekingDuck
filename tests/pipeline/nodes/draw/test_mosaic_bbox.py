@@ -40,7 +40,7 @@ def test_image(request):
 
 @pytest.fixture
 def draw_mosaic_node():
-    node = Node({"input": ["img", "bboxes"], "output": ["img"], "blocks": 7})
+    node = Node({"input": ["img", "bboxes"], "output": ["img"], "mosaic_level": 7})
     return node
 
 

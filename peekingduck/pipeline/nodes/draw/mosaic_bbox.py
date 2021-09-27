@@ -39,15 +39,18 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        blocks (:obj:`int`): **default = 7**
-            controls the intensity of pixelation. Reducing the number of blocks
-            increases the level of opacity but decreases the number of pixels.
+        mosaic_level (:obj:`int`): **default = 7**
+            defines the resolution of a mosaic filter (width x height). The
+            number corresponds to the number of rows and columns used to create
+            a mosaic. For example, the default setting (mosaic_level: 7) creates
+            a 7 x 7 mosaic filter. Increasing the number increases the intensity
+            of pixelation over an area.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.blocks=self.config['blocks']
+        self.mosaic_level=self.config['mosaic_level']
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
@@ -74,13 +77,13 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
             # slice the image to get the area bounded by bbox
             bbox_image = image[y_1:y_2, x_1:x_2, :].copy()
-            mosaic_bbox_image = self.mosaic(bbox_image, self.blocks)
+            mosaic_bbox_image = self.mosaic(bbox_image, self.mosaic_level)
             image[y_1:y_2, x_1:x_2, :] = mosaic_bbox_image
 
         return image
 
     @staticmethod
-    def mosaic(image: np.ndarray, blocks:int) -> np.ndarray: # pylint: disable-msg=too-many-locals
+    def mosaic(image: np.ndarray, mosaic_level:int) -> np.ndarray: # pylint: disable-msg=too-many-locals
         """Mosaics a given input image
 
         Args:
@@ -90,8 +93,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             image (np.ndarray): image in numpy array
         """
         (height, width) = image.shape[:2]
-        x_steps = np.linspace(0, width, blocks + 1, dtype="int")
-        y_steps = np.linspace(0, height, blocks + 1, dtype="int")
+        x_steps = np.linspace(0, width, mosaic_level + 1, dtype="int")
+        y_steps = np.linspace(0, height, mosaic_level + 1, dtype="int")
 
         for i in range(1, len(y_steps)):
             for j in range(1, len(x_steps)):

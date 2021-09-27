@@ -1,4 +1,4 @@
 input: ["bboxes", "img"]
 output: ["img"]
 
-blocks: 7
+mosaic_level: 7
