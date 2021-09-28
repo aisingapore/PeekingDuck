@@ -2,6 +2,7 @@ import os
 import yaml
 import pytest
 import cv2
+import numpy as np
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.license_plate_detector import Node
 from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
@@ -49,9 +50,9 @@ class TestLPYolo:
         output = LPyolo.run({"img": blank_image})
         expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
         assert output.keys() == expected_output.keys()
-        assert type(output["bboxes"]) == list
-        assert type(output["bbox_labels"]) == list
-        assert type(output["bbox_scores"]) == list
+        assert type(output["bboxes"]) == np.ndarray
+        assert type(output["bbox_labels"]) == np.ndarray
+        assert type(output["bbox_scores"]) == np.ndarray
         assert len(output["bboxes"]) == 0
         assert len(output["bbox_labels"]) == 0
         assert len(output["bbox_scores"]) == 0
