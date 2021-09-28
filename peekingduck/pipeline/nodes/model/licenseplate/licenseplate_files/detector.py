@@ -90,18 +90,20 @@ class Detector:
 
     def predict_object_bbox_from_image(
         self, image: np.array
-    ) -> Tuple[List[np.array], List[str], List[float]]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Detect all license plate objects' bounding box from one image
 
         args:
-                image: (np.array) input image
+                image: (Numpy Array) input image
 
         return:
-                boxes: (np.array) an array of bounding box with
-                definition like (x1, y1, x2, y2), in a
-                coordinate system with original point in
-                the left top corner
+                boxes: (Numpy Array) an array of bounding box with
+                    definition like (x1, y1, x2, y2), in a
+                    coordinate system with origin point in
+                    the left top corner
+                labels: (Numpy Array) an array of class labels
+                scores: (Numpy Array) an array of confidence scores
         """
         # Use TF2 .pb saved model format for inference
         image_data = cv.resize(image, (self.config["size"], self.config["size"]))
@@ -140,7 +142,7 @@ class Detector:
             bboxes = self.bbox_scaling(bboxes, 0.75)
 
         # update the labels names of the object detected
-        labels = [self.class_labels[int(i)] for i in classes]
+        labels = np.asarray([self.class_labels[int(i)] for i in classes])
 
         return bboxes, labels, scores
 

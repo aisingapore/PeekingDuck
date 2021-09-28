@@ -68,7 +68,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         """
         Function that reads the image input and returns the image,
         with the areas bounded by the bboxes blurred.
-        
+
         Args:
             inputs (Dict): Dictionary of inputs with keys "img", "bboxes"
         Returns:

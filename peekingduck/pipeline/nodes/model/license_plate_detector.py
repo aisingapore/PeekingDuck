@@ -26,7 +26,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     A YOLO node class that initialises and uses YOLO model to infer bboxes
     from image frame.
 
-    The yolo node is capable of detecting objects from a single class (License Plate). 
+    The yolo node is capable of detecting objects from a single class (License Plate).
     It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
 
     Inputs:
