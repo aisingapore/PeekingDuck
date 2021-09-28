@@ -57,7 +57,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             y_1, y_2 = int(y_1 * height), int(y_2 * height)
 
             # slice the image to get the area bounded by bbox
-            bbox_image = image[y_1:y_2, x_1:x_2, :].copy()
+            bbox_image = image[y_1:y_2, x_1:x_2, :]
+
             # apply the blur using gaussian filter from scipy
             blur_bbox_image = gaussian_filter(bbox_image, sigma=5)
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
