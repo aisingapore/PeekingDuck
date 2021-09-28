@@ -24,8 +24,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blur area bounded by bounding boxes on image.
 
-    The draw blur_bbox node uses the bboxes and blur the area of the image
-    bounded by the bboxes.
+    The blur_bbox node blur the areas of the image
+    bounded by the bounding boxes output from an object detection model
 
     Inputs:
 
@@ -34,7 +34,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bboxes|
 
     Outputs:
-        |none|
+        |img|
 
     Configs:
         None.
@@ -65,8 +65,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         return image
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """
+        Function that reads the image input and returns the image,
+        with the areas bounded by the bboxes blurred.
+        
         Args:
             inputs (Dict): Dictionary of inputs with keys "img", "bboxes"
         Returns:

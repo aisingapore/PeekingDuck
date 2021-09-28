@@ -13,5 +13,5 @@ blob_file: "yolo_license_plate.zip"
 size: 416
 max_output_size_per_class: 50
 max_total_size: 50
-confThreshold: 0.1
-nmsThreshold: 0.3
+yolo_score_threshold: 0.1
+yolo_iou_threshold: 0.3

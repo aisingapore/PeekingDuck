@@ -18,16 +18,16 @@ License Plate Detection model
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .licenseplate import lp_detector_model
+from peekingduck.pipeline.nodes.model.licenseplate import lp_detector_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Yolo node class that initialises and use yolo model to infer bboxes
+    """
+    A YOLO node class that initialises and uses YOLO model to infer bboxes
     from image frame.
 
-    The yolo node is capable of detecting objects from 80 categories. It uses
-    YOLOv4-tiny by default and can be changed to using YOLOv4. The table of
-    categories can be found :term:`here <object detection indices>`.
+    The yolo node is capable of detecting objects from a single class (License Plate). 
+    It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
 
     Inputs:
         |img|
@@ -45,27 +45,27 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             defines the type of YOLO model to be used.
 
         weights_dir (:obj:`List`):
+
             directory pointing to the model weights.
 
         blob_file (:obj:`str`):
+
             name of file to be downloaded, if weights are not found in `weights_dir`.
 
-        model_configuration (:obj:`Dict`):
-            dictionary pointing to path of the model configuration file.
+        model_weights_dir (:obj:`Dict`):
 
-        model_weights (:obj:`Dict`):
-            dictionary pointing to path of the model weights file.
+            dictionary pointing to path of the model weights directory
 
         size (:obj:`int`): **default = 416 **
 
             image resolution passed to the YOLO model.
 
-        confThreshold (:obj:`float`): **[0,1], default = 0.1**
+        yolo_score_threshold (:obj:`float`): **[0,1], default = 0.1**
 
             bounding box with confidence score less than the specified
             confidence score threshold is discarded.
 
-        nmsThreshold (:obj:`float`): **[0,1], default = 0.3**
+        yolo_iou_threshold (:obj:`float`): **[0,1], default = 0.3**
 
             overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
@@ -87,8 +87,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.model = lp_detector_model.Yolov4(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
+        """
+        Function that reads the image input and returns the bboxes
         of the specified objects chosen to be detected
+
         Args:
             inputs (Dict): Dictionary of inputs with key "img"
         Returns:

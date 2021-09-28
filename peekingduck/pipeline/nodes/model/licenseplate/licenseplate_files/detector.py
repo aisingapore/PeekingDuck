@@ -16,11 +16,10 @@
 Object detection class using yolo single label model 
 to find license plate object bboxes
 """
-
-import cv2 as cv
+import os
 import logging
-import os as os
 from typing import Dict, Any, List, Tuple
+import cv2 as cv
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
@@ -63,8 +62,8 @@ class Detector:
             Score threshold: %s",
             self.config["model_type"],
             self.config["size"],
-            self.config["nmsThreshold"],
-            self.config["confThreshold"],
+            self.config["yolo_iou_threshold"],
+            self.config["yolo_score_threshold"],
         )
 
         return model
@@ -100,17 +99,17 @@ class Detector:
     def predict_object_bbox_from_image(
         self, image: np.array
     ) -> Tuple[List[np.array], List[str], List[float]]:
-        """Detect all objects' bounding box from one image
+        """
+        Detect all objects' bounding box from one image
 
         args:
-            - yolo:  (Model) model like yolov4 or yolov4_tiny
-            - image: (np.array) input image
+                image: (np.array) input image
 
         return:
-            - boxes: (np.array) an array of bounding box with
-                    definition like (x1, y1, x2, y2), in a
-                    coordinate system with original point in
-                    the left top corner
+                boxes: (np.array) an array of bounding box with
+                definition like (x1, y1, x2, y2), in a
+                coordinate system with original point in
+                the left top corner
         """
         # Use TF2 .pb saved model format for inference
         image_data = cv.resize(image, (self.config["size"], self.config["size"]))
@@ -129,10 +128,10 @@ class Detector:
             scores=tf.reshape(
                 pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
             ),
-            max_output_size_per_class=50,
-            max_total_size=50,
-            iou_threshold=0.3,
-            score_threshold=0.1,
+            max_output_size_per_class=self.config["max_output_size_per_class"],
+            max_total_size=self.config["max_total_size"],
+            iou_threshold=self.config["yolo_iou_threshold"],
+            score_threshold=self.config["yolo_score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]

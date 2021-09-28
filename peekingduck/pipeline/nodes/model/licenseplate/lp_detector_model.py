@@ -20,7 +20,9 @@ import logging
 from typing import List, Dict, Any, Tuple
 import numpy as np
 from peekingduck.weights_utils import checker, downloader
-from .licenseplate_files.detector import Detector
+from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
+    Detector,
+)
 
 
 class Yolov4:  # pylint: disable=too-few-public-methods
@@ -48,13 +50,13 @@ class Yolov4:  # pylint: disable=too-few-public-methods
 
     def predict(self, frame: np.array) -> Tuple[List[np.array], List[str], List[float]]:
         """
-        predict the bbox from frame
+        Predicts the bboxes from image frame
 
-        returns:
-        object_bboxes(List[Numpy Array]): list of bboxes detected
-        object_labels(List[str]): list of string labels of the
+        Returns:
+        object_bboxes (List[Numpy Array]): list of bboxes detected
+        object_labels (List[str]): list of string labels of the
             object detected for the corresponding bbox
-        object_scores(List(float)): list of confidence scores of the
+        object_scores (List(float)): list of confidence scores of the
             object detected for the corresponding bbox
         """
         assert isinstance(frame, np.ndarray)
