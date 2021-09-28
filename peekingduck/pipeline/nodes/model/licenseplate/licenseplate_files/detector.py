@@ -68,15 +68,6 @@ class Detector:
 
         return model
 
-    def getOutputsNames(self) -> List[str]:
-        """
-        Returns the names of the output layers
-        """
-        # Get the names of all the layers in the network
-        layersNames = self.yolo.getLayerNames()
-        # Get the names of the output layers, i.e. the layers with unconnected outputs
-        return [layersNames[i[0] - 1] for i in self.yolo.getUnconnectedOutLayers()]
-
     @staticmethod
     def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
         """
