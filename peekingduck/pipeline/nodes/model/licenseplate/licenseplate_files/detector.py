@@ -72,8 +72,9 @@ class Detector:
     def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
         """
         To scale the width and height of bboxes from v4tiny
-        After conversion of model from .cfg .weights from ,Alexey's Darknet repo,
-        to tf model, bboxes are bigger. So downscaling required for better fit
+        After the conversion of the model in .cfg and .weight file format, from 
+        Alexey's Darknet repo, to tf model, bboxes are bigger. 
+        So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
             x_1, y_1, x_2, y_2 = tuple(box)
@@ -91,7 +92,7 @@ class Detector:
         self, image: np.array
     ) -> Tuple[List[np.array], List[str], List[float]]:
         """
-        Detect all objects' bounding box from one image
+        Detect all license plate objects' bounding box from one image
 
         args:
                 image: (np.array) input image
