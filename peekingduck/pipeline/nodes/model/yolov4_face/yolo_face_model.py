@@ -43,7 +43,7 @@ class Yolov4:  # pylint: disable=too-few-public-methods
             self.logger.info("---no yolo weights detected. proceeding to download...---")
             downloader.download_weights(config["root"], config["blob_file"])
             self.logger.info("---yolo weights download complete.---")
-            
+
         self.detect_ids = config['detect_ids']
         self.detector = Detector(config)
 
