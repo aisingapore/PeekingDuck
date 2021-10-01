@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Face Detection model
+Fast face detection model that can distinguish between masked and unmasked faces
 """
 
 from typing import Dict, Any
@@ -60,11 +60,11 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
             image resolution passed to the YOLO model.
 
-        detect_ids (:obj:`List`): **default = [0,1] **
+        detect_ids (:obj:`List`): **default = [0,1]**
 
-            list of object class ids to be detected.
+            list of object class ids to be detected where no_mask is 0 and mask is 1.
 
-        max_output_size_per_class (:obj:`int`): **default = 50 **
+        max_output_size_per_class (:obj:`int`): **default = 50**
 
             maximum number of detected instances for each class in an image.
 
@@ -89,9 +89,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
-
-    Yolo Model training guide from:
-        https://www.youtube.com/watch?v=mmj3nxGT2YQ&t=2090s
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

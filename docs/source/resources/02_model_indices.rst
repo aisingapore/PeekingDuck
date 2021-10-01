@@ -120,7 +120,7 @@ This page provides the associated class IDs for PeekingDuck's models.
         +--------------+---------------+-----------------------+--------------+---------------+-----------------------+
 
     face detection indices
-        This table provides the associated indices for each class in two class face detectors.
+        This table provides the associated indices for the model.yolo_face node.
 
         +------------------------------+-----------------------+------------------------------+-----------------------+
         | Class name                   | Class ID              | Class name                   | Class ID              |          

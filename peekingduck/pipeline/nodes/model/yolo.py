@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Slower, two-class Face Detection model
+Fast Object Detection model
 """
 
 from typing import Dict, Any
