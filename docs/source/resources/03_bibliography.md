@@ -18,6 +18,7 @@ and projects.
 | 🦆 YOLOv4       | [✔️](http://arxiv.org/abs/2004.10934)  |[✔️](https://github.com/hunglc007/tensorflow-yolov4-tflite) |
 | 🦆 YOLOv3       | [✔️](https://arxiv.org/abs/1804.02767) |[✔️](https://github.com/zzh8829/yolov3-tf2)                 |
 | 🦆 EfficientDet | [✔️](http://arxiv.org/abs/1911.09070)  |[✔️](https://github.com/xuannianz/EfficientDet)             |
+| 🦆 MTCNN | [✔️](https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf) |[✔️](https://github.com/kpzhang93/MTCNN_face_detection_alignment) |
 | 🇸🇬 Recent advances in deep learning for object detection (2020)       | [✔️](https://ink.library.smu.edu.sg/sis_research/5096) | NA|
 
 
