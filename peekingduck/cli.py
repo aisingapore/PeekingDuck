@@ -99,11 +99,16 @@ def run(config_path: str, node_config: str) -> None:
 
 
 @cli.command()
-@click.option('--type',
-              help="Lists available nodes in the specified node type.\
-                   None will lists nodes from all types.")
+@click.argument("type", required=False)
 def nodes(type: str = None) -> None:
-    """Lists available nodes in PeekingDuck"""
+    """
+    Lists available nodes in PeekingDuck. When no argument is given, all
+    available nodes will be listed. When the node type is given as an argument 
+    , all available nodes in the specified node type will be listed.
+
+    Args:
+        type (str): input, model, dabble, draw or output
+    """
 
     url_prefix = "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
     url_postfix = ".Node.html#peekingduck.pipeline.nodes."
