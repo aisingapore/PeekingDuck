@@ -72,6 +72,7 @@ class TestYolo:
 
     def test_return_at_least_one_face_and_one_bbox(self, test_human_images, yolo):
         test_img = cv2.imread(test_human_images)
+        test_img = cv2.resize(test_img, (1280, 720))
         output = yolo.run({'img': test_img})
         assert 'bboxes' in output
         assert output['bboxes'].size != 0
