@@ -136,7 +136,7 @@ def nodes(type_name: str = None) -> None:
 
             click.secho(f"{num+1}:", nl=False)
             click.secho(f"{node_name}", fg='blue', nl=False)
-            click.secho(f"      Info:", nl=False)
+            click.secho("      Info:", nl=False)
             click.secho(url, fg='green')
 
     click.secho("\n")
