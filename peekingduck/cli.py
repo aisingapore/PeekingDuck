@@ -99,29 +99,29 @@ def run(config_path: str, node_config: str) -> None:
 
 
 @cli.command()
-@click.argument("type", required=False)
-def nodes(type: str = None) -> None:
+@click.argument("type_name", required=False)
+def nodes(type_name: str = None) -> None:
     """
     Lists available nodes in PeekingDuck. When no argument is given, all
-    available nodes will be listed. When the node type is given as an argument 
+    available nodes will be listed. When the node type is given as an argument
     , all available nodes in the specified node type will be listed.
 
     Args:
-        type (str): input, model, dabble, draw or output
+        type_name (str): input, model, dabble, draw or output
     """
 
     url_prefix = "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
     url_postfix = ".Node.html#peekingduck.pipeline.nodes."
 
-    if type is None:
+    if type_name is None:
         type_of_node = ["input", "model", "dabble", "draw", "output"]
     else:
-        type_of_node = [type]
+        type_of_node = [type_name]
 
-    dir = os.path.join(os.getcwd(), 'peekingduck', 'configs')
+    configs_dir = os.path.join(os.getcwd(), 'peekingduck', 'configs')
 
     for node_type in type_of_node:
-        type_dir = os.path.join(dir, node_type)
+        type_dir = os.path.join(configs_dir, node_type)
         files_name = os.listdir(type_dir)
 
         click.secho("\nPeekingDuck has the following ", bold=True, nl=False)
