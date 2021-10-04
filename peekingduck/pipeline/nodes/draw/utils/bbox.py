@@ -31,7 +31,8 @@ from peekingduck.pipeline.nodes.draw.utils.general import \
 def draw_bboxes(frame: np.array,
                 bboxes: List[List[float]],
                 bbox_labels: List[str],
-                show_labels: bool) -> None:
+                show_labels: bool,
+                colour_choice: Tuple[int, int, int] = None) -> None:
     """Draw bboxes onto an image frame.
 
     Args:
@@ -45,7 +46,10 @@ def draw_bboxes(frame: np.array,
     colour_indx = {label: indx for indx, label in enumerate(set(bbox_labels))}
 
     for i, bbox in enumerate(bboxes):
-        colour = PRIMARY_PALETTE[colour_indx[bbox_labels[i]] % TOTAL_COLOURS]
+        if colour_choice:
+            colour = colour_choice
+        else:
+            colour = PRIMARY_PALETTE[colour_indx[bbox_labels[i]] % TOTAL_COLOURS]
         if show_labels:
             _draw_bbox(frame, bbox, image_size,
                        colour, bbox_labels[i])
