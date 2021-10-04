@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector i
 )
 
 
-class Yolov4:  # pylint: disable=too-few-public-methods
+class Yolov4:  # pylint: disable=too-few-public-methods, disable=duplicate-code
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
