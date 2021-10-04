@@ -21,7 +21,7 @@ from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):  # pylint: disable=too-few-public-methods
+class Node(AbstractNode):  # pylint: disable=too-few-public-methods, duplicate-code
     """Blur area bounded by bounding boxes on image.
 
     The blur_bbox node blur the areas of the image
@@ -54,8 +54,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         for bbox in bboxes:
             x_1, y_1, x_2, y_2 = bbox
-            x_1, x_2 = int(x_1 * width), int(x_2 * width)
             y_1, y_2 = int(y_1 * height), int(y_2 * height)
+            x_1, x_2 = int(x_1 * width), int(x_2 * width)
 
             # to get the area bounded by bbox
             bbox_image = image[y_1:y_2, x_1:x_2, :]

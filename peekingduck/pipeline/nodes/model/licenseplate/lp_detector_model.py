@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector i
 )
 
 
-class Yolov4:  # pylint: disable=too-few-public-methods,duplicate-code
+class Yolov4:  # pylint: disable=too-few-public-methods
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -34,13 +34,13 @@ class Yolov4:  # pylint: disable=too-few-public-methods,duplicate-code
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config["yolo_score_threshold"] <= 1:
-            raise ValueError("yolo_score_threshold must be in [0, 1]")
-
         if not 0 <= config["yolo_iou_threshold"] <= 1:
             raise ValueError("yolo_iou_threshold must be in [0, 1]")
 
-        # check for yolo weights, if none then download into weights folder
+        if not 0 <= config["yolo_score_threshold"] <= 1:
+            raise ValueError("yolo_score_threshold must be in [0, 1]")
+
+        # check for yolo(license plate) weights, if none then download
         if not checker.has_weights(config["root"], config["weights_dir"]):
             self.logger.info("---no LP weights detected. proceeding to download...---")
             downloader.download_weights(config["root"], config["blob_file"])
