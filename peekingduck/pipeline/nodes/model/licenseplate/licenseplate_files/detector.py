@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Object detection class using yolo single label model 
+Object detection class using yolo single label model
 to find license plate object bboxes
 """
 import os
@@ -24,22 +24,21 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
-
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        self.logger = logging.getLogger(__name__)
 
         self.config = config
         self.root_dit = config["root"]
+        self.logger = logging.getLogger(__name__)
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
         classes_path = os.path.join(self.config["root"], self.config["classes"])
-        with open(classes_path, "rt") as f:
-            class_labels = f.read().rstrip("\n").split("\n")
+        with open(classes_path, "rt") as file:
+            class_labels = file.read().rstrip("\n").split("\n")
 
         return class_labels
 
@@ -72,8 +71,8 @@ class Detector:
     def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
         """
         To scale the width and height of bboxes from v4tiny
-        After the conversion of the model in .cfg and .weight file format, from 
-        Alexey's Darknet repo, to tf model, bboxes are bigger. 
+        After the conversion of the model in .cfg and .weight file format, from
+        Alexey's Darknet repo, to tf model, bboxes are bigger.
         So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
@@ -112,20 +111,19 @@ class Detector:
         image_data = np.asarray([image_data]).astype(np.float32)
         infer = self.yolo.signatures["serving_default"]
         pred_bbox = infer(tf.constant(image_data))
-        for key, value in pred_bbox.items():
-            boxes = value[:, :, 0:4]
+        for _, value in pred_bbox.items():
             pred_conf = value[:, :, 4:]
+            boxes = value[:, :, 0:4]
 
-        # Use NMS to remove duplicate bboxes
+        # performs nms using model's predictions
         bboxes, scores, classes, nums = tf.image.combined_non_max_suppression(
-            boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-            scores=tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
-            ),
-            max_output_size_per_class=self.config["max_output_size_per_class"],
-            max_total_size=self.config["max_total_size"],
-            iou_threshold=self.config["yolo_iou_threshold"],
-            score_threshold=self.config["yolo_score_threshold"],
+            tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
+            tf.reshape(
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
+            self.config['max_output_size_per_class'],
+            self.config['max_total_size'],
+            self.config['yolo_iou_threshold'],
+            self.config['yolo_score_threshold']
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]
@@ -145,4 +143,3 @@ class Detector:
         labels = np.asarray([self.class_labels[int(i)] for i in classes])
 
         return bboxes, labels, scores
-
