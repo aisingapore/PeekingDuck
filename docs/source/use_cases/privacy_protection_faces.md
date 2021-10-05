@@ -52,9 +52,8 @@ You can mosaic or blur the faces detected using the`draw.mosaic_bbox` or `draw.b
 **3. Adjusting Nodes**
 
 With regard to the MTCNN model, some common node behaviours that you might want to adjust are:
-- `mtcnn_min_size`: This specifies the minimum height and width of a face to be detected (default = 40 pixels . You may want to decrease the minimum size to increase the number of detections.
-- `mtcnn_thresholds`: This specifies the threshold values for the Proposal Network (P-Net), Refine Network
-(R-Net) and Output Network (O-Net) in the MTCNN model. Calibration is performed at each stage in which bounding boxes with confidence scores less than the specified threshold (default = [0.6, 0.7, 0.7]) are discarded. 
+- `mtcnn_min_size`: This specifies the minimum height and width of a face to be detected (default = 40 pixels). You may want to decrease the minimum size to increase the number of detections.
+- `mtcnn_thresholds`: This specifies the threshold values for the Proposal Network (P-Net), Refine Network (R-Net) and Output Network (O-Net) in the MTCNN model. Calibration is performed at each stage in which bounding boxes with confidence scores less than the specified threshold (default = [0.6, 0.7, 0.7]) are discarded. 
 - `mtcnn_score`: This specifies the threshold value in the final output. Bounding boxes with confidence scores less than the specified threshold (default = 0.7) in the final output are discarded. You may want to lower the mtcnn_thresholds and the mtcnn_score to increase the number of detections.
 
 In addition, some common node behaviours that you might want to adjust for the mosaic_bbox and blur_bbox nodes are:
