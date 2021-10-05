@@ -1,0 +1,7 @@
+nodes:
+- input.live
+- model.mtcnn
+- dabble.fps
+- draw.mosaic_bbox
+- draw.legend
+- output.screen
