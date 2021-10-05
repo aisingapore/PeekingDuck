@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if ! (mypy --ignore-missing-imports \
+if ! (mypy --show-error-codes \
+           --ignore-missing-imports \
            --disallow-untyped-defs \
            --disable-error-code override \
            --disable-error-code attr-defined peekingduck); then
