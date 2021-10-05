@@ -14,13 +14,13 @@
 
 import os
 import logging
-from peekingduck.utils.logger import setup_logger
+from peekingduck.utils.logger import LoggerSetup
 import peekingduck.runner as pkd
 
 if __name__ == "__main__":
     RUN_PATH = os.path.join(os.getcwd(), 'PeekingDuck', 'run_config.yml')
 
-    setup_logger()
+    LoggerSetup()
     logger = logging.getLogger(__name__)
     logger.info("Run path: %s", RUN_PATH)
 
