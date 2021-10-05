@@ -21,7 +21,7 @@ from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):  # pylint: disable=too-few-public-methods, duplicate-code
+class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blur area bounded by bounding boxes on image.
 
     The blur_bbox node blur the areas of the image
@@ -43,7 +43,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods, duplicate-c
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    # pylint: disable=duplicate-code
     @staticmethod
     def blur(bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
         """
