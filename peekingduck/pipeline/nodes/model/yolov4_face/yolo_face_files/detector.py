@@ -128,13 +128,13 @@ class Detector: # pylint: disable=too-few-public-methods
 
         # performs nms using model's predictions
         bboxes, scores, classes, nums = tf.image.combined_non_max_suppression(
+            max_output_size_per_class=self.config['max_output_size_per_class'],
             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
             scores=tf.reshape(
                 pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            max_output_size_per_class=self.config['max_output_size_per_class'],
+            score_threshold=self.config['yolo_score_threshold'],
             max_total_size=self.config['max_total_size'],
-            iou_threshold=self.config['yolo_iou_threshold'],
-            score_threshold=self.config['yolo_score_threshold']
+            iou_threshold=self.config['yolo_iou_threshold']
         )
 
         return bboxes, scores, classes, nums
