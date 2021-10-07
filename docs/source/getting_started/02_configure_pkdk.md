@@ -4,6 +4,11 @@ This page will guide users on how to control and configure how PeekingDuck behav
 - Selecting which nodes to include in the pipeline
 - Configuring node behaviour
 
+To list the available nodes in PeekingDuck for selection and get their respective documentation's URL, run the following command: 
+ ```
+ > peekingduck nodes
+ ```
+
 In this guide, we will make changes to PeekingDuck config files to run pose estimation models. We will also teach users how to make changes to the default configurations to run a bird detection pipeline on a local video file.
 
 By default, `run_config.yml` uses the following nodes:
