@@ -4,7 +4,7 @@ This page will guide users on how to control and configure how PeekingDuck behav
 - Selecting which nodes to include in the pipeline
 - Configuring node behaviour
 
-To list the available nodes in PeekingDuck for selection and get their respective documentation's URL, run the following command: 
+You can refer to our API Documentation section to see the available nodes in for selection and their respective configurable settings. Alternatively, to get a quick overview of Peekingduck's nodes, run the following command: 
  ```
  > peekingduck nodes
  ```
