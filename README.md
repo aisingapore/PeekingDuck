@@ -55,12 +55,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     Terminate the program by clicking on the output screen and pressing `q`.
 
-4. To list the available nodes in PeekingDuck and their respective documentation's URL: 
-    ```
-    > peekingduck nodes
-    ```
-
-5. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
+4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
 
 ## How PeekingDuck Works
@@ -74,6 +69,11 @@ PeekingDuck has 5 types of nodes:
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
+
+To list the available nodes in PeekingDuck and get their respective documentation's URL: 
+ ```
+ > peekingduck nodes
+ ```
 
 
 ## Explore PeekingDuck's Features
