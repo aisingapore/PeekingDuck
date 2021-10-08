@@ -35,7 +35,7 @@ nodes:
 
 ## Configuring node behaviour
 
-PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://peekingduck.blob.core.windows.net/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
+PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://storage.googleapis.com/peekingduck/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
 
 By default, `model.yolo` detects humans. We can change its behavior either by 1) updating the `run_config.yml`; or 2) updating the configs at runtime via CLI.
 
