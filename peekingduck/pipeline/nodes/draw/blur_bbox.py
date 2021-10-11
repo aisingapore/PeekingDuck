@@ -38,8 +38,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     Configs:
         blur_level (:obj:`int`): **default = 7**
-            This defines the standard deviation of the Gaussian kernel 
-            used in the Gaussian filter. The higher the blur level, the 
+            This defines the standard deviation of the Gaussian kernel
+            used in the Gaussian filter. The higher the blur level, the
             more intense is the blurring.
     """
 
