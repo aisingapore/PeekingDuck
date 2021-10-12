@@ -97,7 +97,7 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 | [Privacy Protection Faces](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html) | [Privacy Protection License Plates](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_license_plate.html) |
 |                                                              |                                                              |
 | [Face Mask Detection](https://peekingduck.readthedocs.io/en/stable/use_cases/face_mask_detection.html) |                                                              |
-|                                                              |                                                              |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> |                                                              |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
