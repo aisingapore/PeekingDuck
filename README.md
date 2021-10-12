@@ -90,16 +90,14 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 
 |                                                              |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [Social Distancing](use_cases/social_distancing.md)          | [Zone Counting](use_cases/zone_counting.md)                  |
+| [Social Distancing](https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html) | [Zone Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html) |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%"> |
-| [Group Size Checking](use_cases/group_size_checking.md)      | [Object Counting](use_cases/object_counting.md)              |
+| [Group Size Checking](https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html) | [Object Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting.html) |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
-| [Privacy Protection Faces](use_cases/privacy_protection_faces.md) | [Privacy Protection License Plates](use_cases/privacy_license_plate.md) |
+| [Privacy Protection Faces](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html) | [Privacy Protection License Plates](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_license_plate.html) |
 |                                                              |                                                              |
-| [Face Mask Detection](use_cases/face_mask_detection.md)      |                                                              |
+| [Face Mask Detection](https://peekingduck.readthedocs.io/en/stable/use_cases/face_mask_detection.html) |                                                              |
 |                                                              |                                                              |
-|                                                              |                                                              |
-
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
