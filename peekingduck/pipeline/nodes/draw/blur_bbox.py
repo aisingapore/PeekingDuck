@@ -37,14 +37,18 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        None.
+        blur_level (:obj:`int`): **default = 7**
+            This defines the standard deviation of the Gaussian kernel
+            used in the Gaussian filter. The higher the blur level, the
+            more intense is the blurring.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    @staticmethod
-    def blur(bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
+        self.blur_level=self.config['blur_level']
+
+    def blur(self, bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
         """
         Function that blur the area bounded by bbox in an image
         """
@@ -60,7 +64,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
             # apply the blur using gaussian filter from scipy
-            blur_bbox_image = gaussian_filter(bbox_image, sigma=5)
+            blur_bbox_image = gaussian_filter(bbox_image, sigma=self.blur_level)
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image

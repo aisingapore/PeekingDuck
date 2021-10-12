@@ -36,7 +36,7 @@ def test_image(request):
 
 @pytest.fixture
 def draw_blur_node():
-    node = Node({"input": ["bboxes", "img", "bbox_labels"], "output": ["img"],})
+    node = Node({"input": ["bboxes", "img", "bbox_labels"], "output": ["img"],"blur_level": 7})
     return node
 
 
