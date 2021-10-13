@@ -118,7 +118,8 @@ def nodes(type_name: str = None) -> None:
     else:
         type_of_node = [type_name]
 
-    configs_dir = os.path.join(os.getcwd(), 'peekingduck', 'configs')
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    configs_dir = os.path.join(dir_path, 'configs')
 
     for node_type in type_of_node:
         type_dir = os.path.join(configs_dir, node_type)
@@ -135,8 +136,8 @@ def nodes(type_name: str = None) -> None:
                   f"{node_type}.{node_name}.Node"
 
             click.secho(f"{num+1}:", nl=False)
-            click.secho(f"{node_name}", fg='blue', nl=False)
-            click.secho("      Info:", nl=False)
-            click.secho(url, fg='green')
+            click.secho(f"{node_name}", bold=True, nl=False)
+            click.secho("      Info:", fg='yellow', nl=False)
+            click.secho(url, bold=True)
 
     click.secho("\n")
