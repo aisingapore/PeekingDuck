@@ -35,8 +35,8 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         formatter = ColoredFormatter('{asctime} {name} {level_color} {levelname}'
                                      '{reset}: {msg_color} {message} {reset}',
                                      style='{', datefmt='%Y-%m-%d %H:%M:%S',
-                                     colors={'DEBUG': Style.BRIGHT,
-                                             'INFO': Style.BRIGHT,
+                                     colors={'DEBUG': Fore.RESET + Style.BRIGHT,
+                                             'INFO': Fore.RESET + Style.BRIGHT,
                                              'WARNING': Fore.YELLOW + Style.BRIGHT,
                                              'ERROR': Fore.RED + Style.BRIGHT,
                                              'CRITICAL': Fore.RED + Style.BRIGHT})
