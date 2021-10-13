@@ -126,18 +126,20 @@ def nodes(type_name: str = None) -> None:
         files_name = os.listdir(type_dir)
 
         click.secho("\nPeekingDuck has the following ", bold=True, nl=False)
-        click.secho(f"{node_type} ", fg='red', bold=True, nl=False)
+        click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
         click.secho("nodes:", bold=True)
 
-        for num, file_name in enumerate(files_name):
-            node_name = file_name.split('.')[0]
+        node_names = [file_name.split(".")[0] for file_name in files_name]
+        max_length = len(max(node_names, key=len))
+        for num, node_name in enumerate(node_names):
+            url = (
+                f" {url_prefix}{node_type}.{node_name}{url_postfix}"
+                f"{node_type}.{node_name}.Node"
+            )
 
-            url = f" {url_prefix}{node_type}.{node_name}{url_postfix}'"\
-                  f"{node_type}.{node_name}.Node"
-
-            click.secho(f"{num+1}:", nl=False)
-            click.secho(f"{node_name}", bold=True, nl=False)
-            click.secho("      Info:", fg='yellow', nl=False)
-            click.secho(url, bold=True)
+            click.secho(f"{num + 1}:", nl=False)
+            click.secho(f"{node_name: <{max_length + 1}}", bold=True, nl=False)
+            click.secho("Info:", fg="yellow", nl=False)
+            click.secho(url)
 
     click.secho("\n")
