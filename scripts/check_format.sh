@@ -1,6 +1,6 @@
 #!/bin/sh -eu
 
-fail = "0"
+fail="0"
 
 black --version
 
