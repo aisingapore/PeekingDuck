@@ -1,6 +1,6 @@
 name: Skip Test Pypi and Publish to Pypi
 env:
-  VERSION: v1.0.3rc2
+  VERSION: v1.0.3
 on:
   workflow_dispatch
 
