@@ -9,8 +9,10 @@ if ! black --check .; then
 fi
 
 if [ "$fail" = "1" ]; then
-    echo "At least one file is poorly formatted - check the output above"
+    echo "BLACK ERROR: at least one file is poorly formatted"
     exit 123
+else
+    echo "BLACK SUCCESS!!"
 fi
 
-echo "Everything seems to be formatted properly!"
+echo "CHECKCODE: CONGRATULATIONS, ALL TESTS SUCCESSFUL!!"
