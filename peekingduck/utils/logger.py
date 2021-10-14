@@ -55,9 +55,9 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         self.logger.setLevel(logging.INFO)
         sys.excepthook = self.handle_exception
 
-    def handle_exception(
+    def handle_exception(  # type:ignore
         self, exc_type, exc_value, exc_traceback
-    ) -> None:  # type:ignore
+    ) -> None:
         """Use Python's logging module when showing errors"""
 
         if issubclass(exc_type, KeyboardInterrupt):

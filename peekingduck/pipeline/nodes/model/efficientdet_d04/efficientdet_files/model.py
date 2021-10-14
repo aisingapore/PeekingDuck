@@ -837,8 +837,8 @@ def efficientdet(
     )
     anchors_input = np.expand_dims(anchors, axis=0)
     boxes = RegressBoxes(name="boxes")(
-        [anchors_input, regression[..., :4]]
-    )  # type:ignore
+        [anchors_input, regression[..., :4]]  # type:ignore
+    )
     boxes = ClipBoxes(name="clipped_boxes")([image_input, boxes])
 
     # filter detections (apply NMS / score threshold / select top-k)
@@ -848,8 +848,8 @@ def efficientdet(
             score_threshold=score_threshold,
             detect_quadrangle=True,
         )(
-            [boxes, classification, regression[..., 4:8], regression[..., 8]]
-        )  # type: ignore
+            [boxes, classification, regression[..., 4:8], regression[..., 8]]  # type: ignore
+        )
     else:
         detections = FilterDetections(
             name="filtered_detections", score_threshold=score_threshold

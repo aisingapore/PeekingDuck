@@ -65,8 +65,8 @@ class Runner:
         if not nodes and RUN_PATH:
             # create Graph to run
             self.node_loader = DeclarativeLoader(
-                RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER
-            )  # type: ignore
+                RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER  # type: ignore
+            )
 
             self.pipeline = self.node_loader.get_pipeline()
 

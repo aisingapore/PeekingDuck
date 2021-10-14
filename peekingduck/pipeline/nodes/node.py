@@ -114,8 +114,8 @@ class AbstractNode(metaclass=ABCMeta):
             for key, value in dict_update.items():
                 if isinstance(value, collections.abc.Mapping):
                     dict_orig[key] = self._edit_config(
-                        dict_orig.get(key, {}), value
-                    )  # type: ignore
+                        dict_orig.get(key, {}), value  # type: ignore
+                    )
                 elif key not in dict_orig:
                     self.logger.warning(
                         "Config for node %s does not have the key: %s",

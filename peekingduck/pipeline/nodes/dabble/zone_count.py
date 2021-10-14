@@ -59,8 +59,8 @@ class Node(AbstractNode):
         try:
             self.zones = [
                 self._create_zone(zone, config["resolution"])  # type: ignore
-                for zone in self.zones
-            ]  # type: ignore
+                for zone in self.zones  # type: ignore
+            ]
         except TypeError as error:
             self.logger.warning(error)
 

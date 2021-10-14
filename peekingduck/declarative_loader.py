@@ -131,14 +131,14 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     path_to_node,
                     node_name,
                     self.custom_config_loader,
-                    config_updates_yml,
-                )  # type: ignore
+                    config_updates_yml,  # type: ignore
+                )
             else:
                 path_to_node = "peekingduck.pipeline.nodes."
 
                 instantiated_node = self._init_node(
-                    path_to_node, node_str, self.config_loader, config_updates_yml
-                )  # type: ignore
+                    path_to_node, node_str, self.config_loader, config_updates_yml  # type: ignore
+                )
 
             instantiated_nodes.append(instantiated_node)
 
@@ -178,8 +178,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value, node_name
-                )  # type: ignore
+                    dict_orig.get(key, {}), value, node_name  # type: ignore
+                )
             else:
                 if key not in dict_orig:
                     self.logger.warning(
