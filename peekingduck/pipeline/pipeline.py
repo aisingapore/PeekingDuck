@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 # pylint: disable=R0903
 class Pipeline:
-    """ Pipe class that stores nodes and manages flow of data used during inference
+    """Pipe class that stores nodes and manages flow of data used during inference
 
     Args:
         nodes (:obj: `List`): List of initiated nodes for the pipeline to run through
@@ -56,7 +56,7 @@ class Pipeline:
 
         data_pool = []
 
-        if nodes[0].inputs[0] == 'none':
+        if nodes[0].inputs[0] == "none":
             data_pool.extend(nodes[0].outputs)
 
         for node in nodes[1:]:
@@ -64,9 +64,11 @@ class Pipeline:
             if all(item in data_pool for item in node.inputs) or "all" in node.inputs:
                 data_pool.extend(node.outputs)
             else:
-                msg = textwrap.dedent(f"""\
+                msg = textwrap.dedent(
+                    f"""\
                     Nodes in this pipeline do not form a proper channel:
                     {node.name} requires these inputs: {node.inputs}
                     Data pool only has these outputs from previous nodes: {data_pool}
-                    Note that nodes run sequentially, in the order specified in the config file.""")
+                    Note that nodes run sequentially, in the order specified in the config file."""
+                )
                 raise ValueError(msg)

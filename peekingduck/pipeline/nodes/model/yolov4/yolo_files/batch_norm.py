@@ -20,7 +20,9 @@ import numpy as np
 import tensorflow as tf
 
 
-class BatchNormalization(tf.keras.layers.BatchNormalization):  # pylint: disable=too-many-ancestors, too-few-public-methods
+class BatchNormalization(
+    tf.keras.layers.BatchNormalization
+):  # pylint: disable=too-many-ancestors, too-few-public-methods
     """
     Make trainable=False freeze BN for real (the og version is sad)
     """

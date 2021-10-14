@@ -25,8 +25,7 @@ import tensorflow as tf
 
 
 class WBiFPNAdd(keras.layers.Layer):
-    """Class for Weighted Bi-directional FPN
-    """
+    """Class for Weighted Bi-directional FPN"""
 
     def __init__(self, epsilon: float = 1e-4, **kwargs: Any) -> None:
         super().__init__(**kwargs)
@@ -35,15 +34,19 @@ class WBiFPNAdd(keras.layers.Layer):
 
     def build(self, input_shape: List[tf.TensorShape]) -> None:
         num_in = len(input_shape)
-        self.weight = self.add_weight(name=self.name,
-                                      shape=(num_in,),
-                                      initializer=keras.initializers.constant(1 / num_in),
-                                      trainable=True,
-                                      dtype=tf.float32)
+        self.weight = self.add_weight(
+            name=self.name,
+            shape=(num_in,),
+            initializer=keras.initializers.constant(1 / num_in),
+            trainable=True,
+            dtype=tf.float32,
+        )
 
     def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         weight = keras.activations.relu(self.weight)
-        x_in = tf.reduce_sum([weight[i] * inputs[i] for i in range(len(inputs))], axis=0)
+        x_in = tf.reduce_sum(
+            [weight[i] * inputs[i] for i in range(len(inputs))], axis=0
+        )
         x_in = x_in / (tf.reduce_sum(weight) + self.epsilon)
         return x_in
 
@@ -52,15 +55,13 @@ class WBiFPNAdd(keras.layers.Layer):
 
     def get_config(self) -> Dict[str, Any]:
         config = super().get_config()
-        config.update({
-            'epsilon': self.epsilon
-        })
+        config.update({"epsilon": self.epsilon})
         return config
 
 
-def bbox_transform_inv(boxes: tf.Tensor,
-                       deltas: tf.Tensor,
-                       scale_factors: List[float] = None) -> tf.Tensor:
+def bbox_transform_inv(
+    boxes: tf.Tensor, deltas: tf.Tensor, scale_factors: List[float] = None
+) -> tf.Tensor:
     """Helper function to transform bboxes using offsets
 
     Args:
@@ -84,15 +85,14 @@ def bbox_transform_inv(boxes: tf.Tensor,
     height = tf.exp(t_h) * ht_a
     center_y = t_y * ht_a + (boxes[..., 1] + boxes[..., 3]) / 2
     center_x = t_x * wt_a + (boxes[..., 0] + boxes[..., 2]) / 2
-    top_left = center_x - width / 2., center_y - height / 2.
-    btm_right = center_x + width / 2., center_y + height / 2.
+    top_left = center_x - width / 2.0, center_y - height / 2.0
+    btm_right = center_x + width / 2.0, center_y + height / 2.0
     # return tf.stack([xmin, ymin, xmax, ymax], axis=-1)
     return tf.stack([top_left[0], top_left[1], btm_right[0], btm_right[1]], axis=-1)
 
 
 class ClipBoxes(keras.layers.Layer):
-    """ClipBoxes class to limit the value of bbox coordinates to image height and width
-    """
+    """ClipBoxes class to limit the value of bbox coordinates to image height and width"""
 
     def call(self, inputs: List[tf.Tensor], **kwargs: Dict[str, Any]) -> tf.Tensor:
         image, boxes = inputs
@@ -111,8 +111,7 @@ class ClipBoxes(keras.layers.Layer):
 
 
 class RegressBoxes(keras.layers.Layer):
-    """RegressBoxes class to compute actual bbox coordinate using anchors and offsets
-    """
+    """RegressBoxes class to compute actual bbox coordinate using anchors and offsets"""
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
@@ -130,16 +129,16 @@ class RegressBoxes(keras.layers.Layer):
 
 
 def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
-        boxes: tf.Tensor,
-        classification: tf.Tensor,
-        alphas: tf.Tensor = None,
-        ratios: tf.Tensor = None,
-        class_specific_filter: bool = True,
-        nms: bool = True,
-        score_threshold: float = 0.01,
-        max_detections: int = 100,
-        nms_threshold: float = 0.5,
-        detect_quadrangle: bool = False,
+    boxes: tf.Tensor,
+    classification: tf.Tensor,
+    alphas: tf.Tensor = None,
+    ratios: tf.Tensor = None,
+    class_specific_filter: bool = True,
+    nms: bool = True,
+    score_threshold: float = 0.01,
+    max_detections: int = 100,
+    nms_threshold: float = 0.5,
+    detect_quadrangle: bool = False,
 ) -> List[tf.Tensor]:
     """
     Filter detections using the boxes and classification values.
@@ -192,9 +191,12 @@ def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
             # filtered_boxes = tf.concat([filtered_boxes[..., 1:2], filtered_boxes[..., 0:1],
             #                             filtered_boxes[..., 3:4], filtered_boxes[..., 2:3]],
             # axis=-1)
-            nms_indices = tf.image.non_max_suppression(filtered_boxes, filtered_scores,
-                                                       max_output_size=max_detections,
-                                                       iou_threshold=nms_threshold)
+            nms_indices = tf.image.non_max_suppression(
+                filtered_boxes,
+                filtered_scores,
+                max_output_size=max_detections,
+                iou_threshold=nms_threshold,
+            )
 
             # filter indices based on NMS
             # (num_score_nms_keeps, 1)
@@ -213,7 +215,9 @@ def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
         # perform per class filtering
         for category in range(int(classification.shape[1])):
             scores = classification[:, category]
-            labels = category * tf.ones((keras.backend.shape(scores)[0],), dtype='int64')
+            labels = category * tf.ones(
+                (keras.backend.shape(scores)[0],), dtype="int64"
+            )
             all_indices.append(_filter_detections(scores, labels))
 
         # concatenate indices to single tensor
@@ -227,8 +231,9 @@ def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
     # select top k
     scores = tf.gather_nd(classification, indices)
     labels = indices[:, 1]
-    scores, top_indices = tf.nn.top_k(scores, k=keras.backend.minimum(
-        max_detections, keras.backend.shape(scores)[0]))
+    scores, top_indices = tf.nn.top_k(
+        scores, k=keras.backend.minimum(max_detections, keras.backend.shape(scores)[0])
+    )
 
     # filter input using the final set of indices
     indices = keras.backend.gather(indices[:, 0], top_indices)
@@ -240,7 +245,7 @@ def filter_detections(  # pylint: disable=too-many-arguments, too-many-locals
     boxes = tf.pad(boxes, [[0, pad_size], [0, 0]], constant_values=-1)
     scores = tf.pad(scores, [[0, pad_size]], constant_values=-1)
     labels = tf.pad(labels, [[0, pad_size]], constant_values=-1)
-    labels = keras.backend.cast(labels, 'int32')
+    labels = keras.backend.cast(labels, "int32")
 
     # set shapes, since we know what they are
     boxes.set_shape([max_detections, 4])
@@ -265,15 +270,16 @@ class FilterDetections(keras.layers.Layer):
     """
 
     def __init__(  # pylint: disable=too-many-arguments
-            self,
-            nms: bool = True,
-            class_specific_filter: bool = True,
-            nms_threshold: float = 0.5,
-            score_threshold: float = 0.01,
-            max_detections: int = 100,
-            parallel_iterations: int = 32,
-            detect_quadrangle: bool = False,
-            **kwargs: Any) -> None:
+        self,
+        nms: bool = True,
+        class_specific_filter: bool = True,
+        nms_threshold: float = 0.5,
+        score_threshold: float = 0.01,
+        max_detections: int = 100,
+        parallel_iterations: int = 32,
+        detect_quadrangle: bool = False,
+        **kwargs: Any
+    ) -> None:
         """
         Filters detections using score threshold, NMS and selecting the top-k detections.
 
@@ -332,15 +338,15 @@ class FilterDetections(keras.layers.Layer):
             outputs = tf.map_fn(
                 _filter_detections,
                 elems=[boxes, classification, alphas, ratios],
-                dtype=['float32', 'float32', 'float32', 'float32', 'int32'],
-                parallel_iterations=self.parallel_iterations
+                dtype=["float32", "float32", "float32", "float32", "int32"],
+                parallel_iterations=self.parallel_iterations,
             )
         else:
             outputs = tf.map_fn(
                 _filter_detections,
                 elems=[boxes, classification],
-                dtype=['float32', 'float32', 'int32'],
-                parallel_iterations=self.parallel_iterations
+                dtype=["float32", "float32", "int32"],
+                parallel_iterations=self.parallel_iterations,
             )
 
         return outputs
@@ -372,7 +378,9 @@ class FilterDetections(keras.layers.Layer):
             (input_shape[1][0], self.max_detections),
         ]
 
-    def compute_mask(self, inputs: List[tf.Tensor], mask: tf.Tensor = None) -> tf.Tensor:
+    def compute_mask(
+        self, inputs: List[tf.Tensor], mask: tf.Tensor = None
+    ) -> tf.Tensor:
         """
         This is required in Keras when there is more than 1 output.
         """
@@ -386,13 +394,15 @@ class FilterDetections(keras.layers.Layer):
             Dictionary containing the parameters of this layer.
         """
         config = super().get_config()
-        config.update({
-            'nms': self.nms,
-            'class_specific_filter': self.class_specific_filter,
-            'nms_threshold': self.nms_threshold,
-            'score_threshold': self.score_threshold,
-            'max_detections': self.max_detections,
-            'parallel_iterations': self.parallel_iterations,
-        })
+        config.update(
+            {
+                "nms": self.nms,
+                "class_specific_filter": self.class_specific_filter,
+                "nms_threshold": self.nms_threshold,
+                "score_threshold": self.score_threshold,
+                "max_detections": self.max_detections,
+                "parallel_iterations": self.parallel_iterations,
+            }
+        )
 
         return config

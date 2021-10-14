@@ -25,8 +25,7 @@ LEFT_SHOULDER = 5
 RIGHT_SHOULDER = 6
 LEFT_PELVIS = 11
 RIGHT_PELVIS = 12
-TORSO_KEYPOINTS = [
-    NOSE, LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_PELVIS, RIGHT_PELVIS]
+TORSO_KEYPOINTS = [NOSE, LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_PELVIS, RIGHT_PELVIS]
 
 
 class Node(AbstractNode):
@@ -56,8 +55,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Converts pose keypoints into 3D locations.
-        """
+        """Converts pose keypoints into 3D locations."""
 
         locations = []
 
@@ -69,7 +67,8 @@ class Node(AbstractNode):
                 bbox = self._get_bbox(keypoints)
 
             point = self._get_3d_point_from_bbox(
-                bbox, self.focal_length, self.torso_factor)
+                bbox, self.focal_length, self.torso_factor
+            )
             locations.append(point)
 
         outputs = {"obj_3D_locs": locations}
@@ -82,8 +81,7 @@ class Node(AbstractNode):
 
         torso_keypoints = keypoints[TORSO_KEYPOINTS, :]  # type: ignore
         # ignore keypoints that are '-1.' as below confidence score and are masked
-        torso_keypoints = np.reshape(
-            torso_keypoints[torso_keypoints != -1.], (-1, 2))
+        torso_keypoints = np.reshape(torso_keypoints[torso_keypoints != -1.0], (-1, 2))
 
         return torso_keypoints
 
@@ -105,8 +103,9 @@ class Node(AbstractNode):
         return np.array([top_left_x, top_left_y, btm_right_x, btm_right_y])
 
     @staticmethod
-    def _get_3d_point_from_bbox(bbox: np.array, focal_length: float,
-                                torso_factor: float) -> np.array:
+    def _get_3d_point_from_bbox(
+        bbox: np.array, focal_length: float, torso_factor: float
+    ) -> np.array:
         """Get the 3d coordinates of the centre of a bounding box"""
 
         # Subtraction is to make the camera the origin of the coordinate system

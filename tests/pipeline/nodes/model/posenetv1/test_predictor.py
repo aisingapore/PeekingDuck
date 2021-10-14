@@ -25,11 +25,18 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import P
 
 @pytest.fixture
 def posenet_config():
-    filepath = os.path.join(os.getcwd(), 'tests', 'pipeline', 'nodes',
-                            'model', 'posenetv1', 'test_posenet.yml')
+    filepath = os.path.join(
+        os.getcwd(),
+        "tests",
+        "pipeline",
+        "nodes",
+        "model",
+        "posenetv1",
+        "test_posenet.yml",
+    )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config['root'] = os.getcwd()
+    node_config["root"] = os.getcwd()
     return node_config
 
 
@@ -45,16 +52,16 @@ def posenet_predictor(posenet_config):
     return predictor
 
 
-TEST_DIR = os.path.join(os.getcwd(), 'images', 'testing')
+TEST_DIR = os.path.join(os.getcwd(), "images", "testing")
+
 
 @pytest.mark.mlmodel
 class TestPredictor:
-
     def test_predictor(self):
         assert posenet_predictor is not None, "Predictor is not instantiated"
 
     def test_predict(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, 't2.jpg'))
+        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
         output = posenet_predictor.predict(frame)
         assert len(output) == 4, "Predicted output has missing keys"
         for i in output:
@@ -67,28 +74,28 @@ class TestPredictor:
         assert len(tuple_res) == 2, "Loaded data must be of length 2"
 
     def test_create_image_from_frame(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, 't2.jpg'))
-        image, output_scale, image_size = posenet_predictor._create_image_from_frame(16,
-                                                                                     frame,
-                                                                                     (225, 225),
-                                                                                     '75')
+        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
+        image, output_scale, image_size = posenet_predictor._create_image_from_frame(
+            16, frame, (225, 225), "75"
+        )
         assert type(image_size) is list, "Image size must be a list"
         assert image_size == [439, 640], "Incorrect image size"
         assert type(output_scale) is np.ndarray, "Output scale must be a numpy array"
-        npt.assert_almost_equal(output_scale, np.array([1.95, 2.84]),
-                                2), "Incorrect scale"
+        npt.assert_almost_equal(
+            output_scale, np.array([1.95, 2.84]), 2
+        ), "Incorrect scale"
 
     def test_model_instantiation(self, posenet_predictor):
         self.posenet_model = posenet_predictor._create_posenet_model()
         assert self.posenet_model is not None, "Model is not instantiated"
 
     def test_predict_all_poses(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, 't2.jpg'))
+        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
         posenet_model = posenet_predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
-        coords, scores, masks = posenet_predictor._predict_all_poses(posenet_model,
-                                                                     frame,
-                                                                     '75')
+        coords, scores, masks = posenet_predictor._predict_all_poses(
+            posenet_model, frame, "75"
+        )
         assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
         assert scores.shape == (1, 17), "Scores is of wrong shape"
         assert masks.shape == (1, 17), "Masks is of wrong shape"

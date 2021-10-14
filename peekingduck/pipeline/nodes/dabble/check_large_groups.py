@@ -42,12 +42,15 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, List[int]]) -> Dict[str, List[int]]:
-        """ Checks which groups have exceeded the group size threshold,
+        """Checks which groups have exceeded the group size threshold,
         and returns a list of such groups.
         """
 
         group_counter = Counter(inputs["obj_groups"])
-        large_groups = [group for group in group_counter if
-                        group_counter[group] > self.group_size_thres]
+        large_groups = [
+            group
+            for group in group_counter
+            if group_counter[group] > self.group_size_thres
+        ]
 
         return {"large_groups": large_groups}

@@ -57,7 +57,7 @@ class Node(AbstractNode):
         Args:
             inputs (dict): Dict with keys "img", "keypoints", "keypoint_conns"
         """
-        draw_human_poses(inputs["img"],  # type: ignore
-                         inputs["keypoints"],
-                         inputs["keypoint_conns"])  # type: ignore
+        draw_human_poses(
+            inputs["img"], inputs["keypoints"], inputs["keypoint_conns"]  # type: ignore
+        )  # type: ignore
         return {}

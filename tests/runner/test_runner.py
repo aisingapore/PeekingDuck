@@ -27,7 +27,7 @@ PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
 PKD_NODE = "pkd_node_type" + "." + "pkd_node_name"
 PKD_NODE_2 = "pkd_node_type" + "." + "pkd_node_name" + "2"
-NODES = {"nodes": [PKD_NODE,PKD_NODE_2]}
+NODES = {"nodes": [PKD_NODE, PKD_NODE_2]}
 
 MODULE_PATH = "tmp_dir"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
@@ -48,21 +48,20 @@ class MockedNode(AbstractNode):
 
         return output
 
+
 def create_node_config(config_dir, node_name):
-    
-    config_text = {"root": None,
-                   "input": ["none"],
-                   "output": ["pipeline_end"]}
+
+    config_text = {"root": None, "input": ["none"], "output": ["pipeline_end"]}
 
     node_config_file = f"{node_name}.yml"
 
-    with open(os.path.join(config_dir, node_config_file), 'w') as fp:
+    with open(os.path.join(config_dir, node_config_file), "w") as fp:
         yaml.dump(config_text, fp)
 
 
 def create_run_config_yaml(nodes):
 
-    with open(RUN_CONFIG_PATH, 'w') as outfile:
+    with open(RUN_CONFIG_PATH, "w") as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
@@ -70,7 +69,7 @@ def setup():
     sys.path.append(MODULE_PATH)
 
     os.makedirs(PKD_NODE_DIR)
-    
+
     create_run_config_yaml(NODES)
 
 
@@ -86,17 +85,17 @@ def replace_pipeline(node):
     pass
 
 
-@ pytest.fixture
+@pytest.fixture
 def runner():
 
     setup()
 
-    with mock.patch('peekingduck.declarative_loader.DeclarativeLoader.get_pipeline',
-                    wraps=replace_declarativeloader_get_pipeline):
+    with mock.patch(
+        "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
+        wraps=replace_declarativeloader_get_pipeline,
+    ):
 
-        test_runner = Runner(RUN_CONFIG_PATH,
-                             CONFIG_UPDATES_CLI,
-                             CUSTOM_FOLDER_PATH)
+        test_runner = Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_FOLDER_PATH)
 
         return test_runner
 
@@ -106,10 +105,10 @@ def test_input_node():
     Path(CUSTOM_CONFIG_FOLDER_PATH).mkdir(parents=True, exist_ok=True)
     create_node_config(CUSTOM_CONFIG_FOLDER_PATH, PKD_NODE_NAME)
 
-    config_node_input = {'input': ["none"],
-                         'output': ["test_output_1"]}
+    config_node_input = {"input": ["none"], "output": ["test_output_1"]}
 
     return MockedNode(config_node_input)
+
 
 @pytest.fixture
 def test_node_end():
@@ -117,57 +116,65 @@ def test_node_end():
     create_node_config(CUSTOM_CONFIG_FOLDER_PATH, "pkd_node_name2")
 
     config_node_end = {
-        'input': ["test_output_1"],
-        'output': ["test_output_2", "pipeline_end"]}
+        "input": ["test_output_1"],
+        "output": ["test_output_2", "pipeline_end"],
+    }
     return MockedNode(config_node_end)
 
-@ pytest.fixture
+
+@pytest.fixture
 def runner_with_nodes(test_input_node, test_node_end):
 
     setup()
 
     instantiated_nodes = [test_input_node, test_node_end]
 
-    test_runner = Runner(RUN_CONFIG_PATH,
-                         CONFIG_UPDATES_CLI,
-                         CUSTOM_FOLDER_PATH,
-                         instantiated_nodes)
+    test_runner = Runner(
+        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_FOLDER_PATH, instantiated_nodes
+    )
 
     return test_runner
 
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestRunner:
-
     def test_init_nodes_none(self, runner):
 
         assert runner.pipeline == True
 
     def test_init_nodes_with_instantiated_nodes(self, runner_with_nodes):
 
-        with mock.patch('peekingduck.pipeline.pipeline.Pipeline._check_pipe',
-                        wraps=replace_pipeline_check_pipe):
+        with mock.patch(
+            "peekingduck.pipeline.pipeline.Pipeline._check_pipe",
+            wraps=replace_pipeline_check_pipe,
+        ):
 
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
             assert runner_with_nodes.pipeline.nodes[0].inputs == ["none"]
-            assert runner_with_nodes.pipeline.nodes[0].outputs == [
-                "test_output_1"]
+            assert runner_with_nodes.pipeline.nodes[0].outputs == ["test_output_1"]
 
     def test_init_nodes_with_wrong_input(self):
 
         ground_truth = "pipeline"
 
-        with mock.patch('peekingduck.pipeline.pipeline.Pipeline.__init__',
-                        side_effect=ValueError):
+        with mock.patch(
+            "peekingduck.pipeline.pipeline.Pipeline.__init__", side_effect=ValueError
+        ):
 
             with pytest.raises(SystemExit):
-                Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI,
-                       CUSTOM_FOLDER_PATH, [ground_truth])
+                Runner(
+                    RUN_CONFIG_PATH,
+                    CONFIG_UPDATES_CLI,
+                    CUSTOM_FOLDER_PATH,
+                    [ground_truth],
+                )
 
     def test_run(self, runner_with_nodes):
 
-        with mock.patch('peekingduck.runner.Runner.run',
-                        side_effect=Exception("End infinite while loop")):
+        with mock.patch(
+            "peekingduck.runner.Runner.run",
+            side_effect=Exception("End infinite while loop"),
+        ):
 
             with pytest.raises(Exception):
 
@@ -177,11 +184,13 @@ class TestRunner:
         assert isinstance(runner_with_nodes.pipeline, object) == True
 
     def test_run_nodes(self, runner_with_nodes):
-        
-        correct_data = {'test_output_1': 'test_output_0', 
-                        'test_output_2': 'test_output_0', 
-                        'pipeline_end': 'test_output_1'}
-        
+
+        correct_data = {
+            "test_output_1": "test_output_0",
+            "test_output_2": "test_output_0",
+            "pipeline_end": "test_output_1",
+        }
+
         runner_with_nodes.run()
 
         assert runner_with_nodes.pipeline.data == correct_data

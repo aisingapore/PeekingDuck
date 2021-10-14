@@ -22,18 +22,20 @@ from peekingduck.weights_utils import checker, downloader
 
 @pytest.fixture
 def hrnet_config():
-    filepath = os.path.join(os.getcwd(), 'tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml')
+    filepath = os.path.join(
+        os.getcwd(), "tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml"
+    )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config['root'] = os.getcwd()
+    node_config["root"] = os.getcwd()
     return node_config
 
 
 @pytest.fixture
 def hrnet_detector(hrnet_config):
 
-    if not checker.has_weights(hrnet_config['root'], hrnet_config['weights_dir']):
-        downloader.download_weights(hrnet_config['root'], hrnet_config['blob_file'])
+    if not checker.has_weights(hrnet_config["root"], hrnet_config["weights_dir"]):
+        downloader.download_weights(hrnet_config["root"], hrnet_config["blob_file"])
 
     detector = Detector(hrnet_config)
     return detector
@@ -41,9 +43,7 @@ def hrnet_detector(hrnet_config):
 
 @pytest.mark.mlmodel
 class TestDetector:
-
     def test_create_model(self, hrnet_detector):
-        """Testing hrnet model instantiation.
-        """
+        """Testing hrnet model instantiation."""
         hrnet_model = hrnet_detector._create_hrnet_model
         assert hrnet_model is not None

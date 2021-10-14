@@ -23,30 +23,30 @@ Utilities to support Keras in EfficientDet
 from typing import Any, Dict, Callable
 import functools
 import tensorflow.keras as tfkeras
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files \
-    import efficientnet as model
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
+    efficientnet as model,
+)
 
 
 def init_tfkeras_custom_objects() -> None:
-    """Helper function to initialize custom keras objects
-    """
+    """Helper function to initialize custom keras objects"""
     custom_objects = {
-        'swish': inject_tfkeras_modules(model.get_swish)(),
-        'FixedDropout': inject_tfkeras_modules(model.get_dropout)()
+        "swish": inject_tfkeras_modules(model.get_swish)(),
+        "FixedDropout": inject_tfkeras_modules(model.get_dropout)(),
     }
 
     tfkeras.utils.get_custom_objects().update(custom_objects)
 
 
 def inject_tfkeras_modules(func: Callable) -> Callable:
-    """Helper function to wrap input function
-    """
+    """Helper function to wrap input function"""
+
     @functools.wraps(func)
     def wrapper(*args: Dict[str, Any], **kwargs: Dict[str, Any]) -> Callable:
-        kwargs['backend'] = tfkeras.backend
-        kwargs['layers'] = tfkeras.layers
-        kwargs['models'] = tfkeras.models
-        kwargs['utils'] = tfkeras.utils
+        kwargs["backend"] = tfkeras.backend
+        kwargs["layers"] = tfkeras.layers
+        kwargs["models"] = tfkeras.models
+        kwargs["utils"] = tfkeras.utils
         return func(*args, **kwargs)
 
     return wrapper

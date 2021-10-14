@@ -94,11 +94,14 @@ class Node(AbstractNode):
         of the specified objects chosen to be detected
         """
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
-            inputs["img"])
+            inputs["img"]
+        )
         bbox_labels = ["Person"] * len(bboxes)
-        outputs = {"bboxes": bboxes,
-                   "keypoints": keypoints,
-                   "keypoint_scores": keypoint_scores,
-                   "keypoint_conns": keypoint_conns,
-                   "bbox_labels": bbox_labels}
+        outputs = {
+            "bboxes": bboxes,
+            "keypoints": keypoints,
+            "keypoint_scores": keypoint_scores,
+            "keypoint_conns": keypoint_conns,
+            "bbox_labels": bbox_labels,
+        }
         return outputs

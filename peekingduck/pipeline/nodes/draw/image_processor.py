@@ -55,7 +55,7 @@ class Node(AbstractNode):
         Args:
             inputs (dict): Dict with keys "img"
         """
-        img = cv2.convertScaleAbs(inputs['img'],
-                                  alpha=self.contrast,
-                                  beta=self.brightness)
+        img = cv2.convertScaleAbs(
+            inputs["img"], alpha=self.contrast, beta=self.brightness
+        )
         return {"img": img}

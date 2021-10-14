@@ -21,8 +21,7 @@ from shapely.geometry.polygon import Polygon, Point
 
 
 class Zone:
-    """This class uses polygon area to create a zone for counting.
-    """
+    """This class uses polygon area to create a zone for counting."""
 
     def __init__(self, coord_list: List[List[float]]) -> None:
         # Each zone is a polygon created by a list of x, y coordinates

@@ -66,15 +66,15 @@ class Node(AbstractNode):
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw
-            if self.include[0] == 'all_legend_items': # type: ignore
-                self.include = self.all_legend_items # type: ignore
+            if self.include[0] == "all_legend_items":  # type: ignore
+                self.include = self.all_legend_items  # type: ignore
             self._include(inputs)
         if len(self.legend_items) != 0:
             Legend().draw(inputs, self.legend_items, self.position)  # type: ignore
         else:
             return {}
         # cv2 weighted does not update the referenced image. Need to return and replace.
-        return {'img': inputs['img']}
+        return {"img": inputs["img"]}
 
     def _include(self, inputs: Dict[str, Any]) -> None:
         for item in self.all_legend_items:
