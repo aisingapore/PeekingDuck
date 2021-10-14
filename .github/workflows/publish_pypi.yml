@@ -53,7 +53,7 @@ jobs:
       - name: Test installation from Test PyPI
         run: |
           sleep 300
-          pip install click pyyaml
+          pip install click pyyaml colorama
           pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
           peekingduck
       - name: Publish distribution 📦 to PyPI
@@ -64,7 +64,7 @@ jobs:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
   test-install-pypi:
-    name: Build PeekingDuck on Test PyPI
+    name: Build PeekingDuck on PyPI
     needs: build-publish-test
     runs-on: ubuntu-18.04
     steps:
@@ -75,6 +75,6 @@ jobs:
       - name: Test installation from PyPI
         run: |
           sleep 300
-          pip install click pyyaml
+          pip install click pyyaml colorama
           pip install peekingduck==$VERSION --no-dependencies # no tensorflow
           peekingduck
