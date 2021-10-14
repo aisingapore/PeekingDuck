@@ -35,8 +35,8 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         formatter = ColoredFormatter('{asctime} {name} {level_color} {levelname}'
                                      '{reset}: {msg_color} {message} {reset}',
                                      style='{', datefmt='%Y-%m-%d %H:%M:%S',
-                                     colors={'DEBUG': Fore.CYAN + Style.BRIGHT,
-                                             'INFO': Fore.GREEN + Style.BRIGHT,
+                                     colors={'DEBUG': Fore.RESET + Style.BRIGHT,
+                                             'INFO': Fore.RESET + Style.BRIGHT,
                                              'WARNING': Fore.YELLOW + Style.BRIGHT,
                                              'ERROR': Fore.RED + Style.BRIGHT,
                                              'CRITICAL': Fore.RED + Style.BRIGHT})
@@ -83,6 +83,6 @@ class ColoredFormatter(logging.Formatter):
 
         record.level_color = self.colors.get(record.levelname, '')
         record.reset = Style.RESET_ALL
-        record.msg_color = Fore.BLUE + Style.BRIGHT
+        record.msg_color = self.colors.get(record.levelname, '')
 
         return super().format(record)
