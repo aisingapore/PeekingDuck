@@ -58,18 +58,18 @@ def get_centroid(bboxes):
 
     xmin = bboxes[:, 0]
     ymin = bboxes[:, 1]
-    w, h = bboxes[:, 2], bboxes[:, 3]
+    width, height = bboxes[:, 2], bboxes[:, 3]
 
-    xc = xmin + 0.5*w
-    yc = ymin + 0.5*h
+    x_cent = xmin + 0.5*width
+    y_cent = ymin + 0.5*height
 
-    x = np.hstack([xc[:, None], yc[:, None]])
+    cent = np.hstack([x_cent[:, None], y_cent[:, None]])
 
     if one_bbox:
-        x = x.flatten()
-    return x
+        cent = cent.flatten()
+    return cent
 
-
+# pylint: disable=too-many-locals
 def iou(bbox1, bbox2):
     """
     Calculates the intersection-over-union of two bounding boxes.
