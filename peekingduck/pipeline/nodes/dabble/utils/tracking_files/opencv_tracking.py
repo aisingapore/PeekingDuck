@@ -23,10 +23,10 @@ from .iou_tracker.utils import format_boxes
 from .iou_tracker.utils import iou
 
 
-trackerTypes = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE', 'CSRT']
+tracker_types = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'GOTURN', 'MOSSE', 'CSRT']
 
 
-class OpenCVTracker:
+class OpenCVTracker:  # pylint: disable=too-few-public-methods
     """Native OpenCV tracker that is initialized on bounding boxes detected
     in first frame of video feed.
 
@@ -69,13 +69,13 @@ class OpenCVTracker:
             obj_tags = self._if_new_bbox_add_track(bboxes, frame)
 
         # Get updated location of objects in subsequent frames
-        for id, tracker in self.tracking_dict.copy().items():
+        for id_num, tracker in self.tracking_dict.copy().items():
             success, bbox = tracker[0].update(frame)
             if success:
                 # update bounding box
-                self.tracking_dict.update({id: [tracker[0], bbox]})
+                self.tracking_dict.update({id_num: [tracker[0], bbox]})
             else:
-                del self.tracking_dict[id]
+                del self.tracking_dict[id_num]
 
         return obj_tags
 
@@ -100,19 +100,23 @@ class OpenCVTracker:
 
         # Create object tags from highest IOU index and tracking_dict
         track_id = []
-        for k, v in matching_dict.items():
-            if v is not None:
+        for key, value in matching_dict.items():
+            if value is not None:
                 # Get object ID through prev_frame_bbox_highest_iou_index
-                id = list(self.tracking_dict)[v]
-                track_id.append(str(id))
+                id_num = list(self.tracking_dict)[value]
+                track_id.append(str(id_num))
             else:
                 # Create new tracker for bbox that < IOU threshold
-                self._initialize_tracker(k, frame)
-                id = list(self.tracking_dict)[-1]
-                track_id.append(str(id))
+                self._initialize_tracker(key, frame)
+                id_num = list(self.tracking_dict)[-1]
+                track_id.append(str(id_num))
         # Create result list to replace duplicate track_ids
         obj_tags = []
-        [obj_tags.append(x) if x not in obj_tags else obj_tags.append("") for x in track_id]
+        for id_num in track_id:
+            if id_num not in obj_tags:
+                obj_tags.append(id_num)
+            else:
+                obj_tags.append("")
 
         return obj_tags
 
@@ -126,23 +130,24 @@ class OpenCVTracker:
         self.tracking_dict.update({self.next_object_id: [tracker, bbox]})
         return self.tracking_dict
 
-    def _create_tracker_by_name(self, trackerType: str) -> Any:
+    @staticmethod
+    def _create_tracker_by_name(tracker_type: str) -> Any:
         """Create tracker based on tracker name"""
-        if trackerType == trackerTypes[0]:
+        if tracker_type == tracker_types[0]:
             tracker = cv2.TrackerBoosting_create()
-        elif trackerType == trackerTypes[1]:
+        elif tracker_type == tracker_types[1]:
             tracker = cv2.TrackerMIL_create()
-        elif trackerType == trackerTypes[2]:
+        elif tracker_type == tracker_types[2]:
             tracker = cv2.TrackerKCF_create()
-        elif trackerType == trackerTypes[3]:
+        elif tracker_type == tracker_types[3]:
             tracker = cv2.TrackerTLD_create()
-        elif trackerType == trackerTypes[4]:
+        elif tracker_type == tracker_types[4]:
             tracker = cv2.TrackerMedianFlow_create()
-        elif trackerType == trackerTypes[5]:
+        elif tracker_type == tracker_types[5]:
             tracker = cv2.TrackerGOTURN_create()
-        elif trackerType == trackerTypes[6]:
+        elif tracker_type == tracker_types[6]:
             tracker = cv2.TrackerMOSSE_create()
-        elif trackerType == trackerTypes[7]:
+        elif tracker_type == tracker_types[7]:
             tracker = cv2.TrackerCSRT_create()
         else:
             tracker = None

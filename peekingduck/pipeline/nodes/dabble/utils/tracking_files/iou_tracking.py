@@ -22,7 +22,7 @@ from .iou_tracker.iou_tracker import IOUTracker
 from .iou_tracker.utils import format_boxes
 
 
-class IOUTracking:
+class IOUTracking:  # pylint: disable=too-few-public-methods
     """Simple tracking class based on Intersection Over Union of bounding
     boxes.
 
@@ -63,7 +63,8 @@ class IOUTracking:
         obj_tags = self._order_tags_by_bbox(bboxes, tracks)
         return obj_tags
 
-    def _order_tags_by_bbox(self, bboxes: List[float], tracks: List[float]) -> List[str]:
+    @staticmethod
+    def _order_tags_by_bbox(bboxes: List[float], tracks: List[float]) -> List[str]:
         """Order object tags by bboxes"""
         # Create dict with {(bbox): id}
         matching_dict = dict()
@@ -76,8 +77,11 @@ class IOUTracking:
             obj_tags.append(str(obj_tag))
         return obj_tags
 
-    def _convert_class_label_to_unique_id(self, classes: List[str]) -> List[int]:
-        """Covert class label to unique ids"""
-        id = dict([(y,x+1) for x,y in enumerate(sorted(set(classes)))])
-        class_ids = [id[x] for x in classes]
+    @staticmethod
+    def _convert_class_label_to_unique_id(classes: List[str]) -> List[int]:
+        """Convert class label to unique ids"""
+        obj_id = dict()  # pylint: disable=too-many-arguments
+        for num, label in enumerate(sorted(set(classes))):
+            obj_id.update({label: num+1})
+        class_ids = [obj_id[x] for x in classes]
         return class_ids

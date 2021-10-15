@@ -90,6 +90,7 @@ class Tracker:
 
         del self.tracks[track_id]
 
+    # pylint: disable=too-many-arguments
     def _update_track(self, track_id, frame_id, bbox, detection_confidence,
                       class_id, lost=0, iou_score=0., **kwargs):
         """
@@ -126,7 +127,7 @@ class Tracker:
         """
 
         outputs = []
-        for trackid, track in tracks.items():
+        for _, track in tracks.items():
             if not track.lost:
                 outputs.append(track.output())
         return outputs
@@ -155,6 +156,7 @@ class Tracker:
         new_detections = list(zip(new_bboxes, new_class_ids, new_detection_scores))
         return new_detections
 
+    # pylint: disable=too-many-locals
     def update(self, bboxes, detection_scores, class_ids):
         """
         Update the tracker based on the new bounding boxes.
@@ -194,6 +196,7 @@ class Tracker:
 
         updated_tracks, updated_detections = [], []
 
+        # pylint: disable=len-as-condition
         if len(track_ids):
             track_centroids = np.array([self.tracks[tid].centroid for tid in track_ids])
             detection_centroids = get_centroid(bboxes)
@@ -209,8 +212,9 @@ class Tracker:
                     (i, d) for (i, d) in enumerate(centroid_distances[idx, :]) \
                     if i not in updated_detections]
 
+                # pylint: disable=len-as-condition
                 if len(remaining_detections):
-                    detection_idx, detection_distance = min(remaining_detections,
+                    detection_idx, _ = min(remaining_detections,
                                                             key=lambda x: x[1])
                     bbox, class_id, confidence = detections[detection_idx]
                     self._update_track(track_id, self.frame_count, bbox, confidence,

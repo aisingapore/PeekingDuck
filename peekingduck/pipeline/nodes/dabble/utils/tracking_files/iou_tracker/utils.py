@@ -19,9 +19,9 @@ Additional functions for deepsort
 import numpy as np
 
 
-# helper function to convert bounding boxes from normalized ymin, xmin, ymax, xmax
-# ---> xmin, ymin, xmax, ymax
 def format_boxes(bboxes, image_height, image_width):
+    """Helper function to convert bounding boxes from normalized
+    ymin, xmin, ymax, xmax ---> xmin, ymin, xmax, ymax."""
     for box in bboxes:
         xmin = int(box[0] * image_width)
         ymin = int(box[1] * image_height)
@@ -58,13 +58,13 @@ def iou(bbox, candidates):
     candidates_tl = candidates[:, :2]
     candidates_br = candidates[:, :2] + candidates[:, 2:]
 
-    tl = np.c_[np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
+    top_left = np.c_[np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
                np.maximum(bbox_tl[1], candidates_tl[:, 1])[:, np.newaxis]]
-    br = np.c_[np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
+    bottom_right = np.c_[np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
                np.minimum(bbox_br[1], candidates_br[:, 1])[:, np.newaxis]]
-    wh = np.maximum(0., br - tl)
+    width_height = np.maximum(0., bottom_right - top_left)
 
-    area_intersection = wh.prod(axis=1)
+    area_intersection = width_height.prod(axis=1)
     area_bbox = bbox[2:].prod()
     area_candidates = candidates[:, 2:].prod(axis=1)
     return area_intersection / (area_bbox + area_candidates - area_intersection)

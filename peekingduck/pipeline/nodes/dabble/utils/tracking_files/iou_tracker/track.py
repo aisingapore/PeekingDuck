@@ -38,7 +38,7 @@ Track class
 
 import numpy as np
 
-class Track:
+class Track:  # pylint: disable=too-many-instance-attributes
     """
     Track containing attributes to track various objects.
 
@@ -63,7 +63,7 @@ class Track:
     metadata = dict(
         data_output_formats=['mot_challenge', 'visdrone_challenge']
     )
-
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         track_id,
@@ -78,7 +78,7 @@ class Track:
     ):
         assert data_output_format in Track.metadata['data_output_formats']
         Track.count += 1
-        self.id = track_id
+        self.id_num = track_id
 
         self.detection_confidence_max = 0.
         self.lost = 0
@@ -94,6 +94,7 @@ class Track:
         else:
             raise NotImplementedError
 
+    # pylint: disable=too-many-arguments
     def update(self, frame_id, bbox, detection_confidence, class_id=None,
                lost=0, iou_score=0., **kwargs):
         """
@@ -121,8 +122,8 @@ class Track:
         else:
             self.lost += lost
 
-        for k, v in kwargs.items():
-            setattr(self, k, v)
+        for key, val in kwargs.items():
+            setattr(self, key, val)
 
         self.detection_confidence_max = max(self.detection_confidence_max,
                                             detection_confidence)
@@ -154,7 +155,7 @@ class Track:
 
         """
         mot_tuple = (
-            self.frame_id, self.id, self.bbox[0], self.bbox[1], self.bbox[2],
+            self.frame_id, self.id_num, self.bbox[0], self.bbox[1], self.bbox[2],
             self.bbox[3], self.detection_confidence, -1, -1, -1
         )
         return mot_tuple
@@ -177,17 +178,19 @@ class Track:
                    object_category, truncation, occlusion)`.
         """
         mot_tuple = (
-            self.frame_id, self.id, self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3],
+            self.frame_id, self.id_num, self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3],
             self.detection_confidence, self.class_id, -1, -1
         )
         return mot_tuple
 
+    # pylint: disable=no-self-use
     def predict(self):
-        """
-        Implement to prediction the next estimate of track.
-        """
+        """Implement to prediction the next estimate of track."""
+        # pylint: disable=notimplemented-raised
+        # pylint: disable=raising-bad-type
         raise NotImplemented
 
     @staticmethod
     def print_all_track_output_formats():
+        """Prints all metadata of track output."""
         print(Track.metadata['data_output_formats'])
