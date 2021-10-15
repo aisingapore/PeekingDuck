@@ -22,7 +22,7 @@ from .tracking_files.iou_tracking import IOUTracking
 from .tracking_files.opencv_tracking import OpenCVTracker
 
 
-class LoadTracker():
+class LoadTracker:  # pylint: disable=too-few-public-methods
     """Loads chosen tracker node."""
     def __init__(self, tracking_type) -> None:
         super().__init__()
