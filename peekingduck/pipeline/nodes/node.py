@@ -31,8 +31,13 @@ class AbstractNode(metaclass=ABCMeta):
     It defines default attributes and methods of a node.
     """
 
-    def __init__(self, config: Dict[str, Any] = None,
-                 node_path: str = "", pkdbasedir: str = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        config: Dict[str, Any] = None,
+        node_path: str = "",
+        pkdbasedir: str = None,
+        **kwargs: Any
+    ) -> None:
 
         self._name = node_path
         self.logger = logging.getLogger(self._name)
@@ -50,8 +55,7 @@ class AbstractNode(metaclass=ABCMeta):
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:
-        return (hasattr(subclass, 'run') and
-                callable(subclass.run))
+        return hasattr(subclass, "run") and callable(subclass.run)
 
     @abstractmethod
     def run(self, inputs: Dict[str, Any]) -> None:
@@ -73,10 +77,10 @@ class AbstractNode(metaclass=ABCMeta):
         """getter for node name"""
         return self._name
 
-    def load_node_config(self,
-                         config: Dict[str, Any],
-                         kwargs_config: Dict[str, Any]) -> None:
-        """ loads node configuration
+    def load_node_config(
+        self, config: Dict[str, Any], kwargs_config: Dict[str, Any]
+    ) -> None:
+        """loads node configuration
         NOTE: config and kwargs_config are similar but come from different inputs
         config is when users input a dictionary to update the node
         kwargs_config is when users input parameters to update the node
@@ -100,24 +104,30 @@ class AbstractNode(metaclass=ABCMeta):
             setattr(self, key, self.config[key])
 
     # pylint: disable=R0801
-    def _edit_config(self,
-                     dict_orig: Dict[str, Any],
-                     dict_update: Dict[str, Any]) -> Dict[str, Any]:
-        """ Update value of a nested dictionary of varying depth using
-            recursion
+    def _edit_config(
+        self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Update value of a nested dictionary of varying depth using
+        recursion
         """
         if dict_update:
             for key, value in dict_update.items():
                 if isinstance(value, collections.abc.Mapping):
                     dict_orig[key] = self._edit_config(
-                        dict_orig.get(key, {}), value)  # type: ignore
+                        dict_orig.get(key, {}), value
+                    )  # type: ignore
                 elif key not in dict_orig:
                     self.logger.warning(
                         "Config for node %s does not have the key: %s",
-                        self.node_name, key)
+                        self.node_name,
+                        key,
+                    )
                 else:
                     dict_orig[key] = value
                     self.logger.info(
                         "Config for node %s is updated to: '%s': %s",
-                        self.node_name, key, value)
+                        self.node_name,
+                        key,
+                        value,
+                    )
         return dict_orig

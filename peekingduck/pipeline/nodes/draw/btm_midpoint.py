@@ -48,13 +48,12 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Methods that draws btm midpoint of bounding bboxes
 
-         Args:
-             inputs (dict): Dict with keys "bboxes".
+        Args:
+            inputs (dict): Dict with keys "bboxes".
 
-         Returns:
-             outputs (dict): Empty dictionary.
-         """
-        draw_pts(inputs["img"],
-                 inputs["btm_midpoint"])
+        Returns:
+            outputs (dict): Empty dictionary.
+        """
+        draw_pts(inputs["img"], inputs["btm_midpoint"])
 
         return {}

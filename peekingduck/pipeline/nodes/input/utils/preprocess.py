@@ -25,9 +25,9 @@ logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def get_res(stream: Any) -> Tuple[int, int]:
-    '''
+    """
     Gets the resolution for the video frame
-    '''
+    """
     width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -35,9 +35,9 @@ def get_res(stream: Any) -> Tuple[int, int]:
 
 
 def mirror(frame: np.array) -> np.array:
-    '''
+    """
     Mirrors a video frame.
-    '''
+    """
     return cv2.flip(frame, 1)
 
 

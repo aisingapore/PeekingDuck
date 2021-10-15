@@ -34,14 +34,13 @@ class IncorrectNode(AbstractNode):
 
 @pytest.fixture
 def c_node():
-    return ConcreteNode({'input': ['img'], 'output': ['int']})
+    return ConcreteNode({"input": ["img"], "output": ["int"]})
 
-class TestNode():
 
+class TestNode:
     def test_node_returns_correct_output(self, c_node):
-        results = c_node.run({'input': 1})
+        results = c_node.run({"input": 1})
         assert results == {"data1": 1, "data2": 42}
-
 
     def test_node_init_takes_empty_dictionary(self):
         ConcreteNode({})
@@ -49,22 +48,19 @@ class TestNode():
 
     def test_node_init_able_to_override_using_kwargs(self):
         tmp_node = ConcreteNode(input_dir="path_to_input")
-        assert tmp_node.config['input_dir'] == "path_to_input"
+        assert tmp_node.config["input_dir"] == "path_to_input"
 
     def test_node_init_able_to_override_using_dict(self):
         tmp_node = ConcreteNode(config={"input_dir": "path_to_input"})
-        assert tmp_node.config['input_dir'] == "path_to_input"
-
+        assert tmp_node.config["input_dir"] == "path_to_input"
 
     def test_node_gives_correct_inputs(self, c_node):
         results = c_node.inputs
         assert results == ["img"]
 
-
     def test_node_gives_correct_outputs(self, c_node):
         results = c_node.outputs
         assert results == ["int"]
-
 
     def test_node_no_concrete_run_raises_error(self):
         with pytest.raises(TypeError):

@@ -20,9 +20,12 @@ from peekingduck.pipeline.nodes.dabble.bbox_count import Node
 
 @pytest.fixture
 def bbox_count():
-    node = Node({"input": ["bboxes"],
-                 "output": ["count"],
-                 })
+    node = Node(
+        {
+            "input": ["bboxes"],
+            "output": ["count"],
+        }
+    )
     return node
 
 
@@ -35,8 +38,7 @@ class TestBboxCount:
         np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_multi_bboxes(self, bbox_count):
-        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
-                  np.array([0.5, 0.6, 0.7, 0.8])]
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]), np.array([0.5, 0.6, 0.7, 0.8])]
         input1 = {"bboxes": array1}
 
         assert bbox_count.run(input1)["count"] == 2

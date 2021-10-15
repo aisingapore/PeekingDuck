@@ -22,15 +22,15 @@ from peekingduck.pipeline.nodes.input.recorded import Node
 
 
 def create_reader():
-    media_reader = Node({"input": "source",
-                         "output": "img",
-                         "resize": {
-                            "do_resizing": False,
-                            "width": 1280,
-                            "height": 720},
-                         "mirror_image": False,
-                         "input_dir": "."
-                         })
+    media_reader = Node(
+        {
+            "input": "source",
+            "output": "img",
+            "resize": {"do_resizing": False, "width": 1280, "height": 720},
+            "mirror_image": False,
+            "input_dir": ".",
+        }
+    )
     return media_reader
 
 
@@ -45,19 +45,18 @@ def _get_video_file(reader, num_frames):
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestMediaReader:
-
     def test_reader_run_throws_error_on_wrong_file_path(self):
         with pytest.raises(FileNotFoundError):
-            file_path = 'path_that_does_not_exist'
-            Node({"input": "source",
-                  "output": "img",
-                  "resize": {
-                      "do_resizing": False,
-                      "width": 1280,
-                      "height": 720},
-                  "mirror_image": False,
-                  "input_dir": file_path
-                  })
+            file_path = "path_that_does_not_exist"
+            Node(
+                {
+                    "input": "source",
+                    "output": "img",
+                    "resize": {"do_resizing": False, "width": 1280, "height": 720},
+                    "mirror_image": False,
+                    "input_dir": file_path,
+                }
+            )
 
     def test_reader_run_throws_error_on_empty_folder(self):
         with pytest.raises(FileNotFoundError):
@@ -68,7 +67,7 @@ class TestMediaReader:
         image1 = create_input_image("image1.png", (900, 800, 3))
         reader = create_reader()
         output1 = reader.run({})
-        assert np.array_equal(output1['img'], image1)
+        assert np.array_equal(output1["img"], image1)
 
     def test_reader_reads_multi_images(self, create_input_image):
         image1 = create_input_image("image1.png", (900, 800, 3))
@@ -79,16 +78,14 @@ class TestMediaReader:
         output2 = reader.run({})
         output3 = reader.run({})
 
-        assert np.array_equal(output1['img'], image1)
-        assert np.array_equal(output2['img'], image2)
-        assert np.array_equal(output3['img'], image3)
+        assert np.array_equal(output1["img"], image1)
+        assert np.array_equal(output2["img"], image2)
+        assert np.array_equal(output3["img"], image3)
 
     def test_reader_reads_one_video(self, create_input_video):
         num_frames = 30
         size = (600, 800, 3)
-        video1 = create_input_video(
-            "video1.avi", fps=10, size=size, nframes=num_frames
-        )
+        video1 = create_input_video("video1.avi", fps=10, size=size, nframes=num_frames)
         reader = create_reader()
 
         read_video1 = _get_video_file(reader, num_frames)
@@ -98,12 +95,8 @@ class TestMediaReader:
         num_frames = 20
         size = (600, 800, 3)
 
-        video1 = create_input_video(
-            "video1.avi", fps=5, size=size, nframes=num_frames
-        )
-        video2 = create_input_video(
-            "video2.avi", fps=5, size=size, nframes=num_frames
-        )
+        video1 = create_input_video("video1.avi", fps=5, size=size, nframes=num_frames)
+        video2 = create_input_video("video2.avi", fps=5, size=size, nframes=num_frames)
 
         reader = create_reader()
 
