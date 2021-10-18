@@ -36,7 +36,7 @@
 Track class
 """
 
-from typing import Any, Tuple, Union
+from typing import Any, Dict, Tuple, Union
 import numpy as np
 
 class Track:  # pylint: disable=too-many-instance-attributes
@@ -74,8 +74,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
             lost: int = 0,
             iou_score: float = 0.,
             data_output_format: str = 'mot_challenge',
-            **kwargs
-        ) -> None:
+            **kwargs: Dict[Any, Any]) -> None:
         assert data_output_format in Track.metadata['data_output_formats']
         Track.count += 1
         self.id_num = track_id
@@ -99,7 +98,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
                detection_confidence: float,
                class_id: Union[str, int] = None,
                lost: int = 0,
-               iou_score: float = 0., **kwargs) -> None:
+               iou_score: float = 0., **kwargs: Dict[Any, Any]) -> None:
         """
         Update the track.
 
