@@ -67,7 +67,7 @@ class Tracker:
                    frame_id: int,
                    bbox: np.ndarray,
                    detection_confidence: float,
-                   class_id: Union[str, int], **kwargs) -> None:
+                   class_id: Union[str, int], **kwargs: Dict[Any, Any]) -> None:
         """
         Add a newly detected object to the queue.
 
@@ -105,7 +105,7 @@ class Tracker:
                       detection_confidence: float,
                       class_id: int,
                       lost: int = 0,
-                      iou_score: float = 0., **kwargs) -> None:
+                      iou_score: float = 0., **kwargs: Dict[Any, Any]) -> None:
         """
         Update track state.
 
