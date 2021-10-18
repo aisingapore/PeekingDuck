@@ -36,7 +36,7 @@
 Core IOU Tracker
 """
 
-from typing import Any, Dict, List
+from typing import Any, List
 from .tracker import Tracker
 from .misc import iou_xywh as iou
 
