@@ -16,7 +16,7 @@
 Tracking algorithm that uses OpenCV
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 import numpy as np
 import cv2
 from .iou_tracker.utils import format_boxes
@@ -43,9 +43,10 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         self.first_frame_or_not = True
         self.next_object_id = 0
         self.iou_thresh = 0.1
-        self.tracking_dict = dict() # Dict to store {id (key): [Tracker, bbox(prev)]}
+        # Dict to store {id (key): [Tracker, bbox(prev)]}
+        self.tracking_dict: Dict[int, List[Any]] = dict()
 
-    def run(self, inputs: Dict[str, Any]) -> List[int]:
+    def run(self, inputs: Dict[str, Any]) -> List[str]:
         """Initialize and update tracker on each frame"""
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
@@ -80,10 +81,11 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         return obj_tags
 
 
-    def _if_new_bbox_add_track(self, bboxes: List[float], frame: np.array) -> List[int]:
+    def _if_new_bbox_add_track(self, bboxes: List[Any], frame: np.array) -> List[str]:
         """Check for new bboxes added and initialize new tracker"""
         prev_frame_tracked_bbox = []
-        matching_dict = dict()  # Dict to store {current frame bbox: highest_iou_index}
+        # Dict to store {current frame bbox: highest_iou_index}
+        matching_dict: Dict[Any, Any] = dict()
         # Get previous frames' tracked bboxes
         for _, value in self.tracking_dict.items():
             prev_frame_tracked_bbox.append(np.array(value[1]))

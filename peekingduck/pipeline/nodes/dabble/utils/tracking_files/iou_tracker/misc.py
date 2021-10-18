@@ -36,10 +36,11 @@
 Helper functions for IOU Tracker
 """
 
+from typing import List, Union
 import numpy as np
 
 
-def get_centroid(bboxes):
+def get_centroid(bboxes: np.array) -> np.array:
     """
     Calculate centroids for multiple bounding boxes.
 
@@ -70,7 +71,7 @@ def get_centroid(bboxes):
     return cent
 
 # pylint: disable=too-many-locals
-def iou(bbox1, bbox2):
+def iou(bbox1: np.array, bbox2: np.array) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py
@@ -111,7 +112,8 @@ def iou(bbox1, bbox2):
     return iou_
 
 
-def iou_xywh(bbox1, bbox2):
+def iou_xywh(bbox1: Union[np.array, List[float]],
+             bbox2: Union[np.array, List[float]]) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py

@@ -16,7 +16,7 @@
 Tracking algorithm that uses IOU matching
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 import numpy as np
 from .iou_tracker.iou_tracker import IOUTracker
 from .iou_tracker.utils import format_boxes
@@ -46,7 +46,7 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
                             min_detection_confidence=0.2,
                             max_detection_confidence=1)
 
-    def run(self, inputs: Dict[str, Any]) -> List[int]:
+    def run(self, inputs: Dict[str, Any]) -> List[str]:
         """Update tracker on each frame and return sorted object tags"""
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
@@ -64,10 +64,10 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         return obj_tags
 
     @staticmethod
-    def _order_tags_by_bbox(bboxes: List[float], tracks: List[float]) -> List[str]:
+    def _order_tags_by_bbox(bboxes: List[List[Any]], tracks: List[Any]) -> List[str]:
         """Order object tags by bboxes"""
         # Create dict with {(bbox): id}
-        matching_dict = dict()
+        matching_dict: Dict[Tuple[Any, ...], Any] = dict()
         for trk in tracks:
             matching_dict.update({(trk[2], trk[3], trk[4], trk[5]): trk[1]})
         obj_tags = []
