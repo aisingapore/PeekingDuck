@@ -36,6 +36,7 @@
 Track class
 """
 
+from typing import Any, Tuple, Union
 import numpy as np
 
 class Track:  # pylint: disable=too-many-instance-attributes
@@ -53,7 +54,6 @@ class Track:  # pylint: disable=too-many-instance-attributes
             by tracker in consecutive frames.
         iou_score (float): Intersection over union score.
         data_output_format (str): Output format for data in tracker.
-            Options include ``['mot_challenge', 'visdrone_challenge']``.
             Default is ``mot_challenge``.
         kwargs (dict): Additional key word arguments.
     """
@@ -61,21 +61,21 @@ class Track:  # pylint: disable=too-many-instance-attributes
     count = 0
 
     metadata = dict(
-        data_output_formats=['mot_challenge', 'visdrone_challenge']
+        data_output_formats=['mot_challenge']
     )
     # pylint: disable=too-many-arguments
     def __init__(
-        self,
-        track_id,
-        frame_id,
-        bbox,
-        detection_confidence,
-        class_id=None,
-        lost=0,
-        iou_score=0.,
-        data_output_format='mot_challenge',
-        **kwargs
-    ):
+            self,
+            track_id: int,
+            frame_id: int,
+            bbox: np.array,
+            detection_confidence: float,
+            class_id: Union[str, int] = None,
+            lost: int = 0,
+            iou_score: float = 0.,
+            data_output_format: str = 'mot_challenge',
+            **kwargs
+        ) -> None:
         assert data_output_format in Track.metadata['data_output_formats']
         Track.count += 1
         self.id_num = track_id
@@ -89,14 +89,17 @@ class Track:  # pylint: disable=too-many-instance-attributes
 
         if data_output_format == 'mot_challenge':
             self.output = self.get_mot_challenge_format
-        elif data_output_format == 'visdrone_challenge':
-            self.output = self.get_vis_drone_format
         else:
             raise NotImplementedError
 
     # pylint: disable=too-many-arguments
-    def update(self, frame_id, bbox, detection_confidence, class_id=None,
-               lost=0, iou_score=0., **kwargs):
+    def update(self,
+               frame_id: int,
+               bbox: np.array,
+               detection_confidence: float,
+               class_id: Union[str, int] = None,
+               lost: int = 0,
+               iou_score: float = 0., **kwargs) -> None:
         """
         Update the track.
 
@@ -131,7 +134,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
         self.age += 1
 
     @property
-    def centroid(self):
+    def centroid(self) -> np.array:
         """
         Return the centroid of the bounding box.
 
@@ -141,7 +144,8 @@ class Track:  # pylint: disable=too-many-instance-attributes
         """
         return np.array((self.bbox[0]+0.5*self.bbox[2], self.bbox[1]+0.5*self.bbox[3]))
 
-    def get_mot_challenge_format(self):
+    def get_mot_challenge_format(self) -> \
+                Tuple[int, int, Any, Any, Any, Any, float, int, int, int]:
         """
         Get the tracker data in MOT challenge format as a tuple of elements containing
         `(frame, id, bb_left, bb_top, bb_width, bb_height, conf, x, y, z)`
@@ -160,37 +164,15 @@ class Track:  # pylint: disable=too-many-instance-attributes
         )
         return mot_tuple
 
-    def get_vis_drone_format(self):
-        """
-        Track data output in VISDRONE Challenge format with tuple as
-        `(frame_index, target_id, bbox_left, bbox_top, bbox_width, bbox_height,
-        score, object_category, truncation, occlusion)`.
-
-        References:
-            - Website : http://aiskyeye.com/
-            - Paper : https://arxiv.org/abs/2001.06303
-            - GitHub : https://github.com/VisDrone/VisDrone2018-MOT-toolkit
-            - GitHub : https://github.com/VisDrone/
-
-        Returns:
-            tuple: Tuple containing the elements as `(frame_index, target_id,
-                   bbox_left, bbox_top, bbox_width, bbox_height, score,
-                   object_category, truncation, occlusion)`.
-        """
-        mot_tuple = (
-            self.frame_id, self.id_num, self.bbox[0], self.bbox[1], self.bbox[2], self.bbox[3],
-            self.detection_confidence, self.class_id, -1, -1
-        )
-        return mot_tuple
-
     # pylint: disable=no-self-use
-    def predict(self):
+    def predict(self) -> None:
         """Implement to prediction the next estimate of track."""
         # pylint: disable=notimplemented-raised
         # pylint: disable=raising-bad-type
         raise NotImplemented
 
     @staticmethod
-    def print_all_track_output_formats():
+    def print_all_track_output_formats() -> None:
         """Prints all metadata of track output."""
         print(Track.metadata['data_output_formats'])
+        return None
