@@ -69,6 +69,11 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
+To list the available nodes in PeekingDuck and get their respective documentation's URL: 
+ ```
+ > peekingduck nodes
+ ```
+
 
 ## Explore PeekingDuck's Features
 

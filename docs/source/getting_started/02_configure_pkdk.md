@@ -4,6 +4,11 @@ This page will guide users on how to control and configure how PeekingDuck behav
 - Selecting which nodes to include in the pipeline
 - Configuring node behaviour
 
+You can refer to our [API Documentation](/peekingduck.pipeline.nodes) section to see the available nodes in PeekingDuck for selection and their respective configurable settings. Alternatively, to get a quick overview of Peekingduck's nodes, run the following command: 
+ ```
+ > peekingduck nodes
+ ```
+
 In this guide, we will make changes to PeekingDuck config files to run pose estimation models. We will also teach users how to make changes to the default configurations to run a bird detection pipeline on a local video file.
 
 By default, `run_config.yml` uses the following nodes:
@@ -35,7 +40,7 @@ nodes:
 
 ## Configuring node behaviour
 
-PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://peekingduck.blob.core.windows.net/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
+PeekingDuck is also able to work on recorded videos or saved images, and we'll use the `input.recorded` and `output.media_writer` nodes for that. For this demo, you'll have to [download](https://storage.googleapis.com/peekingduck/videos/ducks.mp4.zip) and unzip a short video of ducks, and use `model.yolo` again to detect them.
 
 By default, `model.yolo` detects humans. We can change its behavior either by 1) updating the `run_config.yml`; or 2) updating the configs at runtime via CLI.
 
