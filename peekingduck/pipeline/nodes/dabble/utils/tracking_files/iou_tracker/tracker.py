@@ -65,9 +65,9 @@ class Tracker:
 
     def _add_track(self,
                    frame_id: int,
-                   bbox: np.array,
+                   bbox: np.ndarray,
                    detection_confidence: float,
-                   class_id, **kwargs) -> None:
+                   class_id: Union[str, int], **kwargs) -> None:
         """
         Add a newly detected object to the queue.
 
@@ -101,7 +101,7 @@ class Tracker:
     def _update_track(self,
                       track_id: int,
                       frame_id: int,
-                      bbox: np.array,
+                      bbox: np.ndarray,
                       detection_confidence: float,
                       class_id: int,
                       lost: int = 0,
@@ -146,10 +146,10 @@ class Tracker:
         return outputs
 
     @staticmethod
-    def preprocess_input(bboxes: Union[List, np.array],
-                         class_ids: Union[List, np.array],
-                         detection_scores: Union[List, np.array]) -> \
-                        List[Tuple[np.array, np.array, np.array]]:
+    def preprocess_input(bboxes: Union[List, np.ndarray],
+                         class_ids: Union[List, np.ndarray],
+                         detection_scores: Union[List, np.ndarray]) -> \
+                        List[Tuple[np.ndarray, np.ndarray, np.ndarray]]:
         """
         Preprocess the input data.
 
@@ -174,9 +174,9 @@ class Tracker:
 
     # pylint: disable=too-many-locals
     def update(self,
-               bboxes: Union[List, np.array],
-               detection_scores: Union[List, np.array],
-               class_ids: Union[List, np.array]) -> \
+               bboxes: Union[List, np.ndarray],
+               detection_scores: Union[List, np.ndarray],
+               class_ids: Union[List, np.ndarray]) -> \
                List[Tuple[int, int, Any, Any, Any, Any, float, int, int, int]]:
         """
         Update the tracker based on the new bounding boxes.

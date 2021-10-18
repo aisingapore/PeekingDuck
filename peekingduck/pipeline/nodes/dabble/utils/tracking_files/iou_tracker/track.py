@@ -68,7 +68,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
             self,
             track_id: int,
             frame_id: int,
-            bbox: np.array,
+            bbox: np.ndarray,
             detection_confidence: float,
             class_id: Union[str, int] = None,
             lost: int = 0,
@@ -95,7 +95,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
     # pylint: disable=too-many-arguments
     def update(self,
                frame_id: int,
-               bbox: np.array,
+               bbox: np.ndarray,
                detection_confidence: float,
                class_id: Union[str, int] = None,
                lost: int = 0,
@@ -134,7 +134,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
         self.age += 1
 
     @property
-    def centroid(self) -> np.array:
+    def centroid(self) -> np.ndarray:
         """
         Return the centroid of the bounding box.
 

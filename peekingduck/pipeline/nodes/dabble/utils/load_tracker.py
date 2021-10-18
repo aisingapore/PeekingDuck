@@ -16,7 +16,7 @@
 Load Tracker for inference
 """
 
-from typing import Dict, Any
+from typing import Any, Dict, List
 import logging
 from .tracking_files.iou_tracking import IOUTracking
 from .tracking_files.opencv_tracking import OpenCVTracker
@@ -24,19 +24,19 @@ from .tracking_files.opencv_tracking import OpenCVTracker
 
 class LoadTracker:  # pylint: disable=too-few-public-methods
     """Loads chosen tracker node."""
-    def __init__(self, tracking_type) -> None:
+    def __init__(self, tracking_type: str) -> None:
         super().__init__()
         self.logger = logging.getLogger(__name__)
         if tracking_type == "mosse":
             self.logger.info('OpenCV Tracking algorithm used: %s', tracking_type)
-            self.tracker = OpenCVTracker()
+            self.tracker = OpenCVTracker()  # type: ignore
         elif tracking_type == "iou":
             self.logger.info('Tracking algorithm used: %s', tracking_type)
-            self.tracker = IOUTracking()
+            self.tracker = IOUTracking()  # type: ignore
         else:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']")
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, inputs: Dict[str, Any]) -> List[str]:
         """Run tracking algorithm"""
         obj_tags = self.tracker.run(inputs)
 

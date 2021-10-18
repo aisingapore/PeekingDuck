@@ -80,8 +80,9 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
 
         return obj_tags
 
-
-    def _if_new_bbox_add_track(self, bboxes: List[Any], frame: np.array) -> List[str]:
+    def _if_new_bbox_add_track(self,
+                               bboxes: List[List[float]],
+                               frame: np.ndarray) -> List[str]:
         """Check for new bboxes added and initialize new tracker"""
         prev_frame_tracked_bbox = []
         # Dict to store {current frame bbox: highest_iou_index}
@@ -105,7 +106,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         for key, value in matching_dict.items():
             if value is not None:
                 # Get object ID through prev_frame_bbox_highest_iou_index
-                id_num = list(self.tracking_dict)[value]
+                id_num = list(self.tracking_dict)[value]  # type: ignore
                 track_id.append(str(id_num))
             else:
                 # Create new tracker for bbox that < IOU threshold
@@ -124,7 +125,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
 
     def _initialize_tracker(self,
                             bbox: List[float],
-                            frame: np.array) -> Dict[int, List[Any]]:
+                            frame: np.ndarray) -> Dict[int, List[Any]]:
         """Start a tracker for each bbox"""
         tracker = self._create_tracker_by_name(self.tracker_type)
         tracker.init(frame, tuple(bbox))
