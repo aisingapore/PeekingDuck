@@ -40,7 +40,7 @@ from typing import List, Union
 import numpy as np
 
 
-def get_centroid(bboxes: np.array) -> np.array:
+def get_centroid(bboxes: np.ndarray) -> np.ndarray:
     """
     Calculate centroids for multiple bounding boxes.
 
@@ -71,7 +71,7 @@ def get_centroid(bboxes: np.array) -> np.array:
     return cent
 
 # pylint: disable=too-many-locals
-def iou(bbox1: np.array, bbox2: np.array) -> float:
+def iou(bbox1: np.ndarray, bbox2: np.ndarray) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py
@@ -112,8 +112,8 @@ def iou(bbox1: np.array, bbox2: np.array) -> float:
     return iou_
 
 
-def iou_xywh(bbox1: Union[np.array, List[float]],
-             bbox2: Union[np.array, List[float]]) -> float:
+def iou_xywh(bbox1: Union[np.ndarray, List[float]],
+             bbox2: Union[np.ndarray, List[float]]) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py
