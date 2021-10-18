@@ -16,7 +16,7 @@
 Tracking algorithm that uses OpenCV
 """
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 import numpy as np
 import cv2
 from .iou_tracker.utils import format_boxes
