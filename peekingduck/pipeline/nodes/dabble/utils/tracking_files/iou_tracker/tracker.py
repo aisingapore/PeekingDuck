@@ -36,6 +36,7 @@
 Create Tracker
 """
 
+from typing import Any, Dict, List, Tuple, Union
 from collections import OrderedDict
 import numpy as np
 from scipy.spatial import distance
@@ -53,14 +54,20 @@ class Tracker:
         tracker_output_format (str): Output format of the tracker.
     """
 
-    def __init__(self, max_lost=5, tracker_output_format='mot_challenge'):
+    def __init__(self,
+                 max_lost:int = 5,
+                 tracker_output_format: str = 'mot_challenge') -> None:
         self.next_track_id = 0
-        self.tracks = OrderedDict()
+        self.tracks: Dict = OrderedDict()
         self.max_lost = max_lost
         self.frame_count = 0
         self.tracker_output_format = tracker_output_format
 
-    def _add_track(self, frame_id, bbox, detection_confidence, class_id, **kwargs):
+    def _add_track(self,
+                   frame_id: int,
+                   bbox: np.array,
+                   detection_confidence: float,
+                   class_id, **kwargs) -> None:
         """
         Add a newly detected object to the queue.
 
@@ -80,7 +87,7 @@ class Tracker:
         )
         self.next_track_id += 1
 
-    def _remove_track(self, track_id):
+    def _remove_track(self, track_id: int) -> None:
         """
         Remove tracker data after object is lost.
 
@@ -91,8 +98,14 @@ class Tracker:
         del self.tracks[track_id]
 
     # pylint: disable=too-many-arguments
-    def _update_track(self, track_id, frame_id, bbox, detection_confidence,
-                      class_id, lost=0, iou_score=0., **kwargs):
+    def _update_track(self,
+                      track_id: int,
+                      frame_id: int,
+                      bbox: np.array,
+                      detection_confidence: float,
+                      class_id: int,
+                      lost: int = 0,
+                      iou_score: float = 0., **kwargs) -> None:
         """
         Update track state.
 
@@ -114,7 +127,7 @@ class Tracker:
         )
 
     @staticmethod
-    def _get_tracks(tracks):
+    def _get_tracks(tracks: Dict[int, Any]) -> List[Any]:
         """
         Output the information of tracks.
 
@@ -133,7 +146,10 @@ class Tracker:
         return outputs
 
     @staticmethod
-    def preprocess_input(bboxes, class_ids, detection_scores):
+    def preprocess_input(bboxes: Union[List, np.array],
+                         class_ids: Union[List, np.array],
+                         detection_scores: Union[List, np.array]) -> \
+                        List[Tuple[np.array, np.array, np.array]]:
         """
         Preprocess the input data.
 
@@ -157,7 +173,11 @@ class Tracker:
         return new_detections
 
     # pylint: disable=too-many-locals
-    def update(self, bboxes, detection_scores, class_ids):
+    def update(self,
+               bboxes: Union[List, np.array],
+               detection_scores: Union[List, np.array],
+               class_ids: Union[List, np.array]) -> \
+               List[Tuple[int, int, Any, Any, Any, Any, float, int, int, int]]:
         """
         Update the tracker based on the new bounding boxes.
 

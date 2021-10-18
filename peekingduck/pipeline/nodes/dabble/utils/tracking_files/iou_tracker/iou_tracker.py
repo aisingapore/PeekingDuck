@@ -36,8 +36,9 @@
 Core IOU Tracker
 """
 
-from .misc import iou_xywh as iou
+from typing import Any, Dict, List
 from .tracker import Tracker
+from .misc import iou_xywh as iou
 
 
 class IOUTracker(Tracker):
@@ -60,11 +61,11 @@ class IOUTracker(Tracker):
 
     def __init__(
             self,
-            max_lost=2,
-            iou_threshold=0.5,
-            min_detection_confidence=0.4,
-            max_detection_confidence=0.7
-    ):
+            max_lost: int = 2,
+            iou_threshold: float = 0.5,
+            min_detection_confidence: float = 0.4,
+            max_detection_confidence: float = 0.7
+    ) -> None:
         self.iou_threshold = iou_threshold
         self.max_detection_confidence = max_detection_confidence
         self.min_detection_confidence = min_detection_confidence
@@ -72,7 +73,10 @@ class IOUTracker(Tracker):
         super(IOUTracker, self).__init__(max_lost=max_lost,
             tracker_output_format='mot_challenge')
 
-    def update(self, bboxes, detection_scores, class_ids):
+    def update(self,
+               bboxes: List,
+               detection_scores: List[float],
+               class_ids: List[int]) -> List[Any]:
         detections = Tracker.preprocess_input(bboxes, class_ids, detection_scores)
         self.frame_count += 1
         track_ids = list(self.tracks.keys())

@@ -13,15 +13,18 @@
 # limitations under the License.
 
 """
-Additional functions for deepsort
+Additional functions
 """
 
+from typing import List
 import numpy as np
 
 
-def format_boxes(bboxes, image_height, image_width):
+def format_boxes(bboxes: List[List[float]],
+                 image_height: int,
+                 image_width: int) -> List[List[float]]:
     """Helper function to convert bounding boxes from normalized
-    ymin, xmin, ymax, xmax ---> xmin, ymin, xmax, ymax."""
+    ymin, xmin, ymax, xmax ---> xmin, ymin, width, height."""
     for box in bboxes:
         xmin = int(box[0] * image_width)
         ymin = int(box[1] * image_height)
@@ -29,13 +32,10 @@ def format_boxes(bboxes, image_height, image_width):
         ymax = int(box[3] * image_height)
         width = xmax - xmin
         height = ymax - ymin
-        # xcent = xmin + width/2
-        # ycent = ymin + height/2
-        # box[0], box[1], box[2], box[3] = xcent, ycent, width, height
         box[0], box[1], box[2], box[3] = xmin, ymin, width, height
     return bboxes
 
-def iou(bbox, candidates):
+def iou(bbox: np.array, candidates: np.array) -> np.array:
     """Computer intersection over union.
 
     Parameters
