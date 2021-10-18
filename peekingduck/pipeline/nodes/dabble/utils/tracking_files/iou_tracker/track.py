@@ -36,7 +36,7 @@
 Track class
 """
 
-from typing import Any, Dict, Tuple, Union
+from typing import Any, Tuple, Union
 import numpy as np
 
 class Track:  # pylint: disable=too-many-instance-attributes
