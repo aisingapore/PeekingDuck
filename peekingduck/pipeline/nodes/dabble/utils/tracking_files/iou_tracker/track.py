@@ -74,7 +74,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
             lost: int = 0,
             iou_score: float = 0.,
             data_output_format: str = 'mot_challenge',
-            **kwargs: Dict[Any, Any]) -> None:
+            **kwargs: Any) -> None:
         assert data_output_format in Track.metadata['data_output_formats']
         Track.count += 1
         self.id_num = track_id
@@ -98,7 +98,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
                detection_confidence: float,
                class_id: Union[str, int] = None,
                lost: int = 0,
-               iou_score: float = 0., **kwargs: Dict[Any, Any]) -> None:
+               iou_score: float = 0., **kwargs: Any) -> None:
         """
         Update the track.
 
