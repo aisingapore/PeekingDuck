@@ -175,4 +175,3 @@ class Track:  # pylint: disable=too-many-instance-attributes
     def print_all_track_output_formats() -> None:
         """Prints all metadata of track output."""
         print(Track.metadata['data_output_formats'])
-        return None
