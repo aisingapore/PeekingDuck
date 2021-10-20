@@ -19,7 +19,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
     ```
     > pip install peekingduck
     ```
-    *Note: if installing on a device with an ARM processor such as a Raspberry Pi, include the `--no-dependencies` flag.*
+    *Note: if installing on a ARM-based device such as a Raspberry Pi or M1 Macbook, include the `--no-dependencies` flag, and separately install other dependencies listed in our [requirements.txt](https://github.com/aimakerspace/PeekingDuck/blob/dev/requirements.txt). See our guide for [M1 Mac](https://peekingduck.readthedocs.io/en/stable/getting_started/01_installation.html#m1-mac-installation) installation.*
 
 2. Create a project folder at a convenient location, and initialize a PeekingDuck project.
     ```
