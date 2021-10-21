@@ -2,14 +2,14 @@ input: ["img"]
 output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
 
 model_type: resnet # 50, 75, 100 or resnet
-weights_dir: ["../weights/posenet/models"]
+weights_dir: ["../peekingduck_weights/posenet/models"]
 blob_file: "posenet.zip"
 model_files:
   {
-    50: ../weights/posenet/models/model-mobilenet_v1_050.pb,
-    75: ../weights/posenet/models/model-mobilenet_v1_075.pb,
-    100: ../weights/posenet/models/model-mobilenet_v1_100.pb,
-    resnet: ../weights/posenet/models/model-resnet.pb,
+    50: ../peekingduck_weights/posenet/models/model-mobilenet_v1_050.pb,
+    75: ../peekingduck_weights/posenet/models/model-mobilenet_v1_075.pb,
+    100: ../peekingduck_weights/posenet/models/model-mobilenet_v1_100.pb,
+    resnet: ../peekingduck_weights/posenet/models/model-resnet.pb,
   }
 
 resolution: { height: 225, width: 225 }
