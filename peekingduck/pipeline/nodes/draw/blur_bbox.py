@@ -16,10 +16,9 @@ Blur area bounded by bounding boxes over detected object
 """
 
 from typing import Any, Dict, List
+import cv2
 import numpy as np
-from scipy.ndimage import gaussian_filter
 from peekingduck.pipeline.nodes.node import AbstractNode
-
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blur area bounded by bounding boxes on image.
@@ -37,16 +36,15 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        blur_level (:obj:`int`): **default = 7**
-            This defines the standard deviation of the Gaussian kernel
-            used in the Gaussian filter. The higher the blur level, the
-            more intense is the blurring.
+        blur_kernel_size (:obj:`int`): **default = 30**
+            This defines the kernel size used in the blur filter.
+            The larger the kernel size, the more intense is the blurring.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.blur_level=self.config['blur_level']
+        self.blur_kernel_size = self.config["blur_kernel_size"]
 
     def blur(self, bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
         """
@@ -63,8 +61,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             # to get the area bounded by bbox
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
-            # apply the blur using gaussian filter from scipy
-            blur_bbox_image = gaussian_filter(bbox_image, sigma=self.blur_level)
+            # apply the blur using blur filter from opencv
+            blur_bbox_image = cv2.blur(
+                bbox_image,
+                (self.blur_kernel_size,self.blur_kernel_size))
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image
