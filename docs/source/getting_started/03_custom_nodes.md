@@ -90,14 +90,13 @@ We recommend new users to use the node template below.
 
 ```python
 # this is a template for writing custom nodes
-from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config = None, **kwargs):
         super().__init__(config, node_path =__name__)
 
-    def run(self, inputs) -> Dict[str, Any]:
+    def run(self, inputs):
         return {}
 ```
 
