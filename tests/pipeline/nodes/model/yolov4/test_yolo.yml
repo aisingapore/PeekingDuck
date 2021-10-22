@@ -3,12 +3,12 @@ output: ["bboxes", "bbox_labels", "bbox_scores"]
 
 model_class: humanmodel
 model_type: v4tiny # v3, v3tiny, v4 or v4tiny
-classes: ../weights/yolov4/coco.names
-weights_dir: ["../weights/yolov4"]
+classes: ../peekingduck_weights/yolov4/coco.names
+weights_dir: ["../peekingduck_weights/yolov4"]
 blob_file: "yolo.zip"
 graph_files: {
-    v4: ../weights/yolov4/yolov4.pb,
-    v4tiny: ../weights/yolov4/yolov4-tiny.pb
+    v4: ../peekingduck_weights/yolov4/yolov4.pb,
+    v4tiny: ../peekingduck_weights/yolov4/yolov4-tiny.pb
 }
 size: 416
 num_classes: 80
