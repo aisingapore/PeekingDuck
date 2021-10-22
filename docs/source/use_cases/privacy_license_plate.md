@@ -2,9 +2,9 @@
 
 ## Overview
 
-As organisations collect more data, there is a need to better protect the identities of individuals in public and private places. AI Singapore has developed a solution that performs face anonymisation. This can be used to comply with the General Data Protection Regulation (GDPR) or other data privacy laws.
+To help organisations to collect data, while complying with the General Data Protection Regulation (GDPR) or other data privacy laws, AI Singapore developed a solution that performs license plate anonymisation.
 
-Our solution automatically detects and blurs vehicles' license plate. This is further elaborated in a [subsequent section](#how-it-works).
+Our solution automatically detects and blurs vehicles' license plate, which is further elaborated in the [subsequent section](#how-it-works).
 
 ## Demo
 
@@ -20,7 +20,7 @@ There are two main components to license plate anonymisation: 1) license plate d
 
 **1. License Plate Detection**
 
-We use an open-source object detection model known as [YoloV4](https://arxiv.org/abs/2004.10934) to identify license plates. This allows the application to identify the locations of the license plates in an image/video feed. The locations of detected license plates are returned as an array of coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each license plate detected. For more information on how to adjust the license plate detector node, check out the [license plate detector configurable parameters](/peekingduck.pipeline.nodes.model.licenseplate.Node).
+We use open-source object detection models under the [YoloV4](https://arxiv.org/abs/2004.10934) family to identify the locations of the license plates in an image/video feed. Specifically, we offer the YoloV4-tiny model, which is faster, and the YoloV4 model, which provides higher accuracy. The locations of detected license plates are returned as an array of coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each license plate detected. For more information on how to adjust the license plate detector node, check out the [license plate detector configurable parameters](/peekingduck.pipeline.nodes.model.licenseplate.Node).
 
 **2. License Plate De-Identification**
 
@@ -28,13 +28,12 @@ To perform license plate de-identification, the areas bounded by the bounding bo
 
 ## Nodes Used
 
-These are the nodes used in the earlier demo (also in [privacy_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_license_plate.yml)):
+These are the nodes used in the license plate anonymisation demo (also in [privacy_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_license_plate.yml)):
 ```
 nodes:
 - input.recorded:
     input_dir: <path to video with cars>
-- model.license_plate_detector:
-    model_type: v4tiny
+- model.license_plate_detector
 - dabble.fps
 - draw.blur_bbox
 - draw.legend
@@ -43,7 +42,11 @@ nodes:
 
 **1. License Plate Detection Node**
 
-As mentioned, we use a custom-trained Yolov4 model for license plate detection. By default, it uses the Yolov4-tiny model to detect the license plate. For better accuracy, you can change the parameters in the run config declaration to use the Yolov4 model instead.
+By default, the license plate detection node uses the Yolov4-tiny model to detect license plates. When higher accuracy is required or when the image/video quality is poor, such as when captured using dashcams, you can change the parameters in the run config declaration to use the Yolov4 model.
+```
+- model.license_plate_detector:
+    model_type: v4
+```
 
 **2. License Plate De-Identification Nodes**
 

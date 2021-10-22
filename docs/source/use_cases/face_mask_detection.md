@@ -4,6 +4,8 @@
 
 As part of COVID-19 measures, the Singapore Government has mandated the wearing of face masks in public places. AI Singapore has developed a solution that checks whether or not a person is wearing a face mask. This can be used in places such as in malls or shops to ensure that visitors adhere to the guidelines.
 
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="70%">
+
 We have trained a custom Yolov4 model to detect whether or not a person is wearing a face mask. This is further elaborated in a [subsequent section](#how-it-works).
 
 ## Demo

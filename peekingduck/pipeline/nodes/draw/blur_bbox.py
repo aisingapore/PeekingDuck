@@ -48,7 +48,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         self.blur_level=self.config['blur_level']
 
-    def blur(self, bboxes: List[np.ndarray], image: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def _blur(bboxes: List[np.ndarray], image: np.ndarray, blur_level: int) -> np.ndarray:
         """
         Function that blur the area bounded by bbox in an image
         """
@@ -64,7 +65,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
             # apply the blur using gaussian filter from scipy
-            blur_bbox_image = gaussian_filter(bbox_image, sigma=self.blur_level)
+            blur_bbox_image = gaussian_filter(bbox_image, sigma=blur_level)
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image
@@ -80,6 +81,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             outputs (Dict): Output in dictionary format with key
             "img"
         """
-        blurred_img = self.blur(inputs["bboxes"], inputs["img"])
+        blurred_img = self._blur(inputs["bboxes"], inputs["img"], self.blur_level)
         outputs = {"img": blurred_img}
         return outputs
