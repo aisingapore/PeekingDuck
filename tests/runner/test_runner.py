@@ -14,6 +14,7 @@
 
 import os
 import sys
+from types import SimpleNamespace
 from unittest import mock
 import unittest
 
@@ -75,7 +76,9 @@ def setup():
 
 
 def replace_declarativeloader_get_pipeline():
-    return True
+    mock_pipeline = mock.Mock()
+    mock_pipeline.nodes = []
+    return mock_pipeline
 
 
 def replace_pipeline_check_pipe(node):
@@ -141,7 +144,8 @@ class TestRunner:
 
     def test_init_nodes_none(self, runner):
 
-        assert runner.pipeline == True
+        assert isinstance(runner.pipeline, mock.Mock)
+        assert runner.pipeline.nodes == []
 
     def test_init_nodes_with_instantiated_nodes(self, runner_with_nodes):
 

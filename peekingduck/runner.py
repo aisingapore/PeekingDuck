@@ -17,12 +17,15 @@ Main engine for Peekingduck processes
 """
 
 import copy
-import sys
 import logging
+import subprocess
+import sys
 from typing import List
-from peekingduck.pipeline.pipeline import Pipeline
+
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.utils.requirement_checker import check_requirements
 
 
 class Runner():
@@ -74,6 +77,11 @@ class Runner():
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)
+        try:
+            for node in self.pipeline.nodes:
+                check_requirements(node.name)
+        except subprocess.CalledProcessError:
+            sys.exit(1)
 
     def run(self) -> None:
         """execute single or continuous inference
