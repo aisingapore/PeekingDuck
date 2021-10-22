@@ -90,14 +90,15 @@ We recommend new users to use the node template below.
 
 ```python
 # this is a template for writing custom nodes
+from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     def __init__(self, config = None, **kwargs):
         super().__init__(config, node_path =__name__)
 
-    def run(self, inputs):
-        pass
+    def run(self, inputs) -> Dict[str, Any]:
+        return {}
 ```
 
 2. Develop `run()`, the core function that PeekingDuck will call in the pipeline. Nodes can simply retrieve the necessary data by querying the input in a dict-like fashion. In this case, we take the input `count` and write the results into the specified filepath.
