@@ -5,4 +5,3 @@ nodes:
 - dabble.fps
 - draw.blur_bbox
 - draw.legend
-- output.screen
