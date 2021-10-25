@@ -36,7 +36,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        blur_kernel_size (:obj:`int`): **default = 30**
+        blur_kernel_size (:obj:`int`): **default = 50**
             This defines the kernel size used in the blur filter.
             The larger the kernel size, the more intense is the blurring.
     """

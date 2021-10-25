@@ -60,4 +60,4 @@ With regard to the MTCNN model, some common node behaviours that you might want 
 
 In addition, some common node behaviours that you might want to adjust for the mosaic_bbox and blur_bbox nodes are:
 - `mosaic_level`: This defines the resolution of a mosaic filter (width x height). The number corresponds to the number of rows and columns used to create a mosaic. For example, the default setting (mosaic_level: 7) creates a 7 x 7 mosaic filter. Increasing the number increases the intensity of pixelation over an area.
-- `blur_level`:  This defines the standard deviation of the Gaussian kernel used in the Gaussian filter. The higher the blur level, the more intense is the blurring (default = 60).
+- `blur_level`:  This defines the standard deviation of the Gaussian kernel used in the Gaussian filter. The higher the blur level, the more intense is the blurring (default = 50).
