@@ -20,7 +20,7 @@ import logging
 from typing import Dict, Any, Tuple
 import numpy as np
 from peekingduck.weights_utils import checker, downloader
-from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
+from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
     Detector,
 )
 

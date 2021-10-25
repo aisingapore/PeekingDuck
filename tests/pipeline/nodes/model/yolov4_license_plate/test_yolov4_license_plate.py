@@ -4,7 +4,7 @@ import pytest
 import cv2
 import numpy as np
 from unittest import mock, TestCase
-from peekingduck.pipeline.nodes.model.license_plate_detector import Node
+from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
 from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
     Detector,
 )
@@ -14,7 +14,7 @@ from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector i
 def LP_config():
     filepath = os.path.join(
         os.getcwd(),
-        "tests/pipeline/nodes/model/licenseplate_detector/test_LPdetector.yml",
+        "tests/pipeline/nodes/model/yolov4_license_plate/test_yolov4_license_plate.yml",
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
@@ -73,7 +73,7 @@ class TestLPYolo:
                 wraps=replace_download_weights,
             ):
                 with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.licenseplate.LP_detector_model.logger"
+                    "peekingduck.pipeline.nodes.model.yolov4_license_plate.LP_detector_model.logger"
                 ) as captured:
 
                     LPyolo = Node(config=LP_config)

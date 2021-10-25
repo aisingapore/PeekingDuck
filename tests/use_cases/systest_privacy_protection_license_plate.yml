@@ -1,6 +1,6 @@
 nodes:
 - input.recorded:
-    input_dir: <path to video with cars>
+    input_dir: "images/testing"
 - model.yolo_license_plate
 - dabble.fps
 - draw.blur_bbox

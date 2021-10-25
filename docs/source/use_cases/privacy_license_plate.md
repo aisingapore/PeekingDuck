@@ -2,7 +2,7 @@
 
 ## Overview
 
-To help organisations to collect data, while complying with the General Data Protection Regulation (GDPR) or other data privacy laws, AI Singapore developed a solution that performs license plate anonymisation.
+Posting images or videos of our vehicles online might lead to others misusing our license plate number to reveal our personal information or being vulnerable to license plate cloning. Hence, AI Singapore has developed a solution that performs license plate anonymisation. This can also be used to comply with the General Data Protection Regulation (GDPR) or other data privacy laws.
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%">
 
@@ -35,7 +35,7 @@ These are the nodes used in the license plate anonymisation demo (also in [priva
 nodes:
 - input.recorded:
     input_dir: <path to video with cars>
-- model.license_plate_detector
+- model.yolo_license_plate
 - dabble.fps
 - draw.blur_bbox
 - draw.legend
@@ -46,7 +46,7 @@ nodes:
 
 By default, the license plate detection node uses the Yolov4-tiny model to detect license plates. When higher accuracy is required or when the image/video quality is poor, such as when captured using dashcams, you can change the parameters in the run config declaration to use the Yolov4 model.
 ```
-- model.license_plate_detector:
+- model.yolo_license_plate:
     model_type: v4
 ```
 

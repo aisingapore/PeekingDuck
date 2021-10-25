@@ -18,7 +18,7 @@ License Plate Detection model
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.model.licenseplate import lp_detector_model
+from peekingduck.pipeline.nodes.model.yolov4_license_plate import lp_detector_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -77,9 +77,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
-
-    Yolo Model training guide from:
-        https://www.youtube.com/watch?v=mmj3nxGT2YQ&t=2090s
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
