@@ -1,4 +1,4 @@
 input: ["bboxes", "img"]
 output: ["img"]
 
-blur_kernel_size: 60
+blur_kernel_size: 50
