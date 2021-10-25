@@ -4,6 +4,8 @@
 
 As organisations collect more data, there is a need to better protect the identities of individuals in public and private places. AI Singapore has developed a solution that performs face anonymisation. This can be used to comply with the General Data Protection Regulation (GDPR) or other data privacy laws.
 
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif" width="100%">
+
 Our solution automatically detects and mosaics (or blurs) human faces. This is further elaborated in a [subsequent section](#how-it-works).
 
 ## Demo
@@ -47,7 +49,7 @@ As mentioned, we use the MTCNN model for face detection. It is able to detect hu
 
 **2. Face De-Identification Nodes**
 
-You can mosaic or blur the faces detected using the`draw.mosaic_bbox` or `draw.blur_bbox` in the run config declaration.
+You can mosaic or blur the faces detected using the `draw.mosaic_bbox` or `draw.blur_bbox` in the run config declaration.
 
 **3. Adjusting Nodes**
 

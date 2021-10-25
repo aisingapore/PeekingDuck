@@ -4,6 +4,8 @@
 
 To help organisations to collect data, while complying with the General Data Protection Regulation (GDPR) or other data privacy laws, AI Singapore developed a solution that performs license plate anonymisation.
 
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%">
+
 Our solution automatically detects and blurs vehicles' license plate, which is further elaborated in the [subsequent section](#how-it-works).
 
 ## Demo
@@ -54,7 +56,7 @@ You can choose to mosaic or blur the detected license plate using the `draw.mosa
 
 **3. Adjusting Nodes**
 
-With regard to the Yolov4 model, some common node configurations that you might want to adjust are:
+With regard to the YoloV4 model, some common node configurations that you might want to adjust are:
 - `yolo_score_threshold`: The bounding boxes with confidence score less than the specified score threshold are discarded. (default = 0.1)
 - `yolo_iou_threshold`: The overlapping bounding boxes above the specified IoU (Intersection over Union) threshold are discarded. (default = 0.3)
 
