@@ -2,11 +2,11 @@ input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
 model_type: v4tiny # v4 or v4tiny
-classes: ../weights/yolo_face/classes.names
-weights_dir: ["../weights/yolo_face"]
+classes: ../peekingduck_weights/yolo_face/classes.names
+weights_dir: ["../peekingduck_weights/yolo_face"]
 model_weights_dir: {
-    v4: ../weights/yolo_face/yolov4,
-    v4tiny: ../weights/yolo_face/yolov4tiny,
+    v4: ../peekingduck_weights/yolo_face/yolov4,
+    v4tiny: ../peekingduck_weights/yolo_face/yolov4tiny,
 }
 blob_file: "yolo_face.zip"
 
