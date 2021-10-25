@@ -50,7 +50,7 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%"> |
 | [Group Size Checking](use_cases/group_size_checking.md)      | [Object Counting](use_cases/object_counting.md)              |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
-| [Privacy Protection Faces](use_cases/privacy_protection_faces.md) | [Privacy Protection License Plates](use_cases/privacy_license_plate.md) |
+| [Privacy Protection (Faces)](use_cases/privacy_protection_faces.md) | [Privacy Protection (License Plates)](use_cases/privacy_protection_license_plate.md) |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%"> |
 | [Face Mask Detection](use_cases/face_mask_detection.md)      |                                                              |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> |                                                              |

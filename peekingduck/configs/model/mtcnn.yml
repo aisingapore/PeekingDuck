@@ -1,10 +1,10 @@
 input: ["img"]
 output: ["bboxes", "bbox_scores", "bbox_labels"]
 
-weights_dir: ["../weights/mtcnn"]
+weights_dir: ["../peekingduck_weights/mtcnn"]
 blob_file: "mtcnn.zip"
 graph_files: {
-    mtcnn: ../weights/mtcnn/mtcnn.pb
+    mtcnn: ../peekingduck_weights/mtcnn/mtcnn.pb
 }
 mtcnn_min_size: 40
 mtcnn_factor: 0.709

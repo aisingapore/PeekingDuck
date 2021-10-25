@@ -83,7 +83,7 @@ autosummary_mock_imports = [
     'peekingduck.pipeline.nodes.model.hrnetv1',
     'peekingduck.pipeline.nodes.model.yolov4_face',
     'peekingduck.pipeline.nodes.model.mtcnnv1',
-    'peekingduck.pipeline.nodes.model.licenseplate',
+    'peekingduck.pipeline.nodes.model.yolov4_license_plate',
     'peekingduck.pipeline.nodes.input.utils',
     'peekingduck.pipeline.nodes.dabble.utils',
     'peekingduck.pipeline.nodes.draw.utils',

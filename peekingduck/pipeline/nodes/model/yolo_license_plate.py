@@ -40,7 +40,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bbox_scores|
 
     Configs:
-        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**
+        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**
 
             defines the type of YOLO model to be used.
 

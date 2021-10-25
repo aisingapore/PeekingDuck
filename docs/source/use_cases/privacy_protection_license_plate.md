@@ -1,4 +1,4 @@
-# Privacy Protection (License Plate)
+# Privacy Protection (License Plates)
 
 ## Overview
 
@@ -35,7 +35,8 @@ These are the nodes used in the license plate anonymisation demo (also in [priva
 nodes:
 - input.recorded:
     input_dir: <path to video with cars>
-- model.yolo_license_plate
+- model.yolo_license_plate:
+    model_type: v4
 - dabble.fps
 - draw.blur_bbox
 - draw.legend
@@ -44,10 +45,10 @@ nodes:
 
 **1. License Plate Detection Node**
 
-By default, the license plate detection node uses the Yolov4-tiny model to detect license plates. When higher accuracy is required or when the image/video quality is poor, such as when captured using dashcams, you can change the parameters in the run config declaration to use the Yolov4 model.
+By default, the license plate detection node uses the Yolov4 model to detect license plates. When faster inference speed is required, you can change the parameter in the run config declaration to use the Yolov4-tiny model.
 ```
 - model.yolo_license_plate:
-    model_type: v4
+    model_type: v4tiny
 ```
 
 **2. License Plate De-Identification Nodes**
@@ -63,4 +64,4 @@ With regard to the YoloV4 model, some common node configurations that you might 
 In addition, some common node behaviours that you might want to adjust for the mosaic_bbox and blur_bbox nodes are:
 - `mosaic_level`: This defines the resolution of a mosaic filter (width x height). The number corresponds to the number of rows and columns used to create a mosaic. For example, the default setting (mosaic_level: 7) creates a 7 x 7 mosaic filter. Increasing the number increases the intensity of pixelation over an area.
 
-- `blur level`: This defines the standard deviation of the Gaussian kernel used in the Gaussian filter. The higher the blur level, the more intense is the blurring. (default = 7)
+- `blur level`: This defines the standard deviation of the Gaussian kernel used in the Gaussian filter. The higher the blur level, the more intense is the blurring. (default = 60)

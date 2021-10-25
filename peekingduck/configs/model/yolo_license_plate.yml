@@ -1,12 +1,12 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
-model_type: v4tiny # v4 or v4tiny
-classes: ../weights/yolo_license_plate/classes.names
-weights_dir: ["../weights/yolo_license_plate"]
+model_type: v4 # v4 or v4tiny
+classes: ../peekingduck_weights/yolo_license_plate/classes.names
+weights_dir: ["../peekingduck_weights/yolo_license_plate"]
 model_weights_dir: {
-    v4: ../weights/yolo_license_plate/LPyolov4,
-    v4tiny: ../weights/yolo_license_plate/LPyolov4tiny,
+    v4: ../peekingduck_weights/yolo_license_plate/LPyolov4,
+    v4tiny: ../peekingduck_weights/yolo_license_plate/LPyolov4tiny,
 }
 blob_file: "yolo_license_plate.zip"
 
