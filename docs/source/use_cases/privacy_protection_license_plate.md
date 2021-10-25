@@ -10,10 +10,10 @@ Our solution automatically detects and blurs vehicles' license plate, which is f
 
 ## Demo
 
-To try our solution on your computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [privacy_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_license_plate.yml) and run PeekingDuck.
+To try our solution on your computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [privacy_protection_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plate.yml) and run PeekingDuck.
 
 ```
-> peekingduck run --config_path <path_to_privacy_license_plate.yml>
+> peekingduck run --config_path <path_to_privacy_protection_license_plate.yml>
 ```
 
 ## How it Works
@@ -22,7 +22,7 @@ There are two main components to license plate anonymisation: 1) license plate d
 
 **1. License Plate Detection**
 
-We use open-source object detection models under the [YoloV4](https://arxiv.org/abs/2004.10934) family to identify the locations of the license plates in an image/video feed. Specifically, we offer the YoloV4-tiny model, which is faster, and the YoloV4 model, which provides higher accuracy. The locations of detected license plates are returned as an array of coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each license plate detected. For more information on how to adjust the license plate detector node, check out the [license plate detector configurable parameters](/peekingduck.pipeline.nodes.model.licenseplate.Node).
+We use open-source object detection models under the [YoloV4](https://arxiv.org/abs/2004.10934) family to identify the locations of the license plates in an image/video feed. Specifically, we offer the YoloV4-tiny model, which is faster, and the YoloV4 model, which provides higher accuracy. The locations of detected license plates are returned as an array of coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each license plate detected. For more information on how to adjust the license plate detector node, check out the [license plate detector configurable parameters](/peekingduck.pipeline.nodes.model.yolo_license_plate.Node).
 
 **2. License Plate De-Identification**
 
@@ -30,13 +30,12 @@ To perform license plate de-identification, the areas bounded by the bounding bo
 
 ## Nodes Used
 
-These are the nodes used in the license plate anonymisation demo (also in [privacy_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_license_plate.yml)):
+These are the nodes used in the license plate anonymisation demo (also in [privacy_protection_license_plate.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plate.yml)):
 ```
 nodes:
 - input.recorded:
     input_dir: <path to video with cars>
-- model.yolo_license_plate:
-    model_type: v4
+- model.yolo_license_plate
 - dabble.fps
 - draw.blur_bbox
 - draw.legend
