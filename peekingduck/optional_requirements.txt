@@ -1,0 +1,7 @@
+dabble.zone_count PYTHON shapely == 1.7.1
+draw.bbox PYTHON shapely == 1.7.1
+draw.bbox PYTHON matplotlib >= 3.2.2
+draw.bbox PYTHON numpy == 1.10.0
+draw.bbox SYSTEM tesseract-ocr
+output.screen PYTHON pytesseract == 0.3.8
+output.screen SYSTEM tesseract-ocr

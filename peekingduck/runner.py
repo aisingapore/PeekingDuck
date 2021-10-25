@@ -78,8 +78,12 @@ class Runner():
                 self.logger.error(str(error))
                 sys.exit(1)
         try:
+            n_update = 0
             for node in self.pipeline.nodes:
-                check_requirements(node.name)
+                if node.name.startswith("peekingduck.pipeline.nodes"):
+                    n_update += check_requirements(node.node_name)
+            if n_update > 0:
+                sys.exit(1)
         except subprocess.CalledProcessError:
             sys.exit(1)
 

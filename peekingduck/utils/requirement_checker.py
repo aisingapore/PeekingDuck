@@ -16,19 +16,24 @@
 Python package requirements checker
 """
 
+import collections
 import logging
 from pathlib import Path
 import subprocess
-from typing import Iterator, TextIO, Union
+from typing import Iterator, TextIO, Tuple, Union
 
 import pkg_resources as pkg
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-ROOT = Path(__file__).resolve().parents[2]
+PKD_REQ_TYPE_LEN = 6  # string length of either PYTHON or SYSTEM
+PKD_REQ_TYPE_PYTHON = "PYTHON"  # type specifier for Python packages
+ROOT = Path(__file__).resolve().parents[1]
 
-def check_requirements(identifier: str,
-                       requirements_path: Path = ROOT / "requirements.txt",
-                       install: bool = True) -> None:
+OptionalRequirement = collections.namedtuple("OptionalRequirement", "name type")
+
+def check_requirements(
+        identifier: str,
+        requirements_path: Path = ROOT / "optional_requirements.txt") -> int:
     """Checks if the packages specified by the `identifier` in the requirements
     file at `requirements_path` are present on the system. If `install` is True,
     attempts to install the packages
@@ -36,40 +41,42 @@ def check_requirements(identifier: str,
     Args:
         identifier (str): A unique identifier, typically a pipeline node name,
             used to specify which packages to check for
-        requiremetns_path (Path): Path to the requirements file
-        install (bool): Flag to specify missing packages should be installed
+        requirements_path (Path): Path to the requirements file
     """
     with open(requirements_path) as infile:
-        requirements = [f"{req.name}{req.specifier}"
-                        for req in parse_requirements(infile, identifier)]
+        requirements = list(parse_requirements(infile, identifier))
 
     n_update = 0
     for req in requirements:
-        try:
-            pkg.require(req)
-        except (pkg.DistributionNotFound, pkg.VersionConflict):
-            msg = f"{req} not found and is required"
-            if install:
-                logger.info("%s, attempting auto-update...", msg)
+        if req.type == PKD_REQ_TYPE_PYTHON:
+            try:
+                pkg.require(req.name)
+            except (pkg.DistributionNotFound, pkg.VersionConflict):
+                logger.info("%s not found and is required, attempting "
+                            "auto-update...", req.name)
                 try:
-                    # Put req in quotes to prevent >=ver from being intepreted
-                    # as redirect
                     logger.info(subprocess.check_output(
-                        ["pip", "install", req]).decode())
+                        ["pip", "install", req.name]).decode())
                     n_update += 1
                 except subprocess.CalledProcessError as exception:
                     logger.error(exception)
                     raise
-            else:
-                logger.warning("%s. Please install and rerun.", msg)
+        else:
+            logger.warning("The %s node requires packages that need to be "
+                           "manually installed. Please follow the instructions "
+                           "at %s and rerun. Ignore this warning if the "
+                           "packages are already installed", identifier,
+                           "<install faq link>")
 
     if n_update > 0:
         logger.warning("%d package%s updated. Please rerun for the updates to "
                        "take effect.", n_update, "s" * int(n_update > 1))
 
+    return n_update
+
 
 def parse_requirements(file: TextIO,
-                       identifier: str) -> Iterator[pkg.Requirement]:
+                       identifier: str) -> Iterator[OptionalRequirement]:
     """Yield `pkg.Requirement` objects for each specification in `strings`
 
     `strings` must be a string, or a (possibly-nested) iterable thereof.
@@ -88,19 +95,30 @@ def parse_requirements(file: TextIO,
                 line += next(lines)
             except StopIteration:
                 return
-        yield pkg.Requirement(line)  # type: ignore
+        req_type, req_name = split_type_and_name(line)
+        if req_type == PKD_REQ_TYPE_PYTHON:
+            req = pkg.Requirement(req_name)  # type: ignore
+            requirement = OptionalRequirement(f"{req.name}{req.specifier}",
+                                              req_type)
+        else:
+            requirement = OptionalRequirement(req_name, req_type)
+        yield requirement
 
 
 def yield_lines(strings: Union[TextIO, str], identifier: str) -> Iterator[str]:
     """Yield non-empty/non-comment lines of a string or sequence"""
-    prefix = f"# OTF_req {identifier} "
+    prefix = f"{identifier} "
     if isinstance(strings, str):
         for string in strings.splitlines():
             string = string.strip()
-            # Return only OTF_req lines
+            # Return only optional requirement lines
             if string and string.startswith(prefix):
                 yield string[len(prefix):]
     else:
         for string_item in strings:
             for string in yield_lines(string_item, identifier):
                 yield string
+
+def split_type_and_name(string: str) -> Tuple[str, str]:
+    """Split an optional requirement line into the requirement type and name"""
+    return string[:PKD_REQ_TYPE_LEN], string[PKD_REQ_TYPE_LEN:]
