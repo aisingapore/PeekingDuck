@@ -1,0 +1,8 @@
+nodes:
+- input.recorded:
+    input_dir: "images/testing" 
+- model.yolo_face
+- dabble.fps
+- draw.bbox:
+    show_labels: True
+- draw.legend
