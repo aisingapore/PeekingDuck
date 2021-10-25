@@ -22,7 +22,7 @@ import requests
 from tqdm import tqdm
 
 
-BASE_URL = "https://peekingduck.blob.core.windows.net/models"
+BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 
 
 def download_weights(root: str, blob_file: str) -> None:

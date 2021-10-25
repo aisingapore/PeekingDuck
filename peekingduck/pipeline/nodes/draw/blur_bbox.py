@@ -77,4 +77,3 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         blurred_img = self._blur(inputs["bboxes"], inputs["img"], self.blur_kernel_size)
         outputs = {"img": blurred_img}
         return outputs
-        

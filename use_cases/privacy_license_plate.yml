@@ -1,0 +1,9 @@
+nodes:
+- input.recorded:
+    input_dir: <path to video with cars>
+- model.license_plate_detector:
+    model_type: v4tiny # v4  (for better accuracy)
+- dabble.fps
+- draw.blur_bbox
+- draw.legend
+- output.screen

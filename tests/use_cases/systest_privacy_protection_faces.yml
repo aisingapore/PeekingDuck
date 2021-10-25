@@ -1,0 +1,7 @@
+nodes:
+- input.recorded:
+    input_dir: "images/testing"
+- model.mtcnn
+- dabble.fps
+- draw.mosaic_bbox
+- draw.legend
