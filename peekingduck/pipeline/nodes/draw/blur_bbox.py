@@ -22,13 +22,19 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blur area bounded by bounding boxes on image.
+
     The blur_bbox node blur the areas of the image
     bounded by the bounding boxes output from an object detection model
+
     Inputs:
+
         |img|
+
         |bboxes|
+
     Outputs:
         |img|
+
     Configs:
         blur_kernel_size (:obj:`int`): **default = 30**
             This defines the kernel size used in the blur filter.
