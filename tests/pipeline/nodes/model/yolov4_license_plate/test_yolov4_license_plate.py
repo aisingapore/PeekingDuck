@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
-from peekingduck.pipeline.nodes.model.licenseplate.licenseplate_files.detector import (
+from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
     Detector,
 )
 
