@@ -62,11 +62,11 @@ def check_requirements(
                     logger.error(exception)
                     raise
         else:
-            logger.warning("The %s node requires packages that need to be "
+            logger.warning("The %s node requires %s which needs to be "
                            "manually installed. Please follow the instructions "
                            "at %s and rerun. Ignore this warning if the "
-                           "packages are already installed", identifier,
-                           "<install faq link>")
+                           "package is already installed", identifier,
+                           req.name.strip(), "<install faq link>")
 
     if n_update > 0:
         logger.warning("%d package%s updated. Please rerun for the updates to "
@@ -88,13 +88,6 @@ def parse_requirements(file: TextIO,
         # Drop comments -- a hash without a space may be in a URL.
         if " #" in line:
             line = line[:line.find(" #")]
-        # If there is a line continuation, drop it, and append the next line.
-        if line.endswith("\\"):
-            line = line[:-2].strip()
-            try:
-                line += next(lines)
-            except StopIteration:
-                return
         req_type, req_name = split_type_and_name(line)
         if req_type == PKD_REQ_TYPE_PYTHON:
             req = pkg.Requirement(req_name)  # type: ignore
