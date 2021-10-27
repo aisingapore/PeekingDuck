@@ -20,6 +20,7 @@ import cv2
 import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 
+
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blur area bounded by bounding boxes on image.
 
@@ -47,7 +48,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.blur_kernel_size = self.config["blur_kernel_size"]
 
     @staticmethod
-    def _blur(bboxes: List[np.ndarray], image: np.ndarray, blur_kernel_size: int) -> np.ndarray:
+    def _blur(
+        bboxes: List[np.ndarray], image: np.ndarray, blur_kernel_size: int
+    ) -> np.ndarray:
         """
         Function that blur the area bounded by bbox in an image
         """
@@ -63,9 +66,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
             # apply the blur using blur filter from opencv
-            blur_bbox_image = cv2.blur(
-                bbox_image,
-                (blur_kernel_size,blur_kernel_size))
+            blur_bbox_image = cv2.blur(bbox_image, (blur_kernel_size, blur_kernel_size))
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image

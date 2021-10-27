@@ -67,7 +67,7 @@ class TestMosaic:
         input = {
             # x1,y1,x2,y2
             "bboxes": [np.asarray([0.4, 0.6, 0.6, 0.7])],
-            "img": output_img
+            "img": output_img,
         }
 
         draw_mosaic_node.run(input)
@@ -95,7 +95,7 @@ class TestMosaic:
                 np.asarray([0.4, 0.6, 0.6, 0.7]),
                 np.asarray([0.2, 0.1, 0.4, 0.2]),
             ],
-            "img": output_img
+            "img": output_img,
         }
         draw_mosaic_node.run(input)
         for bbox in input["bboxes"]:

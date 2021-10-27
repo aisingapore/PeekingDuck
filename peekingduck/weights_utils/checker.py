@@ -34,7 +34,7 @@ def has_weights(root: str, path_to_check: List[str]) -> bool:
 
     # Check for whether weights dir even exist. If not make directory
     # Empty directory should then return False
-    weights_dir = os.path.join(root, '..', 'peekingduck_weights')
+    weights_dir = os.path.join(root, "..", "peekingduck_weights")
     if not os.path.isdir(weights_dir):
         os.mkdir(weights_dir)
         return False

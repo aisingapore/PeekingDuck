@@ -23,11 +23,12 @@ from typing import Dict, Any, Tuple, List
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions \
-    import load_graph
+from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
+    load_graph,
+)
 
 
-class Detector: # pylint: disable=too-many-instance-attributes
+class Detector:  # pylint: disable=too-many-instance-attributes
     """Face detection class using MTCNN model to find bboxes and landmarks"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -35,29 +36,30 @@ class Detector: # pylint: disable=too-many-instance-attributes
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config['root']
-        self.min_size = self.config['mtcnn_min_size']
-        self.factor = self.config['mtcnn_factor']
-        self.thresholds = self.config['mtcnn_thresholds']
-        self.score = self.config['mtcnn_score']
+        self.root_dir = config["root"]
+        self.min_size = self.config["mtcnn_min_size"]
+        self.factor = self.config["mtcnn_factor"]
+        self.thresholds = self.config["mtcnn_thresholds"]
+        self.score = self.config["mtcnn_score"]
         self.mtcnn = self._create_mtcnn_model()
 
     def _create_mtcnn_model(self) -> tf.keras.Model:
-        '''
+        """
         Creates MTCNN model for face detection
-        '''
-        model_path = os.path.join(self.root_dir, self.config['graph_files']['mtcnn'])
+        """
+        model_path = os.path.join(self.root_dir, self.config["graph_files"]["mtcnn"])
 
         self.logger.info(
-            'MTCNN model loaded with following configs: \n \
+            "MTCNN model loaded with following configs: \n \
             Min size: %s, \n \
             Scale Factor: %s, \n \
             Steps Thresholds: %s, \n \
-            Score Threshold: %s',
-            self.config['mtcnn_min_size'],
-            self.config['mtcnn_factor'],
-            self.config['mtcnn_thresholds'],
-            self.config['mtcnn_score'])
+            Score Threshold: %s",
+            self.config["mtcnn_min_size"],
+            self.config["mtcnn_factor"],
+            self.config["mtcnn_thresholds"],
+            self.config["mtcnn_score"],
+        )
 
         return self._load_mtcnn_graph(model_path)
 
@@ -67,13 +69,13 @@ class Detector: # pylint: disable=too-many-instance-attributes
         if os.path.isfile(model_path):
             return load_graph(model_path)
 
-        raise ValueError('Graph file does not exist. Please check that '
-                         '%s exists' % model_path)
+        raise ValueError(
+            "Graph file does not exist. Please check that " "%s exists" % model_path
+        )
 
-    def predict_bbox_landmarks(self, image: np.ndarray) -> Tuple[np.ndarray,
-                                                                 np.ndarray,
-                                                                 np.ndarray,
-                                                                 np.ndarray]:
+    def predict_bbox_landmarks(
+        self, image: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, scores and landmarks
 
         Args:
@@ -87,17 +89,20 @@ class Detector: # pylint: disable=too-many-instance-attributes
         """
         # 1. process inputs
         image = self.process_image(image)
-        min_size, factor, thresholds = self.process_params(self.min_size, self.factor,
-                                                           self.thresholds)
+        min_size, factor, thresholds = self.process_params(
+            self.min_size, self.factor, self.thresholds
+        )
 
         # 2. evaluate image
         bboxes, scores, landmarks = self.mtcnn(image, min_size, factor, thresholds)
 
         # 3. process outputs
-        bboxes, scores, landmarks = self.process_outputs(image, bboxes, scores, landmarks)
+        bboxes, scores, landmarks = self.process_outputs(
+            image, bboxes, scores, landmarks
+        )
 
         # 4. create bbox_labels
-        classes = np.array(['face']*len(bboxes))
+        classes = np.array(["face"] * len(bboxes))
 
         return bboxes, scores, landmarks, classes
 
@@ -117,8 +122,9 @@ class Detector: # pylint: disable=too-many-instance-attributes
         return image
 
     @staticmethod
-    def process_params(min_size: int, factor: float, thresholds: List[float]) \
-                       -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
+    def process_params(
+        min_size: int, factor: float, thresholds: List[float]
+    ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
         """Processes model input parameters
 
         Args:
@@ -138,10 +144,13 @@ class Detector: # pylint: disable=too-many-instance-attributes
 
         return min_size, factor, thresholds
 
-    def process_outputs(self, image: np.ndarray, bboxes: tf.Tensor,
-                         scores: tf.Tensor, landmarks: tf.Tensor) -> Tuple[np.ndarray,
-                                                                           np.ndarray,
-                                                                           np.ndarray]:
+    def process_outputs(
+        self,
+        image: np.ndarray,
+        bboxes: tf.Tensor,
+        scores: tf.Tensor,
+        landmarks: tf.Tensor,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Processes MTCNN model outputs
 
         Args:
@@ -164,11 +173,11 @@ class Detector: # pylint: disable=too-many-instance-attributes
         landmarks = landmarks[indices]
 
         # Swap position of x, y coordinates
-        bboxes[:,[0, 1]] = bboxes[:,[1, 0]]
-        bboxes[:,[2, 3]] = bboxes[:,[3, 2]]
+        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
+        bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
 
         # Express image coordinates as a percentage of image height and width
-        bboxes[:, [0, 2]] = bboxes[:, [0, 2]]/image.shape[1]
-        bboxes[:, [1, 3]] = bboxes[:, [1, 3]]/image.shape[0]
+        bboxes[:, [0, 2]] = bboxes[:, [0, 2]] / image.shape[1]
+        bboxes[:, [1, 3]] = bboxes[:, [1, 3]] / image.shape[0]
 
         return bboxes, scores, landmarks

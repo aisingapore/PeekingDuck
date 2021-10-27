@@ -50,7 +50,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.mosaic_level=self.config['mosaic_level']
+        self.mosaic_level = self.config["mosaic_level"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
@@ -83,7 +83,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         return image
 
     @staticmethod
-    def mosaic(image: np.ndarray, mosaic_level:int) -> np.ndarray: # pylint: disable-msg=too-many-locals
+    def mosaic(
+        image: np.ndarray, mosaic_level: int
+    ) -> np.ndarray:  # pylint: disable-msg=too-many-locals
         """Mosaics a given input image
 
         Args:
@@ -105,8 +107,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
                 roi = image[start_y:end_y, start_x:end_x]
                 (blue, green, red) = [int(x) for x in cv2.mean(roi)[:3]]
-                cv2.rectangle(image, (start_x, start_y), (end_x, end_y),
-                             (blue, green, red), -1)
+                cv2.rectangle(
+                    image, (start_x, start_y), (end_x, end_y), (blue, green, red), -1
+                )
 
         return image
-       
