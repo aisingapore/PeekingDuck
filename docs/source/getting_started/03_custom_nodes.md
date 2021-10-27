@@ -97,7 +97,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path =__name__)
 
     def run(self, inputs):
-        pass
+        return {}
 ```
 
 2. Develop `run()`, the core function that PeekingDuck will call in the pipeline. Nodes can simply retrieve the necessary data by querying the input in a dict-like fashion. In this case, we take the input `count` and write the results into the specified filepath.

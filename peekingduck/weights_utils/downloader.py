@@ -33,8 +33,8 @@ def download_weights(root: str, blob_file: str) -> None:
         blob_file (str): name of file to be downloaded
     """
 
-    extract_dir = os.path.join(root, "..", "weights")
-    zip_path = os.path.join(root, "..", "weights", "temp.zip")
+    extract_dir = os.path.join(root, "..", "peekingduck_weights")
+    zip_path = os.path.join(root, "..", "peekingduck_weights", "temp.zip")
 
     download_file_from_blob(blob_file, zip_path)
 
