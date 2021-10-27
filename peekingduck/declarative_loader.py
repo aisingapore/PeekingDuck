@@ -16,20 +16,19 @@
 Helper classes to load configs, nodes
 """
 
-import sys
-import os
-import importlib
-import logging
 import ast
 import collections.abc
-import re
+import importlib
+import logging
+import sys
+from pathlib import Path
 from typing import Any, Dict, List
 
 import yaml
 
-from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.configloader import ConfigLoader
+from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.pipeline import Pipeline
 
 PEEKINGDUCK_NODE_TYPE = ["input", "model", "draw", "dabble", "output"]
 
@@ -59,11 +58,11 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     """
 
     def __init__(
-        self, run_config: str, config_updates_cli: str, custom_node_parent_folder: str
+        self, run_config: Path, config_updates_cli: str, custom_node_parent_folder: str
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        pkdbasedir = os.path.join(os.path.dirname(os.path.abspath(__file__)))
+        pkdbasedir = Path(__file__).resolve().parent
         self.config_loader = ConfigLoader(pkdbasedir)
 
         self.node_list = self._load_node_list(run_config)
@@ -71,15 +70,13 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         custom_folder = self._get_custom_name_from_node_list()
         if custom_folder is not None:
-            custom_folder_path = os.path.join(
-                os.getcwd(), custom_node_parent_folder, custom_folder
-            )
+            custom_folder_path = Path.cwd() / custom_node_parent_folder / custom_folder
             self.custom_config_loader = ConfigLoader(custom_folder_path)
             sys.path.append(custom_node_parent_folder)
 
             self.custom_folder_path = custom_folder_path
 
-    def _load_node_list(self, run_config: str) -> List[str]:
+    def _load_node_list(self, run_config: Path) -> List[str]:
         """Loads a list of nodes from run_config.yml"""
         with open(run_config) as node_yml:
             nodes = yaml.safe_load(node_yml)["nodes"]
@@ -88,7 +85,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         return nodes
 
     def _get_custom_name_from_node_list(self) -> Any:
-
         custom_name = None
 
         for node in self.node_list:
@@ -122,9 +118,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
             if len(node_str_split) == 3:
                 # convert windows/linux filepath to a module path
-                path_to_node = (
-                    ".".join(re.split(r"\\|\/", self.custom_folder_path)[-1:]) + "."
-                )
+                path_to_node = f"{self.custom_folder_path.name}."
                 node_name = ".".join(node_str_split[-2:])
 
                 instantiated_node = self._init_node(
@@ -152,7 +146,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config_updates_yml: Dict[str, Any],
     ) -> AbstractNode:
         """Import node to filepath and initialise node with config"""
-
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 

@@ -16,10 +16,10 @@
 Abstract Node class for all nodes
 """
 
-import pathlib
-import logging
 import collections
+import logging
 from abc import ABCMeta, abstractmethod
+from pathlib import Path
 from typing import Any, Dict, List
 
 from peekingduck.configloader import ConfigLoader
@@ -35,15 +35,14 @@ class AbstractNode(metaclass=ABCMeta):
         self,
         config: Dict[str, Any] = None,
         node_path: str = "",
-        pkdbasedir: str = None,
+        pkdbasedir: Path = None,
         **kwargs: Any
     ) -> None:
-
         self._name = node_path
         self.logger = logging.getLogger(self._name)
 
         if not pkdbasedir:
-            pkdbasedir = str(pathlib.Path(__file__).parents[2].resolve())
+            pkdbasedir = Path(__file__).resolve().parents[2]
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
