@@ -83,9 +83,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         return image
 
     @staticmethod
-    def mosaic(
+    def mosaic(  # pylint: disable-msg=too-many-locals
         image: np.ndarray, mosaic_level: int
-    ) -> np.ndarray:  # pylint: disable-msg=too-many-locals
+    ) -> np.ndarray:
         """Mosaics a given input image
 
         Args:
