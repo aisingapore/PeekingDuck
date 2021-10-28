@@ -114,9 +114,10 @@ class Node(AbstractNode):
         if len(invalid) != 0:
             msg = textwrap.dedent(
                 f"""\
-                    {invalid} are not valid outputs.
-                    Data pool only has this outputs: {list(inputs.keys())}
-                    Only {valid} will be logged in the csv file"""
+                {invalid} are not valid outputs.
+                Data pool only has this outputs: {list(inputs.keys())}
+                Only {valid} will be logged in the csv file
+                """
             )
             self.logger.warning(msg)
 

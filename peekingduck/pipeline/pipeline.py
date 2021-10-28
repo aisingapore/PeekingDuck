@@ -69,6 +69,7 @@ class Pipeline:
                     Nodes in this pipeline do not form a proper channel:
                     {node.name} requires these inputs: {node.inputs}
                     Data pool only has these outputs from previous nodes: {data_pool}
-                    Note that nodes run sequentially, in the order specified in the config file."""
+                    Note that nodes run sequentially, in the order specified in the config file.
+                    """
                 )
                 raise ValueError(msg)

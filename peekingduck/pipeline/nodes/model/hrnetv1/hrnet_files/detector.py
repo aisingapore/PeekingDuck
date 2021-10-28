@@ -73,9 +73,11 @@ class Detector:
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
-            "HRNet graph model loaded with following configs: \n \
-            Resolution: %s, \n \
-            Score Threshold: %s",
+            (
+                "HRNet graph model loaded with following configs: \n\t"
+                "Resolution: %s, \n\t"
+                "Score Threshold: %s"
+            ),
             resolution_tuple,
             self.min_score,
         )

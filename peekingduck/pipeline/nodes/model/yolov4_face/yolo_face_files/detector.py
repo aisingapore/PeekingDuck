@@ -51,14 +51,16 @@ class Detector:  # pylint: disable=too-few-public-methods
         model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
 
         self.logger.info(
-            "Yolo model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            IDs being detected: %s, \n \
-            Max detections per class: %s, \n \
-            Max total detections: %s, \n \
-            IOU threshold: %s, \n \
-            Score threshold: %s",
+            (
+                "Yolo model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "IDs being detected: %s, \n\t"
+                "Max detections per class: %s, \n\t"
+                "Max total detections: %s, \n\t"
+                "IOU threshold: %s, \n\t"
+                "Score threshold: %s"
+            ),
             self.config["model_type"],
             self.config["size"],
             self.config["detect_ids"],

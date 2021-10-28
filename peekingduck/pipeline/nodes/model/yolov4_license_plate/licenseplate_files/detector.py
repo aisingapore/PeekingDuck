@@ -55,11 +55,13 @@ class Detector:
         model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
 
         self.logger.info(
-            "Yolo model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            NMS threshold: %s, \n \
-            Score threshold: %s",
+            (
+                "Yolo model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "NMS threshold: %s, \n\t"
+                "Score threshold: %s"
+            ),
             self.config["model_type"],
             self.config["size"],
             self.config["yolo_iou_threshold"],

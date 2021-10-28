@@ -50,11 +50,13 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_path = os.path.join(self.root_dir, self.config["graph_files"]["mtcnn"])
 
         self.logger.info(
-            "MTCNN model loaded with following configs: \n \
-            Min size: %s, \n \
-            Scale Factor: %s, \n \
-            Steps Thresholds: %s, \n \
-            Score Threshold: %s",
+            (
+                "MTCNN model loaded with following configs: \n\t"
+                "Min size: %s, \n\t"
+                "Scale Factor: %s, \n\t"
+                "Steps Thresholds: %s, \n\t"
+                "Score Threshold: %s"
+            ),
             self.config["mtcnn_min_size"],
             self.config["mtcnn_factor"],
             self.config["mtcnn_thresholds"],
