@@ -101,7 +101,8 @@ The following conventions are adopted to help maintain code consistency.
 
 - PEP8 convention
 - PEP484 type hinting for functions and methods
-- Absolute imports instead of relative imports 
+- Absolute imports instead of relative imports
+- [Black](https://black.readthedocs.io/en/stable/) code formatter to ensure consistent code format
 
 ## Test Suites
 
@@ -111,6 +112,7 @@ Run these tests locally to ensure that your code passes prior to submission of a
 ```shell
 sh scripts/linter.sh            # pylint for pep8 and code consistency
 sh scripts/bandit.sh            # bandit to check for security related issues on dependencies
+sh scripts/check_format.sh      # black to check for formatting issues
 sh scripts/check_type.sh        # mypy to check for type hints on function/method level
 sh scripts/run_tests.sh unit    # pytest for all except model nodes
 sh scripts/run_tests.sh mlmodel # pytest for model nodes
