@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import io
 import os
 import random
 import string
@@ -48,6 +49,36 @@ CUSTOM_PKD_NODE_DIR = MODULE_DIR / CUSTOM_FOLDER_NAME / PKD_NODE_TYPE
 CUSTOM_PKD_NODE_CONFIG_DIR = CUSTOM_NODE_CONFIG_DIR / PKD_NODE_TYPE
 RUN_CONFIG_PATH = PROJECT_DIR / "run_config.yml"
 YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
+
+NODE_TYPES = ["input", "model", "dabble", "draw", "output"]
+PKD_CONFIG_DIR = Path(__file__).resolve().parents[2] / "peekingduck" / "configs"
+
+
+def available_nodes_msg(type_name=None):
+    output = io.StringIO()
+    if type_name is None:
+        node_types = NODE_TYPES
+    else:
+        node_types = [type_name]
+
+    url_prefix = (
+        "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
+    )
+    url_postfix = ".Node.html#peekingduck.pipeline.nodes."
+    for node_type in node_types:
+        node_names = [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")]
+        max_length = len(max(node_names, key=len))
+        print(f"\nPeekingDuck has the following {node_type} nodes:", file=output)
+        for idx, node_name in enumerate(node_names):
+            url = (
+                f"{url_prefix}{node_type}.{node_name}{url_postfix}"
+                f"{node_type}.{node_name}.Node"
+            )
+            print(f"{idx + 1}:{node_name: <{max_length + 1}}Info: {url}", file=output)
+    print("\n", file=output)
+    content = output.getvalue()
+    output.close()
+    return content
 
 
 def create_node_config(config_dir, node_name, config_text):
@@ -106,6 +137,21 @@ def setup():
 
 
 @pytest.fixture
+def cwd():
+    return Path.cwd()
+
+
+@pytest.fixture
+def parent_dir():
+    return Path.cwd().parent
+
+
+@pytest.fixture
+def runner():
+    return CliRunner()
+
+
+@pytest.fixture
 def tmp_project_dir():
     cwd = Path.cwd()
     (cwd / PROJECT_DIR).mkdir(parents=True)
@@ -116,76 +162,82 @@ def tmp_project_dir():
 
 @pytest.mark.usefixtures("tmp_dir", "tmp_project_dir")
 class TestCli:
-    def test_version(self):
-        runner = CliRunner()
+    def test_version(self, runner):
         result = runner.invoke(cli, ["--version"])
+
         assert result.exit_code == 0
+        # not testing full message as .invoke() sets program name to cli
+        # instead of peekingduck
         assert f"version {__version__}" in result.output
 
-    def test_init_default(self):
-        parent_dir = Path.cwd().parent
-        runner = CliRunner()
+    def test_init_default(self, runner, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = runner.invoke(cli, ["init"])
 
             assert result.exit_code == 0
-            assert "Creating custom nodes folder in" in captured.records[0].getMessage()
-            assert "custom_nodes" in captured.records[0].getMessage()
+            assert (
+                captured.records[0].getMessage()
+                == f"Creating custom nodes folder in {cwd / 'src' / 'custom_nodes'}"
+            )
             assert (parent_dir / DEFAULT_NODE_DIR).exists()
             assert (parent_dir / DEFAULT_NODE_CONFIG_DIR).exists()
             assert (parent_dir / RUN_CONFIG_PATH).exists()
             with open(parent_dir / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
-    def test_init_custom(self):
-        parent_dir = Path.cwd().parent
-        runner = CliRunner()
+    def test_init_custom(self, runner, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = runner.invoke(
                 cli, ["init", "--custom_folder_name", CUSTOM_FOLDER_NAME]
             )
-
             assert result.exit_code == 0
-            assert "Creating custom nodes folder in" in captured.records[0].getMessage()
-            assert CUSTOM_FOLDER_NAME in captured.records[0].getMessage()
+            assert captured.records[0].getMessage() == f"Creating custom nodes folder in {cwd / 'src' / CUSTOM_FOLDER_NAME}" 
             assert (parent_dir / CUSTOM_NODE_DIR).exists()
             assert (parent_dir / CUSTOM_NODE_CONFIG_DIR).exists()
             assert (parent_dir / RUN_CONFIG_PATH).exists()
             with open(parent_dir / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
-    def test_run_default(self):
+    def test_run_default(self, runner):
         setup()
-        runner = CliRunner()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = runner.invoke(cli, ["run"])
             assert (
-                "Successfully loaded run_config file."
-                == captured.records[0].getMessage()
+                captured.records[0].getMessage()
+                == "Successfully loaded run_config file."
             )
-            assert init_msg(PKD_NODE) == captured.records[1].getMessage()
-            assert init_msg(PKD_NODE_2) == captured.records[2].getMessage()
+            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
+            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
             assert result.exit_code == 0
 
-    def test_run_custom(self):
+    def test_run_custom_config(self, runner):
         setup()
         node_name = ".".join(PKD_NODE.split(".")[1:])
         config_update_value = "'do_resizing': True"
         config_update_cli = (
             f"{{'{node_name}': {{'resize': {{ {config_update_value} }} }} }}"
         )
-        runner = CliRunner()
-
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = runner.invoke(cli, ["run", "--node_config", config_update_cli])
             assert (
-                "Successfully loaded run_config file."
-                == captured.records[0].getMessage()
+                captured.records[0].getMessage()
+                == "Successfully loaded run_config file."
             )
-            assert init_msg(PKD_NODE) == captured.records[1].getMessage()
+            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
             assert (
-                f"Config for node {node_name} is updated to: {config_update_value}"
-                == captured.records[2].getMessage()
+                captured.records[2].getMessage()
+                == f"Config for node {node_name} is updated to: {config_update_value}"
             )
-            assert init_msg(PKD_NODE_2) == captured.records[3].getMessage()
+            assert captured.records[3].getMessage() == init_msg(PKD_NODE_2)
             assert result.exit_code == 0
+
+    def test_nodes_all(self, runner):
+        result = runner.invoke(cli, ["nodes"])
+        assert result.exit_code == 0
+        assert result.output == available_nodes_msg()
+
+    def test_nodes_single(self, runner):
+        for node_type in NODE_TYPES:
+            result = runner.invoke(cli, ["nodes", node_type])
+            assert result.exit_code == 0
+            assert result.output == available_nodes_msg(node_type)
