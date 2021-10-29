@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import io
+import math
 import os
 import random
 import string
@@ -62,20 +63,18 @@ def available_nodes_msg(type_name=None):
     else:
         node_types = [type_name]
 
-    url_prefix = (
-        "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
-    )
-    url_postfix = ".Node.html#peekingduck.pipeline.nodes."
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
+    url_postfix = ".html#"
     for node_type in node_types:
         node_names = [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")]
         max_length = len(max(node_names, key=len))
         print(f"\nPeekingDuck has the following {node_type} nodes:", file=output)
-        for idx, node_name in enumerate(node_names):
-            url = (
-                f"{url_prefix}{node_type}.{node_name}{url_postfix}"
-                f"{node_type}.{node_name}.Node"
-            )
-            print(f"{idx + 1}:{node_name: <{max_length + 1}}Info: {url}", file=output)
+        for num, node_name in enumerate(node_names):
+            idx = num + 1
+            node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
+            url = f"{url_prefix}{node_path}{url_postfix}{node_path}"
+            node_width = max_length + 1 - int(math.log10(idx))
+            print(f"{idx}:{node_name: <{node_width}}Info: {url}", file=output)
     print("\n", file=output)
     content = output.getvalue()
     output.close()
@@ -254,6 +253,8 @@ class TestCli:
 
     def test_nodes_all(self, runner):
         result = runner.invoke(cli, ["nodes"])
+        print(result.exception)
+        print(result.output)
         assert result.exit_code == 0
         assert result.output == available_nodes_msg()
 
