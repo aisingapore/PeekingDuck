@@ -78,9 +78,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
         if self.threading:
-            self.videocap = VideoThread(
-                self.input_source, self.mirror_image
-            )
+            self.videocap = VideoThread(self.input_source, self.mirror_image)
         else:
             self.videocap = VideoNoThread(  # type: ignore
                 self.input_source, self.mirror_image
