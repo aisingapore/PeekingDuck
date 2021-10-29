@@ -47,7 +47,8 @@ CUSTOM_NODE_DIR = MODULE_DIR / CUSTOM_FOLDER_NAME
 CUSTOM_NODE_CONFIG_DIR = CUSTOM_NODE_DIR / "configs"
 CUSTOM_PKD_NODE_DIR = MODULE_DIR / CUSTOM_FOLDER_NAME / PKD_NODE_TYPE
 CUSTOM_PKD_NODE_CONFIG_DIR = CUSTOM_NODE_CONFIG_DIR / PKD_NODE_TYPE
-RUN_CONFIG_PATH = PROJECT_DIR / "run_config.yml"
+RUN_CONFIG_PATH = Path("run_config.yml")
+CUSTOM_RUN_CONFIG_PATH = Path("custom_dir") / "run_config.yml"
 YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
 NODE_TYPES = ["input", "model", "dabble", "draw", "output"]
@@ -103,9 +104,10 @@ def create_node_python(node_dir, node_name, return_statement):
         outfile.write(content)
 
 
-def create_run_config_yaml(nodes):
-    # Inside PROJECT_DIR through usefixtures, use the leaf of the path
-    with open(RUN_CONFIG_PATH.name, "w") as outfile:
+def create_run_config_yaml(nodes, custom_config_path):
+    with open(
+        CUSTOM_RUN_CONFIG_PATH if custom_config_path else RUN_CONFIG_PATH, "w"
+    ) as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
@@ -113,7 +115,7 @@ def init_msg(node_name):
     return f"Initialising {node_name} node..."
 
 
-def setup():
+def setup(custom_config_path=False):
     sys.path.append(str(MODULE_DIR))
 
     relative_node_dir = CUSTOM_PKD_NODE_DIR.relative_to(CUSTOM_PKD_NODE_DIR.parts[0])
@@ -122,6 +124,8 @@ def setup():
     )
     relative_node_dir.mkdir(parents=True)
     relative_config_dir.mkdir(parents=True)
+    if custom_config_path:
+        CUSTOM_RUN_CONFIG_PATH.parent.mkdir()
     node_config_1 = {
         "input": ["none"],
         "output": ["test_output_1"],
@@ -129,7 +133,7 @@ def setup():
     }
     node_config_2 = {"input": ["test_output_1"], "output": ["pipeline_end"]}
 
-    create_run_config_yaml(NODES)
+    create_run_config_yaml(NODES, custom_config_path)
     create_node_python(relative_node_dir, PKD_NODE_NAME, "'test_output_1': None")
     create_node_python(relative_node_dir, PKD_NODE_NAME_2, "'pipeline_end': True")
     create_node_config(relative_config_dir, PKD_NODE_NAME, node_config_1)
@@ -181,8 +185,8 @@ class TestCli:
             )
             assert (parent_dir / DEFAULT_NODE_DIR).exists()
             assert (parent_dir / DEFAULT_NODE_CONFIG_DIR).exists()
-            assert (parent_dir / RUN_CONFIG_PATH).exists()
-            with open(parent_dir / RUN_CONFIG_PATH) as infile:
+            assert (cwd / RUN_CONFIG_PATH).exists()
+            with open(cwd / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
     def test_init_custom(self, runner, parent_dir, cwd):
@@ -191,17 +195,34 @@ class TestCli:
                 cli, ["init", "--custom_folder_name", CUSTOM_FOLDER_NAME]
             )
             assert result.exit_code == 0
-            assert captured.records[0].getMessage() == f"Creating custom nodes folder in {cwd / 'src' / CUSTOM_FOLDER_NAME}" 
+            assert (
+                captured.records[0].getMessage()
+                == f"Creating custom nodes folder in {cwd / 'src' / CUSTOM_FOLDER_NAME}"
+            )
             assert (parent_dir / CUSTOM_NODE_DIR).exists()
             assert (parent_dir / CUSTOM_NODE_CONFIG_DIR).exists()
-            assert (parent_dir / RUN_CONFIG_PATH).exists()
-            with open(parent_dir / RUN_CONFIG_PATH) as infile:
+            assert (cwd / RUN_CONFIG_PATH).exists()
+            with open(cwd / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
     def test_run_default(self, runner):
         setup()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = runner.invoke(cli, ["run"])
+            assert (
+                captured.records[0].getMessage()
+                == "Successfully loaded run_config file."
+            )
+            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
+            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
+            assert result.exit_code == 0
+
+    def test_run_custom_path(self, runner):
+        setup(True)
+        with TestCase.assertLogs("peekingduck.cli.logger") as captured:
+            result = runner.invoke(
+                cli, ["run", "--config_path", CUSTOM_RUN_CONFIG_PATH]
+            )
             assert (
                 captured.records[0].getMessage()
                 == "Successfully loaded run_config file."
