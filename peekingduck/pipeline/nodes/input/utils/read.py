@@ -30,8 +30,10 @@ class VideoThread:
     Videos will be threaded to prevent I/O blocking from affecting FPS.
     """
 
-    def __init__(self, input_source: Path, mirror_image: bool) -> None:
-        self.stream = cv2.VideoCapture(str(input_source))
+    def __init__(self, input_source: Union[int, Path], mirror_image: bool) -> None:
+        self.stream = cv2.VideoCapture(
+            str(input_source) if isinstance(input_source, Path) else input_source
+        )
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError("Camera or video input not detected: %s" % input_source)
@@ -85,8 +87,10 @@ class VideoNoThread:
     No threading to deal with recorded videos and images.
     """
 
-    def __init__(self, input_source: Path, mirror_image: bool) -> None:
-        self.stream = cv2.VideoCapture(str(input_source))
+    def __init__(self, input_source: Union[int, Path], mirror_image: bool) -> None:
+        self.stream = cv2.VideoCapture(
+            str(input_source) if isinstance(input_source, Path) else input_source
+        )
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError("Video or image path incorrect: %s" % input_source)
