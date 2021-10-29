@@ -12,19 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-import os
 import re
+from pathlib import Path
 
 import pytest
+
 from peekingduck.pipeline.nodes.output.media_writer import Node
 
-OUTPUT_PATH = "output"
+OUTPUT_PATH = Path("output")
+SIZE = (400, 600, 3)
 
 
 def directory_contents():
-    res = os.listdir(OUTPUT_PATH)
-    return set(res)
+    return list(set(OUTPUT_PATH.iterdir()))
 
 
 @pytest.fixture
@@ -33,16 +33,13 @@ def writer():
     return media_writer
 
 
-size = (400, 600, 3)
-
-
 @pytest.mark.usefixtures("tmp_dir")
 class TestMediaWriter:
     def test_cwd_starts_empty(self):
-        assert os.listdir(os.getcwd()) == []
+        assert list(Path.cwd().iterdir()) == []
 
     def test_writer_writes_single_image(self, writer, create_image):
-        image = create_image(size)
+        image = create_image(SIZE)
         writer.run(
             {
                 "filename": "test.jpg",
@@ -66,13 +63,13 @@ class TestMediaWriter:
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
         assert len(directory_contents()) == 1
-        assert list(directory_contents())[0].split(".")[-1] == "jpg"
-        assert re.search(pattern, list(directory_contents())[0])
+        assert directory_contents()[0].suffix == ".jpg"
+        assert re.search(pattern, str(directory_contents()[0]))
 
     def test_writer_writes_multi_image(self, writer, create_image):
-        image1 = create_image(size)
-        image2 = create_image(size)
-        image3 = create_image(size)
+        image1 = create_image(SIZE)
+        image2 = create_image(SIZE)
+        image3 = create_image(SIZE)
 
         writer.run(
             {
@@ -115,11 +112,11 @@ class TestMediaWriter:
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
         for filename in directory_contents():
-            assert filename.split(".")[-1] == "jpg"
-            assert re.search(pattern, filename)
+            assert filename.suffix == ".jpg"
+            assert re.search(pattern, str(filename))
 
     def test_writer_writes_single_video(self, writer, create_video):
-        video = create_video(size, nframes=20)
+        video = create_video(SIZE, nframes=20)
         for frame in video:
             writer.run(
                 {
@@ -143,12 +140,12 @@ class TestMediaWriter:
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
         assert len(directory_contents()) == 1
-        assert list(directory_contents())[0].split(".")[-1] == "mp4"
-        assert re.search(pattern, list(directory_contents())[0])
+        assert directory_contents()[0].suffix == ".mp4"
+        assert re.search(pattern, str(directory_contents()[0]))
 
     def test_writer_writes_multi_video(self, writer, create_video):
-        video1 = create_video(size, nframes=20)
-        video2 = create_video(size, nframes=20)
+        video1 = create_video(SIZE, nframes=20)
+        video2 = create_video(SIZE, nframes=20)
         for frame in video1:
             writer.run(
                 {
@@ -158,7 +155,6 @@ class TestMediaWriter:
                     "pipeline_end": False,
                 }
             )
-
         for frame in video2:
             writer.run(
                 {
@@ -184,5 +180,5 @@ class TestMediaWriter:
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z0-9]{3,4}$"
 
         for filename in directory_contents():
-            assert filename.split(".")[-1] == "mp4"
-            assert re.search(pattern, filename)
+            assert filename.suffix == ".mp4"
+            assert re.search(pattern, str(filename))
