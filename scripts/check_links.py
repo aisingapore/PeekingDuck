@@ -59,6 +59,7 @@ def check_for_faulty_links(
     """
     faulty_links: List[Tuple[Path, str, Union[int, Path]]] = []
     for path in file_paths:
+        print(f"===== Checking {path}")
         with open(path, "r", encoding="utf-8") as infile:
             content = infile.read()
             content_html = markdown.markdown(content)
@@ -131,5 +132,5 @@ if __name__ == "__main__":
     print("\nCHECKING FILES")
     print("-" * 50)
 
-    FAULTY_LINKS = check_for_faulty_links(sorted(MD_RST_PATHS)[:10])
+    FAULTY_LINKS = check_for_faulty_links(sorted(MD_RST_PATHS))
     print_output(FAULTY_LINKS)
