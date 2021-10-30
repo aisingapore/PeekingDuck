@@ -76,7 +76,9 @@ class Detector:
         model_nodes = self.config["MODEL_NODES"][model_type]
         if model_path.is_file():
             return load_graph(
-                str(model_path), inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+                str(model_path),
+                inputs=model_nodes["inputs"],
+                outputs=model_nodes["outputs"],
             )
         raise ValueError(
             "Graph file does not exist. Please check that " "%s exists" % model_path

@@ -54,7 +54,9 @@ from tensorflow.keras.layers import (
 )
 from tensorflow.keras.regularizers import l2
 
-from peekingduck.pipeline.nodes.model.yolov4.yolo_files.batch_norm import BatchNormalization
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.batch_norm import (
+    BatchNormalization,
+)
 
 # pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
 

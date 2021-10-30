@@ -48,7 +48,9 @@ class Detector:
         Creates yolo model for license plate detection
         """
         self.model_type = self.config["model_type"]
-        model_file = self.config["root"] / self.config["model_weights_dir"][self.model_type]
+        model_file = (
+            self.config["root"] / self.config["model_weights_dir"][self.model_type]
+        )
         model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
 
         self.logger.info(
