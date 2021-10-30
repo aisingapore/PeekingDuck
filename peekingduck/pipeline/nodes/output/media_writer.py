@@ -18,7 +18,7 @@ Write the output image/video to file
 
 import datetime
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -56,13 +56,12 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.output_dir = Path(self.output_dir)  # type: ignore
-        self._file_name = None
+        self._file_name: Optional[str] = None
+        self._file_path_with_timestamp: Optional[str] = None
+        self._image_type: Optional[str] = None
+        self.writer = None
         self._prepare_directory(self.output_dir)
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        self._image_type = None
-        self._file_path = None
-        self.writer = None
-        self._file_path_with_timestamp = None
         self.logger.info("Output directory used is: %s", self.output_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -88,17 +87,17 @@ class Node(AbstractNode):
         if self._image_type == "image":
             cv2.imwrite(self._file_path_with_timestamp, img)
         else:
-            self.writer.write(img)  # type: ignore
+            self.writer.write(img)
 
     def _prepare_writer(
         self, filename: str, img: np.array, saved_video_fps: int
     ) -> None:
-        self._file_path_with_timestamp = self._append_datetime_filename(filename)  # type: ignore
+        self._file_path_with_timestamp = self._append_datetime_filename(filename)
 
-        self._image_type = "video"  # type: ignore
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
-            self._image_type = "image"  # type: ignore
+            self._image_type = "image"
         else:
+            self._image_type = "video"
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
                 self._file_path_with_timestamp,
@@ -112,7 +111,7 @@ class Node(AbstractNode):
         output_dir.mkdir(parents=True, exist_ok=True)
 
     def _append_datetime_filename(self, filename: str) -> str:
-        self._file_name = filename  # type: ignore
+        self._file_name = filename
         current_time = datetime.datetime.now()
         # output as '240621-15-09-13'
         time_str = current_time.strftime("%d%m%y-%H-%M-%S")
