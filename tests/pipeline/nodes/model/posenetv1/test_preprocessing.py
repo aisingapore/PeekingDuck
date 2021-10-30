@@ -13,29 +13,30 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
+from pathlib import Path
+
 import cv2
-import os
-import pytest
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
     rescale_image,
-    _rescale_image,
     _get_valid_resolution,
+    _rescale_image,
 )
 
-TEST_DIR = os.path.join(os.getcwd(), "images", "testing")
+TEST_DIR = Path.cwd() / "images" / "testing"
 NP_FILE = np.load(
-    os.path.join(
-        os.getcwd(), "tests", "pipeline", "nodes", "model", "posenetv1", "posenet.npz"
-    )
+    Path.cwd() / "tests" / "pipeline" / "nodes" / "model" / "posenetv1" / "posenet.npz"
 )
-mobilenet_model_list = [50, 75, 100]
+MOBILENET_MODEL_LIST = [50, 75, 100]
 
 
 @pytest.fixture
 def frame():
-    image = cv2.imread(os.path.join(TEST_DIR, "t1.jpg"))
+    image = cv2.imread(str(TEST_DIR / "t1.jpg"))
     return np.array(image)
 
 
@@ -79,7 +80,7 @@ class TestPreprocessing:
         ), "Processed resnet image did not meet expected value"
 
     @pytest.mark.parametrize(
-        "mobilenet_model", mobilenet_model_list, indirect=True, ids=str
+        "mobilenet_model", MOBILENET_MODEL_LIST, indirect=True, ids=str
     )
     def test_preprocess_image_mobilenet(self, frame, image_mobilenet, mobilenet_model):
         image_processed, scale = rescale_image(
@@ -107,7 +108,7 @@ class TestPreprocessing:
         ), "Unable to obtain valid resolution"
 
     @pytest.mark.parametrize(
-        "mobilenet_model", mobilenet_model_list, indirect=True, ids=str
+        "mobilenet_model", MOBILENET_MODEL_LIST, indirect=True, ids=str
     )
     def test_rescale_image_mobilenet(self, frame, image_mobilenet, mobilenet_model):
         rescaled_image = _rescale_image(frame, 225, 225, mobilenet_model)
