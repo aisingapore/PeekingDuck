@@ -69,7 +69,9 @@ class Detector:
         graph_path = self.root_dir / self.config["model_file"]
         model_nodes = self.config["MODEL_NODES"]
         self.frozen_fn = load_graph(
-            str(graph_path), inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+            str(graph_path),
+            inputs=model_nodes["inputs"],
+            outputs=model_nodes["outputs"],
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
