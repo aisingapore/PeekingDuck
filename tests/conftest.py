@@ -12,21 +12,24 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import gc
 import os
 import shutil
 import tempfile
+from pathlib import Path
 
 import numpy as np
 import pytest
 
 import cv2
+import tensorflow.keras.backend as K
 
 TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
 TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
 
 TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
 TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
-PKD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "peekingduck")
+PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
 
 
 @pytest.fixture
@@ -75,7 +78,7 @@ def create_input_video(create_video):
 
 @pytest.fixture
 def tmp_dir():
-    cwd = os.getcwd()
+    cwd = Path.cwd()
     newpath = tempfile.mkdtemp()
     os.chdir(newpath)
     yield
@@ -85,27 +88,35 @@ def tmp_dir():
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
 def test_no_human_images(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=TEST_LP_IMAGES)
 def test_LP_images(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_LP_IMAGES)
 def test_no_LP_images(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
