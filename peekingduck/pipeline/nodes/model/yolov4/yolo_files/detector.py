@@ -16,14 +16,16 @@
 Object detection class using yolo model to find object bboxes
 """
 
-import os
 import builtins
-from typing import Dict, Any, List, Tuple
 import logging
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import tensorflow as tf
+
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.dataset import transform_images
 from peekingduck.utils.graph_functions import load_graph
-from .dataset import transform_images
 
 
 class Detector:
@@ -42,7 +44,7 @@ class Detector:
         Creates yolo model for human detection
         """
         model_type = self.config["model_type"]
-        model_path = os.path.join(self.root_dir, self.config["graph_files"][model_type])
+        model_path = self.root_dir / self.config["graph_files"][model_type]
 
         self.logger.info(
             "Yolo model loaded with following configs: \n \
@@ -64,7 +66,7 @@ class Detector:
 
         return self._load_yolo_graph(model_path)
 
-    def _load_yolo_graph(self, filepath: str) -> tf.compat.v1.GraphDef:
+    def _load_yolo_graph(self, model_path: Path) -> tf.compat.v1.GraphDef:
         """
         When loading a graph model, you need to explicitly state the input
         and output nodes of the graph. It is usually x:0 for input and Identity:0
@@ -72,10 +74,9 @@ class Detector:
         """
         model_type = "yolo%s" % self.config["model_type"][:2]
         model_nodes = self.config["MODEL_NODES"][model_type]
-        model_path = os.path.join(filepath)
-        if os.path.isfile(model_path):
+        if model_path.is_file():
             return load_graph(
-                model_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+                str(model_path), inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
             )
         raise ValueError(
             "Graph file does not exist. Please check that " "%s exists" % model_path
@@ -168,15 +169,14 @@ class Detector:
     ) -> Tuple[List[np.array], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
-        args:
-            - yolo:  (Model) model like yolov3 or yolov3_tiny
-            - image: (np.array) input image
+        Args:
+            yolo (Model): model like yolov3 or yolov3_tiny
+            image (np.array): input image
 
-        return:
-            - boxes: (np.array) an array of bounding box with
-                    definition like (x1, y1, x2, y2), in a
-                    coordinate system with original point in
-                    the left top corner
+        Return:
+            boxes (np.array): an array of bounding box with definition like
+                (x1, y1, x2, y2), in a coordinate system with original point in
+                the left top corner
         """
         # 1. prepare image
         image = self._prepare_image_from_camera(image)
