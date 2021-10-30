@@ -16,8 +16,8 @@
 Face detection class using mtcnn model to find face bboxes
 """
 
-import os
 import logging
+from pathlib import Path
 from typing import Dict, Any, Tuple, List
 
 import numpy as np
@@ -32,7 +32,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
     """Face detection class using MTCNN model to find bboxes and landmarks"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-
         self.logger = logging.getLogger(__name__)
 
         self.config = config
@@ -47,7 +46,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         Creates MTCNN model for face detection
         """
-        model_path = os.path.join(self.root_dir, self.config["graph_files"]["mtcnn"])
+        model_path = self.root_dir / self.config["graph_files"]["mtcnn"]
 
         self.logger.info(
             "MTCNN model loaded with following configs: \n \
@@ -64,10 +63,9 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         return self._load_mtcnn_graph(model_path)
 
     @staticmethod
-    def _load_mtcnn_graph(filepath: str) -> tf.compat.v1.GraphDef:
-        model_path = os.path.join(filepath)
-        if os.path.isfile(model_path):
-            return load_graph(model_path)
+    def _load_mtcnn_graph(model_path: Path) -> tf.compat.v1.GraphDef:
+        if model_path.is_file():
+            return load_graph(str(model_path))
 
         raise ValueError(
             "Graph file does not exist. Please check that " "%s exists" % model_path
