@@ -17,42 +17,52 @@ Reader functions for input nodes
 """
 
 from typing import Any, Tuple, Union
-from threading import Thread, Lock
+from threading import Thread, Lock, Event
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
+import time
 
 
 class VideoThread:
-    '''
+    """
     Videos will be threaded to prevent I/O blocking from affecting FPS.
-    '''
+    """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Camera or video input not detected: %s" % input_source)
+            raise ValueError(
+                "Camera or video input not detected: %s" % input_source
+            )
 
         self._lock = Lock()
 
         self.frame = None
-        thread = Thread(target=self._reading_thread, args=(), daemon=True)
-        thread.start()
+        self.done = Event()
+        self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
+        self.thread.start()
+        time.sleep(3)  # give time for thread to start
 
     def __del__(self) -> None:
+        print("in read.py.__del__")
+        self.done.set()
+        self.thread.join()
         self.stream.release()
 
     def _reading_thread(self) -> None:
-        '''
+        """
         A thread that continuously polls the camera for frames.
-        '''
-        while True:
-            _, self.frame = self.stream.read()
+        """
+        while not self.done.is_set():
+            if self.stream.isOpened():
+                _, self.frame = self.stream.read()
+            time.sleep(0.01)
 
     def read_frame(self) -> Union[bool, Any]:
-        '''
+        """
         Reads the frame.
-        '''
+        """
         self._lock.acquire()
         if self.frame is not None:
             frame = self.frame.copy()
@@ -66,7 +76,7 @@ class VideoThread:
 
     @property
     def resolution(self) -> Tuple[int, int]:
-        """ Get resolution of the camera device used.
+        """Get resolution of the camera device used.
 
         Returns:
             width(int): width of input resolution
@@ -78,28 +88,30 @@ class VideoThread:
 
 
 class VideoNoThread:
-    '''
+    """
     No threading to deal with recorded videos and images.
-    '''
+    """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Video or image path incorrect: %s" % input_source)
+            raise ValueError(
+                "Video or image path incorrect: %s" % input_source
+            )
 
     def __del__(self) -> None:
         self.stream.release()
 
     def read_frame(self) -> None:
-        '''
+        """
         Reads the frame.
-        '''
+        """
         return self.stream.read()
 
     @property
     def fps(self) -> float:
-        """ Get FPS of videofile
+        """Get FPS of videofile
 
         Returns:
             int: number indicating FPS
@@ -109,7 +121,7 @@ class VideoNoThread:
 
     @property
     def resolution(self) -> Tuple[int, int]:
-        """ Get resolution of the file.
+        """Get resolution of the file.
 
         Returns:
             width(int): width of resolution
@@ -121,7 +133,7 @@ class VideoNoThread:
 
     @property
     def frame_count(self) -> int:
-        """ Get total number of frames of file
+        """Get total number of frames of file
 
         Returns:
             int: number indicating frame count
