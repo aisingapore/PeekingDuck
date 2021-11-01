@@ -1,0 +1,25 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+yolo_plugin_path: "/home/aisg/Cvhub/tensorrt_demo/tensorrt_demos/plugins/libyolo_layer.so"
+
+model_type: v4 # v4 or v4tiny
+model_weights_dir: {
+    v4: "../weights/yolo_license_plate/LPyolov4",
+    v4tiny: "../weights/yolo_license_plate/LPyolov4tiny",
+}
+TensorRT_path: {
+    v4: "/home/aisg/Cvhub/tensorrt_demo/tensorrt_demos/yolo/yolov4-LP.trt",
+    v4tiny: "/home/aisg/Cvhub/tensorrt_demo/tensorrt_demos/yolo/yolov4tiny-LP.trt",
+}
+
+converted_model_path: {
+    v4: "../weights/TRTv4",
+    v4tiny: "../weights/TRTv4tiny",
+}
+    
+size: 416
+max_output_size_per_class: 50
+max_total_size: 50
+yolo_score_threshold: 0.1
+yolo_iou_threshold: 0.3
