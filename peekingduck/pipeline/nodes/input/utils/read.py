@@ -18,18 +18,21 @@ Reader functions for input nodes
 
 from typing import Any, Tuple, Union
 from threading import Thread, Lock, Event
-import cv2
+import cv2, time, platform
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
-import time
 
 
 class VideoThread:
     """
-    Videos will be threaded to prevent I/O blocking from affecting FPS.
+    Videos will be threaded to improve FPS by reducing I/O blocking latency.
     """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
-        self.stream = cv2.VideoCapture(input_source)
+        if platform.system().startswith("Windows"):
+            # to eliminate opencv's "[WARN] terminating async callback"
+            self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+        else:
+            self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError(
@@ -45,10 +48,17 @@ class VideoThread:
         time.sleep(3)  # give time for thread to start
 
     def __del__(self) -> None:
-        print("in read.py.__del__")
+        print("VideoThread.__del__")
+        self.stream.release()
+
+    def shutdown(self) -> None:
+        """
+        Shuts down this class.
+        Cannot be merged into __del__ as threading code needs to run here.
+        """
+        print("VideoThread.shutdown")
         self.done.set()
         self.thread.join()
-        self.stream.release()
 
     def _reading_thread(self) -> None:
         """
@@ -75,6 +85,26 @@ class VideoThread:
         return False, None
 
     @property
+    def fps(self) -> float:
+        """Get FPS of videofile
+
+        Returns:
+            int: number indicating FPS
+        """
+        fps = self.stream.get(cv2.CAP_PROP_FPS)
+        return fps
+
+    @property
+    def frame_count(self) -> int:
+        """Get total number of frames of file
+
+        Returns:
+            int: number indicating frame count
+        """
+        num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        return int(num_frames)
+
+    @property
     def resolution(self) -> Tuple[int, int]:
         """Get resolution of the camera device used.
 
@@ -93,7 +123,11 @@ class VideoNoThread:
     """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
-        self.stream = cv2.VideoCapture(input_source)
+        if platform.system().startswith("Windows"):
+            # to eliminate opencv's "[WARN] terminating async callback"
+            self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+        else:
+            self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError(
@@ -101,6 +135,7 @@ class VideoNoThread:
             )
 
     def __del__(self) -> None:
+        print("VideoNoThread.__del__")
         self.stream.release()
 
     def read_frame(self) -> None:
@@ -108,6 +143,13 @@ class VideoNoThread:
         Reads the frame.
         """
         return self.stream.read()
+
+    def shutdown(self) -> None:
+        """
+        Shuts down this class.
+        Cannot be merged into __del__ as threading code needs to run here.
+        """
+        print("VideoNoThread.shutdown")
 
     @property
     def fps(self) -> float:
@@ -120,6 +162,16 @@ class VideoNoThread:
         return fps
 
     @property
+    def frame_count(self) -> int:
+        """Get total number of frames of file
+
+        Returns:
+            int: number indicating frame count
+        """
+        num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
+        return int(num_frames)
+
+    @property
     def resolution(self) -> Tuple[int, int]:
         """Get resolution of the file.
 
@@ -130,13 +182,3 @@ class VideoNoThread:
         width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
         return int(width), int(height)
-
-    @property
-    def frame_count(self) -> int:
-        """Get total number of frames of file
-
-        Returns:
-            int: number indicating frame count
-        """
-        num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
-        return int(num_frames)

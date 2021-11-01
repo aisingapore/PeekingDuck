@@ -8,3 +8,4 @@ resize: {
         }
 input_dir: 'PeekingDuck/data/input'
 mirror_image: False
+threading: False    # Enable to speed up FPS. Currently unsupported for Linux.
