@@ -18,7 +18,9 @@ Reader functions for input nodes
 
 from typing import Any, Tuple, Union
 from threading import Thread, Lock, Event
-import cv2, time, platform
+import time
+import platform
+import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
@@ -152,6 +154,7 @@ class VideoNoThread:
         """
         return self.stream.read()
 
+    # pylint: disable=R0201
     def shutdown(self) -> None:
         """
         Shuts down this class.
