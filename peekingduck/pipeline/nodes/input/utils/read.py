@@ -29,8 +29,12 @@ class VideoThread:
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         if platform.system().startswith("Windows"):
-            # to eliminate opencv's "[WARN] terminating async callback"
-            self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            if str(input_source).isdigit():
+                # to eliminate opencv's "[WARN] terminating async callback"
+                self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            else:
+                # no cv2.CAP_DSHOW flag if input_source is file
+                self.stream = cv2.VideoCapture(input_source)
         else:
             self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
@@ -124,8 +128,12 @@ class VideoNoThread:
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         if platform.system().startswith("Windows"):
-            # to eliminate opencv's "[WARN] terminating async callback"
-            self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            if str(input_source).isdigit():
+                # to eliminate opencv's "[WARN] terminating async callback"
+                self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            else:
+                # no cv2.CAP_DSHOW flag if input_source is file
+                self.stream = cv2.VideoCapture(input_source)
         else:
             self.stream = cv2.VideoCapture(input_source)
         self.mirror = mirror_image
