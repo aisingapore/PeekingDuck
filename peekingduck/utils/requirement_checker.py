@@ -83,7 +83,7 @@ def check_requirements(
 
     if n_update > 0:
         logger.warning(
-            "%d package%s updated. Please rerun for the updates to " "take effect.",
+            "%d package%s updated. Please rerun for the updates to take effect.",
             n_update,
             "s" * int(n_update > 1),
         )
