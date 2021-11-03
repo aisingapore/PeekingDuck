@@ -67,8 +67,10 @@ class StandupBot:
                 ]
             )
         )
-        return f"Hi {namelist}, you shouldn't really be working over the weekends. \
-                The GIF below represents what I think of you"
+        return (
+            f"Hi {namelist}, you shouldn't really be working over the weekends. "
+            "The GIF below represents what I think of you"
+        )
 
     def _add_date(self):
         message_title = "Activity for {}:".format(self.date)

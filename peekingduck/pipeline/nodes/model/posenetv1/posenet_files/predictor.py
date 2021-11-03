@@ -61,11 +61,13 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         model_func = self._load_posenet_graph(model_path)
 
         self.logger.info(
-            "PoseNet model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            Max pose detection: %s, \n \
-            Score threshold: %s",
+            (
+                "PoseNet model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "Max pose detection: %s, \n\t"
+                "Score threshold: %s"
+            ),
             self.model_type,
             self.resolution,
             self.max_pose_detection,

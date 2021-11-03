@@ -140,6 +140,7 @@ cython_debug/
 # Other likely dirs that should not be committed
 data/
 logs/
+peekingduck_weights/
 results/
 weights/
 .vscode/

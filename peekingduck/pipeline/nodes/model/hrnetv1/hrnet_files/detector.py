@@ -50,9 +50,9 @@ class Detector:
 
         self.hrnet = self._create_hrnet_model()
 
-    def _inference_function(
+    def _inference_function(  # pylint:disable=unused-argument
         self, person_frame: np.ndarray, training: bool = False
-    ) -> tf.Tensor:  # pylint:disable=unused-argument
+    ) -> tf.Tensor:
         """
         When graph is frozen, we need a different way to extract the
         arrays. We use this to return the values needed. The purpose
@@ -75,9 +75,11 @@ class Detector:
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
-            "HRNet graph model loaded with following configs: \n \
-            Resolution: %s, \n \
-            Score Threshold: %s",
+            (
+                "HRNet graph model loaded with following configs: \n\t"
+                "Resolution: %s, \n\t"
+                "Score Threshold: %s"
+            ),
             resolution_tuple,
             self.min_score,
         )
@@ -110,9 +112,9 @@ class Detector:
 
         return np.array(cropped_imgs), affine_matrices, frame_size
 
-    def postprocess(
+    def postprocess(  # pylint: disable=too-many-locals
         self,
-        heatmaps: np.ndarray,  # pylint: disable=too-many-locals
+        heatmaps: np.ndarray,
         affine_matrices: np.ndarray,
         cropped_frames_scale: List[int],
         frame_size: Tuple[int, int],
