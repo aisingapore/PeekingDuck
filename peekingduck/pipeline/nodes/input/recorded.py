@@ -165,9 +165,13 @@ class Node(AbstractNode):
 
             if self._is_valid_file_type(file_path):
                 if self.threading:
-                    self.videocap = VideoThread(file_path, self.mirror_image)
+                    self.videocap = VideoThread(  # type: ignore
+                        file_path, self.mirror_image
+                    )
                 else:
-                    self.videocap = VideoNoThread(file_path, self.mirror_image)
+                    self.videocap = VideoNoThread(  # type: ignore
+                        file_path, self.mirror_image
+                    )
                 self._fps = self.videocap.fps
             else:
                 self.logger.warning(
