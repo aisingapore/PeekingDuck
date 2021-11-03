@@ -79,6 +79,7 @@ class Node(AbstractNode):
 
     Model weights trained by https://github.com/blaueck/tf-mtcnn
     """
+
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = mtcnn_model.MtcnnModel(self.config)

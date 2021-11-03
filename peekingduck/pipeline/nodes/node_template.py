@@ -31,7 +31,7 @@ class Node(AbstractNode):
         # self.logger.info("model loaded with configs: %s", config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-        """ This node does ___.
+        """This node does ___.
 
         Args:
             inputs (dict): Dict with keys "__", "__".

@@ -36,11 +36,11 @@ def get_submodules_from_kwargs(kwargs: Dict[str, Any]) -> Tuple[Any, Any, Any, A
     Returns:
         (tuple): the specified submodules
     """
-    backend = kwargs.get('backend', _KERAS_BACKEND)
-    layers = kwargs.get('layers', _KERAS_LAYERS)
-    models = kwargs.get('models', _KERAS_MODELS)
-    utils = kwargs.get('utils', _KERAS_UTILS)
+    backend = kwargs.get("backend", _KERAS_BACKEND)
+    layers = kwargs.get("layers", _KERAS_LAYERS)
+    models = kwargs.get("models", _KERAS_MODELS)
+    utils = kwargs.get("utils", _KERAS_UTILS)
     for key in kwargs.keys():
-        if key not in ['backend', 'layers', 'models', 'utils']:
-            raise TypeError(f'Invalid keyword argument: {key}')
+        if key not in ["backend", "layers", "models", "utils"]:
+            raise TypeError(f"Invalid keyword argument: {key}")
     return backend, layers, models, utils

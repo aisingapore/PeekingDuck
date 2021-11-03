@@ -19,10 +19,9 @@ from peekingduck.pipeline.nodes.dabble.check_large_groups import Node
 
 @pytest.fixture
 def check_large_groups():
-    node = Node({"input": ["obj_groups"],
-                 "output": ["large_groups"],
-                 "group_size_thres": 3
-                 })
+    node = Node(
+        {"input": ["obj_groups"], "output": ["large_groups"], "group_size_thres": 3}
+    )
     return node
 
 

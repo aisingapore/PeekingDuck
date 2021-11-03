@@ -39,9 +39,9 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         self._basedir = basedir
 
     def _get_config_path(self, node: str) -> str:
-        """ Based on the node, return the corresponding node config path """
+        """Based on the node, return the corresponding node config path"""
 
-        configs_folder = os.path.join(self._basedir, 'configs')
+        configs_folder = os.path.join(self._basedir, "configs")
         node_type, node_name = node.split(".")
         node_name = node_name + ".yml"
         filepath = os.path.join(configs_folder, node_type, node_name)
@@ -68,5 +68,5 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading
-        node_config['root'] = self._basedir
+        node_config["root"] = self._basedir
         return node_config

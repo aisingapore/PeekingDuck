@@ -18,7 +18,7 @@ from peekingduck.utils.logger import LoggerSetup
 import peekingduck.runner as pkd
 
 if __name__ == "__main__":
-    RUN_PATH = os.path.join(os.getcwd(), 'PeekingDuck', 'run_config.yml')
+    RUN_PATH = os.path.join(os.getcwd(), "PeekingDuck", "run_config.yml")
 
     LoggerSetup()
     logger = logging.getLogger(__name__)

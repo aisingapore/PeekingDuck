@@ -41,4 +41,4 @@ class Node(AbstractNode):
         """Counts bboxes of object chosen in the frame. Note that this method
         requires that the bbox returns all the same objects (for example, all people)
         """
-        return {'count': len(inputs["bboxes"])}
+        return {"count": len(inputs["bboxes"])}

@@ -26,7 +26,7 @@ import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
 
-class Detector: # pylint: disable=too-few-public-methods
+class Detector:  # pylint: disable=too-few-public-methods
     """Object detection class using yolo model to find human faces"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -45,33 +45,36 @@ class Detector: # pylint: disable=too-few-public-methods
 
     def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
-        model_file = os.path.join(self.config['root'],
-                                  self.config["model_weights_dir"][model_type])
+        model_file = os.path.join(
+            self.config["root"], self.config["model_weights_dir"][model_type]
+        )
         model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
 
         self.logger.info(
-            "Yolo model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            IDs being detected: %s, \n \
-            Max detections per class: %s, \n \
-            Max total detections: %s, \n \
-            IOU threshold: %s, \n \
-            Score threshold: %s",
-            self.config['model_type'],
-            self.config['size'],
-            self.config['detect_ids'],
-            self.config['max_output_size_per_class'],
-            self.config['max_total_size'],
-            self.config['yolo_iou_threshold'],
-            self.config['yolo_score_threshold'],
+            (
+                "Yolo model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "IDs being detected: %s, \n\t"
+                "Max detections per class: %s, \n\t"
+                "Max total detections: %s, \n\t"
+                "IOU threshold: %s, \n\t"
+                "Score threshold: %s"
+            ),
+            self.config["model_type"],
+            self.config["size"],
+            self.config["detect_ids"],
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["yolo_iou_threshold"],
+            self.config["yolo_score_threshold"],
         )
 
         return model
 
-    def predict_object_bbox_from_image(self, image: np.array) -> Tuple[np.ndarray,
-                                                                       np.ndarray,
-                                                                       np.ndarray]:
+    def predict_object_bbox_from_image(
+        self, image: np.array
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores
 
         Args:
@@ -90,7 +93,8 @@ class Detector: # pylint: disable=too-few-public-methods
 
         # 3. clean up return
         bboxes, scores, classes = self._shrink_dimension_and_length(
-            bboxes, scores, classes, nums)
+            bboxes, scores, classes, nums
+        )
 
         # 4. convert classes into class names
         classes = np.array([self.class_labels[int(i)] for i in classes])
@@ -99,15 +103,14 @@ class Detector: # pylint: disable=too-few-public-methods
 
     def _process_image(self, image: np.ndarray) -> np.ndarray:
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = cv2.resize(image , (self.config["size"], self.config["size"]))
-        image = np.asarray([image]).astype(np.float32)/255.
+        image = cv2.resize(image, (self.config["size"], self.config["size"]))
+        image = np.asarray([image]).astype(np.float32) / 255.0
 
         return image
 
-    def _evaluate_image_by_yolo(self, image: np.ndarray) -> Tuple[tf.Tensor,
-                                                                  tf.Tensor,
-                                                                  tf.Tensor,
-                                                                  tf.Tensor]:
+    def _evaluate_image_by_yolo(
+        self, image: np.ndarray
+    ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor, tf.Tensor]:
         """Performs inference on a given input image.
 
         Args:
@@ -120,7 +123,7 @@ class Detector: # pylint: disable=too-few-public-methods
             nums (tf.Tensor): number of valid bboxes. Only nums[0] should be used.
             The rest are paddings.
         """
-        infer = self.yolo.signatures['serving_default']
+        infer = self.yolo.signatures["serving_default"]
         pred_bbox = infer(tf.constant(image))
         for value in pred_bbox.values():
             boxes = value[:, :, 0:4]
@@ -128,30 +131,27 @@ class Detector: # pylint: disable=too-few-public-methods
 
         # performs nms using model's predictions
         bboxes, scores, classes, nums = tf.image.combined_non_max_suppression(
-            max_output_size_per_class=self.config['max_output_size_per_class'],
+            max_output_size_per_class=self.config["max_output_size_per_class"],
             boxes=tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
             scores=tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            score_threshold=self.config['yolo_score_threshold'],
-            max_total_size=self.config['max_total_size'],
-            iou_threshold=self.config['yolo_iou_threshold']
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
+            ),
+            score_threshold=self.config["yolo_score_threshold"],
+            max_total_size=self.config["max_total_size"],
+            iou_threshold=self.config["yolo_iou_threshold"],
         )
 
         return bboxes, scores, classes, nums
 
-    def _shrink_dimension_and_length(self,
-                                     bboxes: tf.Tensor,
-                                     scores: tf.Tensor,
-                                     classes: tf.Tensor,
-                                     nums: tf.Tensor) -> Tuple[np.ndarray,
-                                                               np.ndarray,
-                                                               np.ndarray]:
+    def _shrink_dimension_and_length(
+        self, bboxes: tf.Tensor, scores: tf.Tensor, classes: tf.Tensor, nums: tf.Tensor
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         len0 = nums[0]
 
         classes = classes.numpy()[0]
         classes = classes[:len0]
         # only identify objects we are interested in
-        mask1 = np.isin(classes, tuple(self.config['detect_ids']))
+        mask1 = np.isin(classes, tuple(self.config["detect_ids"]))
 
         scores = scores.numpy()[0]
         scores = scores[:len0]

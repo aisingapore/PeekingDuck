@@ -33,21 +33,21 @@ class YoloModel:
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config['yolo_score_threshold'] <= 1:
+        if not 0 <= config["yolo_score_threshold"] <= 1:
             raise ValueError("yolo_score_threshold must be in [0, 1]")
 
         # check for yolo weights, if none then download into weights folder
-        if not checker.has_weights(config['root'],
-                                   config['weights_dir']):
-            self.logger.info('---no yolo weights detected. proceeding to download...---')
-            downloader.download_weights(config['root'],
-                                        config['blob_file'])
-            self.logger.info('---yolo weights download complete.---')
+        if not checker.has_weights(config["root"], config["weights_dir"]):
+            self.logger.info(
+                "---no yolo weights detected. proceeding to download...---"
+            )
+            downloader.download_weights(config["root"], config["blob_file"])
+            self.logger.info("---yolo weights download complete.---")
 
         # get classnames path to read all the classes
-        classes_path = os.path.join(config['root'], config['classes'])
+        classes_path = os.path.join(config["root"], config["classes"])
         self.class_names = [c.strip() for c in open(classes_path).readlines()]
-        self.detect_ids = config['detect_ids']
+        self.detect_ids = config["detect_ids"]
 
         self.detector = Detector(config)
 

@@ -24,6 +24,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
+
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
@@ -54,11 +55,13 @@ class Detector:
         model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
 
         self.logger.info(
-            "Yolo model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            NMS threshold: %s, \n \
-            Score threshold: %s",
+            (
+                "Yolo model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "NMS threshold: %s, \n\t"
+                "Score threshold: %s"
+            ),
             self.config["model_type"],
             self.config["size"],
             self.config["yolo_iou_threshold"],
@@ -119,11 +122,12 @@ class Detector:
         bboxes, scores, classes, nums = tf.image.combined_non_max_suppression(
             tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
             tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            self.config['max_output_size_per_class'],
-            self.config['max_total_size'],
-            self.config['yolo_iou_threshold'],
-            self.config['yolo_score_threshold']
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
+            ),
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["yolo_iou_threshold"],
+            self.config["yolo_score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]

@@ -19,14 +19,15 @@ from typing import List
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi import \
-    decode_multiple_poses
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi import (
+    decode_multiple_poses,
+)
 
 
-def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
-                                  output_scale: np.ndarray,
-                                  image_size: List[int]) -> np.ndarray:
-    """ Get keypoints coordinates relative to image size
+def get_keypoints_relative_coords(
+    keypoint_coords: np.ndarray, output_scale: np.ndarray, image_size: List[int]
+) -> np.ndarray:
+    """Get keypoints coordinates relative to image size
     Args:
         keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
         output_scale (np.array): output scale in Hx2 format
@@ -37,26 +38,28 @@ def get_keypoints_relative_coords(keypoint_coords: np.ndarray,
     """
     assert len(keypoint_coords.shape) == 3, "keypoint_coords should be 3D"
     assert keypoint_coords.shape[
-        2], "keypoint_coords should be a 2D matrix of 2D offsets"
+        2
+    ], "keypoint_coords should be a 2D matrix of 2D offsets"
     rel_keypoint_coords = keypoint_coords * output_scale
     rel_keypoint_coords = rel_keypoint_coords / image_size
     return rel_keypoint_coords
 
 
 def _sigmoid(array: np.ndarray) -> np.ndarray:
-    return 1/(1 + np.exp(-array))
+    return 1 / (1 + np.exp(-array))
 
 
 def detect_keypoints(
-        tf_model: tf.keras.Model,
-        image: tf.Tensor,
-        output_stride: int,
-        dst_scores: np.ndarray,
-        dst_keypoints: np.ndarray,
-        model_type: str,
-        score_threshold: float) -> int:
+    tf_model: tf.keras.Model,
+    image: tf.Tensor,
+    output_stride: int,
+    dst_scores: np.ndarray,
+    dst_keypoints: np.ndarray,
+    model_type: str,
+    score_threshold: float,
+) -> int:
     # pylint: disable=too-many-arguments
-    """ Evaluate image by model function to get detected keypoints
+    """Evaluate image by model function to get detected keypoints
     Args:
         tf_model: tensorflow model
         image (tf.Tensor): image for inference
@@ -74,7 +77,7 @@ def detect_keypoints(
 
     # For resnet's implementation, we need to apply a sigmoid function on
     # the heatmap, which is the first tensor in the output
-    if model_type == 'resnet':
+    if model_type == "resnet":
         model_output[0] = _sigmoid(model_output[0])
 
     pose_count = decode_multiple_poses(
@@ -82,6 +85,7 @@ def detect_keypoints(
         dst_scores,
         dst_keypoints,
         output_stride=output_stride,
-        min_pose_score=score_threshold)
+        min_pose_score=score_threshold,
+    )
 
     return pose_count

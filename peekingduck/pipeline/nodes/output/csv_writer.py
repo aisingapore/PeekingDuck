@@ -56,7 +56,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)
-        self.logging_interval = int(self.logging_interval) # type: ignore
+        self.logging_interval = int(self.logging_interval)  # type: ignore
         # check if filepath has a '.csv' extension
         if not ".csv" in self.filepath:
             raise ValueError("Filepath must have a '.csv' extension.")
@@ -64,9 +64,9 @@ class Node(AbstractNode):
         self._filepath_datetime = self._append_datetime_filepath(self.filepath)
         self._stats_checked = False
         self.stats_to_track = self.stats_to_track  # type: ignore
-        self.csv_logger = CSVLogger(self._filepath_datetime,
-                                    self.stats_to_track,
-                                    self.logging_interval)
+        self.csv_logger = CSVLogger(
+            self._filepath_datetime, self.stats_to_track, self.logging_interval
+        )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -88,9 +88,9 @@ class Node(AbstractNode):
         if not self._stats_checked:
             self._check_tracked_stats(inputs)
             # self._stats_to_track might change after the check
-            self.csv_logger = CSVLogger(self._filepath_datetime,
-                                        self.stats_to_track,
-                                        self.logging_interval)
+            self.csv_logger = CSVLogger(
+                self._filepath_datetime, self.stats_to_track, self.logging_interval
+            )
 
         self.csv_logger.write(inputs, self.stats_to_track)
 
@@ -112,10 +112,13 @@ class Node(AbstractNode):
                 invalid.append(stat)
 
         if len(invalid) != 0:
-            msg = textwrap.dedent(f"""\
-                    {invalid} are not valid outputs.
-                    Data pool only has this outputs: {list(inputs.keys())}
-                    Only {valid} will be logged in the csv file""")
+            msg = textwrap.dedent(
+                f"""\
+                {invalid} are not valid outputs.
+                Data pool only has this outputs: {list(inputs.keys())}
+                Only {valid} will be logged in the csv file
+                """
+            )
             self.logger.warning(msg)
 
         # update stats_to_track with valid stats found in data pool
@@ -135,10 +138,11 @@ class Node(AbstractNode):
         """
         current_time = datetime.now()  # type: ignore
         time_str = current_time.strftime(
-            "%d%m%y-%H-%M-%S")  # output as '240621-15-09-13'
+            "%d%m%y-%H-%M-%S"
+        )  # output as '240621-15-09-13'
 
-        file_name = filepath.split('.')[-2]
-        file_ext = filepath.split('.')[-1]
+        file_name = filepath.split(".")[-2]
+        file_ext = filepath.split(".")[-1]
 
         # append timestamp to filename before extension
         # Format: filename_timestamp.extension

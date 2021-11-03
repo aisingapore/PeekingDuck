@@ -33,50 +33,59 @@ class Detector:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config['root']
+        self.root_dir = config["root"]
 
         self.yolo = self._create_yolo_model()
 
     def _create_yolo_model(self) -> tf.keras.Model:
-        '''
+        """
         Creates yolo model for human detection
-        '''
-        model_type = self.config['model_type']
-        model_path = os.path.join(self.root_dir, self.config['graph_files'][model_type])
+        """
+        model_type = self.config["model_type"]
+        model_path = os.path.join(self.root_dir, self.config["graph_files"][model_type])
 
         self.logger.info(
-            'Yolo model loaded with following configs: \n \
-            Model type: %s, \n \
-            Input resolution: %s, \n \
-            IDs being detected: %s \n \
-            Max Detections per class: %s, \n \
-            Max Total Detections: %s, \n \
-            IOU threshold: %s, \n \
-            Score threshold: %s', self.config["model_type"], self.config["size"],
-            self.config['detect_ids'], self.config['max_output_size_per_class'],
-            self.config['max_total_size'], self.config['yolo_iou_threshold'],
-            self.config['yolo_score_threshold'])
+            (
+                "Yolo model loaded with following configs: \n\t"
+                "Model type: %s, \n\t"
+                "Input resolution: %s, \n\t"
+                "IDs being detected: %s \n\t"
+                "Max Detections per class: %s, \n\t"
+                "Max Total Detections: %s, \n\t"
+                "IOU threshold: %s, \n\t"
+                "Score threshold: %s"
+            ),
+            self.config["model_type"],
+            self.config["size"],
+            self.config["detect_ids"],
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["yolo_iou_threshold"],
+            self.config["yolo_score_threshold"],
+        )
 
         return self._load_yolo_graph(model_path)
 
     def _load_yolo_graph(self, filepath: str) -> tf.compat.v1.GraphDef:
-        '''
+        """
         When loading a graph model, you need to explicitly state the input
         and output nodes of the graph. It is usually x:0 for input and Identity:0
         for outputs, depending on how many output nodes you have.
-        '''
-        model_type = 'yolo%s' % self.config['model_type'][:2]
-        model_nodes = self.config['MODEL_NODES'][model_type]
+        """
+        model_type = "yolo%s" % self.config["model_type"][:2]
+        model_nodes = self.config["MODEL_NODES"][model_type]
         model_path = os.path.join(filepath)
         if os.path.isfile(model_path):
-            return load_graph(model_path, inputs=model_nodes['inputs'],
-                              outputs=model_nodes['outputs'])
-        raise ValueError('Graph file does not exist. Please check that '
-                         '%s exists' % model_path)
+            return load_graph(
+                model_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+            )
+        raise ValueError(
+            "Graph file does not exist. Please check that " "%s exists" % model_path
+        )
 
     def _load_image(self, image_file: str) -> builtins.bytes:
-        img = open(image_file, 'rb').read()
-        self.logger.info('image file %s loaded', image_file)
+        img = open(image_file, "rb").read()
+        self.logger.info("image file %s loaded", image_file)
         return img
 
     @staticmethod
@@ -86,15 +95,20 @@ class Detector:
         return image
 
     @staticmethod
-    def _shrink_dimension_and_length(boxes: tf.Tensor, scores: tf.Tensor,
-                                     classes: tf.Tensor, nums: List[int],
-                                     object_ids: List[int]
-                                     ) -> Tuple[List[np.array], List[float], List[str]]:
+    def _shrink_dimension_and_length(
+        boxes: tf.Tensor,
+        scores: tf.Tensor,
+        classes: tf.Tensor,
+        nums: List[int],
+        object_ids: List[int],
+    ) -> Tuple[List[np.array], List[float], List[str]]:
         len0 = nums[0]
 
         classes = classes.numpy()[0]
         classes = classes[:len0]
-        mask1 = np.isin(classes, tuple(object_ids))  # only identify objects we are interested in
+        mask1 = np.isin(
+            classes, tuple(object_ids)
+        )  # only identify objects we are interested in
         classes = tf.boolean_mask(classes, mask1)
 
         scores = scores.numpy()[0]
@@ -107,11 +121,10 @@ class Detector:
 
         return boxes, scores, classes
 
-    def _evaluate_image_by_yolo(self, image: np.array) -> Tuple[List[np.array],
-                                                                List[float],
-                                                                List[float],
-                                                                List[int]]:
-        '''
+    def _evaluate_image_by_yolo(
+        self, image: np.array
+    ) -> Tuple[List[np.array], List[float], List[float], List[int]]:
+        """
         Takes in the yolo model and image to perform inference with.
         It will return the following:
             - boxes: the bounding boxes for each object
@@ -119,7 +132,7 @@ class Detector:
             - classes: the class predicted for each bounding box
             - nums: number of valid bboxes. Only nums[0] should be used. The rest
                     are paddings.
-        '''
+        """
         # image = image[..., ::-1]  # swap from bgr to rgb
         pred = self.yolo(image)[-1]
         bboxes = pred[:, :, :4].numpy()
@@ -131,11 +144,12 @@ class Detector:
         boxes, scores, classes, nums = tf.image.combined_non_max_suppression(
             boxes=tf.reshape(bboxes, (tf.shape(bboxes)[0], -1, 1, 4)),
             scores=tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            max_output_size_per_class=self.config['max_output_size_per_class'],
-            max_total_size=self.config['max_total_size'],
-            iou_threshold=self.config['yolo_iou_threshold'],
-            score_threshold=self.config['yolo_score_threshold']
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
+            ),
+            max_output_size_per_class=self.config["max_output_size_per_class"],
+            max_total_size=self.config["max_total_size"],
+            iou_threshold=self.config["yolo_iou_threshold"],
+            score_threshold=self.config["yolo_score_threshold"],
         )
         return boxes, scores, classes, nums
 
@@ -151,10 +165,9 @@ class Detector:
         return image
 
     # possible that we may want to control what is being detection
-    def predict_object_bbox_from_image(self, class_names: List[str], image: np.array,
-                                       detect_ids: List[int]) -> Tuple[List[np.array],
-                                                                       List[str],
-                                                                       List[float]]:
+    def predict_object_bbox_from_image(
+        self, class_names: List[str], image: np.array, detect_ids: List[int]
+    ) -> Tuple[List[np.array], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
         args:
@@ -169,14 +182,15 @@ class Detector:
         """
         # 1. prepare image
         image = self._prepare_image_from_camera(image)
-        image = self._reshape_image(image, self.config['size'])
+        image = self._reshape_image(image, self.config["size"])
 
         # 2. evaluate image
         boxes, scores, classes, nums = self._evaluate_image_by_yolo(image)
 
         # 3. clean up return
         boxes, scores, classes = self._shrink_dimension_and_length(  # type: ignore
-            boxes, scores, classes, nums, detect_ids)
+            boxes, scores, classes, nums, detect_ids
+        )
 
         # convert classes into class names
         classes = np.array([class_names[int(i)] for i in classes])  # type: ignore
@@ -187,8 +201,8 @@ class Detector:
         """Method to give info on whether the current device code is running on
         Is using GPU or CPU.
         """
-        physical_devices = tf.config.experimental.list_physical_devices('GPU')
+        physical_devices = tf.config.experimental.list_physical_devices("GPU")
         if len(physical_devices) > 0:
-            self.logger.info('GPU setup with %d devices', len(physical_devices))
+            self.logger.info("GPU setup with %d devices", len(physical_devices))
         else:
-            self.logger.info('use CPU')
+            self.logger.info("use CPU")

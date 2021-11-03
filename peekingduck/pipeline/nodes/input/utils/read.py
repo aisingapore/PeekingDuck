@@ -23,9 +23,9 @@ from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
 class VideoThread:
-    '''
+    """
     Videos will be threaded to prevent I/O blocking from affecting FPS.
-    '''
+    """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
@@ -43,16 +43,16 @@ class VideoThread:
         self.stream.release()
 
     def _reading_thread(self) -> None:
-        '''
+        """
         A thread that continuously polls the camera for frames.
-        '''
+        """
         while True:
             _, self.frame = self.stream.read()
 
     def read_frame(self) -> Union[bool, Any]:
-        '''
+        """
         Reads the frame.
-        '''
+        """
         self._lock.acquire()
         if self.frame is not None:
             frame = self.frame.copy()
@@ -66,7 +66,7 @@ class VideoThread:
 
     @property
     def resolution(self) -> Tuple[int, int]:
-        """ Get resolution of the camera device used.
+        """Get resolution of the camera device used.
 
         Returns:
             width(int): width of input resolution
@@ -78,9 +78,9 @@ class VideoThread:
 
 
 class VideoNoThread:
-    '''
+    """
     No threading to deal with recorded videos and images.
-    '''
+    """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
         self.stream = cv2.VideoCapture(input_source)
@@ -92,14 +92,14 @@ class VideoNoThread:
         self.stream.release()
 
     def read_frame(self) -> None:
-        '''
+        """
         Reads the frame.
-        '''
+        """
         return self.stream.read()
 
     @property
     def fps(self) -> float:
-        """ Get FPS of videofile
+        """Get FPS of videofile
 
         Returns:
             int: number indicating FPS
@@ -109,7 +109,7 @@ class VideoNoThread:
 
     @property
     def resolution(self) -> Tuple[int, int]:
-        """ Get resolution of the file.
+        """Get resolution of the file.
 
         Returns:
             width(int): width of resolution
@@ -121,7 +121,7 @@ class VideoNoThread:
 
     @property
     def frame_count(self) -> int:
-        """ Get total number of frames of file
+        """Get total number of frames of file
 
         Returns:
             int: number indicating frame count

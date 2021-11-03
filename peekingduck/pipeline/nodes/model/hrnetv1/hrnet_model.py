@@ -26,8 +26,7 @@ from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detect
 
 
 class HRNetModel:  # pylint: disable=too-few-public-methods
-    """HRNet model to detect poses from detected bboxes
-    """
+    """HRNet model to detect poses from detected bboxes"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
@@ -35,20 +34,21 @@ class HRNetModel:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config['score_threshold'] <= 1:
+        if not 0 <= config["score_threshold"] <= 1:
             raise ValueError("score_threshold must be in [0, 1]")
 
         # check for hrnet weights, if none then download into weights folder
-        if not checker.has_weights(config['root'], config['weights_dir']):
-            print('---no hrnet weights detected. proceeding to download...---')
-            downloader.download_weights(config['root'], config['blob_file'])
-            print('---hrnet weights download complete.---')
+        if not checker.has_weights(config["root"], config["weights_dir"]):
+            print("---no hrnet weights detected. proceeding to download...---")
+            downloader.download_weights(config["root"], config["blob_file"])
+            print("---hrnet weights download complete.---")
 
         self.detector = Detector(config)
-        self.threshold_score = config['score_threshold']
+        self.threshold_score = config["score_threshold"]
 
-    def predict(self, frame: np.ndarray, bboxes: np.ndarray) -> \
-            Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def predict(
+        self, frame: np.ndarray, bboxes: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predict poses from input frame and bboxes
 
         Args:
