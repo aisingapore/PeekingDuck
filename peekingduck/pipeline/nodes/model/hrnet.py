@@ -86,9 +86,12 @@ class Node(AbstractNode):
         """function that reads the bbox input and returns the poses
         and pose bbox of the specified objects chosen to be detected"""
         keypoints, keypoint_scores, keypoint_conns = self.model.predict(
-            inputs["img"], inputs["bboxes"])
+            inputs["img"], inputs["bboxes"]
+        )
 
-        outputs = {"keypoints": keypoints,
-                   "keypoint_scores": keypoint_scores,
-                   "keypoint_conns": keypoint_conns}
+        outputs = {
+            "keypoints": keypoints,
+            "keypoint_scores": keypoint_scores,
+            "keypoint_conns": keypoint_conns,
+        }
         return outputs

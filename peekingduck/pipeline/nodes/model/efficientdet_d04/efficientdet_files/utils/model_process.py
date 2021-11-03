@@ -27,8 +27,9 @@ IMG_MEAN = [0.485, 0.456, 0.406]
 IMG_STD = [0.229, 0.224, 0.225]
 
 
-def preprocess_image(image: np.ndarray,
-                     image_size: int) -> Tuple[List[List[float]], float]:
+def preprocess_image(
+    image: np.ndarray, image_size: int
+) -> Tuple[List[List[float]], float]:
     """Preprocessing helper function for efficientdet
 
     Args:
@@ -52,20 +53,19 @@ def preprocess_image(image: np.ndarray,
 
     image = cv2.resize(image, (resized_width, resized_height))
     image = image.astype(np.float32)
-    image /= 255.
+    image /= 255.0
     image -= IMG_MEAN
     image /= IMG_STD
     pad_h = image_size - resized_height
     pad_w = image_size - resized_width
-    image = np.pad(image, [(0, pad_h), (0, pad_w), (0, 0)], mode='constant')
+    image = np.pad(image, [(0, pad_h), (0, pad_w), (0, 0)], mode="constant")
 
     return image, scale
 
 
-def postprocess_boxes(boxes: np.ndarray,
-                      scale: float,
-                      height: int,
-                      width: int) -> np.ndarray:
+def postprocess_boxes(
+    boxes: np.ndarray, scale: float, height: int, width: int
+) -> np.ndarray:
     """Postprocessing helper function for efficientdet
 
     Args:

@@ -23,24 +23,25 @@ from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model import HRNetModel
 
 
 def hrnet_config():
-    filepath = os.path.join(os.getcwd(), 'tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml')
+    filepath = os.path.join(
+        os.getcwd(), "tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml"
+    )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config['root'] = os.getcwd()
+    node_config["root"] = os.getcwd()
     return node_config
 
 
 @pytest.mark.mlmodel
 class TestHrnetModel:
-
-    @patch('peekingduck.weights_utils.checker.has_weights')
-    @patch('builtins.print')
+    @patch("peekingduck.weights_utils.checker.has_weights")
+    @patch("builtins.print")
     def test_no_weight(self, mock_print, mock_has_weights):
-        
+
         mock_has_weights.return_value = False
 
-        msg_1 = '---no hrnet weights detected. proceeding to download...---'
-        msg_2 = '---hrnet weights download complete.---'
+        msg_1 = "---no hrnet weights detected. proceeding to download...---"
+        msg_2 = "---hrnet weights download complete.---"
 
         config = hrnet_config()
         HRNetModel(config)

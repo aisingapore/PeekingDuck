@@ -31,23 +31,22 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config['score_threshold'] <= 1:
+        if not 0 <= config["score_threshold"] <= 1:
             raise ValueError("score_threshold must be in [0, 1]")
-        if config['model_type'] not in [50, 75, 100, 'resnet']:
+        if config["model_type"] not in [50, 75, 100, "resnet"]:
             raise ValueError("model_type must be one of [50, 75, 100, resnet]")
 
         # check for posenet weights, if none then download into weights folder
-        if not checker.has_weights(config['root'],
-                                   config['weights_dir']):
-            print('---no posenet weights detected. proceeding to download...---')
-            downloader.download_weights(config['root'],
-                                        config['blob_file'])
-            print('---posenet weights download complete.---')
+        if not checker.has_weights(config["root"], config["weights_dir"]):
+            print("---no posenet weights detected. proceeding to download...---")
+            downloader.download_weights(config["root"], config["blob_file"])
+            print("---posenet weights download complete.---")
 
         self.predictor = Predictor(config)
 
-    def predict(self, frame: np.ndarray) -> \
-            Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def predict(
+        self, frame: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """ Predict poses from input frame
 
         Args:

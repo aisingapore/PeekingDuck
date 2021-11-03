@@ -20,11 +20,14 @@ from peekingduck.pipeline.nodes.dabble.bbox_to_3d_loc import Node
 
 @pytest.fixture
 def bbox_to_3d_loc():
-    node = Node({"input": "bboxes",
-                 "output": "obj_3d_locs",
-                 "focal_length": 1.14,
-                 "height_factor": 2.5
-                 })
+    node = Node(
+        {
+            "input": "bboxes",
+            "output": "obj_3d_locs",
+            "focal_length": 1.14,
+            "height_factor": 2.5,
+        }
+    )
     return node
 
 
@@ -37,8 +40,7 @@ class TestBboxTo3dLoc:
         np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_multi_bboxes(self, bbox_to_3d_loc):
-        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
-                  np.array([0.5, 0.6, 0.7, 0.8])]
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]), np.array([0.5, 0.6, 0.7, 0.8])]
         input1 = {"bboxes": array1}
 
         assert len(bbox_to_3d_loc.run(input1)["obj_3D_locs"]) == 2

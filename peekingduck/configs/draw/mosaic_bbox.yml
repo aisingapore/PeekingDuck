@@ -1,0 +1,4 @@
+input: ["bboxes", "img"]
+output: ["img"]
+
+mosaic_level: 7

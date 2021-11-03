@@ -37,10 +37,13 @@ class AnchorParameters:
         scales : List of scales to use per location in a feature map.
     """
 
-    def __init__(self, sizes: Tuple[int, int, int, int, int] = (32, 64, 128, 256, 512),
-                 strides: Tuple[int, int, int, int, int] = (8, 16, 32, 64, 128),
-                 ratios: Tuple[float, float, float] = (1.0, 0.5, 2.0),
-                 scales: Tuple[float, float, float] = (1.0, 2**(1. / 3.), 2**(2. / 3.))) -> None:
+    def __init__(
+        self,
+        sizes: Tuple[int, int, int, int, int] = (32, 64, 128, 256, 512),
+        strides: Tuple[int, int, int, int, int] = (8, 16, 32, 64, 128),
+        ratios: Tuple[float, float, float] = (1.0, 0.5, 2.0),
+        scales: Tuple[float, float, float] = (1.0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)),
+    ) -> None:
         self.sizes = sizes
         self.strides = strides
         self.ratios = np.array(ratios, dtype=keras.backend.floatx())
@@ -55,8 +58,7 @@ class AnchorParameters:
         return len(self.ratios) * len(self.scales)
 
     def get_sizes(self) -> Tuple[int, int, int, int, int]:
-        """Getter for sizes
-        """
+        """Getter for sizes"""
         return self.sizes
 
 
@@ -65,7 +67,9 @@ AnchorParameters.default = AnchorParameters(  # type: ignore
     sizes=(32, 64, 128, 256, 512),
     strides=(8, 16, 32, 64, 128),
     ratios=np.array([1, 0.5, 2], keras.backend.floatx()),
-    scales=np.array([2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()),
+    scales=np.array(
+        [2 ** 0, 2 ** (1.0 / 3.0), 2 ** (2.0 / 3.0)], keras.backend.floatx()
+    ),
 )
 
 
@@ -85,9 +89,9 @@ def guess_shapes(image_shape: Tuple[int, int], pyramid_levels: List[int]) -> Lis
     return image_shapes
 
 
-def generate_anchors(base_size: int = 16,
-                     ratios: Tuple[float] = None,
-                     scales: Tuple[float] = None) -> np.ndarray:
+def generate_anchors(
+    base_size: int = 16, ratios: Tuple[float] = None, scales: Tuple[float] = None
+) -> np.ndarray:
     """
     Generate anchor windows by enumerating aspect ratios X scales w.r.t. a reference window.
 
@@ -124,7 +128,9 @@ def generate_anchors(base_size: int = 16,
     return anchors
 
 
-def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray) -> np.ndarray:
+def shift(
+    feature_map_shape: List[float], stride: int, anchors: np.ndarray
+) -> np.ndarray:
     """
     Produce shifted anchors based on shape of the map and stride size.
 
@@ -140,25 +146,25 @@ def shift(feature_map_shape: List[float], stride: int, anchors: np.ndarray) -> n
 
     shift_x, shift_y = np.meshgrid(shift_x, shift_y)
 
-    shifts = np.vstack((
-        shift_x.ravel(), shift_y.ravel(),
-        shift_x.ravel(), shift_y.ravel()
-    )).transpose()
+    shifts = np.vstack(
+        (shift_x.ravel(), shift_y.ravel(), shift_x.ravel(), shift_y.ravel())
+    ).transpose()
 
     a_num = anchors.shape[0]
     k_num = shifts.shape[0]
-    all_anchors = (anchors.reshape((1, a_num, 4)) +
-                   shifts.reshape((1, k_num, 4)).transpose((1, 0, 2)))
+    all_anchors = anchors.reshape((1, a_num, 4)) + shifts.reshape(
+        (1, k_num, 4)
+    ).transpose((1, 0, 2))
     all_anchors = all_anchors.reshape((k_num * a_num, 4))
 
     return all_anchors
 
 
 def anchors_for_shape(
-        image_shape: Tuple[int, int],
-        pyramid_levels: List[int] = None,
-        anchor_params: AnchorParameters = None,
-        shapes_callback: Callable = None,
+    image_shape: Tuple[int, int],
+    pyramid_levels: List[int] = None,
+    anchor_params: AnchorParameters = None,
+    shapes_callback: Callable = None,
 ) -> np.ndarray:
     """
     Generators anchors for a given shape.
@@ -189,9 +195,11 @@ def anchors_for_shape(
         anchors = generate_anchors(
             base_size=anchor_params.sizes[idx],
             ratios=anchor_params.ratios,
-            scales=anchor_params.scales
+            scales=anchor_params.scales,
         )
-        shifted_anchors = shift(feature_map_shapes[idx], anchor_params.strides[idx], anchors)
+        shifted_anchors = shift(
+            feature_map_shapes[idx], anchor_params.strides[idx], anchors
+        )
         all_anchors = np.append(all_anchors, shifted_anchors, axis=0)
 
     return all_anchors.astype(np.float32)

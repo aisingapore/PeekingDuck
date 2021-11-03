@@ -57,8 +57,10 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         try:
-            self.zones = [self._create_zone(zone, config["resolution"]) # type: ignore
-                          for zone in self.zones]  # type: ignore
+            self.zones = [
+                self._create_zone(zone, config["resolution"])  # type: ignore
+                for zone in self.zones  # type: ignore
+            ]
         except TypeError as error:
             self.logger.warning(error)
 
@@ -74,8 +76,10 @@ class Node(AbstractNode):
                 if zone.point_within_zone(*point):
                     zone_counts[i] += 1
 
-        return {"zones": [zone.get_all_points_of_area() for zone in self.zones],
-                "zone_count": zone_counts}
+        return {
+            "zones": [zone.get_all_points_of_area() for zone in self.zones],
+            "zone_count": zone_counts,
+        }
 
     def _create_zone(self, zone: List[Any], resolution: List[int]) -> Any:
         """creates the appropriate Zone given either the absolute pixel values or
@@ -84,7 +88,9 @@ class Node(AbstractNode):
 
         if all(all(0 <= i <= 1 for i in coords) for coords in zone):
             # coordinates are in fraction. Use resolution to get correct coords
-            pixel_coords = [self._get_pixel_coords(coords, resolution) for coords in zone]
+            pixel_coords = [
+                self._get_pixel_coords(coords, resolution) for coords in zone
+            ]
             created_zone = Zone(pixel_coords)
         if all(all((isinstance(i, int) and i >= 0) for i in coords) for coords in zone):
             # when 1st-if fails and this statement passes, list is in pixel value.
@@ -92,9 +98,11 @@ class Node(AbstractNode):
 
         # if neither, something is wrong
         if not created_zone:
-            assert False, ("Zone %s needs to be all pixel-wise points or "
-                           "all fractions of the frame between 0 and 1. "
-                           "please check zone_count configs." % zone)
+            assert False, (
+                "Zone %s needs to be all pixel-wise points or "
+                "all fractions of the frame between 0 and 1. "
+                "please check zone_count configs." % zone
+            )
 
         return created_zone
 

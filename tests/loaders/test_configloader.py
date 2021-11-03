@@ -28,36 +28,34 @@ def configloader():
 
 def create_config_yaml(node, data):
     node_type, node_name = node.split(".")
-    config_path = os.path.join("tmp_dir", 'configs')
+    config_path = os.path.join("tmp_dir", "configs")
 
     node_config_path = os.path.join(config_path, node_type)
     os.makedirs(node_config_path)
     config_file = node_name + ".yml"
 
     full_path = os.path.join(node_config_path, config_file)
-    with open(full_path, 'w') as outfile:
+    with open(full_path, "w") as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
 
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestConfigLoader:
-
     def test_config_loader_returns_correct_config_filepath(self, configloader):
 
-        node = 'type.node'
+        node = "type.node"
         # .replace("\\","/") for windows where os.path.join uses "\\"
-        filepath = configloader._get_config_path(node).replace("\\","/")
+        filepath = configloader._get_config_path(node).replace("\\", "/")
 
-        ground_truth = os.path.join("tmp_dir",
-                                    "configs",
-                                    node.replace(".", "/") + ".yml").replace("\\","/")
+        ground_truth = os.path.join(
+            "tmp_dir", "configs", node.replace(".", "/") + ".yml"
+        ).replace("\\", "/")
 
         assert filepath == ground_truth
 
     def test_config_loader_load_correct_yaml(self, configloader):
         node = "input.test"
-        data = {"input": "img",
-                "output": "img"}
+        data = {"input": "img", "output": "img"}
         create_config_yaml(node, data)
 
         config = configloader.get(node)

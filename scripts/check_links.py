@@ -108,4 +108,3 @@ if __name__ == "__main__":
     faulty_links = check_files(mds_rst_filepaths)
 
     print_output(faulty_links)
-

@@ -30,34 +30,36 @@ PKD_NODE = f"{PKD_NODE_TYPE}.{PKD_NODE_NAME}"
 CUSTOM_NODE_TYPE = "custom_node_type"
 CUSTOM_NODE_NAME = "custom_node_name"
 CUSTOM_NODE = f"{CUSTOM_NODE_TYPE}.{CUSTOM_NODE_NAME}"
-NODES = {"nodes": [PKD_NODE,
-                   {PKD_NODE: [{'setting': True}]},
-                   f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}"]}
+NODES = {
+    "nodes": [
+        PKD_NODE,
+        {PKD_NODE: [{"setting": True}]},
+        f"{CUSTOM_NODE_NAME}.{CUSTOM_NODE}",
+    ]
+}
 
 MODULE_PATH = "tmp_dir"
-UNIQUE_SUFFIX = ''.join(random.choice(string.ascii_lowercase)
-                        for x in range(8))
+UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for x in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 RUN_CONFIG_PATH = os.path.join(MODULE_PATH, "run_config.yml")
 CUSTOM_FOLDER_PATH = os.path.join(MODULE_PATH, CUSTOM_FOLDER_NAME)
 PKD_NODE_DIR = os.path.join(MODULE_PATH, PKD_NODE_TYPE)
 CUSTOM_NODE_DIR = os.path.join(CUSTOM_FOLDER_PATH, CUSTOM_NODE_TYPE)
 PKD_NODE_CONFIG_DIR = os.path.join(MODULE_PATH, "configs", PKD_NODE_TYPE)
-CUSTOM_NODE_CONFIG_DIR = os.path.join(
-    CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
+CUSTOM_NODE_CONFIG_DIR = os.path.join(CUSTOM_FOLDER_PATH, "configs", CUSTOM_NODE_TYPE)
 CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
 def create_run_config_yaml(nodes):
 
-    with open(RUN_CONFIG_PATH, 'w') as outfile:
+    with open(RUN_CONFIG_PATH, "w") as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
 def create_node_python(node_dir, node_name):
 
     node_file = f"{node_name}.py"
-    with open(os.path.join(node_dir, node_file), 'w') as fp:
+    with open(os.path.join(node_dir, node_file), "w") as fp:
         content = textwrap.dedent(
             """\
             import pathlib
@@ -70,20 +72,19 @@ def create_node_python(node_dir, node_name):
 
                 def run(self):
                     return {}
-            """)
+            """
+        )
 
         fp.write(content)
 
 
 def create_node_config(config_dir, node_name):
 
-    config_text = {"root": None,
-                   "input": ["source"],
-                   "output": ["end"]}
+    config_text = {"root": None, "input": ["source"], "output": ["end"]}
 
     node_config_file = f"{node_name}.yml"
 
-    with open(os.path.join(config_dir, node_config_file), 'w') as fp:
+    with open(os.path.join(config_dir, node_config_file), "w") as fp:
         yaml.dump(config_text, fp)
 
 
@@ -104,13 +105,14 @@ def setup():
     create_node_config(CUSTOM_NODE_CONFIG_DIR, CUSTOM_NODE_NAME)
 
 
-@ pytest.fixture
+@pytest.fixture
 def declarativeloader():
 
     setup()
 
     declarative_loader = DeclarativeLoader(
-        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_PATH)
+        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_PATH
+    )
 
     declarative_loader.config_loader._basedir = MODULE_PATH
     declarative_loader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH
@@ -130,8 +132,7 @@ def replace_instantiate_nodes():
     instantiated_nodes = []
 
     node_path = PKD_NODE
-    node_config_path = os.path.join(PKD_NODE_CONFIG_DIR,
-                                    f"{PKD_NODE_NAME}.yml")
+    node_config_path = os.path.join(PKD_NODE_CONFIG_DIR, f"{PKD_NODE_NAME}.yml")
 
     node = importlib.import_module(node_path)
     with open(node_config_path) as file:
@@ -142,7 +143,7 @@ def replace_instantiate_nodes():
     return instantiated_nodes
 
 
-@ pytest.mark.usefixtures("tmp_dir")
+@pytest.mark.usefixtures("tmp_dir")
 class TestDeclarativeLoader:
     # NOTE Due to essential code logic, private functions are separately tested
     # from public function to ensure simple, yet robust and comprehensive unit
@@ -163,25 +164,33 @@ class TestDeclarativeLoader:
 
     def test_instantiate_nodes(self, declarativeloader):
 
-        pkd_node_default = ['peekingduck.pipeline.nodes.',
-                            PKD_NODE,
-                            declarativeloader.config_loader,
-                            None]
+        pkd_node_default = [
+            "peekingduck.pipeline.nodes.",
+            PKD_NODE,
+            declarativeloader.config_loader,
+            None,
+        ]
 
-        pkd_node_edit = ['peekingduck.pipeline.nodes.',
-                         PKD_NODE,
-                         declarativeloader.config_loader,
-                         [{'setting': True}]]
+        pkd_node_edit = [
+            "peekingduck.pipeline.nodes.",
+            PKD_NODE,
+            declarativeloader.config_loader,
+            [{"setting": True}],
+        ]
 
-        custom_node = [f"{CUSTOM_NODE_NAME}.",
-                       CUSTOM_NODE,
-                       declarativeloader.custom_config_loader,
-                       None]
+        custom_node = [
+            f"{CUSTOM_NODE_NAME}.",
+            CUSTOM_NODE,
+            declarativeloader.custom_config_loader,
+            None,
+        ]
 
         ground_truth = [pkd_node_default, pkd_node_edit, custom_node]
 
-        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._init_node',
-                        wraps=replace_init_node):
+        with mock.patch(
+            "peekingduck.declarative_loader.DeclarativeLoader._init_node",
+            wraps=replace_init_node,
+        ):
 
             instantiated_nodes = declarativeloader._instantiate_nodes()
 
@@ -196,14 +205,13 @@ class TestDeclarativeLoader:
         config_loader = declarativeloader.config_loader
         config_updates = None
 
-        init_node = declarativeloader._init_node(path_to_node,
-                                                 node_name,
-                                                 config_loader,
-                                                 config_updates)
+        init_node = declarativeloader._init_node(
+            path_to_node, node_name, config_loader, config_updates
+        )
 
         assert init_node._name == node_name
-        assert init_node.inputs == ['source']
-        assert init_node.outputs == ['end']
+        assert init_node.inputs == ["source"]
+        assert init_node.outputs == ["end"]
 
     def test_init_node_custom(self, declarativeloader):
 
@@ -212,57 +220,55 @@ class TestDeclarativeLoader:
         config_loader = declarativeloader.custom_config_loader
         config_updates = None
 
-        init_node = declarativeloader._init_node(path_to_node,
-                                                 node_name,
-                                                 config_loader,
-                                                 config_updates)
+        init_node = declarativeloader._init_node(
+            path_to_node, node_name, config_loader, config_updates
+        )
 
         assert init_node._name == f"{path_to_node}{node_name}"
-        assert init_node.inputs == ['source']
-        assert init_node.outputs == ['end']
+        assert init_node.inputs == ["source"]
+        assert init_node.outputs == ["end"]
 
     def test_init_node_edit(self, declarativeloader):
 
         path_to_node = ""
         node_name = PKD_NODE
         config_loader = declarativeloader.config_loader
-        config_updates = {"input": ['img']}
+        config_updates = {"input": ["img"]}
 
-        init_node = declarativeloader._init_node(path_to_node,
-                                                 node_name,
-                                                 config_loader,
-                                                 config_updates)
+        init_node = declarativeloader._init_node(
+            path_to_node, node_name, config_loader, config_updates
+        )
 
         assert init_node._name == node_name
-        assert init_node.inputs == ['img']
-        assert init_node.outputs == ['end']
+        assert init_node.inputs == ["img"]
+        assert init_node.outputs == ["end"]
 
     def test_edit_config(self, declarativeloader):
 
-        node_name = 'input.live'
+        node_name = "input.live"
         orig_config = {
-            'mirror_image': True,
-            'resize': {
-                'do_resizing': False,
-                'width': 1280,
-                'height': 720
-            }}
-        config_update = {'mirror_image': False,
-                         'resize': {'do_resizing': True},
-                         'invalid_key': 123}
+            "mirror_image": True,
+            "resize": {"do_resizing": False, "width": 1280, "height": 720},
+        }
+        config_update = {
+            "mirror_image": False,
+            "resize": {"do_resizing": True},
+            "invalid_key": 123,
+        }
         ground_truth = {
-            'mirror_image': False,
-            'resize': {
-                'do_resizing': True,
-                'width': 1280,
-                'height': 720
-            }}
+            "mirror_image": False,
+            "resize": {"do_resizing": True, "width": 1280, "height": 720},
+        }
 
         orig_config = declarativeloader._edit_config(
-            orig_config, config_update, node_name)
+            orig_config, config_update, node_name
+        )
 
-        assert orig_config['mirror_image'] == ground_truth['mirror_image']
-        assert orig_config['resize']['do_resizing'] == ground_truth['resize']['do_resizing']
+        assert orig_config["mirror_image"] == ground_truth["mirror_image"]
+        assert (
+            orig_config["resize"]["do_resizing"]
+            == ground_truth["resize"]["do_resizing"]
+        )
         # Ensure that config_update does not replace the "resize" sub-dict completely and
         # erase "width" or "height"
         assert "width" in orig_config["resize"]
@@ -270,18 +276,22 @@ class TestDeclarativeLoader:
 
     def test_get_pipeline(self, declarativeloader):
 
-        with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
-                        wraps=replace_instantiate_nodes):
+        with mock.patch(
+            "peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes",
+            wraps=replace_instantiate_nodes,
+        ):
 
             pipeline = declarativeloader.get_pipeline()
             assert pipeline.nodes[0]._name == PKD_NODE
-            assert pipeline.nodes[0].inputs == ['source']
-            assert pipeline.nodes[0].outputs == ['end']
+            assert pipeline.nodes[0].inputs == ["source"]
+            assert pipeline.nodes[0].outputs == ["end"]
 
     def test_get_pipeline_error(self, declarativeloader):
 
         with pytest.raises(TypeError):
-            with mock.patch('peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes',
-                            wraps=replace_instantiate_nodes_return_none):
+            with mock.patch(
+                "peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes",
+                wraps=replace_instantiate_nodes_return_none,
+            ):
 
                 declarativeloader.get_pipeline()

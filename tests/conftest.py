@@ -21,16 +21,16 @@ import pytest
 
 import cv2
 
-TEST_HUMAN_IMAGES = ['t1.jpg', 't2.jpg', 't4.jpg']
-TEST_NO_HUMAN_IMAGES = ['black.jpg', 't3.jpg']
-PKD_DIR = os.path.join(
-    os.path.dirname(os.path.abspath(__file__)), '..', 'peekingduck'
-)
+TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
+TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
+
+TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
+TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
+PKD_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "peekingduck")
 
 
 @pytest.fixture
 def create_image():
-
     def _create_image(size):
         img = np.random.randint(255, size=size, dtype=np.uint8)
         return img
@@ -40,7 +40,6 @@ def create_image():
 
 @pytest.fixture
 def create_input_image(create_image):
-
     def _create_input_image(path, size):
         img = create_image(size)
         cv2.imwrite(path, img)
@@ -51,10 +50,10 @@ def create_input_image(create_image):
 
 @pytest.fixture
 def create_video():
-
     def _create_video(size, nframes):
-        res = [np.random.randint(255, size=size, dtype=np.uint8)
-               for _ in range(nframes)]
+        res = [
+            np.random.randint(255, size=size, dtype=np.uint8) for _ in range(nframes)
+        ]
         return res
 
     return _create_video
@@ -62,10 +61,9 @@ def create_video():
 
 @pytest.fixture
 def create_input_video(create_video):
-
     def _create_input_video(path, fps, size, nframes):
         vid = create_video(size, nframes)
-        fourcc = cv2.VideoWriter_fourcc(*'FFV1')
+        fourcc = cv2.VideoWriter_fourcc(*"FFV1")
         resolution = (size[1], size[0])
         writer = cv2.VideoWriter(path, fourcc, fps, resolution)
         for frame in vid:
@@ -82,18 +80,32 @@ def tmp_dir():
     os.chdir(newpath)
     yield
     os.chdir(cwd)
-    shutil.rmtree(newpath, ignore_errors=True) # ignore_errors for windows developement
+    shutil.rmtree(newpath, ignore_errors=True)  # ignore_errors for windows developement
 
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
-    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
 
     yield os.path.join(test_img_dir, request.param)
 
 
 @pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
 def test_no_human_images(request):
-    test_img_dir = os.path.join(PKD_DIR, '..', 'images', 'testing')
+    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+
+    yield os.path.join(test_img_dir, request.param)
+
+
+@pytest.fixture(params=TEST_LP_IMAGES)
+def test_LP_images(request):
+    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+
+    yield os.path.join(test_img_dir, request.param)
+
+
+@pytest.fixture(params=TEST_NO_LP_IMAGES)
+def test_no_LP_images(request):
+    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
 
     yield os.path.join(test_img_dir, request.param)

@@ -1,0 +1,8 @@
+nodes:
+- input.recorded:
+    input_dir: <path to video with cars>
+- model.yolo_license_plate
+- dabble.fps
+- draw.blur_bbox
+- draw.legend
+- output.screen

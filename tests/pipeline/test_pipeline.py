@@ -33,14 +33,12 @@ class MockedNode(AbstractNode):
 
 @pytest.fixture
 def config_node_input():
-    return {'input': ["none"],
-            'output': ["test_output_1"]}
+    return {"input": ["none"], "output": ["test_output_1"]}
 
 
 @pytest.fixture
 def config_node_end():
-    return {'input': ["test_output_1"],
-            'output': ["test_output_2", "pipeline_end"]}
+    return {"input": ["test_output_1"], "output": ["test_output_2", "pipeline_end"]}
 
 
 @pytest.fixture
@@ -59,7 +57,6 @@ def pipeline_correct(test_input_node, test_node_end):
 
 
 class TestPipeline:
-
     def test_pipeline_wrong_order(self, test_input_node, test_node_end):
         with pytest.raises(ValueError):
             Pipeline([test_node_end, test_input_node])

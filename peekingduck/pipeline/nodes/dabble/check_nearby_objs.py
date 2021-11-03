@@ -55,7 +55,7 @@ class Node(AbstractNode):
         If an object is close to another, tag it.
         """
 
-        obj_tags = [""]*len(inputs["obj_3D_locs"])
+        obj_tags = [""] * len(inputs["obj_3D_locs"])
 
         for idx_1, loc_1 in enumerate(inputs["obj_3D_locs"]):
             for idx_2, loc_2 in enumerate(inputs["obj_3D_locs"]):
