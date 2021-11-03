@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (  # pylint: disable=line-too-long
     preprocess_image,
     postprocess_boxes,
 )
