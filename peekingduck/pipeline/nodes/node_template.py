@@ -13,15 +13,20 @@
 # limitations under the License.
 
 """
-Node template for creating custom nodes
+Node template for creating custom nodes.
 """
 
 from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This is a template class of how to write a node for peekingduck."""
+    """This is a template class of how to write a node for PeekingDuck.
+
+    Args:
+        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)

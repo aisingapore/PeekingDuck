@@ -13,7 +13,8 @@
 # limitations under the License.
 
 """
-Pipeline class that stores nodes and manages the data information used during inference
+Pipeline class that stores nodes and manages the data information used during
+inference.
 """
 
 import textwrap
@@ -22,16 +23,13 @@ from typing import Any, Dict, List
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-# pylint: disable=R0903
-class Pipeline:
-    """Pipe class that stores nodes and manages flow of data used during inference
+class Pipeline:  # pylint: disable=too-few-public-methods
+    """Pipeline class that stores nodes and manages flow of data used during
+    inference.
 
     Args:
-        nodes (:obj: `List`): List of initiated nodes for the pipeline to run through
-
-    Returns:
-        None
-
+        nodes (:obj:`List[AbstractNode]`): List of initialized nodes for the
+            pipeline to run through.
     """
 
     def __init__(self, nodes: List[AbstractNode]) -> None:
@@ -41,10 +39,11 @@ class Pipeline:
         self.terminate = False
 
     def get_pipeline_results(self) -> Dict[str, Any]:
-        """get all results data of nodes in pipeline
+        """Gets all results data from nodes in pipeline.
 
         Returns:
-            Dict[Any]: Dictionary of all pipeline node results
+            (:obj:`Dict[str, Any]`): Dictionary of all results from nodes in
+            the pipeline.
         """
         return self.data
 

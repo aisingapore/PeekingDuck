@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Main engine for Peekingduck processes
+Main engine for PeekingDuck processes.
 """
 
 import copy
@@ -28,30 +28,28 @@ from peekingduck.pipeline.pipeline import Pipeline
 
 
 class Runner:
-    """
-    The runner class for creation of pipeline using declared/given nodes.
+    """The runner class for creation of pipeline using declared/given nodes.
 
     The runner class uses the provided configurations to setup a node pipeline
     which is used to run inference.
 
     Args:
-
-        run_config_path (:obj:`str`): If path to a run_config.yml is provided, uses \
-        our declarative loader to load the yaml file according to our specified \
-        schema to obtain the declared nodes that would be sequentially \
-        initialized and used to create the pipeline for running inference. \
-
-        config_updates_cli (:obj:`str`): config changes passed as part of the \
-        cli command sed to modify the node configurations direct from cli.
-
-        custom_nodes_parent_subdir (:obj:`str`): path to folder which contains \
-        custom nodes that users have created to be used with PeekingDuck. \
-        For more information on using custom nodes, please refer to \
-        `getting started <getting_started/03_custom_nodes.html>`_.
-
-        nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml, \
-        initialize by giving the node stack directly as a list.
-
+        run_config_path (:obj:`pathlib.Path` | :obj:`None`): If a path to
+            *run_config.yml* is provided, uses
+            :py:class:`DeclarativeLoader <peekingduck.declarative_loader.DeclarativeLoader>`
+            to load the YAML file according to PeekingDuck's specified schema
+            to obtain the declared nodes that would be sequentially initialized
+            and used to create the pipeline for running inference.
+        config_updates_cli (:obj:`str` | :obj:`None`): Configuration changes
+            passed as part of the CLI command used to modify the node
+            configurations directly from CLI.
+        custom_nodes_parent_subdir (:obj:`str` | :obj:`None`): Relative path to
+            a folder which contains custom nodes that users have created to be
+            used with PeekingDuck. For more information on using custom nodes,
+            please refer to
+            `Getting Started <getting_started/03_custom_nodes.html>`_.
+        nodes (:obj:`List[AbstractNode]` | :obj:`None`): If a list of nodes is
+            provided, initialize by the node stack directly.
     """
 
     def __init__(
@@ -107,9 +105,9 @@ class Runner:
                 self.pipeline.data.update(outputs)
 
     def get_run_config(self) -> List[str]:
-        """retrieve run configs
+        """Retrieves run configuration.
 
         Returns:
-            (:obj:`Dict`: run configs being used for runner
+            (:obj:`Dict`): Run configurations being used by runner.
         """
         return self.node_loader.node_list

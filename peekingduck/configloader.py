@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Loads configurations for individual nodes
+Loads configurations for individual nodes.
 """
 
 from pathlib import Path
@@ -23,16 +23,13 @@ import yaml
 
 
 class ConfigLoader:  # pylint: disable=too-few-public-methods
-    """
-    A helper class to create pipeline.
+    """A helper class to create pipeline.
 
     The config loader class is used to allow for instantiation of Node classes
     directly instead of reading configurations from the run config yaml.
 
     Args:
-
-        base_dir (:obj:`str`): base directory of peekingduck
-
+        base_dir (:obj:`pathlib.Path`): Base directory of ``peekingduck``
     """
 
     def __init__(self, base_dir: Path) -> None:
@@ -47,16 +44,14 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         return file_path
 
     def get(self, node_name: str) -> Dict[str, Any]:
-        """
-        Get node configuration for specified node.
+        """Gets node configuration for specified node.
 
         Args:
-            node_name (:obj:`str`): name of node
+            node_name (:obj:`str`): Name of node.
 
-        Outputs:
-            node_config (:obj:`Dict`): dictionary of node configurations for the
-            specified node
-
+        Returns:
+            node_config (:obj:`Dict[str, Any]`): A dictionary of node
+            configurations for the specified node.
         """
         file_path = self._get_config_path(node_name)
 

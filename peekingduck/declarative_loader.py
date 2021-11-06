@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Helper classes to load configs, nodes
+Helper classes to load configurations and nodes.
 """
 
 import ast
@@ -34,27 +34,24 @@ PEEKINGDUCK_NODE_TYPES = ["input", "model", "draw", "dabble", "output"]
 
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods
-    """
-    A helper class to create pipeline.
+    """A helper class to create
+    :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>`.
 
     The declarative loader class creates the specified nodes according to any
     modfications provided in the configs and returns the pipeline needed for
     inference.
 
     Args:
-
-        run_config_path (:obj:`str`): Path to yaml file that declares the node \
-        sequence to be used in the pipeline
-
-        config_updates_cli (:obj:`str`): stringified nested dictionaries of \
-        config changes passed as part of cli command. Used to modify the node \
-        configurations direct from cli.
-
-        custom_nodes_parent_subdir (:obj:`str`): path to parent folder which contains \
-        custom nodes that users have created to be used with PeekingDuck. \
-        For more information on using custom nodes, please refer to \
-        `getting started <getting_started/03_custom_nodes.html>`_.
-
+        run_config_path (:obj:`pathlib.Path`): Path to a YAML file that
+            declares the node sequence to be used in the pipeline.
+        config_updates_cli (:obj:`str`): Stringified nested dictionaries of
+            configuration changes passed as part of CLI command. Used to modify
+            the node configurations directly from the CLI.
+        custom_nodes_parent_subdir (:obj:`str`): Relative path to parent
+            folder which contains custom nodes that users have created to be
+            used with PeekingDuck. For more information on using custom nodes,
+            please refer to
+            `Getting Started <getting_started/03_custom_nodes.html>`_.
     """
 
     def __init__(
@@ -193,7 +190,10 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         return dict_orig
 
     def get_pipeline(self) -> Pipeline:
-        """Returns a compiled Pipeline for PeekingDuck runner to execute"""
+        """Returns a compiled
+        :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>` for
+        PeekingDuck :py:class:`Runner <peekingduck.runner.Runner>` to execute.
+        """
         instantiated_nodes = self._instantiate_nodes()
 
         try:

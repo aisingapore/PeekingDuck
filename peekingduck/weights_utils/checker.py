@@ -11,8 +11,9 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
-Checks for model weights in weights folder
+Checks for model weights in weights folder.
 """
 
 from pathlib import Path
@@ -20,15 +21,15 @@ from typing import List
 
 
 def has_weights(root: Path, weights_paths: List[str]) -> bool:
-    """Checks for model weight paths from weights folder
+    """Checks for model weight paths from weights folder.
 
     Args:
-        root (str): path of peekingduck root folder
-        weights_paths (List[str]): list of files/directories to check
-            to see if weights exists
-
+        root (:obj:`str`): Path of ``peekingduck`` root folder.
+        weights_paths (:obj:`List[str]`): List of files/directories to check
+            whether model weights exist.
     Returns:
-        boolean: True is files/directories needed exists, else False
+        (:obj:`bool`): ``True`` if specified files/directories in
+        ``weights_paths`` exist, else ``False``.
     """
     # Check for whether weights dir even exist. If not make directory
     # Empty directory should then return False

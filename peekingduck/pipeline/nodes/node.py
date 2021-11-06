@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Abstract Node class for all nodes
+Abstract Node class for all nodes.
 """
 
 import collections
@@ -26,9 +26,16 @@ from peekingduck.configloader import ConfigLoader
 
 
 class AbstractNode(metaclass=ABCMeta):
-    """
-    Abstract Node class for inheritance by nodes.
-    It defines default attributes and methods of a node.
+    """Abstract Node class for inheritance by nodes.
+
+    Defines default attributes and methods of a node.
+
+    Args:
+        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+        node_path (:obj:`str`): Period-separated (``.``) relative path to the
+            node from the ``peekingduck`` directory. **Default: "".**
+        pkd_base_dir (:obj:`pathlib.Path` | :obj:`None`): Path to
+            ``peekingduck`` directory.
     """
 
     def __init__(
@@ -46,8 +53,8 @@ class AbstractNode(metaclass=ABCMeta):
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
-        # NOTE: config and kwargs_config are similar but are from different inputs
-        # config is when users input a dictionary to update the node
+        # NOTE: config and kwargs_config are similar but are from different
+        # inputs config is when users input a dictionary to update the node
         # kwargs_config is when users input parameters to update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
@@ -63,32 +70,35 @@ class AbstractNode(metaclass=ABCMeta):
 
     @property
     def inputs(self) -> List[str]:
-        """getter for input requirements"""
+        """Input requirements."""
         return self.input
 
     @property
     def outputs(self) -> List[str]:
-        """getter for node outputs"""
+        """Node outputs."""
         return self.output
 
     @property
     def name(self) -> str:
-        """getter for node name"""
+        """Node name."""
         return self._name
 
     def load_node_config(
         self, config: Dict[str, Any], kwargs_config: Dict[str, Any]
     ) -> None:
-        """loads node configuration
-        NOTE: config and kwargs_config are similar but come from different inputs
-        config is when users input a dictionary to update the node
-        kwargs_config is when users input parameters to update the node
+        """Loads node configuration.
+
+        NOTE: ``config`` and ``kwargs_config`` are similar but come from
+        different inputs. ``config`` is when users input a dictionary to update
+        the node and ``kwargs_config`` is when users input parameters to update
+        the node.
 
         Args:
-            config (Dict[str, Any]): loads configuration from a dictionary input
-            kwargs_config (Dict[str, Any]): loads configuration from kwargs
+            config (:obj:`Dict[str, Any]`): Loads configuration from a
+                dictionary input.
+            kwargs_config (:obj:`Dict[str, Any]`): Loads configuration from
+                ``kwargs``.
         """
-
         # if full set of configuration is not included in config
         # load configuration and update node with **kwargs where possible
         # else load from kwargs only

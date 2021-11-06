@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-CLI functions for Peekingduck
+CLI functions for PeekingDuck.
 """
 
 import logging
@@ -73,7 +73,7 @@ def _len_enumerate(item: Tuple) -> int:
 
     Returns:
         (`int`): Sum of length of `element` and the number of digits of its
-            index
+        index
     """
     return _num_digits(item[0] + 1) + len(item[1])
 
@@ -91,7 +91,11 @@ def _num_digits(number: int) -> int:
 
 
 def create_custom_folder(custom_folder_name: str) -> None:
-    """Make custom nodes folder to create custom nodes"""
+    """Makes custom nodes folder to create custom nodes.
+
+    Args:
+        custom_folder_name (:obj:`str`): Name of the custom nodes folder.
+    """
     curr_dir = _get_cwd()
     custom_nodes_dir = curr_dir / "src" / custom_folder_name
     custom_nodes_config_dir = custom_nodes_dir / "configs"
@@ -102,7 +106,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 
 
 def create_yml() -> None:
-    """Inits the declarative yaml"""
+    """Initialises the declarative *run_config.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
