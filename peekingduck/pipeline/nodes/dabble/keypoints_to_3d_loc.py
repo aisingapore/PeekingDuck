@@ -16,8 +16,10 @@
 Estimates the 3D coordinates of a human given 2D pose coordinates
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 import numpy as np
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 NOSE = 0
@@ -76,7 +78,7 @@ class Node(AbstractNode):
         return outputs
 
     @staticmethod
-    def _get_torso_keypoints(keypoints: np.array) -> np.array:
+    def _get_torso_keypoints(keypoints: np.ndarray) -> np.ndarray:
         """Filter keypoints to get only selected keypoints for torso"""
 
         torso_keypoints = keypoints[TORSO_KEYPOINTS, :]  # type: ignore
@@ -86,7 +88,7 @@ class Node(AbstractNode):
         return torso_keypoints
 
     @staticmethod
-    def _enough_torso_keypoints(torso_keypoints: np.array) -> bool:
+    def _enough_torso_keypoints(torso_keypoints: np.ndarray) -> bool:
         """Returns False if not enough keypoints to represent torso"""
 
         if torso_keypoints.shape[0] >= 2:
@@ -94,7 +96,7 @@ class Node(AbstractNode):
         return False
 
     @staticmethod
-    def _get_bbox(keypoints: np.array) -> np.array:
+    def _get_bbox(keypoints: np.ndarray) -> np.ndarray:
         """Get coordinates of a bbox around keypoints"""
 
         top_left_x, top_left_y = keypoints.min(axis=0)
@@ -104,8 +106,8 @@ class Node(AbstractNode):
 
     @staticmethod
     def _get_3d_point_from_bbox(
-        bbox: np.array, focal_length: float, torso_factor: float
-    ) -> np.array:
+        bbox: np.ndarray, focal_length: float, torso_factor: float
+    ) -> np.ndarray:
         """Get the 3d coordinates of the centre of a bounding box"""
 
         # Subtraction is to make the camera the origin of the coordinate system

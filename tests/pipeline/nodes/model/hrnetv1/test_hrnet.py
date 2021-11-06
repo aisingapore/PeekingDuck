@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import yaml
 from pathlib import Path
 
 import cv2
 import numpy as np
 import numpy.testing as npt
 import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.hrnet import Node
 
@@ -74,7 +74,7 @@ class TestHrnet:
         test_img = cv2.imread(test_human_images)
         img_h, img_w, _ = test_img.shape
         output = hrnet.run(
-            {"img": test_img, "bboxes": np.array([[0, 0, img_w, img_h]])}
+            {"img": test_img, "bboxes": np.ndarray([[0, 0, img_w, img_h]])}
         )
 
         assert "keypoints" in output

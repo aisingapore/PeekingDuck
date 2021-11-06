@@ -44,8 +44,8 @@ class Detector:  # pylint: disable=too-few-public-methods
 
     def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
-        model_file = self.config["root"] / self.config["model_weights_dir"][model_type]
-        model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
+        model_path = self.config["root"] / self.config["model_weights_dir"][model_type]
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.logger.info(
             (
@@ -70,7 +70,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         return model
 
     def predict_object_bbox_from_image(
-        self, image: np.array
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores
 

@@ -17,8 +17,9 @@ Displays info from dabble nodes such as fps, object count and zone counts in a l
 """
 
 from typing import Any, Dict, List
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -53,6 +54,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.include: List[str]
         self.legend_items: List[str] = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -66,11 +68,11 @@ class Node(AbstractNode):
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw
-            if self.include[0] == "all_legend_items":  # type: ignore
-                self.include = self.all_legend_items  # type: ignore
+            if self.include[0] == "all_legend_items":
+                self.include = self.all_legend_items
             self._include(inputs)
         if len(self.legend_items) != 0:
-            Legend().draw(inputs, self.legend_items, self.position)  # type: ignore
+            Legend().draw(inputs, self.legend_items, self.position)
         else:
             return {}
         # cv2 weighted does not update the referenced image. Need to return and replace.

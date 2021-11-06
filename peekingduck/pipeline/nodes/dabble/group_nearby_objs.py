@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.dabble.utils.quick_find import QuickFind
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -65,7 +65,7 @@ class Node(AbstractNode):
 
     @staticmethod
     def _find_nearby_obj_pairs(
-        obj_locs: List[np.array], obj_dist_thres: float
+        obj_locs: List[np.ndarray], obj_dist_thres: float
     ) -> List[Tuple[int, int]]:
         """If the distance between 2 objects are less than the threshold, append their
         indexes to nearby_obj_pairs as a tuple."""

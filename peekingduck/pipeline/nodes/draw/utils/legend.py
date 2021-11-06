@@ -16,18 +16,20 @@
 functions for drawing legend related UI components
 """
 
-from typing import Dict, List, Any
-import numpy as np
+from typing import Any, Dict, List
+
 import cv2
+import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+
 from peekingduck.pipeline.nodes.draw.utils.constants import (
-    THICK,
-    WHITE,
-    SMALL_FONTSCALE,
     BLACK,
     FILLED,
     PRIMARY_PALETTE,
     PRIMARY_PALETTE_LENGTH,
+    SMALL_FONTSCALE,
+    THICK,
+    WHITE,
 )
 from peekingduck.pipeline.nodes.draw.utils.general import get_image_size
 
@@ -44,7 +46,9 @@ class Legend:
         self.delta_y = 0
         self.legend_height = 0
 
-    def draw(self, inputs: Dict[str, Any], items: List[str], position: str) -> np.array:
+    def draw(
+        self, inputs: Dict[str, Any], items: List[str], position: str
+    ) -> np.ndarray:
         """Draw legends onto image
 
         Args:
@@ -63,7 +67,7 @@ class Legend:
             self.func_reg[item](self.frame, y_pos, inputs[item])
             y_pos += 20
 
-    def _draw_count(self, frame: np.array, y_pos: int, count: int) -> None:
+    def _draw_count(self, frame: np.ndarray, y_pos: int, count: int) -> None:
         """draw count of selected object onto frame
 
         Args:
@@ -84,7 +88,7 @@ class Legend:
             LINE_AA,
         )
 
-    def _draw_fps(self, frame: np.array, y_pos: int, current_fps: float) -> None:
+    def _draw_fps(self, frame: np.ndarray, y_pos: int, current_fps: float) -> None:
         """Draw FPS onto frame image
 
         Args:
@@ -105,7 +109,9 @@ class Legend:
             LINE_AA,
         )
 
-    def _draw_zone_count(self, frame: np.array, y_pos: int, counts: List[int]) -> None:
+    def _draw_zone_count(
+        self, frame: np.ndarray, y_pos: int, counts: List[int]
+    ) -> None:
         """Draw zone counts of all zones onto frame image
 
         Args:
@@ -145,7 +151,7 @@ class Legend:
                 LINE_AA,
             )
 
-    def _draw_legend_box(self, frame: np.array) -> None:
+    def _draw_legend_box(self, frame: np.ndarray) -> None:
         """draw pts of selected object onto frame
 
         Args:

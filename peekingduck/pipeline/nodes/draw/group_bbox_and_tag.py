@@ -19,9 +19,10 @@ Draws detected groups and their tags
 from typing import Any, Dict, List
 
 import numpy as np
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes, draw_tags
 from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -65,22 +66,21 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dict with keys "none".
         """
-
         group_bboxes = self._get_group_bbox_coords(
             inputs["large_groups"], inputs["bboxes"], inputs["obj_groups"]
         )
         group_tags = self._get_group_tags(inputs["large_groups"], self.tag)
 
         # show labels set to False to reduce clutter on display
-        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)  # type: ignore
-        draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)  # type: ignore
+        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)
+        draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)
 
         return {}
 
     @staticmethod
     def _get_group_bbox_coords(
-        large_groups: List[int], bboxes: List[np.array], obj_groups: List[int]
-    ) -> List[np.array]:
+        large_groups: List[int], bboxes: List[np.ndarray], obj_groups: List[int]
+    ) -> List[np.ndarray]:
         """For bboxes that belong to the same large group, get the coordinates of
         a large bbox that combines all these individual bboxes. Repeat for all large
         groups.
@@ -101,7 +101,6 @@ class Node(AbstractNode):
     @staticmethod
     def _get_group_tags(large_groups: List[int], tag: str) -> List[str]:
         """Creates a list of tags to be used for the draw_tags function."""
-
         group_tags = [tag for _ in range(len(large_groups))]
 
         return group_tags

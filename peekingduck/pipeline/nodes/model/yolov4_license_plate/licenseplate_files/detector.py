@@ -48,10 +48,10 @@ class Detector:
         Creates yolo model for license plate detection
         """
         self.model_type = self.config["model_type"]
-        model_file = (
+        model_path = (
             self.config["root"] / self.config["model_weights_dir"][self.model_type]
         )
-        model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.logger.info(
             (
@@ -90,7 +90,7 @@ class Detector:
         return bboxes
 
     def predict_object_bbox_from_image(
-        self, image: np.array
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Detect all license plate objects' bounding box from one image

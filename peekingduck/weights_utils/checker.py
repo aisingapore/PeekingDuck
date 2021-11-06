@@ -19,12 +19,12 @@ from pathlib import Path
 from typing import List
 
 
-def has_weights(root: Path, path_to_check: List[str]) -> bool:
+def has_weights(root: Path, weights_paths: List[str]) -> bool:
     """Checks for model weight paths from weights folder
 
     Args:
         root (str): path of peekingduck root folder
-        path_to_check (List[str]): list of files/directories to check
+        weights_paths (List[str]): list of files/directories to check
             to see if weights exists
 
     Returns:
@@ -37,7 +37,4 @@ def has_weights(root: Path, path_to_check: List[str]) -> bool:
         weights_dir.mkdir()
         return False
 
-    for check in path_to_check:
-        if not (root / check).exists():
-            return False
-    return True
+    return all((root / path).exists() for path in weights_paths)

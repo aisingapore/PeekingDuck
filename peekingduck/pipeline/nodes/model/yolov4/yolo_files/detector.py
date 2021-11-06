@@ -104,7 +104,7 @@ class Detector:
         classes: tf.Tensor,
         nums: List[int],
         object_ids: List[int],
-    ) -> Tuple[List[np.array], List[float], List[str]]:
+    ) -> Tuple[List[np.ndarray], List[float], List[str]]:
         len0 = nums[0]
 
         classes = classes.numpy()[0]
@@ -125,8 +125,8 @@ class Detector:
         return boxes, scores, classes
 
     def _evaluate_image_by_yolo(
-        self, image: np.array
-    ) -> Tuple[List[np.array], List[float], List[float], List[int]]:
+        self, image: np.ndarray
+    ) -> Tuple[List[np.ndarray], List[float], List[float], List[int]]:
         """
         Takes in the yolo model and image to perform inference with.
         It will return the following:
@@ -157,20 +157,20 @@ class Detector:
         return boxes, scores, classes, nums
 
     @staticmethod
-    def _prepare_image_from_camera(image: np.array) -> tf.Tensor:
+    def _prepare_image_from_camera(image: np.ndarray) -> tf.Tensor:
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)
         return image
 
     @staticmethod
-    def _prepare_image_from_file(image: np.array) -> tf.Tensor:
+    def _prepare_image_from_file(image: np.ndarray) -> tf.Tensor:
         image = tf.image.decode_image(image, channels=3)
         return image
 
     # possible that we may want to control what is being detection
     def predict_object_bbox_from_image(
-        self, class_names: List[str], image: np.array, detect_ids: List[int]
-    ) -> Tuple[List[np.array], List[str], List[float]]:
+        self, class_names: List[str], image: np.ndarray, detect_ids: List[int]
+    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
         Args:

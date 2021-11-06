@@ -17,7 +17,8 @@ Pipeline class that stores nodes and manages the data information used during in
 """
 
 import textwrap
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -34,7 +35,6 @@ class Pipeline:
     """
 
     def __init__(self, nodes: List[AbstractNode]) -> None:
-
         self.nodes = nodes
         self._check_pipe(nodes)
         self.data = {}  # type: ignore
@@ -53,14 +53,12 @@ class Pipeline:
         # 1. Check the initial node is a source node
         # 2. Check every subsequent node utilizes something that will exist
         # if reached end, it is all valid
-
         data_pool = []
 
         if nodes[0].inputs[0] == "none":
             data_pool.extend(nodes[0].outputs)
 
         for node in nodes[1:]:
-
             if all(item in data_pool for item in node.inputs) or "all" in node.inputs:
                 data_pool.extend(node.outputs)
             else:

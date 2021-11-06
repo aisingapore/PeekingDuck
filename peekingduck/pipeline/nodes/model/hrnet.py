@@ -17,9 +17,10 @@ Slower, accurate Pose Estimation model. Requires a object detector
 """
 
 
-from typing import Dict, Any
-from peekingduck.pipeline.nodes.node import AbstractNode
+from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -84,7 +85,8 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """function that reads the bbox input and returns the poses
-        and pose bbox of the specified objects chosen to be detected"""
+        and pose bbox of the specified objects chosen to be detected
+        """
         keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"], inputs["bboxes"]
         )

@@ -16,10 +16,10 @@
 Reads a videofeed from a stream (e.g. webcam)
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
-from peekingduck.pipeline.nodes.input.utils.read import VideoThread, VideoNoThread
+from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -77,12 +77,11 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
+        self.videocap: Union[VideoNoThread, VideoThread]
         if self.threading:
             self.videocap = VideoThread(self.input_source, self.mirror_image)
         else:
-            self.videocap = VideoNoThread(  # type: ignore
-                self.input_source, self.mirror_image
-            )
+            self.videocap = VideoNoThread(self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
         self.logger.info("Device resolution used: %s by %s", width, height)
@@ -100,7 +99,7 @@ class Node(AbstractNode):
         self.frame_counter = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        success, img = self.videocap.read_frame()  # type: ignore
+        success, img = self.videocap.read_frame()
 
         if success:
             if self.resize["do_resizing"]:

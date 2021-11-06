@@ -16,9 +16,9 @@
 Utility functions for Tensorflow Graphed models
 """
 
-import os
 import logging
-from typing import List, Callable
+import os
+from typing import Callable, List
 
 import tensorflow as tf
 
@@ -58,11 +58,11 @@ def wrap_frozen_graph(
     )
 
 
-def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> tf.function:
+def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> tf.function:
     """
     Loads the graph
     """
-    with tf.io.gfile.GFile(filename, "rb") as graph_file:
+    with tf.io.gfile.GFile(file_path, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(graph_file.read())
 

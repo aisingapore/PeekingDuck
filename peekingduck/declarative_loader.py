@@ -73,7 +73,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         custom_nodes_name = self._get_custom_name_from_node_list()
         if custom_nodes_name is not None:
-            custom_nodes_dir = Path.cwd() / custom_nodes_parent_subdir / custom_nodes_name
+            custom_nodes_dir = (
+                Path.cwd() / custom_nodes_parent_subdir / custom_nodes_name
+            )
             self.custom_config_loader = ConfigLoader(custom_nodes_dir)
             sys.path.append(custom_nodes_parent_subdir)
 

@@ -16,8 +16,10 @@ Blur area bounded by bounding boxes over detected object
 """
 
 from typing import Any, Dict, List
+
 import cv2
 import numpy as np
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -81,7 +83,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             outputs (Dict): Output in dictionary format with key
             "img"
         """
-
         blurred_img = self._blur(inputs["bboxes"], inputs["img"], self.blur_kernel_size)
         outputs = {"img": blurred_img}
         return outputs

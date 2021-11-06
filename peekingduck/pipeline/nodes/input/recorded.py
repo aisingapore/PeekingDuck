@@ -134,7 +134,6 @@ class Node(AbstractNode):
             raise FileNotFoundError("No Media files available")
 
     def _get_next_input(self) -> None:
-
         if self._filepaths:
             file_path = self._filepaths.pop(0)
             self._file_name = file_path.name
