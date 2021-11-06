@@ -22,16 +22,16 @@ import numpy.testing as npt
 import pytest
 
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
-    rescale_image,
     _get_valid_resolution,
     _rescale_image,
+    rescale_image,
 )
 
 TEST_DIR = Path.cwd() / "images" / "testing"
 NP_FILE = np.load(
     Path.cwd() / "tests" / "pipeline" / "nodes" / "model" / "posenetv1" / "posenet.npz"
 )
-MOBILENET_MODEL_LIST = [50, 75, 100]
+MOBILENET_MODELS = [50, 75, 100]
 
 
 @pytest.fixture
@@ -80,7 +80,7 @@ class TestPreprocessing:
         ), "Processed resnet image did not meet expected value"
 
     @pytest.mark.parametrize(
-        "mobilenet_model", MOBILENET_MODEL_LIST, indirect=True, ids=str
+        "mobilenet_model", MOBILENET_MODELS, indirect=True, ids=str
     )
     def test_preprocess_image_mobilenet(self, frame, image_mobilenet, mobilenet_model):
         image_processed, scale = rescale_image(
@@ -108,7 +108,7 @@ class TestPreprocessing:
         ), "Unable to obtain valid resolution"
 
     @pytest.mark.parametrize(
-        "mobilenet_model", MOBILENET_MODEL_LIST, indirect=True, ids=str
+        "mobilenet_model", MOBILENET_MODELS, indirect=True, ids=str
     )
     def test_rescale_image_mobilenet(self, frame, image_mobilenet, mobilenet_model):
         rescaled_image = _rescale_image(frame, 225, 225, mobilenet_model)

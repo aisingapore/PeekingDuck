@@ -18,10 +18,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
+import cv2
 import numpy as np
 import pytest
-
-import cv2
 import tensorflow.keras.backend as K
 
 TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
@@ -105,7 +104,7 @@ def test_no_human_images(request):
 
 
 @pytest.fixture(params=TEST_LP_IMAGES)
-def test_LP_images(request):
+def test_lp_images(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
 
     yield str(test_img_dir / request.param)
@@ -114,7 +113,7 @@ def test_LP_images(request):
 
 
 @pytest.fixture(params=TEST_NO_LP_IMAGES)
-def test_no_LP_images(request):
+def test_no_lp_images(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
 
     yield str(test_img_dir / request.param)
