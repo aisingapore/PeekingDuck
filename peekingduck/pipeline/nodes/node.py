@@ -57,7 +57,7 @@ class AbstractNode(metaclass=ABCMeta):
         return hasattr(subclass, "run") and callable(subclass.run)
 
     @abstractmethod
-    def run(self, inputs: Dict[str, Any]) -> None:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """abstract method needed for running node"""
         raise NotImplementedError("This method needs to be implemented")
 

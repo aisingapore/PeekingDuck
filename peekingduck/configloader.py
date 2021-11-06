@@ -31,21 +31,20 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
     Args:
 
-        basedir (:obj:`str`): base directory of peekingduck
+        base_dir (:obj:`str`): base directory of peekingduck
 
     """
 
-    def __init__(self, basedir: Path) -> None:
-        self._basedir = basedir
+    def __init__(self, base_dir: Path) -> None:
+        self._base_dir = base_dir
 
     def _get_config_path(self, node: str) -> Path:
         """Based on the node, return the corresponding node config path"""
-        configs_folder = self._basedir / "configs"
+        configs_folder = self._base_dir / "configs"
         node_type, node_name = node.split(".")
-        node_name = node_name + ".yml"
-        filepath = configs_folder / node_type / node_name
+        file_path = configs_folder / node_type / f"{node_name}.yml"
 
-        return filepath
+        return file_path
 
     def get(self, node_name: str) -> Dict[str, Any]:
         """
@@ -59,11 +58,11 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             specified node
 
         """
-        filepath = self._get_config_path(node_name)
+        file_path = self._get_config_path(node_name)
 
-        with open(filepath) as file:
+        with open(file_path) as file:
             node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading
-        node_config["root"] = self._basedir
+        node_config["root"] = self._base_dir
         return node_config
