@@ -52,7 +52,7 @@ The results below show the FPS (Frames Per Second) of each model type.
 |                  +--------------+--------+--------+----------+--------+----------+
 |                  | EfficientDet |    4   |  0.43  |   0.42   |  11.74 |   11.88  |
 |                  +--------------+--------+--------+----------+--------+----------+
-|                  |    MTCNN     |    -   |  32.42 |  18.53   |  56.35 |   51.45  |
+|                  |    MTCNN     |   --   |  32.42 |  18.53   |  56.35 |   51.45  |
 +------------------+--------------+--------+--------+----------+--------+----------+
 |  Pose Estimation |    PoseNet   |   50   |  79.81 |   59.97  | 136.31 |   89.37  |
 |                  +--------------+--------+--------+----------+--------+----------+
@@ -66,7 +66,7 @@ The results below show the FPS (Frames Per Second) of each model type.
 +------------------+--------------+--------+--------+----------+--------+----------+
 
 Model Accuracy
-=================
+==============
 
 We evaluated the accuracy of the models using the MS COCO (val 2017) dataset. We integrated the COCO API into the PeekingDuck pipeline
 for loading the annotations and evaluating the outputs from the models. All values are reported in percentage.
