@@ -16,7 +16,7 @@
 
 .. |btm_midpoint| replace:: ``btm_midpoint`` (:obj:`List[Tuple[int, int]]`): A list of tuples
    (x, y) each representing a single point of reference of bounding boxes for use in zone
-   analytics. The order of ``btm_mipoint`` follows the order of ``bboxes``.
+   analytics. The order of ``btm_midpoint`` follows the order of ``bboxes``.
 
 .. |count| replace:: ``count`` (:obj:`List[int]`): A list of integers representing the count of
    a pre-selected object (for example, 'people') detected in each frame through ``bboxes``.
@@ -70,6 +70,12 @@
 .. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced.
    Used for input nodes that require no prior inputs, or draw nodes that overwrite current input.
 
+.. |br| raw:: html
+
+   <br />
+
+.. |tab| unicode:: 0xA0 0xA0 0xA0 0xA0
+   :trim:
 
 {{ fullname | escape | underline }}
 

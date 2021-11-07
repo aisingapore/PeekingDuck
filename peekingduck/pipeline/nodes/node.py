@@ -33,7 +33,7 @@ class AbstractNode(metaclass=ABCMeta):
     Args:
         config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
         node_path (:obj:`str`): Period-separated (``.``) relative path to the
-            node from the ``peekingduck`` directory. **Default: "".**
+            node from the ``peekingduck`` directory. **Default: ""**.
         pkd_base_dir (:obj:`pathlib.Path` | :obj:`None`): Path to
             ``peekingduck`` directory.
     """

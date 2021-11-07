@@ -13,16 +13,16 @@
 # limitations under the License.
 
 """
-Counts the number of detected boxes
+Counts the number of detected boxes.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Counting node class that counts total number of detected objects
+    """Counts total number of detected objects.
 
     Inputs:
         |bboxes|
@@ -38,7 +38,9 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Counts bboxes of object chosen in the frame. Note that this method
-        requires that the bbox returns all the same objects (for example, all people)
+        """Counts bboxes of object chosen in the frame.
+
+        Note that this method requires that the bboxes returned to all belong
+        to the same object category (for example, all 'person').
         """
         return {"count": len(inputs["bboxes"])}

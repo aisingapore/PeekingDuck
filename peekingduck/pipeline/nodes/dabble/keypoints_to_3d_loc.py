@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Estimates the 3D coordinates of a human given 2D pose coordinates
+Estimates the 3D coordinates of a human given 2D pose coordinates.
 """
 
 from typing import Any, Dict
@@ -31,7 +31,7 @@ TORSO_KEYPOINTS = [NOSE, LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_PELVIS, RIGHT_PELVI
 
 
 class Node(AbstractNode):
-    """Node that uses pose keypoint information of torso to estimate 3d location.
+    """Uses pose keypoint information of torso to estimate 3D location.
 
     Inputs:
         |keypoints|
@@ -40,17 +40,14 @@ class Node(AbstractNode):
         |obj_3D_locs|
 
     Configs:
-        focal_length (:obj:`float`): **default = 1.14**
-
-            Approximate focal length of webcam used, in metres. Example on measuring focal length:
+        focal_length (:obj:`float`): **default = 1.14**. |br|
+            Approximate focal length of webcam used, in metres. Example on
+            measuring focal length:
             https://learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
-
-
-        torso_factor (:obj:`float`): **default = 0.9**
-
-            A factor used to estimate real-world distance from pixels, based on average human torso
-            length in metres. The value varies across different camera set-ups, and calibration may
-            be required.
+        torso_factor (:obj:`float`): **default = 0.9**. |br|
+            A factor used to estimate real-world distance from pixels, based on
+            average human torso length in metres. The value varies across
+            different camera set-ups, and calibration may be required.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -58,7 +55,6 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Converts pose keypoints into 3D locations."""
-
         locations = []
 
         for keypoints in inputs["keypoints"]:
@@ -80,7 +76,6 @@ class Node(AbstractNode):
     @staticmethod
     def _get_torso_keypoints(keypoints: np.ndarray) -> np.ndarray:
         """Filter keypoints to get only selected keypoints for torso"""
-
         torso_keypoints = keypoints[TORSO_KEYPOINTS, :]  # type: ignore
         # ignore keypoints that are '-1.' as below confidence score and are masked
         torso_keypoints = np.reshape(torso_keypoints[torso_keypoints != -1.0], (-1, 2))
@@ -90,7 +85,6 @@ class Node(AbstractNode):
     @staticmethod
     def _enough_torso_keypoints(torso_keypoints: np.ndarray) -> bool:
         """Returns False if not enough keypoints to represent torso"""
-
         if torso_keypoints.shape[0] >= 2:
             return True
         return False
@@ -98,7 +92,6 @@ class Node(AbstractNode):
     @staticmethod
     def _get_bbox(keypoints: np.ndarray) -> np.ndarray:
         """Get coordinates of a bbox around keypoints"""
-
         top_left_x, top_left_y = keypoints.min(axis=0)
         btm_right_x, btm_right_y = keypoints.max(axis=0)
 
@@ -109,7 +102,6 @@ class Node(AbstractNode):
         bbox: np.ndarray, focal_length: float, torso_factor: float
     ) -> np.ndarray:
         """Get the 3d coordinates of the centre of a bounding box"""
-
         # Subtraction is to make the camera the origin of the coordinate system
         center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
         torso_height = bbox[3] - bbox[1]

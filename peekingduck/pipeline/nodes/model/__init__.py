@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Deep Learning model nodes for computer vision
+Deep learning model nodes for computer vision.
 """
