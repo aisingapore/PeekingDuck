@@ -5,15 +5,15 @@
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
 
-## What is PeekingDuck?
+# What is PeekingDuck?
 
 PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
 
 
-## How PeekingDuck Works
+# How PeekingDuck Works
 
 **Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it.
 
@@ -26,7 +26,7 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
 
 
-## Explore PeekingDuck's Features
+# Explore PeekingDuck's Features
 
 The rest of this webpage contains more details about using PeekingDuck, including information on:
 - [Changing PeekingDuck nodes](getting_started/02_configure_pkdk) and their settings
@@ -40,7 +40,7 @@ You are also welcome to join discussions about using PeekingDuck in the followin
 - [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/)
 
 
-## PeekingDuck Use Cases
+# PeekingDuck Use Cases
 
 AI models are cool and fun, but we're even more interested to use them to solve real-world problems. We've combined dabble nodes with model nodes to create **use cases**, such as [social distancing](https://aisingapore.org/2020/06/hp-social-distancing/) and [group size checking](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) to help combat COVID-19. For more details, click on the heading of each use case below.
 
@@ -59,13 +59,13 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
 
 
-## Acknowledgements
+# Acknowledgements
 
 This project is supported by the National Research Foundation, Singapore under its AI Singapore Programme (AISG-RP-2019-050). Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
 
-## License
+# License
 
-PeekingDuck is under the open source [Apache License 2.0](LICENSE) (:
+PeekingDuck is under the open source [Apache License 2.0](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE) (:
 
 Even so, your organisation may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
 - Your organisation is using PeekingDuck in a jurisdiction that does not recognise this license
