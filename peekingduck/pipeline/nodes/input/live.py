@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Reads a videofeed from a stream (e.g. webcam)
+Reads a videofeed from a stream, e.g., webcam.
 """
 
 from typing import Any, Dict, Union
@@ -24,10 +24,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node to receive livestream as inputs.
+    """Receives livestream as inputs.
 
     Inputs:
-        None
+        |none|
 
     Outputs:
         |img|
@@ -39,39 +39,27 @@ class Node(AbstractNode):
         |saved_video_fps|
 
     Configs:
-        fps_saved_output_video (:obj:`int`): **default = 10**
-
-            FPS of the mp4 file after livestream is processed and exported.
-            FPS dependent on running machine performance.
-
-        filename (:obj:`str`):  **default = "webcamfeed.mp4"**
-
-            Filename of the mp4 file if livestream is exported.
-
-        resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
-
-            Dimension of extracted image frame
-
-        input_source (:obj:`int`): **default = 0 (for webcam)**
-
-            Refer to `OpenCV doucmentation
-            <https://docs.opencv.org/3.4/d4/d15/group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d/>`_
-            for list of source stream codes
-
-        mirror_image (:obj:`bool`): **default = False**
-
-            Boolean to set extracted image frame as mirror image of input stream
-
-        frames_log_freq (:obj:`int`): **default = 100**
-
-            Logs frequency of frames passed in cli
-
-        threading (:obj:`bool`): **default = False**
-
-            Boolean to enable threading when reading frames from camera.
-            The FPS can increase up to 30% if this is enabled for Windows and MacOS.
-            This will also be supported in Linux in future PeekingDuck versions.
-
+        fps_saved_output_video (:obj:`int`): **default = 10**. |br|
+            FPS of the MP4 file after livestream is processed and exported. FPS
+            is dependent on running machine performance.
+        filename (:obj:`str`): **default = "webcamfeed.mp4"**. |br|
+            Filename of the MP4 file if livestream is exported.
+        resize (:obj:`Dict`):
+            **default = { do_resizing: False, width: 1280, height: 720 }** |br|
+            Dimension of extracted image frame.
+        input_source (:obj:`int`): **default = 0**  (for webcam). |br|
+            Refer to `OpenCV documentation <https://docs.opencv.org/3.4/d4/d15/
+            group__videoio__flags__base.html#ga023786be1ee68a9105bf2e48c700294d
+            />`_ for list of source stream codes.
+        mirror_image (:obj:`bool`): **default = False**. |br|
+            Flag to set extracted image frame as mirror image of input stream.
+        frames_log_freq (:obj:`int`): **default = 100**. |br|
+            Logs frequency of frames passed in CLI
+        threading (:obj:`bool`): **default = False**. |br|
+            Flag to enable threading when reading frames from camera. The FPS
+            can increase up to 30% if this is enabled for Windows and MacOS.
+            This will also be supported in Linux in future PeekingDuck
+            versions.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

@@ -39,7 +39,7 @@ class Node(AbstractNode):
         |btm_midpoint|
 
     Configs:
-        None
+        None.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

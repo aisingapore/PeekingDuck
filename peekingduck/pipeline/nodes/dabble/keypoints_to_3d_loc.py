@@ -42,8 +42,8 @@ class Node(AbstractNode):
     Configs:
         focal_length (:obj:`float`): **default = 1.14**. |br|
             Approximate focal length of webcam used, in metres. Example on
-            measuring focal length:
-            https://learnopencv.com/approximate-focal-length-for-webcams-and-cell-phone-cameras/
+            measuring focal length can be found `here <https://learnopencv.com
+            /approximate-focal-length-for-webcams-and-cell-phone-cameras/>`_.
         torso_factor (:obj:`float`): **default = 0.9**. |br|
             A factor used to estimate real-world distance from pixels, based on
             average human torso length in metres. The value varies across

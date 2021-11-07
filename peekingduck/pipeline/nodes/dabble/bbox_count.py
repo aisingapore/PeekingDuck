@@ -31,7 +31,7 @@ class Node(AbstractNode):
         |count|
 
     Configs:
-        None
+        None.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -41,6 +41,6 @@ class Node(AbstractNode):
         """Counts bboxes of object chosen in the frame.
 
         Note that this method requires that the bboxes returned to all belong
-        to the same object category (for example, all 'person').
+        to the same object category (for example, all "person").
         """
         return {"count": len(inputs["bboxes"])}

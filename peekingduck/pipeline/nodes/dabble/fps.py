@@ -38,12 +38,12 @@ class Node(AbstractNode):
         |fps|
 
     Configs:
-        fps_log_display (:obj:`bool`): **default =** ``False``. |br|
+        fps_log_display (:obj:`bool`): **default = False**. |br|
             Enables logging of 10 frame moving average FPS during execution of
             PeekingDuck.
         fps_log_freq (:obj:`int`): **default = 100**. |br|
             Frequency of logging moving average FPS every n frames
-        dampen_fps (:obj:`bool`): **default =** ``True``. |br|
+        dampen_fps (:obj:`bool`): **default = True**. |br|
             If ``True``, returns moving average FPS. If ``False``, returns
             instantaneous FPS .
     """

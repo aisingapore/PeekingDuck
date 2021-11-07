@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Draws keypoints on a detected pose
+Draws keypoints on a detected pose.
 """
 
 from typing import Any, Dict
@@ -23,14 +23,15 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node for drawing poses onto image
+    """Draws poses onto image.
 
-    The draw poses node uses the keypoints, keypoint_scores, and keypoint_conns
-    predictions from pose models to draw the human poses onto the image.
-    For better understanding, check out the pose models.
+    The ``draw.poses`` node uses the ``keypoints``, ``keypoint_scores``, and
+    ``keypoint_conns`` predictions from pose models to draw the human poses
+    onto the image. For better understanding, check out the pose models such
+    as :py:class:`HRNet <peekingduck.pipeline.nodes.model.hrnet.Node>` and
+    :py:class:`PoseNet <peekingduck.pipeline.nodes.model.posenet.Node>`.
 
     Inputs:
-
         |img|
 
         |keypoints|
@@ -53,10 +54,11 @@ class Node(AbstractNode):
         self.keypoint_text_color = tuple(self.config["keypoint_text_color"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that draws pose details onto input image
+        """Draws pose details onto input image.
 
         Args:
-            inputs (dict): Dict with keys "img", "keypoints", "keypoint_conns"
+            inputs (dict): Dictionary with keys "img", "keypoints", and
+                "keypoint_conns".
         """
         draw_human_poses(inputs["img"], inputs["keypoints"], inputs["keypoint_conns"])
         return {}

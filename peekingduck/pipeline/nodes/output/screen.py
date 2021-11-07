@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Show the outputs on your display
+Shows the outputs on your display.
 """
 
 from typing import Any, Dict
@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that streams the output on your display
+    """Streams the output on your display.
 
     Inputs:
         |img|
@@ -32,6 +32,8 @@ class Node(AbstractNode):
     Outputs:
         |pipeline_end|
 
+    Configs:
+        None.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

@@ -26,11 +26,11 @@
    of detected poses, and K represents individual keypoints. Keypoints with low confidence scores
    (below threshold) will be replaced by ``-1``.
 
-.. |keypoint_scores| replace:: ``keypoints_scores`` (:obj:`numpy.ndarray`): A numpy array (N, K, 1)
+.. |keypoint_scores| replace:: ``keypoint_scores`` (:obj:`numpy.ndarray`): A numpy array (N, K, 1)
    containing the confidence scores [0, 1] of detected poses. N represents the number of detected
    poses, and K represents individual keypoints.
 
-.. |keypoints_conns| replace:: ``keypoints_conns`` (:obj:`List[numpy.ndarray]`): A list of N numpy
+.. |keypoint_conns| replace:: ``keypoint_conns`` (:obj:`List[numpy.ndarray]`): A list of N numpy
    arrays (2, 2) with each array representing one connection in the image. The numpy array contains
    the coordinates (x, y) of 2 adjacent keypoints pairs, if both keypoints are detected.
 
@@ -64,11 +64,12 @@
    form the boundaries of a zone. The order of zones follows the order of ``zone_count``.
 
 .. |zone_count| replace:: ``zone_count`` (:obj:`List[int]`): A list of integers representing the
-   count of a pre-selected object (for example, 'person') detected in each specified zone. The
+   count of a pre-selected object (for example, "person") detected in each specified zone. The
    order of counts follows the order of ``zones``.
 
 .. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced.
-   Used for input nodes that require no prior inputs, or draw nodes that overwrite current input.
+   Used for ``input`` nodes that require no prior inputs, or ``draw`` nodes that overwrite current
+   input.
 
 .. |br| raw:: html
 
@@ -76,6 +77,8 @@
 
 .. |tab| unicode:: 0xA0 0xA0 0xA0 0xA0
    :trim:
+
+.. |times|  unicode:: U+000D7 .. MULTIPLICATION SIGN
 
 {{ fullname | escape | underline }}
 

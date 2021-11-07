@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Draws detected groups and their tags
+Draws detected groups and their tags.
 """
 
 from typing import Any, Dict, List
@@ -26,16 +26,15 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This node draws large bounding boxes over multiple object bounding boxes
-    which have been identified as belonging to large groups.
+    """Draws large bounding boxes over multiple object bounding boxes which
+    have been identified as belonging to large groups.
 
-    The draw group_bbox_and_tage node uses the obj_groups and large_groups from the
-    dabble nodes to draw group bboxes and the large group message tag onto the image.
-    For better understanding, refer to
+    The ``draw.group_bbox_and_tag`` node uses the ``obj_groups`` and
+    ``large_groups`` from the ``dabble`` nodes to draw group bboxes and the
+    large group message tag onto the image. For better understanding, refer to
     `group size checking usecase <use_cases/group_size_checking.html>`_.
 
     Inputs:
-
         |img|
 
         |bboxes|
@@ -48,8 +47,8 @@ class Node(AbstractNode):
         |none|
 
     Configs:
-        tag (:obj:`str`): **default = "LARGE GROUP!"**
-            string message printed in the case of a large group detected.
+        tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
+            The string message printed when a large group is detected.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -57,14 +56,14 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws large bounding boxes over multiple object bounding boxes
-        which have been identified as belonging to large groups
+        which have been identified as belonging to large groups.
 
         Args:
-            inputs (dict): Dict with keys "img", "bboxes", "obj_groups",
+            inputs (dict): Dictionary with keys "img", "bboxes", "obj_groups",
                 "large_groups".
 
         Returns:
-            outputs (dict): Dict with keys "none".
+            outputs (dict): Dictionary with keys "none".
         """
         group_bboxes = self._get_group_bbox_coords(
             inputs["large_groups"], inputs["bboxes"], inputs["obj_groups"]

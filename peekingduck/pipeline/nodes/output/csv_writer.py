@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Record the nodes outputs to csv file
+Records the nodes outputs to a CSV file.
 """
 
 import logging
@@ -27,29 +27,25 @@ from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 
 class Node(AbstractNode):
-    """Node that tracks user-specified parameters and outputs the results in a
-    CSV file.
+    """Tracks user-specified parameters and outputs the results in a CSV file.
 
     Inputs:
-        ``All`` (:obj:`List`): A placeholder that represents a flexible input.
-        Actual inputs to be written into the csv can be configured in
-        `stats_to_track`.
+        ``all`` (:obj:`List`): A placeholder that represents a flexible input.
+        Actual inputs to be written into the CSV file can be configured in
+        ``stats_to_track``.
 
     Outputs:
-        None
+        |none|
 
     Configs:
-        stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
-
+        stats_to_track (:obj:`List`):
+            **default = ["keypoints", "bboxes", "bbox_labels"]**. |br|
             Parameters to log into the CSV file. The chosen parameters must be
             present in the data pool.
-
-        file_path (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
-
+        file_path (:obj:`str`):
+            **default = "PeekingDuck/data/stats.csv"**. |br|
             Directory where CSV file is saved.
-
-        logging_interval (:obj:`int`): **default = 1**
-
+        logging_interval (:obj:`int`): **default = 1**. |br|
             Interval between each log, in terms of seconds.
     """
 
@@ -71,12 +67,11 @@ class Node(AbstractNode):
         )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Write the current state of the tracked statistics into
+        """Writes the current state of the tracked statistics into
         the csv file as a row entry
 
         Args:
-            inputs(dict): the data pool of the pipeline
+            inputs (dict): The data pool of the pipeline.
 
         Returns:
             outputs: [None]
@@ -98,8 +93,7 @@ class Node(AbstractNode):
         return {}
 
     def _check_tracked_stats(self, inputs: Dict[str, Any]) -> None:
-        """
-        Check whether user input statistics is present in the data pool
+        """Checks whether user input statistics is present in the data pool
         of the pipeline. Statistics not present in data pool will be
         ignored and dropped.
         """
@@ -134,9 +128,7 @@ class Node(AbstractNode):
 
     @staticmethod
     def _append_datetime_file_path(file_path: Path) -> Path:
-        """
-        Append time stamp to the filename
-        """
+        """Append time stamp to the filename."""
         current_time = datetime.now()
         # output as '240621-15-09-13'
         time_str = current_time.strftime("%d%m%y-%H-%M-%S")

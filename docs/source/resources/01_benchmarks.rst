@@ -95,7 +95,7 @@ The detection evaluation metrics from COCO were used to evaluate our object dete
 | EfficientDet | 4      | 40.0 | 54.4                 | 44.1                 | 21.3               | 44.3                | 57.2                | 31.8               | 45.4                | 46.0                 | 23.5               | 49.9                | 65.1               |
 +--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
 
-The keypoint evaluation metrics from COCO were used to evaluate our pose estimation models. Description of these metrics can be found `here <https://cocodataset.org/#keypoints-eval>`_. All images in the 'person' category in the MS COCO (val 2017) dataset were processed to obtain the metrics.
+The keypoint evaluation metrics from COCO were used to evaluate our pose estimation models. Description of these metrics can be found `here <https://cocodataset.org/#keypoints-eval>`_. All images in the "person" category in the MS COCO (val 2017) dataset were processed to obtain the metrics.
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Pose Estimation                                                                                                                                                                                                                     |

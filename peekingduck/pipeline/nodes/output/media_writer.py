@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Write the output image/video to file
+Writes the output image/video to file.
 """
 
 import datetime
@@ -25,14 +25,15 @@ import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-# role of this node is to be able to take in multiple frames, stitch them together and output them.
+# role of this node is to be able to take in multiple frames, stitch them
+# together and output them.
 # to do: need to have 'live' kind of data when there is no filename
 # to do: it will be good to have the accepted file format as a configuration
 # to do: somewhere so that input and output can use this config for media related issues
 
 
 class Node(AbstractNode):
-    """Node that outputs the processed image or video to a file.
+    """Outputs the processed image or video to a file.
 
     Inputs:
         |img|
@@ -44,11 +45,10 @@ class Node(AbstractNode):
         |pipeline_end|
 
     Outputs:
-        None
+        |none|
 
     Configs:
-        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**
-
+        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**. |br|
             Output directory for files to be written locally.
     """
 
@@ -65,7 +65,7 @@ class Node(AbstractNode):
         self.logger.info("Output directory used is: %s", self.output_dir)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Writes media information to filepath"""
+        """Writes media information to filepath."""
         # reset and terminate when there are no more data
         if inputs["pipeline_end"]:
             if self.writer:  # images automatically releases writer

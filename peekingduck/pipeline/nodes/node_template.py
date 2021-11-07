@@ -39,10 +39,10 @@ class Node(AbstractNode):
         """This node does ___.
 
         Args:
-            inputs (dict): Dict with keys "__", "__".
+            inputs (dict): Dictionary with keys "__", "__".
 
         Returns:
-            outputs (dict): Dict with keys "__".
+            outputs (dict): Dictionary with keys "__".
         """
 
         # result = do_something(inputs["in1"], inputs["in2"])

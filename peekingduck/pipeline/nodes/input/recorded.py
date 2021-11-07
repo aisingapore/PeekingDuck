@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Reads video/images from a directory
+Reads video/images from a directory.
 """
 
 from pathlib import Path
@@ -24,12 +24,11 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-# pylint: disable=R0902
-class Node(AbstractNode):
-    """Node to receive videos/image as inputs.
+class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
+    """Receives videos/image as inputs.
 
     Inputs:
-        None
+        |none|
 
     Outputs:
         |img|
@@ -41,18 +40,13 @@ class Node(AbstractNode):
         |saved_video_fps|
 
     Configs:
-        resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
-
-            Dimension of extracted image frame
-
-        input_dir (:obj: `str`): **default = 'PeekingDuck/data/input'**
-
-            The directory to look for recorded video files and images
-
-        mirror_image (:obj:`bool`): **default = False**
-
-            Boolean to set extracted image frame as mirror image of input stream
-
+        resize (:obj:`Dict`):
+            **default = { do_resizing: False, width: 1280, height: 720 }**. |br|
+            Dimension of extracted image frame.
+        input_dir (:obj:`str`): **default = "PeekingDuck/data/input"**. |br|
+            The directory to look for recorded video files and images.
+        mirror_image (:obj:`bool`): **default = False**. |br|
+            Flag to set extracted image frame as mirror image of input stream.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
