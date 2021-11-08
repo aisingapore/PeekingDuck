@@ -91,22 +91,16 @@ class VideoThread:
         Reads the frame.
         """
         if self.queue.empty():
-            return False, None
+            if self.done.is_set():
+                return False, None
+            else:
+                return True, self.prev_frame
         else:
             frame = self.queue.get()
             if self.mirror:
                 frame = mirror(frame)
+            self.prev_frame = frame
             return True, frame
-
-        # self._lock.acquire()
-        # if self.frame is not None:
-        #     frame = self.frame.copy()
-        #     self._lock.release()
-        #     if self.mirror:
-        #         frame = mirror(frame)
-        #     return True, frame
-        # self._lock.release()
-        # return False, None
 
     @property
     def fps(self) -> float:
