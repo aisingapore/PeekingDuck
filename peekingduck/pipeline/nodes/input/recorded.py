@@ -109,7 +109,14 @@ class Node(AbstractNode):
             self.tens_counter += 10
 
         if self.file_end:
-            self.logger.info("Completed processing file: %s", self._file_name)
+            pct_complete = round(
+                100 * self.frame_counter / self.videocap.frame_count
+            )
+            self.logger.info(
+                f"Completed processing file: {self._file_name}, "
+                f"#frames={self.frame_counter}, "
+                f"processed={pct_complete}%"
+            )
             self._get_next_input()
             outputs = self._run_single_file()
             self.frame_counter = 0
@@ -158,7 +165,6 @@ class Node(AbstractNode):
             raise FileNotFoundError("No Media files available")
 
     def _get_next_input(self) -> None:
-
         if self._filepaths:
             file_path = self._filepaths.pop(0)
             self._file_name = os.path.basename(file_path)

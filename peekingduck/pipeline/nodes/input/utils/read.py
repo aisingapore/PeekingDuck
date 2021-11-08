@@ -18,6 +18,7 @@ Reader functions for input nodes
 
 from typing import Any, Tuple, Union
 from threading import Thread, Lock, Event
+import queue
 import time
 import platform
 import cv2
@@ -46,8 +47,9 @@ class VideoThread:
             )
 
         self._lock = Lock()
-
-        self.frame = None
+        self._thread_frame_counter = 0
+        self.queue = queue.Queue()
+        # self.frame = None
         self.done = Event()
         self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
         self.thread.start()
@@ -72,23 +74,39 @@ class VideoThread:
         """
         while not self.done.is_set():
             if self.stream.isOpened():
-                _, self.frame = self.stream.read()
+                ret, frame = self.stream.read()
+                if not ret:
+                    print(
+                        f"_reading_thread: ret={ret}, "
+                        f"#frames read={self._thread_frame_counter}"
+                    )
+                    self.done.set()
+                else:
+                    self._thread_frame_counter += 1
+                    self.queue.put(frame)
             time.sleep(0.01)
 
     def read_frame(self) -> Union[bool, Any]:
         """
         Reads the frame.
         """
-        self._lock.acquire()
-        if self.frame is not None:
-            frame = self.frame.copy()
-            self._lock.release()
+        if self.queue.empty():
+            return False, None
+        else:
+            frame = self.queue.get()
             if self.mirror:
                 frame = mirror(frame)
             return True, frame
 
-        self._lock.release()
-        return False, None
+        # self._lock.acquire()
+        # if self.frame is not None:
+        #     frame = self.frame.copy()
+        #     self._lock.release()
+        #     if self.mirror:
+        #         frame = mirror(frame)
+        #     return True, frame
+        # self._lock.release()
+        # return False, None
 
     @property
     def fps(self) -> float:
@@ -143,16 +161,22 @@ class VideoNoThread:
             raise ValueError(
                 "Video or image path incorrect: %s" % input_source
             )
+        self._frame_counter = 0
 
     def __del__(self) -> None:
         print("VideoNoThread.__del__")
         self.stream.release()
 
-    def read_frame(self) -> None:
+    def read_frame(self) -> Union[bool, Any]:
         """
         Reads the frame.
         """
-        return self.stream.read()
+        ret, frame = self.stream.read()
+        if not ret:
+            print(f"read_frame: ret={ret}, #frames read={self._frame_counter}")
+        else:
+            self._frame_counter += 1
+        return ret, frame
 
     # pylint: disable=R0201
     def shutdown(self) -> None:
