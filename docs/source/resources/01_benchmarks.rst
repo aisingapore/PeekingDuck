@@ -3,7 +3,7 @@ CV Model Benchmarks
 *******************
 
 PeekingDuck is equipped with a wide range of models for different scenarios, from real-time object detection to high-accuracy
-pose estimation. The full list of models can be found :mod:`here <peekingduck.pipeline.nodes.model>`.
+pose estimation. The full list of models can be found under :mod:`nodes.model <peekingduck.pipeline.nodes.model>`.
 
 Given various constraints, such as hardware and costs, users are often faced with a tough trade-off between 
 inference speed and model accuracy. Hence, we prepared the following benchmarks to help users choose the most suitable model for 
@@ -73,7 +73,7 @@ for loading the annotations and evaluating the outputs from the models. All valu
 
 Results
 -------
-The detection evaluation metrics from COCO were used to evaluate our object detection models. Description of these metrics can be found `here <https://cocodataset.org/#detection-eval>`_. All images from all 80 object categories in the MS COCO (val 2017) dataset were processed.
+The detection evaluation metrics from COCO were used to evaluate our object detection models. Description of these metrics can be found `here <https://cocodataset.org/#detection-eval>`__. All images from all 80 object categories in the MS COCO (val 2017) dataset were processed.
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Object Detection                                                                                                                                                                                                                                                              |
@@ -95,7 +95,7 @@ The detection evaluation metrics from COCO were used to evaluate our object dete
 | EfficientDet | 4      | 40.0 | 54.4                 | 44.1                 | 21.3               | 44.3                | 57.2                | 31.8               | 45.4                | 46.0                 | 23.5               | 49.9                | 65.1               |
 +--------------+--------+------+----------------------+----------------------+--------------------+---------------------+---------------------+--------------------+---------------------+----------------------+--------------------+---------------------+--------------------+
 
-The keypoint evaluation metrics from COCO were used to evaluate our pose estimation models. Description of these metrics can be found `here <https://cocodataset.org/#keypoints-eval>`_. All images in the "person" category in the MS COCO (val 2017) dataset were processed to obtain the metrics.
+The keypoint evaluation metrics from COCO were used to evaluate our pose estimation models. Description of these metrics can be found `here <https://cocodataset.org/#keypoints-eval>`__. All images in the "person" category in the MS COCO (val 2017) dataset were processed to obtain the metrics.
 
 +-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | Pose Estimation                                                                                                                                                                                                                     |

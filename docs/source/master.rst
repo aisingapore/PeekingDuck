@@ -7,31 +7,12 @@ Welcome to PeekingDuck's documentation!
 =======================================
 
 .. toctree::
-   :titlesonly:
-   :caption: Introduction
+   :caption: Contents
 
    index.md
-
-.. toctree::
-   :titlesonly:
-   :glob:
-   :caption: Getting Started
-
-   getting_started/*
-
-.. toctree::
-   :titlesonly:
-   :glob:
-   :caption: Model Resources & Information
-
-   resources/*
-
-.. toctree::
-   :titlesonly:
-   :glob:
-   :caption: Use Cases
-
-   use_cases/*
+   getting_started/index
+   resources/index
+   use_cases/index
 
 Nodes
 =====================================
