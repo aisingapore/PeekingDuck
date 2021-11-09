@@ -1,0 +1,29 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+blob_file: "yolox.zip"
+classes: ../peekingduck_weights/yolox/coco.names
+model_files:
+  {
+    yolox-tiny: ../peekingduck_weights/yolox/yolox-tiny.pth,
+    yolox-s: ../peekingduck_weights/yolox/yolox-s.pth,
+    yolox-m: ../peekingduck_weights/yolox/yolox-m.pth,
+    yolox-l: ../peekingduck_weights/yolox/yolox-l.pth,
+  }
+model_sizes:
+  {
+    yolox-tiny: { depth: 0.33, width: 0.375 },
+    yolox-s: { depth: 0.33, width: 0.5 },
+    yolox-m: { depth: 0.67, width: 0.75 },
+    yolox-l: { depth: 1.0, width: 1.0 },
+  }
+num_classes: 80
+weights_dir: ["../peekingduck_weights/yolox"]
+
+model_type: yolox-tiny
+input_size: 416
+detect_ids: [0]
+iou_threshold: 0.45
+score_threshold: 0.25
+half: false
+fuse: false
