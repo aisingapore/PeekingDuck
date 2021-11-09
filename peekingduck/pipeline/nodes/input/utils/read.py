@@ -53,9 +53,9 @@ class VideoThread:
         self.thread_start_flag = Event()
         self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
         self.thread.start()
-        self.thread_start_flag.wait()
         self.queue = queue.Queue()
         self.buffer = buffer_frames
+        self.thread_start_flag.wait()
 
     def __del__(self) -> None:
         print("VideoThread.__del__")
@@ -74,8 +74,6 @@ class VideoThread:
         """
         A thread that continuously polls the camera for frames.
         """
-        self.thread_start_flag.set()  # signal thread really started
-
         while not self.done.is_set():
             if self.stream.isOpened():
                 ret, frame = self.stream.read()
@@ -89,6 +87,7 @@ class VideoThread:
                     if self.mirror:
                         frame = mirror(frame)
                     self.frame = frame
+                    self.thread_start_flag.set()  # signal thread really started
                     self._thread_frame_counter += 1
                     if self.buffer:
                         self.queue.put(self.frame)
