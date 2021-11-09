@@ -8,7 +8,7 @@ body {
 .wy-menu-vertical,
 .wy-nav-side,
 .wy-side-nav-search {
-  width: 340px;
+  width: 320px;
 }
 
 .wy-menu-vertical p.caption {
@@ -35,7 +35,7 @@ body {
 }
 
 .wy-side-scroll {
-  width: 360px;
+  width: 340px;
 }
 
 .wy-table-responsive table.longtable td,
