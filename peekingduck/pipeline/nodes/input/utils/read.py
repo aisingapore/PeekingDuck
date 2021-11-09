@@ -84,7 +84,6 @@ class VideoThread:
                 else:
                     self._thread_frame_counter += 1
                     self.queue.put(frame)
-            time.sleep(0.01)
 
     def read_frame(self) -> Union[bool, Any]:
         """
