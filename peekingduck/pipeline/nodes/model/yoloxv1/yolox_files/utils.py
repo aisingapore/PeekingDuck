@@ -49,19 +49,17 @@ def fuse_conv_and_bn(conv: nn.Conv2d, batch_norm: nn.BatchNorm2d) -> nn.Conv2d:
     """Fuses convolution and batchnorm layers.
     Reference: https://tehnokv.com/posts/fusing-batchnorm-and-conv/
     """
-    fusedconv = (
-        nn.Conv2d(
-            conv.in_channels,
-            conv.out_channels,
-            kernel_size=conv.kernel_size,
-            stride=conv.stride,
-            padding=conv.padding,
-            groups=conv.groups,
-            bias=True,
-        )
-        .requires_grad_(False)
-        .to(conv.weight.device)
-    )
+    fusedconv = nn.Conv2d(
+        conv.in_channels,
+        conv.out_channels,
+        conv.kernel_size,
+        conv.stride,
+        conv.padding,
+        groups=conv.groups,
+        bias=True,
+        device=conv.weight.device,
+        dtype=conv.weight.dtype,
+    ).requires_grad_(False)
 
     # prepare filters
     w_conv = conv.weight.clone().view(conv.out_channels, -1)
@@ -72,7 +70,9 @@ def fuse_conv_and_bn(conv: nn.Conv2d, batch_norm: nn.BatchNorm2d) -> nn.Conv2d:
 
     # prepare spatial bias
     b_conv = (
-        torch.zeros(conv.weight.size(0), device=conv.weight.device)
+        torch.zeros(
+            conv.weight.size(0), dtype=conv.weight.dtype, device=conv.weight.device
+        )
         if conv.bias is None
         else conv.bias
     )
@@ -95,7 +95,7 @@ def fuse_model(model: YOLOX) -> YOLOX:
     return model
 
 
-def strip_optimizer(weights_path: Path, half: bool = False) -> None:
+def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: no cover
     """Remove non-model items from the weights file.
 
     The inference Detector requires only "model" parameters from the weights

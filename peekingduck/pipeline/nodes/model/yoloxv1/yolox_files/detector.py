@@ -208,7 +208,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         detections = detections[conf_mask]
         # Early return if all are below score_threshold
         if not detections.size(0):
-            return np.empty(0), np.empty(0), np.empty(0)
+            return np.empty((0, 4)), np.empty(0), np.empty(0)
 
         # Class agnostic NMS
         nms_out_index = torchvision.ops.nms(
