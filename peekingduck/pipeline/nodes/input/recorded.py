@@ -60,6 +60,11 @@ class Node(AbstractNode):
             Boolean to enable threading when reading frames from camera.
             The FPS can increase up to 30% if this is enabled.
             Works for Windows, MacOS and Linux.
+
+        buffer_frames (:obj:`bool`): **default = False**
+
+            Boolean to indicate if threaded class should buffer image frames.
+            Works only if threading is True.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -172,7 +177,7 @@ class Node(AbstractNode):
             if self._is_valid_file_type(file_path):
                 if self.threading:
                     self.videocap = VideoThread(  # type: ignore
-                        file_path, self.mirror_image
+                        file_path, self.mirror_image, self.buffer_frames
                     )
                 else:
                     self.videocap = VideoNoThread(  # type: ignore

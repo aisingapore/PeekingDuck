@@ -17,10 +17,9 @@ Reader functions for input nodes
 """
 
 from typing import Any, Tuple, Union
-from threading import Thread, Lock, Event
-import queue
-import time
+from threading import Thread, Event
 import platform
+import queue
 import cv2
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
@@ -30,7 +29,9 @@ class VideoThread:
     Videos will be threaded to improve FPS by reducing I/O blocking latency.
     """
 
-    def __init__(self, input_source: str, mirror_image: bool) -> None:
+    def __init__(
+        self, input_source: str, mirror_image: bool, buffer_frames: bool
+    ) -> None:
         if platform.system().startswith("Windows"):
             if str(input_source).isdigit():
                 # to eliminate opencv's "[WARN] terminating async callback"
@@ -46,14 +47,15 @@ class VideoThread:
                 "Camera or video input not detected: %s" % input_source
             )
 
-        self._lock = Lock()
         self._thread_frame_counter = 0
-        self.queue = queue.Queue()
-        # self.frame = None
+        self.frame = None
         self.done = Event()
+        self.thread_start_flag = Event()
         self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
         self.thread.start()
-        time.sleep(3)  # give time for thread to start
+        self.thread_start_flag.wait()
+        self.queue = queue.Queue()
+        self.buffer = buffer_frames
 
     def __del__(self) -> None:
         print("VideoThread.__del__")
@@ -72,6 +74,8 @@ class VideoThread:
         """
         A thread that continuously polls the camera for frames.
         """
+        self.thread_start_flag.set()  # signal thread really started
+
         while not self.done.is_set():
             if self.stream.isOpened():
                 ret, frame = self.stream.read()
@@ -82,24 +86,33 @@ class VideoThread:
                     )
                     self.done.set()
                 else:
+                    if self.mirror:
+                        frame = mirror(frame)
+                    self.frame = frame
                     self._thread_frame_counter += 1
-                    self.queue.put(frame)
+                    if self.buffer:
+                        self.queue.put(self.frame)
 
     def read_frame(self) -> Union[bool, Any]:
         """
         Reads the frame.
         """
-        if self.queue.empty():
+        if self.buffer:
+            if self.queue.empty():
+                if self.done.is_set():
+                    # end of input
+                    return False, None
+                else:
+                    # input slow, so duplicate frame
+                    return True, self.prev_frame
+            else:
+                self.prev_frame = self.queue.get()
+                return True, self.prev_frame
+        else:
             if self.done.is_set():
                 return False, None
             else:
-                return True, self.prev_frame
-        else:
-            frame = self.queue.get()
-            if self.mirror:
-                frame = mirror(frame)
-            self.prev_frame = frame
-            return True, frame
+                return True, self.frame
 
     @property
     def fps(self) -> float:
