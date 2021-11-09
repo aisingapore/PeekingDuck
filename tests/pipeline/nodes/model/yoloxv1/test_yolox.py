@@ -82,10 +82,11 @@ def yolox_default(yolox_config):
 
 @pytest.fixture(params=["yolox-l", "yolox-m", "yolox-s", "yolox-tiny"])
 def yolox(request, yolox_matrix_config):
-    yolox_matrix_config["model_type"] = request.param
-    node = Node(yolox_matrix_config)
+    with mock.patch("torch.cuda.is_available", return_value=False):
+        yolox_matrix_config["model_type"] = request.param
+        node = Node(yolox_matrix_config)
 
-    return node
+        return node
 
 
 def replace_download_weights(root, blob_file):

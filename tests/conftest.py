@@ -18,10 +18,9 @@ import shutil
 import tempfile
 from pathlib import Path
 
+import cv2
 import numpy as np
 import pytest
-
-import cv2
 import tensorflow.keras.backend as K
 
 TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
