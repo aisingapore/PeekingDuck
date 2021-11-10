@@ -16,15 +16,18 @@
 CLI functions for Peekingduck
 """
 
+import functools
 import logging
 import math
+import re
 from pathlib import Path
-from typing import Tuple
+from typing import Callable, List, Optional, Tuple
 
 import click
 import yaml
 
 from peekingduck import __version__
+from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPE
 from peekingduck.runner import Runner
 from peekingduck.utils.logger import LoggerSetup
 
@@ -147,13 +150,85 @@ def run(config_path: str, node_config: str) -> None:
     runner.run()
 
 
+def verify_input(value: Optional[str], value_proc: Callable) -> Optional[str]:
+    if value is not None:
+        try:
+            value = value_proc(value)
+        except click.exceptions.UsageError as error:
+            click.echo(f"Error: {error.message}", err=True)
+            value = None
+    return value
+
+
+def _ensure_relative_path(node_subdir: str) -> str:
+    if ".." in node_subdir:
+        raise click.exceptions.UsageError("Path cannot contain '..'!")
+    if Path(node_subdir).is_absolute():
+        raise click.exceptions.UsageError("Path cannot be absolute!")
+    # TODO check that path is not peekingduck/pipeline/nodes
+    return node_subdir
+
+
+def _ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
+    if re.match(r"^[a-zA-Z][\w\-]*[^\W_]$", node_name) is None:
+        raise click.exceptions.UsageError("Invalid node name!")
+    if (node_dir / node_type / f"{node_name}.py").exists():
+        raise click.exceptions.UsageError("Node name already exists!")
+    return node_name
+
+
+@cli.command()
+@click.option("--node_subdir", required=False)
+@click.option("--node_type", required=False)
+@click.option("--node_name", required=False)
+def create_node(
+    node_subdir: Optional[str] = None,
+    node_type: Optional[str] = None,
+    node_name: Optional[str] = None,
+) -> None:
+    click.secho("Creating new custom node...")
+    project_dir = Path.cwd()
+    node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPE)
+
+    node_subdir = verify_input(node_subdir, value_proc=_ensure_relative_path)
+    if node_subdir is None:
+        node_subdir = click.prompt(
+            f"Enter node directory relative to {project_dir}",
+            default="src/custom_nodes",
+            value_proc=_ensure_relative_path,
+        )
+    node_dir = project_dir / node_subdir
+
+    node_type = verify_input(
+        node_type, value_proc=click.types.convert_type(node_type_choices)
+    )
+    if node_type is None:
+        node_type = click.prompt("Select node type", type=node_type_choices)
+
+    partial_ensure_valid_name = functools.partial(
+        _ensure_valid_name, node_dir, node_type
+    )
+    if node_name is None:
+        node_name = click.prompt(
+            "Enter node name", value_proc=partial_ensure_valid_name
+        )
+
+    config_path = node_dir / "configs" / node_type / f"{node_name}.yml"
+    script_path = node_dir / node_type / f"{node_name}.py"
+    click.echo(f"\nNode directory:\t{node_dir}")
+    click.echo(f"Node type:\t{node_type}")
+    click.echo(f"Node name:\t{node_name}")
+    click.echo("\nCreating the following files:")
+    click.echo(f"\tConfig file: {config_path}")
+    click.echo(f"\tScript file: {script_path}")
+
+
 @cli.command()
 @click.argument("type_name", required=False)
 def nodes(type_name: str = None) -> None:
-    """
-    Lists available nodes in PeekingDuck. When no argument is given, all
-    available nodes will be listed. When the node type is given as an argument
-    , all available nodes in the specified node type will be listed.
+    """Lists available nodes in PeekingDuck. When no argument is given, all
+    available nodes will be listed. When the node type is given as an argument,
+    all available nodes in the specified node type will be listed.
 
     Args:
         type_name (str): input, model, dabble, draw or output
