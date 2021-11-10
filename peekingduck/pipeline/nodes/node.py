@@ -16,9 +16,9 @@
 Abstract Node class for all nodes
 """
 
-import pathlib
-import logging
 import collections
+import logging
+import pathlib
 from abc import ABCMeta, abstractmethod
 from typing import Any, Dict, List
 
@@ -131,3 +131,19 @@ class AbstractNode(metaclass=ABCMeta):
                         value,
                     )
         return dict_orig
+
+
+class PlaceholderNode(AbstractNode):
+    """Ensures that pipeline checks still pass during import error due to
+    missing optional requirements
+    """
+
+    def __init__(
+        self, config: Dict[str, Any], path_to_node: str, node_name: str, **kwargs: Any
+    ) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+        self._name = path_to_node + node_name
+        self.node_name = node_name
+
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        return {}

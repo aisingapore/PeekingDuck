@@ -16,20 +16,20 @@
 Helper classes to load configs, nodes
 """
 
-import sys
-import os
-import importlib
-import logging
 import ast
 import collections.abc
+import importlib
+import logging
+import os
 import re
+import sys
 from typing import Any, Dict, List
 
 import yaml
 
-from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.configloader import ConfigLoader
+from peekingduck.pipeline.nodes.node import AbstractNode, PlaceholderNode
+from peekingduck.pipeline.pipeline import Pipeline
 
 PEEKINGDUCK_NODE_TYPE = ["input", "model", "draw", "dabble", "output"]
 
@@ -152,8 +152,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config_updates_yml: Dict[str, Any],
     ) -> AbstractNode:
         """Import node to filepath and initialise node with config"""
-
-        node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
         # First, override default configs with values from run_config.yml
@@ -166,8 +164,11 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 config = self._edit_config(
                     config, self.config_updates_cli[node_name], node_name
                 )
-
-        return node.Node(config)  # type: ignore
+        try:
+            node = importlib.import_module(path_to_node + node_name)
+            return node.Node(config)  # type: ignore
+        except ModuleNotFoundError:
+            return PlaceholderNode(config, path_to_node, node_name)
 
     def _edit_config(
         self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
