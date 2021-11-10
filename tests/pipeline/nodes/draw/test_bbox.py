@@ -11,28 +11,30 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 Test for draw bbox node
 """
-import os
+
 from pathlib import Path
-import pytest
-import numpy as np
+
 import cv2
+import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.bbox import Node
 
 
 BLACK_IMAGE = ["black.jpg"]
-PKD_DIR = os.path.join(
-    Path(__file__).parents[3]
-)  # path to reach 4 file levels up from test_bbox.py
+# path to reach 4 file levels up from test_bbox.py
+PKD_DIR = Path(__file__).resolve().parents[3]
 
 
 @pytest.fixture(params=BLACK_IMAGE)
 def black_image(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield test_img_dir / request.param
 
 
 @pytest.fixture
@@ -73,7 +75,7 @@ class TestBbox:
         self, draw_bbox_no_labels, draw_bbox_show_labels, black_image
     ):
         bboxes = [np.array([0, 0, 1, 1])]
-        original_img = cv2.imread(black_image)
+        original_img = cv2.imread(str(black_image))
         output_img_no_label = original_img.copy()
         output_img_show_label = original_img.copy()
         labels = ["Person"]

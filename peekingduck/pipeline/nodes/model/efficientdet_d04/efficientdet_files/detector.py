@@ -16,20 +16,21 @@
 Detector class to handle detection of bboxes for efficientdet
 """
 
-import os
-import logging
 import json
-from typing import Dict, Any, List, Tuple
+import logging
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 import tensorflow as tf
-from peekingduck.utils.graph_functions import load_graph
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (  # pylint:disable=line-too-long
+
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (  # pylint: disable=line-too-long
     preprocess_image,
     postprocess_boxes,
 )
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import (
     efficientdet,
 )
+from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
@@ -45,7 +46,7 @@ class Detector:
 
         self.effdet = self._create_effdet_model()
 
-        classes_path = os.path.join(config["root"], config["classes_file"])
+        classes_path = (config["root"] / config["classes_file"]).resolve()
         self.class_names = {
             value["id"] - 1: value["name"]
             for value in json.load(open(classes_path, "r")).values()
@@ -53,40 +54,42 @@ class Detector:
 
     def _create_effdet_model(self) -> tf.keras.Model:
         self.model_type = self.config["model_type"]
+        graph_path = (
+            self.root_dir / self.config["graph_files"][self.model_type]
+        ).resolve()
         if self.GRAPH_MODE:
-            graph_path = os.path.join(
-                self.root_dir, self.config["graph_files"][self.model_type]
-            )
             model_nodes = self.config["MODEL_NODES"]
             model = load_graph(
-                graph_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+                str(graph_path),
+                inputs=model_nodes["inputs"],
+                outputs=model_nodes["outputs"],
             )
             self.logger.info(
-                "Efficientdet graph model loaded with following configs:"
-                "Model type: D%s, "
-                "Score Threshold: %s, ",
+                (
+                    "Efficientdet graph model loaded with following configs:"
+                    "Model type: D%s, "
+                    "Score Threshold: %s, "
+                ),
                 self.model_type,
                 self.config["score_threshold"],
             )
-            return model
-        # For keras model
-        model = efficientdet(
-            phi=self.model_type,
-            num_classes=self.config["num_classes"],
-            score_threshold=self.config["score_threshold"],
-        )
-        model_path = os.path.join(
-            self.root_dir, self.config["graph_files"][self.model_type]
-        )
-        model_path = model_path.replace(".pb", ".h5")
-        model.load_weights(model_path, by_name=True)
-        self.logger.info(
-            "Efficientdet keras model loaded with following configs:"
-            "Model type: D%s, "
-            "Score Threshold: %s, ",
-            self.model_type,
-            self.config["score_threshold"],
-        )
+        else:
+            # For keras model
+            model = efficientdet(
+                phi=self.model_type,
+                num_classes=self.config["num_classes"],
+                score_threshold=self.config["score_threshold"],
+            )
+            model.load_weights(str(graph_path.with_suffix(".h5")), by_name=True)
+            self.logger.info(
+                (
+                    "Efficientdet keras model loaded with following configs:"
+                    "Model type: D%s, "
+                    "Score Threshold: %s, "
+                ),
+                self.model_type,
+                self.config["score_threshold"],
+            )
         return model
 
     @staticmethod
@@ -179,9 +182,7 @@ class Detector:
                 boxes,
                 scores,
                 labels,
-            ) = self.effdet.predict_on_batch(  # pylint:disable=no-member
-                [np.expand_dims(image, axis=0)]
-            )
+            ) = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
             network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
 
         boxes, labels, scores = self.postprocess(

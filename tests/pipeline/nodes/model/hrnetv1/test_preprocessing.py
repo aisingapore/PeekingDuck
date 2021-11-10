@@ -13,13 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import pytest
+
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    project_bbox,
     box2cs,
     crop_and_resize,
+    project_bbox,
 )
 
 

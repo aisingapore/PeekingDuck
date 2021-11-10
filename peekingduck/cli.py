@@ -16,14 +16,17 @@
 CLI functions for Peekingduck
 """
 
-import os
 import logging
-import yaml
-import click
+import math
+from pathlib import Path
+from typing import Tuple
 
+import click
+import yaml
+
+from peekingduck import __version__
 from peekingduck.runner import Runner
 from peekingduck.utils.logger import LoggerSetup
-from peekingduck import __version__
 
 LoggerSetup()
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -39,19 +42,63 @@ def cli() -> None:
     """
 
 
-def _get_cwd() -> str:
-    return os.getcwd()
+def _get_cwd() -> Path:
+    return Path.cwd()
+
+
+def _get_node_url(node_type: str, node_name: str) -> str:
+    """Constructs the URL to documentation of the specified node
+
+    Args:
+        node_type (`str`): One of input, model, dabble, draw or output
+        node_name (`str`): Name of the node
+
+    Returns:
+        (`str`): Full URL to the documentation of the specified node
+    """
+    node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
+    url_postfix = ".html#"
+
+    return f"{url_prefix}{node_path}{url_postfix}{node_path}"
+
+
+def _len_enumerate(item: Tuple) -> int:
+    """Calculate the string length of an enumerate item while accounting for
+    the number of digits of the index
+
+    Args:
+        item (`Tuple`): An item return by `enumerate`, contains
+            `(index, element)` where `element` is a `str`.
+
+    Returns:
+        (`int`): Sum of length of `element` and the number of digits of its
+            index
+    """
+    return _num_digits(item[0] + 1) + len(item[1])
+
+
+def _num_digits(number: int) -> int:
+    """Return the number of digits of the given number
+
+    Args:
+        number (`int`): The given number. It is assumed `number > 0`.
+
+    Returns:
+        (`int`): Number of digits in the given number
+    """
+    return int(math.log10(number))
 
 
 def create_custom_folder(custom_folder_name: str) -> None:
     """Make custom nodes folder to create custom nodes"""
     curdir = _get_cwd()
-    custom_folder_dir = os.path.join(curdir, "src", custom_folder_name)
-    custom_configs_dir = os.path.join(custom_folder_dir, "configs")
+    custom_folder_dir = curdir / "src" / custom_folder_name
+    custom_configs_dir = custom_folder_dir / "configs"
 
     logger.info("Creating custom nodes folder in %s", custom_folder_dir)
-    os.makedirs(custom_folder_dir, exist_ok=True)
-    os.makedirs(custom_configs_dir, exist_ok=True)
+    custom_folder_dir.mkdir(parents=True, exist_ok=True)
+    custom_configs_dir.mkdir(parents=True, exist_ok=True)
 
 
 def create_yml() -> None:
@@ -91,10 +138,12 @@ def run(config_path: str, node_config: str) -> None:
     """Runs PeekingDuck"""
 
     curdir = _get_cwd()
-    if not config_path:
-        config_path = os.path.join(curdir, "run_config.yml")
+    if config_path is None:
+        run_path = curdir / "run_config.yml"
+    else:
+        run_path = Path(config_path)
 
-    runner = Runner(config_path, node_config, "src")
+    runner = Runner(run_path, node_config, "src")
     runner.run()
 
 
@@ -109,39 +158,28 @@ def nodes(type_name: str = None) -> None:
     Args:
         type_name (str): input, model, dabble, draw or output
     """
-
-    url_prefix = (
-        "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes."
-    )
-    url_postfix = ".Node.html#peekingduck.pipeline.nodes."
+    configs_dir = Path(__file__).resolve().parent / "configs"
 
     if type_name is None:
-        type_of_node = ["input", "model", "dabble", "draw", "output"]
+        node_types = ["input", "model", "dabble", "draw", "output"]
     else:
-        type_of_node = [type_name]
+        node_types = [type_name]
 
-    dir_path = os.path.dirname(os.path.realpath(__file__))
-    configs_dir = os.path.join(dir_path, "configs")
-
-    for node_type in type_of_node:
-        type_dir = os.path.join(configs_dir, node_type)
-        files_name = os.listdir(type_dir)
-
+    for node_type in node_types:
         click.secho("\nPeekingDuck has the following ", bold=True, nl=False)
         click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
         click.secho("nodes:", bold=True)
 
-        node_names = [file_name.split(".")[0] for file_name in files_name]
-        max_length = len(max(node_names, key=len))
+        node_names = [path.stem for path in (configs_dir / node_type).glob("*.yml")]
+        max_length = _len_enumerate(max(enumerate(node_names), key=_len_enumerate))
         for num, node_name in enumerate(node_names):
-            url = (
-                f" {url_prefix}{node_type}.{node_name}{url_postfix}"
-                f"{node_type}.{node_name}.Node"
-            )
+            idx = num + 1
+            url = _get_node_url(node_type, node_name)
+            node_name_width = max_length + 1 - _num_digits(idx)
 
-            click.secho(f"{num + 1}:", nl=False)
-            click.secho(f"{node_name: <{max_length + 1}}", bold=True, nl=False)
-            click.secho("Info:", fg="yellow", nl=False)
+            click.secho(f"{idx}:", nl=False)
+            click.secho(f"{node_name: <{node_name_width}}", bold=True, nl=False)
+            click.secho("Info: ", fg="yellow", nl=False)
             click.secho(url)
 
     click.secho("\n")

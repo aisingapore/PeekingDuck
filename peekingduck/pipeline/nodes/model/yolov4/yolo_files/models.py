@@ -37,6 +37,7 @@ Core Yolo model files
 """
 
 from typing import Union, List, Tuple
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -52,7 +53,10 @@ from tensorflow.keras.layers import (
     ZeroPadding2D,
 )
 from tensorflow.keras.regularizers import l2
-from .batch_norm import BatchNormalization
+
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.batch_norm import (
+    BatchNormalization,
+)
 
 # pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
 

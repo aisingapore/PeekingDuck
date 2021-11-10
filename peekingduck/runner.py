@@ -17,12 +17,14 @@ Main engine for Peekingduck processes
 """
 
 import copy
-import sys
 import logging
+import sys
+from pathlib import Path
 from typing import List
-from peekingduck.pipeline.pipeline import Pipeline
+
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.pipeline import Pipeline
 
 
 class Runner:
@@ -54,12 +56,11 @@ class Runner:
 
     def __init__(
         self,
-        RUN_PATH: str = "",
+        RUN_PATH: Path = None,
         config_updates_cli: str = None,
         CUSTOM_NODE_PARENT_FOLDER: str = None,
         nodes: List[AbstractNode] = None,
     ):
-
         self.logger = logging.getLogger(__name__)
 
         if not nodes and RUN_PATH:
@@ -67,9 +68,7 @@ class Runner:
             self.node_loader = DeclarativeLoader(
                 RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER  # type: ignore
             )
-
             self.pipeline = self.node_loader.get_pipeline()
-
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:

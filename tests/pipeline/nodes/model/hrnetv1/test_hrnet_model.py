@@ -14,30 +14,37 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
 import yaml
-from unittest.mock import patch, call
+from pathlib import Path
+from unittest import mock
 
 import pytest
+
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model import HRNetModel
 
 
 def hrnet_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "hrnetv1"
+        / "test_hrnet.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
+
     return node_config
 
 
 @pytest.mark.mlmodel
 class TestHrnetModel:
-    @patch("peekingduck.weights_utils.checker.has_weights")
-    @patch("builtins.print")
+    @mock.patch("peekingduck.weights_utils.checker.has_weights")
+    @mock.patch("builtins.print")
     def test_no_weight(self, mock_print, mock_has_weights):
-
         mock_has_weights.return_value = False
 
         msg_1 = "---no hrnet weights detected. proceeding to download...---"
@@ -46,4 +53,4 @@ class TestHrnetModel:
         config = hrnet_config()
         HRNetModel(config)
 
-        assert mock_print.mock_calls == [call(msg_1), call(msg_2)]
+        assert mock_print.mock_calls == [mock.call(msg_1), mock.call(msg_2)]

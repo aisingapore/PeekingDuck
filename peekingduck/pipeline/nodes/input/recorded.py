@@ -16,11 +16,12 @@
 Reads video/images from a directory
 """
 
-import os
+from pathlib import Path
 from typing import Any, Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 # pylint: disable=R0902
@@ -60,7 +61,7 @@ class Node(AbstractNode):
         self.file_end = False
         self.frame_counter = -1
         self.tens_counter = 10
-        self._get_files(self.input_dir)
+        self._get_files(Path(self.input_dir))
         self._get_next_input()
 
         width, height = self.videocap.resolution
@@ -120,17 +121,14 @@ class Node(AbstractNode):
 
         return outputs
 
-    def _get_files(self, path: str) -> None:
+    def _get_files(self, path: Path) -> None:
         self._filepaths = [path]
 
-        if os.path.isdir(path):
-            self._filepaths = os.listdir(path)
-            self._filepaths = [
-                os.path.join(path, filepath) for filepath in self._filepaths
-            ]
+        if path.is_dir():
+            self._filepaths = list(path.iterdir())
             self._filepaths.sort()
 
-        if not os.path.exists(path):
+        if not path.exists():
             raise FileNotFoundError("Filepath does not exist")
         if not self._filepaths:
             raise FileNotFoundError("No Media files available")
@@ -139,7 +137,7 @@ class Node(AbstractNode):
 
         if self._filepaths:
             file_path = self._filepaths.pop(0)
-            self._file_name = os.path.basename(file_path)
+            self._file_name = file_path.name
 
             if self._is_valid_file_type(file_path):
                 self.videocap = VideoNoThread(file_path, self.mirror_image)
@@ -152,8 +150,7 @@ class Node(AbstractNode):
                 )
                 self._get_next_input()
 
-    def _is_valid_file_type(self, filepath: str) -> bool:
-
-        if filepath.split(".")[-1] in self._allowed_extensions:
+    def _is_valid_file_type(self, filepath: Path) -> bool:
+        if filepath.suffix[1:] in self._allowed_extensions:
             return True
         return False
