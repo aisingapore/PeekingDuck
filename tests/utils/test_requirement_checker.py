@@ -1,12 +1,14 @@
 import subprocess
 from pathlib import Path
-from unittest import mock, TestCase
+from unittest import TestCase, mock
 
 import pytest
 
 from peekingduck.utils.requirement_checker import check_requirements
 
-INSTALL_FAQ_LINK = "<install faq link>"
+INSTALL_FAQ_LINK = (
+    "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html"
+)
 PKG_REQ_TYPE_PYTHON = "PYTHON"
 PKG_REQ_TYPE_SYSTEM = "SYSTEM"
 NODE_WITH_UPDATE = "node_type.node_name0"
