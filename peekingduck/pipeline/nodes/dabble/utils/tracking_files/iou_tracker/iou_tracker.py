@@ -41,7 +41,7 @@ from .tracker import Tracker
 from .misc import iou_xywh as iou
 
 
-class IOUTracker(Tracker):
+class IOUTracker(Tracker):  # pylint: disable=too-few-public-methods
     """
     Intersection over Union Tracker.
 
@@ -66,6 +66,7 @@ class IOUTracker(Tracker):
         min_detection_confidence: float = 0.4,
         max_detection_confidence: float = 0.7,
     ) -> None:
+        # pylint: disable=super-with-arguments
         super(IOUTracker, self).__init__(
             max_lost=max_lost, tracker_output_format="mot_challenge"
         )
@@ -82,6 +83,7 @@ class IOUTracker(Tracker):
         track_ids = list(self.tracks.keys())
 
         updated_tracks = []
+        # pylint: disable=cell-var-from-loop
         for track_id in track_ids:
             if len(detections) > 0:
                 idx, best_match = max(

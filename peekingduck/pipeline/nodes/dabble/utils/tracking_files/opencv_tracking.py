@@ -23,7 +23,7 @@ from .iou_tracker.utils import format_boxes
 from .iou_tracker.utils import iou
 
 
-class OpenCVTracker:
+class OpenCVTracker:  # pylint: disable=too-few-public-methods
     """Native OpenCV tracker that is initialized on bounding boxes detected
     in first frame of video feed.
 

@@ -71,7 +71,7 @@ def get_centroid(bboxes: np.ndarray) -> np.ndarray:
     return cent
 
 
-def iou(bbox1: np.ndarray, bbox2: np.ndarray) -> float:
+def iou(bbox1: np.ndarray, bbox2: np.ndarray) -> float:  # pylint: disable=too-many-locals
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py

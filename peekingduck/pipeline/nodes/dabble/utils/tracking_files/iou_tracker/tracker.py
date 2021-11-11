@@ -104,7 +104,7 @@ class Tracker:
 
         del self.tracks[track_id]
 
-
+    # pylint: disable=too-many-arguments
     def _update_track(
         self,
         track_id: int,
@@ -188,6 +188,7 @@ class Tracker:
         new_detections = list(zip(new_bboxes, new_class_ids, new_detection_scores))
         return new_detections
 
+    # pylint: disable=too-many-locals
     def update(
         self,
         bboxes: Union[List, np.ndarray],
