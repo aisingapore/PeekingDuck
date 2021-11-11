@@ -33,7 +33,7 @@
 # SOFTWARE.
 
 """
-Helper functions for IOU Tracker
+Helper functions for IOU Tracker.
 """
 
 from typing import List, Union
@@ -61,8 +61,8 @@ def get_centroid(bboxes: np.ndarray) -> np.ndarray:
     ymin = bboxes[:, 1]
     width, height = bboxes[:, 2], bboxes[:, 3]
 
-    x_cent = xmin + 0.5*width
-    y_cent = ymin + 0.5*height
+    x_cent = xmin + 0.5 * width
+    y_cent = ymin + 0.5 * height
 
     cent = np.hstack([x_cent[:, None], y_cent[:, None]])
 
@@ -70,7 +70,7 @@ def get_centroid(bboxes: np.ndarray) -> np.ndarray:
         cent = cent.flatten()
     return cent
 
-# pylint: disable=too-many-locals
+
 def iou(bbox1: np.ndarray, bbox2: np.ndarray) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
@@ -112,8 +112,9 @@ def iou(bbox1: np.ndarray, bbox2: np.ndarray) -> float:
     return iou_
 
 
-def iou_xywh(bbox1: Union[np.ndarray, List[float]],
-             bbox2: Union[np.ndarray, List[float]]) -> float:
+def iou_xywh(
+    bbox1: Union[np.ndarray, List[float]], bbox2: Union[np.ndarray, List[float]]
+) -> float:
     """
     Calculates the intersection-over-union of two bounding boxes.
     Source: https://github.com/bochinski/iou-tracker/blob/master/util.py
@@ -127,8 +128,8 @@ def iou_xywh(bbox1: Union[np.ndarray, List[float]],
     Returns:
         float: intersection-over-onion of bbox1, bbox2.
     """
-    bbox1 = bbox1[0], bbox1[1], bbox1[0]+bbox1[2], bbox1[1]+bbox1[3]
-    bbox2 = bbox2[0], bbox2[1], bbox2[0]+bbox2[2], bbox2[1]+bbox2[3]
+    bbox1 = bbox1[0], bbox1[1], bbox1[0] + bbox1[2], bbox1[1] + bbox1[3]
+    bbox2 = bbox2[0], bbox2[1], bbox2[0] + bbox2[2], bbox2[1] + bbox2[3]
 
     iou_ = iou(bbox1, bbox2)
 

@@ -24,17 +24,19 @@ from peekingduck.pipeline.nodes.dabble.tracking import Node
 def size():
     return (400, 600, 3)
 
+
 @pytest.fixture
 def track_config():
     node_config = dict()
-    node_config['root'] = os.getcwd()
+    node_config["root"] = os.getcwd()
     node_config["input"] = ["img", "bboxes", "bbox_scores", "bbox_labels"]
     node_config["output"] = ["obj_tags"]
     return node_config
 
-@pytest.fixture(params=['iou', 'mosse'])
+
+@pytest.fixture(params=["iou", "mosse"])
 def tracker(request, track_config):
-    track_config['tracking_type'] = request.param
+    track_config["tracking_type"] = request.param
     node = Node(track_config)
     return node
 
@@ -45,8 +47,12 @@ class TestTracking:
         array1 = []
         array2 = []
         array3 = []
-        input1 = {"img": img1, "bboxes": array1,
-                  "bbox_scores": array2, "bbox_labels": array3}
+        input1 = {
+            "img": img1,
+            "bboxes": array1,
+            "bbox_scores": array2,
+            "bbox_labels": array3,
+        }
 
         assert tracker.run(input1)["obj_tags"] == []
         np.testing.assert_equal(input1["img"], img1)
@@ -54,12 +60,15 @@ class TestTracking:
 
     def test_multi_tags(self, create_image, size, tracker):
         img1 = create_image(size)
-        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
-                  np.array([0.5, 0.6, 0.7, 0.8])]
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]), np.array([0.5, 0.6, 0.7, 0.8])]
         array2 = [0.9, 0.6]
         array3 = ["label1", "label2"]
-        input1 = {"img": img1, "bboxes": array1,
-                  "bbox_scores": array2, "bbox_labels": array3}
+        input1 = {
+            "img": img1,
+            "bboxes": array1,
+            "bbox_scores": array2,
+            "bbox_labels": array3,
+        }
 
         assert len(tracker.run(input1)["obj_tags"]) == 2
         assert len(tracker.run(input1)["obj_tags"]) == len(array1)
