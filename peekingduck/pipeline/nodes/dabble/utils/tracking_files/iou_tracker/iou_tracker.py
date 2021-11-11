@@ -33,7 +33,7 @@
 # SOFTWARE.
 
 """
-Core IOU Tracker
+IOU Tracker.
 """
 
 from typing import Any, List
@@ -60,23 +60,23 @@ class IOUTracker(Tracker):
     """
 
     def __init__(
-            self,
-            max_lost: int = 2,
-            iou_threshold: float = 0.5,
-            min_detection_confidence: float = 0.4,
-            max_detection_confidence: float = 0.7
+        self,
+        max_lost: int = 2,
+        iou_threshold: float = 0.5,
+        min_detection_confidence: float = 0.4,
+        max_detection_confidence: float = 0.7,
     ) -> None:
+        super(IOUTracker, self).__init__(
+            max_lost=max_lost, tracker_output_format="mot_challenge"
+        )
         self.iou_threshold = iou_threshold
         self.max_detection_confidence = max_detection_confidence
         self.min_detection_confidence = min_detection_confidence
-        # pylint: disable=super-with-arguments
-        super(IOUTracker, self).__init__(max_lost=max_lost,
-            tracker_output_format='mot_challenge')
 
-    def update(self,
-               bboxes: List,
-               detection_scores: List[float],
-               class_ids: List[int]) -> List[Any]:
+
+    def update(
+        self, bboxes: List, detection_scores: List[float], class_ids: List[int]
+    ) -> List[Any]:
         detections = Tracker.preprocess_input(bboxes, class_ids, detection_scores)
         self.frame_count += 1
         track_ids = list(self.tracks.keys())
@@ -84,14 +84,21 @@ class IOUTracker(Tracker):
         updated_tracks = []
         for track_id in track_ids:
             if len(detections) > 0:
-                # pylint: disable=cell-var-from-loop
-                idx, best_match = max(enumerate(detections), key=lambda x: \
-                                      iou(self.tracks[track_id].bbox, x[1][0]))
+                idx, best_match = max(
+                    enumerate(detections),
+                    key=lambda x: iou(self.tracks[track_id].bbox, x[1][0]),
+                )
                 (box, cid, scr) = best_match
 
                 if iou(self.tracks[track_id].bbox, box) > self.iou_threshold:
-                    self._update_track(track_id, self.frame_count, box, scr, class_id=cid,
-                                       iou_score=iou(self.tracks[track_id].bbox, box))
+                    self._update_track(
+                        track_id,
+                        self.frame_count,
+                        box,
+                        scr,
+                        class_id=cid,
+                        iou_score=iou(self.tracks[track_id].bbox, box),
+                    )
                     updated_tracks.append(track_id)
                     del detections[idx]
 
