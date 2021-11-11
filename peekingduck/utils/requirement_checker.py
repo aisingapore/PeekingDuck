@@ -12,24 +12,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Python package requirements checker.
-"""
+"""Python package requirements checker."""
 
 import collections
+import importlib
 import logging
 import subprocess
 from pathlib import Path
-from typing import Iterator, TextIO, Tuple, Union
+from typing import Any, Iterator, TextIO, Tuple, Union
 
 import pkg_resources as pkg
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
+PKD_NODE_PREFIX = "peekingduck.pipeline.nodes."
 PKD_REQ_TYPE_LEN = 6  # string length of either PYTHON or SYSTEM
 PKD_REQ_TYPE_PYTHON = "PYTHON"  # type specifier for Python packages
 ROOT = Path(__file__).resolve().parents[1]
 
 OptionalRequirement = collections.namedtuple("OptionalRequirement", "name type")
+
+
+class RequirementChecker(importlib.abc.MetaPathFinder):
+    """Checks for optional requirements from imports.
+
+    While inheriting from MetaPathFinder is not strictly necessary, it serves
+    as a reference for the required interface.
+    """
+
+    n_update = 0
+
+    @staticmethod
+    def find_spec(fullname: str, *_: Any) -> None:
+        """Checks if the peekingduck.pipeline.nodes module being imported
+        contains optional requirements. Attempt to install if it does.
+
+        Args:
+            fullname (:obj:`str`): Name of the module being imported.
+        """
+        if fullname.startswith(PKD_NODE_PREFIX):
+            RequirementChecker.n_update += check_requirements(
+                fullname[len(PKD_NODE_PREFIX) :]
+            )
 
 
 def check_requirements(
@@ -57,7 +80,7 @@ def check_requirements(
                 pkg.require(req.name)
             except (pkg.DistributionNotFound, pkg.VersionConflict):
                 logger.info(
-                    "%s not found and is required, attempting " "auto-update...",
+                    "%s not found and is required, attempting auto-update...",
                     req.name,
                 )
                 try:
