@@ -33,15 +33,16 @@
 # SOFTWARE.
 
 """
-Track class
+Track class.
 """
 
 from typing import Any, Tuple, Union
 import numpy as np
 
-class Track:  # pylint: disable=too-many-instance-attributes
+
+class Track:
     """
-    Track containing attributes to track various objects.
+    Class containing attributes to track various objects.
 
     Args:
         frame_id (int): Camera frame id.
@@ -60,45 +61,53 @@ class Track:  # pylint: disable=too-many-instance-attributes
 
     count = 0
 
-    metadata = dict(
-        data_output_formats=['mot_challenge']
-    )
-    # pylint: disable=too-many-arguments
+    metadata = dict(data_output_formats=["mot_challenge"])
+
     def __init__(
-            self,
-            track_id: int,
-            frame_id: int,
-            bbox: np.ndarray,
-            detection_confidence: float,
-            class_id: Union[str, int] = None,
-            lost: int = 0,
-            iou_score: float = 0.,
-            data_output_format: str = 'mot_challenge',
-            **kwargs: Any) -> None:
-        assert data_output_format in Track.metadata['data_output_formats']
+        self,
+        track_id: int,
+        frame_id: int,
+        bbox: np.ndarray,
+        detection_confidence: float,
+        class_id: Union[str, int] = None,
+        lost: int = 0,
+        iou_score: float = 0.0,
+        data_output_format: str = "mot_challenge",
+        **kwargs: Any
+    ) -> None:
+        assert data_output_format in Track.metadata["data_output_formats"]
         Track.count += 1
         self.id_num = track_id
 
-        self.detection_confidence_max = 0.
+        self.detection_confidence_max = 0.0
         self.lost = 0
         self.age = 0
 
-        self.update(frame_id, bbox, detection_confidence, class_id=class_id,
-                    lost=lost, iou_score=iou_score, **kwargs)
+        self.update(
+            frame_id,
+            bbox,
+            detection_confidence,
+            class_id=class_id,
+            lost=lost,
+            iou_score=iou_score,
+            **kwargs
+        )
 
-        if data_output_format == 'mot_challenge':
+        if data_output_format == "mot_challenge":
             self.output = self.get_mot_challenge_format
         else:
             raise NotImplementedError
 
-    # pylint: disable=too-many-arguments
-    def update(self,
-               frame_id: int,
-               bbox: np.ndarray,
-               detection_confidence: float,
-               class_id: Union[str, int] = None,
-               lost: int = 0,
-               iou_score: float = 0., **kwargs: Any) -> None:
+    def update(
+        self,
+        frame_id: int,
+        bbox: np.ndarray,
+        detection_confidence: float,
+        class_id: Union[str, int] = None,
+        lost: int = 0,
+        iou_score: float = 0.0,
+        **kwargs: Any
+    ) -> None:
         """
         Update the track.
 
@@ -127,8 +136,9 @@ class Track:  # pylint: disable=too-many-instance-attributes
         for key, val in kwargs.items():
             setattr(self, key, val)
 
-        self.detection_confidence_max = max(self.detection_confidence_max,
-                                            detection_confidence)
+        self.detection_confidence_max = max(
+            self.detection_confidence_max, detection_confidence
+        )
 
         self.age += 1
 
@@ -141,10 +151,13 @@ class Track:  # pylint: disable=too-many-instance-attributes
             numpy.ndarray: Centroid (x, y) of bounding box.
 
         """
-        return np.array((self.bbox[0]+0.5*self.bbox[2], self.bbox[1]+0.5*self.bbox[3]))
+        return np.array(
+            (self.bbox[0] + 0.5 * self.bbox[2], self.bbox[1] + 0.5 * self.bbox[3])
+        )
 
-    def get_mot_challenge_format(self) -> \
-                Tuple[int, int, Any, Any, Any, Any, float, int, int, int]:
+    def get_mot_challenge_format(
+        self,
+    ) -> Tuple[int, int, Any, Any, Any, Any, float, int, int, int]:
         """
         Get the tracker data in MOT challenge format as a tuple of elements containing
         `(frame, id, bb_left, bb_top, bb_width, bb_height, conf, x, y, z)`
@@ -158,19 +171,20 @@ class Track:  # pylint: disable=too-many-instance-attributes
 
         """
         mot_tuple = (
-            self.frame_id, self.id_num, self.bbox[0], self.bbox[1], self.bbox[2],
-            self.bbox[3], self.detection_confidence, -1, -1, -1
+            self.frame_id,
+            self.id_num,
+            self.bbox[0],
+            self.bbox[1],
+            self.bbox[2],
+            self.bbox[3],
+            self.detection_confidence,
+            -1,
+            -1,
+            -1,
         )
         return mot_tuple
-
-    # pylint: disable=no-self-use
-    def predict(self) -> None:
-        """Implement to prediction the next estimate of track."""
-        # pylint: disable=notimplemented-raised
-        # pylint: disable=raising-bad-type
-        raise NotImplemented
 
     @staticmethod
     def print_all_track_output_formats() -> None:
         """Prints all metadata of track output."""
-        print(Track.metadata['data_output_formats'])
+        print(Track.metadata["data_output_formats"])
