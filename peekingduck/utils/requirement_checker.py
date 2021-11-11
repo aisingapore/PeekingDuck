@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Python package requirements checker
+Python package requirements checker.
 """
 
 import collections
@@ -35,20 +35,20 @@ OptionalRequirement = collections.namedtuple("OptionalRequirement", "name type")
 def check_requirements(
     identifier: str, requirements_path: Path = ROOT / "optional_requirements.txt"
 ) -> int:
-    """Checks if the packages specified by the `identifier` in the requirements
-    file at `requirements_path` are present on the system. If `install` is True,
-    attempts to install the packages
+    """Checks if the packages specified by the ``identifier`` in the
+    requirements file at ``requirements_path`` are present on the system. If
+    ``install`` is ``True``, attempts to install the packages.
 
     Args:
-        identifier (str): A unique identifier, typically a pipeline node name,
-            used to specify which packages to check for
+        identifier (:obj:`str`): A unique identifier, typically a pipeline node
+            name, used to specify which packages to check for.
         requirements_path (Path): Path to the requirements file
 
     Returns:
-        (int): The number of packages updated
+        (:obj:`int`): The number of packages updated.
     """
     with open(requirements_path) as infile:
-        requirements = list(parse_requirements(infile, identifier))
+        requirements = list(_parse_requirements(infile, identifier))
 
     n_update = 0
     for req in requirements:
@@ -91,26 +91,27 @@ def check_requirements(
     return n_update
 
 
-def parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequirement]:
-    """Yield `OptionalRequirement` objects for each specification in `strings`
+def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequirement]:
+    """Yield ``OptionalRequirement`` objects for each specification in
+    ``strings``.
 
-    `strings` must be a string, or a (possibly-nested) iterable thereof.
+    ``strings`` must be a string, or a (possibly-nested) iterable thereof.
 
     Arg:
-        file (TextIO): The file object containing optional requirements
+        file (TextIO): The file object containing optional requirements.
         identifier (str): A unique identifier, typically a pipeline node name,
-            used to specify which packages to check for
+            used to specify which packages to check for.
 
     Returns:
         (Iterator[OptionalRequirements]): Optional requirements, both Python
-            and system packages, speficified under the unique identifier
+            and system packages, speficified under the unique identifier.
     """
-    lines = iter(yield_lines(file, identifier))
+    lines = iter(_yield_lines(file, identifier))
     for line in lines:
         # Drop comments -- a hash without a space may be in a URL.
         if " #" in line:
             line = line[: line.find(" #")]
-        req_type, req_name = split_type_and_name(line)
+        req_type, req_name = _split_type_and_name(line)
         if req_type == PKD_REQ_TYPE_PYTHON:
             req = pkg.Requirement(req_name)  # type: ignore
             requirement = OptionalRequirement(f"{req.name}{req.specifier}", req_type)
@@ -119,17 +120,17 @@ def parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequir
         yield requirement
 
 
-def yield_lines(strings: Union[TextIO, str], identifier: str) -> Iterator[str]:
-    """Yield lines with `identifier` as the prefix
+def _yield_lines(strings: Union[TextIO, str], identifier: str) -> Iterator[str]:
+    """Yield lines with ``identifier`` as the prefix.
 
     Args:
         strings (Union[TextIO, str]): Either a file object or a line from the
-            file
+            file.
         identifier (str): A unique identifier, typically a pipeline node name,
-            used to specify which packages to check for
+            used to specify which packages to check for.
 
     Returns:
-        (Iterator[str]): Lines with `identifier` as the prefix
+        (Iterator[str]): Lines with ``identifier`` as the prefix.
     """
     prefix = f"{identifier} "
     if isinstance(strings, str):
@@ -140,10 +141,12 @@ def yield_lines(strings: Union[TextIO, str], identifier: str) -> Iterator[str]:
                 yield string[len(prefix) :]
     else:
         for string_item in strings:
-            for string in yield_lines(string_item, identifier):
+            for string in _yield_lines(string_item, identifier):
                 yield string
 
 
-def split_type_and_name(string: str) -> Tuple[str, str]:
-    """Split an optional requirement line into the requirement type and name"""
+def _split_type_and_name(string: str) -> Tuple[str, str]:
+    """Split an optional requirement line into the requirement type and
+    name.
+    """
     return string[:PKD_REQ_TYPE_LEN], string[PKD_REQ_TYPE_LEN:]

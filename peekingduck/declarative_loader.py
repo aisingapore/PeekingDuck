@@ -23,7 +23,8 @@ import logging
 import os
 import re
 import sys
-from typing import Any, Dict, List
+from types import ModuleType
+from typing import Any, Dict, List, Optional
 
 import yaml
 
@@ -151,7 +152,19 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config_loader: ConfigLoader,
         config_updates_yml: Dict[str, Any],
     ) -> AbstractNode:
-        """Import node to filepath and initialise node with config"""
+        """Imports node to filepath and initialise node with config.
+
+        During import failures due to ModuleNotFoundError, a PlaceholderNode
+        is created when it's due to a dependency issue, else the error is
+        re-raised.
+        """
+        node: Optional[ModuleType]
+        try:
+            node = importlib.import_module(path_to_node + node_name)
+        except ModuleNotFoundError as error:
+            if (path_to_node + node_name) == error.name:
+                raise
+            node = None
         config = config_loader.get(node_name)
 
         # First, override default configs with values from run_config.yml
@@ -164,11 +177,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 config = self._edit_config(
                     config, self.config_updates_cli[node_name], node_name
                 )
-        try:
-            node = importlib.import_module(path_to_node + node_name)
-            return node.Node(config)  # type: ignore
-        except ModuleNotFoundError:
+        if node is None:
             return PlaceholderNode(config, path_to_node, node_name)
+        return node.Node(config)
 
     def _edit_config(
         self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
