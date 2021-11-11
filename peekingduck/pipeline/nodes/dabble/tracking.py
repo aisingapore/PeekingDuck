@@ -52,5 +52,5 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Run object tracking"""
-        obj_tags = self.tracker.run(inputs)
+        obj_tags = self.tracker.predict(inputs)
         return {"obj_tags": obj_tags}
