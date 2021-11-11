@@ -20,6 +20,9 @@ __version__ = "developer"
 
 import sys
 
+from peekingduck.utils.logger import LoggerSetup
 from peekingduck.utils.requirement_checker import RequirementChecker
+
+LoggerSetup()
 
 sys.meta_path.insert(0, RequirementChecker())
