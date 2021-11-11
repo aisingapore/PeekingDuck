@@ -42,6 +42,7 @@ class LoadTracker:
 
     @staticmethod
     def get_tracker(tracking_type: str) -> Any:
+        """Returns tracker from tracking_type config parameter"""
         trackers_dict = {"iou": IOUTracking(), "mosse": OpenCVTracker()}
         tracker = trackers_dict[tracking_type]
         return tracker
