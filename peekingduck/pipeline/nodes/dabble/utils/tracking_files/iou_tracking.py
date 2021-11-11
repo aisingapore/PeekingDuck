@@ -22,7 +22,7 @@ from .iou_tracker.iou_tracker import IOUTracker
 from .iou_tracker.utils import format_boxes
 
 
-class IOUTracking:
+class IOUTracking:  # pylint: disable=too-few-public-methods
     """Simple tracking class based on Intersection Over Union of bounding
     boxes.
 

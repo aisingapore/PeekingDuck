@@ -40,7 +40,7 @@ from typing import Any, Tuple, Union
 import numpy as np
 
 
-class Track:
+class Track:  # pylint: disable=too-many-instance-attributes
     """
     Class containing attributes to track various objects.
 
@@ -62,7 +62,7 @@ class Track:
     count = 0
 
     metadata = dict(data_output_formats=["mot_challenge"])
-
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         track_id: int,
@@ -98,6 +98,7 @@ class Track:
         else:
             raise NotImplementedError
 
+    # pylint: disable=too-many-arguments
     def update(
         self,
         frame_id: int,
