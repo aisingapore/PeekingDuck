@@ -33,7 +33,7 @@
 # SOFTWARE.
 
 """
-Create Tracker
+Create Tracker.
 """
 
 from typing import Any, Dict, List, Tuple, Union
@@ -54,20 +54,23 @@ class Tracker:
         tracker_output_format (str): Output format of the tracker.
     """
 
-    def __init__(self,
-                 max_lost:int = 5,
-                 tracker_output_format: str = 'mot_challenge') -> None:
+    def __init__(
+        self, max_lost: int = 5, tracker_output_format: str = "mot_challenge"
+    ) -> None:
         self.next_track_id = 0
         self.tracks: Dict = OrderedDict()
         self.max_lost = max_lost
         self.frame_count = 0
         self.tracker_output_format = tracker_output_format
 
-    def _add_track(self,
-                   frame_id: int,
-                   bbox: np.ndarray,
-                   detection_confidence: float,
-                   class_id: Union[str, int], **kwargs: Any) -> None:
+    def _add_track(
+        self,
+        frame_id: int,
+        bbox: np.ndarray,
+        detection_confidence: float,
+        class_id: Union[str, int],
+        **kwargs: Any
+    ) -> None:
         """
         Add a newly detected object to the queue.
 
@@ -81,8 +84,12 @@ class Tracker:
         """
 
         self.tracks[self.next_track_id] = Track(
-            self.next_track_id, frame_id, bbox, detection_confidence,
-            class_id=class_id, data_output_format=self.tracker_output_format,
+            self.next_track_id,
+            frame_id,
+            bbox,
+            detection_confidence,
+            class_id=class_id,
+            data_output_format=self.tracker_output_format,
             **kwargs
         )
         self.next_track_id += 1
@@ -97,15 +104,18 @@ class Tracker:
 
         del self.tracks[track_id]
 
-    # pylint: disable=too-many-arguments
-    def _update_track(self,
-                      track_id: int,
-                      frame_id: int,
-                      bbox: np.ndarray,
-                      detection_confidence: float,
-                      class_id: int,
-                      lost: int = 0,
-                      iou_score: float = 0., **kwargs: Any) -> None:
+
+    def _update_track(
+        self,
+        track_id: int,
+        frame_id: int,
+        bbox: np.ndarray,
+        detection_confidence: float,
+        class_id: int,
+        lost: int = 0,
+        iou_score: float = 0.0,
+        **kwargs: Any
+    ) -> None:
         """
         Update track state.
 
@@ -122,8 +132,13 @@ class Tracker:
         """
 
         self.tracks[track_id].update(
-            frame_id, bbox, detection_confidence, class_id=class_id, lost=lost,
-            iou_score=iou_score, **kwargs
+            frame_id,
+            bbox,
+            detection_confidence,
+            class_id=class_id,
+            lost=lost,
+            iou_score=iou_score,
+            **kwargs
         )
 
     @staticmethod
@@ -146,10 +161,11 @@ class Tracker:
         return outputs
 
     @staticmethod
-    def preprocess_input(bboxes: Union[List, np.ndarray],
-                         class_ids: Union[List, np.ndarray],
-                         detection_scores: Union[List, np.ndarray]) -> \
-                        List[Tuple[np.ndarray, np.ndarray, np.ndarray]]:
+    def preprocess_input(
+        bboxes: Union[List, np.ndarray],
+        class_ids: Union[List, np.ndarray],
+        detection_scores: Union[List, np.ndarray],
+    ) -> List[Tuple[np.ndarray, np.ndarray, np.ndarray]]:
         """
         Preprocess the input data.
 
@@ -165,19 +181,19 @@ class Tracker:
                 containing `(bbox, class_id, detection_score)`.
         """
 
-        new_bboxes = np.array(bboxes, dtype='int')
-        new_class_ids = np.array(class_ids, dtype='int')
+        new_bboxes = np.array(bboxes, dtype="int")
+        new_class_ids = np.array(class_ids, dtype="int")
         new_detection_scores = np.array(detection_scores)
 
         new_detections = list(zip(new_bboxes, new_class_ids, new_detection_scores))
         return new_detections
 
-    # pylint: disable=too-many-locals
-    def update(self,
-               bboxes: Union[List, np.ndarray],
-               detection_scores: Union[List, np.ndarray],
-               class_ids: Union[List, np.ndarray]) -> \
-               List[Tuple[int, int, Any, Any, Any, Any, float, int, int, int]]:
+    def update(
+        self,
+        bboxes: Union[List, np.ndarray],
+        detection_scores: Union[List, np.ndarray],
+        class_ids: Union[List, np.ndarray],
+    ) -> List[Tuple[int, int, Any, Any, Any, Any, float, int, int, int]]:
         """
         Update the tracker based on the new bounding boxes.
 
@@ -216,8 +232,7 @@ class Tracker:
 
         updated_tracks, updated_detections = [], []
 
-        # pylint: disable=len-as-condition
-        if len(track_ids):
+        if track_ids:
             track_centroids = np.array([self.tracks[tid].centroid for tid in track_ids])
             detection_centroids = get_centroid(bboxes)
 
@@ -229,16 +244,17 @@ class Tracker:
                 track_id = track_ids[idx]
 
                 remaining_detections = [
-                    (i, d) for (i, d) in enumerate(centroid_distances[idx, :]) \
-                    if i not in updated_detections]
+                    (i, d)
+                    for (i, d) in enumerate(centroid_distances[idx, :])
+                    if i not in updated_detections
+                ]
 
-                # pylint: disable=len-as-condition
                 if len(remaining_detections):
-                    detection_idx, _ = min(remaining_detections,
-                                                            key=lambda x: x[1])
+                    detection_idx, _ = min(remaining_detections, key=lambda x: x[1])
                     bbox, class_id, confidence = detections[detection_idx]
-                    self._update_track(track_id, self.frame_count, bbox, confidence,
-                                       class_id=class_id)
+                    self._update_track(
+                        track_id, self.frame_count, bbox, confidence, class_id=class_id
+                    )
                     updated_detections.append(detection_idx)
                     updated_tracks.append(track_id)
 

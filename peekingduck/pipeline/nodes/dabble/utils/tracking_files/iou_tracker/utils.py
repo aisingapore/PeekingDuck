@@ -13,16 +13,16 @@
 # limitations under the License.
 
 """
-Additional functions
+Additional functions.
 """
 
 from typing import List
 import numpy as np
 
 
-def format_boxes(bboxes: List[List[float]],
-                 image_height: int,
-                 image_width: int) -> List[List[float]]:
+def format_boxes(
+    bboxes: List[List[float]], image_height: int, image_width: int
+) -> List[List[float]]:
     """Helper function to convert bounding boxes from normalized
     ymin, xmin, ymax, xmax ---> xmin, ymin, width, height."""
     for box in bboxes:
@@ -34,6 +34,7 @@ def format_boxes(bboxes: List[List[float]],
         height = ymax - ymin
         box[0], box[1], box[2], box[3] = xmin, ymin, width, height
     return bboxes
+
 
 def iou(bbox: np.array, candidates: np.array) -> np.array:
     """Computer intersection over union.
@@ -58,11 +59,15 @@ def iou(bbox: np.array, candidates: np.array) -> np.array:
     candidates_tl = candidates[:, :2]
     candidates_br = candidates[:, :2] + candidates[:, 2:]
 
-    top_left = np.c_[np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
-               np.maximum(bbox_tl[1], candidates_tl[:, 1])[:, np.newaxis]]
-    bottom_right = np.c_[np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
-               np.minimum(bbox_br[1], candidates_br[:, 1])[:, np.newaxis]]
-    width_height = np.maximum(0., bottom_right - top_left)
+    top_left = np.c_[
+        np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
+        np.maximum(bbox_tl[1], candidates_tl[:, 1])[:, np.newaxis],
+    ]
+    bottom_right = np.c_[
+        np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
+        np.minimum(bbox_br[1], candidates_br[:, 1])[:, np.newaxis],
+    ]
+    width_height = np.maximum(0.0, bottom_right - top_left)
 
     area_intersection = width_height.prod(axis=1)
     area_bbox = bbox[2:].prod()

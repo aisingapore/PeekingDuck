@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Tracking algorithm that uses IOU matching
+Tracking algorithm that uses IOU matching.
 """
 
 from typing import Any, Dict, List, Tuple
@@ -22,7 +22,7 @@ from .iou_tracker.iou_tracker import IOUTracker
 from .iou_tracker.utils import format_boxes
 
 
-class IOUTracking:  # pylint: disable=too-few-public-methods
+class IOUTracking:
     """Simple tracking class based on Intersection Over Union of bounding
     boxes.
 
@@ -39,12 +39,15 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
 
     Inference code adapted from https://github.com/adipandas/multi-object-tracker
     """
+
     def __init__(self) -> None:
         super().__init__()
-        self.tracker = IOUTracker(max_lost=10,
-                            iou_threshold=0.1,
-                            min_detection_confidence=0.2,
-                            max_detection_confidence=1)
+        self.tracker = IOUTracker(
+            max_lost=10,
+            iou_threshold=0.1,
+            min_detection_confidence=0.2,
+            max_detection_confidence=1,
+        )
 
     def run(self, inputs: Dict[str, Any]) -> List[str]:
         """Update tracker on each frame and return sorted object tags"""
@@ -54,8 +57,9 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         # Format bboxes from normalized to frame axis
         bboxes = format_boxes(bboxes, original_h, original_w)
         confidences = np.copy(inputs["bbox_scores"])
-        class_ids = self._convert_class_label_to_unique_id( \
-            np.copy(inputs["bbox_labels"]))
+        class_ids = self._convert_class_label_to_unique_id(
+            np.copy(inputs["bbox_labels"])
+        )
 
         # Update trackers with current bboxes and scores
         tracks = self.tracker.update(bboxes, confidences, class_ids)
@@ -82,6 +86,6 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         """Convert class label to unique ids"""
         obj_id = dict()  # pylint: disable=too-many-arguments
         for num, label in enumerate(sorted(set(classes))):
-            obj_id.update({label: num+1})
+            obj_id.update({label: num + 1})
         class_ids = [obj_id[x] for x in classes]
         return class_ids
