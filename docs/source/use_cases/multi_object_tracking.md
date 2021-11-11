@@ -2,7 +2,7 @@
 
 ## Overview
 
-Multi Object Tracking (MOT) is the task of taking an initial set of object detections, creating a unique ID for each of the initial detections, and then tracking each of the objects as they move around frames in a video, maintaining the ID assignment.
+Multi Object Tracking (MOT) is the task of detecting unique objects and tracking them as they move across frames in a video.
 
 AI Singapore has developed a vision-based [multi object tracker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that tracks multiple moving objects. This tracking capability is to be used in tandem with an object detection model. Objects to track can be, for example, pedestrians on the street, vehicles in the road, sport players on the court, groups of animals and more.
 
@@ -30,9 +30,9 @@ The MOT node requires a detected bounding box from an object detector model. To 
 
 #### 2. MOSSE (OpenCV)
 
-Minimum Output Sum of Squared Error (MOSSE) uses an adaptive correlation for object tracking which produces stable correlation filters when initialized using a single frame. MOSSE tracker is robust to variations in lighting, scale, pose, and non-rigid deformations. It also detects occlusion based upon the peak-to-sidelobe ratio, which enables the tracker to pause and resume where it left off when the object reappears. MOSSE tracker also operates at a higher fps. To add to the positives, it is also very easy to implement, is as accurate as other complex trackers and much faster. But, on a performance scale, it lags behind the deep learning based trackers.
+Minimum Output Sum of Squared Error (MOSSE) uses an adaptive correlation for object tracking which produces stable correlation filters when initialized using a single frame. MOSSE tracker is robust to variations in lighting, scale, pose, and non-rigid deformations. It also detects occlusion based upon the Peak to Sidelobe Ratio (PSR), which enables the tracker to pause and resume where it left off when the object reappears. MOSSE tracker also operates at a higher fps. It is much faster than other models but, not as accurate.
 
-The bounding boxes detected in the first frame are used to initialize a single tracker instance for each detection. The tracker for each bounding box is then updated per frame and is deleted when the tracker fails. 
+The bounding boxes detected in the first frame are used to initialize a single tracker instance for each detection. The tracker for each bounding box is then updated per frame and is deleted when the tracker fails to find a match overtime.
 
 To account for new detections in a frame, which do not have an associated tracker, we perform an IOU of the new bounding box with previous tracked bounding boxes. Should the IOU exceed a threshold, it is then associated with a current track, otherwise a new instance of a track is initialized for the new bounding box.
 
