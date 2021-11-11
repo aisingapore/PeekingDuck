@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Load Tracker for inference
+Load Tracker for inference.
 """
 
 from typing import Any, Dict, List
@@ -22,22 +22,26 @@ from .tracking_files.iou_tracking import IOUTracking
 from .tracking_files.opencv_tracking import OpenCVTracker
 
 
-class LoadTracker:  # pylint: disable=too-few-public-methods
+class LoadTracker:
     """Loads chosen tracker node."""
+
     def __init__(self, tracking_type: str) -> None:
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        if tracking_type == "mosse":
-            self.logger.info('OpenCV Tracking algorithm used: %s', tracking_type)
-            self.tracker = OpenCVTracker()  # type: ignore
-        elif tracking_type == "iou":
-            self.logger.info('Tracking algorithm used: %s', tracking_type)
-            self.tracker = IOUTracking()  # type: ignore
+        self.logger.info("Tracking algorithm used: %s", tracking_type)
+        if tracking_type in ["iou", "mosse"]:
+            self.tracker = self.get_tracker(tracking_type)  # type: ignore
         else:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']")
 
-    def run(self, inputs: Dict[str, Any]) -> List[str]:
+    def predict(self, inputs: Dict[str, Any]) -> List[str]:
         """Run tracking algorithm"""
         obj_tags = self.tracker.run(inputs)
 
         return obj_tags
+
+    @staticmethod
+    def get_tracker(tracking_type: str) -> Any:
+        trackers_dict = {"iou": IOUTracking(), "mosse": OpenCVTracker()}
+        tracker = trackers_dict[tracking_type]
+        return tracker
