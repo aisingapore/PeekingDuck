@@ -21,7 +21,7 @@ import logging
 import math
 import re
 from pathlib import Path
-from typing import Callable, List, Optional, Tuple
+from typing import Callable, Optional, Tuple
 
 import click
 import yaml
@@ -150,7 +150,23 @@ def run(config_path: str, node_config: str) -> None:
     runner.run()
 
 
-def verify_input(value: Optional[str], value_proc: Callable) -> Optional[str]:
+def _verify_input(value: Optional[str], value_proc: Callable) -> Optional[str]:
+    """Verifies that input value via click.option matches the expected value.
+
+    This sets ``value`` to ``None`` if it is invalid so the rest of the prompt
+    can flow smoothly.
+
+    Args:
+        value (Optional[str]): Input value.
+        value_proc (Callable): A function to check the validity of ``value``.
+
+    Returns:
+        (Optional[str]): ``value`` if it is a valid value. ``None`` if it is
+            not.
+
+    Raises:
+        click.exceptions.UsageError: When ``value`` is invalid.
+    """
     if value is not None:
         try:
             value = value_proc(value)
@@ -161,11 +177,16 @@ def verify_input(value: Optional[str], value_proc: Callable) -> Optional[str]:
 
 
 def _ensure_relative_path(node_subdir: str) -> str:
+    """Checks that the subdir path does not contain parent directory
+    navigator (..), is not absolute, and is not "peekingduck/pipeline/nodes".
+    """
+    pkd_node_subdir = "peekingduck/pipeline/nodes"
     if ".." in node_subdir:
         raise click.exceptions.UsageError("Path cannot contain '..'!")
     if Path(node_subdir).is_absolute():
         raise click.exceptions.UsageError("Path cannot be absolute!")
-    # TODO check that path is not peekingduck/pipeline/nodes
+    if node_subdir == pkd_node_subdir:
+        raise click.exceptions.UsageError(f"Path cannot be '{pkd_node_subdir}'!")
     return node_subdir
 
 
@@ -186,11 +207,31 @@ def create_node(
     node_type: Optional[str] = None,
     node_name: Optional[str] = None,
 ) -> None:
+    """Automates the creation of a new custom node.
+
+    If the user does not specifiy ``node_subdir``, ``node_type``, or
+    ``node_name`` through CLI, prompt them for the values while performing
+    checks to ensure value validity.
+
+    Args:
+        node_subdir (Optional[str]): Path to the custom nodes directory,
+            relative to the directory where the command is invoked.
+        node_type (Optional[str]): Node type, only accepts values from existing
+            node types defined in ``PEEKINGDUCK_NODE_TYPE``.
+        node_name (Optional[str]): Name of new custom node. The name cannot be
+            a duplicate of an existing custom node. The name has the following
+            requirements:
+                - Minimum 2 characters
+                - Can only contain alphanumeric characters, dashes and
+                    underscores /[[a-zA-Z0-9_\\-]/
+                - Must start with a alphabet
+                - Must end with an alphanumeric character
+    """
     click.secho("Creating new custom node...")
     project_dir = Path.cwd()
     node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPE)
 
-    node_subdir = verify_input(node_subdir, value_proc=_ensure_relative_path)
+    node_subdir = _verify_input(node_subdir, value_proc=_ensure_relative_path)
     if node_subdir is None:
         node_subdir = click.prompt(
             f"Enter node directory relative to {project_dir}",
@@ -199,7 +240,7 @@ def create_node(
         )
     node_dir = project_dir / node_subdir
 
-    node_type = verify_input(
+    node_type = _verify_input(
         node_type, value_proc=click.types.convert_type(node_type_choices)
     )
     if node_type is None:
@@ -221,6 +262,24 @@ def create_node(
     click.echo("\nCreating the following files:")
     click.echo(f"\tConfig file: {config_path}")
     click.echo(f"\tScript file: {script_path}")
+
+    proceed = click.confirm("Proceed?", default=True)
+    if proceed:
+        config_path.parent.mkdir(parents=True, exist_ok=True)
+        script_path.parent.mkdir(parents=True, exist_ok=True)
+        pkd_dir = Path(__file__).resolve().parent
+        template_name = "node_template"
+        with open(pkd_dir / "configs" / f"{template_name}.yml") as template_file, open(
+            config_path, "w"
+        ) as outfile:
+            outfile.write(template_file.read())
+        with open(
+            pkd_dir / "pipeline" / "nodes" / f"{template_name}.py"
+        ) as template_file, open(script_path, "w") as outfile:
+            outfile.write(template_file.read())
+        click.echo("Created node!")
+    else:
+        click.echo("Aborted!")
 
 
 @cli.command()
