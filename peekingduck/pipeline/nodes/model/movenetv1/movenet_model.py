@@ -38,11 +38,12 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
         if config["model_type"] not in [
             "singlepose_lightning",
             "singlepose_thunder",
-            "multipose_lightning"
+            "multipose_lightning",
         ]:
             raise ValueError(
-                '''model_type must be one of 
-                ["singlepose_lightning","singlepose_thunder","multipose_lightning"]''')
+                """model_type must be one of 
+                ["singlepose_lightning","singlepose_thunder","multipose_lightning"]"""
+            )
 
         # check for movenet weights, if none then download into weights folder
         if not checker.has_weights(config["root"], config["weights_dir"]):
