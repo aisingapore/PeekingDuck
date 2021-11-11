@@ -11,14 +11,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
+from pathlib import Path
 from unittest import mock, TestCase
-import pytest
-import yaml
 
 import cv2
 import numpy as np
 import numpy.testing as npt
+import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.yolo_face import Node
 from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import (
@@ -28,12 +28,18 @@ from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector impor
 
 @pytest.fixture
 def yolo_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/yolov4_face/test_yolo_face.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "yolov4_face"
+        / "test_yolo_face.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
 
     return node_config
 
@@ -83,26 +89,23 @@ class TestYolo:
     def test_no_weights(self, yolo_config):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ):
-            with mock.patch(
-                "peekingduck.weights_utils.downloader.download_weights",
-                wraps=replace_download_weights,
-            ):
-                with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_model.logger"
-                ) as captured:
-
-                    yolo = Node(config=yolo_config)
-                    # records 0 - 20 records are updates to configs
-                    assert (
-                        captured.records[0].getMessage()
-                        == "---no yolo weights detected. proceeding to download...---"
-                    )
-                    assert (
-                        captured.records[1].getMessage()
-                        == "---yolo weights download complete.---"
-                    )
-                    assert yolo is not None
+        ), mock.patch(
+            "peekingduck.weights_utils.downloader.download_weights",
+            wraps=replace_download_weights,
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_model.logger"
+        ) as captured:
+            yolo = Node(config=yolo_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "---no yolo weights detected. proceeding to download...---"
+            )
+            assert (
+                captured.records[1].getMessage()
+                == "---yolo weights download complete.---"
+            )
+            assert yolo is not None
 
     def test_get_detect_ids(self, yolo):
         assert yolo.model.get_detect_ids() == [0, 1]

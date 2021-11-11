@@ -16,25 +16,25 @@
 Detector class to handle detection of poses for hrnet
 """
 
-import os
 import logging
-from typing import Any, Dict, List, Tuple, Callable
+from typing import Any, Callable, Dict, List, Tuple
 
-import tensorflow as tf
 import numpy as np
-from peekingduck.utils.graph_functions import load_graph
+import tensorflow as tf
+
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    project_bbox,
     box2cs,
     crop_and_resize,
+    project_bbox,
 )
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
-    scale_transform,
     affine_transform_xy,
-    reshape_heatmaps,
-    get_valid_keypoints,
     get_keypoint_conns,
+    get_valid_keypoints,
+    reshape_heatmaps,
+    scale_transform,
 )
+from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
@@ -66,10 +66,12 @@ class Detector:
         return heatmap
 
     def _create_hrnet_model(self) -> Callable:
-        graph_path = os.path.join(self.root_dir, self.config["model_file"])
+        graph_path = self.root_dir / self.config["model_file"]
         model_nodes = self.config["MODEL_NODES"]
         self.frozen_fn = load_graph(
-            graph_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+            str(graph_path),
+            inputs=model_nodes["inputs"],
+            outputs=model_nodes["outputs"],
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
@@ -150,7 +152,6 @@ class Detector:
         )
 
         normalized_keypoints = keypoints / frame_size
-
         keypoint_conns = get_keypoint_conns(normalized_keypoints, kp_masks)
 
         return normalized_keypoints, kp_scores, keypoint_conns

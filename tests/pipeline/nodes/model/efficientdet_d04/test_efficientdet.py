@@ -13,12 +13,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import os
+
 import yaml
-import pytest
+from pathlib import Path
+
+import cv2
 import numpy as np
 import numpy.testing as npt
-import cv2
+import pytest
+
 from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
     Detector,
@@ -30,12 +33,19 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model 
 
 @pytest.fixture
 def efficientdet_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/efficientdet_d04/test_efficientdet.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "efficientdet_d04"
+        / "test_efficientdet.yml"
     )
+
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
 
     return node_config
 

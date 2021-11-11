@@ -12,13 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
+"""
+Workaround for running Peekingduck from project directory
+"""
+
 import logging
-from peekingduck.utils.logger import LoggerSetup
+from pathlib import Path
+
 import peekingduck.runner as pkd
+from peekingduck.utils.logger import LoggerSetup
 
 if __name__ == "__main__":
-    RUN_PATH = os.path.join(os.getcwd(), "PeekingDuck", "run_config.yml")
+    RUN_PATH = Path.cwd() / "PeekingDuck" / "run_config.yml"
 
     LoggerSetup()
     logger = logging.getLogger(__name__)

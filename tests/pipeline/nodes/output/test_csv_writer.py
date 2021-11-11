@@ -14,51 +14,52 @@
 
 import csv
 import datetime
-import os
 import re
+from pathlib import Path
 
 import pytest
+
 from peekingduck.pipeline.nodes.output.csv_writer import Node
 
 
 def directory_contents():
-    cwd = os.getcwd()
-    res = os.listdir(cwd)
-    return res
+    return list(Path.cwd().iterdir())
 
 
 @pytest.fixture
 def writer():  # logging interval of 1 second
+    # absolute filepath is used for the temp dir created for the test
     csv_writer = Node(
         {
             "input": "all",
             "output": "end",
-            "filepath": os.path.join(os.getcwd(), "test1.csv"),
+            "filepath": str(Path.cwd() / "test1.csv"),
             "stats_to_track": ["bbox", "bbox_labels"],
             "logging_interval": "1",
         }
-    )  # absolute filepath is used for the temp dir created for the test
+    )
     return csv_writer
 
 
 @pytest.fixture
 def writer2():  # logging interval of 5 second
+    # absolute filepath is used for the temp dir created for the test
     csv_writer = Node(
         {
             "input": "all",
             "output": "end",
-            "filepath": os.path.join(os.getcwd(), "test2.csv"),
+            "filepath": str(Path.cwd() / "test2.csv"),
             "stats_to_track": ["bbox", "bbox_labels"],
             "logging_interval": "5",
         }
-    )  # absolute filepath is used for the temp dir created for the test
+    )
     return csv_writer
 
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestCSVWriter:
     def test_cwd_starts_empty(self):
-        assert os.listdir(os.getcwd()) == []
+        assert list(Path.cwd().iterdir()) == []
 
     def test_check_csv_name(self, writer):
         inputs = {
@@ -76,8 +77,8 @@ class TestCSVWriter:
         pattern = r".*_\d{6}-\d{2}-\d{2}-\d{2}\.[a-z]{3}$"
 
         assert len(directory_contents()) == 1
-        assert directory_contents()[0].split(".")[-1] == "csv"
-        assert re.search(pattern, directory_contents()[0])
+        assert directory_contents()[0].suffix == ".csv"
+        assert re.search(pattern, str(directory_contents()[0]))
 
     def test_check_header_in_csv(self, writer):
         inputs = {
@@ -107,13 +108,11 @@ class TestCSVWriter:
         }
 
         time_lapse = 0
-
         start_time = datetime.datetime.now()
 
         while time_lapse < 15:
             curr_time = datetime.datetime.now()
-
-            # Run wrtier with input arriving in 1 sec intervals
+            # Run writer with input arriving in 1 sec intervals
             # total 14 secs with logging interval of 5 sec
             # should log 2 entries
             if (curr_time - start_time).seconds >= 1:

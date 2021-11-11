@@ -18,12 +18,13 @@ EfficientDet model with model types: D0-D4
 
 import logging
 from typing import Dict, Any, List, Tuple
+
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
     Detector,
 )
+from peekingduck.weights_utils import checker, downloader
 
 
 class EfficientDetModel:

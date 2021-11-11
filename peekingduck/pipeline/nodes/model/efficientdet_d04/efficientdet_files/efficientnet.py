@@ -44,7 +44,7 @@ from tensorflow.keras.applications.imagenet_utils import (
     preprocess_input as _preprocess_input,
 )
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.submodule import (
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.submodule import (  # pylint: disable=line-too-long
     get_submodules_from_kwargs,
 )
 

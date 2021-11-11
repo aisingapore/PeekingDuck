@@ -16,9 +16,10 @@
 Object detection class using yolo single label model
 to find license plate object bboxes
 """
-import os
+
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple
+
 import cv2 as cv
 import numpy as np
 import tensorflow as tf
@@ -29,15 +30,14 @@ class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
+        self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dit = config["root"]
-        self.logger = logging.getLogger(__name__)
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
-        classes_path = os.path.join(self.config["root"], self.config["classes"])
+        classes_path = self.config["root"] / self.config["classes"]
         with open(classes_path, "rt") as file:
             class_labels = file.read().rstrip("\n").split("\n")
 
@@ -48,11 +48,10 @@ class Detector:
         Creates yolo model for license plate detection
         """
         self.model_type = self.config["model_type"]
-
-        model_file = os.path.join(
-            self.config["root"], self.config["model_weights_dir"][self.model_type]
+        model_file = (
+            self.config["root"] / self.config["model_weights_dir"][self.model_type]
         )
-        model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
+        model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
 
         self.logger.info(
             (

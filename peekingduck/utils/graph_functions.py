@@ -19,6 +19,7 @@ Utility functions for Tensorflow Graphed models
 import os
 import logging
 from typing import List, Callable
+
 import tensorflow as tf
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"

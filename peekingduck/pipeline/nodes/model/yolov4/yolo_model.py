@@ -16,12 +16,13 @@
 Yolo model with model types: v3 and v3tiny
 """
 
-import os
 import logging
 from typing import List, Dict, Any, Tuple
+
 import numpy as np
+
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 from peekingduck.weights_utils import checker, downloader
-from .yolo_files.detector import Detector
 
 
 class YoloModel:
@@ -29,7 +30,6 @@ class YoloModel:
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
-
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
@@ -45,8 +45,9 @@ class YoloModel:
             self.logger.info("---yolo weights download complete.---")
 
         # get classnames path to read all the classes
-        classes_path = os.path.join(config["root"], config["classes"])
-        self.class_names = [c.strip() for c in open(classes_path).readlines()]
+        classes_path = config["root"] / config["classes"]
+        with open(classes_path) as infile:
+            self.class_names = [c.strip() for c in infile.readlines()]
         self.detect_ids = config["detect_ids"]
 
         self.detector = Detector(config)
@@ -54,12 +55,12 @@ class YoloModel:
     def predict(self, frame: np.array) -> Tuple[List[np.array], List[str], List[float]]:
         """predict the bbox from frame
 
-        returns:
-        object_bboxes(List[Numpy Array]): list of bboxes detected
-        object_labels(List[str]): list of string labels of the
-            object detected for the corresponding bbox
-        object_scores(List(float)): list of confidence scores of the
-            object detected for the corresponding bbox
+        Returns:
+            object_bboxes (List[Numpy Array]): list of bboxes detected
+            object_labels (List[str]): list of string labels of the
+                object detected for the corresponding bbox
+            object_scores (List(float)): list of confidence scores of the
+                object detected for the corresponding bbox
         """
         assert isinstance(frame, np.ndarray)
 

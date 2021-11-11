@@ -20,6 +20,7 @@ import copy
 import logging
 import subprocess
 import sys
+from pathlib import Path
 from typing import List
 
 from peekingduck.declarative_loader import DeclarativeLoader
@@ -57,12 +58,11 @@ class Runner:
 
     def __init__(
         self,
-        RUN_PATH: str = "",
+        RUN_PATH: Path = None,
         config_updates_cli: str = None,
         CUSTOM_NODE_PARENT_FOLDER: str = None,
         nodes: List[AbstractNode] = None,
     ):
-
         self.logger = logging.getLogger(__name__)
 
         if not nodes and RUN_PATH:
@@ -70,9 +70,7 @@ class Runner:
             self.node_loader = DeclarativeLoader(
                 RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER  # type: ignore
             )
-
             self.pipeline = self.node_loader.get_pipeline()
-
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:

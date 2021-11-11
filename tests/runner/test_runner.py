@@ -47,15 +47,12 @@ class MockedNode(AbstractNode):
             self.outputs[idx]: f"test_output_{idx}"
             for idx, _ in enumerate(self.outputs)
         }
-
         return output
 
 
 def create_node_config(config_dir, node_name):
     config_text = {"root": None, "input": ["none"], "output": ["pipeline_end"]}
-    node_config_file = f"{node_name}.yml"
-
-    with open(config_dir / node_config_file, "w") as fp:
+    with open(config_dir / f"{node_name}.yml", "w") as fp:
         yaml.dump(config_text, fp)
 
 

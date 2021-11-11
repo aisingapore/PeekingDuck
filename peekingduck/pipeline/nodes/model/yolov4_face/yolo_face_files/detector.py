@@ -17,8 +17,7 @@ Object detection class using yolo model to detect human faces
 """
 
 import logging
-import os
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -37,18 +36,16 @@ class Detector:  # pylint: disable=too-few-public-methods
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
-        classes_path = os.path.join(self.config["root"], self.config["classes"])
+        classes_path = self.config["root"] / self.config["classes"]
         with open(classes_path, "rt", encoding="utf8") as file:
-            class_labels = file.read().rstrip("\n").split("\n")
+            class_labels = [c.strip() for c in file.readlines()]
 
         return class_labels
 
     def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
-        model_file = os.path.join(
-            self.config["root"], self.config["model_weights_dir"][model_type]
-        )
-        model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
+        model_file = self.config["root"] / self.config["model_weights_dir"][model_type]
+        model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
 
         self.logger.info(
             (
