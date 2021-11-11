@@ -74,7 +74,6 @@ class IOUTracker(Tracker):  # pylint: disable=too-few-public-methods
         self.max_detection_confidence = max_detection_confidence
         self.min_detection_confidence = min_detection_confidence
 
-
     def update(
         self, bboxes: List, detection_scores: List[float], class_ids: List[int]
     ) -> List[Any]:
