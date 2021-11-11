@@ -78,7 +78,7 @@ def check_requirements(
                 ),
                 identifier,
                 req.name.strip(),
-                "<install faq link>",
+                "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html",
             )
 
     if n_update > 0:
