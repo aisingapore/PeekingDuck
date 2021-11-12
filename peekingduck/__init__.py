@@ -17,3 +17,12 @@ A modular python framework for Computer Vision Inference
 """
 
 __version__ = "developer"
+
+import sys
+
+from peekingduck.utils.logger import LoggerSetup
+from peekingduck.utils.requirement_checker import RequirementChecker
+
+LoggerSetup()
+
+sys.meta_path.insert(0, RequirementChecker())
