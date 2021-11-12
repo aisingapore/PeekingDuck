@@ -22,6 +22,7 @@ import yaml
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.runner import Runner
+from peekingduck.utils.requirement_checker import RequirementChecker
 
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
@@ -171,41 +172,24 @@ class TestRunner:
         ground_truth = "pipeline"
         with mock.patch(
             "peekingduck.pipeline.pipeline.Pipeline.__init__", side_effect=ValueError
-        ):
-            with pytest.raises(SystemExit):
-                Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR, [ground_truth])
-
-    def test_init_with_update_failure(self):
-        setup()
-        with mock.patch(
-            "peekingduck.runner.check_requirements",
-            side_effect=subprocess.CalledProcessError(1, ""),
-        ), mock.patch(
-            "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
-            wraps=get_pipeline_with_default_node_names,
-        ):
-            with pytest.raises(SystemExit):
-                Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR)
+        ), pytest.raises(SystemExit):
+            Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR, [ground_truth])
 
     def test_init_with_updated_packages(self):
         setup()
-        with mock.patch(
-            "peekingduck.runner.check_requirements", side_effect=[1]
-        ), mock.patch(
+        with mock.patch.object(RequirementChecker, "n_update", 1), mock.patch(
             "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
             wraps=get_pipeline_with_default_node_names,
-        ):
-            with pytest.raises(SystemExit):
-                Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR)
+        ), pytest.raises(SystemExit):
+            Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR)
 
     def test_run(self, runner_with_nodes):
         with mock.patch(
             "peekingduck.runner.Runner.run",
             side_effect=Exception("End infinite while loop"),
-        ):
-            with pytest.raises(Exception):
-                runner_with_nodes.pipeline.terminate = False
-                runner_with_nodes.run()
+        ), pytest.raises(Exception):
+            runner_with_nodes.pipeline.terminate = False
+            runner_with_nodes.run()
 
         assert isinstance(runner_with_nodes.pipeline, object) == True
 

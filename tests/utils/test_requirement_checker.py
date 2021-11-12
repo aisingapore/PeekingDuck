@@ -4,7 +4,11 @@ from unittest import TestCase, mock
 
 import pytest
 
-from peekingduck.utils.requirement_checker import check_requirements
+from peekingduck.utils.requirement_checker import (
+    PKD_NODE_PREFIX,
+    RequirementChecker,
+    check_requirements,
+)
 
 INSTALL_FAQ_LINK = (
     "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html"
@@ -51,13 +55,23 @@ class TestRequirementChecker:
             side_effect=subprocess.CalledProcessError(ret_code, cmd),
         ), TestCase.assertLogs(
             "peekingduck.utils.requirement_checker.logger"
-        ) as captured:
-            with pytest.raises(subprocess.CalledProcessError):
-                check_requirements(NODE_WITH_UPDATE, requirements_file)
+        ) as captured, pytest.raises(
+            subprocess.CalledProcessError
+        ):
+            check_requirements(NODE_WITH_UPDATE, requirements_file)
             assert (
                 f"Command '{cmd}' returned non-zero exit status {ret_code}."
                 == captured.records[1].getMessage()
             )
+
+    def test_checker_class_update_failure(self, requirements_file):
+        ret_code = 123
+        cmd = "command"
+        with mock.patch(
+            "peekingduck.utils.requirement_checker.check_requirements",
+            side_effect=subprocess.CalledProcessError(ret_code, cmd),
+        ), pytest.raises(SystemExit):
+            RequirementChecker.find_spec(PKD_NODE_PREFIX + NODE_WITH_UPDATE)
 
     def test_node_with_python_updates(self, requirements_file):
         with mock.patch(

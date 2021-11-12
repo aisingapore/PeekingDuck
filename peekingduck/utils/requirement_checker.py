@@ -18,6 +18,7 @@ import collections
 import importlib
 import logging
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any, Iterator, TextIO, Tuple, Union
 
@@ -50,9 +51,12 @@ class RequirementChecker(importlib.abc.MetaPathFinder):
             fullname (:obj:`str`): Name of the module being imported.
         """
         if fullname.startswith(PKD_NODE_PREFIX):
-            RequirementChecker.n_update += check_requirements(
-                fullname[len(PKD_NODE_PREFIX) :]
-            )
+            try:
+                RequirementChecker.n_update += check_requirements(
+                    fullname[len(PKD_NODE_PREFIX) :]
+                )
+            except subprocess.CalledProcessError:
+                sys.exit(1)
 
 
 def check_requirements(

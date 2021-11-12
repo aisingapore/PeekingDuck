@@ -18,7 +18,6 @@ Main engine for Peekingduck processes
 
 import copy
 import logging
-import subprocess
 import sys
 from pathlib import Path
 from typing import List
@@ -26,11 +25,7 @@ from typing import List
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.utils.requirement_checker import (
-    PKD_NODE_PREFIX,
-    RequirementChecker,
-    check_requirements,
-)
+from peekingduck.utils.requirement_checker import RequirementChecker
 
 
 class Runner:
@@ -82,14 +77,7 @@ class Runner:
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)
-        try:
-            n_update = RequirementChecker.n_update
-            for node in self.pipeline.nodes:
-                if node.name.startswith(PKD_NODE_PREFIX):
-                    n_update += check_requirements(node.node_name)
-            if n_update > 0:
-                sys.exit(1)
-        except subprocess.CalledProcessError:
+        if RequirementChecker.n_update > 0:
             sys.exit(1)
 
     def run(self) -> None:
