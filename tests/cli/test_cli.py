@@ -25,7 +25,6 @@ from unittest import TestCase
 import pytest
 import yaml
 from click.testing import CliRunner
-
 from peekingduck import __version__
 from peekingduck.cli import cli
 
@@ -65,8 +64,10 @@ with open(
 
 @pytest.fixture(params=[0, 1])
 def create_node_input_abort(request):
+    # Windows has a different absolute path format
+    bad_paths = "bad_paths_win" if sys.platform == "win32" else "bad_paths"
     yield (
-        CREATE_NODE_INPUT["bad_paths"],
+        CREATE_NODE_INPUT[bad_paths],
         CREATE_NODE_INPUT["bad_types"],
         CREATE_NODE_INPUT["bad_names"],
         CREATE_NODE_INPUT["good_paths"][request.param],
@@ -78,8 +79,9 @@ def create_node_input_abort(request):
 
 @pytest.fixture(params=[0, 1])
 def create_node_input_accept(request):
+    bad_paths = "bad_paths_win" if sys.platform == "win32" else "bad_paths"
     yield (
-        CREATE_NODE_INPUT["bad_paths"],
+        CREATE_NODE_INPUT[bad_paths],
         CREATE_NODE_INPUT["bad_types"],
         CREATE_NODE_INPUT["bad_names"],
         CREATE_NODE_INPUT["good_paths"][request.param],
@@ -145,8 +147,8 @@ def create_run_config_yaml(nodes, custom_config_path):
 
 def get_custom_node_subpaths(node_subdir, node_type, node_name):
     return (
-        f"{node_subdir}/configs/{node_type}/{node_name}.yml",
-        f"{node_subdir}/{node_type}/{node_name}.py",
+        str(Path(node_subdir) / "configs" / node_type / f"{node_name}.yml"),
+        str(Path(node_subdir) / node_type / f"{node_name}.py"),
     )
 
 
@@ -323,10 +325,12 @@ class TestCli:
             + good_name
             + proceed,
         )
+        print(result.output)
         # Count only substring we create so we are unaffected by click changes
         config_subpath, script_subpath = get_custom_node_subpaths(
             good_path.strip(), good_type.strip(), good_name.strip()
         )
+        print(config_subpath)
         assert result.output.count("Path cannot") == bad_paths.count("\n")
         assert result.output.count("invalid choice") == bad_types.count("\n")
         assert result.output.count("Invalid node name") == bad_names.count("\n")

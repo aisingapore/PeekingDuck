@@ -4,6 +4,12 @@ bad_paths: |
   /
   /some/path
   peekingduck/pipeline/nodes
+bad_paths_win: |
+  ..
+  ../some/path
+  C:/
+  C:/some/path
+  peekingduck/pipeline/nodes
 bad_types: |
   inputs
   random type
