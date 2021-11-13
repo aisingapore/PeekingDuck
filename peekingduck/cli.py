@@ -35,64 +35,6 @@ LoggerSetup()
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-@click.group()
-@click.version_option(__version__)
-def cli() -> None:
-    """
-    PeekingDuck is a modular computer vision inference framework.
-
-    Developed by Computer Vision Hub at AI Singapore.
-    """
-
-
-def _get_cwd() -> Path:
-    return Path.cwd()
-
-
-def _get_node_url(node_type: str, node_name: str) -> str:
-    """Constructs the URL to documentation of the specified node
-
-    Args:
-        node_type (`str`): One of input, model, dabble, draw or output
-        node_name (`str`): Name of the node
-
-    Returns:
-        (`str`): Full URL to the documentation of the specified node
-    """
-    node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
-    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
-    url_postfix = ".html#"
-
-    return f"{url_prefix}{node_path}{url_postfix}{node_path}"
-
-
-def _len_enumerate(item: Tuple) -> int:
-    """Calculate the string length of an enumerate item while accounting for
-    the number of digits of the index
-
-    Args:
-        item (`Tuple`): An item return by `enumerate`, contains
-            `(index, element)` where `element` is a `str`.
-
-    Returns:
-        (`int`): Sum of length of `element` and the number of digits of its
-            index
-    """
-    return _num_digits(item[0] + 1) + len(item[1])
-
-
-def _num_digits(number: int) -> int:
-    """Return the number of digits of the given number
-
-    Args:
-        number (`int`): The given number. It is assumed `number > 0`.
-
-    Returns:
-        (`int`): Number of digits in the given number
-    """
-    return int(math.log10(number))
-
-
 def create_custom_folder(custom_folder_name: str) -> None:
     """Make custom nodes folder to create custom nodes"""
     curdir = _get_cwd()
@@ -111,6 +53,16 @@ def create_yml() -> None:
 
     with open("run_config.yml", "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
+
+
+@click.group()
+@click.version_option(__version__)
+def cli() -> None:
+    """
+    PeekingDuck is a modular computer vision inference framework.
+
+    Developed by Computer Vision Hub at AI Singapore.
+    """
 
 
 @cli.command()
@@ -150,54 +102,6 @@ def run(config_path: str, node_config: str) -> None:
     runner.run()
 
 
-def _verify_input(value: Optional[str], value_proc: Callable) -> Optional[str]:
-    """Verifies that input value via click.option matches the expected value.
-
-    This sets ``value`` to ``None`` if it is invalid so the rest of the prompt
-    can flow smoothly.
-
-    Args:
-        value (Optional[str]): Input value.
-        value_proc (Callable): A function to check the validity of ``value``.
-
-    Returns:
-        (Optional[str]): ``value`` if it is a valid value. ``None`` if it is
-            not.
-
-    Raises:
-        click.exceptions.UsageError: When ``value`` is invalid.
-    """
-    if value is not None:
-        try:
-            value = value_proc(value)
-        except click.exceptions.UsageError as error:
-            click.echo(f"Error: {error.message}", err=True)
-            value = None
-    return value
-
-
-def _ensure_relative_path(node_subdir: str) -> str:
-    """Checks that the subdir path does not contain parent directory
-    navigator (..), is not absolute, and is not "peekingduck/pipeline/nodes".
-    """
-    pkd_node_subdir = "peekingduck/pipeline/nodes"
-    if ".." in node_subdir:
-        raise click.exceptions.UsageError("Path cannot contain '..'!")
-    if Path(node_subdir).is_absolute():
-        raise click.exceptions.UsageError("Path cannot be absolute!")
-    if node_subdir == pkd_node_subdir:
-        raise click.exceptions.UsageError(f"Path cannot be '{pkd_node_subdir}'!")
-    return node_subdir
-
-
-def _ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
-    if re.match(r"^[a-zA-Z][\w\-]*[^\W_]$", node_name) is None:
-        raise click.exceptions.UsageError("Invalid node name!")
-    if (node_dir / node_type / f"{node_name}.py").exists():
-        raise click.exceptions.UsageError("Node name already exists!")
-    return node_name
-
-
 @cli.command()
 @click.option("--node_subdir", required=False)
 @click.option("--node_type", required=False)
@@ -231,7 +135,7 @@ def create_node(
     project_dir = Path.cwd()
     node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPE)
 
-    node_subdir = _verify_input(node_subdir, value_proc=_ensure_relative_path)
+    node_subdir = _verify_option(node_subdir, value_proc=_ensure_relative_path)
     if node_subdir is None:
         node_subdir = click.prompt(
             f"Enter node directory relative to {project_dir}",
@@ -240,7 +144,7 @@ def create_node(
         )
     node_dir = project_dir / node_subdir
 
-    node_type = _verify_input(
+    node_type = _verify_option(
         node_type, value_proc=click.types.convert_type(node_type_choices)
     )
     if node_type is None:
@@ -249,6 +153,7 @@ def create_node(
     partial_ensure_valid_name = functools.partial(
         _ensure_valid_name, node_dir, node_type
     )
+    node_name = _verify_option(node_name, value_proc=partial_ensure_valid_name)
     if node_name is None:
         node_name = click.prompt(
             "Enter node name", value_proc=partial_ensure_valid_name
@@ -317,3 +222,100 @@ def nodes(type_name: str = None) -> None:
             click.secho(url)
 
     click.secho("\n")
+
+
+def _ensure_relative_path(node_subdir: str) -> str:
+    """Checks that the subdir path does not contain parent directory
+    navigator (..), is not absolute, and is not "peekingduck/pipeline/nodes".
+    """
+    pkd_node_subdir = "peekingduck/pipeline/nodes"
+    if ".." in node_subdir:
+        raise click.exceptions.UsageError("Path cannot contain '..'!")
+    if Path(node_subdir).is_absolute():
+        raise click.exceptions.UsageError("Path cannot be absolute!")
+    if node_subdir == pkd_node_subdir:
+        raise click.exceptions.UsageError(f"Path cannot be '{pkd_node_subdir}'!")
+    return node_subdir
+
+
+def _ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
+    if re.match(r"^[a-zA-Z][\w\-]*[^\W_]$", node_name) is None:
+        raise click.exceptions.UsageError("Invalid node name!")
+    if (node_dir / node_type / f"{node_name}.py").exists():
+        raise click.exceptions.UsageError("Node name already exists!")
+    return node_name
+
+
+def _get_cwd() -> Path:
+    return Path.cwd()
+
+
+def _get_node_url(node_type: str, node_name: str) -> str:
+    """Constructs the URL to documentation of the specified node.
+
+    Args:
+        node_type (str): One of input, model, dabble, draw or output.
+        node_name (str): Name of the node.
+
+    Returns:
+        (str): Full URL to the documentation of the specified node.
+    """
+    node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
+    url_postfix = ".html#"
+
+    return f"{url_prefix}{node_path}{url_postfix}{node_path}"
+
+
+def _len_enumerate(item: Tuple) -> int:
+    """Calculates the string length of an enumerate item while accounting for
+    the number of digits of the index.
+
+    Args:
+        item (Tuple): An item return by ``enumerate``, contains
+            ``(index, element)`` where ``element`` is a ``str``.
+
+    Returns:
+        (int): Sum of length of ``element`` and the number of digits of its
+            index.
+    """
+    return _num_digits(item[0] + 1) + len(item[1])
+
+
+def _num_digits(number: int) -> int:
+    """The number of digits of the given number.
+
+    Args:
+        number (int): The given number. It is assumed ``number > 0``.
+
+    Returns:
+        (int): Number of digits in the given number.
+    """
+    return int(math.log10(number))
+
+
+def _verify_option(value: Optional[str], value_proc: Callable) -> Optional[str]:
+    """Verifies that input value via click.option matches the expected value.
+
+    This sets ``value`` to ``None`` if it is invalid so the rest of the prompt
+    can flow smoothly.
+
+    Args:
+        value (Optional[str]): Input value.
+        value_proc (Callable): A function to check the validity of ``value``.
+
+    Returns:
+        (Optional[str]): ``value`` if it is a valid value. ``None`` if it is
+            not.
+
+    Raises:
+        click.exceptions.UsageError: When ``value`` is invalid.
+    """
+    if value is None:
+        return value
+    try:
+        value = value_proc(value)
+    except click.exceptions.UsageError as error:
+        click.echo(f"Error: {error.message}", err=True)
+        value = None
+    return value
