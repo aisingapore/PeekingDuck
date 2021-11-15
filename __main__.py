@@ -23,11 +23,11 @@ import peekingduck.runner as pkd
 from peekingduck.utils.logger import LoggerSetup
 
 if __name__ == "__main__":
-    RUN_PATH = Path.cwd() / "PeekingDuck" / "run_config.yml"
+    run_path = Path.cwd() / "PeekingDuck" / "run_config.yml"
 
     LoggerSetup()
     logger = logging.getLogger(__name__)
-    logger.info("Run path: %s", RUN_PATH)
+    logger.info(f"Run path: {run_path}")
 
-    runner = pkd.Runner(RUN_PATH, "None", "PeekingDuck")
+    runner = pkd.Runner(run_path, "None", "PeekingDuck")
     runner.run()

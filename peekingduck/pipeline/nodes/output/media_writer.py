@@ -62,7 +62,7 @@ class Node(AbstractNode):
         self.writer = None
         self._prepare_directory(self.output_dir)
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        self.logger.info("Output directory used is: %s", self.output_dir)
+        self.logger.info(f"Output directory used is: {self.output_dir}")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Writes media information to filepath."""

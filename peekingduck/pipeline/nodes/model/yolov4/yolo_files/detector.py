@@ -47,23 +47,14 @@ class Detector:
         model_path = self.root_dir / self.config["graph_files"][model_type]
 
         self.logger.info(
-            (
-                "Yolo model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "IDs being detected: %s \n\t"
-                "Max Detections per class: %s, \n\t"
-                "Max Total Detections: %s, \n\t"
-                "IOU threshold: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.config["model_type"],
-            self.config["size"],
-            self.config["detect_ids"],
-            self.config["max_output_size_per_class"],
-            self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            "Yolo model loaded with following configs: \n\t"
+            f"Model type: {self.config['model_type']}, \n\t"
+            f"Input resolution: {self.config['size']}, \n\t"
+            f"IDs being detected: {self.config['detect_ids']} \n\t"
+            f"Max Detections per class: {self.config['max_output_size_per_class']}, \n\t"
+            f"Max Total Detections: {self.config['max_total_size']}, \n\t"
+            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['yolo_score_threshold']}"
         )
 
         return self._load_yolo_graph(model_path)
@@ -74,7 +65,7 @@ class Detector:
         and output nodes of the graph. It is usually x:0 for input and Identity:0
         for outputs, depending on how many output nodes you have.
         """
-        model_type = "yolo%s" % self.config["model_type"][:2]
+        model_type = f"yolo{self.config['model_type'][:2]}"
         model_nodes = self.config["MODEL_NODES"][model_type]
         if model_path.is_file():
             return load_graph(
@@ -83,12 +74,12 @@ class Detector:
                 outputs=model_nodes["outputs"],
             )
         raise ValueError(
-            "Graph file does not exist. Please check that " "%s exists" % model_path
+            f"Graph file does not exist. Please check that {model_path} exists"
         )
 
     def _load_image(self, image_file: str) -> builtins.bytes:
         img = open(image_file, "rb").read()
-        self.logger.info("image file %s loaded", image_file)
+        self.logger.info(f"image file {image_file} loaded")
         return img
 
     @staticmethod
@@ -205,6 +196,6 @@ class Detector:
         """
         physical_devices = tf.config.experimental.list_physical_devices("GPU")
         if len(physical_devices) > 0:
-            self.logger.info("GPU setup with %d devices", len(physical_devices))
+            self.logger.info(f"GPU setup with {len(physical_devices)} devices")
         else:
             self.logger.info("use CPU")

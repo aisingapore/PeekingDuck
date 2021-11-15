@@ -86,7 +86,7 @@ def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
         if graph_op.type == "Placeholder":
             input_list.append(graph_op.name)
 
-        logger.info("Inputs: %s", input_list)
+        logger.info(f"Inputs: {input_list}")
 
 
 def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
@@ -100,4 +100,4 @@ def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
         input_list.extend(node.input)
 
     outputs = set(name_list) - set(input_list)
-    logger.info("Outputs: %s", list(outputs))
+    logger.info(f"Outputs: {list(outputs)}")

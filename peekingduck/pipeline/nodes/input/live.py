@@ -72,16 +72,15 @@ class Node(AbstractNode):
             self.videocap = VideoNoThread(self.input_source, self.mirror_image)
 
         width, height = self.videocap.resolution
-        self.logger.info("Device resolution used: %s by %s", width, height)
+        self.logger.info(f"Device resolution used: {width} by {height}")
         if self.resize["do_resizing"]:
             self.logger.info(
-                "Resizing of input set to %s by %s",
-                self.resize["width"],
-                self.resize["height"],
+                f"Resizing of input set to {self.resize['width']} "
+                f"by {self.resize['height']}"
             )
         if self.filename.split(".")[-1] not in self._allowed_extensions:
             raise ValueError(
-                "filename extension must be one of: ", self._allowed_extensions
+                f"filename extension must be one of: {self._allowed_extensions}"
             )
 
         self.frame_counter = 0
@@ -101,7 +100,7 @@ class Node(AbstractNode):
             }
             self.frame_counter += 1
             if self.frame_counter % self.frames_log_freq == 0:
-                self.logger.info("Frames Processed: %s ...", self.frame_counter)
+                self.logger.info(f"Frames Processed: {self.frame_counter} ...")
 
         else:
             outputs = {

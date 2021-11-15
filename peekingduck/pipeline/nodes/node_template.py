@@ -33,7 +33,7 @@ class Node(AbstractNode):
 
         # initialize/load any configs and models here
         # configs can be called by self.<config_name> e.g. self.filepath
-        # self.logger.info("model loaded with configs: %s", config)
+        # self.logger.info(f"model loaded with configs: config")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
         """This node does ___.

@@ -100,7 +100,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
     custom_nodes_dir = curr_dir / "src" / custom_folder_name
     custom_nodes_config_dir = custom_nodes_dir / "configs"
 
-    logger.info("Creating custom nodes folder in %s", custom_nodes_dir)
+    logger.info(f"Creating custom nodes folder in {custom_nodes_dir}")
     custom_nodes_dir.mkdir(parents=True, exist_ok=True)
     custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 

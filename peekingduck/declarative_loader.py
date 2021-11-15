@@ -115,7 +115,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                 config_updates_yml = None
 
             node_str_split = node_str.split(".")
-            self.logger.info("Initialising %s node...", node_str)
+            self.logger.info(f"Initialising {node_str} node...")
 
             if len(node_str_split) == 3:
                 # convert windows/linux filepath to a module path
@@ -177,15 +177,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             else:
                 if key not in dict_orig:
                     self.logger.warning(
-                        "Config for node %s does not have the key: %s", node_name, key
+                        f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
                     dict_orig[key] = value
                     self.logger.info(
-                        "Config for node %s is updated to: '%s': %s",
-                        node_name,
-                        key,
-                        value,
+                        f"Config for node {node_name} is updated to: '{key}': {value}"
                     )
         return dict_orig
 

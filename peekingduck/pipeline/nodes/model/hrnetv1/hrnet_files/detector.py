@@ -22,17 +22,17 @@ from typing import Any, Callable, Dict, List, Tuple
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    box2cs,
-    crop_and_resize,
-    project_bbox,
-)
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
     affine_transform_xy,
     get_keypoint_conns,
     get_valid_keypoints,
     reshape_heatmaps,
     scale_transform,
+)
+from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
+    box2cs,
+    crop_and_resize,
+    project_bbox,
 )
 from peekingduck.utils.graph_functions import load_graph
 
@@ -75,13 +75,9 @@ class Detector:
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
-            (
-                "HRNet graph model loaded with following configs: \n\t"
-                "Resolution: %s, \n\t"
-                "Score Threshold: %s"
-            ),
-            resolution_tuple,
-            self.min_score,
+            "HRNet graph model loaded with following configs: \n\t"
+            f"Resolution: {resolution_tuple}, \n\t"
+            f"Score Threshold: {self.min_score}"
         )
         return self._inference_function
 

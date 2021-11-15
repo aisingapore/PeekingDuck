@@ -43,7 +43,7 @@ class AbstractNode(metaclass=ABCMeta):
         config: Dict[str, Any] = None,
         node_path: str = "",
         pkd_base_dir: Optional[Path] = None,
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         self._name = node_path
         self.logger = logging.getLogger(self._name)
@@ -126,16 +126,11 @@ class AbstractNode(metaclass=ABCMeta):
                     dict_orig[key] = self._edit_config(dict_orig.get(key, {}), value)
                 elif key not in dict_orig:
                     self.logger.warning(
-                        "Config for node %s does not have the key: %s",
-                        self.node_name,
-                        key,
+                        f"Config for node {self.node_name} does not have the key: {key}"
                     )
                 else:
                     dict_orig[key] = value
                     self.logger.info(
-                        "Config for node %s is updated to: '%s': %s",
-                        self.node_name,
-                        key,
-                        value,
+                        f"Config for node {self.node_name} is updated to: '{key}': {value}"
                     )
         return dict_orig
