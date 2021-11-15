@@ -78,7 +78,7 @@ class Runner:
                 self.logger.error(str(error))
                 sys.exit(1)
         if RequirementChecker.n_update > 0:
-            sys.exit(1)
+            sys.exit(3)
 
     def run(self) -> None:
         """execute single or continuous inference"""

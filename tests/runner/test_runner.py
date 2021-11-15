@@ -180,8 +180,10 @@ class TestRunner:
         with mock.patch.object(RequirementChecker, "n_update", 1), mock.patch(
             "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
             wraps=get_pipeline_with_default_node_names,
-        ), pytest.raises(SystemExit):
+        ), pytest.raises(SystemExit) as exec_info:
             Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_DIR)
+        # Ensure we are throwing the correct exit code
+        assert exec_info.value.code == 3
 
     def test_run(self, runner_with_nodes):
         with mock.patch(
