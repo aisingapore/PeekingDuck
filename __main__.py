@@ -20,12 +20,10 @@ import logging
 from pathlib import Path
 
 import peekingduck.runner as pkd
-from peekingduck.utils.logger import LoggerSetup
 
 if __name__ == "__main__":
     run_path = Path.cwd() / "PeekingDuck" / "run_config.yml"
 
-    LoggerSetup()
     logger = logging.getLogger(__name__)
     logger.info(f"Run path: {run_path}")
 

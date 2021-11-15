@@ -21,11 +21,13 @@ import yaml
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.runner import Runner
+from peekingduck.utils.requirement_checker import RequirementChecker
 
 PKD_NODE_TYPE = "pkd_node_type"
 PKD_NODE_NAME = "pkd_node_name"
-PKD_NODE = "pkd_node_type" + "." + "pkd_node_name"
-PKD_NODE_2 = "pkd_node_type" + "." + "pkd_node_name" + "2"
+PKD_NODE_NAME_2 = "pkd_node_name2"
+PKD_NODE = f"{PKD_NODE_TYPE}.{PKD_NODE_NAME}"
+PKD_NODE_2 = f"{PKD_NODE_TYPE}.{PKD_NODE_NAME_2}"
 NODES = {"nodes": [PKD_NODE, PKD_NODE_2]}
 
 MODULE_DIR = Path("tmp_dir")
@@ -38,7 +40,7 @@ CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True}}}"
 
 class MockedNode(AbstractNode):
     def __init__(self, config):
-        super().__init__(config, node_path=PKD_NODE, pkdbasedir=MODULE_DIR)
+        super().__init__(config, node_path=PKD_NODE, pkd_base_dir=MODULE_DIR)
 
     def run(self, inputs):
         output = {
@@ -60,13 +62,28 @@ def create_run_config_yaml(nodes):
 
 
 def setup():
-    sys.path.append(str(MODULE_DIR))
+    sys.path.append(str(Path.cwd() / MODULE_DIR))
     PKD_NODE_DIR.mkdir(parents=True)
     create_run_config_yaml(NODES)
 
 
+def get_pipeline_with_default_node_names():
+    mock_node = mock.Mock()
+    mock_node.inputs = ["none"]
+    mock_node.name = f"peekingduck.pipeline.nodes.{PKD_NODE}"
+    mock_node.node_name = PKD_NODE
+
+    mock_pipeline = mock.Mock()
+    mock_pipeline.nodes = [mock_node]
+
+    return mock_pipeline
+
+
 def replace_declarativeloader_get_pipeline():
-    return True
+    mock_pipeline = mock.Mock()
+    mock_pipeline.nodes = []
+
+    return mock_pipeline
 
 
 def replace_pipeline_check_pipe(node):
@@ -87,6 +104,7 @@ def runner(request):
         test_runner = Runner(
             RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR, request.param
         )
+
         return test_runner
 
 
@@ -107,6 +125,7 @@ def test_node_end():
         "input": ["test_output_1"],
         "output": ["test_output_2", "pipeline_end"],
     }
+
     return MockedNode(config_node_end)
 
 
@@ -125,7 +144,8 @@ def runner_with_nodes(test_input_node, test_node_end):
 class TestRunner:
     @pytest.mark.parametrize("runner", [None, []], indirect=True)
     def test_init_nodes_none(self, runner):
-        assert runner.pipeline == True
+        assert isinstance(runner.pipeline, mock.Mock)
+        assert runner.pipeline.nodes == []
 
     def test_init_nodes_none_config_updates_none(self):
         with pytest.raises(SystemExit):
@@ -152,6 +172,16 @@ class TestRunner:
             Runner(
                 RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR, [ground_truth]
             )
+
+    def test_init_with_updated_packages(self):
+        setup()
+        with mock.patch.object(RequirementChecker, "n_update", 1), mock.patch(
+            "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
+            wraps=get_pipeline_with_default_node_names,
+        ), pytest.raises(SystemExit) as exec_info:
+            Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR)
+        # Ensure we are throwing the correct exit code
+        assert exec_info.value.code == 3
 
     def test_run(self, runner_with_nodes):
         with mock.patch(

@@ -26,9 +26,7 @@ import yaml
 
 from peekingduck import __version__
 from peekingduck.runner import Runner
-from peekingduck.utils.logger import LoggerSetup
 
-LoggerSetup()
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
