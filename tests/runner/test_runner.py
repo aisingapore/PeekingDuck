@@ -147,7 +147,8 @@ class TestRunner:
         assert isinstance(runner.pipeline, mock.Mock)
         assert runner.pipeline.nodes == []
 
-    def test_init_nodes_none_config_updates_none(self):
+    def test_init_nodes_none_config_updates_none(self, test_input_node):
+        print(test_input_node)
         with pytest.raises(SystemExit):
             Runner(RUN_CONFIG_PATH)
 

@@ -66,9 +66,9 @@ def create_node_python(node_dir, node_name):
             from peekingduck.pipeline.nodes.node import AbstractNode
             
             class Node(AbstractNode):
-                def __init__(self, config, pkdbasedir=None):
-                    pkdbasedir = str(pathlib.Path(__file__).parents[1].resolve())
-                    super().__init__(config, node_path=__name__, pkdbasedir=pkdbasedir)
+                def __init__(self, config, pkd_base_dir=None):
+                    pkd_base_dir = str(pathlib.Path(__file__).parents[1].resolve())
+                    super().__init__(config, node_path=__name__, pkd_base_dir=pkd_base_dir)
 
                 def run(self):
                     return {}
@@ -132,7 +132,7 @@ def replace_instantiate_nodes():
     with open(node_config_path) as file:
         node_config = yaml.safe_load(file)
 
-    instantiated_nodes.append(node.Node(node_config, pkdbasedir=MODULE_DIR))
+    instantiated_nodes.append(node.Node(node_config, pkd_base_dir=MODULE_DIR))
 
     return instantiated_nodes
 
