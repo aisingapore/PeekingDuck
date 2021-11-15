@@ -10,10 +10,11 @@ do
     eval $command
     ret_code=$?
 
-    if [ $ret_code -eq 3 ] && ! (eval $command); then
-        echo "USECASE TESTING $use_case FAILED."
-        exit 123
-    elif [ $ret_code -ne 0 ]; then
+    if [ $ret_code -eq 3 ]; then
+        eval $command
+        ret_code=$?
+    fi
+    if [ $ret_code -ne 0 ]; then
         echo "USECASE TESTING $use_case FAILED."
         exit 123
     fi
