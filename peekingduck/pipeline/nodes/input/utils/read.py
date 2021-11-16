@@ -18,6 +18,7 @@ Reader functions for input nodes
 
 from typing import Any, Tuple, Union
 from threading import Thread, Event
+import logging
 import platform
 import queue
 import cv2
@@ -28,6 +29,9 @@ class VideoThread:
     """
     Videos will be threaded to improve FPS by reducing I/O blocking latency.
     """
+
+    # pylint: disable=too-many-instance-attributes
+    # pylint: disable=logging-fstring-interpolation
 
     def __init__(
         self, input_source: str, mirror_image: bool, buffer_frames: bool
@@ -41,24 +45,28 @@ class VideoThread:
                 self.stream = cv2.VideoCapture(input_source)
         else:
             self.stream = cv2.VideoCapture(input_source)
+        self.logger = logging.getLogger("VideoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError(
                 "Camera or video input not detected: %s" % input_source
             )
-
-        self._thread_frame_counter = 0
+        # events to coordinate threading
+        self.is_done = Event()
+        self.is_thread_start = Event()
+        # frame storage and buffering
+        self.frame_counter = 0
         self.frame = None
-        self.done = Event()
-        self.thread_start_flag = Event()
+        self.prev_frame = None
+        self.buffer = buffer_frames
+        self.queue: queue.Queue = queue.Queue()
+        # start threading
         self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
         self.thread.start()
-        self.queue = queue.Queue()
-        self.buffer = buffer_frames
-        self.thread_start_flag.wait()
+        self.is_thread_start.wait()
 
     def __del__(self) -> None:
-        print("VideoThread.__del__")
+        self.logger.debug("VideoThread.__del__")
         self.stream.release()
 
     def shutdown(self) -> None:
@@ -66,29 +74,29 @@ class VideoThread:
         Shuts down this class.
         Cannot be merged into __del__ as threading code needs to run here.
         """
-        print("VideoThread.shutdown")
-        self.done.set()
+        self.logger.debug("VideoThread.shutdown")
+        self.is_done.set()
         self.thread.join()
 
     def _reading_thread(self) -> None:
         """
         A thread that continuously polls the camera for frames.
         """
-        while not self.done.is_set():
+        while not self.is_done.is_set():
             if self.stream.isOpened():
                 ret, frame = self.stream.read()
                 if not ret:
-                    print(
+                    self.logger.info(
                         f"_reading_thread: ret={ret}, "
-                        f"#frames read={self._thread_frame_counter}"
+                        f"#frames read={self.frame_counter}"
                     )
-                    self.done.set()
+                    self.is_done.set()
                 else:
                     if self.mirror:
                         frame = mirror(frame)
                     self.frame = frame
-                    self.thread_start_flag.set()  # signal thread really started
-                    self._thread_frame_counter += 1
+                    self.is_thread_start.set()  # thread really started
+                    self.frame_counter += 1
                     if self.buffer:
                         self.queue.put(self.frame)
 
@@ -96,9 +104,10 @@ class VideoThread:
         """
         Reads the frame.
         """
+        # pylint: disable=no-else-return
         if self.buffer:
             if self.queue.empty():
-                if self.done.is_set():
+                if self.is_done.is_set():
                     # end of input
                     return False, None
                 else:
@@ -108,7 +117,7 @@ class VideoThread:
                 self.prev_frame = self.queue.get()
                 return True, self.prev_frame
         else:
-            if self.done.is_set():
+            if self.is_done.is_set():
                 return False, None
             else:
                 return True, self.frame

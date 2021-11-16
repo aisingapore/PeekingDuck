@@ -118,9 +118,10 @@ class Node(AbstractNode):
                 100 * self.frame_counter / self.videocap.frame_count
             )
             self.logger.info(
-                f"Completed processing file: {self._file_name}, "
-                f"#frames={self.frame_counter}, "
-                f"processed={pct_complete}%"
+                "Processed %s: #frames=%s, done=%s%%",
+                self._file_name,
+                self.frame_counter,
+                pct_complete,
             )
             self._get_next_input()
             outputs = self._run_single_file()
