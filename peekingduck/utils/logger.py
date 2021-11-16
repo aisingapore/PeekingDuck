@@ -49,9 +49,7 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
-        log_level_settings = set(
-            ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
-        )
+        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
         log_level = log_level.upper()
         if log_level not in log_level_settings:
             log_level = "INFO"
@@ -72,9 +70,7 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
             sys.__excepthook__(exc_type, exc_value, exc_traceback)
             return
 
-        error_list = traceback.format_exception(
-            exc_type, exc_value, exc_traceback
-        )
+        error_list = traceback.format_exception(exc_type, exc_value, exc_traceback)
         traceback_msg = " ".join([str(elem) for elem in error_list[:-1]])
         error_msg = str(error_list[-1])
 

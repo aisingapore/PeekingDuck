@@ -1,7 +1,0 @@
-nodes:
-- input.recorded:
-    input_dir: PeekingDuck/images/testing
-- dabble.fps
-- draw.legend
-- output.screen
-

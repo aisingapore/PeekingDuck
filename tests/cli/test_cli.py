@@ -15,6 +15,7 @@
 import io
 import math
 import os
+import subprocess
 import random
 import string
 import sys
@@ -54,6 +55,7 @@ YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
 NODE_TYPES = ["input", "model", "dabble", "draw", "output"]
 PKD_CONFIG_DIR = Path(__file__).resolve().parents[2] / "peekingduck" / "configs"
+PKD_RUN_DIR = Path(__file__).parents[3]
 
 
 def available_nodes_msg(type_name=None):
@@ -263,3 +265,16 @@ class TestCli:
             result = runner.invoke(cli, ["nodes", node_type])
             assert result.exit_code == 0
             assert result.output == available_nodes_msg(node_type)
+
+    def test_main_py_log_level_debug(self):
+        setup()
+        os.chdir(PKD_RUN_DIR)
+        print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
+        cmd = f"python PeekingDuck --log-level debug --config_path {CUSTOM_RUN_CONFIG_PATH}"
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+        (out, _) = proc.communicate()
+        out_str = out.decode("utf-8")
+        print(out_str)
+        exit_status = proc.returncode
+        assert "DEBUG" in str(out_str)
+        assert exit_status == 0

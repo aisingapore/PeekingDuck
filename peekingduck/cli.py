@@ -16,7 +16,6 @@
 CLI functions for Peekingduck
 """
 
-import os
 import logging
 import math
 from pathlib import Path
@@ -103,9 +102,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 def create_yml() -> None:
     """Inits the declarative yaml"""
     # Default yml to be discussed
-    default_yml = dict(
-        nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"]
-    )
+    default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
     with open("run_config.yml", "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
@@ -181,21 +178,15 @@ def nodes(type_name: str = None) -> None:
         click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
         click.secho("nodes:", bold=True)
 
-        node_names = [
-            path.stem for path in (configs_dir / node_type).glob("*.yml")
-        ]
-        max_length = _len_enumerate(
-            max(enumerate(node_names), key=_len_enumerate)
-        )
+        node_names = [path.stem for path in (configs_dir / node_type).glob("*.yml")]
+        max_length = _len_enumerate(max(enumerate(node_names), key=_len_enumerate))
         for num, node_name in enumerate(node_names):
             idx = num + 1
             url = _get_node_url(node_type, node_name)
             node_name_width = max_length + 1 - _num_digits(idx)
 
             click.secho(f"{idx}:", nl=False)
-            click.secho(
-                f"{node_name: <{node_name_width}}", bold=True, nl=False
-            )
+            click.secho(f"{node_name: <{node_name_width}}", bold=True, nl=False)
             click.secho("Info: ", fg="yellow", nl=False)
             click.secho(url)
 
