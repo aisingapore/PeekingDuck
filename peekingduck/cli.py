@@ -133,7 +133,7 @@ def init(custom_folder_name: str) -> None:
                     Example: --node_config '{"node_name": {"param_1": var_1}}' """,
 )
 @click.option(
-    "--log-level",
+    "--log_level",
     default="info",
     help="""Modify log level {"error", "warning", "info", "debug"}""",
 )

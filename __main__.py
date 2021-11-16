@@ -33,7 +33,7 @@ import click
     ),
 )
 @click.option(
-    "--log-level",
+    "--log_level",
     default="info",
     help="""Modify log level {"error", "warning", "info", "debug"}""",
 )
@@ -52,3 +52,4 @@ def run(config_path, log_level):
 
 if __name__ == "__main__":
     run()
+

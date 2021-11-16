@@ -58,12 +58,12 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
         self.logger.setLevel(log_level)
-        self.logger.info(f"log_level={log_level}")
+        self.logger.info("log_level: %s", log_level)
         sys.excepthook = self.handle_exception
 
-    def handle_exception(
+    def handle_exception(  # type: ignore
         self, exc_type, exc_value, exc_traceback
-    ) -> None:  # type:ignore
+    ) -> None:
         """Use Python's logging module when showing errors"""
 
         if issubclass(exc_type, KeyboardInterrupt):
@@ -83,10 +83,7 @@ class ColoredFormatter(logging.Formatter):
     """This class formats the color of logging messages"""
 
     def __init__(
-        self,
-        *args: str,
-        colors: Optional[Dict[str, str]] = None,
-        **kwargs: str,
+        self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str,
     ) -> None:
         """Initialize the formatter with specified format strings"""
 
