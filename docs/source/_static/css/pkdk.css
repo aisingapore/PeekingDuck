@@ -5,12 +5,6 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
-.wy-menu-vertical,
-.wy-nav-side,
-.wy-side-nav-search {
-  width: 320px;
-}
-
 .wy-menu-vertical p.caption {
   color: #ffffff;
 }
@@ -32,10 +26,6 @@ body {
 
 .wy-side-nav-search {
   background: #a76d60;
-}
-
-.wy-side-scroll {
-  width: 340px;
 }
 
 .wy-table-responsive table.longtable td,
