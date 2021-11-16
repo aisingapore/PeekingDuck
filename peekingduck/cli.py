@@ -91,7 +91,7 @@ def init(custom_folder_name: str) -> None:
 @click.option(
     "--log-level",
     default="info",
-    help="""Modify debug level {"error", "warning", "info", "debug"}""",
+    help="""Modify log level {"error", "warning", "info", "debug"}""",
 )
 def run(config_path: str, node_config: str, log_level: str) -> None:
     """Runs PeekingDuck"""

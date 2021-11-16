@@ -56,13 +56,12 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
             "info": logging.INFO,
             "debug": logging.DEBUG,
         }
-        lg = log_levels[log_level]
-        print(f"log_level={log_level}, lg={lg}")
 
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
         self.logger.setLevel(log_levels[log_level])
+        self.logger.info(f"log_level={log_level}")
         sys.excepthook = self.handle_exception
 
     def handle_exception(

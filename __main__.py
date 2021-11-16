@@ -18,27 +18,33 @@ from peekingduck.utils.logger import LoggerSetup
 import peekingduck.runner as pkd
 import click
 
-
-@click.group()
-def cli():
-    pass
+PKD_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 @click.command()
-@click.option("--log-level", default="info")
-def run(log_level):
-    RUN_PATH = os.path.join(os.getcwd(), "PeekingDuck", "run_config.yml")
+@click.option(
+    "--config_path",
+    default=None,
+    type=click.Path(),
+    help="List of nodes to run. None assumes \
+                   run_config.yml at current working directory",
+)
+@click.option(
+    "--log-level",
+    default="info",
+    help="""Modify log level {"error", "warning", "info", "debug"}""",
+)
+def run(config_path, log_level):
+    if not config_path:
+        config_path = os.path.join(PKD_DIR, "run_config.yml")
 
     LoggerSetup(log_level=log_level)
     logger = logging.getLogger(__name__)
-    logger.info("Run path: %s", RUN_PATH)
+    logger.info("Run path: %s", config_path)
 
-    runner = pkd.Runner(RUN_PATH, "None", "PeekingDuck")
+    runner = pkd.Runner(config_path, "None", "PeekingDuck")
     runner.run()
 
 
-cli.add_command(run)
-
-
 if __name__ == "__main__":
-    cli()
+    run()
