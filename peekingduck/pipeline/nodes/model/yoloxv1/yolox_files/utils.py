@@ -26,7 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""A collection of utility functions used by YOLOX
+"""A collection of utility functions used by YOLOX.
 
 Modifications include:
 - Refactor fuse_conv_and_bn and fuse_model
@@ -47,6 +47,7 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.network_blocks import 
 @no_type_check
 def fuse_conv_and_bn(conv: nn.Conv2d, batch_norm: nn.BatchNorm2d) -> nn.Conv2d:
     """Fuses convolution and batchnorm layers.
+
     Reference: https://tehnokv.com/posts/fusing-batchnorm-and-conv/
     """
     fusedconv = nn.Conv2d(
@@ -96,7 +97,7 @@ def fuse_model(model: YOLOX) -> YOLOX:
 
 
 def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: no cover
-    """Remove non-model items from the weights file.
+    """Removes non-model items from the weights file.
 
     The inference Detector requires only "model" parameters from the weights
     file. Deletes all other values from the weights file. Optionally, converts
@@ -104,8 +105,8 @@ def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: 
     such as `num_batches_tracked` in `BatchNorm2d` untouched.
 
     Args:
-        weights_path (`Path`): Path to weights file.
-        half (`bool`): Flag to determine if float and double parameters should
+        weights_path (Path): Path to weights file.
+        half (bool): Flag to determine if float and double parameters should
             be converted to half-precision.
     """
     stripped_weights_path = weights_path.with_name(
@@ -148,10 +149,10 @@ def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
 
 
 def xyxy2xyxyn(inputs: np.ndarray, height: float, width: float) -> np.ndarray:
-    """Converts from [x1, y1, x2, y2] to normalized [x1, y1, x2, y2].
+    """Converts from [x1, y1, x2, y2] to normalised [x1, y1, x2, y2].
 
     (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
-    Normalized coordinates are w.r.t. original image size.
+    Normalised coordinates are w.r.t. original image size.
     """
     outputs = np.empty_like(inputs)
     outputs[:, [0, 2]] = inputs[:, [0, 2]] / width

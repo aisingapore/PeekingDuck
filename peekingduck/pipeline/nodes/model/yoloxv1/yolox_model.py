@@ -63,7 +63,7 @@ class YOLOXModel:
 
     @property
     def detect_ids(self) -> List[int]:
-        """The list of selected object category IDs"""
+        """The list of selected object category IDs."""
         return self._detect_ids
 
     @detect_ids.setter
@@ -80,10 +80,10 @@ class YOLOXModel:
         """Predicts bboxes from image.
 
         Args:
-            image (np.array): Input image frame
+            image (np.ndarray): Input image frame.
 
         Returns:
-            (Tuple[List[np.array], List[str], List[float]]): Returned tuple
+            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
                 contains:
                 - A list of detection bboxes
                 - A list of human-friendly detection class names

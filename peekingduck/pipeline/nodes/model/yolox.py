@@ -21,7 +21,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Node class to initialize and use YOLOX to infer from an image frame.
+    """Initialises and use YOLOX to infer from an image frame.
 
     The YOLOX node is capable detecting objects from 80 categories. The table
     of object categories can be found :term:`here <object detection indices>`.
@@ -40,29 +40,31 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     Configs:
         model_type (:obj:`str`): **{"yolox-tiny", "yolox-s", "yolox-m",
-            "yolox-l"}, default="yolox-tiny".** Defines the type of YOLOX model
-            to be used.
-        input_size (:obj:`int`): **Default=416.** Input image resolution of the
-            YOLOX model.
-        detect_ids (:obj:`List[int]`): **Default=[0].** List of object category
-            IDs to be detected.
-        iou_threshold (:obj:`float`): **[0, 1], default = 0.45.** Overlapping
-            bounding boxes with Intersection over Union (IoU) above the
-            threshold will be discarded.
-        score_threshold (:obj:`float`): **[0, 1], default = 0.25.** Bounding
-            boxes with confidence score (product of objectness score and
-            classification score) below the threshold will be discarded.
-        fp16 (:obj:`bool`): **Default = False.** Flag to determine if
-            half-precision floating-point should be used for inference
-        fuse (:ojb:`bool`): **Default = False.** Flag to determine if the
-            convolution and batch normalization layers should be fused for
-            inference.
+            "yolox-l"}, default="yolox-tiny"**. |br|
+            Defines the type of YOLOX model to be used.
+        input_size (:obj:`int`): **default=416**. |br|
+            Input image resolution of the YOLOX model.
+        detect_ids (:obj:`List[int]`): **default=[0]**. |br|
+            List of object category IDs to be detected.
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
+            Overlapping bounding boxes with Intersection over Union (IoU) above
+            the threshold will be discarded.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.25**. |br|
+            Bounding boxes with confidence score (product of objectness score
+            and classification score) below the threshold will be discarded.
+        fp16 (:obj:`bool`): **default = False**. |br|
+            Flag to determine if half-precision floating-point should be used
+            for inference
+        fuse (:obj:`bool`): **default = False**. |br|
+            Flag to determine if the convolution and batch normalization layers
+            should be fused for inference.
 
     References:
         YOLOX: Exceeding YOLO Series in 2021:
-            https://arxiv.org/abs/2107.08430
+        https://arxiv.org/abs/2107.08430
+
         Inference code and model weights:
-            https://github.com/Megvii-BaseDetection/YOLOX
+        https://github.com/Megvii-BaseDetection/YOLOX
     """
 
     def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
@@ -70,7 +72,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.model = yolox_model.YOLOXModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Read `img` from `inputs` and return the bboxes of the detect
+        """Reads `img` from `inputs` and return the bboxes of the detect
         objects.
 
         The classes of objects to be detected can be specified through the

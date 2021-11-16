@@ -26,7 +26,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Network blocks for constructing the YOLOX model
+"""Network blocks for constructing the YOLOX model.
 
 Modifications include:
 - BaseConv
@@ -48,7 +48,7 @@ import torch.nn as nn
 
 
 class BaseConv(nn.Module):
-    """A Conv2d -> Batchnorm -> silu block"""
+    """A Conv2d -> Batchnorm -> SiLU block."""
 
     # pylint: disable=invalid-name
     def __init__(
@@ -66,7 +66,7 @@ class BaseConv(nn.Module):
         self.act = nn.SiLU(inplace=True)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         return self.act(self.bn(self.conv(inputs)))
 
     def fuseforward(self, inputs: torch.Tensor) -> torch.Tensor:
@@ -93,7 +93,7 @@ class Bottleneck(nn.Module):
         self.use_add = shortcut and in_channels == out_channels
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         ouputs = self.conv2(self.conv1(inputs))
         if self.use_add:
             ouputs = ouputs + inputs
@@ -101,7 +101,7 @@ class Bottleneck(nn.Module):
 
 
 class SPPBottleneck(nn.Module):
-    """Spatial pyramid pooling layer used in YOLOv3-SPP"""
+    """Spatial pyramid pooling layer used in YOLOv3-SPP."""
 
     # pylint: disable=invalid-name
     def __init__(
@@ -118,7 +118,7 @@ class SPPBottleneck(nn.Module):
         self.conv2 = BaseConv(conv2_channels, out_channels, 1, 1)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         inputs = self.conv1(inputs)
         inputs = torch.cat([inputs] + [m(inputs) for m in self.m], dim=1)
         inputs = self.conv2(inputs)
@@ -126,7 +126,7 @@ class SPPBottleneck(nn.Module):
 
 
 class CSPLayer(nn.Module):
-    """C3 in yolov5, CSP Bottleneck with 3 convolutions"""
+    """C3 in yolov5, CSP Bottleneck with 3 convolutions."""
 
     # pylint: disable=invalid-name
     def __init__(
@@ -138,9 +138,9 @@ class CSPLayer(nn.Module):
     ) -> None:
         """
         Args:
-            in_channels (int): input channels.
-            out_channels (int): output channels.
-            n (int): number of Bottlenecks. Default value: 1.
+            in_channels (int): Input channels.
+            out_channels (int): Output channels.
+            num_blocks (int): Number of Bottlenecks, default = 1.
         """
         # ch_in, ch_out, number, shortcut, groups, expansion
         super().__init__()
@@ -156,7 +156,7 @@ class CSPLayer(nn.Module):
         )
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         inputs_1 = self.conv1(inputs)
         inputs_2 = self.conv2(inputs)
         inputs_1 = self.m(inputs_1)
@@ -179,7 +179,7 @@ class Focus(nn.Module):
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         # shape of x (b,c,w,h) -> y(b,4c,w/2,h/2)
         patch_top_left = inputs[..., ::2, ::2]
         patch_top_right = inputs[..., ::2, 1::2]

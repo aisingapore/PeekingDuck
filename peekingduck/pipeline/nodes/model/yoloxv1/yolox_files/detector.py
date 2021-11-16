@@ -74,7 +74,7 @@ class Detector:  # pylint: disable=too-few-public-methods
                 names.
 
         Returns:
-            (Tuple[List[np.array], List[str], List[float]]): Returned tuple
+            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
                 contains:
                 - A list of detection bboxes
                 - A list of human-friendly detection class names
@@ -113,23 +113,14 @@ class Detector:  # pylint: disable=too-few-public-methods
         model_sizes = self.config["model_sizes"][model_type]
 
         self.logger.info(
-            (
-                "YOLOX model loaded with the following configs:\n\t"
-                "Model type: %s\n\t"
-                "Input resolution: %s\n\t"
-                "IDs being detected: %s\n\t"
-                "IOU threshold: %s\n\t"
-                "Score threshold: %s\n\t"
-                "Half-precision floating-point: %s\n\t"
-                "Fuse convolution and batch normalization layers: %s\n\t"
-            ),
-            self.config["model_type"],
-            self.input_size,
-            self.config["detect_ids"],
-            self.config["iou_threshold"],
-            self.config["score_threshold"],
-            self.half,
-            self.config["fuse"],
+            "YOLOX model loaded with the following configs:\n\t"
+            f"Model type: {self.config['model_type']}\n\t"
+            f"Input resolution: {self.input_size}\n\t"
+            f"IDs being detected: {self.config['detect_ids']}\n\t"
+            f"IOU threshold: {self.config['iou_threshold']}\n\t"
+            f"Score threshold: {self.config['score_threshold']}\n\t"
+            f"Half-precision floating-point: {self.half}\n\t"
+            f"Fuse convolution and batch normalization layers: {self.config['fuse']}"
         )
         return self._load_yolox_weights(model_path, model_sizes)
 
@@ -188,7 +179,7 @@ class Detector:  # pylint: disable=too-few-public-methods
                 names.
 
         Returns:
-            (Tuple[List[np.array], List[str], List[float]]): Returned tuple
+            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
                 contains:
                 - A list of detection bboxes
                 - A list of human-friendly detection class names

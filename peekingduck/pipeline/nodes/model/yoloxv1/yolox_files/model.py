@@ -57,6 +57,7 @@ IN_CHANNELS = [256, 512, 1024]
 
 class YOLOX(nn.Module):
     """YOLOX model module.
+
     The module list is defined by create_yolov3_modules function. The network
     returns loss values from three YOLO layers during training and detection
     results during test.
@@ -74,16 +75,14 @@ class YOLOX(nn.Module):
         self.head = YOLOXHead(num_classes, width)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         # FPN output content features of [dark3, dark4, dark5]
         fpn_outs = self.backbone(inputs)
         return self.head(fpn_outs)
 
 
 class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
-    """
-    YOLOv3 model. Darknet 53 is the default backbone of this model.
-    """
+    """YOLOv3 model. Darknet 53 is the default backbone of this model."""
 
     # pylint: disable=arguments-differ, dangerous-default-value, invalid-name
     def __init__(
@@ -131,7 +130,7 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
     def make_csp_layer(
         in_channel: int, out_channel: int, depth: int, width: float
     ) -> CSPLayer:
-        """Returns a CSPLayer"""
+        """Returns a CSPLayer."""
         return CSPLayer(
             int(2 * in_channel * width), int(out_channel * width), depth, False
         )
@@ -141,7 +140,7 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
         """
         Args:
-            inputs: input images.
+            inputs: Input images.
 
         Returns:
             Tuple[Tensor]: FPN feature.
@@ -186,15 +185,8 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
         width: float = 1.0,
         strides: List[int] = [8, 16, 32],
     ) -> None:
-        """
-        Args:
-            act (str): activation type of conv. Default: "silu".
-            depthwise (bool): Flag to determine whether to apply depthwise
-                conv in conv branch. Default: False.
-        """
         super().__init__()
 
-        # self.sizes: List[torch.Size]
         self.sizes: List[Tuple[Any, ...]]
         feat_channels = int(256 * width)
         self.n_anchors = 1
@@ -222,7 +214,7 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def make_group_layer(in_channels: int) -> Tuple[BaseConv, BaseConv]:
-        """2x BaseConv layer"""
+        """2x BaseConv layer."""
         return (
             BaseConv(in_channels, in_channels, 3, 1),
             BaseConv(in_channels, in_channels, 3, 1),
@@ -231,7 +223,7 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
     def forward(
         self, xin: Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
     ) -> torch.Tensor:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         outputs = []
         for k, (cls_conv, reg_conv, x) in enumerate(
             zip(self.cls_convs, self.reg_convs, xin)

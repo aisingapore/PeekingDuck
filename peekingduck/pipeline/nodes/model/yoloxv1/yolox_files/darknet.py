@@ -49,7 +49,7 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.network_blocks import 
 
 
 class CSPDarknet(nn.Module):
-    """Modified CSPNet with SiLU activation"""
+    """Modified CSPNet with SiLU activation."""
 
     # pylint: disable=arguments-differ
     def __init__(
@@ -84,7 +84,7 @@ class CSPDarknet(nn.Module):
         )
 
     def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
-        """Defines the computation performed at every call"""
+        """Defines the computation performed at every call."""
         outputs = {}
         inputs = self.stem(inputs)
         outputs["stem"] = inputs
