@@ -19,6 +19,7 @@ import cv2
 import numpy as np
 import numpy.testing as npt
 import pytest
+import torch
 import yaml
 
 from peekingduck.pipeline.nodes.model.yolox import Node
@@ -48,15 +49,16 @@ def yolox_bad_detect_ids_config(request, yolox_config):
     return yolox_config
 
 
-@pytest.fixture(params=[-0.5, 1.5])
-def yolox_bad_iou_config(request, yolox_config):
-    yolox_config["iou_threshold"] = request.param
-    return yolox_config
-
-
-@pytest.fixture(params=[-0.5, 1.5])
-def yolox_bad_score_config(request, yolox_config):
-    yolox_config["score_threshold"] = request.param
+@pytest.fixture(
+    params=[
+        {"key": "iou_threshold", "value": -0.5},
+        {"key": "iou_threshold", "value": 1.5},
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+    ],
+)
+def yolox_bad_config_value(request, yolox_config):
+    yolox_config[request.param["key"]] = request.param["value"]
     return yolox_config
 
 
@@ -80,6 +82,12 @@ def yolox_default(yolox_config):
     return node
 
 
+@pytest.fixture
+def yolox_gpu(yolox_matrix_config):
+    node = Node(yolox_matrix_config)
+    return node
+
+
 @pytest.fixture(params=["yolox-l", "yolox-m", "yolox-s", "yolox-tiny"])
 def yolox(request, yolox_matrix_config):
     with mock.patch("torch.cuda.is_available", return_value=False):
@@ -89,7 +97,7 @@ def yolox(request, yolox_matrix_config):
         return node
 
 
-def replace_download_weights(root, blob_file):
+def replace_download_weights(*_):
     pass
 
 
@@ -111,6 +119,17 @@ class TestYOLOX:
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, yolox):
         test_image = cv2.imread(test_human_images)
         output = yolox.run({"img": test_image})
+
+        assert "bboxes" in output
+        assert output["bboxes"].size > 0
+
+    @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
+    def test_return_at_least_one_person_and_one_bbox_gpu(
+        self, test_human_images, yolox_gpu
+    ):
+        test_image = cv2.imread(test_human_images)
+        # Ran on YOLOX-tiny only due to GPU OOM error on some systems
+        output = yolox_gpu.run({"img": test_image})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
@@ -155,13 +174,9 @@ class TestYOLOX:
         with pytest.raises(TypeError):
             _ = Node(config=yolox_bad_detect_ids_config)
 
-    def test_invalid_config_iou_threshold(self, yolox_bad_iou_config):
+    def test_invalid_config_value(self, yolox_bad_config_value):
         with pytest.raises(ValueError):
-            _ = Node(config=yolox_bad_iou_config)
-
-    def test_invalid_config_score_threshold(self, yolox_bad_score_config):
-        with pytest.raises(ValueError):
-            _ = Node(config=yolox_bad_score_config)
+            _ = Node(config=yolox_bad_config_value)
 
     def test_invalid_config_model_files(self, yolox_config):
         with mock.patch(
