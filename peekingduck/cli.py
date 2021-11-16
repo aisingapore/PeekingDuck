@@ -44,11 +44,10 @@ def _get_cwd() -> str:
 
 
 def create_custom_folder(custom_folder_name: str) -> None:
-    """Make custom nodes folder to create custom nodes
-    """
+    """Make custom nodes folder to create custom nodes"""
     curdir = _get_cwd()
     custom_folder_dir = os.path.join(curdir, "src", custom_folder_name)
-    custom_configs_dir = os.path.join(custom_folder_dir, 'configs')
+    custom_configs_dir = os.path.join(custom_folder_dir, "configs")
 
     logger.info("Creating custom nodes folder in %s", custom_folder_dir)
     os.makedirs(custom_folder_dir, exist_ok=True)
@@ -59,20 +58,15 @@ def create_yml() -> None:
     """Inits the declarative yaml"""
     # Default yml to be discussed
     default_yml = dict(
-        nodes=[
-            'input.live',
-            'model.yolo',
-            'draw.bbox',
-            'output.screen'
-        ]
+        nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"]
     )
 
-    with open('run_config.yml', 'w') as yml_file:
+    with open("run_config.yml", "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
 @cli.command()
-@click.option('--custom_folder_name', default='custom_nodes')
+@click.option("--custom_folder_name", default="custom_nodes")
 def init(custom_folder_name: str) -> None:
     """Initialise a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
@@ -81,14 +75,27 @@ def init(custom_folder_name: str) -> None:
 
 
 @cli.command()
-@click.option('--config_path', default=None, type=click.Path(),
-              help="List of nodes to run. None assumes \
-                   run_config.yml at current working directory")
-@click.option('--node_config', default="None",
-              help="""Modify node configs by wrapping desired configs in a JSON string.\n
-                    Example: --node_config '{"node_name": {"param_1": var_1}}' """)
-def run(config_path: str, node_config: str) -> None:
+@click.option(
+    "--config_path",
+    default=None,
+    type=click.Path(),
+    help="List of nodes to run. None assumes \
+                   run_config.yml at current working directory",
+)
+@click.option(
+    "--node_config",
+    default="None",
+    help="""Modify node configs by wrapping desired configs in a JSON string.\n
+                    Example: --node_config '{"node_name": {"param_1": var_1}}' """,
+)
+@click.option(
+    "--log-level",
+    default="info",
+    help="""Modify debug level {"error", "warning", "info", "debug"}""",
+)
+def run(config_path: str, node_config: str, log_level: str) -> None:
     """Runs PeekingDuck"""
+    logger.setLevel(log_level)
 
     curdir = _get_cwd()
     if not config_path:
@@ -119,7 +126,7 @@ def nodes(type_name: str = None) -> None:
         type_of_node = [type_name]
 
     dir_path = os.path.dirname(os.path.realpath(__file__))
-    configs_dir = os.path.join(dir_path, 'configs')
+    configs_dir = os.path.join(dir_path, "configs")
 
     for node_type in type_of_node:
         type_dir = os.path.join(configs_dir, node_type)

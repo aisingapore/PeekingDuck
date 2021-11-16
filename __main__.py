@@ -16,13 +16,29 @@ import os
 import logging
 from peekingduck.utils.logger import LoggerSetup
 import peekingduck.runner as pkd
+import click
 
-if __name__ == "__main__":
-    RUN_PATH = os.path.join(os.getcwd(), 'PeekingDuck', 'run_config.yml')
 
-    LoggerSetup()
+@click.group()
+def cli():
+    pass
+
+
+@click.command()
+@click.option("--log-level", default="info")
+def run(log_level):
+    RUN_PATH = os.path.join(os.getcwd(), "PeekingDuck", "run_config.yml")
+
+    LoggerSetup(log_level=log_level)
     logger = logging.getLogger(__name__)
     logger.info("Run path: %s", RUN_PATH)
 
     runner = pkd.Runner(RUN_PATH, "None", "PeekingDuck")
     runner.run()
+
+
+cli.add_command(run)
+
+
+if __name__ == "__main__":
+    cli()
