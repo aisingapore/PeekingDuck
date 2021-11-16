@@ -19,12 +19,15 @@ from peekingduck.pipeline.nodes.dabble.fps import Node
 
 @pytest.fixture
 def fps_node():
-    node = Node({"input": ["pipeline_end"],
-                 "output": ["fps"],
-                 "fps_log_display": True,
-                 "fps_log_freq": 30,
-                 "dampen_fps": True
-                 })
+    node = Node(
+        {
+            "input": ["pipeline_end"],
+            "output": ["fps"],
+            "fps_log_display": True,
+            "fps_log_freq": 30,
+            "dampen_fps": True,
+        }
+    )
     return node
 
 

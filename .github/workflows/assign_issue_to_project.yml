@@ -1,0 +1,19 @@
+name: Assign Issue to Project
+
+on:
+  issues:
+    types: [opened, labeled]
+env:
+  MY_GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
+jobs:
+  assign_one_project:
+    runs-on: ubuntu-latest
+
+    name: Assign to One Project
+    steps:
+    - name: Assign NEW issue to One Project
+      uses: srggrs/assign-one-project-github-action@1.3.1
+      if: github.event.action == 'opened'
+      with:
+        project: 'https://github.com/orgs/aimakerspace/projects/1'

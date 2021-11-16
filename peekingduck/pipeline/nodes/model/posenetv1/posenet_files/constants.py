@@ -19,31 +19,57 @@ Constants used for PoseNet
 import numpy as np
 
 KEYPOINT_NAMES = (
-    "nose", "leftEye", "rightEye", "leftEar", "rightEar", "leftShoulder",
-    "rightShoulder", "leftElbow", "rightElbow", "leftWrist", "rightWrist",
-    "leftHip", "rightHip", "leftKnee", "rightKnee", "leftAnkle", "rightAnkle"
+    "nose",
+    "leftEye",
+    "rightEye",
+    "leftEar",
+    "rightEar",
+    "leftShoulder",
+    "rightShoulder",
+    "leftElbow",
+    "rightElbow",
+    "leftWrist",
+    "rightWrist",
+    "leftHip",
+    "rightHip",
+    "leftKnee",
+    "rightKnee",
+    "leftAnkle",
+    "rightAnkle",
 )
 
 _KEYPOINT_IDS = {pn: pid for pid, pn in enumerate(KEYPOINT_NAMES)}
 
 _POSE_CHAIN = [
-    ("nose", "leftEye"), ("leftEye", "leftEar"), ("nose", "rightEye"),
-    ("rightEye", "rightEar"), ("nose", "leftShoulder"),
-    ("leftShoulder", "leftElbow"), ("leftElbow", "leftWrist"),
-    ("leftShoulder", "leftHip"), ("leftHip", "leftKnee"),
-    ("leftKnee", "leftAnkle"), ("nose", "rightShoulder"),
-    ("rightShoulder", "rightElbow"), ("rightElbow", "rightWrist"),
-    ("rightShoulder", "rightHip"), ("rightHip", "rightKnee"),
-    ("rightKnee", "rightAnkle")
+    ("nose", "leftEye"),
+    ("leftEye", "leftEar"),
+    ("nose", "rightEye"),
+    ("rightEye", "rightEar"),
+    ("nose", "leftShoulder"),
+    ("leftShoulder", "leftElbow"),
+    ("leftElbow", "leftWrist"),
+    ("leftShoulder", "leftHip"),
+    ("leftHip", "leftKnee"),
+    ("leftKnee", "leftAnkle"),
+    ("nose", "rightShoulder"),
+    ("rightShoulder", "rightElbow"),
+    ("rightElbow", "rightWrist"),
+    ("rightShoulder", "rightHip"),
+    ("rightHip", "rightKnee"),
+    ("rightKnee", "rightAnkle"),
 ]
 
-POSE_CONNECTIONS = np.array([(_KEYPOINT_IDS[parent], _KEYPOINT_IDS[child])
-                             for parent, child in _POSE_CHAIN])
+POSE_CONNECTIONS = np.array(
+    [(_KEYPOINT_IDS[parent], _KEYPOINT_IDS[child]) for parent, child in _POSE_CHAIN]
+)
 
-SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
-            [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
-            [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4],
-            [3, 5], [4, 6], [5, 7]]
+# fmt: off
+SKELETON = [
+    [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7],
+    [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5],
+    [4, 6], [5, 7],
+]
+# fmt: on
 
 LOCAL_MAXIMUM_RADIUS = 1
 

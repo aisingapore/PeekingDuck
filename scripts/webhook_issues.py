@@ -10,33 +10,26 @@ from copy import deepcopy
 class StandupBot:
     SHAME_GIF_URL = "https://media3.giphy.com/media/vX9WcCiWwUF7G/200.gif"
     COMMIT_FORMAT = "[#{number}]({url}) - {title} \n "
-    DISCORD_JSON = {'username': 'Stand-up Bot',
-                    'content': "Hi team, here's a summary of the latest activities :mechanical_arm: :robot:",
-                    'embeds': [
-                        {
-                            'title': None,
-                            'fields': [
-                                {
-                                    'name': 'New Issues since last stand-up',
-                                    'value': None
-                                },
-                                {
-                                    'name': 'PRs merged since last stand-up',
-                                    'value': None
-                                },
-                                {
-                                    'name': 'PRs opened since last stand-up',
-                                    'value': None
-                                },
-                            ],
-                            'footer': {
-                                "text": "This message is brought to you by Stand-up Bot"
-                            }
-                        }
-                    ]}
+    DISCORD_JSON = {
+        "username": "Stand-up Bot",
+        "content": "Hi team, here's a summary of the latest activities :mechanical_arm: :robot:",
+        "embeds": [
+            {
+                "title": None,
+                "fields": [
+                    {"name": "New Issues since last stand-up", "value": None},
+                    {"name": "PRs merged since last stand-up", "value": None},
+                    {"name": "PRs opened since last stand-up", "value": None},
+                ],
+                "footer": {"text": "This message is brought to you by Stand-up Bot"},
+            }
+        ],
+    }
 
-    EMPTY_MESSAGE = {'username': 'Stand-up Bot',
-                     'content': "Hi team, seems there wasn't any activity yesterday"}
+    EMPTY_MESSAGE = {
+        "username": "Stand-up Bot",
+        "content": "Hi team, seems there wasn't any activity yesterday",
+    }
 
     def __init__(self, opened_issues, merged_pr, opened_pr, webhook_url, date):
         self.opened_issues = opened_issues
@@ -57,7 +50,7 @@ class StandupBot:
 
     @staticmethod
     def _check_weekend(date):
-        date_dt = datetime.datetime.strptime(date, '%Y-%m-%dT%H:%M:%SZ')
+        date_dt = datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%SZ")
         now = pytz.timezone("UTC")
         to_sg = pytz.timezone("Singapore")
         date_converted = now.localize(date_dt).astimezone(to_sg)
@@ -65,22 +58,30 @@ class StandupBot:
         return weekday == 5 or weekday == 6
 
     def _name_and_shame(self):
-        namelist = ', '.join(set(['@' + pr['mergedBy']['login']
-                                  for pr in self.merged_pr if self._check_weekend(pr['mergedAt'])]))
-        return f"Hi {namelist}, you shouldn't really be working over the weekends. \
-                The GIF below represents what I think of you"
+        namelist = ", ".join(
+            set(
+                [
+                    "@" + pr["mergedBy"]["login"]
+                    for pr in self.merged_pr
+                    if self._check_weekend(pr["mergedAt"])
+                ]
+            )
+        )
+        return (
+            f"Hi {namelist}, you shouldn't really be working over the weekends. "
+            "The GIF below represents what I think of you"
+        )
 
     def _add_date(self):
         message_title = "Activity for {}:".format(self.date)
-        self.discord_message['embeds'][0]['title'] = message_title
+        self.discord_message["embeds"][0]["title"] = message_title
 
     def add_shame_message(self):
         shame_message = self._name_and_shame()
-        self.discord_message['embeds'][0]['image'] = {'url': self.SHAME_GIF_URL}
-        self.discord_message['embeds'][0]['fields'].append({
-            'name': 'Naming and Shaming Corner',
-            'value': shame_message
-        })
+        self.discord_message["embeds"][0]["image"] = {"url": self.SHAME_GIF_URL}
+        self.discord_message["embeds"][0]["fields"].append(
+            {"name": "Naming and Shaming Corner", "value": shame_message}
+        )
 
     def parse_json(self, json_to_parse):
         content = ""
@@ -109,16 +110,16 @@ class StandupBot:
         opened_pr_parsed = self.parse_json(self.opened_pr)
         merged_pr_parsed = self.parse_json(self.merged_pr)
 
-        self.discord_message['embeds'][0]['fields'][0]['value'] = opened_issues_parsed
-        self.discord_message['embeds'][0]['fields'][1]['value'] = merged_pr_parsed
-        self.discord_message['embeds'][0]['fields'][2]['value'] = opened_pr_parsed
+        self.discord_message["embeds"][0]["fields"][0]["value"] = opened_issues_parsed
+        self.discord_message["embeds"][0]["fields"][1]["value"] = merged_pr_parsed
+        self.discord_message["embeds"][0]["fields"][2]["value"] = opened_pr_parsed
 
         if self.merged_pr and self.is_friday:
             self.add_shame_message()
         return self.discord_message
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     parser = argparse.ArgumentParser()
     parser.add_argument("opened_issues")

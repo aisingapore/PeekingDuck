@@ -25,7 +25,7 @@ from peekingduck.weights_utils import checker, downloader
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
 
-class MtcnnModel: # pylint: disable=too-few-public-methods
+class MtcnnModel:  # pylint: disable=too-few-public-methods
     """MTCNN model to detect face bboxes and landmarks"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -33,31 +33,32 @@ class MtcnnModel: # pylint: disable=too-few-public-methods
 
         self.logger = logging.getLogger(__name__)
 
-         # check factor value
-        if not 0 <= config['mtcnn_factor'] <= 1:
+        # check factor value
+        if not 0 <= config["mtcnn_factor"] <= 1:
             raise ValueError("mtcnn_factor must be between 0 and 1")
 
         # check threshold values
-        for threshold in config['mtcnn_thresholds']:
+        for threshold in config["mtcnn_thresholds"]:
             if not 0 <= threshold <= 1:
                 raise ValueError("mtcnn_thresholds must be between 0 and 1")
 
         # check score value
-        if not 0 <= config['mtcnn_score'] <= 1:
+        if not 0 <= config["mtcnn_score"] <= 1:
             raise ValueError("mtcnn_score must be between 0 and 1")
 
         # check for mtcnn weights, if none then download into weights folder
-        if not checker.has_weights(config['root'],
-                                   config['weights_dir']):
-            self.logger.info('---no mtcnn weights detected. proceeding to download...---')
-            downloader.download_weights(config['root'],
-                                        config['blob_file'])
-            self.logger.info('---mtcnn weights download complete.---')
+        if not checker.has_weights(config["root"], config["weights_dir"]):
+            self.logger.info(
+                "---no mtcnn weights detected. proceeding to download...---"
+            )
+            downloader.download_weights(config["root"], config["blob_file"])
+            self.logger.info("---mtcnn weights download complete.---")
 
         self.detector = Detector(config)
 
-    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray,
-                                                  np.ndarray]:
+    def predict(
+        self, frame: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, scores and landmarks
 
         Args:

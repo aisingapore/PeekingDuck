@@ -56,8 +56,11 @@ class Node(AbstractNode):
         bboxes = inputs["bboxes"]
         frame = inputs["img"]
         self.img_size = (frame.shape[1], frame.shape[0])  # type:ignore
-        return {'btm_midpoint': [self._xy_on_img(((bbox[0]+bbox[2])/2), bbox[3])
-                                 for bbox in bboxes]}
+        return {
+            "btm_midpoint": [
+                self._xy_on_img(((bbox[0] + bbox[2]) / 2), bbox[3]) for bbox in bboxes
+            ]
+        }
 
     def _xy_on_img(self, pt_x: float, pt_y: float) -> Tuple[int, int]:
         """Return the int x y points of the midpoint on the original image"""

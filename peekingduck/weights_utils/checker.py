@@ -15,12 +15,11 @@
 Checks for model weights in weights folder
 """
 
-
-import os
+from pathlib import Path
 from typing import List
 
 
-def has_weights(root: str, path_to_check: List[str]) -> bool:
+def has_weights(root: Path, path_to_check: List[str]) -> bool:
     """Checks for model weight paths from weights folder
 
     Args:
@@ -31,15 +30,14 @@ def has_weights(root: str, path_to_check: List[str]) -> bool:
     Returns:
         boolean: True is files/directories needed exists, else False
     """
-
     # Check for whether weights dir even exist. If not make directory
     # Empty directory should then return False
-    weights_dir = os.path.join(root, '..', 'peekingduck_weights')
-    if not os.path.isdir(weights_dir):
-        os.mkdir(weights_dir)
+    weights_dir = root.parent / "peekingduck_weights"
+    if not weights_dir.exists():
+        weights_dir.mkdir()
         return False
 
     for check in path_to_check:
-        if not os.path.exists(os.path.join(root, check)):
+        if not (root / check).exists():
             return False
     return True

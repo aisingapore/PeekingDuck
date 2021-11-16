@@ -47,13 +47,14 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """ Checks the distance between 3d locations of a pair of objects.
+        """Checks the distance between 3d locations of a pair of objects.
         If distance is less than threshold, assign the objects to the same group.
         Repeat for all object pairs.
         """
 
         nearby_obj_pairs = self._find_nearby_obj_pairs(
-            inputs["obj_3D_locs"], self.obj_dist_thres)
+            inputs["obj_3D_locs"], self.obj_dist_thres
+        )
 
         quickfind = QuickFind(len(inputs["obj_3D_locs"]))
         for (idx_1, idx_2) in nearby_obj_pairs:
@@ -63,8 +64,9 @@ class Node(AbstractNode):
         return {"obj_groups": quickfind.get_group_alloc()}
 
     @staticmethod
-    def _find_nearby_obj_pairs(obj_locs: List[np.array],
-                               obj_dist_thres: float) -> List[Tuple[int, int]]:
+    def _find_nearby_obj_pairs(
+        obj_locs: List[np.array], obj_dist_thres: float
+    ) -> List[Tuple[int, int]]:
         """If the distance between 2 objects are less than the threshold, append their
         indexes to nearby_obj_pairs as a tuple."""
 

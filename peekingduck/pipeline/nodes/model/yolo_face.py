@@ -97,6 +97,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         bboxes, labels, scores = self.model.predict(inputs["img"])
-        outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores,}
+        outputs = {
+            "bboxes": bboxes,
+            "bbox_labels": labels,
+            "bbox_scores": scores,
+        }
 
         return outputs

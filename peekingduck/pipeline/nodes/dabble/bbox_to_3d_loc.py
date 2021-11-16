@@ -48,8 +48,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Converts 2D bounding boxes into 3D locations.
-        """
+        """Converts 2D bounding boxes into 3D locations."""
 
         locations = []
 

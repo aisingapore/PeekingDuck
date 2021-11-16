@@ -1,14 +1,18 @@
-pylint ==2.7.4
-pytest == 6.2.3
+bandit == 1.7.0
+black == 21.9b0
 coverage == 5.5
 mypy == 0.910
-bandit == 1.7.0
-types-PyYAML==5.4.3
-types-requests==2.25.0
-types-six==0.1.7
+pylint == 2.7.4
+pytest == 6.2.3
+types-PyYAML == 5.4.3
+types-requests == 2.25.0
+types-setuptools == 57.4.2
+types-six == 0.1.7
 beautifulsoup4
 myst-parser
 sphinx-autodoc-typehints
 sphinx-rtd-theme
 texttable # for pretty print scripts/check_links.py output
+# optional requirements
+shapely == 1.7.1
 -r requirements.txt

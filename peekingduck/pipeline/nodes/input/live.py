@@ -16,11 +16,11 @@
 Reads a videofeed from a stream (e.g. webcam)
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoThread, VideoNoThread
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -78,21 +78,24 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
         if self.threading:
-            self.videocap = VideoThread(                # type: ignore
-                self.input_source, self.mirror_image)
+            self.videocap = VideoThread(self.input_source, self.mirror_image)
         else:
-            self.videocap = VideoNoThread(              # type: ignore
-                self.input_source, self.mirror_image)
+            self.videocap = VideoNoThread(  # type: ignore
+                self.input_source, self.mirror_image
+            )
 
         width, height = self.videocap.resolution
-        self.logger.info('Device resolution used: %s by %s', width, height)
-        if self.resize['do_resizing']:
-            self.logger.info('Resizing of input set to %s by %s',
-                             self.resize['width'],
-                             self.resize['height'])
-        if self.filename.split('.')[-1] not in self._allowed_extensions:
-            raise ValueError("filename extension must be one of: ",
-                             self._allowed_extensions)
+        self.logger.info("Device resolution used: %s by %s", width, height)
+        if self.resize["do_resizing"]:
+            self.logger.info(
+                "Resizing of input set to %s by %s",
+                self.resize["width"],
+                self.resize["height"],
+            )
+        if self.filename.split(".")[-1] not in self._allowed_extensions:
+            raise ValueError(
+                "filename extension must be one of: ", self._allowed_extensions
+            )
 
         self.frame_counter = 0
 
@@ -100,25 +103,26 @@ class Node(AbstractNode):
         success, img = self.videocap.read_frame()  # type: ignore
 
         if success:
-            if self.resize['do_resizing']:
-                img = resize_image(img,
-                                   self.resize['width'],
-                                   self.resize['height'])
+            if self.resize["do_resizing"]:
+                img = resize_image(img, self.resize["width"], self.resize["height"])
 
-            outputs = {"img": img,
-                       "pipeline_end": False,
-                       "filename": self.filename,
-                       "saved_video_fps": self.fps_saved_output_video}
+            outputs = {
+                "img": img,
+                "pipeline_end": False,
+                "filename": self.filename,
+                "saved_video_fps": self.fps_saved_output_video,
+            }
             self.frame_counter += 1
             if self.frame_counter % self.frames_log_freq == 0:
-                self.logger.info('Frames Processed: %s ...',
-                                 self.frame_counter)
+                self.logger.info("Frames Processed: %s ...", self.frame_counter)
 
         else:
-            outputs = {"img": None,
-                       "pipeline_end": True,
-                       "filename": self.filename,
-                       "saved_video_fps": self.fps_saved_output_video}
+            outputs = {
+                "img": None,
+                "pipeline_end": True,
+                "filename": self.filename,
+                "saved_video_fps": self.fps_saved_output_video,
+            }
             self.logger.warning("No video frames available for processing.")
 
         return outputs

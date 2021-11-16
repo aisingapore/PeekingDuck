@@ -16,7 +16,7 @@
 Loads configurations for individual nodes
 """
 
-import os
+from pathlib import Path
 from typing import Any, Dict
 
 import yaml
@@ -35,16 +35,15 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
     """
 
-    def __init__(self, basedir: str) -> None:
+    def __init__(self, basedir: Path) -> None:
         self._basedir = basedir
 
-    def _get_config_path(self, node: str) -> str:
-        """ Based on the node, return the corresponding node config path """
-
-        configs_folder = os.path.join(self._basedir, 'configs')
+    def _get_config_path(self, node: str) -> Path:
+        """Based on the node, return the corresponding node config path"""
+        configs_folder = self._basedir / "configs"
         node_type, node_name = node.split(".")
         node_name = node_name + ".yml"
-        filepath = os.path.join(configs_folder, node_type, node_name)
+        filepath = configs_folder / node_type / node_name
 
         return filepath
 
@@ -53,7 +52,6 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         Get node configuration for specified node.
 
         Args:
-
             node_name (:obj:`str`): name of node
 
         Outputs:
@@ -61,12 +59,11 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             specified node
 
         """
-
         filepath = self._get_config_path(node_name)
 
         with open(filepath) as file:
             node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading
-        node_config['root'] = self._basedir
+        node_config["root"] = self._basedir
         return node_config

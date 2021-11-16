@@ -16,10 +16,11 @@
 Record the nodes outputs to csv file
 """
 
-from datetime import datetime
 import logging
 import textwrap
-from typing import Any, Dict
+from datetime import datetime
+from pathlib import Path
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
@@ -56,17 +57,18 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)
-        self.logging_interval = int(self.logging_interval) # type: ignore
+        self.logging_interval = int(self.logging_interval)  # type: ignore
+        self.filepath = Path(self.filepath)  # type: ignore
         # check if filepath has a '.csv' extension
-        if not ".csv" in self.filepath:
+        if self.filepath.suffix != ".csv":
             raise ValueError("Filepath must have a '.csv' extension.")
 
         self._filepath_datetime = self._append_datetime_filepath(self.filepath)
         self._stats_checked = False
-        self.stats_to_track = self.stats_to_track  # type: ignore
-        self.csv_logger = CSVLogger(self._filepath_datetime,
-                                    self.stats_to_track,
-                                    self.logging_interval)
+        self.stats_to_track: List[str]
+        self.csv_logger = CSVLogger(
+            self._filepath_datetime, self.stats_to_track, self.logging_interval
+        )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -79,7 +81,6 @@ class Node(AbstractNode):
         Returns:
             outputs: [None]
         """
-
         # reset and terminate when there are no more data
         if inputs["pipeline_end"]:
             self._reset()
@@ -88,9 +89,9 @@ class Node(AbstractNode):
         if not self._stats_checked:
             self._check_tracked_stats(inputs)
             # self._stats_to_track might change after the check
-            self.csv_logger = CSVLogger(self._filepath_datetime,
-                                        self.stats_to_track,
-                                        self.logging_interval)
+            self.csv_logger = CSVLogger(
+                self._filepath_datetime, self.stats_to_track, self.logging_interval
+            )
 
         self.csv_logger.write(inputs, self.stats_to_track)
 
@@ -112,10 +113,13 @@ class Node(AbstractNode):
                 invalid.append(stat)
 
         if len(invalid) != 0:
-            msg = textwrap.dedent(f"""\
-                    {invalid} are not valid outputs.
-                    Data pool only has this outputs: {list(inputs.keys())}
-                    Only {valid} will be logged in the csv file""")
+            msg = textwrap.dedent(
+                f"""\
+                {invalid} are not valid outputs.
+                Data pool only has this outputs: {list(inputs.keys())}
+                Only {valid} will be logged in the csv file
+                """
+            )
             self.logger.warning(msg)
 
         # update stats_to_track with valid stats found in data pool
@@ -129,19 +133,18 @@ class Node(AbstractNode):
         self._stats_checked = False
 
     @staticmethod
-    def _append_datetime_filepath(filepath: str) -> str:
+    def _append_datetime_filepath(filepath: Path) -> Path:
         """
         Append time stamp to the filename
         """
-        current_time = datetime.now()  # type: ignore
-        time_str = current_time.strftime(
-            "%d%m%y-%H-%M-%S")  # output as '240621-15-09-13'
-
-        file_name = filepath.split('.')[-2]
-        file_ext = filepath.split('.')[-1]
+        current_time = datetime.now()
+        # output as '240621-15-09-13'
+        time_str = current_time.strftime("%d%m%y-%H-%M-%S")
 
         # append timestamp to filename before extension
         # Format: filename_timestamp.extension
-        filepath_with_timestamp = f"{file_name}_{time_str}.{file_ext}"
+        filepath_with_timestamp = filepath.with_name(
+            f"{filepath.stem}_{time_str}{filepath.suffix}"
+        )
 
         return filepath_with_timestamp

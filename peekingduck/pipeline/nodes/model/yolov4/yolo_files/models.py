@@ -37,6 +37,7 @@ Core Yolo model files
 """
 
 from typing import Union, List, Tuple
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -52,34 +53,58 @@ from tensorflow.keras.layers import (
     ZeroPadding2D,
 )
 from tensorflow.keras.regularizers import l2
-from .batch_norm import BatchNormalization
+
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.batch_norm import (
+    BatchNormalization,
+)
 
 # pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
 
-YOLO_ANCHORS = np.array([(10, 13), (16, 30), (33, 23), (30, 61), (62, 45),
-                         (59, 119), (116, 90), (156, 198),
-                         (373, 326)], np.float32) / 416
+YOLO_ANCHORS = (
+    np.array(
+        [
+            (10, 13),
+            (16, 30),
+            (33, 23),
+            (30, 61),
+            (62, 45),
+            (59, 119),
+            (116, 90),
+            (156, 198),
+            (373, 326),
+        ],
+        np.float32,
+    )
+    / 416
+)
 YOLO_ANCHOR_MASKS = np.array([[6, 7, 8], [3, 4, 5], [0, 1, 2]])
 
-YOLO_TINY_ANCHORS = np.array([(10, 14), (23, 27), (37, 58), (81, 82),
-                              (135, 169), (344, 319)], np.float32) / 416
+YOLO_TINY_ANCHORS = (
+    np.array(
+        [(10, 14), (23, 27), (37, 58), (81, 82), (135, 169), (344, 319)], np.float32
+    )
+    / 416
+)
 YOLO_TINY_ANCHOR_MASKS = np.array([[3, 4, 5], [0, 1, 2]])
 
 
-def _darknet_conv(x: np.array, filters: int, size: int,
-                  strides: int = 1, batch_norm: bool = True) -> tf.Tensor:
+def _darknet_conv(
+    x: np.array, filters: int, size: int, strides: int = 1, batch_norm: bool = True
+) -> tf.Tensor:
     """create 1 layer with [padding], conv2d, [bn and relu]"""
     if strides == 1:
-        padding = 'same'
+        padding = "same"
     else:
         x = ZeroPadding2D(((1, 0), (1, 0)))(x)  # top left half-padding
-        padding = 'valid'
-    x = Conv2D(filters=filters,
-               kernel_size=size,
-               strides=strides,
-               padding=padding,
-               use_bias=not batch_norm,
-               kernel_regularizer=l2(0.0005))(x)
+        padding = "valid"
+    x = Conv2D(
+        filters=filters,
+        kernel_size=size,
+        strides=strides,
+        padding=padding,
+        use_bias=not batch_norm,
+        kernel_regularizer=l2(0.0005),
+    )(x)
     if batch_norm:
         x = BatchNormalization()(x)
         x = LeakyReLU(alpha=0.1)(x)
@@ -127,17 +152,17 @@ def _darknet_tiny(name: str = None) -> tf.keras.Model:
     """create 7 layers, return a Model with 2 outputs x_8 and x"""
     x = inputs = Input([None, None, 3])
     x = _darknet_conv(x, 16, 3)
-    x = MaxPool2D(2, 2, 'same')(x)
+    x = MaxPool2D(2, 2, "same")(x)
     x = _darknet_conv(x, 32, 3)
-    x = MaxPool2D(2, 2, 'same')(x)
+    x = MaxPool2D(2, 2, "same")(x)
     x = _darknet_conv(x, 64, 3)
-    x = MaxPool2D(2, 2, 'same')(x)
+    x = MaxPool2D(2, 2, "same")(x)
     x = _darknet_conv(x, 128, 3)
-    x = MaxPool2D(2, 2, 'same')(x)
+    x = MaxPool2D(2, 2, "same")(x)
     x = x_8 = _darknet_conv(x, 256, 3)  # skip connection
-    x = MaxPool2D(2, 2, 'same')(x)
+    x = MaxPool2D(2, 2, "same")(x)
     x = _darknet_conv(x, 512, 3)
-    x = MaxPool2D(2, 1, 'same')(x)
+    x = MaxPool2D(2, 1, "same")(x)
     x = _darknet_conv(x, 1024, 3)
     return tf.keras.Model(inputs, (x_8, x), name=name)
 
@@ -150,6 +175,7 @@ def _yolo_conv(filters: int, name: str = None) -> tf.keras.Model:
     Return:
         - Model with 1 output x
     """
+
     def _yolo_conv_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
@@ -174,6 +200,7 @@ def _yolo_conv(filters: int, name: str = None) -> tf.keras.Model:
 
 def _yolo_conv_tiny(filters: int, name: str = None) -> tf.keras.Model:
     """create [1] layers, return a Model with 1 output x"""
+
     def _yolo_conv_tiny_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
@@ -192,27 +219,33 @@ def _yolo_conv_tiny(filters: int, name: str = None) -> tf.keras.Model:
     return _yolo_conv_tiny_imp
 
 
-def _yolo_output(filters: int, anchors: int, classes: int,
-                 name: str = None) -> tf.keras.Model:
+def _yolo_output(
+    filters: int, anchors: int, classes: int, name: str = None
+) -> tf.keras.Model:
     """create 2 layers, return a model with 1 output x"""
+
     def _yolo_output_imp(x_in: np.array) -> tf.keras.Model:
         x = inputs = Input(x_in.shape[1:])
         x = _darknet_conv(x, filters * 2, 3)
         x = _darknet_conv(x, anchors * (classes + 5), 1, batch_norm=False)
-        x = Lambda(lambda x: tf.reshape(x, (-1, tf.shape(x)[1], tf.shape(x)[2],
-                                            anchors, classes + 5)))(x)
+        x = Lambda(
+            lambda x: tf.reshape(
+                x, (-1, tf.shape(x)[1], tf.shape(x)[2], anchors, classes + 5)
+            )
+        )(x)
         return tf.keras.Model(inputs, x, name=name)(x_in)
 
     return _yolo_output_imp
 
 
-def _yolo_boxes(pred: tf.Tensor, anchors: int,
-                classes: int) -> Tuple[List[np.array], List[str], List[float], List[np.array]]:
+def _yolo_boxes(
+    pred: tf.Tensor, anchors: int, classes: int
+) -> Tuple[List[np.array], List[str], List[float], List[np.array]]:
     # pred: (batch_size, grid, grid, anchors, (x, y, w, h, obj, ...classes))
     grid_size = tf.shape(pred)[1]
-    box_xy, box_wh, objectness, class_probs = tf.split(pred,
-                                                       (2, 2, 1, classes),
-                                                       axis=-1)
+    box_xy, box_wh, objectness, class_probs = tf.split(
+        pred, (2, 2, 1, classes), axis=-1
+    )
 
     box_xy = tf.sigmoid(box_xy)
     objectness = tf.sigmoid(objectness)
@@ -223,8 +256,7 @@ def _yolo_boxes(pred: tf.Tensor, anchors: int,
     grid = tf.meshgrid(tf.range(grid_size), tf.range(grid_size))
     grid = tf.expand_dims(tf.stack(grid, axis=-1), axis=2)  # [gx, gy, 1, 2]
 
-    box_xy = (box_xy + tf.cast(grid, tf.float32)) / \
-        tf.cast(grid_size, tf.float32)
+    box_xy = (box_xy + tf.cast(grid, tf.float32)) / tf.cast(grid_size, tf.float32)
     box_wh = tf.exp(box_wh) * anchors
 
     box_x1y1 = box_xy - box_wh / 2
@@ -234,8 +266,9 @@ def _yolo_boxes(pred: tf.Tensor, anchors: int,
     return bbox, objectness, class_probs, pred_box
 
 
-def _yolo_nms(outputs: List[tf.Tensor],
-              classes: tf.Tensor) -> Tuple[List[np.array], List[float], List[str], List[int]]:
+def _yolo_nms(
+    outputs: List[tf.Tensor], classes: tf.Tensor
+) -> Tuple[List[np.array], List[float], List[str], List[int]]:
     """non-maximum suppression"""
     # boxes, conf, type
     b, c, t = [], [], []
@@ -252,20 +285,19 @@ def _yolo_nms(outputs: List[tf.Tensor],
     scores = confidence * class_probs
     boxes, scores, classes, valid_detections = tf.image.combined_non_max_suppression(
         boxes=tf.reshape(bbox, (tf.shape(bbox)[0], -1, 1, 4)),
-        scores=tf.reshape(scores,
-                          (tf.shape(scores)[0], -1, tf.shape(scores)[-1])),
+        scores=tf.reshape(scores, (tf.shape(scores)[0], -1, tf.shape(scores)[-1])),
         max_output_size_per_class=100,
         max_total_size=100,
         iou_threshold=0.5,
-        score_threshold=0.2)
+        score_threshold=0.2,
+    )
 
     return boxes, scores, classes, valid_detections
 
 
-def yolov3(size: int = None,
-           channels: int = 3,
-           classes: int = 80,
-           training: bool = False) -> tf.keras.Model:
+def yolov3(
+    size: int = None, channels: int = 3, classes: int = 80, training: bool = False
+) -> tf.keras.Model:
     """Create a yolov3 model
 
     This model has 76 layers, which can be calcualted below:
@@ -291,40 +323,40 @@ def yolov3(size: int = None,
 
     x = inputs = Input([size, size, channels])
 
-    x_36, x_61, x = _darknet(name='yolo_darknet')(x)
+    x_36, x_61, x = _darknet(name="yolo_darknet")(x)
 
-    x = _yolo_conv(512, name='yolo_conv_0')(x)
-    output_0 = _yolo_output(
-        512, len(masks[0]), classes, name='yolo_output_0')(x)
+    x = _yolo_conv(512, name="yolo_conv_0")(x)
+    output_0 = _yolo_output(512, len(masks[0]), classes, name="yolo_output_0")(x)
 
-    x = _yolo_conv(256, name='yolo_conv_1')((x, x_61))
-    output_1 = _yolo_output(
-        256, len(masks[1]), classes, name='yolo_output_1')(x)
+    x = _yolo_conv(256, name="yolo_conv_1")((x, x_61))
+    output_1 = _yolo_output(256, len(masks[1]), classes, name="yolo_output_1")(x)
 
-    x = _yolo_conv(128, name='yolo_conv_2')((x, x_36))
-    output_2 = _yolo_output(
-        128, len(masks[2]), classes, name='yolo_output_2')(x)
+    x = _yolo_conv(128, name="yolo_conv_2")((x, x_36))
+    output_2 = _yolo_output(128, len(masks[2]), classes, name="yolo_output_2")(x)
 
     if training:
-        return Model(inputs, (output_0, output_1, output_2), name='yolov3')
+        return Model(inputs, (output_0, output_1, output_2), name="yolov3")
 
-    boxes_0 = Lambda(lambda x: _yolo_boxes(x, anchors[masks[0]], classes),
-                     name='yolo_boxes_0')(output_0)
-    boxes_1 = Lambda(lambda x: _yolo_boxes(x, anchors[masks[1]], classes),
-                     name='yolo_boxes_1')(output_1)
-    boxes_2 = Lambda(lambda x: _yolo_boxes(x, anchors[masks[2]], classes),
-                     name='yolo_boxes_2')(output_2)
+    boxes_0 = Lambda(
+        lambda x: _yolo_boxes(x, anchors[masks[0]], classes), name="yolo_boxes_0"
+    )(output_0)
+    boxes_1 = Lambda(
+        lambda x: _yolo_boxes(x, anchors[masks[1]], classes), name="yolo_boxes_1"
+    )(output_1)
+    boxes_2 = Lambda(
+        lambda x: _yolo_boxes(x, anchors[masks[2]], classes), name="yolo_boxes_2"
+    )(output_2)
 
-    outputs = Lambda(lambda x: _yolo_nms(x, classes),
-                     name='yolo_nms')((boxes_0[:3], boxes_1[:3], boxes_2[:3]))
+    outputs = Lambda(lambda x: _yolo_nms(x, classes), name="yolo_nms")(
+        (boxes_0[:3], boxes_1[:3], boxes_2[:3])
+    )
 
-    return Model(inputs, outputs, name='yolov3')
+    return Model(inputs, outputs, name="yolov3")
 
 
-def yolov3_tiny(size: int = None,
-                channels: int = 3,
-                classes: int = 80,
-                training: bool = False) -> tf.keras.Model:
+def yolov3_tiny(
+    size: int = None, channels: int = 3, classes: int = 80, training: bool = False
+) -> tf.keras.Model:
     """Create Yolov3 tiny model
 
     This model has 23 layers, which can be calcualted below:
@@ -350,24 +382,25 @@ def yolov3_tiny(size: int = None,
 
     x = inputs = Input([size, size, channels])
 
-    x_8, x = _darknet_tiny(name='yolo_darknet')(x)
+    x_8, x = _darknet_tiny(name="yolo_darknet")(x)
 
-    x = _yolo_conv_tiny(256, name='yolo_conv_0')(x)
-    output_0 = _yolo_output(256, len(masks[0]), classes,
-                            name='yolo_output_0')(x)
+    x = _yolo_conv_tiny(256, name="yolo_conv_0")(x)
+    output_0 = _yolo_output(256, len(masks[0]), classes, name="yolo_output_0")(x)
 
-    x = _yolo_conv_tiny(128, name='yolo_conv_1')((x, x_8))
-    output_1 = _yolo_output(128, len(masks[1]), classes,
-                            name='yolo_output_1')(x)
+    x = _yolo_conv_tiny(128, name="yolo_conv_1")((x, x_8))
+    output_1 = _yolo_output(128, len(masks[1]), classes, name="yolo_output_1")(x)
 
     if training:
-        return Model(inputs, (output_0, output_1), name='yolov3')
+        return Model(inputs, (output_0, output_1), name="yolov3")
 
-    boxes_0 = Lambda(lambda x: _yolo_boxes(x, anchors[masks[0]], classes),
-                     name='yolo_boxes_0')(output_0)
-    boxes_1 = Lambda(lambda x: _yolo_boxes(x, anchors[masks[1]], classes),
-                     name='yolo_boxes_1')(output_1)
-    outputs = Lambda(lambda x: _yolo_nms(x, classes),
-                     name='yolo_nms')((boxes_0[:3], boxes_1[:3]))
+    boxes_0 = Lambda(
+        lambda x: _yolo_boxes(x, anchors[masks[0]], classes), name="yolo_boxes_0"
+    )(output_0)
+    boxes_1 = Lambda(
+        lambda x: _yolo_boxes(x, anchors[masks[1]], classes), name="yolo_boxes_1"
+    )(output_1)
+    outputs = Lambda(lambda x: _yolo_nms(x, classes), name="yolo_nms")(
+        (boxes_0[:3], boxes_1[:3])
+    )
 
-    return Model(inputs, outputs, name='yolov3_tiny')
+    return Model(inputs, outputs, name="yolov3_tiny")

@@ -17,15 +17,18 @@ Main engine for Peekingduck processes
 """
 
 import copy
-import sys
 import logging
+import sys
+from pathlib import Path
 from typing import List
-from peekingduck.pipeline.pipeline import Pipeline
+
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.utils.requirement_checker import RequirementChecker
 
 
-class Runner():
+class Runner:
     """
     The runner class for creation of pipeline using declared/given nodes.
 
@@ -52,36 +55,39 @@ class Runner():
 
     """
 
-    def __init__(self,
-                 RUN_PATH: str = "",
-                 config_updates_cli: str = None,
-                 CUSTOM_NODE_PARENT_FOLDER: str = None,
-                 nodes: List[AbstractNode] = None):
-
+    def __init__(
+        self,
+        RUN_PATH: Path = None,
+        config_updates_cli: str = None,
+        CUSTOM_NODE_PARENT_FOLDER: str = None,
+        nodes: List[AbstractNode] = None,
+    ):
         self.logger = logging.getLogger(__name__)
 
         if not nodes and RUN_PATH:
             # create Graph to run
             self.node_loader = DeclarativeLoader(
-                RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER)  # type: ignore
-
+                RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER  # type: ignore
+            )
             self.pipeline = self.node_loader.get_pipeline()
-
         # If Runner given nodes, instantiated_nodes is created differently
         else:
             try:
-                self.pipeline = Pipeline(nodes) # type: ignore
+                self.pipeline = Pipeline(nodes)  # type: ignore
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)
+        if RequirementChecker.n_update > 0:
+            sys.exit(3)
 
     def run(self) -> None:
-        """execute single or continuous inference
-        """
+        """execute single or continuous inference"""
         while not self.pipeline.terminate:
             for node in self.pipeline.nodes:
-                if "pipeline_end" in self.pipeline.data and \
-                        self.pipeline.data["pipeline_end"]:  # type: ignore
+                if (
+                    "pipeline_end" in self.pipeline.data
+                    and self.pipeline.data["pipeline_end"]
+                ):  # type: ignore
 
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
@@ -90,8 +96,11 @@ class Runner():
                 if "all" in node.inputs:
                     inputs = copy.deepcopy(self.pipeline.data)
                 else:
-                    inputs = {key: self.pipeline.data[key]
-                              for key in node.inputs if key in self.pipeline.data}
+                    inputs = {
+                        key: self.pipeline.data[key]
+                        for key in node.inputs
+                        if key in self.pipeline.data
+                    }
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)  # type: ignore

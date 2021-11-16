@@ -18,10 +18,13 @@ EfficientDet model with model types: D0-D4
 
 import logging
 from typing import Dict, Any, List, Tuple
+
 import numpy as np
 
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
+    Detector,
+)
 from peekingduck.weights_utils import checker, downloader
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import Detector
 
 
 class EfficientDetModel:
@@ -33,21 +36,21 @@ class EfficientDetModel:
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config['score_threshold'] <= 1:
+        if not 0 <= config["score_threshold"] <= 1:
             raise ValueError("score_threshold must be in [0, 1]")
-        if not 0 <= config['model_type'] <= 4:
+        if not 0 <= config["model_type"] <= 4:
             raise ValueError("model_type must be an integer in [0, 4]")
 
         # check for efficientdet weights, if none then download into weights folder
-        if not checker.has_weights(config['root'],
-                                   config['weights_dir']):
-            self.logger.info('---no efficientdet weights detected. proceeding to download...---')
-            downloader.download_weights(config['root'],
-                                        config['blob_file'])
-            self.logger.info('---efficientdet weights download complete.---')
+        if not checker.has_weights(config["root"], config["weights_dir"]):
+            self.logger.info(
+                "---no efficientdet weights detected. proceeding to download...---"
+            )
+            downloader.download_weights(config["root"], config["blob_file"])
+            self.logger.info("---efficientdet weights download complete.---")
 
-        self.detect_ids = config['detect_ids']
-        self.logger.info('efficientdet model detecting ids: %s', self.detect_ids)
+        self.detect_ids = config["detect_ids"]
+        self.logger.info("efficientdet model detecting ids: %s", self.detect_ids)
 
         self.detector = Detector(config)
 
@@ -67,6 +70,5 @@ class EfficientDetModel:
         return self.detector.predict_bbox_from_image(frame, self.detect_ids)
 
     def get_detect_ids(self) -> List[int]:
-        """getter function for ids to be detected
-        """
+        """getter function for ids to be detected"""
         return self.detect_ids

@@ -49,18 +49,17 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
-        log_levels = {
-            "critical": logging.CRITICAL,
-            "error": logging.ERROR,
-            "warning": logging.WARNING,
-            "info": logging.INFO,
-            "debug": logging.DEBUG,
-        }
+        log_level_settings = set(
+            ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"]
+        )
+        log_level = log_level.upper()
+        if log_level not in log_level_settings:
+            log_level = "INFO"
 
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
-        self.logger.setLevel(log_levels[log_level])
+        self.logger.setLevel(log_level)
         self.logger.info(f"log_level={log_level}")
         sys.excepthook = self.handle_exception
 
