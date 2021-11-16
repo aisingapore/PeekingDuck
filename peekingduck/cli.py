@@ -95,6 +95,10 @@ def init(custom_folder_name: str) -> None:
 )
 def run(config_path: str, node_config: str, log_level: str) -> None:
     """Runs PeekingDuck"""
+    log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+    log_level = log_level.upper()
+    if log_level not in log_level_settings:
+        log_level = "INFO"
     logger.setLevel(log_level)
 
     curdir = _get_cwd()
