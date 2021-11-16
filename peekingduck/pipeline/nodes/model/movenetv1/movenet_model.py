@@ -41,15 +41,17 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
             "multipose_lightning",
         ]:
             raise ValueError(
-                """model_type must be one of 
+                """model_type must be one of
                 ["singlepose_lightning","singlepose_thunder","multipose_lightning"]"""
             )
 
         # check for movenet weights, if none then download into weights folder
         if not checker.has_weights(config["root"], config["weights_dir"]):
-            print("---no movenet weights detected. proceeding to download...---")
+            self.logger.info(
+                "---no movenet weights detected. proceeding to download...---"
+            )
             downloader.download_weights(config["root"], config["blob_file"])
-            print("---movenet weights download complete.---")
+            self.logger.info("---movenet weights download complete.---")
 
         self.predictor = Predictor(config)
 

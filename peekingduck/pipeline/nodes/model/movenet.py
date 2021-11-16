@@ -17,6 +17,7 @@ Fast Pose Estimation model
 """
 
 from typing import Dict, Any
+import numpy as np
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
 
@@ -49,7 +50,7 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`): **{"
-        singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"}, 
+        singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"},
         default="mulitpose_lightning"**
 
             Defines the detection model for MoveNet either single or multi pose.
@@ -96,7 +97,8 @@ class Node(AbstractNode):
             inputs["img"]
         )
 
-        bbox_labels = ["Person"] * len(bboxes)
+        bbox_labels = np.array(["Person"] * len(bboxes))
+
         return {
             "bboxes": bboxes,
             "keypoints": keypoints,

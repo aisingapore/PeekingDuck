@@ -1,7 +1,6 @@
 input: ["img"]
 output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
 
-
 model_type: multipose_lightning
 weights_dir: ["../peekingduck_weights/movenet"]
 model_weights_dir: {
@@ -9,6 +8,7 @@ model_weights_dir: {
     singlepose_lightning: ../peekingduck_weights/movenet/singlepose_lightning,
     singlepose_thunder: ../peekingduck_weights/movenet/singlepose_thunder,
 }
+
 blob_file: "movenet.zip"
 
 resolution: {
@@ -19,4 +19,4 @@ resolution: {
   # recommended shape is 256
 
 bbox_score_threshold: 0.2
-keypoint_score_threshold: 0.2
+keypoint_score_threshold: 0.3

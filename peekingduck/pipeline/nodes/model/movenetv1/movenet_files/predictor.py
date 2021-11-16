@@ -24,7 +24,27 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
-from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.constants import SKELETON
+SKELETON = [
+    [16, 14],
+    [14, 12],
+    [17, 15],
+    [15, 13],
+    [12, 13],
+    [6, 12],
+    [7, 13],
+    [6, 7],
+    [6, 8],
+    [7, 9],
+    [8, 10],
+    [9, 11],
+    [2, 3],
+    [1, 2],
+    [1, 3],
+    [2, 4],
+    [3, 5],
+    [4, 6],
+    [5, 7],
+]
 
 
 class Predictor:
@@ -71,7 +91,7 @@ class Predictor:
             # threshold not required
             self.logger.info(
                 (
-                    "PoseNet model loaded with following configs: \n\t"
+                    "MoveNet model loaded with following configs: \n\t"
                     "Model type: %s, \n\t"
                     "Input resolution: %s, \n\t"
                     "keypoint_score_threshold: %s"
@@ -170,6 +190,8 @@ class Predictor:
         valid_keypoints, keypoints_masks = self._get_keypoints_coords(
             keypoints, keypoints_scores, self.config["keypoint_score_threshold"]
         )
+        if valid_keypoints is None:
+            return (np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0))
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
         bbox = self._get_bbox_from_keypoints(valid_keypoints)
@@ -211,6 +233,9 @@ class Predictor:
             bbox_score, self.config["bbox_score_threshold"]
         )
 
+        if len(bbox_masks) == 0:
+            return (np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0))
+
         bboxes = bboxes[bbox_masks, :]
         bbox_score = bbox_score[bbox_masks]
         keypoints = keypoints[bbox_masks, :, :]
@@ -221,7 +246,6 @@ class Predictor:
         )
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
-
         return (bboxes, valid_keypoints, keypoints_scores, keypoints_conns)
 
     @staticmethod
@@ -235,10 +259,12 @@ class Predictor:
             for start_joint, end_joint in SKELETON:
                 if masks[i, start_joint - 1] and masks[i, end_joint - 1]:
                     connections.append(
-                        (keypoints[i, start_joint - 1], keypoints[i, end_joint - 1])
+                        np.vstack(
+                            (keypoints[i, start_joint - 1], keypoints[i, end_joint - 1])
+                        )
                     )
             all_connections.append(connections)
-        return np.array(all_connections)
+        return np.asarray(all_connections)
 
     @staticmethod
     def _get_keypoints_coords(
@@ -264,6 +290,12 @@ class Predictor:
 
         keypoint_masks = keypoints_score > keypoints_score_theshold
         valid_keypoints[~keypoint_masks] = [-1, -1]
+
+        # if all keypoints are invalid, valid_keypoints
+        # will be an array of [-1,-1] for all keypoints (x,y) coor
+        if np.sum(valid_keypoints) < 0:
+            return None, None
+
         return valid_keypoints, keypoint_masks
 
     @staticmethod
@@ -285,7 +317,7 @@ class Predictor:
     def _get_bbox_from_keypoints(valid_keypoints: np.ndarray) -> np.ndarray:
         """
         Obtain coordinates from the keypoints for single pose model where bounding box
-        coordinates are not provided as model outputs. The bounding boox coordinates 
+        coordinates are not provided as model outputs. The bounding boox coordinates
         will be from the [xmin,ymin,xman,ymax] of the keypoints coordinates. The bounding
         box coordinate will be expanded to be slightly bigger so that it will cover the head
         and body better
@@ -297,4 +329,3 @@ class Predictor:
         ymax = valid_keypoints[:, :, 1].max()
 
         return np.asarray([[xmin, ymin, xmax, ymax]])
-
