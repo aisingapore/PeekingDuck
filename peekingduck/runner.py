@@ -25,6 +25,7 @@ from typing import List
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.utils.requirement_checker import RequirementChecker
 
 
 class Runner:
@@ -76,6 +77,8 @@ class Runner:
             except ValueError as error:
                 self.logger.error(str(error))
                 sys.exit(1)
+        if RequirementChecker.n_update > 0:
+            sys.exit(3)
 
     def run(self) -> None:
         """execute single or continuous inference"""

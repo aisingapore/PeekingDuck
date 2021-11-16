@@ -1,12 +1,11 @@
 click == 7.1.2
-opencv-python == 4.1.2.30
-requests == 2.24.0
-shapely == 1.7.1
-tensorflow == 2.2.0
-tqdm == 4.45.0
-numpy == 1.17.3
-pyyaml >= 5.3.1
 colorama == 0.4.4
-scipy
+numpy == 1.17.3
+opencv-python == 4.1.2.30
+pyyaml >= 5.3.1
+requests == 2.24.0
+tensorflow == 2.2.0
 torch == 1.10.0
 torchvision == 0.11.1
+tqdm == 4.45.0
+scipy
