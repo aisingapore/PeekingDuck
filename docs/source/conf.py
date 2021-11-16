@@ -76,6 +76,7 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
+    "peekingduck.pipeline.nodes.model.yoloxv1",
     "peekingduck.pipeline.nodes.model.yolov4",
     "peekingduck.pipeline.nodes.model.posenetv1",
     "peekingduck.pipeline.nodes.model.efficientdet_d04",
