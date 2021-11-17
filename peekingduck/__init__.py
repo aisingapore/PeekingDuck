@@ -16,7 +16,7 @@
 A modular python framework for Computer Vision Inference
 """
 
-__version__ = "developer"
+__version__ = ""
 
 import sys
 

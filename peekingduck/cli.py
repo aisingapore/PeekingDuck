@@ -142,7 +142,10 @@ def run(config_path: str, node_config: str, log_level: str) -> None:
     log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
     log_level = log_level.upper()
     if log_level not in log_level_settings:
+        logger.info("Unknown log_level %s, defaulting to INFO", log_level)
         log_level = "INFO"
+    if log_level != "INFO":
+        logger.info("Changing log_level to %s", log_level)
     logger.setLevel(log_level)
 
     curdir = _get_cwd()
