@@ -52,4 +52,3 @@ def run(config_path, log_level):
 
 if __name__ == "__main__":
     run()
-

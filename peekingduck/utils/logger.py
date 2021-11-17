@@ -83,7 +83,10 @@ class ColoredFormatter(logging.Formatter):
     """This class formats the color of logging messages"""
 
     def __init__(
-        self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str,
+        self,
+        *args: str,
+        colors: Optional[Dict[str, str]] = None,
+        **kwargs: str,
     ) -> None:
         """Initialize the formatter with specified format strings"""
 
