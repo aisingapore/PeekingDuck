@@ -18,10 +18,11 @@ General utils for drawing functions
 """
 
 from typing import Tuple
+
 import numpy as np
 
 
-def get_image_size(frame: np.array) -> Tuple[int, int]:
+def get_image_size(frame: np.ndarray) -> Tuple[int, int]:
     """Obtain image size of input frame
 
     Args:

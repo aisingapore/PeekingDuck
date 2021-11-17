@@ -14,13 +14,13 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import yaml
 from pathlib import Path
 
 import cv2
 import numpy as np
 import numpy.testing as npt
 import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.hrnet import Node
 

@@ -27,11 +27,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Mosaics areas bounded by bounding boxes on image.
 
-    The mosaic bbox node helps to anonymize detected objects by pixelating the
-    areas bounded by bounding boxes in an image.
+    The ``draw.mosaic_bbox`` node helps to anonymize detected objects by
+    pixelating the areas bounded by bounding boxes in an image.
 
     Inputs:
-
         |img|
 
         |bboxes|
@@ -40,12 +39,13 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        mosaic_level (:obj:`int`): **default = 7**
-            defines the resolution of a mosaic filter (width x height). The
-            number corresponds to the number of rows and columns used to create
-            a mosaic. For example, the default setting (mosaic_level: 7) creates
-            a 7 x 7 mosaic filter. Increasing the number increases the intensity
-            of pixelation over an area.
+        mosaic_level (:obj:`int`): **default = 7**. |br|
+            Defines the resolution of a mosaic filter (width |times| height).
+            The number corresponds to the number of rows and columns used to
+            create a mosaic. For example, the default setting
+            (``mosaic_level = 7``) creates a 7 |times| 7 mosaic filter.
+            Increasing the number increases the intensity of pixelation over an
+            area.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

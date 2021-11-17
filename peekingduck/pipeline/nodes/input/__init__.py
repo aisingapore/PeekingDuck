@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Reads data from a given input
+Reads data from a given input.
 """

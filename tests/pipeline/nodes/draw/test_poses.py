@@ -15,8 +15,10 @@
 """
 Test for draw poses node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.poses import Node
 
 

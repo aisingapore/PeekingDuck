@@ -15,8 +15,10 @@
 """
 Test for draw bottom midpoint node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.btm_midpoint import Node
 
 

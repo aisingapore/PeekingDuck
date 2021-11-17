@@ -14,10 +14,10 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import yaml
 from pathlib import Path
 
 import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
 from peekingduck.weights_utils import checker, downloader

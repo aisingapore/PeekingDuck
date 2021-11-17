@@ -17,7 +17,7 @@ EfficientDet model with model types: D0-D4
 """
 
 import logging
-from typing import Dict, Any, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
@@ -50,7 +50,7 @@ class EfficientDetModel:
             self.logger.info("---efficientdet weights download complete.---")
 
         self.detect_ids = config["detect_ids"]
-        self.logger.info("efficientdet model detecting ids: %s", self.detect_ids)
+        self.logger.info(f"efficientdet model detecting ids: {self.detect_ids}")
 
         self.detector = Detector(config)
 

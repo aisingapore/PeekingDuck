@@ -18,7 +18,7 @@ Face detection class using mtcnn model to find face bboxes
 
 import logging
 from pathlib import Path
-from typing import Dict, Any, Tuple, List
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -49,17 +49,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_path = self.root_dir / self.config["graph_files"]["mtcnn"]
 
         self.logger.info(
-            (
-                "MTCNN model loaded with following configs: \n\t"
-                "Min size: %s, \n\t"
-                "Scale Factor: %s, \n\t"
-                "Steps Thresholds: %s, \n\t"
-                "Score Threshold: %s"
-            ),
-            self.config["mtcnn_min_size"],
-            self.config["mtcnn_factor"],
-            self.config["mtcnn_thresholds"],
-            self.config["mtcnn_score"],
+            "MTCNN model loaded with following configs: \n\t"
+            f"Min size: {self.config['mtcnn_min_size']}, \n\t"
+            f"Scale Factor: {self.config['mtcnn_factor']}, \n\t"
+            f"Steps Thresholds: {self.config['mtcnn_thresholds']}, \n\t"
+            f"Score Threshold: {self.config['mtcnn_score']}"
         )
 
         return self._load_mtcnn_graph(model_path)

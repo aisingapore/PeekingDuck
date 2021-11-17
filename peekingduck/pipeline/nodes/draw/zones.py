@@ -13,22 +13,23 @@
 # limitations under the License.
 
 """
-Draws the 2D boundaries of a zone
+Draws the 2D boundaries of a zone.
 """
 
 from typing import Any, Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.draw.utils.zone import draw_zones
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
     """Draws the boundaries of each specified zone onto the image.
 
-    The draw zones node uses the zones from the zone_count dabble node to
-    draw a bounding box that represents the zone boundaries onto the image.
+    The ``draw.zones`` node uses the ``zones`` output from the
+    ``dabble.zone_count`` node to draw a bounding box that represents the zone
+    boundaries onto the image.
 
     Inputs:
-
         |img|
 
         |zones|
@@ -47,10 +48,10 @@ class Node(AbstractNode):
         """Draws the boundaries of each specified zone onto the image.
 
         Args:
-            inputs (dict): Dict with keys "zones", "img".
+            inputs (dict): Dictionary with keys "zones", "img".
 
         Returns:
-            outputs (dict): Dict with keys "none".
+            outputs (dict): Dictionary with keys "none".
         """
 
         draw_zones(inputs["img"], inputs["zones"])  # type: ignore
