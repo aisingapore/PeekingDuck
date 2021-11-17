@@ -54,7 +54,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             and classification score) below the threshold will be discarded.
         fp16 (:obj:`bool`): **default = False**. |br|
             Flag to determine if half-precision floating-point should be used
-            for inference
+            for inference.
         fuse (:obj:`bool`): **default = False**. |br|
             Flag to determine if the convolution and batch normalization layers
             should be fused for inference.
@@ -67,7 +67,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         https://github.com/Megvii-BaseDetection/YOLOX
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = yolox_model.YOLOXModel(self.config)
 
