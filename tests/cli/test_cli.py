@@ -271,7 +271,7 @@ class TestCli:
         os.chdir(PKD_RUN_DIR)
         print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
         cmd = f"python PeekingDuck --log_level debug --config_path {CUSTOM_RUN_CONFIG_PATH}"
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)  # nosec
         (out, _) = proc.communicate()
         out_str = out.decode("utf-8")
         print(out_str)
