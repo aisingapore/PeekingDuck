@@ -17,7 +17,6 @@ Reader functions for input nodes
 """
 
 from pathlib import Path
-from threading import Lock, Thread
 from typing import Any, Tuple, Union
 from threading import Thread, Event
 import logging

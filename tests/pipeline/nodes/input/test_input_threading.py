@@ -75,9 +75,9 @@ def test_input_threading():
         num_sec = 60  # to run test for 60 seconds max
         avg_fps = 0
         cmd = f"python PeekingDuck"
-        proc = subprocess.Popen(
+        proc = subprocess.Popen(  # nosec
             cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, bufsize=1
-        )  # nosec
+        )
         st = perf_counter()
         while True:
             output = proc.stdout.readline()

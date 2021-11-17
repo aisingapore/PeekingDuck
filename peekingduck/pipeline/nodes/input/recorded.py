@@ -157,11 +157,11 @@ class Node(AbstractNode):
             if self._is_valid_file_type(file_path):
                 if getattr(self, "threading", False):
                     self.videocap = VideoThread(  # type: ignore
-                        file_path, self.mirror_image, self.buffer_frames
+                        str(file_path), self.mirror_image, self.buffer_frames
                     )
                 else:
                     self.videocap = VideoNoThread(  # type: ignore
-                        file_path, self.mirror_image
+                        str(file_path), self.mirror_image
                     )
                 self._fps = self.videocap.fps
             else:
