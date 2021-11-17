@@ -8,9 +8,10 @@
   - [New Nodes and Features](#new-nodes-and-features)
   - [Code Contributions](#code-contributions)
 - [Community Discussions](#community-discussions)
-- [Code Styles](#code-styles)
+- [Project Conventions](#project-conventions)
+  - [Branch Names](#branch-names)
   - [Git Commit Messages](#git-commit-messages)
-  - [Project Conventions](#project-conventions)
+  - [Code Styles](#code-styles)
 - [Test Suites](#test-suites)
 
 ## Code of Conduct
@@ -66,43 +67,89 @@ Thank you for your contributions!!
 
 Join us in our [GitHub discussion board](https://github.com/aimakerspace/PeekingDuck/discussions) or [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/).
 
-. Post your thread regarding
+Post your thread regarding
 
 - Questions on the project
 - Suggestions/feature requests
 - Your custom nodes and projects
 
-## Code Styles
+## Project Conventions
 
 Help us maintain the quality of our project by following the conventions we take below.
 
-### Git Commit Messages
+### Branch Names
 
-This is a shortened version inspired by [angular's contributing docs](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit-message-header).
-
-A standard git commit message helps us structure the project. 
-
+It is a good practice to have a consistent branch naming approach. We follow the convention below, where words
+are separated by dashes (`-`).
 ```bash
-<type>(<scope>): <short summary>
-  │       │             │
-  │       │             └─⫸ Summary in present tense. Not capitalized. No period at the end.
-  │       │
-  │       └─⫸ Commit Scope: core|cli|changelog|packaging|models|heuristics|cicd-infra|docs-infra|community
+<type>-<short description of task>
   │
-  │
-  └─⫸ Commit Type: build|ci|docs|feat|fix|perf|refactor|test
+  └─⫸ Commit Type: build|cicd|docs|feat|fix|node|refactor|test
+
+Examples:
+fix-linux-threading, node-crowd-counting, refactor-use-pathlib
 ```
 
-The `<type>` and `<summary>` fields are required, we encourage filling the `(<scope>)` field where possible.
+`<type>` must be one of the following:
+- build: Updates to dependencies and package building
+- cicd: Changes to CI/CD 
+- docs: Documentation changes
+- feat: Enhancements which are not new nodes
+- fix: Bug fixes
+- node: New nodes
+- refactor: Code changes that neither fixes a bug nor adds a feature
+- test: Unit or system tests
 
-### Project Conventions
 
-The following conventions are adopted to help maintain code consistency.
+### Git Commit Messages
 
-- PEP8 convention
-- PEP484 type hinting for functions and methods
-- Absolute imports instead of relative imports
-- [Black](https://black.readthedocs.io/en/stable/) code formatter to ensure consistent code format
+A standard git commit message makes it easier to read commit histories. This is a shortened version inspired by [angular's contributing docs](https://github.com/angular/angular/blob/master/CONTRIBUTING.md#commit-message-header).
+
+```bash
+<type>: <short summary>
+  │            │
+  │            └─⫸ Summary in present tense. Not capitalized. No period at the end.
+  │
+  └─⫸ Commit Type: build|cicd|docs|feat|fix|node|refactor|test
+```
+`<type>` must be one of the options described in the above [Branch Names](#branch-names) section.
+
+### Code Styles
+
+We follow the PEP8 style guide, with PEP484 type hinting for functions and methods, and use [Black](https://black.readthedocs.io/en/stable/) code formatter to ensure consistent code format.
+
+The following are commonly used conventions which we adhere to:
+- Imports
+  - Absolute imports instead of relative imports (e.g. avoid `from ...nodes.node import AbstractNode`)
+- Paths/files
+  - Use `pathlib.Path` instead of `os.path` to make code cleaner
+- Strings
+  - Use f-strings for clear and concise string formatting. This includes logging messages.
+  - Do not use `+` concatenation on a mix of string variables and literals
+- Naming
+  - `snake_case` for `module_name`, `package_name`, `method_name`, `function_name`, `global_var_name`, `instance_var_name`, `function_parameter_name`, `local_var_name`
+  - `CapWords` for `ClassName`, `ExceptionName`
+  - Fully capitalised for `GLOBAL_CONSTANT_NAME`
+  - `_dir` postfix for full paths of directories, e.g. where weights are stored
+  - `_path` postfix for full paths to files, e.g. `~/demo/run_config.yml`
+  - `_subdir` postfix for part of paths, e.g. `src/custom_nodes`
+  - `_name` postfix for file names, e.g. `output.mp4`
+- Docstrings and comments
+  - Public classes, functions, methods should have docstrings
+  - Private/internal functions and methods can have less detailed docstrings, with optional `Args` and `Returns`
+  - `__init__` methods do not require docstrings
+  - Avoid inline comments if the line width limit is exceeded as it causes the code to be wrapped
+- Type Hints
+  - Use `pathlib.Path` type for arguments that are full paths (such as variables with `_dir` and `_path` postfixes) instead of `str`
+  - Avoid using `#type: ignore` as much as possible - declare variable type instead
+  - Use `Optional` prefix if the variable can be `None`
+    ```
+    def func(a: Optional[str], b: Optional[str] = None) -> str:
+	    ...
+    ```
+
+
+
 
 ## Test Suites
 
