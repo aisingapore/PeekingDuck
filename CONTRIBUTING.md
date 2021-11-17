@@ -84,13 +84,14 @@ are separated by dashes (`-`).
 ```bash
 <type>-<short description of task>
   │
-  └─⫸ Commit Type: cicd|docs|feat|fix|node|refactor|test
+  └─⫸ Commit Type: build|cicd|docs|feat|fix|node|refactor|test
 
 Examples:
 fix-linux-threading, node-crowd-counting, refactor-use-pathlib
 ```
 
 `<type>` must be one of the following:
+- build: Updates to dependencies and package building
 - cicd: Changes to CI/CD 
 - docs: Documentation changes
 - feat: Enhancements which are not new nodes
@@ -109,7 +110,7 @@ A standard git commit message makes it easier to read commit histories. This is 
   │            │
   │            └─⫸ Summary in present tense. Not capitalized. No period at the end.
   │
-  └─⫸ Commit Type: cicd|docs|feat|fix|node|refactor|test
+  └─⫸ Commit Type: build|cicd|docs|feat|fix|node|refactor|test
 ```
 `<type>` must be one of the options described in the above [Branch Names](#branch-names) section.
 
@@ -120,7 +121,6 @@ We follow the PEP8 style guide, with PEP484 type hinting for functions and metho
 The following are commonly used conventions which we adhere to:
 - Imports
   - Absolute imports instead of relative imports (e.g. avoid `from ...nodes.node import AbstractNode`)
-  - Use [isort](https://github.com/PyCQA/isort) to order imports
 - Paths/files
   - Use `pathlib.Path` instead of `os.path` to make code cleaner
 - Strings
