@@ -15,15 +15,16 @@
 """
 Test for draw zones node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.zones import Node
+
 
 @pytest.fixture
 def draw_zones():
-    node = Node({'input': ["zones", "img"],
-                 'output': ["none"]
-                })
+    node = Node({"input": ["zones", "img"], "output": ["none"]})
     return node
 
 
@@ -32,26 +33,27 @@ class TestZones:
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
         input1 = {
-        "img": output_img,
-        "zones": [],
+            "img": output_img,
+            "zones": [],
         }
         draw_zones.run(input1)
         assert original_img.shape == output_img.shape
         np.testing.assert_equal(original_img, output_img)
 
-
     # formula: processed image = contrast * image + brightness
     def test_zones(self, draw_zones, create_image):
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
-        input1 = {
-        "img": output_img,
-        "zones": [[(2, 2), (10, 10), (10, 20), (2, 20)]]
-        }
+        input1 = {"img": output_img, "zones": [[(2, 2), (10, 10), (10, 20), (2, 20)]]}
         draw_zones.run(input1)
 
         assert original_img.shape == output_img.shape
-        np.testing.assert_raises(AssertionError, np.testing.assert_equal,
-                                 original_img, output_img)
-        np.testing.assert_raises(AssertionError, np.testing.assert_equal,
-                                 original_img[2][2], output_img[2][2])
+        np.testing.assert_raises(
+            AssertionError, np.testing.assert_equal, original_img, output_img
+        )
+        np.testing.assert_raises(
+            AssertionError,
+            np.testing.assert_equal,
+            original_img[2][2],
+            output_img[2][2],
+        )

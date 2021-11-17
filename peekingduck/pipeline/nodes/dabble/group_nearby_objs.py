@@ -13,22 +13,22 @@
 # limitations under the License.
 
 """
-Assign objects in close proximity to groups
+Assigns objects in close proximity to groups.
 """
 
 from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.dabble.utils.quick_find import QuickFind
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that groups objects that are near each other.
+    """Groups objects that are near each other.
 
-    It does so by comparing the 3D location of all objects, and assigning objects
-    near each other to the same group.
+    It does so by comparing the 3D location of all objects, and assigning
+    objects near each other to the same group.
 
     Inputs:
         |obj_3D_locs|
@@ -37,23 +37,24 @@ class Node(AbstractNode):
         |obj_groups|
 
     Configs:
-        obj_dist_thres (:obj:`float`): **default = 1.5**
-
-            Threshold of distance, in metres, between two objects, less than which they
-            would be assigned to the same group.
+        obj_dist_thres (:obj:`float`): **default = 1.5**. |br|
+            Threshold of distance, in metres, between two objects. Objects with
+            distance less than ``obj_dist_thres`` would be assigned to the same
+            group.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """ Checks the distance between 3d locations of a pair of objects.
-        If distance is less than threshold, assign the objects to the same group.
-        Repeat for all object pairs.
-        """
+        """Checks the distance between 3d locations of a pair of objects.
 
+        If distance is less than threshold, assign the objects to the same
+        group. Repeat for all object pairs.
+        """
         nearby_obj_pairs = self._find_nearby_obj_pairs(
-            inputs["obj_3D_locs"], self.obj_dist_thres)
+            inputs["obj_3D_locs"], self.obj_dist_thres
+        )
 
         quickfind = QuickFind(len(inputs["obj_3D_locs"]))
         for (idx_1, idx_2) in nearby_obj_pairs:
@@ -63,11 +64,12 @@ class Node(AbstractNode):
         return {"obj_groups": quickfind.get_group_alloc()}
 
     @staticmethod
-    def _find_nearby_obj_pairs(obj_locs: List[np.array],
-                               obj_dist_thres: float) -> List[Tuple[int, int]]:
-        """If the distance between 2 objects are less than the threshold, append their
-        indexes to nearby_obj_pairs as a tuple."""
-
+    def _find_nearby_obj_pairs(
+        obj_locs: List[np.ndarray], obj_dist_thres: float
+    ) -> List[Tuple[int, int]]:
+        """If the distance between 2 objects are less than the threshold,
+        append their indexes to nearby_obj_pairs as a tuple.
+        """
         nearby_obj_pairs = []
         for idx_1, loc_1 in enumerate(obj_locs):
             for idx_2, loc_2 in enumerate(obj_locs):

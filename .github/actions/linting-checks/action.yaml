@@ -12,6 +12,9 @@ runs:
     - name: Run linter
       run: bash ./scripts/linter.sh
       shell: bash
+    - name: Run black code formatter
+      run: bash ./scripts/check_format.sh
+      shell: bash
     - name: Run type checker
       run: |
         bash ./scripts/check_type.sh

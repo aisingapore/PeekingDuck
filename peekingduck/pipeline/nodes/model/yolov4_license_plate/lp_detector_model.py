@@ -17,12 +17,14 @@ License Plate detection model with model types: yolov4 and yolov4tiny
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
 import numpy as np
-from peekingduck.weights_utils import checker, downloader
+
 from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
     Detector,
 )
+from peekingduck.weights_utils import checker, downloader
 
 
 class Yolov4:  # pylint: disable=too-few-public-methods
@@ -48,7 +50,7 @@ class Yolov4:  # pylint: disable=too-few-public-methods
 
         self.detector = Detector(config)
 
-    def predict(self, frame: np.array) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Predicts the bboxes from image frame
 

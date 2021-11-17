@@ -18,19 +18,18 @@ Displays a tag on bounding box
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
 from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that draws tags above bounding boxes
+    """Draws tags above bounding boxes.
 
-    The draw tag node uses the bboxes, obj_tags predictions from
-    dabble nodes and models to draw the tags of the bboxes onto the image.
+    The ``draw.tag`` node uses the ``bboxes`` and ``obj_tags`` predictions from
+    ``dabble`` nodes and models to draw the tags of the bboxes onto the image.
 
     Inputs:
-
         |img|
 
         |bboxes|
@@ -51,12 +50,11 @@ class Node(AbstractNode):
         """Draws a tag above each bounding box.
 
         Args:
-            inputs (dict): Dict with keys "bboxes", "obj_tags", "img".
+            inputs (dict): Dictionary with keys "bboxes", "obj_tags", "img".
 
         Returns:
-            outputs (dict): Dict with keys "none".
+            outputs (dict): Dictionary with keys "none".
         """
-
         draw_tags(inputs["img"], inputs["bboxes"], inputs["obj_tags"], TOMATO)
 
         return {}

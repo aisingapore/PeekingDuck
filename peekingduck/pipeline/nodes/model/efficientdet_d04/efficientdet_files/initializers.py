@@ -19,28 +19,26 @@ Functions to control weights initialisation
 """
 
 
-# import keras
-from typing import Any, Dict
 import math
+from typing import Any, Dict
+
 import numpy as np
 from tensorflow import keras
 
 
 class PriorProbability(keras.initializers.Initializer):
-    """ Apply a prior probability to the weights.
-    """
+    """Apply a prior probability to the weights."""
 
     def __init__(self, probability: float = 0.01) -> None:
         self.probability = probability
 
     def get_config(self) -> Dict[str, Any]:
-        return {
-            'probability': self.probability
-        }
+        return {"probability": self.probability}
 
-    def __call__(self, shape: np.array, dtype: np.dtype = None) -> np.ndarray:
+    def __call__(self, shape: np.ndarray, dtype: np.dtype = None) -> np.ndarray:
         # set bias to -log((1 - p)/p) for foreground
-        result = np.ones(shape, dtype=np.float32) * - \
-            math.log((1 - self.probability) / self.probability)
+        result = np.ones(shape, dtype=np.float32) * -math.log(
+            (1 - self.probability) / self.probability
+        )
 
         return result

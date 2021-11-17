@@ -13,28 +13,28 @@
 # limitations under the License.
 
 """
-Functions to download model weights
+Functions to download model weights.
 """
 
 import os
 import zipfile
+from pathlib import Path
+
 import requests
 from tqdm import tqdm
-
 
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 
 
-def download_weights(root: str, blob_file: str) -> None:
-    """Download weights for specified blob_file
+def download_weights(root: Path, blob_file: str) -> None:
+    """Downloads weights for specified ``blob_file``.
 
     Args:
-        root (str): root directory of peekingduck
-        blob_file (str): name of file to be downloaded
+        root (:obj:`pathlib.Path`): Root directory of ``peekingduck``
+        blob_file (:obj:`str`): Name of file to be downloaded.
     """
-
-    extract_dir = os.path.join(root, "..", "peekingduck_weights")
-    zip_path = os.path.join(root, "..", "peekingduck_weights", "temp.zip")
+    extract_dir = root.parent / "peekingduck_weights"
+    zip_path = root.parent / "peekingduck_weights" / "temp.zip"
 
     download_file_from_blob(blob_file, zip_path)
 
@@ -46,14 +46,13 @@ def download_weights(root: str, blob_file: str) -> None:
     os.remove(zip_path)
 
 
-def download_file_from_blob(file_name: str, destination: str) -> None:
-    """Method to download publicly shared files from azure blob
+def download_file_from_blob(file_name: str, destination: Path) -> None:
+    """Downloads publicly shared files from Google Cloud Platform.
 
     Args:
-        file_name (str): name of file to be downloaded
-        destination (str): destination directory of download
+        file_name (:obj:`str`): Name of file to be downloaded.
+        destination (:obj:`pathlib.Path`): Destination directory of download.
     """
-
     url = f"{BASE_URL}/{file_name}"
     session = requests.Session()
 
@@ -61,13 +60,14 @@ def download_file_from_blob(file_name: str, destination: str) -> None:
     save_response_content(response, destination)
 
 
-def save_response_content(response: requests.Response, destination: str) -> None:
-    """Chunk saving of download content. Chunk size set to large
-    integer as weights are usually pretty large
+def save_response_content(response: requests.Response, destination: Path) -> None:
+    """Saves download content in chunks.
+
+    Chunk size set to large integer as weights are usually pretty large.
 
     Args:
-        response (Reponse): html response
-        destination (str): destintation directory of download
+        response (:obj:`requests.Reponse`): HTML response.
+        destination (:obj:`pathlib.Path`): Destintation directory of download.
     """
     chunk_size = 32768
 

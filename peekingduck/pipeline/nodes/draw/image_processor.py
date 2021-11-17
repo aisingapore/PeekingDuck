@@ -13,36 +13,36 @@
 # limitations under the License.
 
 """
-Adjusts brightness of an incoming image
+Adjusts brightness of an incoming image.
 """
 
 
 from typing import Any, Dict
+
 import cv2
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node for changing image contrast and brightness
+    """Changes image contrast and brightness.
 
-    The draw image processor node adjusts contrast and brightness of the given image.
-    Uses alogrithm by OpenCV. An article providing a good overview of the algorithm
-    can be found `here <https://programmer.ink/think/
+    The ``draw.image_processor`` node adjusts contrast and brightness of the
+    given image. Uses algorithm by OpenCV. An article providing a good overview
+    of the algorithm can be found `here <https://programmer.ink/think/
     adjusting-the-brightness-and-contrast-of-an-image-with-opencv4.3.0-tutorial
     .html#3、API-convertScaleAbs>`_.
 
     Inputs:
-
         |img|
 
     Outputs:
         |img|
 
     Configs:
-        brightness (:obj:`int`): **[-100,100], default = 0**
+        brightness (:obj:`int`): **[-100,100], default = 0**. |br|
             Adjusts the brightness of the image.
-
-        contrast (:obj:`float`): **[1,3], default = 1**
+        contrast (:obj:`float`): **[1, 3], default = 1**. |br|
             Adjusts the contrast of the image.
     """
 
@@ -50,12 +50,12 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that draws pose details onto input image
+        """Draws pose details onto input image.
 
         Args:
-            inputs (dict): Dict with keys "img"
+            inputs (dict): Dictionary with keys "img".
         """
-        img = cv2.convertScaleAbs(inputs['img'],
-                                  alpha=self.contrast,
-                                  beta=self.brightness)
+        img = cv2.convertScaleAbs(
+            inputs["img"], alpha=self.contrast, beta=self.brightness
+        )
         return {"img": img}

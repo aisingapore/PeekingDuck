@@ -16,12 +16,15 @@
 Reader functions for input nodes
 """
 
+from pathlib import Path
+from threading import Lock, Thread
 from typing import Any, Tuple, Union
 from threading import Thread, Event
 import logging
 import platform
 import queue
 import cv2
+
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
@@ -42,15 +45,15 @@ class VideoThread:
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
             else:
                 # no cv2.CAP_DSHOW flag if input_source is file
-                self.stream = cv2.VideoCapture(input_source)
+                self.stream = cv2.VideoCapture(str(input_source))
         else:
-            self.stream = cv2.VideoCapture(input_source)
+            self.stream = cv2.VideoCapture(
+                str(input_source) if isinstance(input_source, Path) else input_source
+            )
         self.logger = logging.getLogger("VideoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError(
-                "Camera or video input not detected: %s" % input_source
-            )
+            raise ValueError("Camera or video input not detected: %s" % input_source)
         # events to coordinate threading
         self.is_done = Event()
         self.is_thread_start = Event()
@@ -167,14 +170,14 @@ class VideoNoThread:
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
             else:
                 # no cv2.CAP_DSHOW flag if input_source is file
-                self.stream = cv2.VideoCapture(input_source)
+                self.stream = cv2.VideoCapture(str(input_source))
         else:
-            self.stream = cv2.VideoCapture(input_source)
+            self.stream = cv2.VideoCapture(
+                str(input_source) if isinstance(input_source, Path) else input_source
+            )
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError(
-                "Video or image path incorrect: %s" % input_source
-            )
+            raise ValueError("Video or image path incorrect: %s" % input_source)
         self._frame_counter = 0
 
     def __del__(self) -> None:

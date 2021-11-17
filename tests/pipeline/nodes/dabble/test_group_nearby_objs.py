@@ -13,17 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.dabble.group_nearby_objs import Node
 
 
 @pytest.fixture
 def group_nearby_objs():
-    node = Node({"input": ["obj_3D_locs"],
-                 "output": ["obj_groups"],
-                 "obj_dist_thres": 1.5
-                 })
+    node = Node(
+        {"input": ["obj_3D_locs"], "output": ["obj_groups"], "obj_dist_thres": 1.5}
+    )
     return node
 
 
@@ -36,8 +37,7 @@ class TestGroupNearbyObjs:
         np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_are_nearby(self, group_nearby_objs):
-        array1 = [np.array([0.5, 0.5, 0.5]),
-                  np.array([0.55, 0.55, 0.55])]
+        array1 = [np.array([0.5, 0.5, 0.5]), np.array([0.55, 0.55, 0.55])]
         input1 = {"obj_3D_locs": array1}
         output1 = group_nearby_objs.run(input1)
 
@@ -46,9 +46,11 @@ class TestGroupNearbyObjs:
         np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_objs_not_nearby(self, group_nearby_objs):
-        array1 = [np.array([0.1, 0.1, 0.1]),
-                  np.array([0.1, 0.1, 3.0]),
-                  np.array([0.1, 0.1, 6.0])]
+        array1 = [
+            np.array([0.1, 0.1, 0.1]),
+            np.array([0.1, 0.1, 3.0]),
+            np.array([0.1, 0.1, 6.0]),
+        ]
         input1 = {"obj_3D_locs": array1}
         # all different groups, should get [0, 1, 2]
         output1 = group_nearby_objs.run(input1)
@@ -59,10 +61,12 @@ class TestGroupNearbyObjs:
         np.testing.assert_equal(input1["obj_3D_locs"], array1)
 
     def test_multi_separate_groups(self, group_nearby_objs):
-        array1 = [np.array([0.1, 0.1, 0.1]),
-                  np.array([0.1, 0.1, 6.0]),
-                  np.array([0.1, 0.1, 1.0]),
-                  np.array([0.1, 0.1, 5.0])]
+        array1 = [
+            np.array([0.1, 0.1, 0.1]),
+            np.array([0.1, 0.1, 6.0]),
+            np.array([0.1, 0.1, 1.0]),
+            np.array([0.1, 0.1, 5.0]),
+        ]
         input1 = {"obj_3D_locs": array1}
         # should get something like [0, 1, 0, 1]
         output1 = group_nearby_objs.run(input1)

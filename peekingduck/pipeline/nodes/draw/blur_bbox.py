@@ -11,23 +11,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
-Blur area bounded by bounding boxes over detected object
+Blurs area bounded by bounding boxes over detected object.
 """
 
 from typing import Any, Dict, List
+
 import cv2
 import numpy as np
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Blur area bounded by bounding boxes on image.
 
-    The blur_bbox node blur the areas of the image
-    bounded by the bounding boxes output from an object detection model
+class Node(AbstractNode):  # pylint: disable=too-few-public-methods
+    """Blurs area bounded by bounding boxes on image.
+
+    The ``blur_bbox`` node blurs the areas of the image bounded by the bounding
+    boxes output from an object detection model.
 
     Inputs:
-
         |img|
 
         |bboxes|
@@ -36,9 +39,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img|
 
     Configs:
-        blur_kernel_size (:obj:`int`): **default = 50**
-            This defines the kernel size used in the blur filter.
-            The larger the kernel size, the more intense is the blurring.
+        blur_kernel_size (:obj:`int`): **default = 50**. |br|
+            This defines the kernel size used in the blur filter. Larger values
+            of ``blur_kernel_size`` gives more intense blurring.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -47,10 +50,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.blur_kernel_size = self.config["blur_kernel_size"]
 
     @staticmethod
-    def _blur(bboxes: List[np.ndarray], image: np.ndarray, blur_kernel_size: int) -> np.ndarray:
-        """
-        Function that blur the area bounded by bbox in an image
-        """
+    def _blur(
+        bboxes: List[np.ndarray], image: np.ndarray, blur_kernel_size: int
+    ) -> np.ndarray:
+        """Blurs the area bounded by bbox in an image."""
         height = image.shape[0]
         width = image.shape[1]
 
@@ -63,24 +66,21 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
             # apply the blur using blur filter from opencv
-            blur_bbox_image = cv2.blur(
-                bbox_image,
-                (blur_kernel_size,blur_kernel_size))
+            blur_bbox_image = cv2.blur(bbox_image, (blur_kernel_size, blur_kernel_size))
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Function that reads the image input and returns the image,
-        with the areas bounded by the bboxes blurred.
-        Args:
-            inputs (Dict): Dictionary of inputs with keys "img", "bboxes"
-        Returns:
-            outputs (Dict): Output in dictionary format with key
-            "img"
-        """
+        """Reads the image input and returns the image, with the areas bounded
+        by the bboxes blurred.
 
+        Args:
+            inputs (dict): Dictionary of inputs with keys "img", "bboxes"
+
+        Returns:
+            outputs (dict): Output in dictionary format with key "img"
+        """
         blurred_img = self._blur(inputs["bboxes"], inputs["img"], self.blur_kernel_size)
         outputs = {"img": blurred_img}
         return outputs

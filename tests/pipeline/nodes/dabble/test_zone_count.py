@@ -14,31 +14,38 @@
 """
 Test for zone count node
 """
+
 import pytest
-import numpy as np
+
 from peekingduck.pipeline.nodes.dabble.zone_count import Node
 
 
 @pytest.fixture
 def zone_count():
-    node = Node({'input': ["btm_midpoint"],
-                 'output': ["zones", "zone_count"],
-                 'resolution': [1280, 720], # Used only in fraction mode
-                 'zones': [
-                 [[0, 0], [640, 0], [640, 720], [0, 720]],
-                 [[0.5, 0], [1, 0], [1, 1], [0.5, 1]]]
-                })
+    node = Node(
+        {
+            "input": ["btm_midpoint"],
+            "output": ["zones", "zone_count"],
+            "resolution": [1280, 720],  # Used only in fraction mode
+            "zones": [
+                [[0, 0], [640, 0], [640, 720], [0, 720]],
+                [[0.5, 0], [1, 0], [1, 1], [0.5, 1]],
+            ],
+        }
+    )
     return node
 
 
 class TestBboxCount:
     def test_no_counts(self, zone_count):
         input1 = {"btm_midpoint": []}
-        expected_zones = [[(0, 0), (640, 0), (640, 720), (0, 720)],
-                          [(640, 0), (1280, 0), (1280, 720), (640, 720)]]
+        expected_zones = [
+            [(0, 0), (640, 0), (640, 720), (0, 720)],
+            [(640, 0), (1280, 0), (1280, 720), (640, 720)],
+        ]
         results = zone_count.run(input1)
-        counts = results['zone_count']
-        zones = results['zones']
+        counts = results["zone_count"]
+        zones = results["zones"]
 
         assert len(zones) == 2
         assert zones == expected_zones
@@ -50,7 +57,7 @@ class TestBboxCount:
     def test_counts_in_one_zone(self, zone_count):
         pts = [(2, 2), (3, 3), (4, 4), (639, 0)]
         input1 = {"btm_midpoint": pts}
-        results = zone_count.run(input1)['zone_count']
+        results = zone_count.run(input1)["zone_count"]
 
         assert len(results) == 2
         assert results[0] == 4
@@ -58,7 +65,7 @@ class TestBboxCount:
     def test_counts_multiple_zones(self, zone_count):
         pts = [(2, 2), (3, 3), (720, 700), (650, 50)]
         input1 = {"btm_midpoint": pts}
-        results = zone_count.run(input1)['zone_count']
+        results = zone_count.run(input1)["zone_count"]
 
         assert len(results) == 2
         assert results[0] == 2

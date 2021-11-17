@@ -13,8 +13,10 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.dabble.bbox_to_btm_midpoint import Node
 
 
@@ -25,9 +27,12 @@ def size():
 
 @pytest.fixture
 def bbox_to_btm_midpoint():
-    node = Node({"input": ["bboxes", "img"],
-                 "output": ["btm_midpoint"],
-                 })
+    node = Node(
+        {
+            "input": ["bboxes", "img"],
+            "output": ["btm_midpoint"],
+        }
+    )
     return node
 
 
@@ -42,8 +47,7 @@ class TestBboxToBtmMidpoint:
         np.testing.assert_equal(input1["bboxes"], array1)
 
     def test_multi_bboxes(self, create_image, bbox_to_btm_midpoint, size):
-        array1 = [np.array([0.1, 0.2, 0.3, 0.4]),
-                  np.array([0.5, 0.6, 0.7, 0.8])]
+        array1 = [np.array([0.1, 0.2, 0.3, 0.4]), np.array([0.5, 0.6, 0.7, 0.8])]
         img1 = create_image(size)
         input1 = {"bboxes": array1, "img": img1}
 

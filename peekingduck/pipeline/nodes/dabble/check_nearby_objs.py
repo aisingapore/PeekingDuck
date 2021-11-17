@@ -13,10 +13,10 @@
 # limitations under the License.
 
 """
-Check if detected objects are near each other
+Checks if detected objects are near each other.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
 import numpy as np
 
@@ -24,11 +24,11 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that checks if any objects are near each other.
+    """Checks if any objects are near each other.
 
-    It does so by comparing the 3D location of all objects to see which ones are near
-    each other. If the distance between two objects is less than the minimum threshold,
-    both would be tagged as near.
+    It does so by comparing the 3D locations of all objects to see which ones
+    are near each other. If the distance between two objects is less than the
+    minimum threshold, both would be tagged as near with ``tag_msg``.
 
     Inputs:
         |obj_3D_locs|
@@ -37,13 +37,11 @@ class Node(AbstractNode):
         |obj_tags|
 
     Configs:
-        near_threshold (:obj:`float`): **default = 2.0**
-
-            Threshold of distance, in metres, between two objects, less than which they
-            would be considered 'near'.
-
-        tag_msg (:obj:`string`): **default = "TOO CLOSE!"**
-
+        near_threshold (:obj:`float`): **default = 2.0**. |br|
+            Threshold of distance, in metres, between two objects. Objects with
+            distance less than ``near_threshold`` would be considered as
+            'near'.
+        tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
     """
 
@@ -51,11 +49,12 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Compares the 3D locations of all objects to see which objects are close to each other.
+        """Compares the 3D locations of all objects to see which objects are
+        close to each other.
+
         If an object is close to another, tag it.
         """
-
-        obj_tags = [""]*len(inputs["obj_3D_locs"])
+        obj_tags = [""] * len(inputs["obj_3D_locs"])
 
         for idx_1, loc_1 in enumerate(inputs["obj_3D_locs"]):
             for idx_2, loc_2 in enumerate(inputs["obj_3D_locs"]):

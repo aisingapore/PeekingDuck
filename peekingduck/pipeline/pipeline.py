@@ -13,38 +13,37 @@
 # limitations under the License.
 
 """
-Pipeline class that stores nodes and manages the data information used during inference
+Pipeline class that stores nodes and manages the data information used during
+inference.
 """
 
 import textwrap
-from typing import List, Dict, Any
+from typing import Any, Dict, List
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-# pylint: disable=R0903
-class Pipeline:
-    """ Pipe class that stores nodes and manages flow of data used during inference
+class Pipeline:  # pylint: disable=too-few-public-methods
+    """Pipeline class that stores nodes and manages flow of data used during
+    inference.
 
     Args:
-        nodes (:obj: `List`): List of initiated nodes for the pipeline to run through
-
-    Returns:
-        None
-
+        nodes (:obj:`List[AbstractNode]`): List of initialized nodes for the
+            pipeline to run through.
     """
 
     def __init__(self, nodes: List[AbstractNode]) -> None:
-
         self.nodes = nodes
         self._check_pipe(nodes)
         self.data = {}  # type: ignore
         self.terminate = False
 
     def get_pipeline_results(self) -> Dict[str, Any]:
-        """get all results data of nodes in pipeline
+        """Gets all results data from nodes in pipeline.
 
         Returns:
-            Dict[Any]: Dictionary of all pipeline node results
+            (:obj:`Dict[str, Any]`): Dictionary of all results from nodes in
+            the pipeline.
         """
         return self.data
 
@@ -53,20 +52,21 @@ class Pipeline:
         # 1. Check the initial node is a source node
         # 2. Check every subsequent node utilizes something that will exist
         # if reached end, it is all valid
-
         data_pool = []
 
-        if nodes[0].inputs[0] == 'none':
+        if nodes[0].inputs[0] == "none":
             data_pool.extend(nodes[0].outputs)
 
         for node in nodes[1:]:
-
             if all(item in data_pool for item in node.inputs) or "all" in node.inputs:
                 data_pool.extend(node.outputs)
             else:
-                msg = textwrap.dedent(f"""\
+                msg = textwrap.dedent(
+                    f"""\
                     Nodes in this pipeline do not form a proper channel:
                     {node.name} requires these inputs: {node.inputs}
                     Data pool only has these outputs from previous nodes: {data_pool}
-                    Note that nodes run sequentially, in the order specified in the config file.""")
+                    Note that nodes run sequentially, in the order specified in the config file.
+                    """
+                )
                 raise ValueError(msg)

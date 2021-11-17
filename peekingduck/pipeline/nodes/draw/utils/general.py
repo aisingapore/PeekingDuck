@@ -18,11 +18,12 @@ General utils for drawing functions
 """
 
 from typing import Tuple
+
 import numpy as np
 
 
-def get_image_size(frame: np.array) -> Tuple[int, int]:
-    """ Obtain image size of input frame
+def get_image_size(frame: np.ndarray) -> Tuple[int, int]:
+    """Obtain image size of input frame
 
     Args:
         frame (np.array): image of current frame
@@ -34,9 +35,10 @@ def get_image_size(frame: np.array) -> Tuple[int, int]:
     return image_size
 
 
-def project_points_onto_original_image(points: np.ndarray,
-                                        image_size: Tuple[int, int]) -> np.ndarray:
-    """ Project points from relative value (0, 1) to absolute values in original
+def project_points_onto_original_image(
+    points: np.ndarray, image_size: Tuple[int, int]
+) -> np.ndarray:
+    """Project points from relative value (0, 1) to absolute values in original
     image. Note that coordinate (0, 0) starts from image top-left.
 
     Args:

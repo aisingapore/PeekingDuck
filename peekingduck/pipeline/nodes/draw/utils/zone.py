@@ -16,28 +16,33 @@
 Draws utilities regarding zoning functions
 """
 
-from typing import List, Tuple, Any
-import numpy as np
+from typing import Any, List, Tuple
+
 import cv2
-from peekingduck.pipeline.nodes.draw.utils.constants import \
-    PRIMARY_PALETTE, PRIMARY_PALETTE_LENGTH, VERY_THICK
+import numpy as np
+
+from peekingduck.pipeline.nodes.draw.utils.constants import (
+    PRIMARY_PALETTE,
+    PRIMARY_PALETTE_LENGTH,
+    VERY_THICK,
+)
 
 
-def _draw_zone_area(frame: np.array, points: List[Tuple[int]],
-                    zone_index: int) -> None:
-    total_points = len(points)
-    for i in range(total_points):
-        if i == total_points-1:
-            # for last point, link to first point
-            cv2.line(frame, points[i], points[0],
-                     PRIMARY_PALETTE[(zone_index+1) % PRIMARY_PALETTE_LENGTH], VERY_THICK)
-        else:
-            # for all other points, link to next point in polygon
-            cv2.line(frame, points[i], points[i+1],
-                     PRIMARY_PALETTE[(zone_index+1) % PRIMARY_PALETTE_LENGTH], VERY_THICK)
+def _draw_zone_area(
+    frame: np.ndarray, points: List[Tuple[int]], zone_index: int
+) -> None:
+    num_points = len(points)
+    for i in range(num_points):
+        cv2.line(
+            frame,
+            points[i],
+            points[(i + 1) % num_points],
+            PRIMARY_PALETTE[(zone_index + 1) % PRIMARY_PALETTE_LENGTH],
+            VERY_THICK,
+        )
 
 
-def draw_zones(frame: np.array, zones: List[Any]) -> None:
+def draw_zones(frame: np.ndarray, zones: List[Any]) -> None:
     """draw the boundaries of the zones used in zoning analytics
 
     Args:

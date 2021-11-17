@@ -20,7 +20,9 @@ import logging
 from typing import List, Dict, Any, Tuple
 import numpy as np
 from peekingduck.weights_utils import checker, downloader
-from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import Detector
+from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import (
+    Detector,
+)
 
 
 class Yolov4:  # pylint: disable=too-few-public-methods
@@ -40,11 +42,13 @@ class Yolov4:  # pylint: disable=too-few-public-methods
 
         # check for yolo weights, if none then download into weights folder
         if not checker.has_weights(config["root"], config["weights_dir"]):
-            self.logger.info("---no yolo weights detected. proceeding to download...---")
+            self.logger.info(
+                "---no yolo weights detected. proceeding to download...---"
+            )
             downloader.download_weights(config["root"], config["blob_file"])
             self.logger.info("---yolo weights download complete.---")
 
-        self.detect_ids = config['detect_ids']
+        self.detect_ids = config["detect_ids"]
         self.detector = Detector(config)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:

@@ -18,30 +18,27 @@ Preprocessing fuctions for input nodes
 
 import logging
 from typing import Any, Tuple
-import numpy as np
+
 import cv2
+import numpy as np
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def get_res(stream: Any) -> Tuple[int, int]:
-    '''
-    Gets the resolution for the video frame
-    '''
+    """Gets the resolution for the video frame"""
     width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
     return width, height
 
 
-def mirror(frame: np.array) -> np.array:
-    '''
-    Mirrors a video frame.
-    '''
+def mirror(frame: np.ndarray) -> np.ndarray:
+    """Mirrors a video frame."""
     return cv2.flip(frame, 1)
 
 
-def resize_image(frame: np.array, desired_width: int, desired_height: int) -> Any:
+def resize_image(frame: np.ndarray, desired_width: int, desired_height: int) -> Any:
     """function that resizes the image input
     to the desired dimensions
 

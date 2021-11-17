@@ -15,19 +15,25 @@
 """
 Test for draw poses node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.poses import Node
+
 
 @pytest.fixture
 def draw_poses():
-    node = Node({'input': ["keypoints", "keypoint_scores", "keypoint_conns", "img"],
-                 'output': ["none"],
-                 'keypoint_dot_color': [0, 255, 0],
-                 'keypoint_dot_radius': 5,
-                 'keypoint_connect_color': [0, 255, 255],
-                 'keypoint_text_color': [255, 0, 255],
-                })
+    node = Node(
+        {
+            "input": ["keypoints", "keypoint_scores", "keypoint_conns", "img"],
+            "output": ["none"],
+            "keypoint_dot_color": [0, 255, 0],
+            "keypoint_dot_radius": 5,
+            "keypoint_connect_color": [0, 255, 255],
+            "keypoint_text_color": [255, 0, 255],
+        }
+    )
     return node
 
 
@@ -39,10 +45,10 @@ class TestBtmMidpoint:
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
         input1 = {
-        "keypoints": poses,
-        "keypoint_scores": scores,
-        "keypoint_conns": keypoint_conns,
-        "img": output_img
+            "keypoints": poses,
+            "keypoint_scores": scores,
+            "keypoint_conns": keypoint_conns,
+            "img": output_img,
         }
         draw_poses.run(input1)
         np.testing.assert_equal(original_img, output_img)

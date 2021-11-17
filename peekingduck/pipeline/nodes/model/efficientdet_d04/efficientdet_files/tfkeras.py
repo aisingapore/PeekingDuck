@@ -20,10 +20,13 @@ Inject Tensorflow Keras into model workloads
 """
 
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.keras_utils \
-    import inject_tfkeras_modules, init_tfkeras_custom_objects
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files \
-    import efficientnet as model
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.keras_utils import (
+    inject_tfkeras_modules,
+    init_tfkeras_custom_objects,
+)
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
+    efficientnet as model,
+)
 
 EfficientNetB0 = inject_tfkeras_modules(model.efficientnet_b0)
 EfficientNetB1 = inject_tfkeras_modules(model.efficientnet_b1)

@@ -1,98 +1,101 @@
 # (26.10.21) Work in progress to troubleshoot this unit test, where testing
 # only fails in Github runner
 
+from pathlib import Path
+from unittest import TestCase, mock
 
-# import os
-# import yaml
-# import pytest
-# import cv2
-# import numpy as np
-# from unittest import mock, TestCase
-# from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
-# from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
-#     Detector,
-# )
+import cv2
+import numpy as np
+import pytest
+import yaml
 
-
-# @pytest.fixture
-# def LP_config():
-#     filepath = os.path.join(
-#         os.getcwd(),
-#         "tests/pipeline/nodes/model/yolov4_license_plate/test_yolov4_license_plate.yml",
-#     )
-#     with open(filepath) as file:
-#         node_config = yaml.safe_load(file)
-#     node_config["root"] = os.getcwd()
-
-#     return node_config
+from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
+from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
+    Detector,
+)
 
 
-# @pytest.fixture(params=["v4", "v4tiny"])
-# def LPyolo(request, LP_config):
-#     LP_config["model_type"] = request.param
-#     node = Node(LP_config)
+@pytest.fixture
+def yolo_config():
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "yolov4_license_plate"
+        / "test_yolov4_license_plate.yml"
+    )
+    with open(filepath) as file:
+        node_config = yaml.safe_load(file)
+    node_config["root"] = Path.cwd()
 
-#     return node
-
-
-# @pytest.fixture()
-# def LPyolo_detector(LP_config):
-#     LP_config["model_type"] = "v4tiny"
-#     detector = Detector(LP_config)
-
-#     return detector
-
-
-# def replace_download_weights(root, blob_file):
-#     return False
+    return node_config
 
 
-# @pytest.mark.mlmodel
-# class TestLPYolo:
-#     def test_no_LP_image(self, test_no_LP_images, LPyolo):
-#         blank_image = cv2.imread(test_no_LP_images)
-#         output = LPyolo.run({"img": blank_image})
-#         expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
-#         assert output.keys() == expected_output.keys()
-#         assert type(output["bboxes"]) == np.ndarray
-#         assert type(output["bbox_labels"]) == np.ndarray
-#         assert type(output["bbox_scores"]) == np.ndarray
-#         assert len(output["bboxes"]) == 0
-#         assert len(output["bbox_labels"]) == 0
-#         assert len(output["bbox_scores"]) == 0
+@pytest.fixture(params=["v4", "v4tiny"])
+def yolo(request, yolo_config):
+    yolo_config["model_type"] = request.param
+    node = Node(yolo_config)
 
-#     def test_at_least_one_LP_image(self, test_LP_images, LPyolo):
-#         test_img = cv2.imread(test_LP_images)
-#         output = LPyolo.run({"img": test_img})
-#         assert "bboxes" in output
-#         assert len(output["bboxes"]) != 0
-#         assert len(output["bboxes"]) == len(output["bbox_labels"])
+    return node
 
-#     def test_no_weights(self, LP_config):
-#         with mock.patch(
-#             "peekingduck.weights_utils.checker.has_weights", return_value=False
-#         ):
-#             with mock.patch(
-#                 "peekingduck.weights_utils.downloader.download_weights",
-#                 wraps=replace_download_weights,
-#             ):
-#                 with TestCase.assertLogs(
-#                     "peekingduck.pipeline.nodes.model.yolov4_license_plate.LP_detector_model.logger"
-#                 ) as captured:
 
-#                     LPyolo = Node(config=LP_config)
-#                     # records 0 - 20 records are updates to configs
-#                     assert (
-#                         captured.records[0].getMessage()
-#                         == "---no LP weights detected. proceeding to download...---"
-#                     )
-#                     assert (
-#                         captured.records[1].getMessage()
-#                         == "---LP weights download complete.---"
-#                     )
-#                     assert LPyolo is not None
+@pytest.fixture()
+def yolo_detector(yolo_config):
+    yolo_config["model_type"] = "v4tiny"
+    detector = Detector(yolo_config)
 
-#     def test_model_initialization(self, LP_config):
-#         detector = Detector(config=LP_config)
-#         model = detector.yolo
-#         assert model is not None
+    return detector
+
+
+def replace_download_weights(root, blob_file):
+    return False
+
+
+@pytest.mark.mlmodel
+class TestLPYolo:
+    def test_no_lp_image(self, test_no_lp_images, yolo):
+        blank_image = cv2.imread(test_no_lp_images)
+        output = yolo.run({"img": blank_image})
+        expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
+        assert output.keys() == expected_output.keys()
+        assert type(output["bboxes"]) == np.ndarray
+        assert type(output["bbox_labels"]) == np.ndarray
+        assert type(output["bbox_scores"]) == np.ndarray
+        assert len(output["bboxes"]) == 0
+        assert len(output["bbox_labels"]) == 0
+        assert len(output["bbox_scores"]) == 0
+
+    def test_at_least_one_lp_image(self, test_lp_images, yolo):
+        test_img = cv2.imread(test_lp_images)
+        output = yolo.run({"img": test_img})
+        assert "bboxes" in output
+        assert len(output["bboxes"]) != 0
+        assert len(output["bboxes"]) == len(output["bbox_labels"])
+
+    def test_no_weights(self, yolo_config):
+        with mock.patch(
+            "peekingduck.weights_utils.checker.has_weights", return_value=False
+        ), mock.patch(
+            "peekingduck.weights_utils.downloader.download_weights",
+            wraps=replace_download_weights,
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.yolov4_license_plate.LP_detector_model.logger"
+        ) as captured:
+            yolo = Node(config=yolo_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "---no LP weights detected. proceeding to download...---"
+            )
+            assert (
+                captured.records[1].getMessage()
+                == "---LP weights download complete.---"
+            )
+            assert yolo is not None
+
+    def test_model_initialization(self, yolo_config):
+        detector = Detector(config=yolo_config)
+        model = detector.yolo
+        assert model is not None

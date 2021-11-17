@@ -16,19 +16,21 @@
 Postprocessing functions for HRNet
 """
 
-
 from typing import List, Tuple
 import numpy as np
 
-SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13],
-            [6, 12], [7, 13], [6, 7], [6, 8], [7, 9],
-            [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4],
-            [3, 5], [4, 6], [5, 7]]
+# fmt: off
+SKELETON = [
+    [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7],
+    [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5],
+    [4, 6], [5, 7],
+]
+# fmt: on
 
 
-def scale_transform(keypoints: np.ndarray,
-                    in_scale: List[int],
-                    out_scale: List[int]) -> np.ndarray:
+def scale_transform(
+    keypoints: np.ndarray, in_scale: List[int], out_scale: List[int]
+) -> np.ndarray:
     """Transform points from input scale to out scale.
 
     Args:
@@ -44,7 +46,9 @@ def scale_transform(keypoints: np.ndarray,
     return keypoints
 
 
-def affine_transform_xy(keypoints: np.ndarray, affine_matrices: np.ndarray) -> np.ndarray:
+def affine_transform_xy(
+    keypoints: np.ndarray, affine_matrices: np.ndarray
+) -> np.ndarray:
     """Apply respective affine transform on array of points.
 
     Args:
@@ -55,7 +59,9 @@ def affine_transform_xy(keypoints: np.ndarray, affine_matrices: np.ndarray) -> n
         array of transformed points
     """
     transformed_matrices = []
-    keypoints = np.dstack((keypoints, np.ones((keypoints.shape[0], keypoints.shape[1], 1))))
+    keypoints = np.dstack(
+        (keypoints, np.ones((keypoints.shape[0], keypoints.shape[1], 1)))
+    )
     for affine_matrix, keypoint in zip(affine_matrices, keypoints):
         transformed_keypoint = np.dot(affine_matrix, keypoint.T)
         transformed_matrices.append(transformed_keypoint.T)
@@ -80,10 +86,9 @@ def reshape_heatmaps(heatmaps: np.ndarray) -> np.ndarray:
     return heatmaps_reshaped
 
 
-def get_valid_keypoints(keypoints: np.ndarray,
-                        keypoint_scores: np.ndarray,
-                        batch: int,
-                        min_score: int) -> Tuple[np.ndarray, np.ndarray]:
+def get_valid_keypoints(
+    keypoints: np.ndarray, keypoint_scores: np.ndarray, batch: int, min_score: int
+) -> Tuple[np.ndarray, np.ndarray]:
     """Helper function to get visible keypoints
 
     Args:
@@ -96,7 +101,9 @@ def get_valid_keypoints(keypoints: np.ndarray,
         Tuple[np.ndarray, np.ndarray]: array of keypoints above threshold and keypoint mask
     """
     score_masks = keypoint_scores > min_score
-    kp_masks = np.repeat(keypoint_scores > 0., 2).reshape(batch, 17, -1).astype(np.float32)
+    kp_masks = (
+        np.repeat(keypoint_scores > 0.0, 2).reshape(batch, 17, -1).astype(np.float32)
+    )
     keypoints *= kp_masks
     return keypoints, score_masks
 

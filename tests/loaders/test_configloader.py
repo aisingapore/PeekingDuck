@@ -12,52 +12,50 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import os
-import yaml
+from pathlib import Path
 
 import pytest
+import yaml
+
 from peekingduck.declarative_loader import ConfigLoader
 
 
 @pytest.fixture
 def configloader():
-    config_loader = ConfigLoader("tmp_dir")
+    config_loader = ConfigLoader(Path.cwd() / "tmp_dir")
 
     return config_loader
 
 
 def create_config_yaml(node, data):
     node_type, node_name = node.split(".")
-    config_path = os.path.join("tmp_dir", 'configs')
+    config_dir = Path.cwd() / "tmp_dir" / "configs"
 
-    node_config_path = os.path.join(config_path, node_type)
-    os.makedirs(node_config_path)
-    config_file = node_name + ".yml"
+    node_config_dir = config_dir / node_type
+    node_config_dir.mkdir(parents=True)
 
-    full_path = os.path.join(node_config_path, config_file)
-    with open(full_path, 'w') as outfile:
+    full_path = node_config_dir / f"{node_name}.yml"
+
+    with open(full_path, "w") as outfile:
         yaml.dump(data, outfile, default_flow_style=False)
 
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestConfigLoader:
-
-    def test_config_loader_returns_correct_config_filepath(self, configloader):
-
-        node = 'type.node'
+    def test_config_loader_returns_correct_config_file_path(self, configloader):
+        node = "type.node"
         # .replace("\\","/") for windows where os.path.join uses "\\"
-        filepath = configloader._get_config_path(node).replace("\\","/")
+        file_path = str(configloader._get_config_path(node)).replace("\\", "/")
 
-        ground_truth = os.path.join("tmp_dir",
-                                    "configs",
-                                    node.replace(".", "/") + ".yml").replace("\\","/")
+        ground_truth = str(
+            Path.cwd() / "tmp_dir" / "configs" / f"{node.replace('.', '/')}.yml"
+        ).replace("\\", "/")
 
-        assert filepath == ground_truth
+        assert file_path == ground_truth
 
     def test_config_loader_load_correct_yaml(self, configloader):
         node = "input.test"
-        data = {"input": "img",
-                "output": "img"}
+        data = {"input": "img", "output": "img"}
         create_config_yaml(node, data)
 
         config = configloader.get(node)

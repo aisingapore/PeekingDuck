@@ -16,18 +16,20 @@
 Utility functions for Tensorflow Graphed models
 """
 
-import os
 import logging
-from typing import List, Callable
+import os
+from typing import Callable, List
+
 import tensorflow as tf
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
-                      outputs: List[str]) -> Callable:
+def wrap_frozen_graph(
+    graph_def: tf.compat.v1.GraphDef, inputs: List[str], outputs: List[str]
+) -> Callable:
     """
     Wraps the graph into a function. This is akin to a model.predict() function
     in keras. When doing inference, simply do frozen_function(tf.cast(x, float))[0].
@@ -43,6 +45,7 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
     Return:
         a wrapped_import function to perform your inference with.
     """
+
     def _imports_graph_def() -> None:  # this needs to be here because of graph_def
         tf.compat.v1.import_graph_def(graph_def, name="")
 
@@ -51,20 +54,21 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef, inputs: List[str],
 
     return wrapped_import.prune(
         tf.nest.map_structure(import_graph.as_graph_element, inputs),
-        tf.nest.map_structure(import_graph.as_graph_element, outputs))
+        tf.nest.map_structure(import_graph.as_graph_element, outputs),
+    )
 
 
-def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> tf.function:
+def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> tf.function:
     """
     Loads the graph
     """
-    with tf.io.gfile.GFile(filename, "rb") as graph_file:
+    with tf.io.gfile.GFile(file_path, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(graph_file.read())
 
-        frozen_func = wrap_frozen_graph(graph_def=graph_def,
-                                        inputs=inputs,
-                                        outputs=outputs)
+        frozen_func = wrap_frozen_graph(
+            graph_def=graph_def, inputs=inputs, outputs=outputs
+        )
 
         return frozen_func
 
@@ -75,14 +79,14 @@ def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
     """
     # pylint: disable=not-context-manager
     with tf.Graph().as_default() as graph:
-        tf.import_graph_def(graph_def, name='')
+        tf.import_graph_def(graph_def, name="")
 
     input_list = []
     for graph_op in graph.get_operations():  # tensorflow.python.framework.ops.Operation
         if graph_op.type == "Placeholder":
             input_list.append(graph_op.name)
 
-        logger.info('Inputs: %s', input_list)
+        logger.info(f"Inputs: {input_list}")
 
 
 def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
@@ -96,4 +100,4 @@ def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
         input_list.extend(node.input)
 
     outputs = set(name_list) - set(input_list)
-    logger.info('Outputs: %s', list(outputs))
+    logger.info(f"Outputs: {list(outputs)}")

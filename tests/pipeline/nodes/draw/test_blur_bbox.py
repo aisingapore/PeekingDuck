@@ -11,38 +11,46 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
 Test for draw blur_bbox node
 """
-import os
+
 from pathlib import Path
-import pytest
-import numpy as np
+
 import cv2
+import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.blur_bbox import Node
 
 TEST_IMAGE = ["tcar1.jpg"]
-PKD_DIR = os.path.join(
-    Path(__file__).parents[3]
-)  # path to reach 4 file levels up from test_blur_bbox.py
+# path to reach 4 file levels up from test_blur_bbox.py
+PKD_DIR = Path(__file__).resolve().parents[3]
 
 
 @pytest.fixture(params=TEST_IMAGE)
 def test_image(request):
-    test_img_dir = os.path.join(PKD_DIR, "..", "images", "testing")
+    test_img_dir = PKD_DIR / ".." / "images" / "testing"
 
-    yield os.path.join(test_img_dir, request.param)
+    yield test_img_dir / request.param
 
 
 @pytest.fixture
 def draw_blur_node():
-    node = Node({"input": ["bboxes", "img", "bbox_labels"], "output": ["img"],"blur_kernel_size": 30})
+    node = Node(
+        {
+            "input": ["bboxes", "img", "bbox_labels"],
+            "output": ["img"],
+            "blur_kernel_size": 30,
+        }
+    )
     return node
 
 
 class TestBlur:
     def test_no_bbox(self, draw_blur_node, test_image):
-        original_img = cv2.imread(test_image)
+        original_img = cv2.imread(str(test_image))
         output_img = original_img.copy()
 
         input = {"bboxes": [], "img": output_img, "bbox_labels": []}
@@ -51,12 +59,11 @@ class TestBlur:
         np.testing.assert_equal(original_img, output_img)
 
     def test_single_bbox(self, draw_blur_node, test_image):
-
-        original_img = cv2.imread(test_image)
-        frameHeight = original_img.shape[0]
-        frameWidth = original_img.shape[1]
-        x1, x2 = int(0.4 * frameWidth), int(0.6 * frameWidth)
-        y1, y2 = int(0.6 * frameHeight), int(0.7 * frameHeight)
+        original_img = cv2.imread(str(test_image))
+        frame_height = original_img.shape[0]
+        frame_width = original_img.shape[1]
+        x1, x2 = int(0.4 * frame_width), int(0.6 * frame_width)
+        y1, y2 = int(0.6 * frame_height), int(0.7 * frame_height)
         original_bbox_bounded_area = original_img[y1:y2, x1:x2, :]
 
         output_img = original_img.copy()
@@ -80,9 +87,9 @@ class TestBlur:
         )
 
     def test_multiple_bbox(self, draw_blur_node, test_image):
-        original_img = cv2.imread(test_image)
-        frameHeight = original_img.shape[0]
-        frameWidth = original_img.shape[1]
+        original_img = cv2.imread(str(test_image))
+        frame_height = original_img.shape[0]
+        frame_width = original_img.shape[1]
 
         output_img = original_img.copy()
 
@@ -98,8 +105,8 @@ class TestBlur:
         draw_blur_node.run(input)
         for bbox in input["bboxes"]:
             x1, y1, x2, y2 = bbox
-            x1, x2 = int(x1 * frameWidth), int(x2 * frameWidth)
-            y1, y2 = int(y1 * frameHeight), int(y2 * frameHeight)
+            x1, x2 = int(x1 * frame_width), int(x2 * frame_width)
+            y1, y2 = int(y1 * frame_height), int(y2 * frame_height)
 
             original_bbox_bounded_area = original_img[y1:y2, x1:x2, :]
             output_bbox_bounded_area = output_img[y1:y2, x1:x2, :]

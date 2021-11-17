@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-
 import numpy as np
-
 import pytest
+
 from peekingduck.pipeline.nodes.input.recorded import Node
 
 
@@ -53,13 +52,8 @@ class TestMediaReader:
                 {
                     "input": "source",
                     "output": "img",
-                    "resize": {
-                        "do_resizing": False,
-                        "width": 1280,
-                        "height": 720,
-                    },
+                    "resize": {"do_resizing": False, "width": 1280, "height": 720},
                     "mirror_image": False,
-                    "threading": False,
                     "input_dir": file_path,
                 }
             )
@@ -91,9 +85,7 @@ class TestMediaReader:
     def test_reader_reads_one_video(self, create_input_video):
         num_frames = 30
         size = (600, 800, 3)
-        video1 = create_input_video(
-            "video1.avi", fps=10, size=size, nframes=num_frames
-        )
+        video1 = create_input_video("video1.avi", fps=10, size=size, nframes=num_frames)
         reader = create_reader()
 
         read_video1 = _get_video_file(reader, num_frames)
@@ -103,12 +95,8 @@ class TestMediaReader:
         num_frames = 20
         size = (600, 800, 3)
 
-        video1 = create_input_video(
-            "video1.avi", fps=5, size=size, nframes=num_frames
-        )
-        video2 = create_input_video(
-            "video2.avi", fps=5, size=size, nframes=num_frames
-        )
+        video1 = create_input_video("video1.avi", fps=5, size=size, nframes=num_frames)
+        video2 = create_input_video("video2.avi", fps=5, size=size, nframes=num_frames)
 
         reader = create_reader()
 

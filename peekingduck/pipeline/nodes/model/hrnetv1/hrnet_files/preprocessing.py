@@ -63,15 +63,19 @@ def box2cs(bboxes: np.ndarray, aspect_ratio: float) -> np.ndarray:
     bboxes[:, 1] = bboxes[:, 1] + bboxes[:, 3] * 0.5
 
     req_w = aspect_ratio * bboxes[:, 3]
-    bboxes[:, 3][bboxes[:, 2] > req_w] = bboxes[bboxes[:, 2] > req_w][:, 2] / aspect_ratio
-    bboxes[:, 2][bboxes[:, 2] < req_w] = bboxes[bboxes[:, 2] < req_w][:, 3] * aspect_ratio
+    bboxes[:, 3][bboxes[:, 2] > req_w] = (
+        bboxes[bboxes[:, 2] > req_w][:, 2] / aspect_ratio
+    )
+    bboxes[:, 2][bboxes[:, 2] < req_w] = (
+        bboxes[bboxes[:, 2] < req_w][:, 3] * aspect_ratio
+    )
 
     return bboxes
 
 
-def crop_and_resize(frame: np.ndarray,
-                    bboxes: np.ndarray,
-                    out_size: Tuple[int, int]) -> Tuple[np.ndarray, np.ndarray]:
+def crop_and_resize(
+    frame: np.ndarray, bboxes: np.ndarray, out_size: Tuple[int, int]
+) -> Tuple[np.ndarray, np.ndarray]:
     """Crop a region from frame specified by its center and size. The
     cropped region is resized to out_size.
 
@@ -97,9 +101,10 @@ def crop_and_resize(frame: np.ndarray,
     affine_matrices = np.concatenate((x_mat, y_mat), axis=1)
     affine_matrices = affine_matrices.reshape((-1, 2, 3))
 
-    transformed_images = [cv2.warpAffine(frame,
-                                         x,
-                                         out_size,
-                                         flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP)
-                          for x in affine_matrices]
+    transformed_images = [
+        cv2.warpAffine(
+            frame, x, out_size, flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP
+        )
+        for x in affine_matrices
+    ]
     return transformed_images, affine_matrices
