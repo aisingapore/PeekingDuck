@@ -44,33 +44,24 @@ class Detector:  # pylint: disable=too-few-public-methods
 
     def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
-        model_file = self.config["root"] / self.config["model_weights_dir"][model_type]
-        model = tf.saved_model.load(str(model_file), tags=[tag_constants.SERVING])
+        model_path = self.config["root"] / self.config["model_weights_dir"][model_type]
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.logger.info(
-            (
-                "Yolo model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "IDs being detected: %s, \n\t"
-                "Max detections per class: %s, \n\t"
-                "Max total detections: %s, \n\t"
-                "IOU threshold: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.config["model_type"],
-            self.config["size"],
-            self.config["detect_ids"],
-            self.config["max_output_size_per_class"],
-            self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            "Yolo model loaded with following configs: \n\t"
+            f"Model type: {self.config['model_type']}, \n\t"
+            f"Input resolution: {self.config['size']}, \n\t"
+            f"IDs being detected: {self.config['detect_ids']}, \n\t"
+            f"Max detections per class: {self.config['max_output_size_per_class']}, \n\t"
+            f"Max total detections: {self.config['max_total_size']}, \n\t"
+            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['yolo_score_threshold']}"
         )
 
         return model
 
     def predict_object_bbox_from_image(
-        self, image: np.array
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores
 

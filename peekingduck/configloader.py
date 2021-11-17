@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Loads configurations for individual nodes
+Loads configurations for individual nodes.
 """
 
 from pathlib import Path
@@ -23,47 +23,41 @@ import yaml
 
 
 class ConfigLoader:  # pylint: disable=too-few-public-methods
-    """
-    A helper class to create pipeline.
+    """A helper class to create pipeline.
 
     The config loader class is used to allow for instantiation of Node classes
     directly instead of reading configurations from the run config yaml.
 
     Args:
-
-        basedir (:obj:`str`): base directory of peekingduck
-
+        base_dir (:obj:`pathlib.Path`): Base directory of ``peekingduck``
     """
 
-    def __init__(self, basedir: Path) -> None:
-        self._basedir = basedir
+    def __init__(self, base_dir: Path) -> None:
+        self._base_dir = base_dir
 
     def _get_config_path(self, node: str) -> Path:
         """Based on the node, return the corresponding node config path"""
-        configs_folder = self._basedir / "configs"
+        configs_folder = self._base_dir / "configs"
         node_type, node_name = node.split(".")
-        node_name = node_name + ".yml"
-        filepath = configs_folder / node_type / node_name
+        file_path = configs_folder / node_type / f"{node_name}.yml"
 
-        return filepath
+        return file_path
 
     def get(self, node_name: str) -> Dict[str, Any]:
-        """
-        Get node configuration for specified node.
+        """Gets node configuration for specified node.
 
         Args:
-            node_name (:obj:`str`): name of node
+            node_name (:obj:`str`): Name of node.
 
-        Outputs:
-            node_config (:obj:`Dict`): dictionary of node configurations for the
-            specified node
-
+        Returns:
+            node_config (:obj:`Dict[str, Any]`): A dictionary of node
+            configurations for the specified node.
         """
-        filepath = self._get_config_path(node_name)
+        file_path = self._get_config_path(node_name)
 
-        with open(filepath) as file:
+        with open(file_path) as file:
             node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading
-        node_config["root"] = self._basedir
+        node_config["root"] = self._base_dir
         return node_config

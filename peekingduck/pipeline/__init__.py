@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Nodes and pipelines to run PeekingDuck
+Nodes and pipelines to run PeekingDuck.
 """

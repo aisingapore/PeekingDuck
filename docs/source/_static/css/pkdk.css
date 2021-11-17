@@ -1,29 +1,34 @@
-@import 'theme.css';
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap');
+@import "theme.css";
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@200&display=swap");
 
 body {
-    font-family: 'Nunito', sans-serif;
-}
-
-.wy-nav-side {
-    background: #383838;
-}
-.wy-side-nav-search {
-    background: #A76D60;
-}
-
-
-.wy-nav-content {
-    padding:1.618em 3.236em;
-    height:100%;
-    max-width:1000px;
-    margin:auto
-   }
-
-.wy-nav-content-wrap{
-    background: #fcfcfc;
+  font-family: "Nunito", sans-serif;
 }
 
 .wy-menu-vertical p.caption {
-    color: #FFFFFF;
+  color: #ffffff;
+}
+
+.wy-nav-content {
+  padding: 1.618em 3.236em;
+  height: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+
+.wy-nav-content-wrap {
+  background: #fcfcfc;
+}
+
+.wy-nav-side {
+  background: #383838;
+}
+
+.wy-side-nav-search {
+  background: #a76d60;
+}
+
+.wy-table-responsive table.longtable td,
+.wy-table-responsive table.longtable th {
+  white-space: normal;
 }

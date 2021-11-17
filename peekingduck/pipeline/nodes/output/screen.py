@@ -13,16 +13,18 @@
 # limitations under the License.
 
 """
-Show the outputs on your display
+Shows the outputs on your display.
 """
 
 from typing import Any, Dict
+
 import cv2
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Node that streams the output on your display
+    """Streams the output on your display.
 
     Inputs:
         |img|
@@ -30,6 +32,8 @@ class Node(AbstractNode):
     Outputs:
         |pipeline_end|
 
+    Configs:
+        None.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -37,7 +41,6 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
-
         cv2.imshow("PeekingDuck", inputs["img"])
 
         if cv2.waitKey(1) & 0xFF == ord("q"):

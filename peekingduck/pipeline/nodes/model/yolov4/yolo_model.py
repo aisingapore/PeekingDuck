@@ -52,7 +52,9 @@ class YoloModel:
 
         self.detector = Detector(config)
 
-    def predict(self, frame: np.array) -> Tuple[List[np.array], List[str], List[float]]:
+    def predict(
+        self, frame: np.ndarray
+    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """predict the bbox from frame
 
         Returns:

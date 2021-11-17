@@ -47,23 +47,14 @@ class Detector:
         model_path = self.root_dir / self.config["graph_files"][model_type]
 
         self.logger.info(
-            (
-                "Yolo model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "IDs being detected: %s \n\t"
-                "Max Detections per class: %s, \n\t"
-                "Max Total Detections: %s, \n\t"
-                "IOU threshold: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.config["model_type"],
-            self.config["size"],
-            self.config["detect_ids"],
-            self.config["max_output_size_per_class"],
-            self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            "Yolo model loaded with following configs: \n\t"
+            f"Model type: {self.config['model_type']}, \n\t"
+            f"Input resolution: {self.config['size']}, \n\t"
+            f"IDs being detected: {self.config['detect_ids']} \n\t"
+            f"Max Detections per class: {self.config['max_output_size_per_class']}, \n\t"
+            f"Max Total Detections: {self.config['max_total_size']}, \n\t"
+            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['yolo_score_threshold']}"
         )
 
         return self._load_yolo_graph(model_path)
@@ -74,7 +65,7 @@ class Detector:
         and output nodes of the graph. It is usually x:0 for input and Identity:0
         for outputs, depending on how many output nodes you have.
         """
-        model_type = "yolo%s" % self.config["model_type"][:2]
+        model_type = f"yolo{self.config['model_type'][:2]}"
         model_nodes = self.config["MODEL_NODES"][model_type]
         if model_path.is_file():
             return load_graph(
@@ -83,12 +74,12 @@ class Detector:
                 outputs=model_nodes["outputs"],
             )
         raise ValueError(
-            "Graph file does not exist. Please check that " "%s exists" % model_path
+            f"Graph file does not exist. Please check that {model_path} exists"
         )
 
     def _load_image(self, image_file: str) -> builtins.bytes:
         img = open(image_file, "rb").read()
-        self.logger.info("image file %s loaded", image_file)
+        self.logger.info(f"image file {image_file} loaded")
         return img
 
     @staticmethod
@@ -104,7 +95,7 @@ class Detector:
         classes: tf.Tensor,
         nums: List[int],
         object_ids: List[int],
-    ) -> Tuple[List[np.array], List[float], List[str]]:
+    ) -> Tuple[List[np.ndarray], List[float], List[str]]:
         len0 = nums[0]
 
         classes = classes.numpy()[0]
@@ -125,8 +116,8 @@ class Detector:
         return boxes, scores, classes
 
     def _evaluate_image_by_yolo(
-        self, image: np.array
-    ) -> Tuple[List[np.array], List[float], List[float], List[int]]:
+        self, image: np.ndarray
+    ) -> Tuple[List[np.ndarray], List[float], List[float], List[int]]:
         """
         Takes in the yolo model and image to perform inference with.
         It will return the following:
@@ -157,20 +148,20 @@ class Detector:
         return boxes, scores, classes, nums
 
     @staticmethod
-    def _prepare_image_from_camera(image: np.array) -> tf.Tensor:
+    def _prepare_image_from_camera(image: np.ndarray) -> tf.Tensor:
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)
         return image
 
     @staticmethod
-    def _prepare_image_from_file(image: np.array) -> tf.Tensor:
+    def _prepare_image_from_file(image: np.ndarray) -> tf.Tensor:
         image = tf.image.decode_image(image, channels=3)
         return image
 
     # possible that we may want to control what is being detection
     def predict_object_bbox_from_image(
-        self, class_names: List[str], image: np.array, detect_ids: List[int]
-    ) -> Tuple[List[np.array], List[str], List[float]]:
+        self, class_names: List[str], image: np.ndarray, detect_ids: List[int]
+    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
         Args:
@@ -205,6 +196,6 @@ class Detector:
         """
         physical_devices = tf.config.experimental.list_physical_devices("GPU")
         if len(physical_devices) > 0:
-            self.logger.info("GPU setup with %d devices", len(physical_devices))
+            self.logger.info(f"GPU setup with {len(physical_devices)} devices")
         else:
             self.logger.info("use CPU")

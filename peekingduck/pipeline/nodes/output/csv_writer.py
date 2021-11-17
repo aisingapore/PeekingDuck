@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Record the nodes outputs to csv file
+Records the nodes outputs to a CSV file.
 """
 
 import logging
@@ -27,29 +27,25 @@ from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
 
 
 class Node(AbstractNode):
-    """Node that tracks user-specified parameters and outputs the results in a
-    CSV file.
+    """Tracks user-specified parameters and outputs the results in a CSV file.
 
     Inputs:
-        ``All`` (:obj:`List`): A placeholder that represents a flexible input.
-        Actual inputs to be written into the csv can be configured in
-        `stats_to_track`.
+        ``all`` (:obj:`List`): A placeholder that represents a flexible input.
+        Actual inputs to be written into the CSV file can be configured in
+        ``stats_to_track``.
 
     Outputs:
-        None
+        |none|
 
     Configs:
-        stats_to_track (:obj:`List`): **default = ["keypoints", "bboxes", "bbox_labels"]**
-
+        stats_to_track (:obj:`List`):
+            **default = ["keypoints", "bboxes", "bbox_labels"]**. |br|
             Parameters to log into the CSV file. The chosen parameters must be
             present in the data pool.
-
-        filepath (:obj:`str`): **default = "PeekingDuck/data/stats.csv"**
-
+        file_path (:obj:`str`):
+            **default = "PeekingDuck/data/stats.csv"**. |br|
             Directory where CSV file is saved.
-
-        logging_interval (:obj:`int`): **default = 1**
-
+        logging_interval (:obj:`int`): **default = 1**. |br|
             Interval between each log, in terms of seconds.
     """
 
@@ -58,25 +54,24 @@ class Node(AbstractNode):
 
         self.logger = logging.getLogger(__name__)
         self.logging_interval = int(self.logging_interval)  # type: ignore
-        self.filepath = Path(self.filepath)  # type: ignore
-        # check if filepath has a '.csv' extension
-        if self.filepath.suffix != ".csv":
+        self.file_path = Path(self.file_path)  # type: ignore
+        # check if file_path has a '.csv' extension
+        if self.file_path.suffix != ".csv":
             raise ValueError("Filepath must have a '.csv' extension.")
 
-        self._filepath_datetime = self._append_datetime_filepath(self.filepath)
+        self._file_path_datetime = self._append_datetime_file_path(self.file_path)
         self._stats_checked = False
         self.stats_to_track: List[str]
         self.csv_logger = CSVLogger(
-            self._filepath_datetime, self.stats_to_track, self.logging_interval
+            self._file_path_datetime, self.stats_to_track, self.logging_interval
         )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Write the current state of the tracked statistics into
+        """Writes the current state of the tracked statistics into
         the csv file as a row entry
 
         Args:
-            inputs(dict): the data pool of the pipeline
+            inputs (dict): The data pool of the pipeline.
 
         Returns:
             outputs: [None]
@@ -90,7 +85,7 @@ class Node(AbstractNode):
             self._check_tracked_stats(inputs)
             # self._stats_to_track might change after the check
             self.csv_logger = CSVLogger(
-                self._filepath_datetime, self.stats_to_track, self.logging_interval
+                self._file_path_datetime, self.stats_to_track, self.logging_interval
             )
 
         self.csv_logger.write(inputs, self.stats_to_track)
@@ -98,8 +93,7 @@ class Node(AbstractNode):
         return {}
 
     def _check_tracked_stats(self, inputs: Dict[str, Any]) -> None:
-        """
-        Check whether user input statistics is present in the data pool
+        """Checks whether user input statistics is present in the data pool
         of the pipeline. Statistics not present in data pool will be
         ignored and dropped.
         """
@@ -112,7 +106,7 @@ class Node(AbstractNode):
             else:
                 invalid.append(stat)
 
-        if len(invalid) != 0:
+        if not invalid:
             msg = textwrap.dedent(
                 f"""\
                 {invalid} are not valid outputs.
@@ -133,18 +127,16 @@ class Node(AbstractNode):
         self._stats_checked = False
 
     @staticmethod
-    def _append_datetime_filepath(filepath: Path) -> Path:
-        """
-        Append time stamp to the filename
-        """
+    def _append_datetime_file_path(file_path: Path) -> Path:
+        """Append time stamp to the filename."""
         current_time = datetime.now()
         # output as '240621-15-09-13'
         time_str = current_time.strftime("%d%m%y-%H-%M-%S")
 
         # append timestamp to filename before extension
         # Format: filename_timestamp.extension
-        filepath_with_timestamp = filepath.with_name(
-            f"{filepath.stem}_{time_str}{filepath.suffix}"
+        file_path_with_timestamp = file_path.with_name(
+            f"{file_path.stem}_{time_str}{file_path.suffix}"
         )
 
-        return filepath_with_timestamp
+        return file_path_with_timestamp

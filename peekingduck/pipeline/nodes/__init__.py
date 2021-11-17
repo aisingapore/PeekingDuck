@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Nodes for PeekingDuck inference workloads
+Nodes for PeekingDuck inference workloads.
 """

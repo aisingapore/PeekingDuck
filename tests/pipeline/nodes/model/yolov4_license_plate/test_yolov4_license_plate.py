@@ -1,9 +1,8 @@
 # (26.10.21) Work in progress to troubleshoot this unit test, where testing
 # only fails in Github runner
 
-import os
 from pathlib import Path
-from unittest import mock, TestCase
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -56,8 +55,8 @@ def replace_download_weights(root, blob_file):
 
 @pytest.mark.mlmodel
 class TestLPYolo:
-    def test_no_LP_image(self, test_no_LP_images, yolo):
-        blank_image = cv2.imread(test_no_LP_images)
+    def test_no_lp_image(self, test_no_lp_images, yolo):
+        blank_image = cv2.imread(test_no_lp_images)
         output = yolo.run({"img": blank_image})
         expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
         assert output.keys() == expected_output.keys()
@@ -68,8 +67,8 @@ class TestLPYolo:
         assert len(output["bbox_labels"]) == 0
         assert len(output["bbox_scores"]) == 0
 
-    def test_at_least_one_LP_image(self, test_LP_images, yolo):
-        test_img = cv2.imread(test_LP_images)
+    def test_at_least_one_lp_image(self, test_lp_images, yolo):
+        test_img = cv2.imread(test_lp_images)
         output = yolo.run({"img": test_img})
         assert "bboxes" in output
         assert len(output["bboxes"]) != 0

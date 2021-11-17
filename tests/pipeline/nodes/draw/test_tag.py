@@ -15,8 +15,10 @@
 """
 Test for draw tag node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.tag import Node
 
 

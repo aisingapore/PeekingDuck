@@ -28,12 +28,12 @@ def directory_contents():
 
 @pytest.fixture
 def writer():  # logging interval of 1 second
-    # absolute filepath is used for the temp dir created for the test
+    # absolute file_path is used for the temp dir created for the test
     csv_writer = Node(
         {
             "input": "all",
             "output": "end",
-            "filepath": str(Path.cwd() / "test1.csv"),
+            "file_path": str(Path.cwd() / "test1.csv"),
             "stats_to_track": ["bbox", "bbox_labels"],
             "logging_interval": "1",
         }
@@ -43,12 +43,12 @@ def writer():  # logging interval of 1 second
 
 @pytest.fixture
 def writer2():  # logging interval of 5 second
-    # absolute filepath is used for the temp dir created for the test
+    # absolute file_path is used for the temp dir created for the test
     csv_writer = Node(
         {
             "input": "all",
             "output": "end",
-            "filepath": str(Path.cwd() / "test2.csv"),
+            "file_path": str(Path.cwd() / "test2.csv"),
             "stats_to_track": ["bbox", "bbox_labels"],
             "logging_interval": "5",
         }
