@@ -102,7 +102,7 @@ class VideoThread:
                     if self.buffer:
                         self.queue.put(self.frame)
 
-    def read_frame(self) -> Union[bool, Any]:
+    def read_frame(self) -> Tuple[bool, Any]:
         """
         Reads the frame.
         """
@@ -183,7 +183,7 @@ class VideoNoThread:
         print("VideoNoThread.__del__")
         self.stream.release()
 
-    def read_frame(self) -> Union[bool, Any]:
+    def read_frame(self) -> Tuple[bool, Any]:
         """
         Reads the frame.
         """
