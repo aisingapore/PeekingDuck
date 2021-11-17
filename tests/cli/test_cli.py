@@ -15,6 +15,7 @@
 import io
 import math
 import os
+from posixpath import curdir
 import subprocess
 import random
 import string
@@ -268,8 +269,29 @@ class TestCli:
 
     def test_main_py_log_level_debug(self):
         setup()
-        os.chdir(PKD_RUN_DIR)
+        # debug curr env
+        mydir = os.getcwd()
+        print(f"currdir = {mydir}")
+        myfiles = os.listdir(mydir)
+        print(f"files = {myfiles}")
+
         print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
+        os.chdir(PKD_RUN_DIR)
+
+        print(f"CUSTOM_RUN_CONFIG_PATH={CUSTOM_RUN_CONFIG_PATH}")
+        nodes = {
+            "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
+        }
+        print(nodes)
+        create_run_config_yaml(nodes, CUSTOM_RUN_CONFIG_PATH)
+        # debug yaml
+        myfiles = os.listdir("custom_dir")
+        print(f"files = {myfiles}")
+        print("---")
+        with open(CUSTOM_RUN_CONFIG_PATH) as f:
+            print(f.read())
+        print("---")
+
         cmd = f"python PeekingDuck --log_level debug --config_path {CUSTOM_RUN_CONFIG_PATH}"
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)  # nosec
         (out, _) = proc.communicate()
