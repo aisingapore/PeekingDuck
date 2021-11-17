@@ -268,32 +268,23 @@ class TestCli:
             assert result.output == available_nodes_msg(node_type)
 
     def test_main_py_log_level_debug(self):
+        # setup unit test env content
         setup()
-        # debug curr env
         tmpdir = os.getcwd()
-        print(f"tmpdir = {tmpdir}")
-        myfiles = os.listdir(tmpdir)
-        print(f"files = {myfiles}")
-
         test_config = Path(tmpdir) / "test_config.yml"
-        print(f"custom_config={test_config}")
         nodes = {
             "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
         }
-        print(nodes)
         with open(test_config, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)
-        myfiles = os.listdir(tmpdir)
-        print(f"files = {myfiles}")
 
-        print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
+        # run unit test here
         os.chdir(PKD_RUN_DIR)
-
         cmd = f"python PeekingDuck --log_level debug --config_path {test_config}"
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)  # nosec
         (out, _) = proc.communicate()
         out_str = out.decode("utf-8")
-        print(out_str)
+        # print(out_str)
         exit_status = proc.returncode
         assert "DEBUG" in str(out_str)
         assert exit_status == 0
