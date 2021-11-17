@@ -55,7 +55,8 @@ def invalid_thresholds(request):
 @pytest.fixture
 def movenet_config():
     filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
+        os.getcwd(),
+        "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
@@ -117,13 +118,6 @@ class TestMoveNet:
     def test_no_human_single(self, empty_image, movenet_model_single):
         no_human_img = cv2.imread(os.path.join(TEST_DIR, empty_image))
         output = movenet_model_single.run({"img": no_human_img})
-        # expected_output = {
-        #     "bboxes": np.zeros((0, 4)),
-        #     "keypoints": np.zeros((0, 17, 2)),
-        #     "keypoint_scores": np.zeros((0, 17)),
-        #     "keypoint_conns": np.zeros(0),
-        #     "bbox_labels": np.zeros(0),
-        # }
         expected_output = {
             "bboxes": np.zeros(0),
             "keypoints": np.zeros(0),
@@ -141,13 +135,6 @@ class TestMoveNet:
     def test_no_human_multi(self, empty_image, movenet_model_multi):
         no_human_img = cv2.imread(os.path.join(TEST_DIR, empty_image))
         output = movenet_model_multi.run({"img": no_human_img})
-        # expected_output = {
-        #     "bboxes": np.zeros((0, 4)),
-        #     "keypoints": np.zeros((0, 17, 2)),
-        #     "keypoint_scores": np.zeros((0, 17)),
-        #     "keypoint_conns": np.zeros(0),
-        #     "bbox_labels": np.zeros(0),
-        # }
         expected_output = {
             "bboxes": np.zeros(0),
             "keypoints": np.zeros(0),

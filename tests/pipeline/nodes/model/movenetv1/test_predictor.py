@@ -30,7 +30,8 @@ single_person_list = ["t2.jpg"]
 @pytest.fixture
 def movenet_config():
     filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
+        os.getcwd(),
+        "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
@@ -140,7 +141,9 @@ class TestPredictor:
             keypoints_scores,
             keypoints_conns,
         ) = movenet_predictor._get_results_multi(prediction)
-        # output of random tensor will produce between
+        # output of random tensor will produce between 1 to 6 valid output
+        # The valid number of detections will be same for the all outputs,
+        # which is the value of the 1st index in the shape of the outputs
         assert bbox.shape[0] >= 1
         assert bbox.shape[0] <= 6
         assert bbox.shape[0] == valid_keypoints.shape[0]
