@@ -18,20 +18,23 @@ functions for drawing bounding box related UI components
 """
 
 from typing import List, Tuple
-import numpy as np
+
 import cv2
+import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
+
 from peekingduck.pipeline.nodes.draw.utils.constants import (
-    CHAMPAGNE,
     BLACK,
-    THICK,
-    VERY_THICK,
+    CHAMPAGNE,
+    FILLED,
     NORMAL_FONTSCALE,
     POINT_RADIUS,
-    FILLED,
     PRIMARY_PALETTE,
+)
+from peekingduck.pipeline.nodes.draw.utils.constants import (
     PRIMARY_PALETTE_LENGTH as TOTAL_COLOURS,
 )
+from peekingduck.pipeline.nodes.draw.utils.constants import THICK, VERY_THICK
 from peekingduck.pipeline.nodes.draw.utils.general import (
     get_image_size,
     project_points_onto_original_image,
@@ -39,7 +42,7 @@ from peekingduck.pipeline.nodes.draw.utils.general import (
 
 
 def draw_bboxes(
-    frame: np.array,
+    frame: np.ndarray,
     bboxes: List[List[float]],
     bbox_labels: List[str],
     show_labels: bool,
@@ -69,12 +72,12 @@ def draw_bboxes(
 
 
 def _draw_bbox(
-    frame: np.array,
+    frame: np.ndarray,
     bbox: List[float],
     image_size: Tuple[int, int],
     colour: Tuple[int, int, int],
     bbox_label: str = None,
-) -> np.array:
+) -> np.ndarray:
     """Draw a single bounding box"""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
     cv2.rectangle(
@@ -90,7 +93,7 @@ def _draw_bbox(
 
 
 def _draw_label(
-    frame: np.array,
+    frame: np.ndarray,
     top_left: Tuple[int, int],
     bbox_label: str,
     bg_colour: Tuple[int, int, int],
@@ -125,7 +128,7 @@ def _draw_label(
 
 
 def draw_tags(
-    frame: np.array,
+    frame: np.ndarray,
     bboxes: List[List[float]],
     tags: List[str],
     colour: Tuple[int, int, int],
@@ -144,8 +147,8 @@ def draw_tags(
 
 
 def _draw_tag(
-    frame: np.array,
-    bbox: np.array,
+    frame: np.ndarray,
+    bbox: np.ndarray,
     tag: str,
     image_size: Tuple[int, int],
     colour: Tuple[int, int, int],
@@ -165,7 +168,7 @@ def _draw_tag(
     )
 
 
-def draw_pts(frame: np.array, pts: List[Tuple[float]]) -> None:
+def draw_pts(frame: np.ndarray, pts: List[Tuple[float]]) -> None:
     """draw pts of selected object onto frame
 
     Args:

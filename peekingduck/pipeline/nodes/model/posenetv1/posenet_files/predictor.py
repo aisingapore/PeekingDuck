@@ -18,20 +18,20 @@ Predictor class to handle detection of poses for posenet
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Callable, Any, Tuple
+from typing import Any, Callable, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
-    detect_keypoints,
-    get_keypoints_relative_coords,
-)
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
     KEYPOINTS_NUM,
     MIN_PART_SCORE,
     SCALE_FACTOR,
     SKELETON,
+)
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
+    detect_keypoints,
+    get_keypoints_relative_coords,
 )
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
     rescale_image,
@@ -61,19 +61,12 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         model_func = self._load_posenet_graph(model_path)
 
         self.logger.info(
-            (
-                "PoseNet model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "Max pose detection: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.model_type,
-            self.resolution,
-            self.max_pose_detection,
-            self.score_threshold,
+            "PoseNet model loaded with following configs: \n\t"
+            f"Model type: {self.model_type}, \n\t"
+            f"Input resolution: {self.resolution}, \n\t"
+            f"Max pose detection: {self.max_pose_detection}, \n\t"
+            f"Score threshold: {self.score_threshold}"
         )
-
         return model_func
 
     def _load_posenet_graph(self, model_path: Path) -> Callable:

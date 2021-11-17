@@ -14,8 +14,9 @@
 """
 Test for zone count node
 """
+
 import pytest
-import numpy as np
+
 from peekingduck.pipeline.nodes.dabble.zone_count import Node
 
 

@@ -11,25 +11,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
 """
-Draw bounding boxes over detected object
+Draws bounding boxes over detected objects.
 """
 
 from typing import Any, Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draw bounding boxes on image.
+    """Draws bounding boxes on image.
 
-    The draw bbox node uses the bboxes and, optionally, the bbox labels from the model
-    predictions to draw the bbox predictions onto the image.
-    For better understanding of the usecase, refer to the
+    The ``draw.bbox`` node uses the ``bboxes`` and, optionally, the
+    ``bbox_labels`` from the model predictions to draw the bbox predictions
+    onto the image. For better understanding of the usecase, refer to the
     `object counting usecase <use_cases/object_counting.html>`_.
 
     Inputs:
-
         |img|
 
         |bboxes|
@@ -40,8 +41,9 @@ class Node(AbstractNode):
         |none|
 
     Configs:
-        show_labels (:obj:`bool`): **default = False**
-            Show class label, e.g. "person", above bounding box
+        show_labels (:obj:`bool`): **default = False**. |br|
+            If ``True``, shows class label, e.g. "person", above the bounding
+            box
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -50,5 +52,5 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         draw_bboxes(
             inputs["img"], inputs["bboxes"], inputs["bbox_labels"], self.show_labels
-        )  # type: ignore
+        )
         return {}

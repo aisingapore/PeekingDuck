@@ -13,21 +13,22 @@
 # limitations under the License.
 
 """
-Fast Pose Estimation model
+Fast Pose Estimation model.
 """
 
-from typing import Dict, Any
-from peekingduck.pipeline.nodes.node import AbstractNode
+from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """PoseNet node that initalises a PoseNet model to detect human poses from
-    an image.
+    """Initalises a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
-    simultaneously per inference and for each detected human figure, 17 keypoints
-    are estimated. The keypoint indices table can be found :term:`here <keypoint indices>`.
+    simultaneously per inference and for each detected human figure, 17
+    keypoints are estimated. The keypoint indices table can be found
+    :term:`here <keypoint indices>`.
 
     Inputs:
         |img|
@@ -35,54 +36,39 @@ class Node(AbstractNode):
     Outputs:
         |bboxes|
 
-
         |keypoints|
-
 
         |keypoint_scores|
 
-
-        |keypoints_conns|
-
+        |keypoint_conns|
 
         |bbox_labels|
 
     Configs:
-        model_type (:obj:`str`): **{"resnet", "50", "75", "100"}, default="resnet"**
-
+        model_type (:obj:`str`):
+            **{"resnet", "50", "75", "100"}, default="resnet"**. |br|
             Defines the backbone model for PoseNet.
-
         weights_dir (:obj:`List`):
-            list of directories pointing to model weights
-
+            A list of directories pointing to model weights.
         blob_file (:obj:`str`):
-            name of file to be downloaded, if weights are not found in `weights_dir`
-
+            Name of file to be downloaded, if weights are not found in
+            ``weights_dir``.
         model_files (:obj:`Dict`):
-            dictionary pointing to path of model weights file
-
-        resolution (:obj:`Dict`): **default = { height: 225, width: 225 }**
-
-            resolution of input array to PoseNet model
-
-        max_pose_detection (:obj:`int`): **default = 10**
-
-            maximum number of poses to be detected
-
-        score_threshold (:obj:`float`): **[0,1], default = 0.4**
-
-            threshold to determine if detection should be returned
-
+            Dictionary pointing to path of model weights file.
+        resolution (:obj:`Dict`):
+            **default = { height: 225, width: 225 }**. |br|
+            Resolution of input array to PoseNet model.
+        max_pose_detection (:obj:`int`): **default = 10**. |br|
+            Maximum number of poses to be detected.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.4**. |br|
+            Threshold to determine if detection should be returned
 
     References:
-
-    PersonLab: Person Pose Estimation and Instance Segmentation with a Bottom-Up,
-        Part-Based, Geometric Embedding Model:
+        PersonLab: Person Pose Estimation and Instance Segmentation with a
+        Bottom-Up, Part-Based, Geometric Embedding Model:
         https://arxiv.org/abs/1803.08225
 
-    Code adapted from https://github.com/rwightman/posenet-python
-
-
+        Code adapted from https://github.com/rwightman/posenet-python
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
