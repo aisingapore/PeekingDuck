@@ -26,8 +26,8 @@ from peekingduck.pipeline.nodes.model.posenet import Node
 
 TEST_DIR = Path.cwd() / "images" / "testing"
 MODELS = [50, 75, 100, "resnet"]
-PERSON_IMAGE_LIST = ["t1.jpg", "t2.jpg", "t4.jpg"]
-EMPTY_IMAGE_LIST = ["black.jpg", "t3.jpg"]
+PERSON_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
+EMPTY_IMAGES = ["black.jpg", "t3.jpg"]
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def posenet_model(request):
 
 @pytest.mark.mlmodel
 class TestPoseNet:
-    @pytest.mark.parametrize("empty_image", EMPTY_IMAGE_LIST, indirect=True, ids=str)
+    @pytest.mark.parametrize("empty_image", EMPTY_IMAGES, indirect=True, ids=str)
     @pytest.mark.parametrize("posenet_model", MODELS, indirect=True, ids=str)
     def test_no_detection(self, posenet_model, empty_image):
         blank_image = cv2.imread(str(TEST_DIR / empty_image))
@@ -81,7 +81,7 @@ class TestPoseNet:
             ), "unexpected output for {}".format(i)
 
     @pytest.mark.parametrize("posenet_model", MODELS, indirect=True, ids=str)
-    @pytest.mark.parametrize("person_image", PERSON_IMAGE_LIST, indirect=True, ids=str)
+    @pytest.mark.parametrize("person_image", PERSON_IMAGES, indirect=True, ids=str)
     def test_different_models(self, posenet_model, person_image):
         pose_image = cv2.imread(str(TEST_DIR / person_image))
         assert posenet_model is not None

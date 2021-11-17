@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Functions to help download model weights
+Functions to help download model weights.
 """

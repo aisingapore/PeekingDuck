@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-CLI functions for Peekingduck
+CLI functions for PeekingDuck.
 """
 
 import functools
@@ -27,25 +27,29 @@ import click
 import yaml
 
 from peekingduck import __version__
-from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPE
+from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
 from peekingduck.runner import Runner
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def create_custom_folder(custom_folder_name: str) -> None:
-    """Make custom nodes folder to create custom nodes"""
-    curdir = _get_cwd()
-    custom_folder_dir = curdir / "src" / custom_folder_name
-    custom_configs_dir = custom_folder_dir / "configs"
+    """Makes custom nodes folder to create custom nodes.
 
-    logger.info("Creating custom nodes folder in %s", custom_folder_dir)
-    custom_folder_dir.mkdir(parents=True, exist_ok=True)
-    custom_configs_dir.mkdir(parents=True, exist_ok=True)
+    Args:
+        custom_folder_name (:obj:`str`): Name of the custom nodes folder.
+    """
+    curr_dir = _get_cwd()
+    custom_nodes_dir = curr_dir / "src" / custom_folder_name
+    custom_nodes_config_dir = custom_nodes_dir / "configs"
+
+    logger.info(f"Creating custom nodes folder in {custom_nodes_dir}")
+    custom_nodes_dir.mkdir(parents=True, exist_ok=True)
+    custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 
 
 def create_yml() -> None:
-    """Inits the declarative yaml"""
+    """Initialises the declarative *run_config.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
@@ -90,13 +94,13 @@ def init(custom_folder_name: str) -> None:
 def run(config_path: str, node_config: str) -> None:
     """Runs PeekingDuck"""
 
-    curdir = _get_cwd()
+    curr_dir = _get_cwd()
     if config_path is None:
-        run_path = curdir / "run_config.yml"
+        run_config_path = curr_dir / "run_config.yml"
     else:
-        run_path = Path(config_path)
+        run_config_path = Path(config_path)
 
-    runner = Runner(run_path, node_config, "src")
+    runner = Runner(run_config_path, node_config, "src")
     runner.run()
 
 
@@ -119,7 +123,7 @@ def create_node(
         node_subdir (Optional[str]): Path to the custom nodes directory,
             relative to the directory where the command is invoked.
         node_type (Optional[str]): Node type, only accepts values from existing
-            node types defined in ``PEEKINGDUCK_NODE_TYPE``.
+            node types defined in ``PEEKINGDUCK_NODE_TYPES``.
         node_name (Optional[str]): Name of new custom node. The name cannot be
             a duplicate of an existing custom node. The name has the following
             requirements:
@@ -131,7 +135,7 @@ def create_node(
     """
     click.secho("Creating new custom node...")
     project_dir = Path.cwd()
-    node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPE)
+    node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPES)
 
     node_subdir = _verify_option(node_subdir, value_proc=_ensure_relative_path)
     if node_subdir is None:
@@ -195,7 +199,7 @@ def nodes(type_name: str = None) -> None:
     Args:
         type_name (str): input, model, dabble, draw or output
     """
-    configs_dir = Path(__file__).resolve().parent / "configs"
+    config_dir = Path(__file__).resolve().parent / "configs"
 
     if type_name is None:
         node_types = ["input", "model", "dabble", "draw", "output"]
@@ -207,7 +211,7 @@ def nodes(type_name: str = None) -> None:
         click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
         click.secho("nodes:", bold=True)
 
-        node_names = [path.stem for path in (configs_dir / node_type).glob("*.yml")]
+        node_names = [path.stem for path in (config_dir / node_type).glob("*.yml")]
         max_length = _len_enumerate(max(enumerate(node_names), key=_len_enumerate))
         for num, node_name in enumerate(node_names):
             idx = num + 1

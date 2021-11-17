@@ -39,15 +39,16 @@ NODES = {
     ]
 }
 
-MODULE_PATH = Path("tmp_dir")
 UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for _ in range(8))
-CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
-RUN_CONFIG_PATH = MODULE_PATH / "run_config.yml"
-CUSTOM_FOLDER_PATH = MODULE_PATH / CUSTOM_FOLDER_NAME
-PKD_NODE_DIR = MODULE_PATH / PKD_NODE_TYPE
-CUSTOM_NODE_DIR = CUSTOM_FOLDER_PATH / CUSTOM_NODE_TYPE
-PKD_NODE_CONFIG_DIR = MODULE_PATH / "configs" / PKD_NODE_TYPE
-CUSTOM_NODE_CONFIG_DIR = CUSTOM_FOLDER_PATH / "configs" / CUSTOM_NODE_TYPE
+CUSTOM_NODES_DIR_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
+
+MODULE_DIR = Path("tmp_dir")
+RUN_CONFIG_PATH = MODULE_DIR / "run_config.yml"
+CUSTOM_NODES_DIR = MODULE_DIR / CUSTOM_NODES_DIR_NAME
+PKD_NODE_DIR = MODULE_DIR / PKD_NODE_TYPE
+CUSTOM_NODE_DIR = CUSTOM_NODES_DIR / CUSTOM_NODE_TYPE
+PKD_NODE_CONFIG_DIR = MODULE_DIR / "configs" / PKD_NODE_TYPE
+CUSTOM_NODE_CONFIG_DIR = CUSTOM_NODES_DIR / "configs" / CUSTOM_NODE_TYPE
 CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
@@ -65,9 +66,9 @@ def create_node_python(node_dir, node_name):
             from peekingduck.pipeline.nodes.node import AbstractNode
             
             class Node(AbstractNode):
-                def __init__(self, config, pkdbasedir=None):
-                    pkdbasedir = str(pathlib.Path(__file__).parents[1].resolve())
-                    super().__init__(config, node_path=__name__, pkdbasedir=pkdbasedir)
+                def __init__(self, config, pkd_base_dir=None):
+                    pkd_base_dir = str(pathlib.Path(__file__).parents[1].resolve())
+                    super().__init__(config, node_path=__name__, pkd_base_dir=pkd_base_dir)
 
                 def run(self):
                     return {}
@@ -85,7 +86,7 @@ def create_node_config(config_dir, node_name):
 
 
 def setup():
-    sys.path.append(str(MODULE_PATH))
+    sys.path.append(str(MODULE_DIR))
 
     PKD_NODE_DIR.mkdir(parents=True)
     CUSTOM_NODE_DIR.mkdir(parents=True)
@@ -105,10 +106,10 @@ def setup():
 def declarativeloader():
     setup()
     declarative_loader = DeclarativeLoader(
-        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_PATH
+        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_DIR
     )
-    declarative_loader.config_loader._basedir = MODULE_PATH
-    declarative_loader.custom_config_loader._basedir = CUSTOM_FOLDER_PATH
+    declarative_loader.config_loader._base_dir = MODULE_DIR
+    declarative_loader.custom_config_loader._base_dir = CUSTOM_NODES_DIR
 
     return declarative_loader
 
@@ -131,7 +132,7 @@ def replace_instantiate_nodes():
     with open(node_config_path) as file:
         node_config = yaml.safe_load(file)
 
-    instantiated_nodes.append(node.Node(node_config, pkdbasedir=MODULE_PATH))
+    instantiated_nodes.append(node.Node(node_config, pkd_base_dir=MODULE_DIR))
 
     return instantiated_nodes
 
@@ -199,7 +200,7 @@ class TestDeclarativeLoader:
         assert init_node.outputs == ["end"]
 
     def test_init_node_custom(self, declarativeloader):
-        path_to_node = f"{CUSTOM_FOLDER_NAME}."
+        path_to_node = f"{CUSTOM_NODES_DIR_NAME}."
         node_name = CUSTOM_NODE
         config_loader = declarativeloader.custom_config_loader
         config_updates = None
@@ -267,9 +268,8 @@ class TestDeclarativeLoader:
             assert pipeline.nodes[0].outputs == ["end"]
 
     def test_get_pipeline_error(self, declarativeloader):
-        with pytest.raises(TypeError):
-            with mock.patch(
-                "peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes",
-                wraps=replace_instantiate_nodes_return_none,
-            ):
-                declarativeloader.get_pipeline()
+        with mock.patch(
+            "peekingduck.declarative_loader.DeclarativeLoader._instantiate_nodes",
+            wraps=replace_instantiate_nodes_return_none,
+        ), pytest.raises(TypeError):
+            declarativeloader.get_pipeline()

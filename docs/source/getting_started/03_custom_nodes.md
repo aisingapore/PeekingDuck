@@ -42,17 +42,16 @@ The `run_config.yml` will be created by `peekingduck init`. For this tutorial, r
 
 **IMPORTANT**: `<node_type>` needs to adhere to one of the five node types in PeekingDuck: `['input','output','model','dabble','draw']`
 
-
 ```yaml
 # run_config.yml
 nodes:
-- input.live # -- or `input.recorded` to use your videofiles
-- model.yolo
-- dabble.bbox_count
-- draw.bbox
-- draw.legend
-- output.screen
-- custom_nodes.output.csv_writer
+  - input.live # -- or `input.recorded` to use your videofiles
+  - model.yolo
+  - dabble.bbox_count
+  - draw.bbox
+  - draw.legend
+  - output.screen
+  - custom_nodes.output.csv_writer
 ```
 
 PeekingDuck is designed for flexibility and coherence between in-built and custom nodes; you can design a pipeline which has both types of nodes.
@@ -64,10 +63,10 @@ As PeekingDuck runs the pipeline sequentially, it is important to check if the n
 Create a custom node config under `src/<custom_folder_name>/configs/<node_type>/<node>.yml`. In this tutorial it will be `src/custom_nodes/configs/output/csv_writer.yml` to list configurations required by the system.
 
 ```yaml
-input: ["count"]                # inputs required by the node
-output: ["none"]                # outputs of the node.
-period: 1                       # time interval (s) between logs
-filepath: 'results/stats.csv'   # output file location
+input: ["count"] # inputs required by the node
+output: ["none"] # outputs of the node.
+period: 1 # time interval (s) between logs
+filepath: "results/stats.csv" # output file location
 ```
 
 `results` directory was manually created in Step 1 and PeekingDuck will save the csv as `stats.csv` in the directory.
@@ -75,12 +74,12 @@ Node configs contains information on the input and outputs for PeekingDuck to ma
 We recommend new users to use the [config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml) for reference.
 
 Your node config yaml file should contain the following:
+
 - `input` (list of str): the key(s) to the required inputs for your node
 - `output` (list of str): the key(s) to the outputs
 - (optional) node-specific parameters. In our case, it will be `period` and `filepath`.
 
 Note: While the keys for input and output can be arbitrary strings, keys should be consistent across all nodes in the pipeline.
-
 
 ## Step 4: Create your node scripts
 
@@ -122,7 +121,7 @@ class Node(AbstractNode):
         """Method that draws the count on the top left corner of image
 
          Args:
-             inputs (dict): Dict with keys "count".
+             inputs (dict): Dictionary with keys "count".
          Returns:
              outputs (dict): None
          """
@@ -133,6 +132,7 @@ class Node(AbstractNode):
 ```
 
 Note:
+
 - Class name should be maintained as `Node`.
 - PeekingDuck pipelines will feed a dict as an input to the node. In order to access the input data, simply call `inputs["in1"]`
 - `run` must return a dictionary with the key-value pair defined as `{"out1": results_object}`. `out1` must be consistent with the outputs defined in the node configs. In this example, there is no output but we need to return an empty dictionary `{}`
@@ -185,7 +185,6 @@ class CSVLogger:
 - Create a `results` folder at the same level as `src`!
 - Ensure that the files are in the correct folder structure.
 
-
 Your repository should look similar to this:
 
 ```bash
@@ -207,7 +206,7 @@ Your repository should look similar to this:
 
 - Now the setup is complete and ready to run! Run the setup using the following code.
 
-    `peekingduck run --config_path run_config.yml`
+  `peekingduck run --config_path run_config.yml`
 
 - If the setup is working, you should see an output screen being displayed. If you are using `input.live`, terminate the program by clicking on the output screen and pressing `q`.
 
@@ -216,4 +215,3 @@ Your repository should look similar to this:
 **NOTE:**
 
 While running, the csv file may be empty. This is because the implementation of this csv logger completes the writing at the end of the instruction.
-

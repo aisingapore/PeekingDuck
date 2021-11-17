@@ -12,7 +12,7 @@ limitations under the License.
 """
 
 from pathlib import Path
-from unittest import mock, TestCase
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np

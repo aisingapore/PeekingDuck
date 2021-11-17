@@ -12,13 +12,15 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License."""
 
-from typing import Tuple, Any, Iterable, Union
-import numpy as np
+from typing import Any, Iterable, Tuple, Union
+
 import cv2
+import numpy as np
+
 from peekingduck.pipeline.nodes.draw.utils.constants import (
     CHAMPAGNE,
-    THICK,
     POINT_RADIUS,
+    THICK,
     TOMATO,
 )
 from peekingduck.pipeline.nodes.draw.utils.general import (
@@ -28,7 +30,7 @@ from peekingduck.pipeline.nodes.draw.utils.general import (
 
 
 def draw_human_poses(
-    image: np.array, keypoints: np.ndarray, keypoint_conns: np.ndarray
+    image: np.ndarray, keypoints: np.ndarray, keypoint_conns: np.ndarray
 ) -> None:
     # pylint: disable=too-many-arguments
     """Draw poses onto an image frame.
@@ -47,7 +49,7 @@ def draw_human_poses(
 
 
 def _draw_connections(
-    frame: np.array,
+    frame: np.ndarray,
     connections: Union[None, Iterable[Any]],
     image_size: Tuple[int, int],
     connection_color: Tuple[int, int, int],

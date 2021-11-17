@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Algorithms that performs calculations/heuristics on the outputs of `model`
+Algorithms that perform calculations/heuristics on the outputs of ``model``.
 """

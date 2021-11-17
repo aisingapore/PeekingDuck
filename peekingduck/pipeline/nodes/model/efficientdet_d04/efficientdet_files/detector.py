@@ -23,12 +23,12 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (  # pylint: disable=line-too-long
-    preprocess_image,
-    postprocess_boxes,
-)
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import (
     efficientdet,
+)
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.utils.model_process import (  # pylint: disable=line-too-long
+    postprocess_boxes,
+    preprocess_image,
 )
 from peekingduck.utils.graph_functions import load_graph
 
@@ -65,13 +65,9 @@ class Detector:
                 outputs=model_nodes["outputs"],
             )
             self.logger.info(
-                (
-                    "Efficientdet graph model loaded with following configs:"
-                    "Model type: D%s, "
-                    "Score Threshold: %s, "
-                ),
-                self.model_type,
-                self.config["score_threshold"],
+                "Efficientdet graph model loaded with following configs: \n\t"
+                f"Model type: D{self.model_type}, \n\t"
+                f"Score Threshold: {self.config['score_threshold']}, "
             )
         else:
             # For keras model
@@ -82,13 +78,9 @@ class Detector:
             )
             model.load_weights(str(graph_path.with_suffix(".h5")), by_name=True)
             self.logger.info(
-                (
-                    "Efficientdet keras model loaded with following configs:"
-                    "Model type: D%s, "
-                    "Score Threshold: %s, "
-                ),
-                self.model_type,
-                self.config["score_threshold"],
+                "Efficientdet keras model loaded with following configs: \n\t"
+                f"Model type: D{self.model_type}, \n\t"
+                f"Score Threshold: {self.config['score_threshold']}, "
             )
         return model
 

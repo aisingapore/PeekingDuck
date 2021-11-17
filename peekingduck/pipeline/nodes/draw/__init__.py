@@ -13,6 +13,8 @@
 # limitations under the License.
 
 """
-Draws results/outputs to an image. For information from dabble nodes such as fps,
-object count and zone count, use `draw.legend` to display them.
+Draws results/outputs to an image.
+
+For information from dabble nodes such as ``fps``, ``bbox_count`` and
+``zone_count``, use ``draw.legend`` to display them.
 """

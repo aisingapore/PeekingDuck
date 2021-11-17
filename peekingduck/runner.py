@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Main engine for Peekingduck processes
+Main engine for PeekingDuck processes.
 """
 
 import copy
@@ -29,56 +29,59 @@ from peekingduck.utils.requirement_checker import RequirementChecker
 
 
 class Runner:
-    """
-    The runner class for creation of pipeline using declared/given nodes.
+    """The runner class for creation of pipeline using declared/given nodes.
 
     The runner class uses the provided configurations to setup a node pipeline
     which is used to run inference.
 
     Args:
-
-        RUN_PATH (:obj:`str`): If path to a run_config.yml is provided, uses \
-        our declarative loader to load the yaml file according to our specified \
-        schema to obtain the declared nodes that would be sequentially \
-        initialized and used to create the pipeline for running inference. \
-
-        config_updates_cli (:obj:`str`): config changes passed as part of the \
-        cli command sed to modify the node configurations direct from cli.
-
-        CUSTOM_NODE_PARENT_FOLDER (:obj:`str`): path to folder which contains \
-        custom nodes that users have created to be used with PeekingDuck. \
-        For more information on using custom nodes, please refer to \
-        `getting started <getting_started/03_custom_nodes.html>`_.
-
-        nodes (:obj:`list` of :obj:`Node`): if not using declarations via yaml, \
-        initialize by giving the node stack directly as a list.
-
+        run_config_path (:obj:`pathlib.Path` | :obj:`None`): If a path to
+            *run_config.yml* is provided, uses
+            :py:class:`DeclarativeLoader <peekingduck.declarative_loader.DeclarativeLoader>`
+            to load the YAML file according to PeekingDuck's specified schema
+            to obtain the declared nodes that would be sequentially initialized
+            and used to create the pipeline for running inference.
+        config_updates_cli (:obj:`str` | :obj:`None`): Configuration changes
+            passed as part of the CLI command used to modify the node
+            configurations directly from CLI.
+        custom_nodes_parent_subdir (:obj:`str` | :obj:`None`): Relative path to
+            a folder which contains custom nodes that users have created to be
+            used with PeekingDuck. For more information on using custom nodes,
+            please refer to
+            `Getting Started <getting_started/03_custom_nodes.html>`_.
+        nodes (:obj:`List[AbstractNode]` | :obj:`None`): If a list of nodes is
+            provided, initialize by the node stack directly.
     """
 
     def __init__(
         self,
-        RUN_PATH: Path = None,
+        run_config_path: Path = None,
         config_updates_cli: str = None,
-        CUSTOM_NODE_PARENT_FOLDER: str = None,
+        custom_nodes_parent_subdir: str = None,
         nodes: List[AbstractNode] = None,
     ):
         self.logger = logging.getLogger(__name__)
-
-        if not nodes and RUN_PATH:
-            # create Graph to run
-            self.node_loader = DeclarativeLoader(
-                RUN_PATH, config_updates_cli, CUSTOM_NODE_PARENT_FOLDER  # type: ignore
-            )
-            self.pipeline = self.node_loader.get_pipeline()
-        # If Runner given nodes, instantiated_nodes is created differently
-        else:
-            try:
-                self.pipeline = Pipeline(nodes)  # type: ignore
-            except ValueError as error:
-                self.logger.error(str(error))
-                sys.exit(1)
-        if RequirementChecker.n_update > 0:
+        try:
+            if nodes:
+                # instantiated_nodes is created differently when given nodes
+                self.pipeline = Pipeline(nodes)
+            elif run_config_path and config_updates_cli and custom_nodes_parent_subdir:
+                # create Graph to run
+                self.node_loader = DeclarativeLoader(
+                    run_config_path, config_updates_cli, custom_nodes_parent_subdir
+                )
+                self.pipeline = self.node_loader.get_pipeline()
+            else:
+                raise ValueError(
+                    "Arguments error! Pass in either nodes to load directly via "
+                    "Pipeline or run_config_path, config_updates_cli, and "
+                    "custom_nodes_parent_subdir to load via DeclarativeLoader."
+                )
+        except ValueError as error:
+            self.logger.error(str(error))
             sys.exit(1)
+        if RequirementChecker.n_update > 0:
+            sys.exit(3)
 
     def run(self) -> None:
         """execute single or continuous inference"""
@@ -87,8 +90,7 @@ class Runner:
                 if (
                     "pipeline_end" in self.pipeline.data
                     and self.pipeline.data["pipeline_end"]
-                ):  # type: ignore
-
+                ):
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
                         continue
@@ -103,12 +105,12 @@ class Runner:
                     }
 
                 outputs = node.run(inputs)
-                self.pipeline.data.update(outputs)  # type: ignore
+                self.pipeline.data.update(outputs)
 
     def get_run_config(self) -> List[str]:
-        """retrieve run configs
+        """Retrieves run configuration.
 
         Returns:
-            (:obj:`Dict`: run configs being used for runner
+            (:obj:`Dict`): Run configurations being used by runner.
         """
         return self.node_loader.node_list
