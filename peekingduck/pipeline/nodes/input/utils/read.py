@@ -174,13 +174,14 @@ class VideoNoThread:
             self.stream = cv2.VideoCapture(
                 str(input_source) if isinstance(input_source, Path) else input_source
             )
+        self.logger = logging.getLogger("VideoNoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError("Video or image path incorrect: %s" % input_source)
         self._frame_counter = 0
 
     def __del__(self) -> None:
-        print("VideoNoThread.__del__")
+        self.logger.debug("VideoNoThread.__del__")
         self.stream.release()
 
     def read_frame(self) -> Tuple[bool, Any]:
@@ -189,7 +190,9 @@ class VideoNoThread:
         """
         ret, frame = self.stream.read()
         if not ret:
-            print(f"read_frame: ret={ret}, #frames read={self._frame_counter}")
+            self.logger.info(
+                f"read_frame: ret={ret}, #frames read={self._frame_counter}"
+            )
         else:
             self._frame_counter += 1
         return ret, frame
@@ -199,8 +202,9 @@ class VideoNoThread:
         """
         Shuts down this class.
         Cannot be merged into __del__ as threading code needs to run here.
+        Dummy method left here for consistency with VideoThread class.
         """
-        print("VideoNoThread.shutdown")
+        self.logger.debug("VideoNoThread.shutdown")
 
     @property
     def fps(self) -> float:
