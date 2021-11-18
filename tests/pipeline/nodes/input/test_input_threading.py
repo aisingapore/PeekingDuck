@@ -5,9 +5,10 @@ from pathlib import Path
 import yaml
 
 PKD_ROOT_DIR = Path(__file__).parents[4]  # dependent on __file__ location
-PKD_CONFIG_ORIG = PKD_ROOT_DIR / "run_config.yml"
-PKD_CONFIG_BAK = PKD_ROOT_DIR / "run_config_orig_bak.yml"
+PKD_CONFIG_ORIG_PATH = PKD_ROOT_DIR / "run_config.yml"
+PKD_CONFIG_BAK_PATH = PKD_ROOT_DIR / "run_config_orig_bak.yml"
 PKD_RUN_DIR = Path(__file__).parents[5]  # dependent on __file__ location
+RTSP_URL = "http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30"
 
 # Helper Functions
 def get_fps_number(avg_fps_msg: str) -> float:
@@ -68,7 +69,9 @@ def test_input_threading():
                 "dabble.fps",
             ]
         }
-        with open(PKD_CONFIG_ORIG, "w") as outfile:  # make new unit test config yml
+        with open(
+            PKD_CONFIG_ORIG_PATH, "w"
+        ) as outfile:  # make new unit test config yml
             yaml.dump(nodes, outfile, default_flow_style=False)
 
         # run input live test
@@ -97,24 +100,18 @@ def test_input_threading():
     os.chdir(PKD_RUN_DIR)
 
     # 2. Backup original run_config.yml
-    os.rename(src=PKD_CONFIG_ORIG, dst=PKD_CONFIG_BAK)  # backup config yml
+    os.rename(src=PKD_CONFIG_ORIG_PATH, dst=PKD_CONFIG_BAK_PATH)
 
     # 3. Run input live test without threading
-    avg_fps_1 = run_rtsp_test(
-        url="http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30",
-        threading=False,
-    )
-    os.remove(PKD_CONFIG_ORIG)  # delete unit test yml
+    avg_fps_1 = run_rtsp_test(url=RTSP_URL, threading=False)
+    os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
     # 4. Run input live test with threading
-    avg_fps_2 = run_rtsp_test(
-        url="http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30",
-        threading=True,
-    )
-    os.remove(PKD_CONFIG_ORIG)  # delete unit test yml
+    avg_fps_2 = run_rtsp_test(url=RTSP_URL, threading=True)
+    os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
     # 5. Restore original config
-    os.rename(src=PKD_CONFIG_BAK, dst=PKD_CONFIG_ORIG)
+    os.rename(src=PKD_CONFIG_BAK_PATH, dst=PKD_CONFIG_ORIG_PATH)
 
     # 6. Check we get higher FPS for 2 than 1
     res = avg_fps_2 > avg_fps_1

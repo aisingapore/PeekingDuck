@@ -32,7 +32,7 @@ class Node(AbstractNode):
     """Receives videos/image as inputs.
 
     Inputs:
-        None
+        |none|
 
     Outputs:
         |img|
@@ -53,8 +53,8 @@ class Node(AbstractNode):
             Flag to set extracted image frame as mirror image of input stream.
         threading (:obj:`bool`):
             **default = False**. |br|
-            Boolean to enable threading when reading frames from camera. |br|
-            The FPS can increase up to 30% if this is enabled.
+            Boolean to enable threading when reading frames from input. |br|
+            The FPS may increase if this is enabled (system dependent).
         buffer_frames (:obj:`bool`):
             **default = False**. |br|
             Boolean to indicate if threaded class should buffer image frames. |br|

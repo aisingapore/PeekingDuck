@@ -177,7 +177,7 @@ class VideoNoThread:
         self.logger = logging.getLogger("VideoNoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Video or image path incorrect: %s" % input_source)
+            raise ValueError(f"Video or image path incorrect: {input_source}")
         self._frame_counter = 0
 
     def __del__(self) -> None:
