@@ -24,7 +24,6 @@ import pytest
 
 from peekingduck.pipeline.nodes.draw.bbox import Node
 
-
 BLACK_IMAGE = ["black.jpg"]
 # path to reach 4 file levels up from test_bbox.py
 PKD_DIR = Path(__file__).resolve().parents[3]

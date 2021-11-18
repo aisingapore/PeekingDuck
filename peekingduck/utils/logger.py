@@ -13,16 +13,17 @@
 # limitations under the License.
 
 """
-Universal logging configueration
+Universal logging configuration
 """
 
+import logging
 import os
 import sys
-import logging
 import traceback
-from typing import Optional, Dict
+from types import TracebackType
+from typing import Dict, Optional, Type
 
-from colorama import init, Fore, Style
+from colorama import Fore, Style, init
 
 
 class LoggerSetup:  # pylint: disable=too-few-public-methods
@@ -61,8 +62,11 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         self.logger.info("log_level: %s", log_level)
         sys.excepthook = self.handle_exception
 
-    def handle_exception(  # type: ignore
-        self, exc_type, exc_value, exc_traceback
+    def handle_exception(
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: TracebackType,
     ) -> None:
         """Use Python's logging module when showing errors"""
 

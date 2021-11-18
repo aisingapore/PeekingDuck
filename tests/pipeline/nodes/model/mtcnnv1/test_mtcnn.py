@@ -15,7 +15,7 @@ limitations under the License.
 """
 
 from pathlib import Path
-from unittest import mock, TestCase
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -87,26 +87,23 @@ class TestMtcnn:
     def test_no_weights(self, mtcnn_config):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ):
-            with mock.patch(
-                "peekingduck.weights_utils.downloader.download_weights",
-                wraps=replace_download_weights,
-            ):
-                with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
-                ) as captured:
-
-                    mtcnn = Node(config=mtcnn_config)
-                    # records 0 - 20 records are updates to configs
-                    assert (
-                        captured.records[0].getMessage()
-                        == "---no mtcnn weights detected. proceeding to download...---"
-                    )
-                    assert (
-                        captured.records[1].getMessage()
-                        == "---mtcnn weights download complete.---"
-                    )
-                    assert mtcnn is not None
+        ), mock.patch(
+            "peekingduck.weights_utils.downloader.download_weights",
+            wraps=replace_download_weights,
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
+        ) as captured:
+            mtcnn = Node(config=mtcnn_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "---no mtcnn weights detected. proceeding to download...---"
+            )
+            assert (
+                captured.records[1].getMessage()
+                == "---mtcnn weights download complete.---"
+            )
+            assert mtcnn is not None
 
     def test_model_initialization(self, mtcnn_config):
         detector = Detector(config=mtcnn_config)

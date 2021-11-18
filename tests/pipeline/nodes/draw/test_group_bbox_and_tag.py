@@ -15,8 +15,10 @@
 """
 Test for group bbox and tag node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.group_bbox_and_tag import Node
 
 

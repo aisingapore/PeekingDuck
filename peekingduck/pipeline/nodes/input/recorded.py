@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Reads video/images from a directory
+Reads video/images from a directory.
 """
 
 from pathlib import Path
@@ -24,12 +24,11 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-# pylint: disable=R0902
-class Node(AbstractNode):
-    """Node to receive videos/image as inputs.
+class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
+    """Receives videos/image as inputs.
 
     Inputs:
-        None
+        |none|
 
     Outputs:
         |img|
@@ -41,18 +40,13 @@ class Node(AbstractNode):
         |saved_video_fps|
 
     Configs:
-        resize (:obj:`Dict`): **default = { do_resizing: False, width: 1280, height: 720 }**
-
-            Dimension of extracted image frame
-
-        input_dir (:obj: `str`): **default = 'PeekingDuck/data/input'**
-
-            The directory to look for recorded video files and images
-
-        mirror_image (:obj:`bool`): **default = False**
-
-            Boolean to set extracted image frame as mirror image of input stream
-
+        resize (:obj:`Dict`):
+            **default = { do_resizing: False, width: 1280, height: 720 }**. |br|
+            Dimension of extracted image frame.
+        input_dir (:obj:`str`): **default = "PeekingDuck/data/input"**. |br|
+            The directory to look for recorded video files and images.
+        mirror_image (:obj:`bool`): **default = False**. |br|
+            Flag to set extracted image frame as mirror image of input stream.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -65,15 +59,14 @@ class Node(AbstractNode):
         self._get_next_input()
 
         width, height = self.videocap.resolution
-        self.logger.info("Video/Image size: %s by %s", width, height)
+        self.logger.info(f"Video/Image size: {width} by {height}")
         if self.resize["do_resizing"]:
             self.logger.info(
-                "Resizing of input set to %s by %s",
-                self.resize["width"],
-                self.resize["height"],
+                f"Resizing of input set to {self.resize['width']} "
+                f"by {self.resize['height']}"
             )
 
-        self.logger.info("Filepath used: %s", self.input_dir)
+        self.logger.info(f"Filepath used: {self.input_dir}")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
@@ -86,11 +79,11 @@ class Node(AbstractNode):
         self.frame_counter += 1
 
         if approx_processed > self.tens_counter:
-            self.logger.info("Approximately Processed: %s%%...", self.tens_counter)
+            self.logger.info(f"Approximately Processed: {self.tens_counter}% ...")
             self.tens_counter += 10
 
         if self.file_end:
-            self.logger.info("Completed processing file: %s", self._file_name)
+            self.logger.info(f"Completed processing file: {self._file_name}")
             self._get_next_input()
             outputs = self._run_single_file()
             self.frame_counter = 0
@@ -134,7 +127,6 @@ class Node(AbstractNode):
             raise FileNotFoundError("No Media files available")
 
     def _get_next_input(self) -> None:
-
         if self._filepaths:
             file_path = self._filepaths.pop(0)
             self._file_name = file_path.name
@@ -144,9 +136,8 @@ class Node(AbstractNode):
                 self._fps = self.videocap.fps
             else:
                 self.logger.warning(
-                    "Skipping '%s' as it is not an accepted file format %s",
-                    file_path,
-                    str(self._allowed_extensions),
+                    f"Skipping '{file_path}' as it is not an accepted "
+                    f"file format {str(self._allowed_extensions)}"
                 )
                 self._get_next_input()
 

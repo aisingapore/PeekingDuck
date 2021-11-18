@@ -15,8 +15,10 @@
 """
 Test for image processor node
 """
-import pytest
+
 import numpy as np
+import pytest
+
 from peekingduck.pipeline.nodes.draw.image_processor import Node
 
 

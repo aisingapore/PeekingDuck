@@ -13,22 +13,23 @@
 # limitations under the License.
 
 """
-Counts the number of detected objects within a boundary
+Counts the number of detected objects within a boundary.
 """
 
-from typing import Dict, List, Any
+from typing import Any, Dict, List
+
 from peekingduck.pipeline.nodes.dabble.zoningv1.zone import Zone
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This node uses the bottom midpoints of all detected bounding boxes
-    and outputs the number of object counts in each specified zone.
+    """Uses the bottom midpoints of all detected bounding boxes and outputs the
+    number of object counts in each specified zone.
 
-    Given the bottom mid-points of all detected objects, this script checks
-    if the points fall within the area of the specified zones.
-    The zone counting detections depend on the configuration set in the
-    object detection models, such as the type of object to detect.
+    Given the bottom mid-points of all detected objects, this script checks if
+    the points fall within the area of the specified zones. The zone counting
+    detections depend on the configuration set in the object detection models,
+    such as the type of object to detect.
 
     Inputs:
         |btm_midpoint|
@@ -36,22 +37,19 @@ class Node(AbstractNode):
     Outputs:
         |zones|
 
-
         |zone_count|
 
     Configs:
-        resolution (:obj:`List`): **default = [1280, 720]**
-
-            resolution of input array to calculate pixel coordinates of
-            zone points
-
-        zones (:obj:`List`): **default = [ \
-                [[0, 0], [640, 0], [640, 720], [0, 720]], \
-                [[0.5, 0], [1, 0], [1, 1], [0.5, 1]] \
-            ]**
-
-            used for creation of specific zones with either the absolute
-            pixel values or % of resolution as a fraction between [0, 1]
+        resolution (:obj:`List[int]`): **default = [1280, 720]**. |br|
+            Resolution of input array to calculate pixel coordinates of zone
+            points.
+        zones (:obj:`List[List[List[Union[int, float]]]]`): |br|
+            **default = [**                                     |br|
+            |tab| **[[0, 0], [640, 0], [640, 720], [0, 720]],** |br|
+            |tab| **[[0.5, 0], [1, 0], [1, 1], [0.5, 1]]**      |br|
+            **]**                                               |br|
+            Used for creation of specific zones with either the absolute pixel
+            values or % of resolution as a fraction between [0, 1].
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -66,7 +64,8 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts all detected objects that falls within any specified zone,
-        and return the total object count in each zone."""
+        and return the total object count in each zone.
+        """
         num_of_zones = len(self.zones)
         zone_counts = [0] * num_of_zones
 
@@ -82,8 +81,9 @@ class Node(AbstractNode):
         }
 
     def _create_zone(self, zone: List[Any], resolution: List[int]) -> Any:
-        """creates the appropriate Zone given either the absolute pixel values or
-        % of resolution as a fraction between [0, 1]"""
+        """Creates the appropriate Zone given either the absolute pixel values
+        or % of resolution as a fraction between [0, 1].
+        """
         created_zone = None
 
         if all(all(0 <= i <= 1 for i in coords) for coords in zone):
@@ -93,7 +93,8 @@ class Node(AbstractNode):
             ]
             created_zone = Zone(pixel_coords)
         if all(all((isinstance(i, int) and i >= 0) for i in coords) for coords in zone):
-            # when 1st-if fails and this statement passes, list is in pixel value.
+            # when 1st-if fails and this statement passes, list is in pixel
+            # value.
             created_zone = Zone(zone)
 
         # if neither, something is wrong
@@ -108,5 +109,5 @@ class Node(AbstractNode):
 
     @staticmethod
     def _get_pixel_coords(coords: List[float], resolution: List[int]) -> List[float]:
-        """returns the pixel position of the zone points"""
+        """Returns the pixel position of the zone points."""
         return [int(coords[0] * resolution[0]), int(coords[1] * resolution[1])]
