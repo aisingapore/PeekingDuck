@@ -158,7 +158,9 @@ def create_node(
     node_name = _verify_option(node_name, value_proc=partial_ensure_valid_name)
     if node_name is None:
         node_name = click.prompt(
-            "Enter node name", value_proc=partial_ensure_valid_name
+            "Enter node name",
+            default="my_custom_node",
+            value_proc=partial_ensure_valid_name,
         )
 
     config_path = node_dir / "configs" / node_type / f"{node_name}.yml"

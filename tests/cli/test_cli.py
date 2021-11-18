@@ -25,6 +25,7 @@ from unittest import TestCase
 import pytest
 import yaml
 from click.testing import CliRunner
+
 from peekingduck import __version__
 from peekingduck.cli import cli
 
@@ -325,12 +326,10 @@ class TestCli:
             + good_name
             + proceed,
         )
-        print(result.output)
         # Count only substring we create so we are unaffected by click changes
         config_subpath, script_subpath = get_custom_node_subpaths(
             good_path.strip(), good_type.strip(), good_name.strip()
         )
-        print(config_subpath)
         assert result.output.count("Path cannot") == bad_paths.count("\n")
         assert result.output.count("invalid choice") == bad_types.count("\n")
         assert result.output.count("Invalid node name") == bad_names.count("\n")
