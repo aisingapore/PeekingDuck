@@ -18,37 +18,14 @@ Workaround for running Peekingduck from project directory
 
 import logging
 from pathlib import Path
-from peekingduck.utils.logger import LoggerSetup
+
 import peekingduck.runner as pkd
-import click
-
-
-@click.command()
-@click.option(
-    "--config_path",
-    default=None,
-    type=click.Path(),
-    help=(
-        "List of nodes to run. None assumes run_config.yml at current working directory"
-    ),
-)
-@click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"error", "warning", "info", "debug"}""",
-)
-def run(config_path, log_level):
-    if not config_path:
-        pkd_dir = Path(__file__).parents[0]
-        config_path = pkd_dir / "run_config.yml"
-
-    LoggerSetup(log_level=log_level)
-    logger = logging.getLogger(__name__)
-    logger.info("Run path: %s", config_path)
-
-    runner = pkd.Runner(config_path, "None", "PeekingDuck")
-    runner.run()
-
 
 if __name__ == "__main__":
-    run()
+    run_path = Path.cwd() / "PeekingDuck" / "run_config.yml"
+
+    logger = logging.getLogger(__name__)
+    logger.info(f"Run path: {run_path}")
+
+    runner = pkd.Runner(run_path, "None", "PeekingDuck")
+    runner.run()
