@@ -77,9 +77,9 @@ def test_input_threading():
         # run input live test
         num_sec = 60  # to run test for 60 seconds max
         avg_fps = 0
-        cmd = f"python PeekingDuck"
-        proc = subprocess.Popen(  # nosec
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, bufsize=1
+        cmd = ["python", "PeekingDuck"]
+        proc = subprocess.Popen(
+            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1
         )
         st = perf_counter()
         while True:
