@@ -20,6 +20,7 @@ import functools
 import logging
 import math
 import re
+import textwrap
 from pathlib import Path
 from typing import Callable, Optional, Tuple
 
@@ -89,7 +90,7 @@ def init(custom_folder_name: str) -> None:
     "--node_config",
     default="None",
     help="""Modify node configs by wrapping desired configs in a JSON string.\n
-         Example: --node_config '{"node_name": {"param_1": var_1}}'""",
+        Example: --node_config '{"node_name": {"param_1": var_1}}'""",
 )
 def run(config_path: str, node_config: str) -> None:
     """Runs PeekingDuck"""
@@ -105,9 +106,35 @@ def run(config_path: str, node_config: str) -> None:
 
 
 @cli.command()
-@click.option("--node_subdir", required=False)
-@click.option("--node_type", required=False)
-@click.option("--node_name", required=False)
+@click.option(
+    "--node_subdir",
+    help=(
+        "Path to the custom nodes directory, relative to the directory where "
+        "the command is invoked."
+    ),
+    required=False,
+)
+@click.option(
+    "--node_type",
+    help=(
+        "Node type, only accepts values from existing node types defined in "
+        f"{PEEKINGDUCK_NODE_TYPES}."
+    ),
+    required=False,
+)
+@click.option(
+    "--node_name",
+    help=(
+        "\b\nName of new custom node. The name cannot be a duplicate of an \n"
+        "existing custom node. The name has the following requirements:\n"
+        "- Minimum 2 characters\n"
+        "- Can only contain alphanumeric characters, dashes and underscores \n"
+        "  /[[a-zA-Z0-9_\\-]/\n"
+        "- Must start with a alphabet\n"
+        "- Must end with an alphanumeric character"
+    ),
+    required=False,
+)
 def create_node(
     node_subdir: Optional[str] = None,
     node_type: Optional[str] = None,
@@ -115,23 +142,9 @@ def create_node(
 ) -> None:
     """Automates the creation of a new custom node.
 
-    If the user does not specifiy ``node_subdir``, ``node_type``, or
-    ``node_name`` through CLI, prompt them for the values while performing
+    If the options `node_subdir`, `node_type`, or `node_name` are not
+    specified, users will be prompted them for the values while performing
     checks to ensure value validity.
-
-    Args:
-        node_subdir (Optional[str]): Path to the custom nodes directory,
-            relative to the directory where the command is invoked.
-        node_type (Optional[str]): Node type, only accepts values from existing
-            node types defined in ``PEEKINGDUCK_NODE_TYPES``.
-        node_name (Optional[str]): Name of new custom node. The name cannot be
-            a duplicate of an existing custom node. The name has the following
-            requirements:
-                - Minimum 2 characters
-                - Can only contain alphanumeric characters, dashes and
-                    underscores /[[a-zA-Z0-9_\\-]/
-                - Must start with a alphabet
-                - Must end with an alphanumeric character
     """
     click.secho("Creating new custom node...")
     project_dir = Path.cwd()
