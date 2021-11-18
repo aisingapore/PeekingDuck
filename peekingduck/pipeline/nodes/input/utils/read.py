@@ -68,7 +68,9 @@ class VideoThread:
         self.is_thread_start.wait()
 
     def __del__(self) -> None:
-        self.logger.debug("VideoThread.__del__")
+        # dotw: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
+        #       but does not crash on Intel MacBook Pro Ubuntu 20.04 python 3.7
+        # self.logger.debug("VideoThread.__del__")
         self.stream.release()
 
     def shutdown(self) -> None:
@@ -181,7 +183,9 @@ class VideoNoThread:
         self._frame_counter = 0
 
     def __del__(self) -> None:
-        self.logger.debug("VideoNoThread.__del__")
+        # dotw: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
+        #       but does not crash on Intel MacBook Pro Ubuntu 20.04 python 3.7
+        # self.logger.debug("VideoNoThread.__del__")
         self.stream.release()
 
     def read_frame(self) -> Tuple[bool, Any]:
