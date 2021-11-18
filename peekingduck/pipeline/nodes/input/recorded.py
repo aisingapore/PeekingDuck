@@ -122,7 +122,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             self._filepaths.sort()
 
         if not path.exists():
-            raise FileNotFoundError("Filepath does not exist")
+            raise FileNotFoundError(f"Filepath {path} does not exist")
         if not self._filepaths:
             raise FileNotFoundError("No Media files available")
 
