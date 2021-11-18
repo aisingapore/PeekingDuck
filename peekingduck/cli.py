@@ -129,7 +129,7 @@ def run(config_path: str, node_config: str) -> None:
         "- Minimum 2 characters\n"
         "- Can only contain alphanumeric characters, dashes and underscores \n"
         "  /[[a-zA-Z0-9_\\-]/\n"
-        "- Must start with a alphabet\n"
+        "- Must start with an alphabet\n"
         "- Must end with an alphanumeric character"
     ),
     required=False,
