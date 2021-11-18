@@ -50,7 +50,7 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
             self.logger.info(
                 "---no movenet weights detected. proceeding to download...---"
             )
-            downloader.download_weights(config["root"], config["blob_file"])
+            downloader.download_weights(config["root"], config["blob_file_name"])
             self.logger.info("---movenet weights download complete.---")
 
         self.predictor = Predictor(config)

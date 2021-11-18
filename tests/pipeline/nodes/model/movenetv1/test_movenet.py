@@ -16,14 +16,14 @@ limitations under the License.
 import pytest
 import yaml
 import cv2
-import os
+from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.movenet import Node
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
 
-TEST_DIR = os.path.join(os.getcwd(), "images", "testing")
+TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
 single_model = ["singlepose_lightning", "singlepose_thunder", "multipose_lightning"]
 multi_model = ["multipose_lightning"]
 single_person_list = ["t2.jpg"]
@@ -54,13 +54,13 @@ def invalid_thresholds(request):
 
 @pytest.fixture
 def movenet_config():
-    filepath = os.path.join(
-        os.getcwd(),
+    filepath = Path.joinpath(
+        Path.cwd(),
         "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
     )
-    with open(filepath) as file:
+    with filepath.open() as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = str(Path.cwd())
 
     return node_config
 
@@ -116,7 +116,7 @@ class TestMoveNet:
                     assert movenet is not None
 
     def test_no_human_single(self, empty_image, movenet_model_single):
-        no_human_img = cv2.imread(os.path.join(TEST_DIR, empty_image))
+        no_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, empty_image)))
         output = movenet_model_single.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.zeros(0),
@@ -133,7 +133,7 @@ class TestMoveNet:
             ), "unexpected output for {}".format(i)
 
     def test_no_human_multi(self, empty_image, movenet_model_multi):
-        no_human_img = cv2.imread(os.path.join(TEST_DIR, empty_image))
+        no_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, empty_image)))
         output = movenet_model_multi.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.zeros(0),
@@ -150,7 +150,7 @@ class TestMoveNet:
             ), "unexpected output for {}".format(i)
 
     def test_single_human(self, single_person_image, movenet_model_single):
-        single_human_img = cv2.imread(os.path.join(TEST_DIR, single_person_image))
+        single_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, single_person_image)))
         output = movenet_model_single.run({"img": single_human_img})
         expected_output = dict.fromkeys(
             ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
@@ -163,7 +163,7 @@ class TestMoveNet:
         assert output["bbox_labels"] == ["Person"]
 
     def test_multi_human(self, multi_person_image, movenet_model_multi):
-        multi_human_img = cv2.imread(os.path.join(TEST_DIR, multi_person_image))
+        multi_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, multi_person_image)))
         output = movenet_model_multi.run({"img": multi_human_img})
         expected_output = dict.fromkeys(
             ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]

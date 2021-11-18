@@ -16,26 +16,27 @@ limitations under the License.
 import pytest
 import yaml
 import cv2
-import os
+from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 import tensorflow as tf
 from peekingduck.pipeline.nodes.model.movenet import Node
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
 
-TEST_DIR = os.path.join(os.getcwd(), "images", "testing")
+TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
+
 single_person_list = ["t2.jpg"]
 
 
 @pytest.fixture
 def movenet_config():
-    filepath = os.path.join(
-        os.getcwd(),
+    filepath = Path.joinpath(
+        Path.cwd(),
         "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = str(Path.cwd())
 
     return node_config
 
@@ -75,7 +76,7 @@ class TestPredictor:
         assert len(tuple_res) == 2, "Resolution in config must be a 2 length tuple"
 
     def test_predict(self, movenet_predictor, single_person_image):
-        img = cv2.imread(os.path.join(TEST_DIR, single_person_image))
+        img = cv2.imread(str(Path.joinpath(TEST_DIR, single_person_image)))
         (
             bboxes,
             valid_keypoints,

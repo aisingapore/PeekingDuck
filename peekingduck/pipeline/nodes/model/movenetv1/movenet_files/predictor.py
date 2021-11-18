@@ -47,7 +47,7 @@ SKELETON = [
 ]
 
 
-class Predictor:
+class Predictor:  # pylint: disable=logging-fstring-interpolation
     """Predictor class to handle detection of poses for MoveNet"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -75,30 +75,23 @@ class Predictor:
         if "multi" in self.model_type:
             self.logger.info(
                 (
-                    "PoseNet model loaded with following configs: \n\t"
-                    "Model type: %s, \n\t"
-                    "Input resolution: %s, \n\t"
-                    "bbox_score_threshold: %s, \n\t"
-                    "keypoint_score_threshold: %s"
-                ),
-                self.model_type,
-                self.resolution,
-                self.config["bbox_score_threshold"],
-                self.config["keypoint_score_threshold"],
+                    f"PoseNet model loaded with following configs: \n\t"
+                    f"Model type: {self.model_type}, \n\t"
+                    f"Input resolution: {self.resolution}, \n\t"
+                    f"bbox_score_threshold: {self.config['bbox_score_threshold']}, \n\t"
+                    f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
+                )
             )
         else:
             # movenet singlepose do not output bbox, so bbox score
             # threshold not required
             self.logger.info(
                 (
-                    "MoveNet model loaded with following configs: \n\t"
-                    "Model type: %s, \n\t"
-                    "Input resolution: %s, \n\t"
-                    "keypoint_score_threshold: %s"
+                    f"MoveNet model loaded with following configs: \n\t"
+                    f"Model type: {self.model_type}, \n\t"
+                    f"Input resolution: {self.resolution}, \n\t"
+                    f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
                 ),
-                self.model_type,
-                self.resolution,
-                self.config["keypoint_score_threshold"],
             )
 
         return model
@@ -116,7 +109,7 @@ class Predictor:
 
         res1, res2 = resolution["height"], resolution["width"]
 
-        return (int(res1), int(res2))
+        return int(res1), int(res2)
 
     def predict(
         self, frame: np.ndarray
@@ -158,12 +151,12 @@ class Predictor:
                 keypoints_conns,
             ) = self._get_results_single(predictions)
 
-        return (bboxes, keypoints, keypoints_scores, keypoints_conns)
+        return bboxes, keypoints, keypoints_scores, keypoints_conns
 
     def _get_results_single(
         self, predictions: tf.Tensor
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
+        """Returns formatted outputs for singlepose model"""
         # Predictions come in a [1x1x17x3] tensor
         # First 2 channel in the last dimension represent the yx coordinates
         # 3rd channel represents confidence scores for the keypoints
@@ -195,12 +188,12 @@ class Predictor:
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
         bbox = self._get_bbox_from_keypoints(valid_keypoints)
-        return (bbox, valid_keypoints, keypoints_scores, keypoints_conns)
+        return bbox, valid_keypoints, keypoints_scores, keypoints_conns
 
     def _get_results_multi(
         self, predictions: tf.Tensor
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-
+        """Returns formatted outputs for multipose model"""
         # Predictions come in a [1x6x56] tensor for up to 6 ppl dectections
         # First 17 x 3 = 51 elements are keypoints locations in the form of
         # [y_0, x_0, s_0, y_1, x_1, s_1, …, y_16, x_16, s_16],
@@ -246,7 +239,7 @@ class Predictor:
         )
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
-        return (bboxes, valid_keypoints, keypoints_scores, keypoints_conns)
+        return bboxes, valid_keypoints, keypoints_scores, keypoints_conns
 
     @staticmethod
     def _get_connections_of_poses(
@@ -283,7 +276,7 @@ class Predictor:
         Returns:
             valid_keypoints (np.array): Nx17x2 array of keypoints where undetected
                 keypoints are assigned a (-1,-1) value.
-            keypoint_masks (np,array) : Nx17 boolean for valid keypoints
+            keypoint_masks (np.array) : Nx17 boolean for valid keypoints
         """
         valid_keypoints = keypoints.copy()
         valid_keypoints = np.clip(valid_keypoints, 0, 1)
@@ -318,9 +311,7 @@ class Predictor:
         """
         Obtain coordinates from the keypoints for single pose model where bounding box
         coordinates are not provided as model outputs. The bounding boox coordinates
-        will be from the [xmin,ymin,xman,ymax] of the keypoints coordinates. The bounding
-        box coordinate will be expanded to be slightly bigger so that it will cover the head
-        and body better
+        will be from the [xmin,ymin,xman,ymax] of the keypoints coordinates.
         """
         # using absolute because it is coded that invalid keypoints are set as -1
         xmin = np.abs(valid_keypoints[:, :, 0]).min()

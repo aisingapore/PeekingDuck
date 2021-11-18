@@ -8,7 +8,7 @@ model_weights_dir: {
     singlepose_lightning: ../peekingduck_weights/movenet/singlepose_lightning,
     singlepose_thunder: ../peekingduck_weights/movenet/singlepose_thunder,
 }
-blob_file: "movenet.zip"
+blob_file_name: "movenet.zip"
 
 resolution: {
     singlepose_lightning: { height: 192, width: 192 },
