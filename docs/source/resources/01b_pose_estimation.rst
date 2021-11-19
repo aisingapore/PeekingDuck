@@ -2,6 +2,19 @@
 Pose Estimation Models
 **********************
 
+List of Pose Estimation Models
+==============================
+
+The table below shows the pose estimation models available for each task category.
+
++---------------+---------+-------------------------------------------------+
+| Category      | Model   | Documentation                                   |
++===============+=========+=================================================+
+|               | HRNet   | :mod:`peekingduck.pipeline.nodes.model.hrnet`   |
++               +---------+-------------------------------------------------+
+| Whole body    | PoseNet | :mod:`peekingduck.pipeline.nodes.model.posenet` |
++---------------+---------+-------------------------------------------------+
+
 Benchmarks
 ==========
 

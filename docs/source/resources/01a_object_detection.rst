@@ -2,6 +2,25 @@
 Object Detection Models
 ***********************
 
+List of Object Detection Models
+===============================
+
+The table below shows the object detection models available for each task category.
+
++---------------+------------------------+------------------------------------------------------------+
+| Category      | Model                  | Documentation                                              |
++===============+========================+============================================================+
+|               | EfficientDet           | :mod:`peekingduck.pipeline.nodes.model.efficientdet`       |
++               +------------------------+------------------------------------------------------------+
+| General       | YOLOv4                 | :mod:`peekingduck.pipeline.nodes.model.yolo`               |
++---------------+------------------------+------------------------------------------------------------+
+|               | MTCNN                  | :mod:`peekingduck.pipeline.nodes.model.mtcnn`              |
++               +------------------------+------------------------------------------------------------+
+| Face          | YOLOv4 (Face)          | :mod:`peekingduck.pipeline.nodes.model.yolo_face`          |
++---------------+------------------------+------------------------------------------------------------+
+| License plate | YOLOv4 (License Plate) | :mod:`peekingduck.pipeline.nodes.model.yolo_license_plate` |
++---------------+------------------------+------------------------------------------------------------+
+
 Benchmarks
 ==========
 
