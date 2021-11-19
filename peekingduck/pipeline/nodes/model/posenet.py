@@ -28,7 +28,7 @@ class Node(AbstractNode):
     The PoseNet node is capable of detecting multiple human figures
     simultaneously per inference and for each detected human figure, 17
     keypoints are estimated. The keypoint indices table can be found
-    :term:`here <keypoint indices>`.
+    :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
         |img|

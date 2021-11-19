@@ -107,6 +107,8 @@ All images from the 80 object categories in the MS COCO (val 2017) dataset were 
 Object Detection IDs
 ====================
 
+.. _general-object-detection-ids:
+
 General Object Detection
 ------------------------
 
@@ -204,6 +206,7 @@ The tables below provide the associated indices for each class in object detecto
 | bed          | 59   | 64           | toothbrush   | 79   | 89           |
 +--------------+------+--------------+--------------+------+--------------+
 
+.. _face-object-detection-ids:
 
 Face Detection
 --------------

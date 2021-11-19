@@ -93,6 +93,8 @@ All images from the "person" category in the MS COCO (val 2017) dataset were pro
 Keypoint IDs
 ============
 
+.. _whole-body-keypoint-ids:
+
 Whole Body
 ----------
 
