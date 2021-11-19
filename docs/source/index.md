@@ -30,7 +30,7 @@ The rest of this webpage contains more details about using PeekingDuck, includin
 - [Official documentation](/peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](getting_started/04_python_mode)
-- `model` nodes [FPS and accuracy benchmarks](resources/01_benchmarks), as well as details about [keypoints and class IDs](resources/02_model_indices)
+- Benchmarks and class/keypoints IDs for [object detection](resources/01a_object_detection) and [pose estimation](resources/01b_pose_estimation) models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
