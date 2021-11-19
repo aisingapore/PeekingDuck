@@ -66,10 +66,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bboxes (List[np.ndarray]): numpy array of detected bboxes
 
         Returns:
-            (np.ndarray): Image with mosaiced bounding box regions.
+            (np.ndarray): Image with mosaicked bounding box regions.
         """
         height, width = image.shape[:2]
-        # Prevent calculating mosaic on a mosaiced area
+        # Prevent calculating mosaic on a mosaicked area
         original_image = image.copy()
 
         for bbox in bboxes:
@@ -89,7 +89,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             image (np.ndarray): Image in numpy array.
 
         Returns:
-            (np.ndarray): Mosaic-ed image in numpy array.
+            (np.ndarray): Mosaicked image in numpy array.
         """
         height, width = image.shape[:2]
         image = cv2.resize(
