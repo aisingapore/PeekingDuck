@@ -29,7 +29,7 @@ from colorama import Fore, Style, init
 class LoggerSetup:  # pylint: disable=too-few-public-methods
     """Set up the universal logging configuration"""
 
-    def __init__(self) -> None:
+    def __init__(self, log_level: str = "info") -> None:
         if os.name == "nt":
             init()
 
@@ -50,10 +50,17 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
+        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+        log_level = log_level.upper()
+        if log_level not in log_level_settings:
+            log_level = "INFO"
+
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
+        if log_level != "INFO":
+            self.logger.info(f"Changing log_level to {log_level}")
+        self.logger.setLevel(log_level)
         sys.excepthook = self.handle_exception
 
     def handle_exception(
