@@ -15,8 +15,6 @@
 import io
 import math
 import os
-from posixpath import curdir
-import subprocess
 import random
 import string
 import sys
@@ -56,7 +54,6 @@ YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
 NODE_TYPES = ["input", "model", "dabble", "draw", "output"]
 PKD_CONFIG_DIR = Path(__file__).resolve().parents[2] / "peekingduck" / "configs"
-PKD_RUN_DIR = Path(__file__).parents[3]
 
 
 def available_nodes_msg(type_name=None):
@@ -266,25 +263,3 @@ class TestCli:
             result = runner.invoke(cli, ["nodes", node_type])
             assert result.exit_code == 0
             assert result.output == available_nodes_msg(node_type)
-
-    def test_main_py_log_level_debug(self):
-        # setup unit test env content
-        setup()
-        tmpdir = os.getcwd()
-        test_config = Path(tmpdir) / "test_config.yml"
-        nodes = {
-            "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
-        }
-        with open(test_config, "w") as outfile:
-            yaml.dump(nodes, outfile, default_flow_style=False)
-
-        # run unit test here
-        os.chdir(PKD_RUN_DIR)
-        cmd = f"python PeekingDuck --log_level debug --config_path {test_config}"
-        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True)  # nosec
-        (out, _) = proc.communicate()
-        out_str = out.decode("utf-8")
-        # print(out_str)
-        exit_status = proc.returncode
-        assert "DEBUG" in str(out_str)
-        assert exit_status == 0

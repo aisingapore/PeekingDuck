@@ -29,7 +29,7 @@ from colorama import Fore, Style, init
 class LoggerSetup:  # pylint: disable=too-few-public-methods
     """Set up the universal logging configuration"""
 
-    def __init__(self, log_level: str = "info") -> None:
+    def __init__(self) -> None:
         if os.name == "nt":
             init()
 
@@ -50,16 +50,10 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
-        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
-        log_level = log_level.upper()
-        if log_level not in log_level_settings:
-            log_level = "INFO"
-
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
-        self.logger.setLevel(log_level)
-        self.logger.info("log_level: %s", log_level)
+        self.logger.setLevel(logging.INFO)
         sys.excepthook = self.handle_exception
 
     def handle_exception(
@@ -87,10 +81,7 @@ class ColoredFormatter(logging.Formatter):
     """This class formats the color of logging messages"""
 
     def __init__(
-        self,
-        *args: str,
-        colors: Optional[Dict[str, str]] = None,
-        **kwargs: str,
+        self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str
     ) -> None:
         """Initialize the formatter with specified format strings"""
 

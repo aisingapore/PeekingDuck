@@ -134,23 +134,10 @@ def init(custom_folder_name: str) -> None:
     "--node_config",
     default="None",
     help="""Modify node configs by wrapping desired configs in a JSON string.\n
-                    Example: --node_config '{"node_name": {"param_1": var_1}}' """,
+         Example: --node_config '{"node_name": {"param_1": var_1}}'""",
 )
-@click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"error", "warning", "info", "debug"}""",
-)
-def run(config_path: str, node_config: str, log_level: str) -> None:
+def run(config_path: str, node_config: str) -> None:
     """Runs PeekingDuck"""
-    log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
-    log_level = log_level.upper()
-    if log_level not in log_level_settings:
-        logger.info("Unknown log_level %s, defaulting to INFO", log_level)
-        log_level = "INFO"
-    if log_level != "INFO":
-        logger.info("Changing log_level to %s", log_level)
-    logger.setLevel(log_level)
 
     curr_dir = _get_cwd()
     if config_path is None:
