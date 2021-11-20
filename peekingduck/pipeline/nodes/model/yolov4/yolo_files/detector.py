@@ -31,11 +31,11 @@ from peekingduck.utils.graph_functions import load_graph
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config["root"]
+        self.model_dir = model_dir
 
         self.yolo = self._create_yolo_model()
 
@@ -44,7 +44,7 @@ class Detector:
         Creates yolo model for human detection
         """
         model_type = self.config["model_type"]
-        model_path = self.root_dir / self.config["graph_files"][model_type]
+        model_path = self.model_dir / self.config["weights"]["model_name"][model_type]
 
         self.logger.info(
             "Yolo model loaded with following configs: \n\t"

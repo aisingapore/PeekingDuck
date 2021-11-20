@@ -43,13 +43,9 @@ class Node(AbstractNode):
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Name of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        graph_files (:obj:`Dict`):
-            Dictionary pointing to path of the model weights file.
+        weights_parent_dir (:obj:`List`): **default = default**. |br|
+            Parent directory where weights will be stored. An absolute path
+            should be specified if the default needs to be changed.
         size (:obj:`int`): **default = 416**. |br|
             Image resolution passed to the YOLO model.
         num_classes (:obj:`int`): **default = 80**. |br|
