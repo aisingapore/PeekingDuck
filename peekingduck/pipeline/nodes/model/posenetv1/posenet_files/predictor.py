@@ -44,7 +44,7 @@ OUTPUT_STRIDE = 16
 class Predictor:  # pylint: disable=too-many-instance-attributes
     """Predictor class to handle detection of poses for posenet"""
 
-    def __init__(self, config: Dict[str, Any], model_dir) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config

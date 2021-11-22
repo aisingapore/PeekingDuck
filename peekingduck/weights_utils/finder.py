@@ -47,7 +47,8 @@ def find_paths(
             )
         if not weights_parent_path.is_absolute():
             raise ValueError(
-                f"The specified weights_parent_dir: {weights_parent_dir} has to be an absolute path."
+                f"The specified weights_parent_dir: {weights_parent_dir} "
+                "has to be an absolute path."
             )
         weights_dir = weights_parent_path / PEEKINGDUCK_WEIGHTS_SUBDIR
 

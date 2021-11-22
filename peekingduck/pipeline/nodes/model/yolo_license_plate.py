@@ -48,8 +48,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             ``weights_dir``.
         model_weights_dir (:obj:`Dict`):
             Dictionary pointing to path of the model weights directory.
-        size (:obj:`int`): **default = 416**. |br|
-            Image resolution passed to the YOLO model.
         yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
             Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
