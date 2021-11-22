@@ -49,13 +49,9 @@ class Node(AbstractNode):
         |keypoint_conns|
 
     Configs:
-        weights_dir (:obj:`List[str]`):
-            List of directories pointing to model weights
-        blob_file (:obj:`str`):
-            Name of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        model_files (:obj:`Dict`):
-            Dictionary pointing to path of model weights file.
+        weights_parent_dir (:obj:`str`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`):
             **default = { height: 192, width: 256 }**. |br|
             Resolution of input array to HRNet model.

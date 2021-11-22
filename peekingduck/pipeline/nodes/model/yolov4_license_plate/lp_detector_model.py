@@ -24,7 +24,7 @@ import numpy as np
 from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
     Detector,
 )
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class Yolov4:  # pylint: disable=too-few-public-methods
@@ -42,13 +42,21 @@ class Yolov4:  # pylint: disable=too-few-public-methods
         if not 0 <= config["yolo_score_threshold"] <= 1:
             raise ValueError("yolo_score_threshold must be in [0, 1]")
 
-        # check for yolo(license plate) weights, if none then download
-        if not checker.has_weights(config["root"], config["weights_dir"]):
-            self.logger.info("---no LP weights detected. proceeding to download...---")
-            downloader.download_weights(config["root"], config["blob_file"])
-            self.logger.info("---LP weights download complete.---")
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights_parent_dir"], config["weights"]
+        )
 
-        self.detector = Detector(config)
+        # check for yolo weights, if none then download into weights folder
+        if not checker.has_weights(weights_dir, model_dir):
+            self.logger.info(
+                "---no yolo license plate weights detected. proceeding to download...---"
+            )
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(
+                f"---yolo license plate weights downloaded to {weights_dir}.---"
+            )
+
+        self.detector = Detector(config, model_dir)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """

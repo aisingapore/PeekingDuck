@@ -20,7 +20,7 @@ from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-from .yolov4 import yolo_model
+from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
 
 
 class Node(AbstractNode):
@@ -43,11 +43,9 @@ class Node(AbstractNode):
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
-        weights_parent_dir (:obj:`List`): **default = default**. |br|
-            Parent directory where weights will be stored. An absolute path
-            should be specified if the default needs to be changed.
-        size (:obj:`int`): **default = 416**. |br|
-            Image resolution passed to the YOLO model.
+        weights_parent_dir (:obj:`str`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|

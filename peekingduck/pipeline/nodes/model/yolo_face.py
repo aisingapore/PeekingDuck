@@ -43,15 +43,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Name of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        graph_files (:obj:`Dict`):
-            Dictionary pointing to path of the model weights file.
-        size (:obj:`int`): **default = 416**. |br|
-            Image resolution passed to the YOLO model.
+        weights_parent_dir (:obj:`str`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         detect_ids (:obj:`List`): **default = [0, 1]**. |br|
             List of object class IDs to be detected where `no_mask` is ``0``
             and `mask` is ``1``.

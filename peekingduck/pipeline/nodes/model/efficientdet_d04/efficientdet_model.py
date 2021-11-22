@@ -24,7 +24,7 @@ import numpy as np
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
     Detector,
 )
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class EfficientDetModel:
@@ -41,18 +41,22 @@ class EfficientDetModel:
         if not 0 <= config["model_type"] <= 4:
             raise ValueError("model_type must be an integer in [0, 4]")
 
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights_parent_dir"], config["weights"]
+        )
+
         # check for efficientdet weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
+        if not checker.has_weights(weights_dir, model_dir):
             self.logger.info(
                 "---no efficientdet weights detected. proceeding to download...---"
             )
-            downloader.download_weights(config["root"], config["blob_file"])
-            self.logger.info("---efficientdet weights download complete.---")
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---efficientdet weights downloaded to {weights_dir}.---")
 
         self.detect_ids = config["detect_ids"]
         self.logger.info(f"efficientdet model detecting ids: {self.detect_ids}")
 
-        self.detector = Detector(config)
+        self.detector = Detector(config, model_dir)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """predict the bbox from frame

@@ -45,10 +45,10 @@ class YoloModel:
             self.logger.info(
                 "---no yolo weights detected. proceeding to download...---"
             )
-            downloader.download_weights(weights_dir, config["weights"]["blob_name"])
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
             self.logger.info(f"---yolo weights downloaded to {weights_dir}.---")
 
-        classes_path = model_dir / config["weights"]["classes_name"]
+        classes_path = model_dir / config["weights"]["classes_file"]
 
         with open(classes_path) as infile:
             self.class_names = [c.strip() for c in infile.readlines()]

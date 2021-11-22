@@ -44,7 +44,7 @@ class Detector:
         Creates yolo model for human detection
         """
         model_type = self.config["model_type"]
-        model_path = self.model_dir / self.config["weights"]["model_name"][model_type]
+        model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
 
         self.logger.info(
             "Yolo model loaded with following configs: \n\t"

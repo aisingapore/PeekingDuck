@@ -21,7 +21,7 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
 
 
@@ -37,13 +37,19 @@ class HRNetModel:  # pylint: disable=too-few-public-methods
         if not 0 <= config["score_threshold"] <= 1:
             raise ValueError("score_threshold must be in [0, 1]")
 
-        # check for hrnet weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
-            print("---no hrnet weights detected. proceeding to download...---")
-            downloader.download_weights(config["root"], config["blob_file"])
-            print("---hrnet weights download complete.---")
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights_parent_dir"], config["weights"]
+        )
 
-        self.detector = Detector(config)
+        # check for hrnet weights, if none then download into weights folder
+        if not checker.has_weights(weights_dir, model_dir):
+            self.logger.info(
+                "---no hrnet weights detected. proceeding to download...---"
+            )
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---hrnet weights downloaded to {weights_dir}.---")
+
+        self.detector = Detector(config, model_dir)
         self.threshold_score = config["score_threshold"]
 
     def predict(

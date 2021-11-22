@@ -21,7 +21,7 @@ from typing import Dict, Any, Tuple
 
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
 
@@ -46,15 +46,19 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
         if not 0 <= config["mtcnn_score"] <= 1:
             raise ValueError("mtcnn_score must be between 0 and 1")
 
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights_parent_dir"], config["weights"]
+        )
+
         # check for mtcnn weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
+        if not checker.has_weights(weights_dir, model_dir):
             self.logger.info(
                 "---no mtcnn weights detected. proceeding to download...---"
             )
-            downloader.download_weights(config["root"], config["blob_file"])
-            self.logger.info("---mtcnn weights download complete.---")
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---mtcnn weights downloaded to {weights_dir}.---")
 
-        self.detector = Detector(config)
+        self.detector = Detector(config, model_dir)
 
     def predict(
         self, frame: np.ndarray
