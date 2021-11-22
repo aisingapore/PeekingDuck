@@ -30,7 +30,7 @@ def download_weights(weights_dir: Path, blob_file: str) -> None:
     """Downloads weights for specified ``blob_file``.
 
     Args:
-        weights_dir (:obj:`pathlib.Path`): Path to where all weights are stored.
+        weights_dir (:obj:`Path`): Path to where all weights are stored.
         blob_file (:obj:`str`): Name of file to be downloaded.
     """
     zip_path = weights_dir / "temp.zip"
@@ -50,7 +50,7 @@ def download_file_from_blob(file_name: str, destination: Path) -> None:
 
     Args:
         file_name (:obj:`str`): Name of file to be downloaded.
-        destination (:obj:`pathlib.Path`): Destination directory of download.
+        destination (:obj:`Path`): Destination directory of download.
     """
     url = f"{BASE_URL}/{file_name}"
     session = requests.Session()
@@ -66,7 +66,7 @@ def save_response_content(response: requests.Response, destination: Path) -> Non
 
     Args:
         response (:obj:`requests.Reponse`): HTML response.
-        destination (:obj:`pathlib.Path`): Destintation directory of download.
+        destination (:obj:`Path`): Destintation directory of download.
     """
     chunk_size = 32768
 

@@ -23,8 +23,8 @@ def has_weights(weights_dir: Path, model_dir: Path) -> bool:
     """Checks for model weight paths from weights folder.
 
     Args:
-        weights_dir (:obj:`pathlib.Path`): Path to where all weights are stored.
-        model_dir (:obj:`pathlib.Path`): Path to where weights for a model are stored.
+        weights_dir (:obj:`Path`): Path to where all weights are stored.
+        model_dir (:obj:`Path`): Path to where weights for a model are stored.
 
     Returns:
         (:obj:`bool`): ``True`` if specified files/directories in
