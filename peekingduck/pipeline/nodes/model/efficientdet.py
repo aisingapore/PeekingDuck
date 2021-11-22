@@ -26,8 +26,8 @@ class Node(AbstractNode):
     """Initalises an EfficientDet model to detect bounding boxes from an image.
 
     The EfficientDet node is capable of detecting objects from 80 categories.
-    The table of categories can be found :term:`here <object detection
-    indices>`.
+    The table of categories can be found
+    :ref:`here <general-object-detection-ids>`.
 
     EfficientDet node has five levels of compound coefficient (0 - 5). A higher
     compound coefficient will scale up all dimensions of the backbone network

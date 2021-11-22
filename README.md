@@ -83,7 +83,7 @@ You can find the complete documentation for PeekingDuck at our [Read the Docs si
 - [Official documentation](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html)
-- `model` nodes [FPS and accuracy benchmarks](https://peekingduck.readthedocs.io/en/stable/resources/01_benchmarks.html), as well as details about [keypoints and class IDs](https://peekingduck.readthedocs.io/en/stable/resources/02_model_indices.html)
+- Benchmarks and class/keypoints IDs for [object detection](https://peekingduck.readthedocs.io/en/stable/resources/01a_object_detection.html) and [pose estimation](https://peekingduck.readthedocs.io/en/stable/resources/01b_pose_estimation.html) models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
@@ -124,4 +124,4 @@ Even so, your organisation may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 ## Additional References
-Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/resources/03_bibliography.html).
+Additional references can be found [here](https://peekingduck.readthedocs.io/en/stable/resources/02_bibliography.html).

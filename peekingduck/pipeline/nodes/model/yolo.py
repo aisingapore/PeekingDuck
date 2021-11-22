@@ -28,7 +28,7 @@ class Node(AbstractNode):
 
     The yolo node is capable of detecting objects from 80 categories. It uses
     YOLOv4-tiny by default and can be changed to using YOLOv4. The table of
-    categories can be found :term:`here <object detection indices>`.
+    categories can be found :ref:`here <general-object-detection-ids>`.
 
     Inputs:
         |img|

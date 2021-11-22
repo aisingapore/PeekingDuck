@@ -67,7 +67,7 @@
    count of a pre-selected object (for example, "person") detected in each specified zone. The
    order of counts follows the order of ``zones``.
 
-.. |none| replace:: ``none`` (:obj:`none`): No inputs required, or no additional outputs produced.
+.. |none| replace:: ``none``: No inputs required, or no additional outputs produced.
    Used for ``input`` nodes that require no prior inputs, or ``draw`` nodes that overwrite current
    input.
 

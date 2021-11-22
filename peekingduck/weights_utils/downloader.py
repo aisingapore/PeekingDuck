@@ -30,7 +30,7 @@ def download_weights(root: Path, blob_file: str) -> None:
     """Downloads weights for specified ``blob_file``.
 
     Args:
-        root (:obj:`pathlib.Path`): Root directory of ``peekingduck``
+        root (:obj:`Path`): Root directory of ``peekingduck``
         blob_file (:obj:`str`): Name of file to be downloaded.
     """
     extract_dir = root.parent / "peekingduck_weights"
@@ -51,7 +51,7 @@ def download_file_from_blob(file_name: str, destination: Path) -> None:
 
     Args:
         file_name (:obj:`str`): Name of file to be downloaded.
-        destination (:obj:`pathlib.Path`): Destination directory of download.
+        destination (:obj:`Path`): Destination directory of download.
     """
     url = f"{BASE_URL}/{file_name}"
     session = requests.Session()
@@ -67,7 +67,7 @@ def save_response_content(response: requests.Response, destination: Path) -> Non
 
     Args:
         response (:obj:`requests.Reponse`): HTML response.
-        destination (:obj:`pathlib.Path`): Destintation directory of download.
+        destination (:obj:`Path`): Destintation directory of download.
     """
     chunk_size = 32768
 

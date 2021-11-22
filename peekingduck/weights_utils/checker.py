@@ -24,7 +24,7 @@ def has_weights(root: Path, weights_paths: List[str]) -> bool:
     """Checks for model weight paths from weights folder.
 
     Args:
-        root (:obj:`str`): Path of ``peekingduck`` root folder.
+        root (:obj:`Path`): Path of ``peekingduck`` root folder.
         weights_paths (:obj:`List[str]`): List of files/directories to check
             whether model weights exist.
     Returns:
