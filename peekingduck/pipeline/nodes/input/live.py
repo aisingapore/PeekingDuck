@@ -60,7 +60,10 @@ class Node(AbstractNode):
             The FPS can increase up to 30%.
         buffer_frames (:obj:`bool`): **default = False**. |br|
             Boolean to indicate if threaded class should buffer image frames.
-            Works only if threading is True.
+            If threading is True and output.media_writer is enabled, then
+            buffer_frames should be True to ensure output video is correctedly
+            saved. One side effect of threading=True, buffer_frames=True is the
+            onscreen video display could appear laggy due to the buffering.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

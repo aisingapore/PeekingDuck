@@ -52,7 +52,7 @@ class VideoThread:
         self.logger = logging.getLogger("VideoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
-            raise ValueError("Camera or video input not detected: %s" % input_source)
+            raise ValueError(f"Camera or video input not detected: {input_source}")
         # events to coordinate threading
         self.is_done = Event()
         self.is_thread_start = Event()

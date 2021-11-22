@@ -51,14 +51,14 @@ class Node(AbstractNode):
             The directory to look for recorded video files and images.
         mirror_image (:obj:`bool`): **default = False**. |br|
             Flag to set extracted image frame as mirror image of input stream.
-        threading (:obj:`bool`):
-            **default = False**. |br|
-            Boolean to enable threading when reading frames from input. |br|
+        threading (:obj:`bool`): **default = False**. |br|
+            Boolean to enable threading when reading frames from input.
             The FPS may increase if this is enabled (system dependent).
-        buffer_frames (:obj:`bool`):
-            **default = False**. |br|
-            Boolean to indicate if threaded class should buffer image frames. |br|
-            Works only if threading is True.
+        buffer_frames (:obj:`bool`): **default = False**. |br|
+            Boolean to indicate if threaded class should buffer image frames.
+            If threading is True, it is highly recommended that buffer_frames is
+            also True to avoid losing frames, as otherwise the input thread would
+            very likely read ahead of the main thread.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -103,10 +103,9 @@ class Node(AbstractNode):
             self.tens_counter += 10
 
         if self.file_end:
+            self.logger.info(f"Completed processing file: {self._file_name}")
             pct_complete = round(100 * self.frame_counter / self.videocap.frame_count)
-            self.logger.info(
-                f"Processed {self._file_name}: #frames={self.frame_counter}, done={pct_complete}%"
-            )
+            self.logger.debug(f"#frames={self.frame_counter}, done={pct_complete}%")
             self._get_next_input()
             outputs = self._run_single_file()
             self.frame_counter = 0
