@@ -36,11 +36,11 @@ import peekingduck.runner as pkd
 @click.option(
     "--log_level",
     default="info",
-    help=("""Modify log level {"error", "warning", "info", "debug"}"""),
+    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
 )
-def run(config_path: str, log_level: str):
+def run(config_path: str, log_level: str) -> None:
     if not config_path:
-        pkd_dir = Path(__file__).parents[0]
+        pkd_dir = Path(__file__).parent
         config_path = pkd_dir / "run_config.yml"
 
     LoggerSetup(log_level=log_level)

@@ -267,9 +267,9 @@ class TestCli:
 
     def test_main_py_log_level_debug(self):
         # setup unit test env
-        tmp_dir = os.getcwd()
+        tmp_dir = Path.cwd()
         print(f"\ntmp_dir={tmp_dir}")
-        test_config_path = Path(tmp_dir) / "test_config.yml"
+        test_config_path = tmp_dir / "test_config.yml"
         nodes = {
             "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
         }
