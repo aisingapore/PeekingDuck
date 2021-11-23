@@ -61,9 +61,11 @@ class Node(AbstractNode):
         buffer_frames (:obj:`bool`): **default = False**. |br|
             Boolean to indicate if threaded class should buffer image frames.
             If threading is True and output.media_writer is enabled, then
-            buffer_frames should be True to ensure output video is correctedly
+            buffer_frames should be True to ensure output video is correctly
             saved. One side effect of threading=True, buffer_frames=True is the
-            onscreen video display could appear laggy due to the buffering.
+            onscreen video display could appear laggy due to the buffering. |br|
+            For more info, please refer to `input.live configuration
+            <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/input/live.yml>`_.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

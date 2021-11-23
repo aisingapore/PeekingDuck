@@ -58,7 +58,9 @@ class Node(AbstractNode):
             Boolean to indicate if threaded class should buffer image frames.
             If threading is True, it is highly recommended that buffer_frames is
             also True to avoid losing frames, as otherwise the input thread would
-            very likely read ahead of the main thread.
+            very likely read ahead of the main thread. |br|
+            For more info, please refer to `input.recorded configuration
+            <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/input/recorded.yml>`_.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
