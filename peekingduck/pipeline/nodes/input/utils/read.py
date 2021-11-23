@@ -68,9 +68,10 @@ class VideoThread:
         self.is_thread_start.wait()
 
     def __del__(self) -> None:
-        # dotw: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
-        #       but does not crash on Intel MacBook Pro Ubuntu 20.04 python 3.7
-        # self.logger.debug("VideoThread.__del__")
+        """
+        Release acquired resources here.
+        """
+        self.logger.debug("VideoThread.__del__")
         self.stream.release()
 
     def shutdown(self) -> None:
