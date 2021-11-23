@@ -23,6 +23,7 @@ from .tracking_files.opencv_tracking import OpenCVTracker
 
 # pylint: disable=too-few-public-methods
 
+
 class LoadTracker:
     """Loads chosen tracker node."""
 
