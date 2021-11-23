@@ -43,7 +43,7 @@ class Node(AbstractNode):
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
-        weights_parent_dir (:obj:`str`): **default = null**. |br|
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by replacing
             ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|

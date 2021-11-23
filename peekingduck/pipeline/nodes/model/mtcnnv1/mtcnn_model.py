@@ -47,16 +47,14 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
             raise ValueError("mtcnn_score must be between 0 and 1")
 
         weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights_parent_dir"], config["weights"]
+            config["root"], config["weights"], config["weights_parent_dir"]
         )
 
         # check for mtcnn weights, if none then download into weights folder
         if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info(
-                "---no mtcnn weights detected. proceeding to download...---"
-            )
+            self.logger.info("---no weights detected. proceeding to download...---")
             downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---mtcnn weights downloaded to {weights_dir}.---")
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         self.detector = Detector(config, model_dir)
 

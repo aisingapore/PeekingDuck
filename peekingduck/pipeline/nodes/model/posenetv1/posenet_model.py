@@ -37,16 +37,14 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
             raise ValueError("model_type must be one of [50, 75, 100, resnet]")
 
         weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights_parent_dir"], config["weights"]
+            config["root"], config["weights"], config["weights_parent_dir"]
         )
 
         # check for posenet weights, if none then download into weights folder
         if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info(
-                "---no posenet weights detected. proceeding to download...---"
-            )
+            self.logger.info("---no weights detected. proceeding to download...---")
             downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---posenet weights downloaded to {weights_dir}.---")
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         self.predictor = Predictor(config, model_dir)
 

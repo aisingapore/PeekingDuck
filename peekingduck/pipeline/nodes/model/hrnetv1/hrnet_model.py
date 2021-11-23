@@ -38,16 +38,14 @@ class HRNetModel:  # pylint: disable=too-few-public-methods
             raise ValueError("score_threshold must be in [0, 1]")
 
         weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights_parent_dir"], config["weights"]
+            config["root"], config["weights"], config["weights_parent_dir"]
         )
 
         # check for hrnet weights, if none then download into weights folder
         if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info(
-                "---no hrnet weights detected. proceeding to download...---"
-            )
+            self.logger.info("---no weights detected. proceeding to download...---")
             downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---hrnet weights downloaded to {weights_dir}.---")
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         self.detector = Detector(config, model_dir)
         self.threshold_score = config["score_threshold"]

@@ -17,27 +17,27 @@ Finds paths for where weights are stored.
 """
 
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Optional
 
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
 
 
 def find_paths(
-    root: Path, weights_parent_dir: str, weights: Dict[str, Any]
+    root: Path, weights: Dict[str, Any], weights_parent_dir: Optional[str] = None
 ) -> Tuple[Path, Path]:
     """Checks for model weight paths from weights folder.
 
     Args:
         root (:obj:`str`): Path of ``peekingduck`` root folder.
-        weights_parent_dir (:obj:`str`): Parent dir of where weights will be stored.
         weights (:obj:`Dict[str, Any]`): File/subdir names of weights.
+        weights_parent_dir (:obj:`Optional[str]`): Parent dir of where weights will be stored.
 
     Returns:
         weights_dir (:obj:`pathlib.Path`): Path to where all weights are stored.
         model_dir (:obj:`pathlib.Path`): Path to where weights for a model are stored.
     """
 
-    if not weights_parent_dir:
+    if weights_parent_dir is None:
         weights_dir = root.parent / PEEKINGDUCK_WEIGHTS_SUBDIR
     else:
         weights_parent_path = Path(weights_parent_dir)

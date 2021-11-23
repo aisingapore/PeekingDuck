@@ -67,7 +67,7 @@ class TestHrnetModel:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no hrnet weights detected. proceeding to download...---"
+                == "---no weights detected. proceeding to download...---"
             )
             assert "weights downloaded" in captured.records[1].getMessage()
             assert hrnet is not None

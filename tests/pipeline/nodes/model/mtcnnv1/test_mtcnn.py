@@ -106,7 +106,7 @@ class TestMtcnn:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no mtcnn weights detected. proceeding to download...---"
+                == "---no weights detected. proceeding to download...---"
             )
             assert "weights downloaded" in captured.records[1].getMessage()
             assert mtcnn is not None

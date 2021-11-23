@@ -40,7 +40,7 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Configs:
-        weights_parent_dir (:obj:`str`): **default = null**. |br|
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by replacing
             ``null`` with an absolute path to the desired directory.
         mtcnn_min_size (:obj:`int`): **default = 40**. |br|
