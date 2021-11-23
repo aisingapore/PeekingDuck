@@ -50,18 +50,11 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         handler = logging.StreamHandler(sys.stdout)
         handler.setFormatter(formatter)
 
-        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
-        log_level = log_level.upper()
-        if log_level not in log_level_settings:
-            log_level = "INFO"
-
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
-        if log_level != "INFO":
-            self.logger.info(f"Changing log_level to {log_level}")
-        self.logger.setLevel(log_level)
         sys.excepthook = self.handle_exception
+        LoggerSetup.set_log_level(log_level)
 
     def handle_exception(
         self,
@@ -82,6 +75,20 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         # Make the error type more obvious in terminal by separating these
         self.logger.error(traceback_msg)
         self.logger.error(error_msg)
+
+    @staticmethod
+    def set_log_level(
+        log_level: str = "info", logger_name: Optional[str] = None
+    ) -> None:
+        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+        log_level = log_level.upper()
+        if log_level not in log_level_settings:
+            log_level = "INFO"
+        logger = logging.getLogger(logger_name)
+        print(f"* logger: name={logger_name}, id={id(logger)}")
+        if log_level != "INFO":
+            logger.info(f"Changing log_level to {log_level}")
+        logger.setLevel(log_level)
 
 
 class ColoredFormatter(logging.Formatter):
