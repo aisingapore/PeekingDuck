@@ -2,7 +2,7 @@
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's input, draw, and output nodes. We've designed PeekingDuck to be very flexible --- you can create your own nodes and use them with ours. This guide will showcase how anyone can develop custom nodes to be used with PeekingDuck.
 
-In this guide, we'll be building a custom `csv_logger` which writes data into a file. It serves as a data collection step that stores useful metrics into a csv file. This csv file can be used for logging purposes and can serve as a base for data analytics. (PeekingDuck already has an [`output.csv_logger`](/peekingduck.pipeline.nodes.output.csv_writer.Node) node, but this is a good example for users to experience creating a custom node from scratch.)
+In this guide, we'll be building a custom `csv_writer` node which writes data into a file. It serves as a data collection step that stores useful metrics into a CSV file. This CSV file can be used for logging purposes and can serve as a base for data analytics. (PeekingDuck already has an [`output.csv_writer`](/peekingduck.pipeline.nodes.output.csv_writer.Node) node, but this is a good example for users to experience creating a custom node from scratch.)
 
 A step by step instruction to build this custom node is provided below.
 
@@ -35,11 +35,11 @@ Your project folder should look like this:
 
 - `src/<custom_folder_name>` is where custom nodes created for the project should be housed.
 - `run_config.yml` is the basic YAML file to select nodes in the pipeline. You will be using this to run your peekingduck pipeline.
-- `results` is the directory to store outputs from the custom `csv_logger` node we will be creating.
+- `results` is the directory to store outputs from the custom `csv_writer` node we will be creating.
 
 ## Step 2: Populate run_config.yml
 
-The `run_config.yml` will be created by `peekingduck init`. For this tutorial, replace its contents with the following node list. Notice that newly minted nodes are identified by the following structure `<custom_folder_name>.<node-type>.<node>`. In this project, the `<custom_folder_name>` is named `custom_nodes`.
+The `run_config.yml` will be created by `peekingduck init`. For this guide, replace its contents with the following node list. Notice that newly minted nodes are identified by the following structure `<custom_folder_name>.<node-type>.<node>`. In this project, the `<custom_folder_name>` is named `custom_nodes`.
 
 **IMPORTANT**: `<node_type>` needs to adhere to one of the five node types in PeekingDuck: `['input','output','model','dabble','draw']`
 
@@ -61,7 +61,7 @@ As PeekingDuck runs the pipeline sequentially, it is important to check if the n
 
 ## Step 3: Generate Template Node Config and Script
 
-We recommend using the `peekingduck create-node` command to generate the template config and script files for your custom node through an interactive process as demonstracted below.
+We recommend using the `peekingduck create-node` command to generate the template config and script files for your custom node through an interactive process as demonstrated below.
 ```
 > peekingduck create-node
 Creating new custom node...
@@ -86,7 +86,7 @@ Created node!
 Enter node directory relative to /path/to/<project_name> [src/custom_nodes]:
 ```
 Enter the path of your custom node directory, ensure the path is relative to `<project_name>`, e.g.
-`src/<custom_folder_name>`. The default value `src/custom_nodes` is used in this demo.
+`src/<custom_folder_name>`. The default value `src/custom_nodes` is used in this guide.
 
 ### Step 3b: Select a Node Type for Your Custom Node
 
@@ -94,7 +94,7 @@ Enter the path of your custom node directory, ensure the path is relative to `<p
 Select node type (input, model, draw, dabble, output): output
 ```
 Select a node type from one of the five node types in PeekingDuck `(input, model, draw, dabble, output)`.
-`output` type is selected in this demo.
+`output` type is selected in this guide.
 
 ### Step 3c: Enter Your Custom Node Name
 
@@ -103,7 +103,7 @@ Enter node name [my_custom_node]: csv_writer
 ```
 Enter a name for your custom node. Some checks are performed in the background to ensure that the
 node name is valid and does not already exist (to prevent existing files from being overwritten).
-The default value is `my_custom_node` but `csv_writer` is used in this demo.
+The default value is `my_custom_node` but `csv_writer` is used in this guide.
 
 ### Step 3d: Confirm Node Creation
 
@@ -118,7 +118,7 @@ Creating the following files:
 Proceed? [Y/n]: 
 ```
 The full paths of the config and script files to be created will be shown for verification. You can
-abort the process by entering `n`. The default value of `y` is selected in this demo.
+abort the process by entering `n`. The default value of `y` is selected in this guide.
 
 ### Alternative: Use `peekingduck create-node` with Command-line Options
 
@@ -143,7 +143,7 @@ A final confirmation is still required before the files are created. You can use
 combination of the available command-line options. You will be prompted for the missing values
 through the same interactive process.
 
-If you have been following along to this demo, you should expect to see the following directory
+If you have been following along to this guide, you should expect to see the following directory
 structure:
 ```text
 <project_name>
@@ -159,13 +159,10 @@ structure:
 ├── results
 ```
 
-## Alternative Step 3: Manually Create Node Config and Scripts
+## Step 4: Create Node Config
 
-If you prefer to set up the files manually yourself, please follow the steps below.
-
-### Step 3a: Create Node Config
-
-Create a custom node config under `src/<custom_folder_name>/configs/<node_type>/<node>.yml`. In this tutorial it will be `src/custom_nodes/configs/output/csv_writer.yml` to list configurations required by the system.
+Using the template config file generated from above, we can list configurations required by the
+system in `src/custom_nodes/configs/output/csv_writer.yml`.
 
 ```yaml
 input: ["count"] # inputs required by the node
@@ -174,11 +171,12 @@ period: 1 # time interval (s) between logs
 filepath: "results/stats.csv" # output file location
 ```
 
-`results` directory was manually created in Step 1 and PeekingDuck will save the csv as `stats.csv` in the directory.
-Node configs contains information on the input and outputs for PeekingDuck to manage.
-We recommend new users to use the [config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml) for reference.
+`results` directory was manually created in Step 1 and PeekingDuck will save the CSV file as
+`stats.csv` in the directory. Node configs contain information on the input and output for
+PeekingDuck to manage.
 
-Your node config yaml file should contain the following:
+
+Your node config YAML file should contain the following:
 
 - `input` (list of str): the key(s) to the required inputs for your node
 - `output` (list of str): the key(s) to the outputs
@@ -186,22 +184,41 @@ Your node config yaml file should contain the following:
 
 Note: While the keys for input and output can be arbitrary strings, keys should be consistent across all nodes in the pipeline.
 
-### Step 3b: Create Your Node Scripts
+## Step 5: Create Your Node Scripts
 
-We recommend new users to use the node template below.
-
-1. Initialise your node script, `src/<custom_folder_name>/<node_type>/<node>.py`, in our example it will be `src/custom_nodes/output/csv_writer.py`. You may want to use the following template start building your custom node.
+1. You should see the following template code in the generated script file `src/custom_nodes/output/csv_writer.py`.
 
 ```python
-# this is a template for writing custom nodes
+# csv_writer.py
+from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-class Node(AbstractNode):
-    def __init__(self, config = None, **kwargs):
-        super().__init__(config, node_path =__name__)
 
-    def run(self, inputs):
-        return {}
+class Node(AbstractNode):
+    """This is a template class of how to write a node for PeekingDuck.
+    Args:
+        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    """
+
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+        super().__init__(config, node_path=__name__, **kwargs)
+
+        # initialize/load any configs and models here
+        # configs can be called by self.<config_name> e.g. self.filepath
+        # self.logger.info(f"model loaded with configs: config")
+
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+        """This node does ___.
+        Args:
+            inputs (dict): Dictionary with keys "__", "__".
+        Returns:
+            outputs (dict): Dictionary with keys "__".
+        """
+
+        # result = do_something(inputs["in1"], inputs["in2"])
+        # outputs = {"out1": result}
+        # return outputs
 ```
 
 2. Develop `run()`, the core function that PeekingDuck will call in the pipeline. Nodes can simply retrieve the necessary data by querying the input in a dict-like fashion. In this case, we take the input `count` and write the results into the specified filepath.
@@ -209,7 +226,9 @@ class Node(AbstractNode):
 ```python
 # csv_writer.py
 from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.node import AbstractNode
+
 from .utils.csv import CSVLogger
 
 class Node(AbstractNode):
@@ -243,9 +262,9 @@ Note:
 - `run` must return a dictionary with the key-value pair defined as `{"out1": results_object}`. `out1` must be consistent with the outputs defined in the node configs. In this example, there is no output but we need to return an empty dictionary `{}`
 - Logging is added to all nodes. To access it, simply call `self.logger` (e.g. `self.logger.info("Model loaded!")`)
 
-## Step 4: Create Utilities (Optional)
+## Step 6: Create Utilities (Optional)
 
-We recommend placing the utility files together with your node folder `src/<custom_folder_name>/<node_type>/utils/<your-util>.py`. For this tutorial we will place the following code under `src/custom_nodes/output/utils/csv.py`.
+We recommend placing the utility files together with your node folder `src/<custom_folder_name>/<node_type>/utils/<your_util>.py`. For this guide we will place the following code under `src/custom_nodes/output/utils/csv.py`.
 
 The implementation below uses `period` (declared in your configs) to `file_path` (also in configs) which dictates the time interval (in seconds) between each log entry.
 
@@ -282,7 +301,7 @@ class CSVLogger:
         self.csv_file.close()
 ```
 
-## Step 5: Run PeekingDuck!
+## Step 7: Run PeekingDuck!
 
 ### Final Checks
 
@@ -290,7 +309,7 @@ class CSVLogger:
 - Create a `results` folder at the same level as `src`!
 - Ensure that the files are in the correct folder structure.
 
-Your repository should look similar to this:
+Your project folder should look similar to this:
 
 ```bash
 <project_name>
@@ -307,11 +326,20 @@ Your repository should look similar to this:
 ├── results
 ```
 
+#### Creating the files manually
+
+If you prefer to set up the files manually, we recommend new users to use these
+[config template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/node_template.yml)
+and [script template](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/pipeline/nodes/node_template.py)
+for reference.
+
 ### Running the Module
 
 - Now the setup is complete and ready to run! Run the setup using the following code.
 
-  `peekingduck run --config_path run_config.yml`
+  ```
+  peekingduck run --config_path run_config.yml
+  ```
 
 - If the setup is working, you should see an output screen being displayed. If you are using `input.live`, terminate the program by clicking on the output screen and pressing `q`.
 
@@ -319,4 +347,4 @@ Your repository should look similar to this:
 
 **NOTE:**
 
-While running, the csv file may be empty. This is because the implementation of this csv logger completes the writing at the end of the instruction.
+While running, the CSV file may be empty. This is because the implementation of this CSV logger completes the writing at the end of the instruction.
