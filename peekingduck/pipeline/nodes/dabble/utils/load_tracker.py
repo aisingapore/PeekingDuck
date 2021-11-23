@@ -28,9 +28,9 @@ class LoadTracker:
     def __init__(self, tracking_type: str) -> None:
         super().__init__()
         self.logger = logging.getLogger(__name__)
-        self.logger.info("Tracking algorithm used: %s", tracking_type)
+        self.logger.info(f"Tracking algorithm used: {tracking_type}")
         if tracking_type in ["iou", "mosse"]:
-            self.tracker = self.get_tracker(tracking_type)  # type: ignore
+            self.tracker = self._get_tracker(tracking_type)  # type: ignore
         else:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']")
 
@@ -41,7 +41,7 @@ class LoadTracker:
         return obj_tags
 
     @staticmethod
-    def get_tracker(tracking_type: str) -> Any:
+    def _get_tracker(tracking_type: str) -> Any:
         """Returns tracker from tracking_type config parameter"""
         trackers_dict = {"iou": IOUTracking(), "mosse": OpenCVTracker()}
         tracker = trackers_dict[tracking_type]
