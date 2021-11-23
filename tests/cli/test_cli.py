@@ -386,7 +386,14 @@ class TestCli:
         with open(script_path) as actual_file, open(
             PKD_NODES_DIR / "node_template.py"
         ) as expected_file:
-            assert actual_file.read() == expected_file.read()
+            lines = expected_file.readlines()
+            # Ensuring start exists/is valid is not done here since we expect
+            # it to always be valid
+            for i, line in enumerate(lines):
+                if line.startswith('"'):
+                    start = i
+                    break
+            assert actual_file.readlines() == lines[start:]
 
     def test_create_node_duplicate_node_name(self, runner, create_node_input_accept):
         _, _, _, good_path, good_type, good_name, proceed = create_node_input_accept
@@ -420,7 +427,12 @@ class TestCli:
         with open(script_path) as actual_file, open(
             PKD_NODES_DIR / "node_template.py"
         ) as expected_file:
-            assert actual_file.read() == expected_file.read()
+            lines = expected_file.readlines()
+            for i, line in enumerate(lines):
+                if line.startswith('"'):
+                    start = i
+                    break
+            assert actual_file.readlines() == lines[start:]
 
     def test_create_node_cli_options_abort(self, runner, create_node_input_abort):
         (
@@ -502,7 +514,12 @@ class TestCli:
         with open(script_path) as actual_file, open(
             PKD_NODES_DIR / "node_template.py"
         ) as expected_file:
-            assert actual_file.read() == expected_file.read()
+            lines = expected_file.readlines()
+            for i, line in enumerate(lines):
+                if line.startswith('"'):
+                    start = i
+                    break
+            assert actual_file.readlines() == lines[start:]
 
     def test_nodes_all(self, runner):
         result = runner.invoke(cli, ["nodes"])

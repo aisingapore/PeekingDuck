@@ -197,7 +197,15 @@ def create_node(
         with open(
             pkd_dir / "pipeline" / "nodes" / f"{template_name}.py"
         ) as template_file, open(script_path, "w") as outfile:
-            outfile.write(template_file.read())
+            lines = template_file.readlines()
+            start = -1
+            for i, line in enumerate(lines):
+                if line.startswith('"'):
+                    start = i
+                    break
+            # In case we couldn't find a starting line
+            start = max(0, start)
+            outfile.writelines(lines[start:])
         click.echo("Created node!")
     else:
         click.echo("Aborted!")
