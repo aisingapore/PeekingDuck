@@ -21,6 +21,7 @@ import logging
 from .tracking_files.iou_tracking import IOUTracking
 from .tracking_files.opencv_tracking import OpenCVTracker
 
+# pylint: disable=too-few-public-methods
 
 class LoadTracker:
     """Loads chosen tracker node."""
@@ -30,7 +31,7 @@ class LoadTracker:
         self.logger = logging.getLogger(__name__)
         self.logger.info(f"Tracking algorithm used: {tracking_type}")
         if tracking_type in ["iou", "mosse"]:
-            self.tracker = self._get_tracker(tracking_type)  # type: ignore
+            self.tracker = self._get_tracker(tracking_type)
         else:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']")
 
