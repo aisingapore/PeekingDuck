@@ -106,6 +106,10 @@ class Runner:
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
+        # clean up nodes with threads
+        for node in self.pipeline.nodes:
+            if node.name.endswith(".live") or node.name.endswith(".recorded"):
+                node.release_resources()
 
     def get_run_config(self) -> List[str]:
         """Retrieves run configuration.

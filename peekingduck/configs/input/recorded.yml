@@ -8,3 +8,9 @@ resize: {
         }
 input_dir: 'PeekingDuck/data/input'
 mirror_image: False
+# Threading technotes for input.recorded:
+# 1. May not speed up FPS if file is already read from fast storage, e.g. SSD.
+# 2. If threading is True, buffer_frames should also be True, or else frames
+#    would likely be lost as the input thread reads ahead of the main thread.
+threading: False
+buffer_frames: False

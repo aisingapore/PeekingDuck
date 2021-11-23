@@ -27,6 +27,7 @@ def create_reader():
             "output": "img",
             "resize": {"do_resizing": False, "width": 1280, "height": 720},
             "mirror_image": False,
+            "threading": False,
             "input_dir": ".",
         }
     )

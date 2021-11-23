@@ -68,6 +68,12 @@ class AbstractNode(metaclass=ABCMeta):
         """abstract method needed for running node"""
         raise NotImplementedError("This method needs to be implemented")
 
+    # pylint: disable=R0201, W0107
+    def release_resources(self) -> None:
+        """To gracefully release any acquired system resources, e.g. webcam
+        NOTE: To be overridden by subclass if required"""
+        pass
+
     @property
     def inputs(self) -> List[str]:
         """Input requirements."""
