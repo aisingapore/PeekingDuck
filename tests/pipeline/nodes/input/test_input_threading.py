@@ -32,7 +32,7 @@ def get_fps_number(avg_fps_msg: str) -> float:
 
 
 @contextmanager
-def config_yml():
+def run_config_yml():
     """Save and restore current run_config.yml"""
     try:
         config_saved = False
@@ -113,18 +113,17 @@ def test_input_threading():
             if dur > num_sec:
                 break
         proc.kill()
+        os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
         return avg_fps
 
     res = False
-    with config_yml():
+    with run_config_yml():
         print("Run test without threading")
         avg_fps_1 = run_rtsp_test(url=RTSP_URL, threading=False)
-        os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
         print("Run test with threading")
         avg_fps_2 = run_rtsp_test(url=RTSP_URL, threading=True)
-        os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
         res = avg_fps_2 > avg_fps_1
         print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
