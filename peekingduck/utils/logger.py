@@ -80,14 +80,23 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
     def set_log_level(
         log_level: str = "info", logger_name: Optional[str] = None
     ) -> None:
+        """Changes the logging level to the specified one.
+        If logger_name is None, then this will change the global log level.
+
+        Args:
+            log_level (str, optional): Log level to set. Defaults to "info".
+            logger_name (Optional[str], optional): Logger name. Defaults to None.
+        """
         log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
         log_level = log_level.upper()
         if log_level not in log_level_settings:
             log_level = "INFO"
         logger = logging.getLogger(logger_name)
-        print(f"* logger: name={logger_name}, id={id(logger)}")
         if log_level != "INFO":
-            logger.info(f"Changing log_level to {log_level}")
+            if logger_name:
+                logger.info(f"Changing log_level to {log_level}")
+            else:
+                logger.info(f"Changing global log_level to {log_level}")
         logger.setLevel(log_level)
 
 
