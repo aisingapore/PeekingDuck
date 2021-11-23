@@ -31,7 +31,10 @@ class TestFinder:
             find_paths(FAKE_ROOT_PATH, weights, "no_exist_path")
 
     def test_parent_path_not_absolute(self, weights):
+        print("CURRENT PATH is: ", CURRENT_PATH)
         with pytest.raises(ValueError):
             find_paths(
-                FAKE_ROOT_PATH, weights, CURRENT_PATH.relative_to(CURRENT_PATH.parent)
+                FAKE_ROOT_PATH,
+                weights,
+                CURRENT_PATH.relative_to(CURRENT_PATH.parent),
             )
