@@ -21,7 +21,7 @@ import logging
 import math
 import re
 from pathlib import Path
-from typing import Callable, Optional, Tuple
+from typing import Callable, Dict, Optional, Tuple, Union
 
 import click
 import yaml
@@ -164,39 +164,43 @@ def create_node(
     if node_type is None:
         node_type = click.prompt("Select node type", type=node_type_choices)
 
-    partial_ensure_valid_name = functools.partial(
-        _ensure_valid_name, node_dir, node_type
+    node_name = _verify_option(
+        node_name, value_proc=_ensure_valid_name_partial(node_dir, node_type)
     )
-    node_name = _verify_option(node_name, value_proc=partial_ensure_valid_name)
     if node_name is None:
         node_name = click.prompt(
             "Enter node name",
             default="my_custom_node",
-            value_proc=partial_ensure_valid_name,
+            value_proc=_ensure_valid_name_partial(node_dir, node_type),
         )
 
-    config_path = node_dir / "configs" / node_type / f"{node_name}.yml"
-    script_path = node_dir / node_type / f"{node_name}.py"
+    created_paths = _get_config_and_script_paths(
+        node_dir, ("configs", node_type), node_type, node_name
+    )
     click.echo(f"\nNode directory:\t{node_dir}")
     click.echo(f"Node type:\t{node_type}")
     click.echo(f"Node name:\t{node_name}")
     click.echo("\nCreating the following files:")
-    click.echo(f"\tConfig file: {config_path}")
-    click.echo(f"\tScript file: {script_path}")
+    click.echo(f"\tConfig file: {created_paths['config']}")
+    click.echo(f"\tScript file: {created_paths['script']}")
 
     proceed = click.confirm("Proceed?", default=True)
     if proceed:
-        config_path.parent.mkdir(parents=True, exist_ok=True)
-        script_path.parent.mkdir(parents=True, exist_ok=True)
-        pkd_dir = Path(__file__).resolve().parent
-        template_name = "node_template"
-        with open(pkd_dir / "configs" / f"{template_name}.yml") as template_file, open(
-            config_path, "w"
+        created_paths["config"].parent.mkdir(parents=True, exist_ok=True)
+        created_paths["script"].parent.mkdir(parents=True, exist_ok=True)
+        template_paths = _get_config_and_script_paths(
+            Path(__file__).resolve().parent,
+            "configs",
+            ("pipeline", "nodes"),
+            "node_template",
+        )
+        with open(template_paths["config"]) as template_file, open(
+            created_paths["config"], "w"
         ) as outfile:
             outfile.write(template_file.read())
-        with open(
-            pkd_dir / "pipeline" / "nodes" / f"{template_name}.py"
-        ) as template_file, open(script_path, "w") as outfile:
+        with open(template_paths["script"]) as template_file, open(
+            created_paths["script"], "w"
+        ) as outfile:
             lines = template_file.readlines()
             start = -1
             for i, line in enumerate(lines):
@@ -270,6 +274,10 @@ def _ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
     return node_name
 
 
+def _ensure_valid_name_partial(node_dir: Path, node_type: str) -> Callable:
+    return functools.partial(_ensure_valid_name, node_dir, node_type)
+
+
 def _get_cwd() -> Path:
     return Path.cwd()
 
@@ -289,6 +297,28 @@ def _get_node_url(node_type: str, node_name: str) -> str:
     url_postfix = ".html#"
 
     return f"{url_prefix}{node_path}{url_postfix}{node_path}"
+
+
+def _get_config_and_script_paths(
+    parent_dir: Path,
+    config_subdir: Union[str, Tuple[str, ...]],
+    script_subdir: Union[str, Tuple[str, ...]],
+    file_stem: str,
+) -> Dict[str, Path]:
+    """Returns the node config file and its corresponding script file."""
+    if isinstance(config_subdir, tuple):
+        config_subpath = Path(*config_subdir)
+    else:
+        config_subpath = Path(config_subdir)
+    if isinstance(script_subdir, tuple):
+        script_subpath = Path(*script_subdir)
+    else:
+        script_subpath = Path(script_subdir)
+
+    return {
+        "config": parent_dir / config_subpath / f"{file_stem}.yml",
+        "script": parent_dir / script_subpath / f"{file_stem}.py",
+    }
 
 
 def _len_enumerate(item: Tuple) -> int:
