@@ -44,6 +44,15 @@ def yolo_config():
     return node_config
 
 
+@pytest.fixture
+def model_dir(yolo_config):
+    return (
+        yolo_config["root"].parent
+        / "peekingduck_weights"
+        / yolo_config["weights"]["model_subdir"]
+    )
+
+
 @pytest.fixture(params=["v4", "v4tiny"])
 def yolo(request, yolo_config):
     yolo_config["model_type"] = request.param
@@ -53,14 +62,14 @@ def yolo(request, yolo_config):
 
 
 @pytest.fixture()
-def yolo_detector(yolo_config):
+def yolo_detector(yolo_config, model_dir):
     yolo_config["model_type"] = "v4tiny"
-    detector = Detector(yolo_config)
+    detector = Detector(yolo_config, model_dir)
 
     return detector
 
 
-def replace_download_weights(root, blob_file):
+def replace_download_weights(model_dir, blob_file):
     return False
 
 
@@ -99,18 +108,15 @@ class TestYolo:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no yolo weights detected. proceeding to download...---"
+                == "---no weights detected. proceeding to download...---"
             )
-            assert (
-                captured.records[1].getMessage()
-                == "---yolo weights download complete.---"
-            )
+            assert "weights downloaded" in captured.records[1].getMessage()
             assert yolo is not None
 
     def test_get_detect_ids(self, yolo):
         assert yolo.model.get_detect_ids() == [0, 1]
 
-    def test_model_initialization(self, yolo_config):
-        detector = Detector(config=yolo_config)
+    def test_model_initialization(self, yolo_config, model_dir):
+        detector = Detector(yolo_config, model_dir)
         model = detector.yolo
         assert model is not None

@@ -41,15 +41,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**. |br|
             Defines the type of YOLO model to be used.
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Name of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        model_weights_dir (:obj:`Dict`):
-            Dictionary pointing to path of the model weights directory.
-        size (:obj:`int`): **default = 416**. |br|
-            Image resolution passed to the YOLO model.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
             Bounding box with confidence score less than the specified
             confidence score threshold is discarded.

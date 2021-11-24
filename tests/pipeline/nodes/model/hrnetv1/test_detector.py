@@ -42,11 +42,25 @@ def hrnet_config():
 
 
 @pytest.fixture
-def hrnet_detector(hrnet_config):
-    if not checker.has_weights(hrnet_config["root"], hrnet_config["weights_dir"]):
-        downloader.download_weights(hrnet_config["root"], hrnet_config["blob_file"])
+def model_dir(hrnet_config):
+    return (
+        hrnet_config["root"]
+        / "peekingduck_weights"
+        / hrnet_config["weights"]["model_subdir"]
+    )
 
-    detector = Detector(hrnet_config)
+
+@pytest.fixture
+def weights_dir(hrnet_config):
+    return hrnet_config["root"] / "peekingduck_weights"
+
+
+@pytest.fixture
+def hrnet_detector(hrnet_config, model_dir, weights_dir):
+    if not checker.has_weights(weights_dir, model_dir):
+        downloader.download_weights(weights_dir, hrnet_config["weights"]["blob_file"])
+
+    detector = Detector(hrnet_config, model_dir)
     return detector
 
 

@@ -45,6 +45,15 @@ def mtcnn_config():
     return node_config
 
 
+@pytest.fixture
+def model_dir(mtcnn_config):
+    return (
+        mtcnn_config["root"].parent
+        / "peekingduck_weights"
+        / mtcnn_config["weights"]["model_subdir"]
+    )
+
+
 @pytest.fixture()
 def mtcnn(mtcnn_config):
     node = Node(mtcnn_config)
@@ -53,13 +62,13 @@ def mtcnn(mtcnn_config):
 
 
 @pytest.fixture()
-def mtcnn_detector(mtcnn_config):
-    detector = Detector(mtcnn_config)
+def mtcnn_detector(mtcnn_config, model_dir):
+    detector = Detector(mtcnn_config, model_dir)
 
     return detector
 
 
-def replace_download_weights(root, blob_file):
+def replace_download_weights(model_dir, blob_file):
     return False
 
 
@@ -97,15 +106,12 @@ class TestMtcnn:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no mtcnn weights detected. proceeding to download...---"
+                == "---no weights detected. proceeding to download...---"
             )
-            assert (
-                captured.records[1].getMessage()
-                == "---mtcnn weights download complete.---"
-            )
+            assert "weights downloaded" in captured.records[1].getMessage()
             assert mtcnn is not None
 
-    def test_model_initialization(self, mtcnn_config):
-        detector = Detector(config=mtcnn_config)
+    def test_model_initialization(self, mtcnn_config, model_dir):
+        detector = Detector(mtcnn_config, model_dir)
         model = detector.mtcnn
         assert model is not None

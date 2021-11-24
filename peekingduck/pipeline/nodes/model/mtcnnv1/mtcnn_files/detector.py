@@ -31,11 +31,11 @@ from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import
 class Detector:  # pylint: disable=too-many-instance-attributes
     """Face detection class using MTCNN model to find bboxes and landmarks"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config["root"]
+        self.model_dir = model_dir
         self.min_size = self.config["mtcnn_min_size"]
         self.factor = self.config["mtcnn_factor"]
         self.thresholds = self.config["mtcnn_thresholds"]
@@ -46,7 +46,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         Creates MTCNN model for face detection
         """
-        model_path = self.root_dir / self.config["graph_files"]["mtcnn"]
+        model_path = self.model_dir / self.config["weights"]["model_file"]
 
         self.logger.info(
             "MTCNN model loaded with following configs: \n\t"

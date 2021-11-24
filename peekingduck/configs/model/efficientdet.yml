@@ -2,17 +2,19 @@ input: ['img']
 output: ['bboxes', 'bbox_labels', 'bbox_scores']
 
 model_type: 0 # 0-4
-classes_file: ../peekingduck_weights/efficientdet/coco_90.json
-weights_dir: ['../peekingduck_weights/efficientdet']
-blob_file: 'efficientdet.zip'
-graph_files:
-    {
-        0: ../peekingduck_weights/efficientdet/efficientdet-d0.pb,
-        1: ../peekingduck_weights/efficientdet/efficientdet-d1.pb,
-        2: ../peekingduck_weights/efficientdet/efficientdet-d2.pb,
-        3: ../peekingduck_weights/efficientdet/efficientdet-d3.pb,
-        4: ../peekingduck_weights/efficientdet/efficientdet-d4.pb,
+weights_parent_dir: null
+weights: {
+    model_subdir: efficientdet,
+    blob_file: efficientdet.zip,
+    classes_file: coco_90.json,
+    model_file: {
+        0: efficientdet-d0.pb,
+        1: efficientdet-d1.pb,
+        2: efficientdet-d2.pb,
+        3: efficientdet-d3.pb,
+        4: efficientdet-d4.pb,
     }
+}
 size: [512, 640, 768, 896, 1024]
 num_classes: 90
 score_threshold: 0.3

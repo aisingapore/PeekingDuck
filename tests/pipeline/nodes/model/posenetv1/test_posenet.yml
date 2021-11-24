@@ -2,15 +2,17 @@ input: ["img"]
 output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns"]
 
 model_type: 75 # 50, 75, 100 or resnet
-weights_dir: ["../peekingduck_weights/posenet/models"]
-blob_file: "posenet.zip"
-model_files:
-  {
-    50: ../peekingduck_weights/posenet/models/model-mobilenet_v1_050.pb,
-    75: ../peekingduck_weights/posenet/models/model-mobilenet_v1_075.pb,
-    100: ../peekingduck_weights/posenet/models/model-mobilenet_v1_100.pb,
-    resnet: ../peekingduck_weights/posenet/models/model-resnet.pb,
+weights_parent_dir: null
+weights: {
+    model_subdir: posenet,
+    blob_file: posenet.zip,
+    model_file: {
+      50: models/model-mobilenet_v1_050.pb,
+      75: models/model-mobilenet_v1_075.pb,
+      100: models/model-mobilenet_v1_100.pb,
+      resnet: models/model-resnet.pb,
   }
+}
 
 resolution: { height: 225, width: 225 }
 max_pose_detection: 3
