@@ -49,46 +49,26 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Configs:
-        model_type (:obj:`str`):  |br|
-
-            **{"                                                                    |br|
-            |tab| singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"|br|
-            },  default="mulitpose_lightning"**                                     |br|
+        model_type (:obj:`str`):
+            **{"
+            singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"
+            },  default="mulitpose_lightning"** |br|
             Defines the detection model for MoveNet either single or multi pose.
             Lightning is smaller and faster but less accurate than Thunder version.
-
-        weights_dir (:obj:`List`):
-
-            Directory path pointing to folder containing the model weights
-
-        model_weights_dir (:obj: `Dict`):
-
-            Dictionary of filepath to the model weights
-
-        blob_file (:obj:`str`):
-
-            Name of file to be downloaded, if weights are not found in `weights_dir`
-
-        model_files (:obj:`Dict`):
-
-            Dictionary pointing to path of model weights file
-
-        resolution (:obj:`Dict`):  |br|
-
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
+        resolution (:obj:`Dict`): **default = { height: 256, width: 256 }** |br|
             Dictionary of resolutions of input array to different MoveNet models.
             Only multipose can use dynamic shape that needs be multiples of 32,
-            recommended shape is 256
-
+            recommended shape is 256. Default will be the resolution for multipose
+            lightning model.
         bbox_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
-
             Detected bounding box confidence score threshold, only boxes above
             threshold will be kept in the output.
-
-        keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
-
+        keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.3** |br|
             Detected keypoints confidence score threshold, only keypoints above
             threshold will be output
-
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

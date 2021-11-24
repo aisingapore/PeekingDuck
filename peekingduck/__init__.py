@@ -16,7 +16,6 @@
 A modular Python framework for Computer Vision Inference.
 """
 
-<<<<<<< Updated upstream
 __version__ = "developer"
 
 import os
@@ -29,6 +28,3 @@ LoggerSetup()
 
 if "READTHEDOCS" not in os.environ:
     sys.meta_path.insert(0, RequirementChecker())
-=======
-__version__ = "0.1.0"
->>>>>>> Stashed changes

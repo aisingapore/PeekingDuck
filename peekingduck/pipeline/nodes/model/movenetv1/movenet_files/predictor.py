@@ -16,8 +16,9 @@
 Predictor class to handle detection of poses for movenet
 """
 
-import os
+# import os
 import logging
+from pathlib import Path
 from typing import Dict, List, Any, Tuple
 import cv2 as cv
 import numpy as np
@@ -50,23 +51,21 @@ SKELETON = [
 class Predictor:  # pylint: disable=logging-fstring-interpolation
     """Predictor class to handle detection of poses for MoveNet"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
 
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.model_type = self.config["model_type"]
 
         self.movenet_model = self._create_posenet_model()
 
     def _create_posenet_model(self) -> tf.keras.Model:
-
-        self.model_type = self.config["model_type"]
-
-        model_file = os.path.join(
-            self.config["root"], self.config["model_weights_dir"][self.model_type]
+        model_path = (
+            self.model_dir / self.config["weights"]["model_file"][self.model_type]
         )
-        model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.resolution = self.get_resolution_as_tuple(
             self.config["resolution"][self.model_type]

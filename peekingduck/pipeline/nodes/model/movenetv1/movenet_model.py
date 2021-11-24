@@ -18,8 +18,8 @@ import logging
 from typing import Dict, Any, Tuple
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class MoveNetModel:  # pylint: disable=too-few-public-methods
@@ -27,7 +27,6 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
-
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
@@ -45,15 +44,17 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
                 ["singlepose_lightning","singlepose_thunder","multipose_lightning"]"""
             )
 
-        # check for movenet weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
-            self.logger.info(
-                "---no movenet weights detected. proceeding to download...---"
-            )
-            downloader.download_weights(config["root"], config["blob_file_name"])
-            self.logger.info("---movenet weights download complete.---")
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights"], config["weights_parent_dir"]
+        )
 
-        self.predictor = Predictor(config)
+        # check for movenet weights, if none then download into weights folder
+        if not checker.has_weights(weights_dir, model_dir):
+            self.logger.info("---no weights detected. proceeding to download...---")
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
+
+        self.predictor = Predictor(config, model_dir)
 
     def predict(
         self, frame: np.ndarray

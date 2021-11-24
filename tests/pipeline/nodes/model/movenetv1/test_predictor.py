@@ -36,7 +36,7 @@ def movenet_config():
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = str(Path.cwd())
+    node_config["root"] = Path.cwd()
 
     return node_config
 
@@ -48,8 +48,17 @@ def movenet(movenet_config):
 
 
 @pytest.fixture
-def movenet_predictor(movenet_config):
-    predictor = Predictor(movenet_config)
+def model_dir(movenet_config):
+    return (
+        movenet_config["root"].parent
+        / "peekingduck_weights"
+        / movenet_config["weights"]["model_subdir"]
+    )
+
+
+@pytest.fixture
+def movenet_predictor(movenet_config, model_dir):
+    predictor = Predictor(movenet_config, model_dir)
     return predictor
 
 

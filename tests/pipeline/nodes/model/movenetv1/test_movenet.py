@@ -60,7 +60,7 @@ def movenet_config():
     )
     with filepath.open() as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = str(Path.cwd())
+    node_config["root"] = Path.cwd()
 
     return node_config
 
@@ -107,12 +107,9 @@ class TestMoveNet:
                     # records 0 - 20 records are updates to configs
                     assert (
                         captured.records[0].getMessage()
-                        == "---no movenet weights detected. proceeding to download...---"
+                        == "---no weights detected. proceeding to download...---"
                     )
-                    assert (
-                        captured.records[1].getMessage()
-                        == "---movenet weights download complete.---"
-                    )
+                    assert "weights downloaded" in captured.records[1].getMessage()
                     assert movenet is not None
 
     def test_no_human_single(self, empty_image, movenet_model_single):
