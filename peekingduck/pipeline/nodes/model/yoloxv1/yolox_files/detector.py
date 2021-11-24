@@ -53,7 +53,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         self.model_dir = model_dir
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Half-precision only supported on CUDA
-        self.half = self.config["half"] and self.device.type != "cpu"
+        self.config["half"] = self.config["half"] and self.device.type != "cpu"
         self.yolox = self._create_yolox_model()
 
     @torch.no_grad()
@@ -84,7 +84,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
         image = torch.from_numpy(image).unsqueeze(0).to(self.device)
-        image = image.half() if self.half else image.float()
+        image = image.half() if self.config["half"] else image.float()
 
         prediction = self.yolox(image)[0]
         bboxes, classes, scores = self._postprocess(
@@ -103,7 +103,7 @@ class Detector:  # pylint: disable=too-few-public-methods
             (YOLOX): YOLOX model.
         """
         self.detect_ids = torch.Tensor(self.config["detect_ids"]).to(self.device)  # type: ignore
-        if self.half:
+        if self.config["half"]:
             self.detect_ids = self.detect_ids.half()
         self.input_size = (self.config["input_size"], self.config["input_size"])
         model_type = self.config["model_type"]
@@ -117,7 +117,7 @@ class Detector:  # pylint: disable=too-few-public-methods
             f"IDs being detected: {self.config['detect_ids']}\n\t"
             f"IOU threshold: {self.config['iou_threshold']}\n\t"
             f"Score threshold: {self.config['score_threshold']}\n\t"
-            f"Half-precision floating-point: {self.half}\n\t"
+            f"Half-precision floating-point: {self.config['half']}\n\t"
             f"Fuse convolution and batch normalization layers: {self.config['fuse']}"
         )
         return self._load_yolox_weights(model_path, model_size)
@@ -147,7 +147,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         if model_path.is_file():
             ckpt = torch.load(str(model_path), map_location="cpu")
             model = self._get_model(model_settings).to(self.device)
-            if self.half:
+            if self.config["half"]:
                 model.half()
             model.eval()
             model.load_state_dict(ckpt["model"])
