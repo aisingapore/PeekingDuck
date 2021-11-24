@@ -15,6 +15,7 @@
 import io
 import math
 import os
+import subprocess
 import random
 import string
 import sys
@@ -263,3 +264,35 @@ class TestCli:
             result = runner.invoke(cli, ["nodes", node_type])
             assert result.exit_code == 0
             assert result.output == available_nodes_msg(node_type)
+
+    def test_main_py_log_level_debug(self):
+        # setup unit test env
+        tmp_dir = Path.cwd()
+        print(f"\ntmp_dir={tmp_dir}")
+        test_config_path = tmp_dir / "test_config.yml"
+        nodes = {
+            "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
+        }
+        with open(test_config_path, "w") as outfile:
+            yaml.dump(nodes, outfile, default_flow_style=False)
+
+        unit_test_run_dir = Path(__file__).parents[3]
+        print(f"unit_test_run_dir={unit_test_run_dir}")
+
+        # run unit test
+        os.chdir(unit_test_run_dir)
+        cmd = [
+            "python",
+            "PeekingDuck",
+            "--log_level",
+            "debug",
+            "--config_path",
+            f"{test_config_path}",
+        ]
+        proc = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+        out, _ = proc.communicate()
+        out_str = out.decode("utf-8")
+        print(out_str)
+        exit_status = proc.returncode
+        assert "DEBUG" in out_str
+        assert exit_status == 0
