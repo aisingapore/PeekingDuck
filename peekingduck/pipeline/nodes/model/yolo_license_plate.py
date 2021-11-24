@@ -16,18 +16,17 @@
 License Plate Detection model
 """
 
-from typing import Dict, Any
-from peekingduck.pipeline.nodes.node import AbstractNode
+from typing import Any, Dict
+
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import lp_detector_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """
-    A YOLO node class that initialises and uses YOLO model to infer bboxes
-    from image frame.
+    """Initialises and uses YOLO model to infer bboxes from image frame.
 
-    The yolo node is capable of detecting objects from a single class (License Plate).
-    It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
+    The YOLO node is capable of detecting objects from a single class (License
+    Plate). It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
 
     Inputs:
         |img|
@@ -40,42 +39,23 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bbox_scores|
 
     Configs:
-        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**
-
-            defines the type of YOLO model to be used.
-
-        weights_dir (:obj:`List`):
-
-            directory pointing to the model weights.
-
-        blob_file (:obj:`str`):
-
-            name of file to be downloaded, if weights are not found in `weights_dir`.
-
-        model_weights_dir (:obj:`Dict`):
-
-            dictionary pointing to path of the model weights directory
-
-        size (:obj:`int`): **default = 416 **
-
-            image resolution passed to the YOLO model.
-
-        yolo_score_threshold (:obj:`float`): **[0,1], default = 0.1**
-
-            bounding box with confidence score less than the specified
+        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**. |br|
+            Defines the type of YOLO model to be used.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
+        yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
+            Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
-
-        yolo_iou_threshold (:obj:`float`): **[0,1], default = 0.3**
-
-            overlapping bounding boxes above the specified IoU (Intersection
+        yolo_iou_threshold (:obj:`float`): **[0, 1], default = 0.3**. |br|
+            Overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
 
     References:
-
-    YOLOv4: Optimal Speed and Accuracy of Object Detection:
+        YOLOv4: Optimal Speed and Accuracy of Object Detection:
         https://arxiv.org/pdf/2004.10934v1.pdf
 
-    Model weights trained using pretrained weights from Darknet:
+        Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
     """
 
@@ -84,17 +64,15 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.model = lp_detector_model.Yolov4(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """
-        Function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """Reads the image input and returns the bboxes of the specified
+        objects chosen to be detected.
 
         Args:
-            inputs (Dict): Dictionary of inputs with key "img"
+            inputs (dict): Dictionary of inputs with key "img".
         Returns:
-            outputs (Dict): bbox output in dictionary format with keys
-            "bboxes", "bbox_labels" and "bbox_scores"
+            outputs (dict): bbox output in dictionary format with keys
+            "bboxes", "bbox_labels", and "bbox_scores".
         """
-
         bboxes, labels, scores = self.model.predict(inputs["img"])
         outputs = {
             "bboxes": bboxes,

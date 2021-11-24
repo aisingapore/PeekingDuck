@@ -16,9 +16,9 @@
 Face detection class using mtcnn model to find face bboxes
 """
 
-import os
 import logging
-from typing import Dict, Any, Tuple, List
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -31,12 +31,11 @@ from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import
 class Detector:  # pylint: disable=too-many-instance-attributes
     """Face detection class using MTCNN model to find bboxes and landmarks"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config["root"]
+        self.model_dir = model_dir
         self.min_size = self.config["mtcnn_min_size"]
         self.factor = self.config["mtcnn_factor"]
         self.thresholds = self.config["mtcnn_thresholds"]
@@ -47,29 +46,22 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         Creates MTCNN model for face detection
         """
-        model_path = os.path.join(self.root_dir, self.config["graph_files"]["mtcnn"])
+        model_path = self.model_dir / self.config["weights"]["model_file"]
 
         self.logger.info(
-            (
-                "MTCNN model loaded with following configs: \n\t"
-                "Min size: %s, \n\t"
-                "Scale Factor: %s, \n\t"
-                "Steps Thresholds: %s, \n\t"
-                "Score Threshold: %s"
-            ),
-            self.config["mtcnn_min_size"],
-            self.config["mtcnn_factor"],
-            self.config["mtcnn_thresholds"],
-            self.config["mtcnn_score"],
+            "MTCNN model loaded with following configs: \n\t"
+            f"Min size: {self.config['mtcnn_min_size']}, \n\t"
+            f"Scale Factor: {self.config['mtcnn_factor']}, \n\t"
+            f"Steps Thresholds: {self.config['mtcnn_thresholds']}, \n\t"
+            f"Score Threshold: {self.config['mtcnn_score']}"
         )
 
         return self._load_mtcnn_graph(model_path)
 
     @staticmethod
-    def _load_mtcnn_graph(filepath: str) -> tf.compat.v1.GraphDef:
-        model_path = os.path.join(filepath)
-        if os.path.isfile(model_path):
-            return load_graph(model_path)
+    def _load_mtcnn_graph(model_path: Path) -> tf.compat.v1.GraphDef:
+        if model_path.is_file():
+            return load_graph(str(model_path))
 
         raise ValueError(
             "Graph file does not exist. Please check that " "%s exists" % model_path

@@ -14,14 +14,14 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
-from unittest import mock, TestCase
-import pytest
-import yaml
+from pathlib import Path
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np
 import numpy.testing as npt
+import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.mtcnn import Node
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
@@ -29,14 +29,29 @@ from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detect
 
 @pytest.fixture
 def mtcnn_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/mtcnnv1/test_mtcnn.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "mtcnnv1"
+        / "test_mtcnn.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture
+def model_dir(mtcnn_config):
+    return (
+        mtcnn_config["root"].parent
+        / "peekingduck_weights"
+        / mtcnn_config["weights"]["model_subdir"]
+    )
 
 
 @pytest.fixture()
@@ -47,13 +62,13 @@ def mtcnn(mtcnn_config):
 
 
 @pytest.fixture()
-def mtcnn_detector(mtcnn_config):
-    detector = Detector(mtcnn_config)
+def mtcnn_detector(mtcnn_config, model_dir):
+    detector = Detector(mtcnn_config, model_dir)
 
     return detector
 
 
-def replace_download_weights(root, blob_file):
+def replace_download_weights(model_dir, blob_file):
     return False
 
 
@@ -81,28 +96,22 @@ class TestMtcnn:
     def test_no_weights(self, mtcnn_config):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ):
-            with mock.patch(
-                "peekingduck.weights_utils.downloader.download_weights",
-                wraps=replace_download_weights,
-            ):
-                with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
-                ) as captured:
+        ), mock.patch(
+            "peekingduck.weights_utils.downloader.download_weights",
+            wraps=replace_download_weights,
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
+        ) as captured:
+            mtcnn = Node(config=mtcnn_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "---no weights detected. proceeding to download...---"
+            )
+            assert "weights downloaded" in captured.records[1].getMessage()
+            assert mtcnn is not None
 
-                    mtcnn = Node(config=mtcnn_config)
-                    # records 0 - 20 records are updates to configs
-                    assert (
-                        captured.records[0].getMessage()
-                        == "---no mtcnn weights detected. proceeding to download...---"
-                    )
-                    assert (
-                        captured.records[1].getMessage()
-                        == "---mtcnn weights download complete.---"
-                    )
-                    assert mtcnn is not None
-
-    def test_model_initialization(self, mtcnn_config):
-        detector = Detector(config=mtcnn_config)
+    def test_model_initialization(self, mtcnn_config, model_dir):
+        detector = Detector(mtcnn_config, model_dir)
         model = detector.mtcnn
         assert model is not None

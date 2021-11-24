@@ -69,7 +69,7 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy.
+By default, we are using the PoseNet model with a ResNet backbone for pose estimation. Please take a look at the [benchmarks](../resources/01b_pose_estimation.rst) of pose estimation models that are included in PeekingDuck if you would like to use a different model variation or an alternative model better suited to your use case.
 
 
 **2. Adjusting Nodes**
@@ -94,4 +94,3 @@ The trade-off here is that the estimated distance between individuals will be le
 To combat COVID-19, individuals are encouraged to maintain physical distance from each other. We've developed a social distancing tool that checks if individuals are too close to each other.
 
 The nodes for social distancing can be stacked with group size checker, to perform both at the same time. To find out which nodes are used, check out the [readme](./social_distancing.md) for social distancing.
-

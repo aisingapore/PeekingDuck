@@ -13,12 +13,12 @@
 # limitations under the License.
 
 """
-Calculates the FPS of video
+Calculates the FPS of video.
 """
 
-from typing import Any, Dict, List
 from statistics import mean
 from time import perf_counter
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -26,10 +26,10 @@ NUM_FRAMES = 10
 
 
 class Node(AbstractNode):
-    """FPS node class that calculates the FPS of the image frame.
+    """Calculates the FPS of the image frame.
 
     This node calculates instantaneous FPS and a 10 frame moving average
-    FPS. A preferred output setting can be set via the config file.
+    FPS. A preferred output setting can be set via the configuration file.
 
     Inputs:
         |pipeline_end|
@@ -38,16 +38,14 @@ class Node(AbstractNode):
         |fps|
 
     Configs:
-        fps_log_display (:obj:`bool`): **default="False"**
-
-            Enables logging of 10 frame moving average FPS during execution of peekingduck
-
-        fps_log_freq (:obj:`int`): **default="100"**
+        fps_log_display (:obj:`bool`): **default = False**. |br|
+            Enables logging of 10 frame moving average FPS during execution of
+            PeekingDuck.
+        fps_log_freq (:obj:`int`): **default = 100**. |br|
             Frequency of logging moving average FPS every n frames
-
-        dampen_fps (:obj:`bool`): **default="True"**
-            Returns moving average FPS if True, instantaneous FPS if False
-
+        dampen_fps (:obj:`bool`): **default = True**. |br|
+            If ``True``, returns moving average FPS. If ``False``, returns
+            instantaneous FPS .
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -60,8 +58,7 @@ class Node(AbstractNode):
 
         if self.fps_log_display:
             self.logger.info(
-                "Moving average of FPS will be logged every: %s frames",
-                self.fps_log_freq,
+                f"Moving average of FPS will be logged every: {self.fps_log_freq} frames"
             )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -81,14 +78,14 @@ class Node(AbstractNode):
         if not inputs["pipeline_end"]:
             if self.fps_log_display:
                 if self.count % self.fps_log_freq == 0 and self.count != 0:
-                    self.logger.info("Avg FPS over last 10 frames: %.2f", average_fps)
+                    self.logger.info(f"Avg FPS over last 10 frames: {average_fps:.2f}")
 
             # Calculate FPS over all processed frames
             self.global_avg_fps = self._global_average(frame_fps)
 
         if inputs["pipeline_end"]:
             self.logger.info(
-                "Avg FPS over all processed frames: %.2f", self.global_avg_fps
+                f"Avg FPS over all processed frames: {self.global_avg_fps:.2f}"
             )
 
         return {"fps": average_fps} if self.dampen_fps else {"fps": frame_fps}

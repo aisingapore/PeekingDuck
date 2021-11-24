@@ -14,10 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-
 import numpy as np
-
 import pytest
+
 from peekingduck.pipeline.nodes.input.recorded import Node
 
 
@@ -28,6 +27,7 @@ def create_reader():
             "output": "img",
             "resize": {"do_resizing": False, "width": 1280, "height": 720},
             "mirror_image": False,
+            "threading": False,
             "input_dir": ".",
         }
     )

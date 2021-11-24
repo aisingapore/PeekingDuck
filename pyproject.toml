@@ -9,7 +9,12 @@ markers = [
 
 [tool.pylint]
     [tool.pylint.'MESSAGES CONTROL']
-    disable=['no-member','attribute-defined-outside-init','access-member-before-definition']
+    disable = [
+        "access-member-before-definition",
+        "attribute-defined-outside-init",
+        "logging-fstring-interpolation",
+        "no-member",
+    ]
 
 [tool.mypy]
 ignore_missing_imports = true

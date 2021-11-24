@@ -13,14 +13,14 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+
 import numpy as np
 import numpy.testing as npt
 
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
-    scale_transform,
-    affine_transform_xy,
-    reshape_heatmaps,
     get_valid_keypoints,
+    reshape_heatmaps,
+    scale_transform,
 )
 
 SKELETON = [

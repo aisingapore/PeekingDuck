@@ -16,21 +16,22 @@
 Predictor class to handle detection of poses for posenet
 """
 
-import os
 import logging
-from typing import Dict, List, Callable, Any, Tuple
-import tensorflow as tf
-import numpy as np
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Tuple
 
+import numpy as np
+import tensorflow as tf
+
+from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
+    KEYPOINTS_NUM,
+    MIN_PART_SCORE,
+    SCALE_FACTOR,
+    SKELETON,
+)
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
     detect_keypoints,
     get_keypoints_relative_coords,
-)
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
-    SCALE_FACTOR,
-    KEYPOINTS_NUM,
-    MIN_PART_SCORE,
-    SKELETON,
 )
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
     rescale_image,
@@ -43,11 +44,11 @@ OUTPUT_STRIDE = 16
 class Predictor:  # pylint: disable=too-many-instance-attributes
     """Predictor class to handle detection of poses for posenet"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.model_type = self.config["model_type"]
 
         self.posenet_model = self._create_posenet_model()
@@ -57,36 +58,31 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         self.max_pose_detection = self.config["max_pose_detection"]
         self.score_threshold = self.config["score_threshold"]
 
-        model_path = os.path.join(
-            self.config["root"], self.config["model_files"][self.model_type]
+        model_path = (
+            self.model_dir / self.config["weights"]["model_file"][self.model_type]
         )
         model_func = self._load_posenet_graph(model_path)
 
         self.logger.info(
-            (
-                "PoseNet model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "Max pose detection: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.model_type,
-            self.resolution,
-            self.max_pose_detection,
-            self.score_threshold,
+            "PoseNet model loaded with following configs: \n\t"
+            f"Model type: {self.model_type}, \n\t"
+            f"Input resolution: {self.resolution}, \n\t"
+            f"Max pose detection: {self.max_pose_detection}, \n\t"
+            f"Score threshold: {self.score_threshold}"
         )
-
         return model_func
 
-    def _load_posenet_graph(self, filepath: str) -> Callable:
-        model_id = "mobilenet"
+    def _load_posenet_graph(self, model_path: Path) -> Callable:
         if self.model_type == "resnet":
             model_id = "resnet"
+        else:
+            model_id = "mobilenet"
         model_nodes = self.config["MODEL_NODES"][model_id]
-        model_path = os.path.join(filepath)
-        if os.path.isfile(model_path):
+        if model_path.is_file():
             return load_graph(
-                model_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+                str(model_path),
+                inputs=model_nodes["inputs"],
+                outputs=model_nodes["outputs"],
             )
         raise ValueError(
             "PoseNet graph file does not exist. Please check that "
@@ -176,7 +172,9 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
     def _get_connections_of_one_pose(
         coords: np.ndarray, masks: np.ndarray
     ) -> np.ndarray:
-        """Get connections between adjacent keypoint pairs if both keypoints are detected"""
+        """Get connections between adjacent keypoint pairs if both keypoints are
+        detected
+        """
         connections = []
         for start_joint, end_joint in SKELETON:
             if masks[start_joint - 1] and masks[end_joint - 1]:
@@ -210,9 +208,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             model_type (str): specified model type (refer to modelconfig.yml)
 
         Returns:
-            full_keypoint_coords (np.array): keypoints coordinates of detected poses
-            full_keypoint_scores (np.array): keypoints confidence scores of detected
+            full_keypoint_coords (np.array): keypoints coordinates of detected
                 poses
+            full_keypoint_scores (np.array): keypoints confidence scores of
+                detected poses
             full_masks (np.array): keypoints validation masks of detected poses
         """
         image, output_scale, image_size = self._create_image_from_frame(
@@ -264,6 +263,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def _get_full_masks_from_keypoint_scores(keypoint_scores: np.ndarray) -> np.ndarray:
-        """Obtain masks for keypoints with confidence scores above the detection threshold"""
+        """Obtain masks for keypoints with confidence scores above the detection
+        threshold
+        """
         masks = keypoint_scores > MIN_PART_SCORE
         return masks

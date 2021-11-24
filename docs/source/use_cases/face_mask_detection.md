@@ -6,7 +6,7 @@ As part of COVID-19 measures, the Singapore Government has mandated the wearing 
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="70%">
 
-We have trained a custom Yolov4 model to detect whether or not a person is wearing a face mask. This is further elaborated in a [subsequent section](#how-it-works).
+We have trained a custom YOLOv4 model to detect whether or not a person is wearing a face mask. This is further elaborated in a [subsequent section](#how-it-works).
 
 ## Demo
 
@@ -18,13 +18,13 @@ To try our solution on your own computer with [PeekingDuck installed](../getting
 
 ## How it Works
 
-The main component is the detection of face mask using the custom Yolov4 model.
+The main component is the detection of face mask using the custom YOLOv4 model.
 
 **Face Mask Detection**
 
-We use an open source object detection model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of human faces with and without face masks. This allows the application to identify the locations of faces and their corresponding classes (no_mask = 0 or mask = 1) in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human face detected.
+We use an open source object detection model known as [YOLOv4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of human faces with and without face masks. This allows the application to identify the locations of faces and their corresponding classes (no_mask = 0 or mask = 1) in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human face detected.
 
-The yolo_face node detects human faces with and without face masks using the Yolov4-tiny model by default. The classes are differentiated by the labels and the colours of the bounding boxes when multiple faces are detected. For more information on how adjust the yolo_face node, checkout the [Yolo face configurable parameters](/peekingduck.pipeline.nodes.model.yolo_face.Node).
+The `yolo_face` node detects human faces with and without face masks using the YOLOv4-tiny model by default. The classes are differentiated by the labels and the colours of the bounding boxes when multiple faces are detected. For more information on how adjust the `yolo_face` node, checkout the [`yolo_face` configurable parameters](/peekingduck.pipeline.nodes.model.yolo_face.Node).
 
 ## Nodes Used
 
@@ -42,7 +42,7 @@ nodes:
 
 **1. Face Mask Detection Node**
 
-By default, the node uses the Yolov4-tiny model for face detection. For better accuracy, you can try the [Yolov4 model](/peekingduck.pipeline.nodes.model.yolo_face.Node) that is included in our repo.
+By default, the node uses the YOLOv4-tiny model for face detection. For better accuracy, you can try the [YOLOv4 model](/peekingduck.pipeline.nodes.model.yolo_face.Node) that is included in our repo.
 
 **2. Adjusting Nodes**
 

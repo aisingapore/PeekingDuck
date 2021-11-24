@@ -13,20 +13,21 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import os
-import pytest
+
+from pathlib import Path
+
 import numpy as np
 import numpy.testing as npt
+import pytest
+
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
     _sigmoid,
     get_keypoints_relative_coords,
 )
 
-TEST_DIR = os.path.join(os.getcwd(), "images")
+TEST_DIR = Path.cwd() / "images"
 NP_FILE = np.load(
-    os.path.join(
-        os.getcwd(), "tests", "pipeline", "nodes", "model", "posenetv1", "posenet.npz"
-    )
+    Path.cwd() / "tests" / "pipeline" / "nodes" / "model" / "posenetv1" / "posenet.npz"
 )
 
 

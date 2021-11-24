@@ -16,9 +16,10 @@
 Utility functions for Tensorflow Graphed models
 """
 
-import os
 import logging
-from typing import List, Callable
+import os
+from typing import Callable, List
+
 import tensorflow as tf
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
@@ -57,11 +58,11 @@ def wrap_frozen_graph(
     )
 
 
-def load_graph(filename: str, inputs: List[str], outputs: List[str]) -> tf.function:
+def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> tf.function:
     """
     Loads the graph
     """
-    with tf.io.gfile.GFile(filename, "rb") as graph_file:
+    with tf.io.gfile.GFile(file_path, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(graph_file.read())
 
@@ -85,7 +86,7 @@ def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
         if graph_op.type == "Placeholder":
             input_list.append(graph_op.name)
 
-        logger.info("Inputs: %s", input_list)
+        logger.info(f"Inputs: {input_list}")
 
 
 def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
@@ -99,4 +100,4 @@ def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
         input_list.extend(node.input)
 
     outputs = set(name_list) - set(input_list)
-    logger.info("Outputs: %s", list(outputs))
+    logger.info(f"Outputs: {list(outputs)}")

@@ -13,22 +13,23 @@
 # limitations under the License.
 
 """
-Universal logging configueration
+Universal logging configuration
 """
 
+import logging
 import os
 import sys
-import logging
 import traceback
-from typing import Optional, Dict
+from types import TracebackType
+from typing import Dict, Optional, Type
 
-from colorama import init, Fore, Style
+from colorama import Fore, Style, init
 
 
 class LoggerSetup:  # pylint: disable=too-few-public-methods
     """Set up the universal logging configuration"""
 
-    def __init__(self) -> None:
+    def __init__(self, log_level: str = "info") -> None:
         if os.name == "nt":
             init()
 
@@ -52,11 +53,14 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger()
         self.logger.handlers[:] = []
         self.logger.addHandler(handler)
-        self.logger.setLevel(logging.INFO)
         sys.excepthook = self.handle_exception
+        LoggerSetup.set_log_level(log_level)
 
-    def handle_exception(  # type:ignore
-        self, exc_type, exc_value, exc_traceback
+    def handle_exception(
+        self,
+        exc_type: Type[BaseException],
+        exc_value: BaseException,
+        exc_traceback: TracebackType,
     ) -> None:
         """Use Python's logging module when showing errors"""
 
@@ -71,6 +75,29 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         # Make the error type more obvious in terminal by separating these
         self.logger.error(traceback_msg)
         self.logger.error(error_msg)
+
+    @staticmethod
+    def set_log_level(
+        log_level: str = "info", logger_name: Optional[str] = None
+    ) -> None:
+        """Changes the logging level to the specified one.
+        If logger_name is None, then this will change the global log level.
+
+        Args:
+            log_level (str, optional): Log level to set. Defaults to "info".
+            logger_name (Optional[str], optional): Logger name. Defaults to None.
+        """
+        log_level_settings = set(["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG"])
+        log_level = log_level.upper()
+        if log_level not in log_level_settings:
+            log_level = "INFO"
+        logger = logging.getLogger(logger_name)
+        if log_level != "INFO":
+            if logger_name:
+                logger.info(f"Changing log_level to {log_level}")
+            else:
+                logger.info(f"Changing global log_level to {log_level}")
+        logger.setLevel(log_level)
 
 
 class ColoredFormatter(logging.Formatter):

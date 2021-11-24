@@ -13,28 +13,27 @@
 # limitations under the License.
 
 """
-Slower, accurate Object Detection model
+Slower but more accurate object detection model.
 """
 
+from typing import Any, Dict
 
-from typing import Dict, Any
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """EfficientDet node that initalises a EfficientDet model to detect bounding
-    boxes from an image.
+    """Initalises an EfficientDet model to detect bounding boxes from an image.
 
     The EfficientDet node is capable of detecting objects from 80 categories.
-    The table of categories can be found :term:`here <object detection
-    indices>`.
+    The table of categories can be found
+    :ref:`here <general-object-detection-ids>`.
 
-    EfficientDet node has five levels of compound coefficient
-    (0 - 5). A higher compound coefficient will scale up all dimensions of the
-    backbone network width, depth, and input resolution, which results in better
-    performance but slower inference time. The default compound coefficient is
-    0 and can be changed to other values.
+    EfficientDet node has five levels of compound coefficient (0 - 5). A higher
+    compound coefficient will scale up all dimensions of the backbone network
+    width, depth, and input resolution, which results in better performance but
+    slower inference time. The default compound coefficient is 0 and can be
+    changed to other values.
 
     Inputs:
         |img|
@@ -47,23 +46,21 @@ class Node(AbstractNode):
         |bbox_scores|
 
     Configs:
-        model_type (:obj:`int`): **{"0", "1", "2", "3", "4"}, default="0"**
-
+        model_type (:obj:`int`): **{0, 1, 2, 3, 4}, default = 0**. |br|
             Defines the compound coefficient for EfficientDet.
-
-        score_threshold (:obj:`float`): **[0,1], default = 0.3**
-
-            Threshold to determine if detection should be returned
-
-        detect_ids (:obj:`List`): **default = [0] **
-
-            List of object class ids to be detected.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.3**.
+            Threshold to determine if detection should be returned.
+        detect_ids (:obj:`List[int]`): **default = [0]**. |br|
+            List of object class IDs to be detected.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
 
     References:
+        EfficientDet: Scalable and Efficient Object Detection:
+        https://arxiv.org/abs/1911.09070
 
-    EfficientDet: Scalable and Efficient Object Detection: https://arxiv.org/abs/1911.09070
-
-    Code adapted from https://github.com/xuannianz/EfficientDet
+        Code adapted from https://github.com/xuannianz/EfficientDet.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -71,7 +68,7 @@ class Node(AbstractNode):
         self.model = efficientdet_model.EfficientDetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Function that takes an image as input and returns bboxes of objects specified
+        """Takes an image as input and returns bboxes of objects specified
         in config.
         """
         # Currently prototyped to return just the bounding boxes

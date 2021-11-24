@@ -27,7 +27,7 @@ class BatchNormalization(
     Make trainable=False freeze BN for real (the og version is sad)
     """
 
-    def call(self, inputs: np.array, training: tf.Tensor = None) -> object:
+    def call(self, inputs: np.ndarray, training: tf.Tensor = None) -> object:
         """Make trainable=False freeze BN for real (the og version is sad)
 
         Input:

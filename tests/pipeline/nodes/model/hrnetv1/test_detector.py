@@ -13,31 +13,54 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import os
-import yaml
+
+from pathlib import Path
+
 import pytest
+import yaml
+
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
 from peekingduck.weights_utils import checker, downloader
 
 
 @pytest.fixture
 def hrnet_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "hrnetv1"
+        / "test_hrnet.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
+
     return node_config
 
 
 @pytest.fixture
-def hrnet_detector(hrnet_config):
+def model_dir(hrnet_config):
+    return (
+        hrnet_config["root"]
+        / "peekingduck_weights"
+        / hrnet_config["weights"]["model_subdir"]
+    )
 
-    if not checker.has_weights(hrnet_config["root"], hrnet_config["weights_dir"]):
-        downloader.download_weights(hrnet_config["root"], hrnet_config["blob_file"])
 
-    detector = Detector(hrnet_config)
+@pytest.fixture
+def weights_dir(hrnet_config):
+    return hrnet_config["root"] / "peekingduck_weights"
+
+
+@pytest.fixture
+def hrnet_detector(hrnet_config, model_dir, weights_dir):
+    if not checker.has_weights(weights_dir, model_dir):
+        downloader.download_weights(weights_dir, hrnet_config["weights"]["blob_file"])
+
+    detector = Detector(hrnet_config, model_dir)
     return detector
 
 

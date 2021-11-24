@@ -36,7 +36,8 @@
 Core Yolo model files
 """
 
-from typing import Union, List, Tuple
+from typing import List, Tuple, Union
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras import Model
@@ -52,7 +53,10 @@ from tensorflow.keras.layers import (
     ZeroPadding2D,
 )
 from tensorflow.keras.regularizers import l2
-from .batch_norm import BatchNormalization
+
+from peekingduck.pipeline.nodes.model.yolov4.yolo_files.batch_norm import (
+    BatchNormalization,
+)
 
 # pylint: disable=redundant-keyword-arg, no-value-for-parameter, unexpected-keyword-arg, invalid-name, too-many-locals
 
@@ -85,7 +89,7 @@ YOLO_TINY_ANCHOR_MASKS = np.array([[3, 4, 5], [0, 1, 2]])
 
 
 def _darknet_conv(
-    x: np.array, filters: int, size: int, strides: int = 1, batch_norm: bool = True
+    x: np.ndarray, filters: int, size: int, strides: int = 1, batch_norm: bool = True
 ) -> tf.Tensor:
     """create 1 layer with [padding], conv2d, [bn and relu]"""
     if strides == 1:
@@ -107,7 +111,7 @@ def _darknet_conv(
     return x
 
 
-def _darknet_residual(x: np.array, filters: int) -> tf.Tensor:
+def _darknet_residual(x: np.ndarray, filters: int) -> tf.Tensor:
     """create 2 layers by given H(x) = F(x) + x"""
     prev = x
     x = _darknet_conv(x, filters // 2, 1)
@@ -116,7 +120,7 @@ def _darknet_residual(x: np.array, filters: int) -> tf.Tensor:
     return x
 
 
-def _darknet_block(x: np.array, filters: int, blocks: int) -> tf.Tensor:
+def _darknet_block(x: np.ndarray, filters: int, blocks: int) -> tf.Tensor:
     """create (1 + 2 x blocks) layers"""
     x = _darknet_conv(x, filters, 3, strides=2)
     for _ in range(blocks):
@@ -172,7 +176,7 @@ def _yolo_conv(filters: int, name: str = None) -> tf.keras.Model:
         - Model with 1 output x
     """
 
-    def _yolo_conv_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
+    def _yolo_conv_imp(x_in: Union[np.ndarray, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
             x, x_skip = inputs
@@ -197,7 +201,7 @@ def _yolo_conv(filters: int, name: str = None) -> tf.keras.Model:
 def _yolo_conv_tiny(filters: int, name: str = None) -> tf.keras.Model:
     """create [1] layers, return a Model with 1 output x"""
 
-    def _yolo_conv_tiny_imp(x_in: Union[np.array, Tuple[int, int]]) -> tf.keras.Model:
+    def _yolo_conv_tiny_imp(x_in: Union[np.ndarray, Tuple[int, int]]) -> tf.keras.Model:
         if isinstance(x_in, tuple):
             inputs = Input(x_in[0].shape[1:]), Input(x_in[1].shape[1:])
             x, x_skip = inputs
@@ -220,7 +224,7 @@ def _yolo_output(
 ) -> tf.keras.Model:
     """create 2 layers, return a model with 1 output x"""
 
-    def _yolo_output_imp(x_in: np.array) -> tf.keras.Model:
+    def _yolo_output_imp(x_in: np.ndarray) -> tf.keras.Model:
         x = inputs = Input(x_in.shape[1:])
         x = _darknet_conv(x, filters * 2, 3)
         x = _darknet_conv(x, anchors * (classes + 5), 1, batch_norm=False)
@@ -236,7 +240,7 @@ def _yolo_output(
 
 def _yolo_boxes(
     pred: tf.Tensor, anchors: int, classes: int
-) -> Tuple[List[np.array], List[str], List[float], List[np.array]]:
+) -> Tuple[List[np.ndarray], List[str], List[float], List[np.ndarray]]:
     # pred: (batch_size, grid, grid, anchors, (x, y, w, h, obj, ...classes))
     grid_size = tf.shape(pred)[1]
     box_xy, box_wh, objectness, class_probs = tf.split(
@@ -264,7 +268,7 @@ def _yolo_boxes(
 
 def _yolo_nms(
     outputs: List[tf.Tensor], classes: tf.Tensor
-) -> Tuple[List[np.array], List[float], List[str], List[int]]:
+) -> Tuple[List[np.ndarray], List[float], List[str], List[int]]:
     """non-maximum suppression"""
     # boxes, conf, type
     b, c, t = [], [], []

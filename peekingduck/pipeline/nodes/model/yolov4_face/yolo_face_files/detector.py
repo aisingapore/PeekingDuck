@@ -17,8 +17,8 @@ Object detection class using yolo model to detect human faces
 """
 
 import logging
-import os
-from typing import Dict, Any, List, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -29,51 +29,43 @@ from tensorflow.python.saved_model import tag_constants
 class Detector:  # pylint: disable=too-few-public-methods
     """Object detection class using yolo model to find human faces"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
-        classes_path = os.path.join(self.config["root"], self.config["classes"])
+        classes_path = self.model_dir / self.config["weights"]["classes_file"]
         with open(classes_path, "rt", encoding="utf8") as file:
-            class_labels = file.read().rstrip("\n").split("\n")
+            class_labels = [c.strip() for c in file.readlines()]
 
         return class_labels
 
     def _create_yolo_model(self) -> cv2.dnn_Net:
         model_type = self.config["model_type"]
-        model_file = os.path.join(
-            self.config["root"], self.config["model_weights_dir"][model_type]
+        model_path = (
+            self.model_dir / self.config["weights"]["saved_model_subdir"][model_type]
         )
-        model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.logger.info(
-            (
-                "Yolo model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "IDs being detected: %s, \n\t"
-                "Max detections per class: %s, \n\t"
-                "Max total detections: %s, \n\t"
-                "IOU threshold: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.config["model_type"],
-            self.config["size"],
-            self.config["detect_ids"],
-            self.config["max_output_size_per_class"],
-            self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            "Yolo model loaded with following configs: \n\t"
+            f"Model type: {self.config['model_type']}, \n\t"
+            f"Input resolution: {self.config['size']}, \n\t"
+            f"IDs being detected: {self.config['detect_ids']}, \n\t"
+            f"Max detections per class: {self.config['max_output_size_per_class']}, \n\t"
+            f"Max total detections: {self.config['max_total_size']}, \n\t"
+            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['yolo_score_threshold']}"
         )
 
         return model
 
     def predict_object_bbox_from_image(
-        self, image: np.array
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores
 

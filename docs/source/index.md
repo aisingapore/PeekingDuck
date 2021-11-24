@@ -1,16 +1,13 @@
-<div align="center">
-    <h1>PeekingDuck</h1>
-</div>
+# Introduction
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
 
 ## What is PeekingDuck?
 
 PeekingDuck is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
-
 
 
 ## How PeekingDuck Works
@@ -33,7 +30,7 @@ The rest of this webpage contains more details about using PeekingDuck, includin
 - [Official documentation](/peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
 - Using PeekingDuck as an imported Python module within your project, via the [Python API](getting_started/04_python_mode)
-- `model` nodes [FPS and accuracy benchmarks](resources/01_benchmarks), as well as details about [keypoints and class IDs](resources/02_model_indices)
+- Benchmarks and class/keypoints IDs for [object detection](resources/01a_object_detection) and [pose estimation](resources/01b_pose_estimation) models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
@@ -63,9 +60,10 @@ We're constantly developing new nodes to increase PeekingDuck's capabilities. Yo
 
 This project is supported by the National Research Foundation, Singapore under its AI Singapore Programme (AISG-RP-2019-050). Any opinions, findings and conclusions or recommendations expressed in this material are those of the author(s) and do not reflect the views of National Research Foundation, Singapore.
 
+
 ## License
 
-PeekingDuck is under the open source [Apache License 2.0](LICENSE) (:
+PeekingDuck is under the open source [Apache License 2.0](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE) (:
 
 Even so, your organisation may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
 - Your organisation is using PeekingDuck in a jurisdiction that does not recognise this license

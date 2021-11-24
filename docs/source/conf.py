@@ -76,17 +76,17 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
-    "peekingduck.pipeline.nodes.model.yolov4",
-    "peekingduck.pipeline.nodes.model.posenetv1",
+    "peekingduck.pipeline.nodes.dabble.utils",
+    "peekingduck.pipeline.nodes.dabble.zoningv1",
+    "peekingduck.pipeline.nodes.draw.utils",
+    "peekingduck.pipeline.nodes.input.utils",
     "peekingduck.pipeline.nodes.model.efficientdet_d04",
     "peekingduck.pipeline.nodes.model.hrnetv1",
-    "peekingduck.pipeline.nodes.model.yolov4_face",
     "peekingduck.pipeline.nodes.model.mtcnnv1",
+    "peekingduck.pipeline.nodes.model.posenetv1",
+    "peekingduck.pipeline.nodes.model.yolov4",
+    "peekingduck.pipeline.nodes.model.yolov4_face",
     "peekingduck.pipeline.nodes.model.yolov4_license_plate",
-    "peekingduck.pipeline.nodes.input.utils",
-    "peekingduck.pipeline.nodes.dabble.utils",
-    "peekingduck.pipeline.nodes.draw.utils",
     "peekingduck.pipeline.nodes.output.utils",
-    "peekingduck.pipeline.nodes.dabble.zoningv1",
     "peekingduck.utils",
 ]

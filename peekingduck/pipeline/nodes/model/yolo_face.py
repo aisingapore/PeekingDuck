@@ -13,21 +13,22 @@
 # limitations under the License.
 
 """
-Fast face detection model that can distinguish between masked and unmasked faces
+Fast face detection model that can distinguish between masked and unmasked
+faces.
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """YOLO node class that initialises and use the YOLO face detection model to
-    infer bboxes from image frame.
+    """Initialises and use the YOLO face detection model to infer bboxes from
+    image frame.
 
-    The yolo face model is a two class model capable of differentiating human faces
-    with and without face masks.
+    The YOLO face model is a two class model capable of differentiating human
+    faces with and without face masks.
 
     Inputs:
         |img|
@@ -40,54 +41,30 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bbox_scores|
 
     Configs:
-        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**
-
-            defines the type of YOLO model to be used.
-
-        weights_dir (:obj:`List`):
-
-            directory pointing to the model weights.
-
-        blob_file (:obj:`str`):
-
-            name of file to be downloaded, if weights are not found in `weights_dir`.
-
-        graph_files (:obj:`Dict`):
-
-            dictionary pointing to path of the model weights file.
-
-        size (:obj:`int`): **default = 416 **
-
-            image resolution passed to the YOLO model.
-
-        detect_ids (:obj:`List`): **default = [0,1]**
-
-            list of object class ids to be detected where no_mask is 0 and mask is 1.
-
-        max_output_size_per_class (:obj:`int`): **default = 50**
-
-            maximum number of detected instances for each class in an image.
-
-        max_total_size (:obj:`int`): **default = 50 **
-
-            maximum total number of detected instances in an image.
-
-        yolo_iou_threshold (:obj:`float`): **[0,1], default = 0.1**
-
-            overlapping bounding boxes above the specified IoU (Intersection
+        model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
+            Defines the type of YOLO model to be used.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
+        detect_ids (:obj:`List`): **default = [0, 1]**. |br|
+            List of object class IDs to be detected where `no_mask` is ``0``
+            and `mask` is ``1``.
+        max_output_size_per_class (:obj:`int`): **default = 50**. |br|
+            Maximum number of detected instances for each class in an image.
+        max_total_size (:obj:`int`): **default = 50**. |br|
+            Maximum total number of detected instances in an image.
+        yolo_iou_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
+            Overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
-
-        yolo_score_threshold (:obj:`float`): **[0,1], default = 0.7**
-
-            bounding box with confidence score less than the specified
+        yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.7**. |br|
+            Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
 
     References:
-
-    YOLOv4: Optimal Speed and Accuracy of Object Detection:
+        YOLOv4: Optimal Speed and Accuracy of Object Detection:
         https://arxiv.org/pdf/2004.10934v1.pdf
 
-    Model weights trained using pretrained weights from Darknet:
+        Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
     """
 

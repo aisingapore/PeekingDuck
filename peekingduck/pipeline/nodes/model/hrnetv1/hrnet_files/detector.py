@@ -16,35 +16,36 @@
 Detector class to handle detection of poses for hrnet
 """
 
-import os
 import logging
-from typing import Any, Dict, List, Tuple, Callable
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Tuple
 
-import tensorflow as tf
 import numpy as np
-from peekingduck.utils.graph_functions import load_graph
+import tensorflow as tf
+
+from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
+    affine_transform_xy,
+    get_keypoint_conns,
+    get_valid_keypoints,
+    reshape_heatmaps,
+    scale_transform,
+)
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    project_bbox,
     box2cs,
     crop_and_resize,
+    project_bbox,
 )
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
-    scale_transform,
-    affine_transform_xy,
-    reshape_heatmaps,
-    get_valid_keypoints,
-    get_keypoint_conns,
-)
+from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
     """Detector class to handle detection of poses for hrnet"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config["root"]
+        self.model_dir = model_dir
         self.resolution = config["resolution"]
         self.min_score = config["score_threshold"]
 
@@ -66,20 +67,18 @@ class Detector:
         return heatmap
 
     def _create_hrnet_model(self) -> Callable:
-        graph_path = os.path.join(self.root_dir, self.config["model_file"])
+        graph_path = self.model_dir / self.config["weights"]["model_file"]
         model_nodes = self.config["MODEL_NODES"]
         self.frozen_fn = load_graph(
-            graph_path, inputs=model_nodes["inputs"], outputs=model_nodes["outputs"]
+            str(graph_path),
+            inputs=model_nodes["inputs"],
+            outputs=model_nodes["outputs"],
         )
         resolution_tuple = (self.resolution["height"], self.resolution["width"])
         self.logger.info(
-            (
-                "HRNet graph model loaded with following configs: \n\t"
-                "Resolution: %s, \n\t"
-                "Score Threshold: %s"
-            ),
-            resolution_tuple,
-            self.min_score,
+            "HRNet graph model loaded with following configs: \n\t"
+            f"Resolution: {resolution_tuple}, \n\t"
+            f"Score Threshold: {self.min_score}"
         )
         return self._inference_function
 
@@ -150,7 +149,6 @@ class Detector:
         )
 
         normalized_keypoints = keypoints / frame_size
-
         keypoint_conns = get_keypoint_conns(normalized_keypoints, kp_masks)
 
         return normalized_keypoints, kp_scores, keypoint_conns

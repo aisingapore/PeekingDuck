@@ -13,31 +13,45 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-import os
-import pytest
-import yaml
+
+from pathlib import Path
+
+import cv2
 import numpy as np
 import numpy.testing as npt
-import cv2
+import pytest
+import yaml
+
 from peekingduck.pipeline.nodes.model.posenet import Node
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
+
+TEST_DIR = Path.cwd() / "images" / "testing"
 
 
 @pytest.fixture
 def posenet_config():
-    filepath = os.path.join(
-        os.getcwd(),
-        "tests",
-        "pipeline",
-        "nodes",
-        "model",
-        "posenetv1",
-        "test_posenet.yml",
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "posenetv1"
+        / "test_posenet.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
     return node_config
+
+
+@pytest.fixture
+def model_dir(posenet_config):
+    return (
+        posenet_config["root"].parent
+        / "peekingduck_weights"
+        / posenet_config["weights"]["model_subdir"]
+    )
 
 
 @pytest.fixture
@@ -47,12 +61,9 @@ def posenet(posenet_config):
 
 
 @pytest.fixture
-def posenet_predictor(posenet_config):
-    predictor = Predictor(posenet_config)
+def posenet_predictor(posenet_config, model_dir):
+    predictor = Predictor(posenet_config, model_dir)
     return predictor
-
-
-TEST_DIR = os.path.join(os.getcwd(), "images", "testing")
 
 
 @pytest.mark.mlmodel
@@ -61,7 +72,7 @@ class TestPredictor:
         assert posenet_predictor is not None, "Predictor is not instantiated"
 
     def test_predict(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
+        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
         output = posenet_predictor.predict(frame)
         assert len(output) == 4, "Predicted output has missing keys"
         for i in output:
@@ -74,8 +85,8 @@ class TestPredictor:
         assert len(tuple_res) == 2, "Loaded data must be of length 2"
 
     def test_create_image_from_frame(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
-        image, output_scale, image_size = posenet_predictor._create_image_from_frame(
+        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
+        _, output_scale, image_size = posenet_predictor._create_image_from_frame(
             16, frame, (225, 225), "75"
         )
         assert type(image_size) is list, "Image size must be a list"
@@ -90,7 +101,7 @@ class TestPredictor:
         assert self.posenet_model is not None, "Model is not instantiated"
 
     def test_predict_all_poses(self, posenet_predictor):
-        frame = cv2.imread(os.path.join(TEST_DIR, "t2.jpg"))
+        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
         posenet_model = posenet_predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
         coords, scores, masks = posenet_predictor._predict_all_poses(

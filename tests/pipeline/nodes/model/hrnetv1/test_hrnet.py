@@ -14,31 +14,38 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import os
-import yaml
-import pytest
+from pathlib import Path
+
 import cv2
 import numpy as np
 import numpy.testing as npt
+import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.model.hrnet import Node
 
 
 @pytest.fixture
 def hrnet_config():
-    filepath = os.path.join(
-        os.getcwd(), "tests/pipeline/nodes/model/hrnetv1/test_hrnet.yml"
+    filepath = (
+        Path.cwd()
+        / "tests"
+        / "pipeline"
+        / "nodes"
+        / "model"
+        / "hrnetv1"
+        / "test_hrnet.yml"
     )
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
-    node_config["root"] = os.getcwd()
+    node_config["root"] = Path.cwd()
+
     return node_config
 
 
 @pytest.fixture
 def hrnet(request, hrnet_config):
     node = Node(hrnet_config)
-
     return node
 
 
@@ -61,8 +68,8 @@ class TestHrnet:
             ), "unexpected output for {}".format(i)
 
     def test_return_at_least_one_person_and_one_bbox(self, test_human_images, hrnet):
-        """Testing HRnet on images with at least one human present. Bbox coordinates is set
-        as the entire image.
+        """Testing HRnet on images with at least one human present. Bbox
+        coordinates is set as the entire image.
         """
         test_img = cv2.imread(test_human_images)
         img_h, img_w, _ = test_img.shape

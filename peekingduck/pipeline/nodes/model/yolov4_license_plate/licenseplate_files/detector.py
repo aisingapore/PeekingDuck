@@ -16,9 +16,11 @@
 Object detection class using yolo single label model
 to find license plate object bboxes
 """
-import os
+
 import logging
-from typing import Dict, Any, List, Tuple
+from pathlib import Path
+from typing import Any, Dict, List, Tuple
+
 import cv2 as cv
 import numpy as np
 import tensorflow as tf
@@ -28,16 +30,16 @@ from tensorflow.python.saved_model import tag_constants
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+        self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dit = config["root"]
-        self.logger = logging.getLogger(__name__)
+        self.model_dir = model_dir
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
-        classes_path = os.path.join(self.config["root"], self.config["classes"])
+        classes_path = self.model_dir / self.config["weights"]["classes_file"]
         with open(classes_path, "rt") as file:
             class_labels = file.read().rstrip("\n").split("\n")
 
@@ -48,24 +50,18 @@ class Detector:
         Creates yolo model for license plate detection
         """
         self.model_type = self.config["model_type"]
-
-        model_file = os.path.join(
-            self.config["root"], self.config["model_weights_dir"][self.model_type]
+        model_path = (
+            self.model_dir
+            / self.config["weights"]["saved_model_subdir"][self.model_type]
         )
-        model = tf.saved_model.load(model_file, tags=[tag_constants.SERVING])
+        model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 
         self.logger.info(
-            (
-                "Yolo model loaded with following configs: \n\t"
-                "Model type: %s, \n\t"
-                "Input resolution: %s, \n\t"
-                "NMS threshold: %s, \n\t"
-                "Score threshold: %s"
-            ),
-            self.config["model_type"],
-            self.config["size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            "Yolo model loaded with following configs: \n\t"
+            f"Model type: {self.config['model_type']}, \n\t"
+            f"Input resolution: {self.config['size']}, \n\t"
+            f"NMS threshold: {self.config['yolo_iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['yolo_score_threshold']}"
         )
 
         return model
@@ -91,7 +87,7 @@ class Detector:
         return bboxes
 
     def predict_object_bbox_from_image(
-        self, image: np.array
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """
         Detect all license plate objects' bounding box from one image
