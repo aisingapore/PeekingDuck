@@ -18,9 +18,9 @@ Reads a videofeed from a stream, e.g., webcam.
 
 from typing import Any, Dict, Union
 
+from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -56,10 +56,16 @@ class Node(AbstractNode):
         frames_log_freq (:obj:`int`): **default = 100**. |br|
             Logs frequency of frames passed in CLI
         threading (:obj:`bool`): **default = False**. |br|
-            Flag to enable threading when reading frames from camera. The FPS
-            can increase up to 30% if this is enabled for Windows and MacOS.
-            This will also be supported in Linux in future PeekingDuck
-            versions.
+            Flag to enable threading when reading frames from camera.
+            The FPS can increase up to 30%.
+        buffer_frames (:obj:`bool`): **default = False**. |br|
+            Boolean to indicate if threaded class should buffer image frames.
+            If threading is True and output.media_writer is enabled, then
+            buffer_frames should be True to ensure output video is correctly
+            saved. One side effect of threading=True, buffer_frames=True is the
+            onscreen video display could appear laggy due to the buffering. |br|
+            For more info, please refer to `input.live configuration
+            <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/input/live.yml>`_.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -67,7 +73,9 @@ class Node(AbstractNode):
         self._allowed_extensions = ["mp4", "avi", "mov", "mkv"]
         self.videocap: Union[VideoNoThread, VideoThread]
         if self.threading:
-            self.videocap = VideoThread(self.input_source, self.mirror_image)
+            self.videocap = VideoThread(
+                self.input_source, self.mirror_image, self.buffer_frames
+            )
         else:
             self.videocap = VideoNoThread(self.input_source, self.mirror_image)
 
@@ -112,3 +120,7 @@ class Node(AbstractNode):
             self.logger.warning("No video frames available for processing.")
 
         return outputs
+
+    def release_resources(self) -> None:
+        """Override base class method to free video resource"""
+        self.videocap.shutdown()

@@ -18,6 +18,7 @@ to find license plate object bboxes
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
 import cv2 as cv
@@ -29,15 +30,16 @@ from tensorflow.python.saved_model import tag_constants
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.class_labels = self._get_class_labels()
         self.yolo = self._create_yolo_model()
 
     def _get_class_labels(self) -> List[str]:
-        classes_path = self.config["root"] / self.config["classes"]
+        classes_path = self.model_dir / self.config["weights"]["classes_file"]
         with open(classes_path, "rt") as file:
             class_labels = file.read().rstrip("\n").split("\n")
 
@@ -49,7 +51,8 @@ class Detector:
         """
         self.model_type = self.config["model_type"]
         model_path = (
-            self.config["root"] / self.config["model_weights_dir"][self.model_type]
+            self.model_dir
+            / self.config["weights"]["saved_model_subdir"][self.model_type]
         )
         model = tf.saved_model.load(str(model_path), tags=[tag_constants.SERVING])
 

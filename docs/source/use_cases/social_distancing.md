@@ -66,7 +66,7 @@ nodes:
 
 **1. Pose Estimation Model**
 
-By default, we are using the PoseNet model with a Resnet backbone for pose estimation. Depending on the device you're using, you might want to switch to the lighter mobilenet backbone, or to a heavier HRnet model for higher accuracy.
+By default, we are using the PoseNet model with a ResNet backbone for pose estimation. Please take a look at the [benchmarks](../resources/01b_pose_estimation.rst) of pose estimation models that are included in PeekingDuck if you would like to use a different model variation or an alternative model better suited to your use case.
 
 **2. Adjusting Nodes**
 
@@ -79,7 +79,7 @@ For more adjustable node behaviours not listed here, check out the [API Referenc
 
 **3. Using Object Detection (Optional)**
 
-It is possible to use object detection nodes such as `model.yolo` instead of pose estimation. To do so, replace the model node accordingly, and replace the node `dabble.keypoints_to_3d_loc` with `dabble.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
+It is possible to use [object detection nodes](../resources/01a_object_detection.rst) instead of pose estimation. To do so, replace the model node accordingly, and replace the node `dabble.keypoints_to_3d_loc` with `dabble.bbox_to_3d_loc`. The reference or “ground truth length” in this case would be the average height of a human, multipled by a small factor.
 
 You might need to use this approach if running on a resource-limited device such as a Raspberry Pi. In this situation, you'll need to use the lightweight models, and we find that lightweight object detectors are generally better than lightweight pose estimation models in detecting humans.
 
@@ -90,4 +90,3 @@ The trade-off here is that the estimated distance between individuals will be le
 As part of COVID-19 measures, the Singapore Government has set restrictions on the group sizes of social gatherings. We've developed a [group size checker](https://aisingapore.org/2021/05/covid-19-stay-vigilant-with-group-size-checker/) that checks if the group size limit has been violated.
 
 The nodes for group size checker can be stacked with social distancing, to perform both at the same time. To find out which nodes are used, check out the [readme](./group_size_checking.md) for group size checker.
-

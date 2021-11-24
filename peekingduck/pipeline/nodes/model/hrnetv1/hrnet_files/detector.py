@@ -17,6 +17,7 @@ Detector class to handle detection of poses for hrnet
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Callable, Dict, List, Tuple
 
 import numpy as np
@@ -40,11 +41,11 @@ from peekingduck.utils.graph_functions import load_graph
 class Detector:
     """Detector class to handle detection of poses for hrnet"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
-        self.root_dir = config["root"]
+        self.model_dir = model_dir
         self.resolution = config["resolution"]
         self.min_score = config["score_threshold"]
 
@@ -66,7 +67,7 @@ class Detector:
         return heatmap
 
     def _create_hrnet_model(self) -> Callable:
-        graph_path = self.root_dir / self.config["model_file"]
+        graph_path = self.model_dir / self.config["weights"]["model_file"]
         model_nodes = self.config["MODEL_NODES"]
         self.frozen_fn = load_graph(
             str(graph_path),

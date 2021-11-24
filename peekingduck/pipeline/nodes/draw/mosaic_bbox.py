@@ -54,64 +54,49 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         self.mosaic_level = self.config["mosaic_level"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        mosaic_img = self.mosaic_bbox(inputs["img"], inputs["bboxes"])
+        mosaic_img = self._mosaic_bbox(inputs["img"], inputs["bboxes"])
         outputs = {"img": mosaic_img}
         return outputs
 
-    def mosaic_bbox(self, image: np.ndarray, bboxes: List[np.ndarray]) -> np.ndarray:
-        """Mosaics areas bounded by bounding boxes on image.
+    def _mosaic_bbox(self, image: np.ndarray, bboxes: List[np.ndarray]) -> np.ndarray:
+        """Mosaics areas bounded by bounding boxes on ``image``.
 
         Args:
-            image (:obj:`np.ndarray`): Input image.
-            bboxes (:obj:`List[np.ndarray]`): A list of detected bboxes.
+            image (np.ndarray): Image in numpy array.
+            bboxes (List[np.ndarray]): numpy array of detected bboxes
 
         Returns:
-            image (:obj:`np.ndarray`): Image with mosaic applied over areas
-            bounded by bounding boxes.
+            (np.ndarray): Image with mosaicked bounding box regions.
         """
-        height = image.shape[0]
-        width = image.shape[1]
+        height, width = image.shape[:2]
+        # Prevent calculating mosaic on a mosaicked area
+        original_image = image.copy()
 
         for bbox in bboxes:
-            x_1, y_1, x_2, y_2 = bbox
-            x_1, x_2 = int(x_1 * width), int(x_2 * width)
-            y_1, y_2 = int(y_1 * height), int(y_2 * height)
+            # bbox can contain negative values sometimes, ensures the ROI
+            # selection is within bounds and without wrapping
+            rows = slice(int(max(0, bbox[1]) * height), int(min(1, bbox[3]) * height))
+            cols = slice(int(max(0, bbox[0]) * width), int(min(1, bbox[2]) * width))
 
-            # slice the image to get the area bounded by bbox
-            bbox_image = image[y_1:y_2, x_1:x_2, :].copy()
-            mosaic_bbox_image = self.mosaic(bbox_image, self.mosaic_level)
-            image[y_1:y_2, x_1:x_2, :] = mosaic_bbox_image
+            image[rows, cols] = self._mosaic(original_image[rows, cols])
 
         return image
 
-    @staticmethod
-    def mosaic(  # pylint: disable-msg=too-many-locals
-        image: np.ndarray, mosaic_level: int
-    ) -> np.ndarray:
+    def _mosaic(self, image: np.ndarray) -> np.ndarray:
         """Mosaics a given input image.
 
         Args:
-            image (:obj:`np.ndarray`): Input image.
-            mosaic_level (:obj:`int`): Mosaic intensity.
+            image (np.ndarray): Image in numpy array.
 
         Returns:
-            image (:obj:`np.ndarray`): Mosaiced image.
+            (np.ndarray): Mosaicked image in numpy array.
         """
-        (height, width) = image.shape[:2]
-        x_steps = np.linspace(0, width, mosaic_level + 1, dtype="int")
-        y_steps = np.linspace(0, height, mosaic_level + 1, dtype="int")
-
-        for i in range(1, len(y_steps)):
-            for j in range(1, len(x_steps)):
-                start_x = x_steps[j - 1]
-                start_y = y_steps[i - 1]
-                end_x = x_steps[j]
-                end_y = y_steps[i]
-
-                roi = image[start_y:end_y, start_x:end_x]
-                (blue, green, red) = [int(x) for x in cv2.mean(roi)[:3]]
-                cv2.rectangle(
-                    image, (start_x, start_y), (end_x, end_y), (blue, green, red), -1
-                )
+        height, width = image.shape[:2]
+        image = cv2.resize(
+            image,
+            (self.mosaic_level, self.mosaic_level),
+            interpolation=cv2.INTER_LANCZOS4,
+        )
+        image = cv2.resize(image, (width, height), interpolation=cv2.INTER_NEAREST)
 
         return image

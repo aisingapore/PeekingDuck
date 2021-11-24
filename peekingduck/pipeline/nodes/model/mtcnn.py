@@ -40,13 +40,9 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Configs:
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Mame of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        graph_files (:obj:`Dict`):
-            Dictionary pointing to path of the model weights file.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         mtcnn_min_size (:obj:`int`): **default = 40**. |br|
             Minimum height and width of face in pixels to be detected.
         mtcnn_factor (:obj:`float`): **[0, 1], default = 0.709**. |br|

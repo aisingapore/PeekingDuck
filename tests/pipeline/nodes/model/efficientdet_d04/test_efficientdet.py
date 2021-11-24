@@ -50,6 +50,15 @@ def efficientdet_config():
     return node_config
 
 
+@pytest.fixture
+def model_dir(efficientdet_config):
+    return (
+        efficientdet_config["root"].parent
+        / "peekingduck_weights"
+        / efficientdet_config["weights"]["model_subdir"]
+    )
+
+
 @pytest.fixture(params=[0, 1, 2, 3, 4])
 def efficientdet(request, efficientdet_config):
     efficientdet_config["model_type"] = request.param
@@ -59,9 +68,9 @@ def efficientdet(request, efficientdet_config):
 
 
 @pytest.fixture()
-def efficientdet_detector(efficientdet_config):
+def efficientdet_detector(efficientdet_config, model_dir):
     efficientdet_config["model_type"] = 0
-    detector = Detector(efficientdet_config)
+    detector = Detector(efficientdet_config, model_dir)
 
     return detector
 
