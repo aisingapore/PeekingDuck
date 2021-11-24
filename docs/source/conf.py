@@ -84,6 +84,7 @@ autosummary_mock_imports = [
     "peekingduck.pipeline.nodes.model.hrnetv1",
     "peekingduck.pipeline.nodes.model.mtcnnv1",
     "peekingduck.pipeline.nodes.model.posenetv1",
+    "peekingduck.pipeline.nodes.model.movenetv1",
     "peekingduck.pipeline.nodes.model.yolov4",
     "peekingduck.pipeline.nodes.model.yolov4_face",
     "peekingduck.pipeline.nodes.model.yolov4_license_plate",

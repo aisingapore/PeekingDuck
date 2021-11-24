@@ -50,6 +50,7 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`):  |br|
+
             **{"                                                                    |br|
             |tab| singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"|br|
             },  default="mulitpose_lightning"**                                     |br|
@@ -57,27 +58,34 @@ class Node(AbstractNode):
             Lightning is smaller and faster but less accurate than Thunder version.
 
         weights_dir (:obj:`List`):
+
             Directory path pointing to folder containing the model weights
 
         model_weights_dir (:obj: `Dict`):
+
             Dictionary of filepath to the model weights
 
         blob_file (:obj:`str`):
+
             Name of file to be downloaded, if weights are not found in `weights_dir`
 
         model_files (:obj:`Dict`):
+
             Dictionary pointing to path of model weights file
 
         resolution (:obj:`Dict`):  |br|
+
             Dictionary of resolutions of input array to different MoveNet models.
             Only multipose can use dynamic shape that needs be multiples of 32,
             recommended shape is 256
 
         bbox_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
+
             Detected bounding box confidence score threshold, only boxes above
             threshold will be kept in the output.
 
         keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
+
             Detected keypoints confidence score threshold, only keypoints above
             threshold will be output
 
