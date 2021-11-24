@@ -22,6 +22,7 @@ from pathlib import Path
 import pytest
 
 
+@pytest.mark.api
 @pytest.mark.usefixtures("tmp_dir")
 class TestApi:
     @staticmethod

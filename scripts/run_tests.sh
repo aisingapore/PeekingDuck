@@ -26,13 +26,12 @@ show_coverage(){
 
 run_test(){
     # runs pytest together with coverage, allows multiple configurations
-    # testType: type(str) - type of test suite to run
     # showCoverage: type(bool) - whether to show coverage
+    # testType: type(str) - type of test suite to run (multiple arguments)
 
-    testType=$1
-    showCoverage=$2
+    showCoverage=$1
 
-    if ! (coverage run --source="$test_dir" -m pytest -m "$testType"); then
+    if ! (coverage run --source="$test_dir" -m pytest -m "$2" -m "$3"); then
         show_coverage $showCoverage
         echo "TEST FAILED."
         exit 1
@@ -48,13 +47,13 @@ echo "Running $selectedTest tests in $test_dir"
 
 case $selectedTest in 
     "all")
-        run_test "" true
+        run_test true
         ;;
     "mlmodel")
-        run_test "mlmodel" false
+        run_test false "mlmodel"
         ;;
     "unit")
-        run_test "not mlmodel" false
+        run_test false "not mlmodel" "not api"
         ;;
     *)
         echo "'$1' is an illegal argument, choose from: " "${allowedExt[@]}"
