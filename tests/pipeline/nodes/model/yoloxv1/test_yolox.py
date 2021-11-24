@@ -23,6 +23,7 @@ import torch
 import yaml
 
 from peekingduck.pipeline.nodes.model.yolox import Node
+from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
 
 @pytest.fixture
@@ -138,6 +139,7 @@ class TestYOLOX:
         assert yolox_default.model.detect_ids == [0]
 
     def test_no_weights(self, yolox_config):
+        weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(
@@ -150,10 +152,11 @@ class TestYOLOX:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "No YOLOX weights detected. Proceeding to download..."
+                == "No weights detected. Proceeding to download..."
             )
             assert (
-                captured.records[1].getMessage() == "YOLOX weights download complete."
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
             )
             assert yolox is not None
 
@@ -182,7 +185,7 @@ class TestYOLOX:
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=True
         ), pytest.raises(ValueError):
-            yolox_config["model_files"][
+            yolox_config["weights"]["model_file"][
                 yolox_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=yolox_config)

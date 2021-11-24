@@ -39,18 +39,18 @@ class Detector:  # pylint: disable=too-few-public-methods
     Attributes:
         logger (logging.Logger): Events logger.
         config (Dict[str, Any]): YOLOX node configuration.
-        root_dir (pathlib.Path): Path to the root directory, used to construct
-            the path to the weights directory.
+        model_dir (pathlib.Path): Path to directory of model weights files.
         device (torch.device): Represents the device on which the torch.Tensor
             will be allocated.
         half (bool): Flag to determine if half-precision should be used.
         yolox (YOLOX): The YOLOX model for performing inference.
     """
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Half-precision only supported on CUDA
         self.half = self.config["half"] and self.device.type != "cpu"
@@ -107,10 +107,8 @@ class Detector:  # pylint: disable=too-few-public-methods
             self.detect_ids = self.detect_ids.half()
         self.input_size = (self.config["input_size"], self.config["input_size"])
         model_type = self.config["model_type"]
-        model_path = (
-            self.config["root"] / self.config["model_files"][model_type]
-        ).resolve()
-        model_sizes = self.config["model_sizes"][model_type]
+        model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
+        model_size = self.config["model_size"][model_type]
 
         self.logger.info(
             "YOLOX model loaded with the following configs:\n\t"
@@ -122,13 +120,13 @@ class Detector:  # pylint: disable=too-few-public-methods
             f"Half-precision floating-point: {self.half}\n\t"
             f"Fuse convolution and batch normalization layers: {self.config['fuse']}"
         )
-        return self._load_yolox_weights(model_path, model_sizes)
+        return self._load_yolox_weights(model_path, model_size)
 
-    def _get_model(self, model_sizes: Dict[str, float]) -> YOLOX:
+    def _get_model(self, model_size: Dict[str, float]) -> YOLOX:
         return YOLOX(
             self.config["num_classes"],
-            model_sizes["depth"],
-            model_sizes["width"],
+            model_size["depth"],
+            model_size["width"],
         )
 
     def _load_yolox_weights(

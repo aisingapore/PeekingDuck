@@ -42,10 +42,14 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         model_type (:obj:`str`): **{"yolox-tiny", "yolox-s", "yolox-m",
             "yolox-l"}, default="yolox-tiny"**. |br|
             Defines the type of YOLOX model to be used.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         input_size (:obj:`int`): **default=416**. |br|
             Input image resolution of the YOLOX model.
         detect_ids (:obj:`List[int]`): **default=[0]**. |br|
-            List of object category IDs to be detected.
+            List of object category IDs to be detected. An empty list will
+            make the model detect all available IDs.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.
