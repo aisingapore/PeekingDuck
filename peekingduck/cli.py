@@ -97,7 +97,9 @@ def init(custom_folder_name: str) -> None:
     default="info",
     help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
 )
-def run(config_path: str, node_config: str, log_level: str) -> None:
+def run(
+    config_path: str, node_config: str, log_level: str, nodes_parent_dir: str = "src"
+) -> None:
     """Runs PeekingDuck"""
     LoggerSetup.set_log_level(log_level)
 
@@ -107,7 +109,7 @@ def run(config_path: str, node_config: str, log_level: str) -> None:
     else:
         run_config_path = Path(config_path)
 
-    runner = Runner(run_config_path, node_config, "src")
+    runner = Runner(run_config_path, node_config, nodes_parent_dir)
     runner.run()
 
 
