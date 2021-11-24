@@ -54,7 +54,7 @@ case $selectedTest in
         run_test "mlmodel" false
         ;;
     "unit")
-        run_test "not mlmodel" false
+        run_test "not mlmodel and not api" false
         ;;
     *)
         echo "'$1' is an illegal argument, choose from: " "${allowedExt[@]}"
