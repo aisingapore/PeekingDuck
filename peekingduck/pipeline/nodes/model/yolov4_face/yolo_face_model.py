@@ -19,7 +19,7 @@ Face detection model with model types: yolov4 and yolov4tiny
 import logging
 from typing import List, Dict, Any, Tuple
 import numpy as np
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import (
     Detector,
 )
@@ -40,16 +40,18 @@ class Yolov4:  # pylint: disable=too-few-public-methods
         if not 0 <= config["yolo_iou_threshold"] <= 1:
             raise ValueError("yolo_iou_threshold must be in [0, 1]")
 
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights"], config["weights_parent_dir"]
+        )
+
         # check for yolo weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
-            self.logger.info(
-                "---no yolo weights detected. proceeding to download...---"
-            )
-            downloader.download_weights(config["root"], config["blob_file"])
-            self.logger.info("---yolo weights download complete.---")
+        if not checker.has_weights(weights_dir, model_dir):
+            self.logger.info("---no weights detected. proceeding to download...---")
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         self.detect_ids = config["detect_ids"]
-        self.detector = Detector(config)
+        self.detector = Detector(config, model_dir)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores

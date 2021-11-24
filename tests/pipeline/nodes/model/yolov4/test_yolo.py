@@ -24,7 +24,6 @@ import pytest
 import yaml
 
 from peekingduck.pipeline.nodes.model.yolo import Node
-from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import (
     yolov3,
     yolov3_tiny,
@@ -57,15 +56,7 @@ def yolo(request, yolo_config):
     return node
 
 
-@pytest.fixture()
-def yolo_detector(yolo_config):
-    yolo_config["model_type"] = "v4tiny"
-    detector = Detector(yolo_config)
-
-    return detector
-
-
-def replace_download_weights(root, blob_file):
+def replace_download_weights(model_dir, blob_file):
     return False
 
 
@@ -103,12 +94,9 @@ class TestYolo:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no yolo weights detected. proceeding to download...---"
+                == "---no weights detected. proceeding to download...---"
             )
-            assert (
-                captured.records[1].getMessage()
-                == "---yolo weights download complete.---"
-            )
+            assert "weights downloaded" in captured.records[1].getMessage()
             assert yolo is not None
 
     def test_get_detect_ids(self, yolo):

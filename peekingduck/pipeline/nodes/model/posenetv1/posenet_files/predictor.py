@@ -44,10 +44,11 @@ OUTPUT_STRIDE = 16
 class Predictor:  # pylint: disable=too-many-instance-attributes
     """Predictor class to handle detection of poses for posenet"""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
 
         self.config = config
+        self.model_dir = model_dir
         self.model_type = self.config["model_type"]
 
         self.posenet_model = self._create_posenet_model()
@@ -57,7 +58,9 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         self.max_pose_detection = self.config["max_pose_detection"]
         self.score_threshold = self.config["score_threshold"]
 
-        model_path = self.config["root"] / self.config["model_files"][self.model_type]
+        model_path = (
+            self.model_dir / self.config["weights"]["model_file"][self.model_type]
+        )
         model_func = self._load_posenet_graph(model_path)
 
         self.logger.info(

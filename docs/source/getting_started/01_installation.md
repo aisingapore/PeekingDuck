@@ -1,4 +1,4 @@
-## Install and Run PeekingDuck
+# Install and Run PeekingDuck
 
 1. Install PeekingDuck from [PyPI](https://pypi.org/project/peekingduck/).
     ```
@@ -42,7 +42,7 @@
 4. For more help on how to use PeekingDuck's command line interface, you can use `peekingduck --help`.
 
 
-### M1 Mac Installation
+## M1 Mac Installation
 
 Apple started releasing Macs with their proprietary [M1](https://en.wikipedia.org/wiki/Apple_M1) ARM-based chip in late 2020, a significant change from the previous Intel processors. We've successfully tested PeekingDuck on a few M1 Macs with these steps:
 

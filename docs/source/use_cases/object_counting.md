@@ -6,7 +6,7 @@ One of the basic task in computer vision is object counting. AI Singapore develo
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%">
 
-Counting is done by looking at the count of objects detected by the object detection models. As an example, we can count the number of people that appear in a video, as per our gif above. This is explained in a [subsequent section](#how-it-works).
+Counting is done by looking at the count of objects detected by the object detection models. For example, we can count the number of people that appear in a video, as shown in the GIF above. This is explained in a [subsequent section](#how-it-works).
 
 ## Demo
 
@@ -18,13 +18,11 @@ To try our solution on your own computer with [PeekingDuck installed](../getting
 
 ## How it Works
 
-The main component to obtain the count is the detection from the object detection model, which is the bounding boxes.
+The main component to obtain the count is the detections from the object detection model, which are the bounding boxes.
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as [Yolov4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as Yolov4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the yolo node, checkout the [Yolo configurable parameters](/peekingduck.pipeline.nodes.model.yolo.Node).
-
-We can also use the [EfficientDet model](/peekingduck.pipeline.nodes.model.efficientdet.Node) as a more accurate but slower alternative.
+We use an open source object detection estimation model known as [YOLOv4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of chosen objects we want to detect. This allows the application to identify where objects are located within the video feed. The location is returned as two (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each object detected. For more information in how adjust the `yolo` node, checkout the [`yolo` configurable parameters](/peekingduck.pipeline.nodes.model.yolo.Node).
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="70%">
 
@@ -49,7 +47,7 @@ nodes:
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people. To use more accurate models, you can try the [Yolov4 model](/peekingduck.pipeline.nodes.model.yolo.Node), or the [EfficientDet model](/peekingduck.pipeline.nodes.model.efficientdet.Node) that is included in our repo.
+By default, the node uses the YOLOv4-tiny model for object detection, set to detect people. Please take a look at the [benchmarks](../resources/01a_object_detection.rst) of object detection models that are included in PeekingDuck if you would like to use a different model variation or an alternative model better suited to your use case.
 
 **2. Object Counting Node**
 
@@ -57,7 +55,7 @@ The object counting node is called by including `dabble.bbox_count` in the run c
 
 **3. Adjusting Nodes**
 
-The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. As such, please see the [Yolo node documentation](/peekingduck.pipeline.nodes.model.yolo.Node) or the [Efficientdet node documentation](/peekingduck.pipeline.nodes.model.efficientdet.Node) for adjustable behaviours that can influence the result of the object counting node.
+The object counting node does not have changeable configurations. However, it depends on the configuration set in the object detection models, such as the type of object to detect, etc. For object detection model used in this demo, please see the [`yolo` node documentation](/peekingduck.pipeline.nodes.model.yolo.Node) for adjustable behaviours that can influence the result of the object counting node.
 
 For more adjustable node behaviours not listed here, check out the [API Reference](/peekingduck.pipeline.nodes).
 
