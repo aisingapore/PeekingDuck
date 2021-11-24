@@ -137,8 +137,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Other likely dirs that should not be committed
+# Ignore all data dir except the one in tests/
 data/
+!tests/data/
+
+# Other likely dirs that should not be committed
 logs/
 peekingduck_weights/
 results/

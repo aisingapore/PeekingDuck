@@ -1,0 +1,47 @@
+bad_paths: |
+  ..
+  ../some/path
+  /
+  /some/path
+  peekingduck/pipeline/nodes
+bad_paths_win: |
+  ..
+  ../some/path
+  C:/
+  C:/some/path
+  peekingduck/pipeline/nodes
+bad_types: |
+  inputs
+  random type
+  dbble
+bad_names: |
+  .name
+  na.me
+  name!
+  nam:e
+  nam/e
+  nam?e
+  name?
+  nam e
+  124n
+  _name
+  -name
+  nam`e
+    name
+  name_
+  name-
+  name 123
+good_paths: 
+  - "some/other/path\n"
+  - "some/path\n"
+good_types:
+  - "input\n"
+  - "model\n"
+good_names:
+  - "my_node_name\n"
+  - "some_node_name\n"
+proceed:
+  accept:
+    - "\n"
+    - "y\n"
+  reject: "n\n"
