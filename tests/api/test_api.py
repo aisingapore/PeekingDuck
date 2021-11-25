@@ -22,7 +22,7 @@ import subprocess
 import textwrap
 from pathlib import Path
 
-TEST_VERSION = "0.0.0.dev"
+TEST_VERSION = "developer"
 
 
 @pytest.mark.api
