@@ -60,6 +60,9 @@ class TestApi:
             """
         )
         output = TestApi.exec_code(code)
+        print("---")
+        print(f"output={output}")
+        print("---")
         res = TEST_VERSION == output
         assert res is not None
 
