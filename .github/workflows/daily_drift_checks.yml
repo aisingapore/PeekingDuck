@@ -23,7 +23,12 @@ jobs:
       - name: Install peekingduck locally
         run: |
           python -m pip install --upgrade pip
-          bash ./scripts/update_version.sh $VERSION
-          pip install .
+          TEST_VER=`grep -m 1 TEST_VERSION ./tests/api/test_api.py | cut -d ' ' -f 3`
+          TEST_VER=`echo ${TEST_VER} | cut -d '"' -f 2`
+          echo "test_api.py TEST_VER=${TEST_VER}"
+          bash ./scripts/update_version.sh ${TEST_VER}
+          pip install . --no-dependencies
+      - name: Run api tests
+        run: bash ./scripts/run_tests.sh api
       - name: Run system-checks
         uses: ./.github/actions/system-test # note only works after checkout@v2

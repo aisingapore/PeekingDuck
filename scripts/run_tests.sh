@@ -7,7 +7,7 @@
 
 test_dir=$PWD/peekingduck
 selectedTest="$1"
-allowedExt=(all unit mlmodel)
+allowedExt=(all unit mlmodel api)
 
 
 show_coverage(){
@@ -49,6 +49,9 @@ echo "Running $selectedTest tests in $test_dir"
 case $selectedTest in 
     "all")
         run_test "" true
+        ;;
+    "api")
+        run_test "api" false
         ;;
     "mlmodel")
         run_test "mlmodel" false
