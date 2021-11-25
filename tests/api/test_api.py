@@ -28,6 +28,15 @@ TEST_VERSION = "0.0.0dev"
 @pytest.mark.api
 @pytest.mark.usefixtures("tmp_dir")
 class TestApi:
+    """
+    dotw's technotes:
+    1. The code scripts below do 'import peekingduck ...'
+       This will import the installed version of Peeking Duck in the test environment.
+    2. The CI/CD post-merge test script install this development version in the
+       test environment using `pip install . --no-dependencies`, so the test code
+       below will be run on this development version instead of the released version.
+    """
+
     @staticmethod
     def exec_code(code: str) -> str:
         """Helper to execute given code string
