@@ -17,11 +17,11 @@ To test "import peekingduck" python API mode
 """
 
 import pytest
-import re
 import subprocess
 import textwrap
 from pathlib import Path
 
+# This version is read by CI/CD script and used for post-merge tests
 TEST_VERSION = "0.0.0dev"
 
 
@@ -60,9 +60,6 @@ class TestApi:
             """
         )
         output = TestApi.exec_code(code)
-        print("---")
-        print(f"output={output}")
-        print("---")
         res = TEST_VERSION == output
         assert res is not None
 

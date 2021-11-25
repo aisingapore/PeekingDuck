@@ -24,9 +24,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r cicd_requirements.txt
           TEST_VER=`grep -m 1 TEST_VERSION ./tests/api/test_api.py | cut -d ' ' -f 3`
-          echo "TEST_VER=${TEST_VER}"
           TEST_VER=`echo ${TEST_VER} | cut -d '"' -f 2`
-          echo "TEST_VER=${TEST_VER}"
+          echo "test_api.py TEST_VER=${TEST_VER}"
           bash ./scripts/update_version.sh ${TEST_VER}
           pip install . --no-dependencies
       - name: Run all tests
