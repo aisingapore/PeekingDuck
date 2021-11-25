@@ -47,7 +47,7 @@ def main(context: click.Context, config_path: str, log_level: str) -> None:
     if config_path is None:
         pkd_dir = Path(__file__).resolve().parent
         config_path = str(pkd_dir / "run_config.yml")
-        nodes_parent_dir = "PeekingDuck"
+        nodes_parent_dir = pkd_dir.name
     else:
         nodes_parent_dir = "src"
 
