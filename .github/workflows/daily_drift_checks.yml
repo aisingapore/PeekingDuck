@@ -22,7 +22,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install peekingduck locally
         run: |
-          if [ "$RUNNER_OS" == "windows-2019" ]; then
+          if [ "$RUNNER_OS" == "Windows" ]; then
             TEST_VER=0.0.0dev
           else
             TEST_VER=`grep -m 1 TEST_VERSION ./tests/api/test_api.py | cut -d ' ' -f 3`
@@ -33,6 +33,7 @@ jobs:
           pip install -r cicd_requirements.txt
           bash ./scripts/update_version.sh ${TEST_VER}
           pip install . --no-dependencies
+        shell: bash
       - name: Run api tests
         run: bash ./scripts/run_tests.sh api
       - name: Run system-checks
