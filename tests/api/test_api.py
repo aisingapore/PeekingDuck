@@ -16,10 +16,13 @@
 To test "import peekingduck" python API mode
 """
 
+import pytest
 import re
 import subprocess
+import textwrap
 from pathlib import Path
-import pytest
+
+TEST_VERSION = "0.0.0.dev"
 
 
 @pytest.mark.api
@@ -41,7 +44,7 @@ class TestApi:
         cmd = ["python", "tmp.py"]
         proc = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=temp_dir)
         out, err = proc.communicate()
-        assert err is None  # no errors at all
+        assert err is None  # we don't want any errors
         out_str = out.decode("utf-8")
         return out_str
 
@@ -49,54 +52,63 @@ class TestApi:
         """
         Check we get a valid version number
         """
-        code = """
-from peekingduck import __version__ as ver
-print(ver)
-        """
+        code = textwrap.dedent(
+            """
+            from peekingduck import __version__ as ver
+
+            print(ver)
+            """
+        )
         output = TestApi.exec_code(code)
-        res = re.match(r"v\d\.\d\.\d", output)
+        res = TEST_VERSION == output
         assert res is not None
 
     def test_pkd_imports(self):
         """
         Check can import without errors
         """
-        code = """
-from peekingduck import cli
-from peekingduck.configloader import ConfigLoader
-from peekingduck.declarative_loader import DeclarativeLoader
-from peekingduck.runner import Runner
-from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.pipeline.nodes.node import AbstractNode
-print("good")
-        """
+        code = textwrap.dedent(
+            """
+            from peekingduck import cli
+            from peekingduck.configloader import ConfigLoader
+            from peekingduck.declarative_loader import DeclarativeLoader
+            from peekingduck.runner import Runner
+            from peekingduck.pipeline.pipeline import Pipeline
+            from peekingduck.pipeline.nodes.node import AbstractNode
+
+            print("good")
+            """
+        )
         output = TestApi.exec_code(code)
-        res = re.match(r"good", output)
+        res = "good" == output
         assert res is not None
 
     def test_pkd_import_types(self):
         """
         Check imports are of the right (class) types
         """
-        code = """
-from peekingduck import cli
-from peekingduck.configloader import ConfigLoader
-from peekingduck.declarative_loader import DeclarativeLoader
-from peekingduck.runner import Runner
-from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.pipeline.nodes.node import AbstractNode
-import inspect
-the_types = []
-the_types.append(inspect.isclass(cli))
-the_types.append(inspect.isclass(ConfigLoader))
-the_types.append(inspect.isclass(DeclarativeLoader))
-the_types.append(inspect.isclass(Runner))
-the_types.append(inspect.isclass(Pipeline))
-the_types.append(inspect.isclass(AbstractNode))
-the_types_str = "".join([str(x) for x in the_types])
-print(the_types_str)
-        """
+        code = textwrap.dedent(
+            """
+            from peekingduck import cli
+            from peekingduck.configloader import ConfigLoader
+            from peekingduck.declarative_loader import DeclarativeLoader
+            from peekingduck.runner import Runner
+            from peekingduck.pipeline.pipeline import Pipeline
+            from peekingduck.pipeline.nodes.node import AbstractNode
+            import inspect
+
+            the_types = []
+            the_types.append(inspect.isclass(cli))
+            the_types.append(inspect.isclass(ConfigLoader))
+            the_types.append(inspect.isclass(DeclarativeLoader))
+            the_types.append(inspect.isclass(Runner))
+            the_types.append(inspect.isclass(Pipeline))
+            the_types.append(inspect.isclass(AbstractNode))
+            the_types_str = "".join([str(x) for x in the_types])
+            print(the_types_str)
+            """
+        )
         output = TestApi.exec_code(code)
         print(output)
-        res = re.match(r"FalseTrueTrueTrueTrueTrue", output)
+        res = "FalseTrueTrueTrueTrueTrue" == output
         assert res is not None

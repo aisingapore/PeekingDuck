@@ -48,7 +48,7 @@ echo "Running $selectedTest tests in $test_dir"
 
 case $selectedTest in 
     "all")
-        run_test "" true 
+        run_test "" true
         ;;
     "mlmodel")
         run_test "mlmodel" false
