@@ -7,7 +7,7 @@
 
 test_dir=$PWD/peekingduck
 selectedTest="$1"
-allowedExt=(all unit mlmodel api)
+allowedExt=(all unit mlmodel module)
 
 
 show_coverage(){
@@ -50,14 +50,14 @@ case $selectedTest in
     "all")
         run_test "" true
         ;;
-    "api")
-        run_test "api" false
+    "module")
+        run_test "module" false
         ;;
     "mlmodel")
         run_test "mlmodel" false
         ;;
     "unit")
-        run_test "not mlmodel and not api" false
+        run_test "not mlmodel and not module" false
         ;;
     *)
         echo "'$1' is an illegal argument, choose from: " "${allowedExt[@]}"

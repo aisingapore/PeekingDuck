@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 markers = [
-    "api: marks test for python import peekingduck tests",
+    "module: marks test for python import peekingduck tests",
     "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not mlmodel\"')",
 ]
 
