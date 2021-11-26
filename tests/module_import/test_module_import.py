@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-To test "import peekingduck" python API mode
+To test "import peekingduck" as a module
 """
 
 import pytest
@@ -25,9 +25,9 @@ from pathlib import Path
 TEST_VERSION = "0.0.0dev"
 
 
-@pytest.mark.api
+@pytest.mark.module
 @pytest.mark.usefixtures("tmp_dir")
-class TestApi:
+class TestModuleImport:
     """
     dotw's technotes:
     1. The code scripts below do 'import peekingduck ...'
@@ -68,7 +68,7 @@ class TestApi:
             print(ver)
             """
         )
-        output = TestApi.exec_code(code)
+        output = TestModuleImport.exec_code(code)
         res = TEST_VERSION == output
         assert res is not None
 
@@ -88,7 +88,7 @@ class TestApi:
             print("good")
             """
         )
-        output = TestApi.exec_code(code)
+        output = TestModuleImport.exec_code(code)
         res = "good" == output
         assert res is not None
 
@@ -117,7 +117,7 @@ class TestApi:
             print(the_types_str)
             """
         )
-        output = TestApi.exec_code(code)
+        output = TestModuleImport.exec_code(code)
         print(output)
         res = "FalseTrueTrueTrueTrueTrue" == output
         assert res is not None
