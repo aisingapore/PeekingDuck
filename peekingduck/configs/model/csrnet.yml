@@ -1,0 +1,19 @@
+input: ["img"]
+output: ["density_map", "count"]
+
+model_type: dense # sparse or dense
+weights_parent_dir: null
+weights: {
+    model_subdir: csrnet,
+    blob_file: csrnet.zip,
+    model_file: {
+        dense: shanghaitech-part-a.onnx,
+        sparse: shanghaitech-part-b.onnx
+    }
+}
+width: 640
+MODEL_NODES: {
+        inputs: ["input_2"],
+        outputs: ["y_out"],
+
+}
