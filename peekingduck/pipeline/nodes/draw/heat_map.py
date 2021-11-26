@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Overlays a heat map over an image
+Superimposes a heat map over an image
 """
 
 from typing import Any, Dict
@@ -27,9 +27,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Superimposes a heat map over an image.
 
-    The ``draw.heat_map`` node helps identify areas that are more crowded. Areas
-    that are more crowded are displayed in red and areas that are less crowded are
-    displayed in blue.
+    The ``draw.heat_map`` node helps to identify areas that are more crowded. Areas
+    that are more crowded are highlighted in red while areas that are less crowded are
+    highlighted in blue.
 
     Inputs:
         |img|
