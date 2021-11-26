@@ -19,6 +19,7 @@ Overlays a heat map over an image
 from typing import Any, Dict
 
 import cv2
+import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -49,7 +50,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         img = self._add_heat_map(inputs["density_map"], inputs["img"])
         return {"img": img}
 
-    def _add_heat_map(self, density_map, image):
+    def _add_heat_map(self, density_map: np.ndarray, image: np.ndarray) -> np.ndarray:
         """Superimposes a heat map over an ``image``.
 
         Args:
@@ -75,7 +76,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         return image
 
     @staticmethod
-    def _norm_min_max(src):
+    def _norm_min_max(src: np.ndarray) -> np.ndarray:
         target = None
         norm_results = cv2.normalize(
             # source array
