@@ -7,7 +7,7 @@
 
 test_dir=$PWD/peekingduck
 selectedTest="$1"
-allowedExt=(all unit mlmodel)
+allowedExt=(all unit mlmodel api)
 
 
 show_coverage(){
@@ -26,8 +26,8 @@ show_coverage(){
 
 run_test(){
     # runs pytest together with coverage, allows multiple configurations
-    # testType: type(str) - type of test suite to run
     # showCoverage: type(bool) - whether to show coverage
+    # testType: type(str) - type of test suite to run
 
     testType=$1
     showCoverage=$2
@@ -50,11 +50,14 @@ case $selectedTest in
     "all")
         run_test "" true
         ;;
+    "api")
+        run_test "api" false
+        ;;
     "mlmodel")
         run_test "mlmodel" false
         ;;
     "unit")
-        run_test "not mlmodel" false
+        run_test "not mlmodel and not api" false
         ;;
     *)
         echo "'$1' is an illegal argument, choose from: " "${allowedExt[@]}"
