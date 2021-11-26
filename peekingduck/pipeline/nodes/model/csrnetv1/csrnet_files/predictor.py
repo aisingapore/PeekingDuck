@@ -84,6 +84,15 @@ class Predictor:
         return density_map, crowd_count
 
     def process_image(self, image: np.ndarray) -> tf.Tensor:
+        """Resizes and normalizes an image based on the mean and standard deviation
+        of Imagenet.
+
+        Args:
+            image (np.ndarray): input image.
+
+        Returns:
+            image (np.ndarray): processed image.
+        """
         image = self.resize_image(image)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image / 255.0
@@ -95,6 +104,14 @@ class Predictor:
         return image
 
     def resize_image(self, image: np.ndarray) -> np.ndarray:
+        """Resizes an image based on the input width.
+
+        Args:
+            image (np.ndarray): input image.
+
+        Returns:
+            image (np.ndarray): resized image.
+        """
         ratio = self.config["width"] / image.shape[1]
         dim = (self.config["width"], int(image.shape[0] * ratio))
         image = cv2.resize(image, dim, interpolation=cv2.INTER_LINEAR)

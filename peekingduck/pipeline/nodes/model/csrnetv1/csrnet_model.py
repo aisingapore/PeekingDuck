@@ -17,7 +17,7 @@ CSRNet model with model types: sparse and dense
 """
 
 import logging
-from typing import List, Dict, Any, Tuple
+from typing import Dict, Any, Tuple
 
 import numpy as np
 
@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.csrnetv1.csrnet_files.predictor import Pre
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class CsrnetModel:
+class CsrnetModel:  # pylint: disable=too-few-public-methods
     """CSRNet model with model types: sparse and dense"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
