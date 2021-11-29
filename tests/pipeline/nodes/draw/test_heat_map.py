@@ -49,16 +49,16 @@ class TestHeatmap:
 
         input = {"img": output_img, "density_map": np.zeros((1, 45, 80, 1))}
 
-        draw_heat_map_node.run(input)
-        np.testing.assert_equal(original_img, output_img)
+        output_img = draw_heat_map_node.run(input)
+        np.testing.assert_equal(original_img, output_img["img"])
 
     def test_heat_map(self, draw_heat_map_node, test_image):
         original_img = cv2.imread(str(test_image))
         output_img = original_img.copy()
 
-        input = {"img": output_img, "density_map": np.random.rand((1, 45, 80, 1))}
+        input = {"img": output_img, "density_map": np.random.rand(1, 45, 80, 1)}
 
-        draw_heat_map_node.run(input)
+        output_img = draw_heat_map_node.run(input)
 
         # does not fail if the images are different
         # after applying heat_map
@@ -66,5 +66,5 @@ class TestHeatmap:
             AssertionError,
             np.testing.assert_array_equal,
             original_img,
-            output_img,
+            output_img["img"],
         )

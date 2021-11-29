@@ -47,8 +47,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        img = self._add_heat_map(inputs["density_map"], inputs["img"])
-        return {"img": img}
+        heat_map_img = self._add_heat_map(inputs["density_map"], inputs["img"])
+        return {"img": heat_map_img}
 
     def _add_heat_map(self, density_map: np.ndarray, image: np.ndarray) -> np.ndarray:
         """Superimposes a heat map over an ``image``.
@@ -60,8 +60,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         Returns:
             image (np.ndarray): image with a heat map superimposed over it.
         """
-        density_map = density_map[0, :, :, 0]
+        original_image = image.copy()
+
         if np.count_nonzero(density_map) != 0:
+            density_map = density_map[0, :, :, 0]
             density_map = self._norm_min_max(density_map)
             heat_map = cv2.applyColorMap(density_map, cv2.COLORMAP_JET)
             heat_map = cv2.resize(
@@ -69,7 +71,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
                 (image.shape[1], image.shape[0]),
                 interpolation=cv2.INTER_LINEAR,
             )
-            image = cv2.addWeighted(image, 0.5, heat_map, 0.5, 0)
+            image = cv2.addWeighted(original_image, 0.5, heat_map, 0.5, 0)
 
         return image
 
