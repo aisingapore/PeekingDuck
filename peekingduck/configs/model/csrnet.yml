@@ -1,7 +1,7 @@
 input: ["img"]
 output: ["density_map", "count"]
 
-model_type: dense # sparse or dense
+model_type: sparse # sparse or dense
 weights_parent_dir: null
 weights: {
     model_subdir: csrnet,
