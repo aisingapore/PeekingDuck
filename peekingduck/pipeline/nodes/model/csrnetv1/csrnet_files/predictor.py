@@ -85,7 +85,7 @@ class Predictor:
 
     def process_image(self, image: np.ndarray) -> tf.Tensor:
         """Resizes and normalizes an image based on the mean and standard deviation
-        of Imagenet.
+        of Imagenet. These are the default values for models with PyTorch origins.
 
         Args:
             image (np.ndarray): input image.
