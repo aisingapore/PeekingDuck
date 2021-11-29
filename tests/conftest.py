@@ -28,6 +28,9 @@ TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
 
 TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
 TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
+
+TEST_CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
+
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
 
 
@@ -114,6 +117,15 @@ def test_lp_images(request):
 
 @pytest.fixture(params=TEST_NO_LP_IMAGES)
 def test_no_lp_images(request):
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
+
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=TEST_CROWD_IMAGES)
+def test_crowd_images(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
 
     yield str(test_img_dir / request.param)
