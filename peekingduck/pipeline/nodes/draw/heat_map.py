@@ -61,17 +61,15 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             image (np.ndarray): image with a heat map superimposed over it.
         """
         density_map = density_map[0, :, :, 0]
-
-        density_map = self._norm_min_max(density_map)
-        heat_map = cv2.applyColorMap(density_map, cv2.COLORMAP_JET)
-
-        heat_map = cv2.resize(
-            heat_map,
-            (image.shape[1], image.shape[0]),
-            interpolation=cv2.INTER_LINEAR,
-        )
-
-        image = cv2.addWeighted(image, 0.5, heat_map, 0.5, 0)
+        if np.count_nonzero(density_map) != 0:
+            density_map = self._norm_min_max(density_map)
+            heat_map = cv2.applyColorMap(density_map, cv2.COLORMAP_JET)
+            heat_map = cv2.resize(
+                heat_map,
+                (image.shape[1], image.shape[0]),
+                interpolation=cv2.INTER_LINEAR,
+            )
+            image = cv2.addWeighted(image, 0.5, heat_map, 0.5, 0)
 
         return image
 
