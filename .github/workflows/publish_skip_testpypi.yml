@@ -1,8 +1,7 @@
 name: Skip Test Pypi and Publish to Pypi
 env:
   VERSION: v1.0.3
-on:
-  workflow_dispatch
+on: workflow_dispatch
 
 jobs:
   local-install-test:
@@ -44,7 +43,7 @@ jobs:
           python -m pip install build --user
           python -m build --sdist --wheel --outdir dist/ .
       - name: Publish distribution 📦 to PyPI
-        uses: pypa/gh-action-pypi-publish@master
+        uses: pypa/gh-action-pypi-publish@v1.4.2
         with:
           password: ${{ secrets.PYPI_API_TOKEN }}
 
