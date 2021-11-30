@@ -1,15 +1,23 @@
-"""yolo_with_plugins.py
+# Copyright 2021 AI Singapore
 
-Implementation of TrtYOLO class with the yolo_layer plugins.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+
+#      https://www.apache.org/licenses/LICENSE-2.0
+
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Object detection class using TF_TRT yolo single label model
+to find license plate object bboxes
 """
 
-
-from __future__ import print_function
-
-import ctypes
-
 import time
-
 import os
 import logging
 from typing import Dict, Any, List, Tuple
@@ -21,9 +29,8 @@ from tensorflow.python.saved_model import tag_constants
 
 
 class Detector:
-
     def __init__(self, config: Dict[str, Any], cuda_ctx=None) -> None:
-        
+
         self.config = config
         self.root_dit = config["root"]
         self.logger = logging.getLogger(__name__)
@@ -31,8 +38,8 @@ class Detector:
 
         # TF-TRT
         TRT_model_saved_dir = os.path.join(
-            self.config["root"], 
-            self.config["converted_model_path"][self.model_type])
+            self.config["root"], self.config["converted_model_path"][self.model_type]
+        )
         if not os.path.isdir(TRT_model_saved_dir):
             self.build_engine()
 
@@ -55,7 +62,7 @@ class Detector:
         # input_fn: a generator function that yields input data as a list or tuple,
         # which will be used to execute the converted signature to generate TensorRT
         # engines.
-        input_shape = (1,self.config["size"],self.config["size"],3)
+        input_shape = (1, self.config["size"], self.config["size"], 3)
         batched_input = np.zeros(input_shape, dtype=np.float32)
         batched_input = tf.constant(batched_input)
         yield (batched_input,)
@@ -66,17 +73,19 @@ class Detector:
             self.config["root"], self.config["model_weights_dir"][self.model_type]
         )
 
-        # Conversion Parameters 
+        # Conversion Parameters
         conversion_params = trt_convert.TrtConversionParams(
             precision_mode=trt_convert.TrtPrecisionMode.FP16,
             max_workspace_size_bytes=4000000000,
-            max_batch_size=1)
-        
+            max_batch_size=1,
+        )
+
         converter = trt_convert.TrtGraphConverterV2(
             input_saved_model_dir=input_saved_model_dir,
-            conversion_params=conversion_params)
+            conversion_params=conversion_params,
+        )
 
-        print('Building the TensorRT engine.  This would take a while...')
+        print("Building the TensorRT engine.  This would take a while...")
         t = time.process_time()
         # Converter method used to partition and optimize TensorRT compatible segments
         converter.convert()
@@ -93,7 +102,7 @@ class Detector:
 
         elapsed_time = time.process_time() - t
         print(f"TensorRT engine built in {elapsed_time} secs")
-    
+
     @staticmethod
     def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
         """
@@ -116,12 +125,12 @@ class Detector:
 
     def predict(self, frame: np.array) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
 
-        #TF-TRT
-        image_data  = cv2.resize(frame, (self.config["size"], self.config["size"]))
+        # TF-TRT
+        image_data = cv2.resize(frame, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
         image_data = np.asarray([image_data]).astype(np.float32)
         batch_data = tf.constant(image_data)
-        func = self.model.signatures['serving_default']
+        func = self.model.signatures["serving_default"]
         output = func(batch_data)
         for _, value in output.items():
             pred_conf = value[:, :, 4:]
@@ -131,11 +140,12 @@ class Detector:
         bboxes, scores, classes, nums = tf.image.combined_non_max_suppression(
             tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
             tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])),
-            self.config['max_output_size_per_class'],
-            self.config['max_total_size'],
-            self.config['yolo_iou_threshold'],
-            self.config['yolo_score_threshold']
+                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
+            ),
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["yolo_iou_threshold"],
+            self.config["yolo_score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]
@@ -152,5 +162,3 @@ class Detector:
             bboxes = self.bbox_scaling(bboxes, 0.75)
 
         return bboxes, classes, scores
-
-
