@@ -36,9 +36,6 @@ class CsrnetModel:  # pylint: disable=too-few-public-methods
             config["root"], config["weights"], config["weights_parent_dir"]
         )
 
-        self.logger.info(f"weights dir: {weights_dir}")
-        self.logger.info(f"model dir: {model_dir}")
-
         # check for csrnet weights, if none then download into weights folder
         if not checker.has_weights(weights_dir, model_dir):
             self.logger.info("---no weights detected. proceeding to download...---")
