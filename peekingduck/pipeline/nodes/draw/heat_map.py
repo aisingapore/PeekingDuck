@@ -48,7 +48,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         heat_map_img = self._add_heat_map(inputs["density_map"], inputs["img"])
-        return {"img": heat_map_img}
+        outputs = {"img": heat_map_img}
+        return outputs
 
     def _add_heat_map(self, density_map: np.ndarray, image: np.ndarray) -> np.ndarray:
         """Superimposes a heat map over an ``image``.
