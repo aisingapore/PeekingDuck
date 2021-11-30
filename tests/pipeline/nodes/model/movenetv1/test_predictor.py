@@ -74,7 +74,7 @@ class TestPredictor:
 
     def test_model_creation(self, movenet_predictor):
         assert (
-            movenet_predictor._create_posenet_model is not None
+            movenet_predictor._create_movenet_model is not None
         ), "Model is not loaded"
 
     def test_get_resolution_as_tuple(self, movenet_predictor):

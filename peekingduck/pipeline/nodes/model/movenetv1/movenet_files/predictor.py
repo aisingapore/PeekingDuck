@@ -59,9 +59,9 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         self.model_dir = model_dir
         self.model_type = self.config["model_type"]
 
-        self.movenet_model = self._create_posenet_model()
+        self.movenet_model = self._create_movenet_model()
 
-    def _create_posenet_model(self) -> tf.keras.Model:
+    def _create_movenet_model(self) -> tf.keras.Model:
         model_path = (
             self.model_dir / self.config["weights"]["model_file"][self.model_type]
         )
