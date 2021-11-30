@@ -1,14 +1,5 @@
 nodes:
-# - input.live
-- input.recorded:
-    input_dir: "E:/PeekingDuck_AIAP/PeekingDuck_test2/test/test_images/no_LP/t4.jpg"
-# - model.posenet
-- model.movenet:
-    model_type: "multipose_lightning"
-- dabble.fps
-- draw.poses
+- input.live
+- model.yolo
 - draw.bbox
-- draw.legend
-- output.media_writer:
-    output_dir: "E:/PeekingDuck_AIAP/PeekingDuck_test2/test/movenet_test"
-# - output.screen
+- output.screen
