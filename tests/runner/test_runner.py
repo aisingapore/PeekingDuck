@@ -217,5 +217,5 @@ class TestRunner:
     def test_get_run_config(self, runner):
         node_list = runner.get_run_config()
 
-        for idx, node in enumerate(node_list):
+        for idx, (node, _) in enumerate(node_list):
             assert node == NODES["nodes"][idx]

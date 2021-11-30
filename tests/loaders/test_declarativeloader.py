@@ -146,8 +146,11 @@ class TestDeclarativeLoader:
     def test_loaded_node_list(self, declarativeloader):
         loaded_nodes = declarativeloader.node_list
 
-        for idx, node in enumerate(loaded_nodes):
-            assert node == NODES["nodes"][idx]
+        for idx, (node, config_updates) in enumerate(loaded_nodes):
+            if isinstance(NODES["nodes"][idx], dict):
+                assert {node: config_updates} == NODES["nodes"][idx]
+            else:
+                assert node == NODES["nodes"][idx]
 
     def test_get_custom_name_from_node_list(self, declarativeloader):
         custom_folder_name = declarativeloader._get_custom_name_from_node_list()
