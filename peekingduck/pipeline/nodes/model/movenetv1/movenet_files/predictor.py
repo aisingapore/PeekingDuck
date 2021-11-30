@@ -283,11 +283,6 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         keypoint_masks = keypoints_score > keypoints_score_theshold
         valid_keypoints[~keypoint_masks] = [-1, -1]
 
-        # if all keypoints are invalid, valid_keypoints
-        # will be an array of [-1,-1] for all keypoints (x,y) coor
-        if np.sum(valid_keypoints) < 0:
-            return None, None
-
         return valid_keypoints, keypoint_masks
 
     @staticmethod
