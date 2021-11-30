@@ -30,7 +30,9 @@ class Node(AbstractNode):
     The csrnet node is capable of predicting the number of people in dense and
     sparse crowds. The dense and sparse crowd models were trained using data from
     ShanghaiTech Part A and ShanghaiTech Part B respectively. The node uses the
-    sparse crowd model by default and can be changed to using the dense crowd model.
+    sparse crowd model by default and can be changed to using the dense crowd
+    model. As a guideline, the dense crowd model should be used if the people in
+    a given image or video frame are packed shoulder to shoulder (e.g. stadiums).
 
     Inputs:
         |img|
@@ -50,7 +52,7 @@ class Node(AbstractNode):
             By default, the width of an image will be resized to 640 for inference.
             The height of the image will be resized proportionally to preserve its
             aspect ratio. In general, decreasing the width of an image will improve
-            inference speed. However, this might impair the accuracy of the results.
+            inference speed. However, this might impact the accuracy of the model.
 
     References:
         CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes:
