@@ -54,8 +54,9 @@ def model_dir(csrnet_config):
     )
 
 
-@pytest.fixture()
-def csrnet(csrnet_config):
+@pytest.fixture(params=["sparse", "dense"])
+def csrnet(request, csrnet_config):
+    csrnet_config["model_type"] = request.param
     node = Node(csrnet_config)
 
     return node
@@ -79,14 +80,14 @@ class TestCsrnet:
         output = csrnet.run({"img": blank_image})
         assert list(output.keys()) == ["density_map", "count"]
         assert math.ceil(np.sum(output["density_map"])) == output["count"]
-        assert output["count"] <= 3
+        assert output["count"] < 9
 
     def test_crowd(self, test_crowd_images, csrnet):
         crowd_image = cv2.imread(test_crowd_images)
         output = csrnet.run({"img": crowd_image})
         assert list(output.keys()) == ["density_map", "count"]
         assert math.ceil(np.sum(output["density_map"])) == output["count"]
-        assert output["count"] > 10
+        assert output["count"] >= 10
 
     def test_no_weights(self, csrnet_config):
         with mock.patch(
