@@ -80,8 +80,8 @@ class TestCsrnet:
         output = csrnet.run({"img": blank_image})
         assert list(output.keys()) == ["density_map", "count"]
         assert math.ceil(np.sum(output["density_map"])) == output["count"]
-        # model is not accurate when count is below 9
-        # min count of ShanghaiTech dataset is 9
+        # model is less accurate and detects extra people when cnt is low or none
+        # threshold of 9 is chosen based on the min cnt in ShanghaiTech dataset
         assert output["count"] < 9
 
     def test_crowd(self, test_crowd_images, csrnet):
