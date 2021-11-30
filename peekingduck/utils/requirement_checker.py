@@ -84,8 +84,7 @@ def check_requirements(
                 pkg.require(req.name)
             except (pkg.DistributionNotFound, pkg.VersionConflict):
                 logger.info(
-                    "%s not found and is required, attempting auto-update...",
-                    req.name,
+                    f"{req.name} not found and is required, attempting auto-update..."
                 )
                 try:
                     logger.info(
@@ -97,22 +96,16 @@ def check_requirements(
                     raise
         else:
             logger.warning(
-                (
-                    "The %s node requires %s which needs to be "
-                    "manually installed. Please follow the instructions "
-                    "at %s and rerun. Ignore this warning if the "
-                    "package is already installed"
-                ),
-                identifier,
-                req.name.strip(),
-                "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html",
+                f"The {identifier} node requires {req.name.strip()} which needs to be "
+                "manually installed. Please follow the instructions at "
+                "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html "
+                "and rerun. Ignore this warning if the package is already installed"
             )
 
     if n_update > 0:
         logger.warning(
-            "%d package%s updated. Please rerun for the updates to take effect.",
-            n_update,
-            "s" * int(n_update > 1),
+            f"{n_update} package{'s' * int(n_update > 1)} updated. Please rerun for "
+            "the updates to take effect."
         )
 
     return n_update
