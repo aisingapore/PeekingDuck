@@ -13,7 +13,9 @@
 # limitations under the License.
 
 import sys
+from logging import LogRecord
 from pathlib import Path
+from unittest import TestCase
 
 import pytest
 import yaml
@@ -21,6 +23,10 @@ from click.testing import CliRunner
 
 from peekingduck.cli import cli
 
+DEFAULT_NODES = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+GOOD_SUBDIR = "custom_nodes"
+GOOD_TYPE = "dabble"
+GOOD_NAME = "name"
 PROJECT_DIR = Path("tmp_dir")
 
 PKD_DIR = Path(__file__).resolve().parents[2] / "peekingduck"
@@ -31,6 +37,11 @@ with open(
     PKD_DIR.parent / "tests" / "data" / "user_inputs" / "create_node.yml"
 ) as infile:
     CREATE_NODE_INPUT = yaml.safe_load(infile.read())
+
+with open(
+    PKD_DIR.parent / "tests" / "data" / "user_configs" / "create_node.yml"
+) as infile:
+    CREATE_NODE_CONFIG = yaml.safe_load(infile.read())
 
 
 @pytest.fixture(params=[0, 1])
@@ -307,11 +318,9 @@ class TestCliCreateNode:
         no_top_level_key = cwd / "run_config_no_top_level_key.yml"
         wrong_top_level_key = cwd / "run_config_wrong_top_level_key.yml"
         with open(no_top_level_key, "w") as outfile:
-            data = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
-            yaml.dump(data, outfile)
+            yaml.dump(DEFAULT_NODES, outfile)
         with open(wrong_top_level_key, "w") as outfile:
-            data = {"asdf": ["input.live", "model.yolo", "draw.bbox", "output.screen"]}
-            yaml.dump(data, outfile)
+            yaml.dump({"asdf": DEFAULT_NODES}, outfile)
 
         for path in (no_top_level_key, wrong_top_level_key):
             # This error originates from DeclarativeLoader
@@ -342,3 +351,184 @@ class TestCliCreateNode:
                 catch_exceptions=False,
             )
         assert "does not contain any nodes!" in str(excinfo.value)
+
+    @pytest.mark.parametrize(
+        "extra_options",
+        [
+            ["node_subdir"],
+            ["node_type"],
+            ["node_name"],
+            ["node_subdir", "node_type", "node_name"],
+        ],
+    )
+    def test_invalid_cli_options(self, extra_options):
+        """Tests cases when at least one `node_` related option is used with
+        `config_path` and when all three `node_` related options are used with
+        `config_path`.
+        """
+        extra_args = [[f"--{option}", "value"] for option in extra_options]
+        with pytest.raises(ValueError) as excinfo:
+            CliRunner().invoke(
+                cli,
+                ["create-node", "--config_path", "value"]
+                + [arg for arg_pair in extra_args for arg in arg_pair],
+                catch_exceptions=False,
+            )
+        assert (
+            "--config_path cannot be use with --node_subdir, --node_type, or "
+            "--node_name!"
+        ) in str(excinfo.value)
+
+    def test_missing_config_file(self, cwd):
+        config_file = "missing_file.yml"
+        config_path = cwd / config_file
+        with pytest.raises(FileNotFoundError) as excinfo:
+            CliRunner().invoke(
+                cli,
+                ["create-node", "--config_path", config_file],
+                catch_exceptions=False,
+            )
+        assert f"Config file '{config_file}' is not found at {config_path}!" == str(
+            excinfo.value
+        )
+
+    def test_no_custom_nodes(self, cwd):
+        """Tests when the config file doesn't contain any custom nodes, so
+        there's nothing to create.
+        """
+        config_file = "run_config_default_nodes_only.yml"
+        default_nodes_only = cwd / config_file
+        with open(default_nodes_only, "w") as outfile:
+            yaml.dump({"nodes": DEFAULT_NODES}, outfile)
+        with pytest.raises(ValueError) as excinfo:
+            CliRunner().invoke(
+                cli,
+                ["create-node", "--config_path", config_file],
+                catch_exceptions=False,
+            )
+            assert f"Config file '{config_file}' does not contain custom nodes!" == str(
+                excinfo.value
+            )
+
+    def test_invalid_custom_node_string(self, cwd):
+        """The custom nodes declared in the config file only contains poor
+        formatting. So all will be skipped.
+        """
+        bad_paths = [
+            f"{node_subdir}.{GOOD_TYPE}.{GOOD_NAME}"
+            for node_subdir in CREATE_NODE_CONFIG[
+                "bad_config_paths_win"
+                if sys.platform == "win32"
+                else "bad_config_paths"
+            ]
+        ]
+        bad_types = [
+            f"{GOOD_SUBDIR}.{node_type}.{GOOD_NAME}"
+            for node_type in CREATE_NODE_CONFIG["bad_config_types"]
+        ]
+        bad_names = [
+            f"{GOOD_SUBDIR}.{GOOD_TYPE}.{node_name}"
+            for node_name in CREATE_NODE_CONFIG["bad_config_names"]
+        ]
+        config_file = "run_config_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / config_file
+        with open(default_nodes_only, "w") as outfile:
+            # Create a "challenging" file, with some config overrides
+            data = {
+                "nodes": [
+                    "input.live",
+                    {"model.yolo": {"model_type": "v4"}},
+                    "draw.bbox",
+                ]
+                + bad_paths
+                + bad_types
+                + bad_names
+                + ["output.screen"]
+            }
+            yaml.dump(data, outfile)
+        with TestCase.assertLogs("peekingduck.cli.logger") as captured:
+            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            offset = 2  # First 2 message is about info about loading config
+            counter = 0
+            for node_string in bad_paths:
+                assert (
+                    f"{node_string} contains invalid formatting: 'Path cannot be "
+                    "absolute!'. Skipping..."
+                ) == captured.records[offset + counter].getMessage()
+                counter += 1
+            for node_string in bad_types:
+                assert (
+                    f"{node_string} contains invalid formatting: 'invalid choice: "
+                ) in captured.records[offset + counter].getMessage()
+                counter += 1
+            for node_string in bad_names:
+                assert (
+                    f"{node_string} contains invalid formatting: 'Invalid node "
+                    "name!'. Skipping..."
+                ) == captured.records[offset + counter].getMessage()
+                counter += 1
+
+    def test_create_nodes_from_config_success(self, cwd):
+        """The custom nodes declared in the config file only contains poor
+        formatting. So all will be skipped.
+        """
+        node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
+        created_config_path = (
+            cwd / "src" / GOOD_SUBDIR / "configs" / GOOD_TYPE / f"{GOOD_NAME}.yml"
+        )
+        created_script_path = cwd / "src" / GOOD_SUBDIR / GOOD_TYPE / f"{GOOD_NAME}.py"
+        config_file = "run_config_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / config_file
+        with open(default_nodes_only, "w") as outfile:
+            # Create a "challenging" file, with some config overrides
+            data = {
+                "nodes": [
+                    "input.live",
+                    {"model.yolo": {"model_type": "v4"}},
+                    "draw.bbox",
+                    node_string,
+                    "output.screen",
+                ]
+            }
+            yaml.dump(data, outfile)
+        with TestCase.assertLogs("peekingduck.cli.logger") as captured:
+            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            # First 2 message is about info about loading config
+            assert (
+                f"Creating files for {node_string}:\n\t"
+                f"Config file: {created_config_path}\n\t"
+                f"Script file: {created_script_path}"
+            ) == captured.records[2].getMessage()
+
+    def test_create_nodes_from_config_duplicate_node_name(self, cwd):
+        """The custom nodes declared in the config file only contains poor
+        formatting. So all will be skipped.
+        """
+        node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
+        created_config_path = (
+            cwd / "src" / GOOD_SUBDIR / "configs" / GOOD_TYPE / f"{GOOD_NAME}.yml"
+        )
+        created_script_path = cwd / "src" / GOOD_SUBDIR / GOOD_TYPE / f"{GOOD_NAME}.py"
+        config_file = "run_config_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / config_file
+        with open(default_nodes_only, "w") as outfile:
+            # Create a "challenging" file, with some config overrides
+            data = {
+                "nodes": [
+                    "input.live",
+                    {"model.yolo": {"model_type": "v4"}},
+                    "draw.bbox",
+                    node_string,
+                    "output.screen",
+                ]
+            }
+            yaml.dump(data, outfile)
+        # Create the node first so we trigger the duplicate name warning
+        CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+        with TestCase.assertLogs("peekingduck.cli.logger") as captured:
+            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            # First 2 message is about info about loading config
+            assert (
+                f"{node_string} contains invalid formatting: 'Node name already "
+                "exists!'. Skipping..."
+            ) == captured.records[2].getMessage()
