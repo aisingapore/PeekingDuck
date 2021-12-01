@@ -7,13 +7,9 @@ weights: {
     model_subdir: csrnet,
     blob_file: csrnet.zip,
     model_file: {
-        dense: shanghaitech-part-a.onnx,
-        sparse: shanghaitech-part-b.onnx
+        dense: shanghaitech-part-a,
+        sparse: shanghaitech-part-b
     }
 }
 width: 640
-MODEL_NODES: {
-        inputs: ["input_2"],
-        outputs: ["y_out"],
 
-}

@@ -19,11 +19,10 @@ Crowd counting class using csrnet model to predict density map and crowd count
 import logging
 import math
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Tuple, Callable
 
 import cv2
 import numpy as np
-import onnxruntime as rt
 import tensorflow as tf
 
 
@@ -38,9 +37,7 @@ class Predictor:
 
         self.csrnet = self._create_csrnet_model()
 
-    def _create_csrnet_model(
-        self,
-    ) -> rt.capi.onnxruntime_inference_collection.InferenceSession:
+    def _create_csrnet_model(self) -> Callable:
         """
         Creates csrnet model to predict density map and crowd count
         """
@@ -55,15 +52,11 @@ class Predictor:
 
         return self._load_csrnet(model_path)
 
-    def _load_csrnet(
-        self, model_path: Path
-    ) -> rt.capi.onnxruntime_inference_collection.InferenceSession:
-        if model_path.is_file():
-            self.session = rt.InferenceSession(str(model_path))
-            return self.session
-        raise ValueError(
-            f"Model file does not exist. Please check that {model_path} exists"
-        )
+    def _load_csrnet(self, model_path: Path) -> Callable:
+        self.module = tf.saved_model.load(str(model_path))
+        self.saved_model = self.module.signatures["serving_default"]
+
+        return self.saved_model
 
     def predict_count_from_image(self, image: np.ndarray) -> Tuple[np.ndarray, int]:
         """Predicts density map and crowd count from image.
@@ -75,12 +68,10 @@ class Predictor:
             density_map (np.ndarray): predicted density map.
             crowd_count (int): predicted count of people.
         """
-        model_nodes = self.config["MODEL_NODES"]
         image = self.process_image(image)
-        density_map = self.session.run(
-            model_nodes["outputs"], {model_nodes["inputs"][0]: image.numpy()}
-        )[0]
+        density_map = self.saved_model(image)["y_out"].numpy()
         crowd_count = math.ceil(np.sum(density_map))
+
         return density_map, crowd_count
 
     def process_image(self, image: np.ndarray) -> tf.Tensor:
