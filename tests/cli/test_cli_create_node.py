@@ -1,3 +1,17 @@
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
 import sys
 from pathlib import Path
 
@@ -46,6 +60,11 @@ def create_node_input_accept(request):
         CREATE_NODE_INPUT["good_names"][request.param],
         CREATE_NODE_INPUT["proceed"]["accept"][request.param],
     )
+
+
+@pytest.fixture
+def cwd():
+    return Path.cwd()
 
 
 def get_custom_node_subpaths(node_subdir, node_type, node_name):
@@ -283,3 +302,43 @@ class TestCliCreateNode:
                     start = i
                     break
             assert actual_file.readlines() == lines[start:]
+
+    def test_poorly_formatted_config_file(self, cwd):
+        no_top_level_key = cwd / "run_config_no_top_level_key.yml"
+        wrong_top_level_key = cwd / "run_config_wrong_top_level_key.yml"
+        with open(no_top_level_key, "w") as outfile:
+            data = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+            yaml.dump(data, outfile)
+        with open(wrong_top_level_key, "w") as outfile:
+            data = {"asdf": ["input.live", "model.yolo", "draw.bbox", "output.screen"]}
+            yaml.dump(data, outfile)
+
+        for path in (no_top_level_key, wrong_top_level_key):
+            # This error originates from DeclarativeLoader
+            with pytest.raises(ValueError) as excinfo:
+                CliRunner().invoke(
+                    cli,
+                    ["create-node", "--config_path", path.name],
+                    catch_exceptions=False,
+                )
+            assert "has an invalid structure. Missing top-level 'nodes' key." in str(
+                excinfo.value
+            )
+
+    def test_no_nodes_config_file(self, cwd):
+        no_nodes = cwd / "run_config_no_nodes.yml"
+        with open(no_nodes, "w") as outfile:
+            data = {"nodes": None}
+            # ``yaml`` will create 'nodes: null' by default. Manually replace
+            # it to just 'nodes: '. Surprisingly ``yaml`` will load this
+            # without error
+            outfile.write(yaml.safe_dump(data).replace("null", ""))
+
+        # This error originates from DeclarativeLoader
+        with pytest.raises(ValueError) as excinfo:
+            CliRunner().invoke(
+                cli,
+                ["create-node", "--config_path", no_nodes.name],
+                catch_exceptions=False,
+            )
+        assert "does not contain any nodes!" in str(excinfo.value)
