@@ -381,16 +381,13 @@ class TestCliCreateNode:
 
     def test_missing_config_file(self, cwd):
         config_file = "missing_file.yml"
-        config_path = cwd / config_file
         with pytest.raises(FileNotFoundError) as excinfo:
             CliRunner().invoke(
                 cli,
                 ["create-node", "--config_path", config_file],
                 catch_exceptions=False,
             )
-        assert f"Config file '{config_file}' is not found at {config_path}!" == str(
-            excinfo.value
-        )
+        assert f"Config file '{config_file}' is not found at" in str(excinfo.value)
 
     def test_no_custom_nodes(self, cwd):
         """Tests when the config file doesn't contain any custom nodes, so
@@ -505,10 +502,6 @@ class TestCliCreateNode:
         formatting. So all will be skipped.
         """
         node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
-        created_config_path = (
-            cwd / "src" / GOOD_SUBDIR / "configs" / GOOD_TYPE / f"{GOOD_NAME}.yml"
-        )
-        created_script_path = cwd / "src" / GOOD_SUBDIR / GOOD_TYPE / f"{GOOD_NAME}.py"
         config_file = "run_config_invalid_custom_node_string.yml"
         default_nodes_only = cwd / config_file
         with open(default_nodes_only, "w") as outfile:
