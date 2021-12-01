@@ -67,11 +67,12 @@
    count of a pre-selected object (for example, "person") detected in each specified zone. The
    order of counts follows the order of ``zones``.
 
+.. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A numpy array that represents
+   the number of persons per pixel. The sum of the array returns the total estimated count of people.
+
 .. |none| replace:: ``none``: No inputs required, or no additional outputs produced.
    Used for ``input`` nodes that require no prior inputs, or ``draw`` nodes that overwrite current
    input.
-
-.. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A numpy array representing the number of persons per pixel.  
 
 .. |br| raw:: html
 

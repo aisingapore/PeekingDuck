@@ -34,7 +34,8 @@ These are the nodes used in the earlier demo (also in [crowd_counting.yml](https
 ```
 nodes:
 - input.live
-- model.csrnet
+- model.csrnet:
+    model_type: dense
 - dabble.fps
 - draw.heat_map
 - draw.legend
