@@ -79,7 +79,7 @@ def ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
 
 def ensure_valid_name_partial(node_dir: Path, node_type: str) -> Callable:
     """Partial function to ensure_valid_name to provide a function that matches
-    function signature required by ``valeu_proc`` in ``click.prompt()``.
+    function signature required by ``value_proc`` in ``click.prompt()``.
     """
     return functools.partial(ensure_valid_name, node_dir, node_type)
 

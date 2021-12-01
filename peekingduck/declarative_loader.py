@@ -38,7 +38,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>`.
 
     The declarative loader class creates the specified nodes according to any
-    modfications provided in the configs and returns the pipeline needed for
+    modifications provided in the configs and returns the pipeline needed for
     inference.
 
     Args:
