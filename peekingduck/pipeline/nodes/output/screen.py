@@ -33,17 +33,33 @@ class Node(AbstractNode):
         |pipeline_end|
 
     Configs:
-        None.
+        window_name (:obj:`str`): **default = "PeekingDuck"** |br|
+            Name of the displayed window.
+        window_width (:obj:`int`): **default = 1280** |br|
+            Width of the displayed window, in pixels.
+        window_height (:obj:`int`): **default = 720** |br|
+            Height of the displayed window, in pixels.
+        window_x_coord (:obj:`int`): **default = 0** |br|
+            X-coordinate of the top left corner of the displayed window, with reference
+            from the top left corner of the screen, in pixels.
+        window_y_coord (:obj:`int`): **default = 0** |br|
+            Y-coordinate of the top left corner of the displayed window, with reference
+            from the top left corner of the screen, in pixels.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+        cv2.moveWindow(self.window_name, self.window_x_coord, self.window_y_coord)
+        cv2.resizeWindow(self.window_name, self.window_width, self.window_height)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
-        cv2.imshow("PeekingDuck", inputs["img"])
+
+        cv2.imshow(self.window_name, inputs["img"])
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
+            cv2.destroyWindow(self.window_name)
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
