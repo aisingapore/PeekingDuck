@@ -1,8 +1,12 @@
 input: ["img"]
 output: ["pipeline_end"]
 
-window_name: PeekingDuck
-window_width: 1280
-window_height: 720
-window_x_coord: 0
-window_y_coord: 0
+window_name: "PeekingDuck"
+window_size: {
+    width: 1280,
+    height: 720 
+}
+window_loc: {
+    x: 0,
+    y: 0
+}

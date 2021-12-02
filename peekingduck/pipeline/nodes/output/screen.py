@@ -35,23 +35,20 @@ class Node(AbstractNode):
     Configs:
         window_name (:obj:`str`): **default = "PeekingDuck"** |br|
             Name of the displayed window.
-        window_width (:obj:`int`): **default = 1280** |br|
-            Width of the displayed window, in pixels.
-        window_height (:obj:`int`): **default = 720** |br|
-            Height of the displayed window, in pixels.
-        window_x_coord (:obj:`int`): **default = 0** |br|
-            X-coordinate of the top left corner of the displayed window, with reference
-            from the top left corner of the screen, in pixels.
-        window_y_coord (:obj:`int`): **default = 0** |br|
-            Y-coordinate of the top left corner of the displayed window, with reference
-            from the top left corner of the screen, in pixels.
+        window_size (:obj:`Dict`): **default = { width: 1280, height: 720 }** |br|
+            Width and height of the displayed window, in pixels.
+        window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
+            X and Y coordinates of the top left corner of the displayed window, with
+            reference from the top left corner of the screen, in pixels.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-        cv2.moveWindow(self.window_name, self.window_x_coord, self.window_y_coord)
-        cv2.resizeWindow(self.window_name, self.window_width, self.window_height)
+        cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
+        cv2.resizeWindow(
+            self.window_name, self.window_size["width"], self.window_size["height"]
+        )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
