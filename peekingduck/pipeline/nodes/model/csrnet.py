@@ -29,10 +29,9 @@ class Node(AbstractNode):
 
     The csrnet node is capable of predicting the number of people in dense and
     sparse crowds. The dense and sparse crowd models were trained using data from
-    ShanghaiTech Part A and ShanghaiTech Part B respectively. The node uses the
-    sparse crowd model by default and can be changed to using the dense crowd
-    model. As a guideline, the dense crowd model should be used if the people in
-    a given image or video frame are packed shoulder to shoulder (e.g. stadiums).
+    ShanghaiTech Part A and ShanghaiTech Part B respectively. As the models were
+    trained to recognise congested scenes, the estimates are less accurate if the
+    number of people are low (e.g. less than 10)
 
     Inputs:
         |img|
@@ -44,7 +43,11 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`): **{"dense", "sparse"}, default="sparse"**. |br|
-            Defines the type of CSRNet model to be used.
+            Defines the type of CSRNet model to be used. The node uses the sparse
+            crowd model by default and can be changed to using the dense crowd
+            model. As a guideline, the dense crowd model should be used if the
+            people in a given image or video frame are packed shoulder to shoulder
+            (e.g. stadiums).
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by replacing
             ``null`` with an absolute path to the desired directory.

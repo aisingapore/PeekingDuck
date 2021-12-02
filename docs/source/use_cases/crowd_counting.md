@@ -22,7 +22,7 @@ There are two main components to our solution: 1) crowd counting; and 2) heat ma
 
 **1. Crowd Counting**
 
-We use an open source crowd counting model known as [CSRNet] (https://arxiv.org/pdf/1802.10062.pdf) to predict the number of people in a sparse or dense crowd. By default, the solution uses the sparse crowd model and this can be changed to the dense crowd model if required. For more information on how adjust the CSRNet node, checkout the [CSRNet configurable parameters](/peekingduck.pipeline.nodes.model.csrnet.Node). 
+We use an open source crowd counting model known as [CSRNet](https://arxiv.org/pdf/1802.10062.pdf) to predict the number of people in a sparse or dense crowd. By default, the solution uses the sparse crowd model and this can be changed to the dense crowd model if required. The dense and sparse crowd models were trained using data from ShanghaiTech Part A and ShanghaiTech Part B respectively. As a guideline, you might want to use the dense crowd model if the people in a given image or video frame are packed shoulder to shoulder (e.g. stadiums). For more information on how adjust the CSRNet node, checkout the [CSRNet configurable parameters](/peekingduck.pipeline.nodes.model.csrnet.Node). 
 
 **2. Heat Map Generation (Optional)**
 
