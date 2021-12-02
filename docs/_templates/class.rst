@@ -18,8 +18,7 @@
    (x, y) each representing a single point of reference of bounding boxes for use in zone
    analytics. The order of ``btm_midpoint`` follows the order of ``bboxes``.
 
-.. |count| replace:: ``count`` (:obj:`int`): An integer representing the count of
-   a pre-selected object (for example, 'people') detected in each frame through ``bboxes``.
+.. |count| replace:: ``count`` (:obj:`int`): An integer representing the number of counted objects.
 
 .. |keypoints| replace:: ``keypoints`` (:obj:`numpy.ndarray`): A numpy array (N, K, 2) with the
    last dimension representing the coordinates (x, y) of detected poses. N represents the number
