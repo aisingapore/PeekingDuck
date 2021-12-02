@@ -26,7 +26,7 @@ import numpy as np
 import tensorflow as tf
 
 
-class Predictor:
+class Predictor:  # pylint: disable=too-few-public-methods
     """Crowd counting class using csrnet model to predict density map and crowd count"""
 
     def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
@@ -68,13 +68,13 @@ class Predictor:
             density_map (np.ndarray): predicted density map.
             crowd_count (int): predicted count of people.
         """
-        image = self.process_image(image)
+        image = self._process_image(image)
         density_map = self.saved_model(image)["y_out"].numpy()
         crowd_count = math.ceil(np.sum(density_map))
 
         return density_map, crowd_count
 
-    def process_image(self, image: np.ndarray) -> tf.Tensor:
+    def _process_image(self, image: np.ndarray) -> tf.Tensor:
         """Resizes and normalizes an image based on the mean and standard deviation
         of Imagenet. These are the default values for models with PyTorch origins.
 
@@ -84,7 +84,7 @@ class Predictor:
         Returns:
             image (np.ndarray): processed image.
         """
-        image = self.resize_image(image)
+        image = self._resize_image(image)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image / 255.0
         image[:, :, 0] = (image[:, :, 0] - 0.485) / 0.229
@@ -94,7 +94,7 @@ class Predictor:
         image = tf.convert_to_tensor(image, dtype=tf.float32)
         return image
 
-    def resize_image(self, image: np.ndarray) -> np.ndarray:
+    def _resize_image(self, image: np.ndarray) -> np.ndarray:
         """Resizes an image based on the input width.
 
         Args:
