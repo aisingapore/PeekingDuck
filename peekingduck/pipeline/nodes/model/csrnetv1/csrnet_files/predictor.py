@@ -94,7 +94,7 @@ class Predictor:
         image = tf.convert_to_tensor(image, dtype=tf.float32)
         return image
 
-    def resize_image(self, image: np.ndarray) -> np.ndarray:
+    def _resize_image(self, image: np.ndarray) -> np.ndarray:
         """Resizes an image based on the input width.
 
         Args:
