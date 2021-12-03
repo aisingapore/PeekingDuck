@@ -47,7 +47,7 @@ class TestHeatmap:
         original_img = cv2.imread(str(test_image))
         output_img = original_img.copy()
 
-        input = {"img": output_img, "density_map": np.zeros((1, 45, 80, 1))}
+        input = {"img": output_img, "density_map": np.zeros((768, 1024, 3))}
 
         output_img = draw_heat_map_node.run(input)
         np.testing.assert_equal(original_img, output_img["img"])
@@ -56,7 +56,7 @@ class TestHeatmap:
         original_img = cv2.imread(str(test_image))
         output_img = original_img.copy()
 
-        input = {"img": output_img, "density_map": np.random.rand(1, 45, 80, 1)}
+        input = {"img": output_img, "density_map": np.random.rand(768, 1024, 3)}
 
         output_img = draw_heat_map_node.run(input)
 
