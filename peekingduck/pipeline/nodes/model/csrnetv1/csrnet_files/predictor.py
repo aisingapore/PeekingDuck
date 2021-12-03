@@ -65,14 +65,17 @@ class Predictor:  # pylint: disable=too-few-public-methods
             image (np.ndarray): input image.
 
         Returns:
-            density_map (np.ndarray): predicted density map.
+            density_map (np.ndarray): resized density map.
             crowd_count (int): predicted count of people.
         """
-        model_input = self._process_input(image)
-        density_map = self.saved_model(model_input)["y_out"].numpy()
-        crowd_count = math.ceil(np.sum(density_map))
+        # 1. resizes and normalizes input image
+        processed_image = self._process_input(image)
 
-        density_map = self._process_output(image, density_map)
+        # 2. generates the predicted density map
+        density_map = self.saved_model(processed_image)["y_out"].numpy()
+
+        # 3. resizes density map and counts the number of people
+        density_map, crowd_count = self._process_output(image, density_map)
 
         return density_map, crowd_count
 
@@ -112,24 +115,26 @@ class Predictor:  # pylint: disable=too-few-public-methods
 
     @staticmethod
     def _process_output(image: np.ndarray, density_map: np.ndarray) -> np.ndarray:
-        """Resizes the output density map back to its original image size. The
-        CSRNet model returns a density map that is 1/8 the original image size.
-        This is used to superimpose a heatmap over the original image.
+        """Counts the number of people and resizes the output density map to match
+        the original image size. The CSRNet model returns a density map that is
+        1/8 the original image size. The resized density map is used to superimpose
+        a heatmap over the original image.
 
         Args:
             density_map (np.ndarray): predicted density map.
             image (np.ndarray): input image.
 
         Returns:
-            density_map (np.ndarray): resized predicted density map.
+            density_map (np.ndarray): resized density map.
+            crowd_count (int): predicted count of people.
         """
-        # removes batch and channel size
-        density_map = density_map[0, :, :, 0]
+        crowd_count = math.ceil(np.sum(density_map))
 
+        density_map = density_map[0, :, :, 0]
         density_map = cv2.resize(
             density_map,
             (image.shape[1], image.shape[0]),
             interpolation=cv2.INTER_LINEAR,
         )
 
-        return density_map
+        return density_map, crowd_count
