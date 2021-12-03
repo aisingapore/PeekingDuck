@@ -68,13 +68,15 @@ class Predictor:  # pylint: disable=too-few-public-methods
             density_map (np.ndarray): predicted density map.
             crowd_count (int): predicted count of people.
         """
-        image = self._process_image(image)
-        density_map = self.saved_model(image)["y_out"].numpy()
+        model_input = self._process_input(image)
+        density_map = self.saved_model(model_input)["y_out"].numpy()
         crowd_count = math.ceil(np.sum(density_map))
+
+        density_map = self._process_output(image, density_map)
 
         return density_map, crowd_count
 
-    def _process_image(self, image: np.ndarray) -> tf.Tensor:
+    def _process_input(self, image: np.ndarray) -> tf.Tensor:
         """Resizes and normalizes an image based on the mean and standard deviation
         of Imagenet. These are the default values for models with PyTorch origins.
 
@@ -107,3 +109,26 @@ class Predictor:  # pylint: disable=too-few-public-methods
         dim = (self.config["width"], int(image.shape[0] * ratio))
         image = cv2.resize(image, dim, interpolation=cv2.INTER_LINEAR)
         return image
+
+    def _process_output(self, image: np.ndarray, density_map: np.ndarray) -> np.ndarray:
+        """Resizes the output density map back to its original image size. The
+        CSRNet model returns a density map that is 1/8 the original image size.
+        This is used to superimpose a heatmap over the original image.
+
+        Args:
+            density_map (np.ndarray): predicted density map.
+            image (np.ndarray): input image.
+
+        Returns:
+            density_map (np.ndarray): resized predicted density map.
+        """
+        # removes batch and channel size
+        density_map = density_map[0, :, :, 0]
+
+        density_map = cv2.resize(
+            density_map,
+            (image.shape[1], image.shape[0]),
+            interpolation=cv2.INTER_LINEAR,
+        )
+
+        return density_map
