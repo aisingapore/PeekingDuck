@@ -110,7 +110,8 @@ class Predictor:  # pylint: disable=too-few-public-methods
         image = cv2.resize(image, dim, interpolation=cv2.INTER_LINEAR)
         return image
 
-    def _process_output(self, image: np.ndarray, density_map: np.ndarray) -> np.ndarray:
+    @staticmethod
+    def _process_output(image: np.ndarray, density_map: np.ndarray) -> np.ndarray:
         """Resizes the output density map back to its original image size. The
         CSRNet model returns a density map that is 1/8 the original image size.
         This is used to superimpose a heatmap over the original image.
