@@ -73,7 +73,7 @@ class TestLegend:
         assert results == expected_output
 
     # formula: processed image = contrast * image + brightness
-    def test_draw_legend_botom_and_top(
+    def test_draw_legend_bottom_and_top(
         self, draw_legend_bottom, draw_legend_top, create_image
     ):
         original_img = create_image((640, 480, 3))

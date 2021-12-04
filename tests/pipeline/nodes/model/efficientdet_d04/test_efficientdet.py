@@ -141,7 +141,7 @@ class TestEfficientDet:
         test_models["normal"] = edet(1)
         test_models["weighted"] = edet(1, weighted_bifpn=False)
         test_models["detect_quadrangle"] = edet(1, detect_quadrangle=True)
-        test_models["no_sepearable_conv"] = edet(1, separable_conv=False)
+        test_models["no_separable_conv"] = edet(1, separable_conv=False)
 
         for key in test_models:
             assert test_models[key] is not None

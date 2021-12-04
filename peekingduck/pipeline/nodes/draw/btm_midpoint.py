@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws the bottom middle point of detected bbounding boxes.
+    """Draws the bottom middle point of detected bounding boxes.
 
     The ``draw.btm_midpoint`` node uses the ``bboxes`` from the model
     predictions to draw the bbox predictions onto the image. For better
