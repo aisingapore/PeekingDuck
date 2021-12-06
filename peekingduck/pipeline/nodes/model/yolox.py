@@ -14,7 +14,7 @@
 
 """High performance anchor-free YOLO object detection model"""
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 from peekingduck.pipeline.nodes.node import AbstractNode

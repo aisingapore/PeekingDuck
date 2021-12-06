@@ -93,6 +93,17 @@ class Detector:  # pylint: disable=too-few-public-methods
 
         return bboxes, classes, scores
 
+    def update_detect_ids(self, ids: List[int]) -> None:
+        """Updates list of selected object category IDs. When the list is
+        empty, all available object category IDs are detected.
+
+        Args:
+            ids: List of selected object category IDs
+        """
+        self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
+        if self.config["half"]:
+            self.detect_ids = self.detect_ids.half()
+
     def _create_yolox_model(self) -> YOLOX:
         """Creates a YOLOX model and loads its weights.
 
@@ -102,9 +113,10 @@ class Detector:  # pylint: disable=too-few-public-methods
         Returns:
             (YOLOX): YOLOX model.
         """
-        self.detect_ids = torch.Tensor(self.config["detect_ids"]).to(self.device)  # type: ignore
-        if self.config["half"]:
-            self.detect_ids = self.detect_ids.half()
+        # self.detect_ids = torch.Tensor(self.config["detect_ids"]).to(self.device)  # type: ignore
+        # if self.config["half"]:
+        #     self.detect_ids = self.detect_ids.half()
+        self.update_detect_ids(self.config["detect_ids"])
         self.input_size = (self.config["input_size"], self.config["input_size"])
         model_type = self.config["model_type"]
         model_path = self.model_dir / self.config["weights"]["model_file"][model_type]

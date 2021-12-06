@@ -167,10 +167,10 @@ class TestYOLOX:
             yolox_config["detect_ids"] = []
             yolox = Node(config=yolox_config)
 
+            assert "IDs being detected: []" in captured.records[0].getMessage()
             assert (
-                captured.records[0].getMessage() == "Detecting all available classes."
+                captured.records[1].getMessage() == "Detecting all available classes."
             )
-            assert "IDs being detected: []" in captured.records[1].getMessage()
             assert yolox is not None
 
     def test_invalid_config_detect_ids(self, yolox_bad_detect_ids_config):

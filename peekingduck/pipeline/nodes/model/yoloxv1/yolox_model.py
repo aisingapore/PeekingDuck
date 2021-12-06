@@ -60,9 +60,9 @@ class YOLOXModel:
 
         with open(model_dir / config["weights"]["classes_file"]) as infile:
             self.class_names = [line.strip() for line in infile.readlines()]
-        self.detect_ids = config["detect_ids"]
 
         self.detector = Detector(config, model_dir)
+        self.detect_ids = config["detect_ids"]
 
     @property
     def detect_ids(self) -> List[int]:
@@ -76,6 +76,7 @@ class YOLOXModel:
         if not ids:
             self.logger.info("Detecting all available classes.")
         self._detect_ids = ids
+        self.detector.update_detect_ids(self._detect_ids)
 
     def predict(
         self, image: np.ndarray
