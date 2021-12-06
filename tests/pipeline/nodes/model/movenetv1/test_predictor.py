@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import P
 
 TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
 
-single_person_list = ["t2.jpg"]
+single_person_images = ["t2.jpg"]
 
 
 @pytest.fixture
@@ -62,7 +62,7 @@ def movenet_predictor(movenet_config, model_dir):
     return predictor
 
 
-@pytest.fixture(params=single_person_list)
+@pytest.fixture(params=single_person_images)
 def single_person_image(request):
     yield request.param
 
@@ -80,9 +80,16 @@ class TestPredictor:
     def test_get_resolution_as_tuple(self, movenet_predictor):
         resolution = {"height": 256, "width": 256}
         tuple_res = movenet_predictor.get_resolution_as_tuple(resolution)
-        assert type(tuple_res) is tuple, "Resolution in config must be a tuple"
-        assert tuple_res == (256, 256), "Resolution is loaded incorrectly"
-        assert len(tuple_res) == 2, "Resolution in config must be a 2 length tuple"
+        assert (
+            type(tuple_res) is tuple
+        ), f"Resolution in config must be a tuple instead of {type(tuple_res)}"
+        assert tuple_res == (
+            256,
+            256,
+        ), f"Incorrect resolution: expected (256, 256) but got {tuple_res}"
+        assert (
+            len(tuple_res) == 2
+        ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
 
     def test_predict(self, movenet_predictor, single_person_image):
         img = cv2.imread(str(Path.joinpath(TEST_DIR, single_person_image)))
@@ -126,16 +133,38 @@ class TestPredictor:
             keypoints_scores_no_pose,
             keypoints_conns_no_pose,
         ) = movenet_predictor._get_results_single(prediction_no_pose)
-        npt.assert_array_equal(bbox_no_pose, np.zeros(0)), "unexpected output for bbox"
         npt.assert_array_equal(
-            valid_keypoints_no_pose, np.zeros(0)
-        ), "unexpected output for keypoints"
+            x=bbox_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected bbox output for prediction with keypoint score below threshold \
+                got {bbox_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
         npt.assert_array_equal(
-            keypoints_scores_no_pose, np.zeros(0)
-        ), "unexpected output for keypoint scores"
+            x=valid_keypoints_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected valid keypoint output for prediction with keypoint score \
+                below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
         npt.assert_array_equal(
-            keypoints_conns_no_pose, np.zeros(0)
-        ), "unexpected output for keypoint connections"
+            x=keypoints_scores_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected keypoint score output for prediction with keypoint score \
+                below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
+        npt.assert_array_equal(
+            x=keypoints_conns_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected keypoint connection output for prediction with keypoint score \
+                below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
 
     def test_get_results_multi(self, movenet_predictor):
         # prediction for multi model is in shape of [1,6,56]
@@ -143,7 +172,7 @@ class TestPredictor:
         # since threshold in config is at 0.2, this random tensor
         # will have at least 1 pose after filtering
         prediction = tf.random.uniform(
-            (1, 6, 56), minval=0.3, maxval=0.9, dtype=tf.dtypes.float32, seed=24
+            (1, 6, 56), minval=0.2, maxval=0.9, dtype=tf.dtypes.float32, seed=24
         )
         (
             bbox,
@@ -173,13 +202,35 @@ class TestPredictor:
             keypoints_scores_no_pose,
             keypoints_conns_no_pose,
         ) = movenet_predictor._get_results_multi(prediction_no_pose)
-        npt.assert_array_equal(bbox_no_pose, np.zeros(0)), "unexpected output for bbox"
         npt.assert_array_equal(
-            valid_keypoints_no_pose, np.zeros(0)
-        ), "unexpected output for keypoints"
+            x=bbox_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected bbox output for prediction with keypoint score below threshold \
+                got {bbox_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
         npt.assert_array_equal(
-            keypoints_scores_no_pose, np.zeros(0)
-        ), "unexpected output for keypoint scores"
+            x=valid_keypoints_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected valid keypoint output for prediction with keypoint score \
+                below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
         npt.assert_array_equal(
-            keypoints_conns_no_pose, np.zeros(0)
-        ), "unexpected output for keypoint connections"
+            x=keypoints_scores_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected keypoint score output for prediction with keypoint score \
+                below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
+        npt.assert_array_equal(
+            x=keypoints_conns_no_pose,
+            y=np.zeros(0),
+            err_msg=(
+                f"Unexpected keypoint connection output for prediction with keypoint score \
+                below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
+            ),
+        )
