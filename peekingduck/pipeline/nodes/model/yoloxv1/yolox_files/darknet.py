@@ -59,7 +59,6 @@ class CSPDarknet(nn.Module):
         out_features: Tuple[str, str, str],
     ) -> None:
         super().__init__()
-        assert out_features, "please provide output features of Darknet"
         self.out_features = out_features
 
         channels = int(wid_mul * 64)  # 64
