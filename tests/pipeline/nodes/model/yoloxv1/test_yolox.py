@@ -25,6 +25,9 @@ import yaml
 from peekingduck.pipeline.nodes.model.yolox import Node
 from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
+with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
+    GT_RESULTS = yaml.safe_load(infile.read())
+
 
 @pytest.fixture
 def yolox_config():
@@ -117,23 +120,41 @@ class TestYOLOX:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_return_at_least_one_person_and_one_bbox(self, test_human_images, yolox):
+    def test_detect_human_bboxes(self, test_human_images, yolox):
         test_image = cv2.imread(test_human_images)
         output = yolox.run({"img": test_image})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
+        model_type = yolox.config["model_type"]
+        image_name = Path(test_human_images).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_array_almost_equal(output["bboxes"], expected["bboxes"], decimal=3)
+        npt.assert_array_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_array_almost_equal(
+            output["bbox_scores"], expected["bbox_scores"], decimal=2
+        )
+
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
-    def test_return_at_least_one_person_and_one_bbox_gpu(
-        self, test_human_images, yolox_gpu
-    ):
+    def test_detect_human_bboxes_gpu(self, test_human_images, yolox_gpu):
         test_image = cv2.imread(test_human_images)
         # Ran on YOLOX-tiny only due to GPU OOM error on some systems
         output = yolox_gpu.run({"img": test_image})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
+
+        model_type = yolox_gpu.config["model_type"]
+        image_name = Path(test_human_images).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_array_almost_equal(output["bboxes"], expected["bboxes"], decimal=3)
+        npt.assert_array_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_array_almost_equal(
+            output["bbox_scores"], expected["bbox_scores"], decimal=2
+        )
 
     def test_get_detect_ids(self, yolox_default):
         assert yolox_default.model.detect_ids == [0]
