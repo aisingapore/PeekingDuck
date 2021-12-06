@@ -96,35 +96,20 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.backbone = CSPDarknet(depth, width, self.in_features)
 
         self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
-        self.lateral_conv0 = BaseConv(
-            int(IN_CHANNELS[2] * width), int(IN_CHANNELS[1] * width), 1, 1
-        )
-        self.C3_p4 = self.make_csp_layer(
-            IN_CHANNELS[1], IN_CHANNELS[1], n_bottleneck, width
-        )
+        N256, N512, N1024 = IN_CHANNELS
+        self.lateral_conv0 = BaseConv(int(N1024 * width), int(N512 * width), 1, 1)
+        self.C3_p4 = self.make_csp_layer(N512, N512, n_bottleneck, width)
 
-        self.reduce_conv1 = BaseConv(
-            int(IN_CHANNELS[1] * width), int(IN_CHANNELS[0] * width), 1, 1
-        )
-        self.C3_p3 = self.make_csp_layer(
-            IN_CHANNELS[0], IN_CHANNELS[0], n_bottleneck, width
-        )
+        self.reduce_conv1 = BaseConv(int(N512 * width), int(N256 * width), 1, 1)
+        self.C3_p3 = self.make_csp_layer(N256, N256, n_bottleneck, width)
 
         # bottom-up conv
-        self.bu_conv2 = BaseConv(
-            int(IN_CHANNELS[0] * width), int(IN_CHANNELS[0] * width), 3, 2
-        )
-        self.C3_n3 = self.make_csp_layer(
-            IN_CHANNELS[0], IN_CHANNELS[1], n_bottleneck, width
-        )
+        self.bu_conv2 = BaseConv(int(N256 * width), int(N256 * width), 3, 2)
+        self.C3_n3 = self.make_csp_layer(N256, N512, n_bottleneck, width)
 
         # bottom-up conv
-        self.bu_conv1 = BaseConv(
-            int(IN_CHANNELS[1] * width), int(IN_CHANNELS[1] * width), 3, 2
-        )
-        self.C3_n4 = self.make_csp_layer(
-            IN_CHANNELS[1], IN_CHANNELS[2], n_bottleneck, width
-        )
+        self.bu_conv1 = BaseConv(int(N512 * width), int(N512 * width), 3, 2)
+        self.C3_n4 = self.make_csp_layer(N512, N1024, n_bottleneck, width)
 
     @staticmethod
     def make_csp_layer(
