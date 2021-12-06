@@ -300,7 +300,7 @@ def yolov3(
 ) -> tf.keras.Model:
     """Create a yolov3 model
 
-    This model has 76 layers, which can be calcualted below:
+    This model has 76 layers, which can be calculated below:
     1 darknet (52 layers) +
     3 yolo_conv (6 layers) +
     3 yolo_output (2 layers)
@@ -359,7 +359,7 @@ def yolov3_tiny(
 ) -> tf.keras.Model:
     """Create Yolov3 tiny model
 
-    This model has 23 layers, which can be calcualted below:
+    This model has 23 layers, which can be calculated below:
     1 darknet_tiny (7 layers) +
     2 yolo_conv (6 layers) +
     2 yolo_output (2 layers)

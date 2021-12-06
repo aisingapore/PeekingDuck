@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initalises an EfficientDet model to detect bounding boxes from an image.
+    """Initialises an EfficientDet model to detect bounding boxes from an image.
 
     The EfficientDet node is capable of detecting objects from 80 categories.
     The table of categories can be found
