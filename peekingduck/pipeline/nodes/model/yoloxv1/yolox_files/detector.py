@@ -123,6 +123,14 @@ class Detector:  # pylint: disable=too-few-public-methods
         return self._load_yolox_weights(model_path, model_size)
 
     def _get_model(self, model_size: Dict[str, float]) -> YOLOX:
+        """Constructs YOLOX model based on parsed configuration.
+
+        Args:
+            model_size (Dict[str, float]): Depth and width of the model.
+
+        Returns:
+            (YOLOX): YOLOX model.
+        """
         return YOLOX(
             self.config["num_classes"],
             model_size["depth"],
@@ -173,7 +181,7 @@ class Detector:  # pylint: disable=too-few-public-methods
             scale (float): Scale factor used during preprocessing.
             image_shape (Tuple[int, int]): Image size of the original input
                 image.
-            class_names (List[str]): List of human-friendly object catetory
+            class_names (List[str]): List of human-friendly object category
                 names.
 
         Returns:
@@ -223,7 +231,8 @@ class Detector:  # pylint: disable=too-few-public-methods
         The input image is resized to fit the `input_size` specified in the
         configurations. If the image cannot be resized exactly, a gray canvas,
         rgb(114, 114, 114), is created and the resized image is pasted on the
-        top left corner of the canvas.
+        top left corner of the canvas. rgb(114, 114, 114) is chosen based on
+        the value used by the original repository during training.
 
         Args:
             image (np.ndarray): Input image.
