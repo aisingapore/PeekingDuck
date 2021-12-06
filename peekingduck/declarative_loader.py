@@ -178,8 +178,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                         f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
-                    if key == "detect_ids" and (
-                        node_name == "model.yolo" or node_name == "model.efficientdet"
+                    if key == "detect_ids" and node_name in (
+                        "model.yolo",
+                        "model.efficientdet",
                     ):
                         key, value = self._change_labels_to_ids(node_name, key, value)
                     dict_orig[key] = value
@@ -228,14 +229,15 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         Returns:
             Dict[str, int]: mapping of labels to object ids relevant to given model
         """
-        assert (
-            node_name == "model.yolo" or node_name == "model.efficientdet"
+        assert node_name in (
+            "model.yolo",
+            "model.efficientdet",
         ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
 
         filename = node_name.replace("model.", "mapping_")
         mapping_file = self.pkd_base_dir / "utils" / f"{filename}.txt"
-        with open(mapping_file, "r") as f:
-            contents = f.read()
+        with open(mapping_file, "r") as file:
+            contents = file.read()
         the_mapping = ast.literal_eval(contents)
         return the_mapping
 
