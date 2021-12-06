@@ -75,7 +75,17 @@ class YOLOX(nn.Module):
         self.head = YOLOXHead(num_classes, width)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Defines the computation performed at every call."""
+        """Defines the computation performed at every call.
+
+        Args:
+            inputs (torch.Tensor): Input image.
+
+        Returns:
+            (torch.Tensor): The decoded output with the shape (B,D,85) where
+            B is the batch size, D is the number of detections. The 85 columns
+            consist of the following values:
+            [x, y, w, h, conf, (cls_conf of the 80 COCO classes)].
+        """
         # FPN output content features of [dark3, dark4, dark5]
         fpn_outs = self.backbone(inputs)
         return self.head(fpn_outs)
@@ -115,7 +125,21 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
     def make_csp_layer(
         in_channel: int, out_channel: int, depth: int, width: float
     ) -> CSPLayer:
-        """Returns a CSPLayer."""
+        """Returns a CSPLayer.
+
+        Args:
+            in_channel (int): Input channels.
+            out_channel (int): Output channels.
+            depth (int): Number of Bottlenecks.
+            width (float): Multiplier to scale the number of input and output
+                channels.
+
+        Returns:
+            (CSPLayer): A CSPLayer consisting of following blocks:
+            Conv -> Bottlenecks -> Conv
+                               /
+                        Conv -
+        """
         return CSPLayer(
             int(2 * in_channel * width), int(out_channel * width), depth, False
         )
@@ -123,12 +147,13 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
     def forward(
         self, inputs: torch.Tensor
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        """
+        """Defines the computation performed at every call.
+
         Args:
             inputs: Input images.
 
         Returns:
-            Tuple[Tensor]: FPN feature.
+            (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]): FPN feature.
         """
         #  backbone
         out_features = self.backbone(inputs)
@@ -208,7 +233,19 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
     def forward(
         self, xin: Tuple[torch.Tensor, torch.Tensor, torch.Tensor]
     ) -> torch.Tensor:
-        """Defines the computation performed at every call."""
+        """Defines the computation performed at every call.
+
+        Args:
+            xin (Tuple[torch.Tensor, torch.Tensor, torch.Tensor]): Inputs from
+                `YOLOPAFPN`, contains 3 levels of FPN features (256, 512,
+                and 1024).
+
+        Returns:
+            (torch.Tensor): The decoded output with the shape (B,D,85) where
+            B is the batch size, D is the number of detections. The 85 columns
+            consist of the following values:
+            [x, y, w, h, conf, (cls_conf of the 80 COCO classes)].
+        """
         outputs = []
         for k, (cls_conv, reg_conv, x) in enumerate(
             zip(self.cls_convs, self.reg_convs, xin)
@@ -237,7 +274,21 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
         return outputs_tensor
 
     def decode_outputs(self, outputs: torch.Tensor, dtype: str) -> torch.Tensor:
-        """Converts raw output to [x, y, w, h] format."""
+        """Converts raw output to [x, y, w, h] format.
+
+        Args:
+            outputs (torch.Tensor): Raw output tensor. The first 4 columns
+                contain 2 offsets in terms of the top-left corner of the grid,
+                and the height and width of the predicted box. The rest of the
+                columns are not accessed in this method.
+            dtype (str): Data type.
+
+        Returns:
+            (torch.Tensor): The decoded output with the shape (B,D,85) where
+            B is the batch size, D is the number of detections. The 85 columns
+            consist of the following values:
+            [x, y, w, h, conf, (cls_conf of the 80 COCO classes)].
+        """
         grids = []
         strides = []
         for (hsize, wsize), stride in zip(self.sizes, self.strides):
