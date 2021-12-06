@@ -23,36 +23,34 @@ from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
 
 
 class Node(AbstractNode):
-    """MoveNet node that initalises a MoveNet model to detect human poses from
+    """MoveNet node that initializes a MoveNet model to detect human poses from
     an image.
 
-    The MoveNet node is capable of detecting up to 6 human figures
-    simultaneously per inference and for each detected human figure, 17 keypoints
-    are estimated. The keypoint indices table can be found :term:`here <keypoint indices>`.
+    The MoveNet node is capable of detecting up to 6 human figures for multipose lightning and
+    single person for singlepose lightning/thunder. If there are more than 6 persons in the image,
+    multipose lightning will only detect 6. This also applies to singlepose models, where only 1
+    person will be detected in a multi persons image, do take note that detection performance
+    will suffer when using singlepose models on multi persons images. 17 keypoints are estimated
+    and the keypoint indices table can be found :term:`here <keypoint indices>`.
 
     Inputs:
         |img|
-
     Outputs:
         |bboxes|
 
-
         |keypoints|
-
 
         |keypoint_scores|
 
-
-        |keypoints_conns|
-
+        |keypoint_conns|
 
         |bbox_labels|
 
     Configs:
         model_type (:obj:`str`):
             **{"
-            singlepose_lightning", "singlepose_thunder", "mulitpose_lightning"
-            },  default="mulitpose_lightning"** |br|
+            singlepose_lightning", "singlepose_thunder", "multipose_lightning"
+            },  default="multipose_lightning"** |br|
             Defines the detection model for MoveNet either single or multi pose.
             Lightning is smaller and faster but less accurate than Thunder version.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -60,15 +58,14 @@ class Node(AbstractNode):
             ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`): **default = { height: 256, width: 256 }** |br|
             Dictionary of resolutions of input array to different MoveNet models.
-            Only multipose can use dynamic shape that needs be multiples of 32,
-            recommended shape is 256. Default will be the resolution for multipose
-            lightning model.
+            Only multipose allows dynamic shape in multiples of 32 (recommended 256).
+            Default will be the resolution for multipose lightning model.
         bbox_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
             Detected bounding box confidence score threshold, only boxes above
             threshold will be kept in the output.
         keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.3** |br|
             Detected keypoints confidence score threshold, only keypoints above
-            threshold will be output
+            threshold will be output.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -76,8 +73,9 @@ class Node(AbstractNode):
         self.model = movenet_model.MoveNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """Function that reads the image input and returns the bboxes, keypoints,
+        keypoints confidence scores, keypoint connections and bounding box labels
+        of the persons detected
         """
 
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(

@@ -59,17 +59,19 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
     def predict(
         self, frame: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """ Predict poses from input frame
+        """Predict poses from input frame
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
-            bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
-            tuple containing list of bboxes and pose related info i.e coordinates,
-            scores, connections
-        """
-        assert isinstance(frame, np.ndarray)
+            Tuple of outputs of the model
+            (bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns)
 
+            bboxes (np.ndarray): Nx4 array of bboxes, N is number of detections
+            keypoints (np.ndarray): Nx17x2 array of keypoint coordinates
+            keypoints_scores (np.ndarray): Nx17 array of keypoint scores
+            keypoints_conns (np.ndarray): NxD'x2 keypoint connections, where
+                D' is the varying pair of valid keypoint connections per detection
+        """
         return self.predictor.predict(frame)
