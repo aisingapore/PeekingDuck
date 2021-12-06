@@ -22,7 +22,7 @@ import importlib
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import yaml
 
@@ -62,8 +62,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        pkd_base_dir = Path(__file__).resolve().parent
-        self.config_loader = ConfigLoader(pkd_base_dir)
+        self.pkd_base_dir = Path(__file__).resolve().parent
+        self.config_loader = ConfigLoader(self.pkd_base_dir)
 
         self.node_list = self._load_node_list(run_config_path)
         self.config_updates_cli = ast.literal_eval(config_updates_cli)
@@ -166,9 +166,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     def _edit_config(
         self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
     ) -> Dict[str, Any]:
-        """Update value of a nested dictionary of varying depth using
-        recursion
-        """
+        """Update value of a nested dictionary of varying depth using recursion"""
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
@@ -180,11 +178,66 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                         f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
+                    if key == "detect_ids" and (
+                        node_name == "model.yolo" or node_name == "model.efficientdet"
+                    ):
+                        key, value = self._change_labels_to_ids(node_name, key, value)
                     dict_orig[key] = value
                     self.logger.info(
                         f"Config for node {node_name} is updated to: '{key}': {value}"
                     )
         return dict_orig
+
+    def _change_labels_to_ids(
+        self, node_name: str, key: str, value: list
+    ) -> Tuple[str, list]:
+        """Process model.yolo or model.efficientdet detect_ids and check for labels to
+        be converted to ids, e.g. person to 0, car to 2
+
+        Args:
+            node_name (str): to determine if node is yolo or efficientdet as both
+                             lists of ids are different.
+            key (str): can only be "detect_ids", else error.
+            value (list): list of labels/ids for detection.
+                          If ids, do nothing.
+                          If labels, to be converted to ids.
+
+        Returns:
+            Tuple[str, list]: "detect_ids", list of sorted ids for object detection
+        """
+        assert key == "detect_ids", f"Key Error: expect detect_ids but got {key}"
+
+        map_labels_ids = self._load_mapping(node_name)
+        # Use set to eliminate duplicates and/or errors (which are mapped to zero)
+        obj_ids_set = {
+            x if isinstance(x, int) else map_labels_ids[x] if x in map_labels_ids else 0
+            for x in value
+        }
+        obj_ids_sorted_list = sorted(list(obj_ids_set))
+
+        return key, obj_ids_sorted_list
+
+    def _load_mapping(self, node_name: str) -> Dict[str, int]:
+        """Loads labels to ids mapping file for object detection models.
+        For efficientdet, the file is utils/mapping_efficientdet.txt
+        For yolo, the file is utils/mapping_yolo.txt
+
+        Args:
+            node_name (str): Must be either model.yolo or model.efficientdet
+
+        Returns:
+            Dict[str, int]: mapping of labels to object ids relevant to given model
+        """
+        assert (
+            node_name == "model.yolo" or node_name == "model.efficientdet"
+        ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
+
+        filename = node_name.replace("model.", "mapping_")
+        mapping_file = self.pkd_base_dir / "utils" / f"{filename}.txt"
+        with open(mapping_file, "r") as f:
+            contents = f.read()
+        the_mapping = ast.literal_eval(contents)
+        return the_mapping
 
     def get_pipeline(self) -> Pipeline:
         """Returns a compiled
