@@ -54,7 +54,7 @@ Install PeekingDuck in Conda Environment
 ```
 conda create -n pkd38 python=3.8
 conda activate pkd38
-conda install click requests scipy shapely tqdm pyyaml opencv colorama
+conda install click requests scipy shapely tqdm pyyaml opencv colorama torchvision
 conda install -c apple tensorflow-deps
 pip install tensorflow-macos
 pip install tensorflow-metal
