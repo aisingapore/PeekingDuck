@@ -53,7 +53,7 @@ class Detector:  # pylint: disable=too-few-public-methods
         self.model_dir = model_dir
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Half-precision only supported on CUDA
-        self.config["half"] = self.config["half"] and self.device.type != "cpu"
+        self.config["half"] = self.config["half"] and self.device.type == "cuda"
         self.yolox = self._create_yolox_model()
 
     @torch.no_grad()
