@@ -224,7 +224,15 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def make_group_layer(in_channels: int) -> Tuple[BaseConv, BaseConv]:
-        """2x BaseConv layer."""
+        """2x BaseConv layer.
+
+        Args:
+            in_channels (int): The number of input and output channels for
+                BaseConv.
+
+        Returns:
+            (Tuple[BaseConv, BaseConv]): A tuple containing 2 BaseConv blocks.
+        """
         return (
             BaseConv(in_channels, in_channels, 3, 1),
             BaseConv(in_channels, in_channels, 3, 1),
