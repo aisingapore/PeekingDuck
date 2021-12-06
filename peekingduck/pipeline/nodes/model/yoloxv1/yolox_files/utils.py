@@ -137,7 +137,8 @@ def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: 
 def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
     """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
 
-    (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
+    (x, y) is the object center. (x1, y1) is the top left corner and (x2, y2)
+    is the bottom right corner.
     """
     outputs = torch.empty_like(inputs)
     outputs[:, 0] = inputs[:, 0] - inputs[:, 2] / 2
