@@ -49,7 +49,17 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.network_blocks import 
 
 
 class CSPDarknet(nn.Module):
-    """Modified CSPNet with SiLU activation."""
+    """Modified CSPNet with SiLU activation.
+
+    Args:
+        dep_mul (float): Depth multiplier, used to determine the number of
+            Bottlenecks in `CSPLayer`.
+        wid_mul (float): Width multiplier, used to determine the number of
+            `in_channels` and `out_channels` in `BaseConv`.
+        out_features (Tuple[str, str, str]): Selects the desired outputs in
+            `forward()`. `YOLOPAFPN` creates `CSPDarknet` with
+            `out_features = ("dark3", "dark4", "dark5")`.
+    """
 
     # pylint: disable=arguments-differ
     def __init__(
@@ -76,14 +86,31 @@ class CSPDarknet(nn.Module):
 
     @staticmethod
     def make_group_layer(in_channels: int, depth: int) -> Tuple[BaseConv, CSPLayer]:
-        """Starts with BaseConv layer, followed by a CSPLayer"""
+        """Starts with BaseConv layer, followed by a CSPLayer.
+
+        Args:
+            in_channels (int): Number of channels in the input image.
+            depth (int): Number of Bottlenecks.
+
+        Returns:
+            (Tuple[BaseConv, CSPLayer]): A group layer consisting of a BaseConv
+            CSPLayer.
+        """
         return (
             BaseConv(in_channels, in_channels * 2, 3, 2),
             CSPLayer(in_channels * 2, in_channels * 2, depth),
         )
 
     def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
-        """Defines the computation performed at every call."""
+        """Defines the computation performed at every call.
+
+        Args:
+            inputs (torch.Tensor): Input from the previous layer.
+
+        Returns:
+            (Dict[str, torch.Tensor]): A dictionary of tensors with keys
+            corresponding to `self.out_features`.
+        """
         outputs = {}
         inputs = self.stem(inputs)
         outputs["stem"] = inputs
