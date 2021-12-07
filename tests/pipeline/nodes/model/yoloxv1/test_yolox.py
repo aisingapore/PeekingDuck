@@ -131,11 +131,9 @@ class TestYOLOX:
         image_name = Path(test_human_images).stem
         expected = GT_RESULTS[model_type][image_name]
 
-        npt.assert_array_almost_equal(output["bboxes"], expected["bboxes"], decimal=3)
-        npt.assert_array_equal(output["bbox_labels"], expected["bbox_labels"])
-        npt.assert_array_almost_equal(
-            output["bbox_scores"], expected["bbox_scores"], decimal=2
-        )
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
     def test_detect_human_bboxes_gpu(self, test_human_images, yolox_gpu):
@@ -150,11 +148,9 @@ class TestYOLOX:
         image_name = Path(test_human_images).stem
         expected = GT_RESULTS[model_type][image_name]
 
-        npt.assert_array_almost_equal(output["bboxes"], expected["bboxes"], decimal=3)
-        npt.assert_array_equal(output["bbox_labels"], expected["bbox_labels"])
-        npt.assert_array_almost_equal(
-            output["bbox_scores"], expected["bbox_scores"], decimal=2
-        )
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     def test_get_detect_ids(self, yolox_default):
         assert yolox_default.model.detect_ids == [0]
