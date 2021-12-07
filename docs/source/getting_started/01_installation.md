@@ -64,5 +64,6 @@ pip install peekingduck --no-dependencies
 Notes:
 - Only Python 3.8 is available for Conda on M1 Mac - Python 3.6 or 3.7 are not available
 - Numpy does not need to be installed explicitly
+- Installing `torchvision` will also install `pytorch`
 
 If this doesn't work for you, do check out our [issues](https://github.com/aimakerspace/PeekingDuck/issues) to see if the community of M1 Mac users have alternative solutions. We will update these instructions as we get more feedback.
