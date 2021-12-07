@@ -199,23 +199,27 @@ class TestYOLOX:
             _ = Node(config=yolox_bad_detect_ids_config)
 
     def test_invalid_config_value(self, yolox_bad_config_value):
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolox_bad_config_value)
+        assert "_threshold must be in [0, 1]" in str(excinfo.value)
 
     def test_invalid_config_model_files(self, yolox_config):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=True
-        ), pytest.raises(ValueError):
+        ), pytest.raises(ValueError) as excinfo:
             yolox_config["weights"]["model_file"][
                 yolox_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=yolox_config)
+        assert "Model file does not exist. Please check that" in str(excinfo.value)
 
     def test_invalid_image(self, test_no_human_images, yolox_default):
         blank_image = cv2.imread(test_no_human_images)
         # Potentially passing in a file path or a tuple from image reader
         # output
-        with pytest.raises(TypeError):
+        with pytest.raises(TypeError) as excinfo:
             _ = yolox_default.run({"img": Path.cwd()})
-        with pytest.raises(TypeError):
+        assert "image must be a np.ndarray" == str(excinfo.value)
+        with pytest.raises(TypeError) as excinfo:
             _ = yolox_default.run({"img": ("image name", blank_image)})
+        assert "image must be a np.ndarray" == str(excinfo.value)
