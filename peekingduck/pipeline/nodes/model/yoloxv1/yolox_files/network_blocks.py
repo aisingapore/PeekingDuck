@@ -94,10 +94,10 @@ class Bottleneck(nn.Module):
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Defines the computation performed at every call."""
-        ouputs = self.conv2(self.conv1(inputs))
+        outputs = self.conv2(self.conv1(inputs))
         if self.use_add:
-            ouputs = ouputs + inputs
-        return ouputs
+            outputs = outputs + inputs
+        return outputs
 
 
 class SPPBottleneck(nn.Module):
