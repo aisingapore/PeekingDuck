@@ -1,0 +1,33 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+weights_parent_dir: null
+weights:
+  {
+    model_subdir: yolox,
+    blob_file: yolox.zip,
+    classes_file: coco.names,
+    model_file:
+      {
+        yolox-tiny: yolox-tiny.pth,
+        yolox-s: yolox-s.pth,
+        yolox-m: yolox-m.pth,
+        yolox-l: yolox-l.pth,
+      },
+  }
+model_size:
+  {
+    yolox-tiny: { depth: 0.33, width: 0.375 },
+    yolox-s: { depth: 0.33, width: 0.5 },
+    yolox-m: { depth: 0.67, width: 0.75 },
+    yolox-l: { depth: 1.0, width: 1.0 },
+  }
+num_classes: 80
+
+model_type: yolox-tiny # yolox-tiny, yolox-s, yolox-m, or yolox-l
+input_size: 416
+detect_ids: [0]
+iou_threshold: 0.45
+score_threshold: 0.25
+half: false
+fuse: false

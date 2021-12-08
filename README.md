@@ -82,7 +82,7 @@ You can find the complete documentation for PeekingDuck at our [Read the Docs si
 - [Changing PeekingDuck nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/02_configure_pkdk.html) and their settings
 - [Official documentation](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_nodes.html), and using them with PeekingDuck nodes
-- Using PeekingDuck as an imported Python module within your project, via the [Python API](https://peekingduck.readthedocs.io/en/stable/getting_started/04_python_mode.html)
+- Using PeekingDuck as an [imported Python module](https://peekingduck.readthedocs.io/en/stable/getting_started/04_import_peekingduck.html) within your project
 - Benchmarks and class/keypoints IDs for [object detection](https://peekingduck.readthedocs.io/en/stable/resources/01a_object_detection.html) and [pose estimation](https://peekingduck.readthedocs.io/en/stable/resources/01b_pose_estimation.html) models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
