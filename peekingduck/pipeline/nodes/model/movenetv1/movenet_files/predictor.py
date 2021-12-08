@@ -44,6 +44,12 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         self.movenet_model = self._create_movenet_model()
 
     def _create_movenet_model(self) -> tf.keras.Model:
+        """
+        Loads the MoveNet model
+
+        Returns:
+            model (tf.keras.Model): Initialized MoveNet Model
+        """
         model_path = (
             self.model_dir / self.config["weights"]["model_file"][self.model_type]
         )
@@ -51,6 +57,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         self.resolution = self.get_resolution_as_tuple(
             self.config["resolution"][self.model_type]
         )
+
         if "multi" in self.model_type:
             self.logger.info(
                 (
@@ -73,17 +80,21 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
                     f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
                 ),
             )
+
         return model
 
     @staticmethod
     def get_resolution_as_tuple(resolution: dict) -> Tuple[int, int]:
         """Convert resolution from dict to tuple format
+
         Args:
             resolution (dict): height and width in dict format
+
         Returns:
             resolution (Tuple(int)): height and width in tuple format
         """
         res1, res2 = resolution["height"], resolution["width"]
+
         return int(res1), int(res2)
 
     def predict(
@@ -91,8 +102,10 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         # pylint: disable=too-many-locals
         """MoveNet prediction function
+
         Args:
-            frame (np.array): image in numpy array
+            frame (np.ndarray): image in numpy array
+
         Returns:
             bboxes (np.ndarray): Nx4 array of bboxes, N is number of detections
             keypoints (np.ndarray): Nx17x2 array of keypoint coordinates
@@ -105,8 +118,8 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         infer = self.movenet_model.signatures["serving_default"]
         outputs = infer(tf.constant(image_data))
         predictions = outputs["output_0"]
-        if "multi" in self.config["model_type"]:
 
+        if "multi" in self.config["model_type"]:
             (
                 bboxes,
                 keypoints,
@@ -120,6 +133,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
                 keypoints_scores,
                 keypoints_conns,
             ) = self._get_results_single(predictions)
+
         return bboxes, keypoints, keypoints_scores, keypoints_conns
 
     def _get_results_single(
@@ -133,6 +147,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
 
         Args:
             predictions (tf.Tensor): model output in a [1x1x17x3] tensor
+
         Returns:
             bboxes (np.ndarray): 1x4 array of bboxes
             keypoints (np.ndarray): 1x17x2 array of keypoint coordinates
@@ -169,6 +184,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
         bbox = self._get_bbox_from_keypoints(valid_keypoints)
+
         return bbox, valid_keypoints, keypoints_scores, keypoints_conns
 
     def _get_results_multi(
@@ -185,6 +201,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
 
         Args:
             predictions (tf.Tensor): model output in a [1x6x56] tensor
+
         Returns:
             bboxes (np.ndarray): Nx4 array of bboxes, N is number of detections
             keypoints (np.ndarray): Nx17x2 array of keypoint coordinates
@@ -225,6 +242,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
             keypoints, keypoints_scores, self.config["keypoint_score_threshold"]
         )
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
+
         return bboxes, valid_keypoints, keypoints_scores, keypoints_conns
 
     @staticmethod
@@ -235,6 +253,15 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         Get connections between adjacent keypoint pairs if both keypoints are detected
         Output will be in the shape of NxD'x2 keypoint connections, where D' is the
         varying pairs of valid keypoint connections per detection
+
+        Args:
+            keypoints (np.ndarray): Nx17x2 array of keypoint coordinates, where N is
+                the number of detections
+            masks (np.ndarray): Nx17 boolean for valid keypoints
+
+        Returns:
+            keypoint_conns (np.ndarray): NxD'x2 keypoint connections, where
+                D' is the varying pair of valid keypoint connections per detection
         """
         all_connections = []
         for i in range(keypoints.shape[0]):
@@ -247,7 +274,9 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
                         )
                     )
             all_connections.append(connections)
-        return np.asarray(all_connections)
+        keypoint_conns = np.asarray(all_connections)
+
+        return keypoint_conns
 
     @staticmethod
     def _get_keypoints_coords(
@@ -256,20 +285,23 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         keypoints_score_threshold: float,
     ) -> Tuple[np.ndarray, np.ndarray]:
         """Keep only valid keypoints' relative coordinates
+
         Args:
-            keypoints (np.array): Nx17x2 array of keypoints' relative coordinates
-            keypoints_score (np.array): Nx17 keypoints confidence score
+            keypoints (np.ndarray): Nx17x2 array of keypoints' relative coordinates
+            keypoints_score (np.ndarray): Nx17 keypoints confidence score
                 for valid keypoints coordinates
             keypoints_score_threshold (float): threshold for keypoints score
+
         Returns:
-            valid_keypoints (np.array): Nx17x2 array of keypoints where undetected
+            valid_keypoints (np.ndarray): Nx17x2 array of keypoints where undetected
                 keypoints are assigned a (-1,-1) value.
-            keypoint_masks (np.array) : Nx17 boolean for valid keypoints
+            keypoint_masks (np.ndarray) : Nx17 boolean for valid keypoints
         """
         valid_keypoints = keypoints.copy()
         valid_keypoints = np.clip(valid_keypoints, 0, 1)
         keypoint_masks = keypoints_score > keypoints_score_threshold
         valid_keypoints[~keypoint_masks] = [-1, -1]
+
         return valid_keypoints, keypoint_masks
 
     @staticmethod
@@ -280,6 +312,14 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         Obtain masks for bbox with confidence scores above the detection threshold
         The mask come in the format of a list with idx of approved detection
         eg [0,1,2], generally movenet will have the valid detections in the first few indexes
+
+        Args:
+            bbox_scores (np.ndarray): array of bbox confidence scores
+            score_threshold (float): threshold value for bbox confidence scores
+
+        Returns:
+            masks (list): list of index of bboxes that have respective bbox confidence
+            scores above the score threshold
         """
         bbox_scores_list = bbox_scores.tolist()
         masks = [
@@ -292,11 +332,22 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         """
         Obtain coordinates from the keypoints for single pose model where bounding box
         coordinates are not provided as model outputs. The bounding box coordinates
-        will be [xmin,ymin,xman,ymax], derived from the keypoints coordinates.
+        will be [xmin,ymin,xmax,ymax], derived from the keypoints coordinates.
+
+        Args:
+            valid_keypoints (np.ndarray): Nx17x2 array of keypoints where undetected
+                Where N is the number of detections
+
+        Returns:
+            bboxes (np.ndarray): Nx4 array of bbox coordinates in the form of
+                [x1,y1,x2,y2] where the values are in relative coordinates
+                between 0 and 1
         """
         # using absolute because it is coded that invalid keypoints are set as -1
         xmin = np.abs(valid_keypoints[:, :, 0]).min()
         ymin = np.abs(valid_keypoints[:, :, 1]).min()
         xmax = valid_keypoints[:, :, 0].max()
         ymax = valid_keypoints[:, :, 1].max()
-        return np.asarray([[xmin, ymin, xmax, ymax]])
+        bboxes = np.asarray([[xmin, ymin, xmax, ymax]])
+
+        return bboxes

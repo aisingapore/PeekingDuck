@@ -76,6 +76,14 @@ class Node(AbstractNode):
         """Function that reads the image input and returns the bboxes, keypoints,
         keypoints confidence scores, keypoint connections and bounding box labels
         of the persons detected
+
+        Args:
+            inputs (dict): Dictionary of inputs with key "img".
+
+        Returns:
+            outputs (dict): bbox output in dictionary format with keys
+                "bboxes", "keypoints", "keypoint_scores", "keypoint_conns
+                and "bbox_labels".
         """
 
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
