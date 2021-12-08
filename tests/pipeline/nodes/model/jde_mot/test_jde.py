@@ -90,7 +90,7 @@ class TestJDE:
         # Create a VideoCapture object and read from input file
         cap = cv2.VideoCapture(test_human_videos)
         # Read until video is completed
-        while(cap.isOpened()):
+        while cap.isOpened():
             # Capture frame-by-frame
             ret, frame = cap.read()
             if ret == True:

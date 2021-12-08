@@ -151,7 +151,7 @@ def non_max_suppression(
             output[image_i] = (
                 det_max
                 if output[image_i] is None
-                else torch.cat((output[image_i], det_max)) # type: ignore
+                else torch.cat((output[image_i], det_max))  # type: ignore
             )
     return output
 
@@ -246,7 +246,7 @@ def decode_delta_map(
         torch.Tensor: Prediction map.
     """
     nB, nA, nGh, nGw, _ = delta_map.shape
-    anchor_mesh = generate_anchor(nGh, nGw, anchors, device) # type: ignore
+    anchor_mesh = generate_anchor(nGh, nGw, anchors, device)  # type: ignore
     anchor_mesh = anchor_mesh.permute(
         0, 2, 3, 1
     ).contiguous()  # Shpae (nA x nGh x nGw) x 4

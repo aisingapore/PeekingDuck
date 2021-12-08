@@ -37,10 +37,10 @@ Functions for bounding box matching
 """
 
 from typing import Any, List, Tuple, Union
-import lap # pylint: disable=import-error
+import lap  # pylint: disable=import-error
 import numpy as np
 from scipy.spatial.distance import cdist
-from cython_bbox import bbox_overlaps as bbox_ious # pylint: disable=import-error
+from cython_bbox import bbox_overlaps as bbox_ious  # pylint: disable=import-error
 from peekingduck.pipeline.nodes.model.jde_mot.jde_files.utils import kalman_filter
 from peekingduck.pipeline.nodes.model.jde_mot.jde_files.utils.kalman_filter import (
     KalmanFilter,
