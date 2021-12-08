@@ -131,7 +131,7 @@ def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequi
 
     Returns:
         (Iterator[OptionalRequirements]): Optional requirements, both Python
-            and system packages, speficified under the unique identifier.
+            and system packages, specified under the unique identifier.
     """
     lines = iter(_yield_lines(file, identifier))
     for line in lines:

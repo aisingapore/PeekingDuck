@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initalises a PoseNet model to detect human poses from an image.
+    """Initialises a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
     simultaneously per inference and for each detected human figure, 17

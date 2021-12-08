@@ -65,8 +65,8 @@ def save_response_content(response: requests.Response, destination: Path) -> Non
     Chunk size set to large integer as weights are usually pretty large.
 
     Args:
-        response (:obj:`requests.Reponse`): HTML response.
-        destination (:obj:`Path`): Destintation directory of download.
+        response (:obj:`requests.Response`): HTML response.
+        destination (:obj:`Path`): Destination directory of download.
     """
     chunk_size = 32768
 

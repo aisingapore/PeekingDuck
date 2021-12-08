@@ -46,7 +46,7 @@ def project_points_onto_original_image(
         image_size (Tuple[int, int]): Width and height of image
 
     Returns:
-        porject_points (np.ndarray): projected points on the original image
+        project_points (np.ndarray): projected points on the original image
     """
     if len(points) == 0:
         return []

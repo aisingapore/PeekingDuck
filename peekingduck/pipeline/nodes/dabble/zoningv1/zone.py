@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Creats a zone from a polygon area
+Creates a zone from a polygon area
 """
 
 from typing import List, Tuple
