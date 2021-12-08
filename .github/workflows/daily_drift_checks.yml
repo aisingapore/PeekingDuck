@@ -22,8 +22,19 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install peekingduck locally
         run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            TEST_VER=0.0.0dev
+          else
+            TEST_VER=`grep -m 1 TEST_VERSION ./tests/module_import/test_module_import.py | cut -d ' ' -f 3`
+            TEST_VER=`echo ${TEST_VER} | cut -d '"' -f 2`
+          fi
+          echo "test_module_import.py TEST_VER=${TEST_VER}"
           python -m pip install --upgrade pip
-          bash ./scripts/update_version.sh $VERSION
-          pip install .
+          pip install -r cicd_requirements.txt
+          bash ./scripts/update_version.sh ${TEST_VER}
+          pip install . --no-dependencies
+        shell: bash
+      - name: Run import peekingduck as module tests
+        run: bash ./scripts/run_tests.sh module
       - name: Run system-checks
         uses: ./.github/actions/system-test # note only works after checkout@v2
