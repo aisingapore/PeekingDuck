@@ -2,12 +2,15 @@ input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
 
 model_type: v4tiny # v4 or v4tiny
-classes: ../peekingduck_weights/yolov4/coco.names
-weights_dir: ["../peekingduck_weights/yolov4"]
-blob_file: "yolo.zip"
-graph_files: {
-    v4: ../peekingduck_weights/yolov4/yolov4.pb,
-    v4tiny: ../peekingduck_weights/yolov4/yolov4-tiny.pb
+weights_parent_dir: null
+weights: {
+    model_subdir: yolov4,
+    blob_file: yolo.zip,
+    classes_file: coco.names,
+    model_file: {
+        v4: yolov4.pb,
+        v4tiny: yolov4-tiny.pb
+    }
 }
 size: 416
 num_classes: 80

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Preprocessing fuctions for input nodes
+Preprocessing functions for input nodes
 """
 
 import logging

@@ -1,4 +1,5 @@
 import os
+from contextlib import contextmanager
 import subprocess
 from time import perf_counter
 from pathlib import Path
@@ -30,19 +31,34 @@ def get_fps_number(avg_fps_msg: str) -> float:
     return avg_fps
 
 
+@contextmanager
+def run_config_yml():
+    """Save and restore current run_config.yml"""
+    try:
+        config_saved = False
+        if os.path.isfile(PKD_CONFIG_ORIG_PATH):
+            print("Backup existing run_config.yml")
+            os.rename(src=PKD_CONFIG_ORIG_PATH, dst=PKD_CONFIG_BAK_PATH)
+            config_saved = True
+        yield
+    finally:
+        if config_saved:
+            print("Restore backed up run_config.yml")
+            os.rename(src=PKD_CONFIG_BAK_PATH, dst=PKD_CONFIG_ORIG_PATH)
+
+
 # Unit Tests
 def test_input_threading():
     """Run input threading unit test.
 
     This test will do the following:
-    1. Prepare unit test environment
-    2. Backup original run_config.yml in Peeking Duck directory
-    3. Run input live test 1 without threading with custom run_config.yml file
+    1. Backup original run_config.yml in Peeking Duck directory
+    2. Run input live test 1 without threading with custom run_config.yml file
        The test comprises input.live, model.yolo and dabble.fps
-    4. Run input live test 2 with threading with custom run_config.yml file
+    3. Run input live test 2 with threading with custom run_config.yml file
        The test comprises input.live, model.yolo and dabble.fps
-    5. Restore original run_config.yml
-    6. Check average FPS from 2 is higher than 1
+    4. Restore original run_config.yml
+    5. Check average FPS from 2 is higher than 1
     """
 
     def run_rtsp_test(url: str, threading: bool) -> float:
@@ -79,7 +95,11 @@ def test_input_threading():
         avg_fps = 0
         cmd = ["python", "PeekingDuck"]
         proc = subprocess.Popen(
-            cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, bufsize=1
+            cmd,
+            cwd=PKD_RUN_DIR,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            bufsize=1,
         )
         st = perf_counter()
         while True:
@@ -93,27 +113,18 @@ def test_input_threading():
             if dur > num_sec:
                 break
         proc.kill()
+        os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
 
         return avg_fps
 
-    # 1. Setup unit test environment
-    os.chdir(PKD_RUN_DIR)
+    res = False
+    with run_config_yml():
+        print("Run test without threading")
+        avg_fps_1 = run_rtsp_test(url=RTSP_URL, threading=False)
 
-    # 2. Backup original run_config.yml
-    os.rename(src=PKD_CONFIG_ORIG_PATH, dst=PKD_CONFIG_BAK_PATH)
+        print("Run test with threading")
+        avg_fps_2 = run_rtsp_test(url=RTSP_URL, threading=True)
 
-    # 3. Run input live test without threading
-    avg_fps_1 = run_rtsp_test(url=RTSP_URL, threading=False)
-    os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
-
-    # 4. Run input live test with threading
-    avg_fps_2 = run_rtsp_test(url=RTSP_URL, threading=True)
-    os.remove(PKD_CONFIG_ORIG_PATH)  # delete unit test yml
-
-    # 5. Restore original config
-    os.rename(src=PKD_CONFIG_BAK_PATH, dst=PKD_CONFIG_ORIG_PATH)
-
-    # 6. Check we get higher FPS for 2 than 1
-    res = avg_fps_2 > avg_fps_1
-    print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
+        res = avg_fps_2 > avg_fps_1
+        print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
     assert res

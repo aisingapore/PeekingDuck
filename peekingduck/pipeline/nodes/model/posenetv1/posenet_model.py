@@ -18,7 +18,7 @@ import logging
 from typing import Dict, Any, Tuple
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader
+from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
 
@@ -36,13 +36,17 @@ class PoseNetModel:  # pylint: disable=too-few-public-methods
         if config["model_type"] not in [50, 75, 100, "resnet"]:
             raise ValueError("model_type must be one of [50, 75, 100, resnet]")
 
-        # check for posenet weights, if none then download into weights folder
-        if not checker.has_weights(config["root"], config["weights_dir"]):
-            print("---no posenet weights detected. proceeding to download...---")
-            downloader.download_weights(config["root"], config["blob_file"])
-            print("---posenet weights download complete.---")
+        weights_dir, model_dir = finder.find_paths(
+            config["root"], config["weights"], config["weights_parent_dir"]
+        )
 
-        self.predictor = Predictor(config)
+        # check for posenet weights, if none then download into weights folder
+        if not checker.has_weights(weights_dir, model_dir):
+            self.logger.info("---no weights detected. proceeding to download...---")
+            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
+            self.logger.info(f"---weights downloaded to {weights_dir}.---")
+
+        self.predictor = Predictor(config, model_dir)
 
     def predict(
         self, frame: np.ndarray

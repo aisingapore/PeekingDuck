@@ -20,7 +20,7 @@ from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
-from .yolov4 import yolo_model
+from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
 
 
 class Node(AbstractNode):
@@ -43,15 +43,9 @@ class Node(AbstractNode):
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Name of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        graph_files (:obj:`Dict`):
-            Dictionary pointing to path of the model weights file.
-        size (:obj:`int`): **default = 416**. |br|
-            Image resolution passed to the YOLO model.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by replacing
+            ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|

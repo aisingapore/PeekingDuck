@@ -13,4 +13,4 @@ Below are the various Getting Started articles.
    /getting_started/01_installation.md
    /getting_started/02_configure_pkdk.md
    /getting_started/03_custom_nodes.md
-   /getting_started/04_python_mode.md
+   /getting_started/04_import_peekingduck.md

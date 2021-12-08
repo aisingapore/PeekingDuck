@@ -46,14 +46,23 @@ def posenet_config():
 
 
 @pytest.fixture
+def model_dir(posenet_config):
+    return (
+        posenet_config["root"].parent
+        / "peekingduck_weights"
+        / posenet_config["weights"]["model_subdir"]
+    )
+
+
+@pytest.fixture
 def posenet(posenet_config):
     node = Node(posenet_config)
     return node
 
 
 @pytest.fixture
-def posenet_predictor(posenet_config):
-    predictor = Predictor(posenet_config)
+def posenet_predictor(posenet_config, model_dir):
+    predictor = Predictor(posenet_config, model_dir)
     return predictor
 
 
