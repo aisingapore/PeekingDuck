@@ -1,10 +1,9 @@
 click == 7.1.2
+colorama == 0.4.4
+numpy == 1.17.3
 opencv-contrib-python == 4.1.2.30
+pyyaml >= 5.3.1
 requests == 2.24.0
-shapely == 1.7.1
 tensorflow == 2.2.0
 tqdm == 4.45.0
-numpy == 1.17.3
-pyyaml >= 5.3.1
-colorama == 0.4.4
-scipy
+scipy >= 1.4.1
