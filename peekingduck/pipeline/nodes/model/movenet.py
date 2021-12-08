@@ -31,7 +31,7 @@ class Node(AbstractNode):
     multipose lightning will only detect 6. This also applies to singlepose models, where only 1
     person will be detected in a multi persons image, do take note that detection performance
     will suffer when using singlepose models on multi persons images. 17 keypoints are estimated
-    and the keypoint indices table can be found :term:`here <keypoint indices>`.
+    and the keypoint indices table can be found :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
         |img|
