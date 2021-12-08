@@ -7,3 +7,5 @@ tensorflow == 2.2.0
 tqdm == 4.45.0
 click == 7.1.2
 scipy
+torch
+torchvision
