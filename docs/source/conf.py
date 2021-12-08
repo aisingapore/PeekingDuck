@@ -88,6 +88,7 @@ autosummary_mock_imports = [
     "peekingduck.pipeline.nodes.model.yolov4",
     "peekingduck.pipeline.nodes.model.yolov4_face",
     "peekingduck.pipeline.nodes.model.yolov4_license_plate",
+    "peekingduck.pipeline.nodes.model.yoloxv1",
     "peekingduck.pipeline.nodes.output.utils",
     "peekingduck.utils",
 ]
