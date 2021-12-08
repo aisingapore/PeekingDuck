@@ -12,7 +12,7 @@ Currently, there are 2 types of trackers available with PeekingDuck: MOSSE (usin
 
 ## Demo
 
-To try our solution on your own computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [object_tracking.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml) and run PeekingDuck.
+To try our solution on your own computer with [PeekingDuck installed](../getting_started/01_installation.md): use the following configuration file: [object_tracking.yml](https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_tracking.yml) and run PeekingDuck.
 
 ```
 > peekingduck run --config_path <path_to_object_tracker.yml>

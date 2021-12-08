@@ -1,0 +1,10 @@
+nodes:
+- input.live
+- model.yolo
+- dabble.tracking:
+    tracking_type: "iou"
+- dabble.fps
+- draw.bbox
+- draw.tag
+- draw.legend
+- output.screen
