@@ -17,9 +17,10 @@ Human detection and tracking model
 """
 
 from typing import Any, Dict
+import os
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.nodes.model.jde_mot import jde_model
-import os
+
 os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
 
 
