@@ -29,7 +29,7 @@ The rest of this webpage contains more details about using PeekingDuck, includin
 - [Changing PeekingDuck nodes](getting_started/02_configure_pkdk) and their settings
 - [Official documentation](/peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
 - Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
-- Using PeekingDuck as an imported Python module within your project, via the [Python API](getting_started/04_python_mode)
+- Using PeekingDuck as an [imported Python module](getting_started/04_import_peekingduck) within your project
 - Benchmarks and class/keypoints IDs for [object detection](resources/01a_object_detection) and [pose estimation](resources/01b_pose_estimation) models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
@@ -49,8 +49,8 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
 | [Privacy Protection (Faces)](use_cases/privacy_protection_faces.md) | [Privacy Protection (License Plates)](use_cases/privacy_protection_license_plate.md) |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%"> |
-| [Face Mask Detection](use_cases/face_mask_detection.md)      |                                                              |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> |                                                              |
+| [Face Mask Detection](use_cases/face_mask_detection.md)      | [Crowd Counting](use_cases/crowd_counting.md)                |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif" width="100%"> |
 |                                                              |                                                              |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
