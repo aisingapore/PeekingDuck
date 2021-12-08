@@ -46,7 +46,7 @@ from peekingduck.pipeline.nodes.model.jde_mot.jde_files.utils.kalman_filter impo
     KalmanFilter,
 )
 
-# pylint: disable=invalid-name, no-name-in-module, unused-argument, redefined-outer-name, too-many-arguments
+# pylint: disable=invalid-name, no-name-in-module, unused-argument, redefined-outer-name, too-many-arguments, import-error
 
 
 def linear_assignment(
