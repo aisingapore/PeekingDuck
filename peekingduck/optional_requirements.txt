@@ -1,3 +1,4 @@
 dabble.zone_count PYTHON shapely == 1.7.1
+model.jde PYTHON lap
 model.jde PYTHON cython
 model.jde PYTHON cython-bbox
