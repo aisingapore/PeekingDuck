@@ -32,7 +32,7 @@ singlepose_models = [
 ]
 multipose_models = ["multipose_lightning"]
 single_person_images = ["t2.jpg"]
-multi_persons_images = ["t1.jpg", "t4.jpg"]
+multi_persons_images = ["t1.jpg"]
 zero_persons_images = ["black.jpg", "t3.jpg"]
 invalid_score_thresholds = [-1, 1.1]
 
