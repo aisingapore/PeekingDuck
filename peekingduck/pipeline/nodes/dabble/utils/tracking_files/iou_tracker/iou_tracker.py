@@ -46,7 +46,7 @@ from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.misc imp
 )
 
 
-class IOUTracker(Tracker): # pylint: disable=too-few-public-methods
+class IOUTracker(Tracker):  # pylint: disable=too-few-public-methods
     """Intersection over Union Tracker.
 
     Args:
