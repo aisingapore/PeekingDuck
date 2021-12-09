@@ -32,7 +32,7 @@ run_test(){
     testType=$1
     showCoverage=$2
 
-    if ! (coverage run --source="$test_dir" -m pytest -v -m "$testType"); then
+    if ! (coverage run --source="$test_dir" -m pytest -v -sv -m "$testType"); then
         show_coverage $showCoverage
         echo "TEST FAILED."
         exit 1

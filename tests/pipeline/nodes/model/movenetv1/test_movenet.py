@@ -120,6 +120,8 @@ class TestMoveNet:
                 ) as captured:
                     movenet = Node(config=movenet_config)
                     # records 0 - 20 records are updates to configs
+                    print(captured.records[0].getMessage())
+                    print(captured.records[1].getMessage())
                     assert (
                         captured.records[0].getMessage()
                         == "---no weights detected. proceeding to download...---"
