@@ -18,17 +18,18 @@ Load Tracker for inference.
 
 from typing import Any, Dict, List
 import logging
-from .tracking_files.iou_tracking import IOUTracking
-from .tracking_files.opencv_tracking import OpenCVTracker
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracking import (
+    IOUTracking,
+)
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.opencv_tracking import (
+    OpenCVTracker,
+)
 
-# pylint: disable=too-few-public-methods
 
-
-class LoadTracker:
+class TrackerLoader:  # pylint: disable=too-few-public-methods
     """Loads chosen tracker node."""
 
     def __init__(self, tracking_type: str) -> None:
-        super().__init__()
         self.logger = logging.getLogger(__name__)
         self.logger.info(f"Tracking algorithm used: {tracking_type}")
         if tracking_type in ["iou", "mosse"]:
@@ -37,14 +38,29 @@ class LoadTracker:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']")
 
     def predict(self, inputs: Dict[str, Any]) -> List[str]:
-        """Run tracking algorithm"""
+        """Runs tracking algorithm.
+
+        Args:
+            inputs (Dict[str, Any]): Dict of outputs from earlier nodes.
+
+        Returns:
+            List[str]: Tracking ids of bounding boxes and ordered
+                accordingly.
+        """
         obj_tags = self.tracker.run(inputs)
 
         return obj_tags
 
     @staticmethod
     def _get_tracker(tracking_type: str) -> Any:
-        """Returns tracker from tracking_type config parameter"""
+        """Returns tracker from tracking_type config parameter.
+
+        Args:
+            tracking_type (str): Name of tracker to be used.
+
+        Returns:
+            Any: Tracker type.
+        """
         trackers_dict = {"iou": IOUTracking(), "mosse": OpenCVTracker()}
         tracker = trackers_dict[tracking_type]
         return tracker

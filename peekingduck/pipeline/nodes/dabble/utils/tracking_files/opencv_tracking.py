@@ -16,11 +16,13 @@
 Tracking algorithm that uses OpenCV's MOSSE.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 import numpy as np
 import cv2
-from .iou_tracker.utils import format_boxes
-from .iou_tracker.utils import iou
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import (
+    format_boxes,
+)
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import iou
 
 
 class OpenCVTracker:  # pylint: disable=too-few-public-methods
@@ -30,9 +32,8 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
     Only the "MOSSE" tracker can be selected as it operates at a high FPS.
 
     References:
-
-    Inference code adapted from:
-        https://learnopencv.com/object-tracking-using-opencv-cpp-python/
+        Inference code adapted from:
+            https://learnopencv.com/object-tracking-using-opencv-cpp-python/
     """
 
     def __init__(self) -> None:
@@ -42,10 +43,18 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         self.next_object_id = 0
         self.iou_thresh = 0.1
         # Dict to store {id (key): [Tracker, bbox(prev)]}
-        self.tracking_dict: Dict[int, List[Any]] = dict()
+        self.tracking_dict: Dict[int, List[Any]] = {}
 
     def run(self, inputs: Dict[str, Any]) -> List[str]:
-        """Initialize and update tracker on each frame"""
+        """Initialises and update tracker on each frame.
+
+        Args:
+            inputs (Dict[str, Any]): Outputs from previous nodes used.
+
+        Returns:
+            List[str]: List of track_ids sorted by bounding boxes.
+        """
+
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
         # Format bboxes from normalized to frame axis
@@ -62,7 +71,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             track_id = list(self.tracking_dict.keys())
             obj_tags = [str(x) for x in track_id]
             self.first_frame_or_not = False
-
         # Continuous frames
         else:
             obj_tags = self._if_new_bbox_add_track(bboxes, frame)
@@ -79,12 +87,22 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         return obj_tags
 
     def _if_new_bbox_add_track(
-        self, bboxes: List[List[float]], frame: np.ndarray
+        self, bboxes: np.ndarray, frame: np.ndarray
     ) -> List[str]:
-        """Check for new bboxes added and initialize new tracker"""
+        """Checks for new bboxes added and initialises new tracker.
+
+        Args:
+            bboxes (np.ndarray): Detected bounding boxes.
+            frame (np.ndarray): Image frame parsed from video.
+
+        Returns:
+            List[str]: List of track_ids.
+        """
+
         prev_frame_tracked_bbox = []
         # Dict to store {current frame bbox: highest_iou_index}
-        matching_dict: Dict[Any, Any] = dict()
+        matching_dict: Dict[Tuple[int, int, int, int], int] = {}
+
         # Get previous frames' tracked bboxes
         for _, value in self.tracking_dict.items():
             prev_frame_tracked_bbox.append(np.array(value[1]))
@@ -97,6 +115,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             prev_frame_bbox_highest_iou_index = (
                 ious.argmax() if round(max(ious), 1) >= self.iou_thresh else None
             )
+            print(box)
             matching_dict.update({tuple(box): prev_frame_bbox_highest_iou_index})
 
         # Create object tags from highest IOU index and tracking_dict
@@ -108,9 +127,10 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
                 track_id.append(str(id_num))
             else:
                 # Create new tracker for bbox that < IOU threshold
-                self._initialize_tracker(key, frame)
+                self._initialise_tracker(key, frame)
                 id_num = list(self.tracking_dict)[-1]
                 track_id.append(str(id_num))
+
         # Create result list to replace duplicate track_ids
         obj_tags = []
         for id_num in track_id:
@@ -121,21 +141,40 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
 
         return obj_tags
 
-    def _initialize_tracker(
+    def _initialise_tracker(
         self, bbox: List[float], frame: np.ndarray
     ) -> Dict[int, List[Any]]:
-        """Start a tracker for each bbox"""
+        """Starts a tracker for each bbox.
+
+        Args:
+            bbox (List[float]): Single detected bounding box.
+            frame (np.ndarray): Image frame parsed from video.
+
+        Returns:
+            Dict[int, List[Any]]: Dict to store {id (key): [Tracker, bbox(prev)]}
+        """
+
         tracker = self._create_tracker_by_name(self.tracker_type)
         tracker.init(frame, tuple(bbox))
         self.next_object_id += 1
         self.tracking_dict.update({self.next_object_id: [tracker, bbox]})
+
         return self.tracking_dict
 
     @staticmethod
     def _create_tracker_by_name(tracker_type: str) -> Any:
-        """Create tracker based on tracker name"""
+        """Create tracker based on tracker name.
+
+        Args:
+            tracker_type (str): Type of opencv tracker used.
+
+        Returns:
+            Any: MOSSE Tracker.
+        """
+
         if tracker_type == "MOSSE":
             tracker = cv2.TrackerMOSSE_create()
         else:
-            tracker = None
+            raise ValueError("Incorrect tracker type.")
+
         return tracker

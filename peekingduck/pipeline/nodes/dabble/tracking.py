@@ -18,16 +18,16 @@ Performs multiple object tracking for detected bboxes
 
 from typing import Dict, Any
 from peekingduck.pipeline.nodes.node import AbstractNode
-from .utils.load_tracker import LoadTracker
+from peekingduck.pipeline.nodes.dabble.utils.load_tracker import TrackerLoader
 
 
 class Node(AbstractNode):
     """Node that uses bounding boxes detected by an object detector model
     to track multiple objects.
 
-    There are types of trackers that can be selected; MOSSE, IOU.
-    Please view each tracker's script, or the multi object
-    tracking use case documentation for more details.
+    There are types of trackers that can be selected: MOSSE, IOU.
+    Please view each tracker's script, or the "Multi Object
+    Tracking" use case documentation for more details.
 
     Inputs:
         |bboxes|
@@ -40,17 +40,24 @@ class Node(AbstractNode):
         |obj_tags|
 
     Configs:
-        tracking_type (:obj:`str`): **default = iou**
-            Type of tracking algorithm to be used. Choice between "iou",
-            "mosse". For more information about the trackers, please view
-            the use case documentation.
+        tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
+            Type of tracking algorithm to be used. For more information
+            about the trackers, please view the use case documentation.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.tracker = LoadTracker(self.tracking_type)
+        self.tracker = TrackerLoader(self.tracking_type)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Run object tracking"""
+        """Runs object tracking.
+
+        Args:
+            inputs (Dict[str, Any]): Dict of outputs from earlier nodes.
+
+        Returns:
+            Dict[str, Any]: Tracking ids of bounding boxes and ordered
+                accordingly.
+        """
         obj_tags = self.tracker.predict(inputs)
         return {"obj_tags": obj_tags}
