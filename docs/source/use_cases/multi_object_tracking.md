@@ -65,7 +65,7 @@ nodes:
 
 **1. Object Detection Node**
 
-By default, the node uses the Yolov4-tiny model for object detection, set to detect people (detect_ids: [0]). To use more accurate models, you can try the [Yolov4 model](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.model.yolo.Node.html), or the [EfficientDet model](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.model.efficientdet.Node.html) that is included in our repo.
+By default, the node uses the YOLOv4-tiny model for object detection, set to detect people (detect_ids: [0]). To use more accurate models, you can try the [YOLOv4 model](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.model.yolo.Node.html), or the [EfficientDet model](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.model.efficientdet.Node.html) that is included in our repo.
 
 **2. Adjusting Nodes**
 
@@ -81,5 +81,5 @@ For more adjustable node behaviours not listed here, check out the [API referenc
 
 | Tracker        | FPS  | Pros         | Cons                               |
 | -------------- | ---- | ------------ | ---------------------------------- |
-| MOSSE (OpenCV) | 22   | Fast         | Not the most accurate, occulusions |
-| IOU            | 17   | Fast, simple | Occlusions                         |
+| MOSSE (OpenCV) | 22   | Fast         | Not the most accurate, sensitive to occlusions |
+| IOU            | 17   | Fast, simple | Sensitive to occlusions                         |
