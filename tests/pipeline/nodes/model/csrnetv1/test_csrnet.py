@@ -79,7 +79,6 @@ class TestCsrnet:
         blank_image = cv2.imread(test_no_human_images)
         output = csrnet.run({"img": blank_image})
         assert list(output.keys()) == ["density_map", "count"]
-        assert math.ceil(np.sum(output["density_map"])) == output["count"]
         # model is less accurate and detects extra people when cnt is low or none
         # threshold of 9 is chosen based on the min cnt in ShanghaiTech dataset
         assert output["count"] < 9
@@ -88,7 +87,6 @@ class TestCsrnet:
         crowd_image = cv2.imread(test_crowd_images)
         output = csrnet.run({"img": crowd_image})
         assert list(output.keys()) == ["density_map", "count"]
-        assert math.ceil(np.sum(output["density_map"])) == output["count"]
         assert output["count"] >= 10
 
     def test_no_weights(self, csrnet_config):
