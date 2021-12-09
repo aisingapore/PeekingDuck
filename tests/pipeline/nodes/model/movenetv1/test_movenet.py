@@ -116,7 +116,7 @@ class TestMoveNet:
                 wraps=replace_download_weights,
             ):
                 with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.movenet.movenet_model.logger"
+                    "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
                 ) as captured:
                     movenet = Node(config=movenet_config)
                     # records 0 - 20 records are updates to configs
