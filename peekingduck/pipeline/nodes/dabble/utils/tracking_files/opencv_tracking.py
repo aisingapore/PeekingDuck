@@ -16,7 +16,7 @@
 Tracking algorithm that uses OpenCV's MOSSE.
 """
 
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List, Tuple, Union
 import numpy as np
 import cv2
 from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import (
@@ -67,7 +67,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         # box indicating the location of the object we want to track
         if self.first_frame_or_not:
             for bbox in bboxes:
-                self._initialize_tracker(bbox, frame)
+                self._initialise_tracker(bbox, frame)
             track_id = list(self.tracking_dict.keys())
             obj_tags = [str(x) for x in track_id]
             self.first_frame_or_not = False
@@ -101,7 +101,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
 
         prev_frame_tracked_bbox = []
         # Dict to store {current frame bbox: highest_iou_index}
-        matching_dict: Dict[Tuple[int, int, int, int], int] = {}
+        matching_dict: Dict[Tuple[float, ...], Any] = {}
 
         # Get previous frames' tracked bboxes
         for _, value in self.tracking_dict.items():
@@ -115,7 +115,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             prev_frame_bbox_highest_iou_index = (
                 ious.argmax() if round(max(ious), 1) >= self.iou_thresh else None
             )
-            print(box)
             matching_dict.update({tuple(box): prev_frame_bbox_highest_iou_index})
 
         # Create object tags from highest IOU index and tracking_dict
@@ -123,7 +122,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         for key, value in matching_dict.items():
             if value is not None:
                 # Get object ID through prev_frame_bbox_highest_iou_index
-                id_num = list(self.tracking_dict)[value]  # type: ignore
+                id_num = list(self.tracking_dict)[value] # type: ignore
                 track_id.append(str(id_num))
             else:
                 # Create new tracker for bbox that < IOU threshold
@@ -142,12 +141,13 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         return obj_tags
 
     def _initialise_tracker(
-        self, bbox: List[float], frame: np.ndarray
+        self, bbox: Union[np.ndarray, Tuple[float, ...]], frame: np.ndarray
     ) -> Dict[int, List[Any]]:
         """Starts a tracker for each bbox.
 
         Args:
-            bbox (List[float]): Single detected bounding box.
+            bbox (Union[np.ndarray, Tuple[float, ...]]): Single detected
+                bounding box.
             frame (np.ndarray): Image frame parsed from video.
 
         Returns:
