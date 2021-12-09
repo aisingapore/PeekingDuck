@@ -122,7 +122,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         for key, value in matching_dict.items():
             if value is not None:
                 # Get object ID through prev_frame_bbox_highest_iou_index
-                id_num = list(self.tracking_dict)[value] # type: ignore
+                id_num = list(self.tracking_dict)[value]  # type: ignore
                 track_id.append(str(id_num))
             else:
                 # Create new tracker for bbox that < IOU threshold
