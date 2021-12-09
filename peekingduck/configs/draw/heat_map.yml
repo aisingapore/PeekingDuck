@@ -1,0 +1,2 @@
+input: ["density_map", "img"]
+output: ["img"]
