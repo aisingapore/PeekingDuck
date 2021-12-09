@@ -61,9 +61,8 @@ class Tracker:
         self, max_lost: int = 5, tracker_output_format: str = "mot_challenge"
     ) -> None:
         self.next_track_id = 0
-        self.tracks: OrderedDict[
-            int, Track
-        ] = OrderedDict()  # pylint: disable=unsubscriptable-object
+        # pylint: disable=unsubscriptable-object
+        self.tracks: OrderedDict[int, Track] = OrderedDict()
         self.max_lost = max_lost
         self.frame_count = 0
         self.tracker_output_format = tracker_output_format
