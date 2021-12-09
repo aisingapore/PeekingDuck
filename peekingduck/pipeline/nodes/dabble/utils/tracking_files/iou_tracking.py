@@ -33,11 +33,10 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
     commonly the case when using sufficiently high frame rates.
 
     References:
+        High-Speed Tracking-by-Detection Without Using Image Information:
+            http://elvera.nue.tu-berlin.de/files/1517Bochinski2017.pdf
 
-    High-Speed Tracking-by-Detection Without Using Image Information:
-        http://elvera.nue.tu-berlin.de/files/1517Bochinski2017.pdf
-
-    Inference code adapted from https://github.com/adipandas/multi-object-tracker
+        Inference code adapted from https://github.com/adipandas/multi-object-tracker
     """
 
     def __init__(self) -> None:
@@ -50,10 +49,19 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         )
 
     def run(self, inputs: Dict[str, Any]) -> List[str]:
-        """Update tracker on each frame and return sorted object tags"""
+        """Updates tracker on each frame and return sorted object tags.
+
+        Args:
+            inputs (Dict[str, Any]): Outputs from previous nodes used.
+
+        Returns:
+            List[str]: List of track_ids sorted by bounding boxes.
+        """
+
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
         bboxes = np.copy(inputs["bboxes"])
+
         # Format bboxes from normalized to frame axis
         bboxes = format_boxes(bboxes, original_h, original_w)
         confidences = np.copy(inputs["bbox_scores"])
@@ -65,27 +73,48 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         tracks = self.tracker.update(bboxes, confidences, class_ids)
         # Order object tags by current bbox order
         obj_tags = self._order_tags_by_bbox(bboxes, tracks)
+
         return obj_tags
 
     @staticmethod
-    def _order_tags_by_bbox(bboxes: List[List[Any]], tracks: List[Any]) -> List[str]:
-        """Order object tags by bboxes"""
+    def _order_tags_by_bbox(bboxes: np.ndarray, tracks: List[Any]) -> List[str]:
+        """Orders object tags by bboxes.
+
+        Args:
+            bboxes (np.ndarray): Detected bounding boxes.
+            tracks (List[Any]): List of tracks.
+
+        Returns:
+            List[str]: List of track_ids sorted by bounding boxes.
+        """
+
         # Create dict with {(bbox): id}
-        matching_dict: Dict[Tuple[Any, ...], Any] = dict()
+        matching_dict: Dict[Tuple[Any, ...], Any] = {}
         for trk in tracks:
             matching_dict.update({(trk[2], trk[3], trk[4], trk[5]): trk[1]})
+
         obj_tags = []
         # Match current bbox with dict key and return id (value)
         for bbox in bboxes:
             obj_tag = matching_dict[tuple(bbox)]
             obj_tags.append(str(obj_tag))
+
         return obj_tags
 
     @staticmethod
     def _convert_class_label_to_unique_id(classes: List[str]) -> List[int]:
-        """Convert class label to unique ids"""
-        obj_id = dict()  # pylint: disable=too-many-arguments
+        """Converts class label to unique IDs.
+
+        Args:
+            classes (List[str]): Bounding box class labels.
+
+        Returns:
+            List[int]: Unique ID per label.
+        """
+
+        obj_id = {}
         for num, label in enumerate(sorted(set(classes))):
             obj_id.update({label: num + 1})
         class_ids = [obj_id[x] for x in classes]
+
         return class_ids

@@ -13,18 +13,24 @@
 # limitations under the License.
 
 """
-Additional functions.
+Utility functions for bounding box operations.
 """
 
-from typing import List
 import numpy as np
 
 
-def format_boxes(
-    bboxes: List[List[float]], image_height: int, image_width: int
-) -> List[List[float]]:
-    """Helper function to convert bounding boxes from normalized
-    ymin, xmin, ymax, xmax ---> xmin, ymin, width, height."""
+def format_boxes(bboxes: np.ndarray, image_height: int, image_width: int) -> np.ndarray:
+    """Converts normalized bounding boxes format: `(ymin, xmin, ymax, xmax)`.
+
+    Args:
+        bboxes (np.ndarray): Detected bounding boxes.
+        image_height (int): Height of image frame.
+        image_width (int): Width of image frame.
+
+    Returns:
+        np.ndarray: Bounding box in format `(xmin, ymin, width, height)`.
+    """
+
     for box in bboxes:
         xmin = int(box[0] * image_width)
         ymin = int(box[1] * image_height)
@@ -33,28 +39,25 @@ def format_boxes(
         width = xmax - xmin
         height = ymax - ymin
         box[0], box[1], box[2], box[3] = xmin, ymin, width, height
+
     return bboxes
 
 
-def iou(bbox: np.array, candidates: np.array) -> np.array:
-    """Computer intersection over union.
+def iou(bbox: np.ndarray, candidates: np.ndarray) -> np.ndarray:
+    """Compute intersection over union.
 
-    Parameters
-    ----------
-    bbox : ndarray
-        A bounding box in format `(top left x, top left y, width, height)`.
-    candidates : ndarray
-        A matrix of candidate bounding boxes (one per row) in the same format
-        as `bbox`.
+    Args:
+        bbox (np.ndarray): A bounding box in format `(top left x, top left y,
+            width, height)`.
+        candidates (np.ndarray): A matrix of candidate bounding boxes
+            (one per row) in the same format as `bbox`.
 
-    Returns
-    -------
-    ndarray
-        The intersection over union in [0, 1] between the `bbox` and each
-        candidate. A higher score means a larger fraction of the `bbox` is
-        occluded by the candidate.
-
+    Returns:
+        np.ndarray: The intersection over union in [0, 1] between the
+            `bbox` and each candidate. A higher score means a larger
+            fraction of the `bbox` is occluded by the candidate.
     """
+
     bbox_tl, bbox_br = bbox[:2], bbox[:2] + bbox[2:]
     candidates_tl = candidates[:, :2]
     candidates_br = candidates[:, :2] + candidates[:, 2:]
@@ -72,4 +75,5 @@ def iou(bbox: np.array, candidates: np.array) -> np.array:
     area_intersection = width_height.prod(axis=1)
     area_bbox = bbox[2:].prod()
     area_candidates = candidates[:, 2:].prod(axis=1)
+
     return area_intersection / (area_bbox + area_candidates - area_intersection)
