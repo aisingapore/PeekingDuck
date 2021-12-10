@@ -32,6 +32,7 @@ class TrackerLoader:  # pylint: disable=too-few-public-methods
     def __init__(self, tracking_type: str) -> None:
         self.logger = logging.getLogger(__name__)
         self.logger.info(f"Tracking algorithm used: {tracking_type}")
+
         if tracking_type in ["iou", "mosse"]:
             self.tracker = self._get_tracker(tracking_type)
         else:
@@ -63,4 +64,5 @@ class TrackerLoader:  # pylint: disable=too-few-public-methods
         """
         trackers_dict = {"iou": IOUTracking(), "mosse": OpenCVTracker()}
         tracker = trackers_dict[tracking_type]
+
         return tracker

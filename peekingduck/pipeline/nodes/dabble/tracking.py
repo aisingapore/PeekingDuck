@@ -60,4 +60,5 @@ class Node(AbstractNode):
                 accordingly.
         """
         obj_tags = self.tracker.predict(inputs)
+
         return {"obj_tags": obj_tags}
