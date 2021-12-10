@@ -5,5 +5,7 @@ opencv-contrib-python == 4.1.2.30
 pyyaml >= 5.3.1
 requests == 2.24.0
 tensorflow == 2.2.0
+torch == 1.10.0
+torchvision == 0.11.1
 tqdm == 4.45.0
 scipy >= 1.4.1
