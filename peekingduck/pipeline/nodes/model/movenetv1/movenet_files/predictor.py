@@ -61,7 +61,7 @@ class Predictor:  # pylint: disable=logging-fstring-interpolation
         if "multi" in self.model_type:
             self.logger.info(
                 (
-                    f"PoseNet model loaded with following configs: \n\t"
+                    f"MoveNet model loaded with following configs: \n\t"
                     f"Model type: {self.model_type}, \n\t"
                     f"Input resolution: {self.resolution}, \n\t"
                     f"bbox_score_threshold: {self.config['bbox_score_threshold']}, \n\t"

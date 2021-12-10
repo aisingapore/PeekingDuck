@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import gc
 import pytest
 import yaml
 import cv2
@@ -22,6 +23,7 @@ import numpy.testing as npt
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.movenet import Node
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
+import tensorflow.keras.backend as K
 
 TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
 TOLERANCE = 1e-2
@@ -40,16 +42,22 @@ invalid_score_thresholds = [-1, 1.1]
 @pytest.fixture(params=zero_persons_images)
 def empty_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=single_person_images)
 def single_person_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=multi_persons_images)
 def multi_person_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=invalid_score_thresholds)
@@ -107,26 +115,6 @@ def replace_download_weights(root, blob_file):
 
 @pytest.mark.mlmodel
 class TestMoveNet:
-    def test_no_weights(self, movenet_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ):
-            with mock.patch(
-                "peekingduck.weights_utils.downloader.download_weights",
-                wraps=replace_download_weights,
-            ):
-                with TestCase.assertLogs(
-                    "peekingduck.pipeline.nodes.model.movenet.movenet_model.logger"
-                ) as captured:
-                    movenet = Node(config=movenet_config)
-                    # records 0 - 20 records are updates to configs
-                    assert (
-                        captured.records[0].getMessage()
-                        == "---no weights detected. proceeding to download...---"
-                    )
-                    assert "weights downloaded" in captured.records[1].getMessage()
-                    assert movenet is not None
-
     def test_no_human_single(self, empty_image, movenet_model_single):
         no_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, empty_image)))
         model, _ = movenet_model_single
@@ -148,6 +136,26 @@ class TestMoveNet:
                         got {output[i]}"
                 ),
             )
+
+    def test_no_weights(self, movenet_config):
+        with mock.patch(
+            "peekingduck.weights_utils.checker.has_weights", return_value=False
+        ):
+            with mock.patch(
+                "peekingduck.weights_utils.downloader.download_weights",
+                wraps=replace_download_weights,
+            ):
+                with TestCase.assertLogs(
+                    "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
+                ) as captured:
+                    movenet = Node(config=movenet_config)
+                    # records 0 - 20 records are updates to configs
+                    assert (
+                        captured.records[0].getMessage()
+                        == "---no weights detected. proceeding to download...---"
+                    )
+                    assert "weights downloaded" in captured.records[1].getMessage()
+                    assert movenet is not None
 
     def test_no_human_multi(self, empty_image, movenet_model_multi):
         no_human_img = cv2.imread(str(Path.joinpath(TEST_DIR, empty_image)))
