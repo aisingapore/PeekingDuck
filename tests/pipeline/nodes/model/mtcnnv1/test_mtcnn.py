@@ -1,18 +1,16 @@
-"""
-Copyright 2021 AI Singapore
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from pathlib import Path
 from unittest import TestCase, mock
@@ -54,28 +52,15 @@ def model_dir(mtcnn_config):
     )
 
 
-@pytest.fixture()
-def mtcnn(mtcnn_config):
-    node = Node(mtcnn_config)
-
-    return node
-
-
-@pytest.fixture()
-def mtcnn_detector(mtcnn_config, model_dir):
-    detector = Detector(mtcnn_config, model_dir)
-
-    return detector
-
-
 def replace_download_weights(model_dir, blob_file):
     return False
 
 
 @pytest.mark.mlmodel
 class TestMtcnn:
-    def test_no_human_face_image(self, test_no_human_images, mtcnn):
+    def test_no_human_face_image(self, test_no_human_images, mtcnn_config):
         blank_image = cv2.imread(test_no_human_images)
+        mtcnn = Node(mtcnn_config)
         output = mtcnn.run({"img": blank_image})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
@@ -87,8 +72,11 @@ class TestMtcnn:
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
 
-    def test_return_at_least_one_face_and_one_bbox(self, test_human_images, mtcnn):
+    def test_return_at_least_one_face_and_one_bbox(
+        self, test_human_images, mtcnn_config
+    ):
         test_img = cv2.imread(test_human_images)
+        mtcnn = Node(mtcnn_config)
         output = mtcnn.run({"img": test_img})
         assert "bboxes" in output
         assert output["bboxes"].size != 0
