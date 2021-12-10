@@ -16,7 +16,7 @@
 # [@xuannianz](https://github.com/xuannianz))
 
 """
-Processing helper functinos for EfficientDet
+Processing helper functions for EfficientDet
 """
 
 from typing import List, Tuple
