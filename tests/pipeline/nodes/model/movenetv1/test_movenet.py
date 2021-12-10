@@ -13,6 +13,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
+import gc
 import pytest
 import yaml
 import cv2
@@ -22,6 +23,7 @@ import numpy.testing as npt
 from unittest import mock, TestCase
 from peekingduck.pipeline.nodes.model.movenet import Node
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
+import tensorflow.keras.backend as K
 
 TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
 TOLERANCE = 1e-2
@@ -32,7 +34,7 @@ singlepose_models = [
 ]
 multipose_models = ["multipose_lightning"]
 single_person_images = ["t2.jpg"]
-multi_persons_images = ["t1.jpg"]
+multi_persons_images = ["t1.jpg", "t4.jpg"]
 zero_persons_images = ["black.jpg", "t3.jpg"]
 invalid_score_thresholds = [-1, 1.1]
 
@@ -40,16 +42,22 @@ invalid_score_thresholds = [-1, 1.1]
 @pytest.fixture(params=zero_persons_images)
 def empty_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=single_person_images)
 def single_person_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=multi_persons_images)
 def multi_person_image(request):
     yield request.param
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=invalid_score_thresholds)
