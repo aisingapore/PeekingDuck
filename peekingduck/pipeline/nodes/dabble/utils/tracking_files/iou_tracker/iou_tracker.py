@@ -78,6 +78,17 @@ class IOUTracker(Tracker):  # pylint: disable=too-few-public-methods
     def update(
         self, bboxes: np.ndarray, detection_scores: List[float], class_ids: List[int]
     ) -> List[Any]:
+        """This function will perform the tracking process.
+
+        Args:
+            bboxes (np.ndarray): Detected bounding boxes.
+            detection_scores (List[float]): Detected bounding boxes'
+                confidence scores.
+            class_ids (List[int]): Detected bounding boxes' labels.
+
+        Returns:
+            List[Any]: List of tracks.
+        """
         detections = Tracker.preprocess_input(bboxes, class_ids, detection_scores)
         self.frame_count += 1
         track_ids = list(self.tracks.keys())
