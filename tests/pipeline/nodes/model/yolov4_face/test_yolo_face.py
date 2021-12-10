@@ -1,15 +1,16 @@
-"""
-Copyright 2021 AI Singapore
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-     https://www.apache.org/licenses/LICENSE-2.0
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from pathlib import Path
 from unittest import TestCase, mock
@@ -54,29 +55,20 @@ def model_dir(yolo_config):
 
 
 @pytest.fixture(params=["v4", "v4tiny"])
-def yolo(request, yolo_config):
+def yolo_type(request, yolo_config):
     yolo_config["model_type"] = request.param
-    node = Node(yolo_config)
-
-    return node
+    return yolo_config
 
 
-@pytest.fixture()
-def yolo_detector(yolo_config, model_dir):
-    yolo_config["model_type"] = "v4tiny"
-    detector = Detector(yolo_config, model_dir)
-
-    return detector
-
-
-def replace_download_weights(model_dir, blob_file):
+def replace_download_weights(*_):
     return False
 
 
 @pytest.mark.mlmodel
 class TestYolo:
-    def test_no_human_face_image(self, test_no_human_images, yolo):
+    def test_no_human_face_image(self, test_no_human_images, yolo_type):
         blank_image = cv2.imread(test_no_human_images)
+        yolo = Node(yolo_type)
         output = yolo.run({"img": blank_image})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
@@ -88,9 +80,10 @@ class TestYolo:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_return_at_least_one_face_and_one_bbox(self, test_human_images, yolo):
+    def test_return_at_least_one_face_and_one_bbox(self, test_human_images, yolo_type):
         test_img = cv2.imread(test_human_images)
         test_img = cv2.resize(test_img, (1280, 720))
+        yolo = Node(yolo_type)
         output = yolo.run({"img": test_img})
         assert "bboxes" in output
         assert output["bboxes"].size != 0
@@ -113,7 +106,8 @@ class TestYolo:
             assert "weights downloaded" in captured.records[1].getMessage()
             assert yolo is not None
 
-    def test_get_detect_ids(self, yolo):
+    def test_get_detect_ids(self, yolo_type):
+        yolo = Node(yolo_type)
         assert yolo.model.get_detect_ids() == [0, 1]
 
     def test_model_initialization(self, yolo_config, model_dir):
