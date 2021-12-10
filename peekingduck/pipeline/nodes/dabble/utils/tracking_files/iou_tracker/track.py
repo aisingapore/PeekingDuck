@@ -58,7 +58,6 @@ class Track:  # pylint: disable=too-many-instance-attributes
     """
 
     count = 0
-
     metadata = dict(data_output_formats=["mot_challenge"])
     # pylint: disable=too-many-arguments
     def __init__(
@@ -117,7 +116,6 @@ class Track:  # pylint: disable=too-many-instance-attributes
                 tracked by tracker in consecutive frames.
             iou_score (float): Intersection over union score.
         """
-
         self.class_id = class_id
         self.bbox = np.array(bbox)
         self.detection_confidence = detection_confidence
@@ -144,9 +142,7 @@ class Track:  # pylint: disable=too-many-instance-attributes
 
         Returns:
             np.ndarray: Centroid (x, y) of bounding box.
-
         """
-
         return np.array(
             (self.bbox[0] + 0.5 * self.bbox[2], self.bbox[1] + 0.5 * self.bbox[3])
         )
@@ -166,7 +162,6 @@ class Track:  # pylint: disable=too-many-instance-attributes
         References:
             Multiple Object tracking website: https://motchallenge.net/
         """
-
         mot_tuple = (
             self.frame_id,
             self.id_num,

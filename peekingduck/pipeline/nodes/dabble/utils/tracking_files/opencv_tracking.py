@@ -54,7 +54,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         Returns:
             List[str]: List of track_ids sorted by bounding boxes.
         """
-
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
         # Format bboxes from normalized to frame axis
@@ -98,7 +97,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         Returns:
             List[str]: List of track_ids.
         """
-
         prev_frame_tracked_bbox = []
         # Dict to store {current frame bbox: highest_iou_index}
         matching_dict: Dict[Tuple[float, ...], Any] = {}
@@ -153,7 +151,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         Returns:
             Dict[int, List[Any]]: Dict to store {id (key): [Tracker, bbox(prev)]}
         """
-
         tracker = self._create_tracker_by_name(self.tracker_type)
         tracker.init(frame, tuple(bbox))
         self.next_object_id += 1
@@ -171,7 +168,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         Returns:
             Any: MOSSE Tracker.
         """
-
         if tracker_type == "MOSSE":
             tracker = cv2.TrackerMOSSE_create()
         else:

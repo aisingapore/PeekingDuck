@@ -30,7 +30,6 @@ def format_boxes(bboxes: np.ndarray, image_height: int, image_width: int) -> np.
     Returns:
         np.ndarray: Bounding box in format `(xmin, ymin, width, height)`.
     """
-
     for box in bboxes:
         xmin = int(box[0] * image_width)
         ymin = int(box[1] * image_height)
@@ -57,7 +56,6 @@ def iou(bbox: np.ndarray, candidates: np.ndarray) -> np.ndarray:
             `bbox` and each candidate. A higher score means a larger
             fraction of the `bbox` is occluded by the candidate.
     """
-
     bbox_tl, bbox_br = bbox[:2], bbox[:2] + bbox[2:]
     candidates_tl = candidates[:, :2]
     candidates_br = candidates[:, :2] + candidates[:, 2:]

@@ -84,7 +84,6 @@ class Tracker:
             detection_confidence (float): Detection confidence of the object (probability).
             class_id (str or int): Class label ID.
         """
-
         self.tracks[self.next_track_id] = Track(
             self.next_track_id,
             frame_id,
@@ -102,7 +101,6 @@ class Tracker:
         Args:
             track_id (int): ID of the track lost while tracking.
         """
-
         del self.tracks[track_id]
 
     # pylint: disable=too-many-arguments
@@ -129,7 +127,6 @@ class Tracker:
             lost (int): Number of frames the object was lost while tracking.
             iou_score (float): Intersection over union.
         """
-
         self.tracks[track_id].update(
             frame_id,
             bbox,
@@ -154,7 +151,6 @@ class Tracker:
             List[Tuple[int, int, float, float, float, float, float, int, int, int]]:
                 List of tracks being currently tracked by the tracker.
         """
-
         outputs = []
         for _, track in tracks.items():
             if not track.lost:
@@ -182,7 +178,6 @@ class Tracker:
                 detections as list of tuples containing `(bbox, class_id,
                 detection_score)`.
         """
-
         new_bboxes = np.array(bboxes, dtype="int")
         new_class_ids = np.array(class_ids, dtype="int")
         new_detection_scores = np.array(detection_scores)
@@ -215,7 +210,6 @@ class Tracker:
                 Each track is represented by the tuple with elements
                 `(frame_id, track_id, bb_left, bb_top, bb_width, bb_height, conf, x, y, z)`.
         """
-
         self.frame_count += 1
 
         if not bboxes:
