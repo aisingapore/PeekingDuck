@@ -18,8 +18,12 @@ Tracking algorithm that uses IOU matching.
 
 from typing import Any, Dict, List, Tuple
 import numpy as np
-from .iou_tracker.iou_tracker import IOUTracker
-from .iou_tracker.utils import format_boxes
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.iou_tracker import (
+    IOUTracker,
+)
+from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import (
+    format_boxes,
+)
 
 
 class IOUTracking:  # pylint: disable=too-few-public-methods
@@ -57,7 +61,6 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         Returns:
             List[str]: List of track_ids sorted by bounding boxes.
         """
-
         frame = np.copy(inputs["img"])
         original_h, original_w, _ = frame.shape
         bboxes = np.copy(inputs["bboxes"])
@@ -87,7 +90,6 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         Returns:
             List[str]: List of track_ids sorted by bounding boxes.
         """
-
         # Create dict with {(bbox): id}
         matching_dict: Dict[Tuple[Any, ...], Any] = {}
         for trk in tracks:
@@ -111,7 +113,6 @@ class IOUTracking:  # pylint: disable=too-few-public-methods
         Returns:
             List[int]: Unique ID per label.
         """
-
         obj_id = {}
         for num, label in enumerate(sorted(set(classes))):
             obj_id.update({label: num + 1})
