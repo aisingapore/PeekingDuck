@@ -29,18 +29,20 @@ from tensorflow.python.saved_model import tag_constants
 
 
 class Detector:
-    def __init__(self, config: Dict[str, Any], cuda_ctx=None) -> None:
-
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Object detection class using yolo model to find object bboxes
+        """
         self.config = config
         self.root_dit = config["root"]
         self.logger = logging.getLogger(__name__)
         self.model_type = config["model_type"]
 
         # TF-TRT
-        TRT_model_saved_dir = os.path.join(
+        trt_model_saved_dir = os.path.join(
             self.config["root"], self.config["converted_model_path"][self.model_type]
         )
-        if not os.path.isdir(TRT_model_saved_dir):
+        if not os.path.isdir(trt_model_saved_dir):
             self.build_engine()
 
         self.model = self._create_yolo_model()
@@ -59,16 +61,20 @@ class Detector:
         return model
 
     def my_input_fn(self):
-        # input_fn: a generator function that yields input data as a list or tuple,
-        # which will be used to execute the converted signature to generate TensorRT
-        # engines.
+        """
+        generator function that yields input data as a list or tuple,
+        which will be used to execute the converted signature to generate TensorRT
+        engines
+        """
         input_shape = (1, self.config["size"], self.config["size"], 3)
         batched_input = np.zeros(input_shape, dtype=np.float32)
         batched_input = tf.constant(batched_input)
         yield (batched_input,)
 
     def build_engine(self):
-
+        """
+        Prebuild the tensorRT enginer prior to running inference
+        """
         input_saved_model_dir = os.path.join(
             self.config["root"], self.config["model_weights_dir"][self.model_type]
         )
@@ -86,7 +92,7 @@ class Detector:
         )
 
         print("Building the TensorRT engine.  This would take a while...")
-        t = time.process_time()
+        curr_time = time.process_time()
         # Converter method used to partition and optimize TensorRT compatible segments
         converter.convert()
 
@@ -100,11 +106,11 @@ class Detector:
         )
         converter.save(converted_model_path)
 
-        elapsed_time = time.process_time() - t
+        elapsed_time = time.process_time() - curr_time
         print(f"TensorRT engine built in {elapsed_time} secs")
 
     @staticmethod
-    def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
+    def bbox_scaling(bboxes: List[list], scaling_factor: float) -> List[list]:
         """
         To scale the width and height of bboxes from v4tiny
         After the conversion of the model in .cfg and .weight file format, from
@@ -112,19 +118,32 @@ class Detector:
         So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
-            x_1, y_1, x_2, y_2 = tuple(box)
-            center_x = (x_1 + x_2) / 2
-            center_y = (y_1 + y_2) / 2
-            scaled_x_1 = center_x - ((x_2 - x_1) / 2 * scale_factor)
-            scaled_x_2 = center_x + ((x_2 - x_1) / 2 * scale_factor)
-            scaled_y_1 = center_y - ((y_2 - y_1) / 2 * scale_factor)
-            scaled_y_2 = center_y + ((y_2 - y_1) / 2 * scale_factor)
-            bboxes[idx] = [scaled_x_1, scaled_y_1, scaled_x_2, scaled_y_2]
+            x1, y1, x2, y2 = tuple(box)
+            middle_y = (y1 + y2) / 2
+            middle_x = (x1 + x2) / 2
+            y1_scaled = middle_y - ((y2 - y1) / 2 * scaling_factor)
+            y2_scaled = middle_y + ((y2 - y1) / 2 * scaling_factor)
+            x1_scaled = middle_x - ((x2 - x1) / 2 * scaling_factor)
+            x2_scaled = middle_x + ((x2 - x1) / 2 * scaling_factor)
+            bboxes[idx] = [x1_scaled, y1_scaled, x2_scaled, y2_scaled]
 
         return bboxes
 
     def predict(self, frame: np.array) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """
+        Detect all license plate objects' bounding box from one image
 
+        args:
+                image: (Numpy Array) input image
+
+        return:
+                boxes: (Numpy Array) an array of bounding box with
+                    definition like (x1, y1, x2, y2), in a
+                    coordinate system with origin point in
+                    the left top corner
+                labels: (Numpy Array) an array of class labels
+                scores: (Numpy Array) an array of confidence scores
+        """
         # TF-TRT
         image_data = cv2.resize(frame, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
@@ -147,18 +166,17 @@ class Detector:
             self.config["yolo_iou_threshold"],
             self.config["yolo_score_threshold"],
         )
-        classes = classes.numpy()[0]
-        classes = classes[: nums[0]]
+        class_labels = classes.numpy()[0]
+        class_labels = class_labels[: nums[0]]
         bboxes = bboxes.numpy()[0]
         bboxes = bboxes[: nums[0]]
-        scores = scores.numpy()[0]
-        scores = scores[: nums[0]]
-
-        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]  # swapping x and y axes
+        bbox_scores = scores.numpy()[0]
+        bbox_scores = bbox_scores[: nums[0]]
         bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
+        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]  # swapping x and y axes
 
         # scaling of bboxes if v4tiny model is used
         if self.config["model_type"] == "v4tiny":
             bboxes = self.bbox_scaling(bboxes, 0.75)
 
-        return bboxes, classes, scores
+        return bboxes, class_labels, bbox_scores

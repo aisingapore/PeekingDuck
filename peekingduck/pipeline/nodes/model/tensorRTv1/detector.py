@@ -18,23 +18,18 @@ plugins, single label model to find license plate object bboxes
 """
 
 import ctypes
-
-import time
-
-import os
-import logging
 from typing import Dict, Any, List, Tuple
 import numpy as np
 import cv2
-import tensorflow as tf
 import tensorrt as trt
 import pycuda.driver as cuda
 import pycuda.autoinit
-from tensorflow.python.saved_model import tag_constants
 
 
 class HostDeviceMem(object):
-    """Simple helper data class that's a little nicer to use than a 2-tuple."""
+    """
+    Simple helper data class that's a little nicer to use than a 2-tuple.
+    """
 
     def __init__(self, host_mem, device_mem):
         self.host = host_mem
@@ -49,10 +44,12 @@ class HostDeviceMem(object):
 
 class Detector:
     def __init__(self, config: Dict[str, Any], cuda_ctx=None) -> None:
+        """
+        Object detection class using yolo model to find object bboxes
+        """
 
         self.config = config
         self.root_dit = config["root"]
-        # self.logger = logging.getLogger(__name__)
         self.model_type = config["model_type"]
         self.trt_logger = trt.Logger(trt.Logger.INFO)
         self.cuda_ctx = cuda_ctx
@@ -61,12 +58,12 @@ class Detector:
 
         try:
             ctypes.cdll.LoadLibrary(self.config["yolo_plugin_path"])
-        except OSError as e:
+        except OSError as error:
             raise SystemExit(
                 "ERROR: failed to load ./plugins/libyolo_layer.so.  "
                 'Did you forget to do a "make" in the "./plugins/" '
                 "subdirectory?"
-            ) from e
+            ) from error
 
         self.engine = self._load_engine()
         self.input_shape = self.get_input_shape(self.engine)
@@ -75,16 +72,16 @@ class Detector:
             self.context = self.engine.create_execution_context()
             # self.inputs, self.outputs, self.bindings, self.stream = \
             #     self.allocate_buffers()
-        except Exception as e:
-            raise RuntimeError("fail to allocate CUDA resources") from e
+        except Exception as error:
+            raise RuntimeError("fail to allocate CUDA resources") from error
         finally:
             if self.cuda_ctx:
                 self.cuda_ctx.pop()
 
     def _load_engine(self) -> Any:
-        TRTbin = self.config["TensorRT_path"][self.config["model_type"]]
-        with open(TRTbin, "rb") as f, trt.Runtime(self.trt_logger) as runtime:
-            return runtime.deserialize_cuda_engine(f.read())
+        trtbin = self.config["TensorRT_path"][self.config["model_type"]]
+        with open(trtbin, "rb") as file, trt.Runtime(self.trt_logger) as runtime:
+            return runtime.deserialize_cuda_engine(file.read())
 
     def allocate_buffers(self) -> Tuple[List, List, List, Any]:
         """Allocates all host/device in/out buffers required for an engine."""
@@ -132,12 +129,9 @@ class Detector:
         binding_dims = engine.get_binding_shape(binding)
         if len(binding_dims) == 4:
             return tuple(binding_dims[2:])
-        elif len(binding_dims) == 3:
+        if len(binding_dims) == 3:
             return tuple(binding_dims[1:])
-        else:
-            raise ValueError(
-                "bad dims of binding %s: %s" % (binding, str(binding_dims))
-            )
+        raise ValueError("bad dims of binding %s: %s" % (binding, str(binding_dims)))
 
     def do_inference_v2(self):
         """do_inference_v2 (for TensorRT 7.0+)
@@ -168,7 +162,8 @@ class Detector:
 
     @staticmethod
     def _nms_boxes(detections, nms_threshold):
-        """Apply the Non-Maximum Suppression (NMS) algorithm on the bounding
+        """
+        Apply the Non-Maximum Suppression (NMS) algorithm on the bounding
         boxes with their confidence scores and return an array with the
         indexes of the bounding boxes we want to keep.
 
@@ -211,7 +206,7 @@ class Detector:
         keep = np.array(keep)
         return keep
 
-    def _post_process(self, trt_outputs: List[np.ndarray], image):
+    def _post_process(self, trt_outputs: List[np.ndarray]):
         """
         Post process TRT output
 
@@ -241,11 +236,11 @@ class Detector:
                 [nms_detections, cls_detections[keep]], axis=0
             )
 
-        xx = nms_detections[:, 0].reshape(-1, 1)
-        yy = nms_detections[:, 1].reshape(-1, 1)
-        ww = nms_detections[:, 2].reshape(-1, 1)
-        hh = nms_detections[:, 3].reshape(-1, 1)
-        boxes = np.concatenate([xx, yy, xx + ww, yy + hh], axis=1)
+        x = nms_detections[:, 0].reshape(-1, 1)
+        y = nms_detections[:, 1].reshape(-1, 1)
+        w = nms_detections[:, 2].reshape(-1, 1)
+        h = nms_detections[:, 3].reshape(-1, 1)
+        boxes = np.concatenate([x, y, x + w, y + h], axis=1)
         scores = nms_detections[:, 4]
         classes = nms_detections[:, 5]
 
@@ -263,19 +258,32 @@ class Detector:
         So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
-            x_1, y_1, x_2, y_2 = tuple(box)
-            center_x = (x_1 + x_2) / 2
-            center_y = (y_1 + y_2) / 2
-            scaled_x_1 = center_x - ((x_2 - x_1) / 2 * scale_factor)
-            scaled_x_2 = center_x + ((x_2 - x_1) / 2 * scale_factor)
-            scaled_y_1 = center_y - ((y_2 - y_1) / 2 * scale_factor)
-            scaled_y_2 = center_y + ((y_2 - y_1) / 2 * scale_factor)
-            bboxes[idx] = [scaled_x_1, scaled_y_1, scaled_x_2, scaled_y_2]
+            x1, y1, x2, y2 = tuple(box)
+            center_x = (x1 + x2) / 2
+            center_y = (y1 + y2) / 2
+            scaled_x1 = center_x - ((x2 - x1) / 2 * scale_factor)
+            scaled_x2 = center_x + ((x2 - x1) / 2 * scale_factor)
+            scaled_y1 = center_y - ((y2 - y1) / 2 * scale_factor)
+            scaled_y2 = center_y + ((y2 - y1) / 2 * scale_factor)
+            bboxes[idx] = [scaled_x1, scaled_y1, scaled_x2, scaled_y2]
 
         return bboxes
 
     def predict(self, frame: np.array) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """
+        Detect all license plate objects' bounding box from one image
 
+        args:
+                image: (Numpy Array) input image
+
+        return:
+                boxes: (Numpy Array) an array of bounding box with
+                    definition like (x1, y1, x2, y2), in a
+                    coordinate system with origin point in
+                    the left top corner
+                labels: (Numpy Array) an array of class labels
+                scores: (Numpy Array) an array of confidence scores
+        """
         self.inputs, self.outputs, self.bindings, self.stream = self.allocate_buffers()
 
         image_data = cv2.resize(frame, (self.input_shape[1], self.input_shape[0]))
@@ -291,6 +299,6 @@ class Detector:
         if self.cuda_ctx:
             self.cuda_ctx.pop()
 
-        bboxes, labels, scores = self._post_process(trt_outputs, frame)
+        bboxes, labels, scores = self._post_process(trt_outputs)
 
         return bboxes, labels, scores

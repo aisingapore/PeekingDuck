@@ -17,7 +17,7 @@ Draw bounding boxes over detected object
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.model.tensorRTv1.detector import Detector
+from peekingduck.pipeline.nodes.model.yolo_lp_tensorrtv1.detector import Detector
 
 
 class Node(AbstractNode):
@@ -48,7 +48,6 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = Detector(self.config)
 
-
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Function that reads the image input and returns the bboxes
@@ -62,10 +61,10 @@ class Node(AbstractNode):
         """
 
         bboxes, labels, scores = self.model.predict(inputs["img"])
-        outputs = {
+        output = {
             "bboxes": bboxes,
-            "bbox_labels": labels,
             "bbox_scores": scores,
+            "bbox_labels": labels,
         }
 
-        return outputs
+        return output

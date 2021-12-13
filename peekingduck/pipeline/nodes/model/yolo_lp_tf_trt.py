@@ -17,7 +17,7 @@ Draw bounding boxes over detected object
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.model.yolo_TF_TRTv1.detector import Detector
+from peekingduck.pipeline.nodes.model.tf_trtv1.detector import Detector
 
 
 class Node(AbstractNode):
@@ -47,7 +47,6 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = Detector(self.config)
-
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
