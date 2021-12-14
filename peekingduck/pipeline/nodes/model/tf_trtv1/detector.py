@@ -29,10 +29,11 @@ from tensorflow.python.saved_model import tag_constants
 
 
 class Detector:
+    """
+    Object detection class using TF_TRT yolo model to find object bboxes
+    """
+
     def __init__(self, config: Dict[str, Any]) -> None:
-        """
-        Object detection class using TF_TRT yolo model to find object bboxes
-        """
         self.config = config
         self.root_dit = config["root"]
         self.logger = logging.getLogger(__name__)

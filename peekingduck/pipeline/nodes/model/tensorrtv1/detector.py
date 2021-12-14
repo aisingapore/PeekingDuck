@@ -43,14 +43,12 @@ class HostDeviceMem(object):
 
 
 class Detector:
-    def __init__(self, config: Dict[str, Any], cuda_ctx=None) -> None:
-        """
-        Object detection class using yolo model to find object bboxes
-        """
+    """
+    Object detection class using yolo model to find object bboxes
+    """
 
+    def __init__(self, config: Dict[str, Any], cuda_ctx=None) -> None:
         self.config = config
-        self.root_dit = config["root"]
-        self.model_type = config["model_type"]
         self.trt_logger = trt.Logger(trt.Logger.INFO)
         self.cuda_ctx = cuda_ctx
         if self.cuda_ctx:
