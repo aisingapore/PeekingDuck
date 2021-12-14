@@ -118,13 +118,13 @@ class Detector:
         So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
-            x1, y1, x2, y2 = tuple(box)
-            middle_y = (y1 + y2) / 2
-            middle_x = (x1 + x2) / 2
-            y1_scaled = middle_y - ((y2 - y1) / 2 * scaling_factor)
-            y2_scaled = middle_y + ((y2 - y1) / 2 * scaling_factor)
-            x1_scaled = middle_x - ((x2 - x1) / 2 * scaling_factor)
-            x2_scaled = middle_x + ((x2 - x1) / 2 * scaling_factor)
+            xmin, ymin, xmax, ymax = tuple(box)
+            middle_y = (ymin + ymax) / 2
+            middle_x = (xmin + xmax) / 2
+            y1_scaled = middle_y - ((ymax - ymin) / 2 * scaling_factor)
+            y2_scaled = middle_y + ((ymax - ymin) / 2 * scaling_factor)
+            x1_scaled = middle_x - ((xmax - xmin) / 2 * scaling_factor)
+            x2_scaled = middle_x + ((xmax - xmin) / 2 * scaling_factor)
             bboxes[idx] = [x1_scaled, y1_scaled, x2_scaled, y2_scaled]
 
         return bboxes
@@ -148,9 +148,9 @@ class Detector:
         image_data = cv2.resize(frame, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
         image_data = np.asarray([image_data]).astype(np.float32)
-        batch_data = tf.constant(image_data)
+        image_data = tf.constant(image_data)
         func = self.model.signatures["serving_default"]
-        output = func(batch_data)
+        output = func(image_data)
         for _, value in output.items():
             pred_conf = value[:, :, 4:]
             boxes = value[:, :, 0:4]

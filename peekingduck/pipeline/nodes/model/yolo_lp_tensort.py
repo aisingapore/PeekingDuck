@@ -17,7 +17,7 @@ Draw bounding boxes over detected object
 
 from typing import Any, Dict
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.model.yolo_lp_tensorrtv1.detector import Detector
+from peekingduck.pipeline.nodes.model.tensorrtv1.detector import Detector
 
 
 class Node(AbstractNode):

@@ -21,7 +21,7 @@ from peekingduck.pipeline.nodes.model.tf_trtv1.detector import Detector
 
 
 class Node(AbstractNode):
-    """Draw bounding boxes on image.
+    """Draw bounding boxes of detected license plate on image.
 
     The draw bbox node uses the bboxes and, optionally, the bbox labels from the model
     predictions to draw the bbox predictions onto the image.
@@ -41,7 +41,7 @@ class Node(AbstractNode):
 
     Configs:
         show_labels (:obj:`bool`): **default = False**
-            Show class label, e.g. "person", above bounding box
+            Show class label, e.g. "license_plate", above bounding box
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -50,8 +50,8 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        Function that reads the input image and returns the bboxes
+        of the license plate detected
 
         Args:
             inputs (Dict): Dictionary of inputs with key "img"
@@ -60,10 +60,10 @@ class Node(AbstractNode):
             "bboxes", "bbox_labels" and "bbox_scores"
         """
 
-        bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes, class_labels, scores = self.model.predict(inputs["img"])
         outputs = {
             "bboxes": bboxes,
-            "bbox_labels": labels,
+            "bbox_labels": class_labels,
             "bbox_scores": scores,
         }
 
