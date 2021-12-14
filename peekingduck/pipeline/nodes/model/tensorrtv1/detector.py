@@ -186,17 +186,17 @@ class Detector:
             # Index of the current element:
             i = ordered[0]
             keep.append(i)
-            xx1 = np.maximum(x_coord[i], x_coord[ordered[1:]])
-            yy1 = np.maximum(y_coord[i], y_coord[ordered[1:]])
-            xx2 = np.minimum(
+            xxmin = np.maximum(x_coord[i], x_coord[ordered[1:]])
+            yymin = np.maximum(y_coord[i], y_coord[ordered[1:]])
+            xxmax = np.minimum(
                 x_coord[i] + width[i], x_coord[ordered[1:]] + width[ordered[1:]]
             )
-            yy2 = np.minimum(
+            yymax = np.minimum(
                 y_coord[i] + height[i], y_coord[ordered[1:]] + height[ordered[1:]]
             )
 
-            width1 = np.maximum(0.0, xx2 - xx1)
-            height1 = np.maximum(0.0, yy2 - yy1)
+            width1 = np.maximum(0.0, xxmax - xxmin)
+            height1 = np.maximum(0.0, yymax - yymin)
             intersection = width1 * height1
             union = areas[i] + areas[ordered[1:]] - intersection
             iou = intersection / union
@@ -215,7 +215,7 @@ class Detector:
                     multiple of 7 float32 numbers in the order of
                     [x, y, w, h, box_conf_score, class_id, class_prob]
         return:
-                bbox: list of bbox coordinate in [x1,y1,x2,y2]
+                bbox: list of bbox coordinate in [xmin,ymin,xmax,ymax]
                 scores: list of bbox conf score
                 classes: list of class id
         """
@@ -236,11 +236,11 @@ class Detector:
                 [nms_detections, cls_detections[keep]], axis=0
             )
 
-        x = nms_detections[:, 0].reshape(-1, 1)
-        y = nms_detections[:, 1].reshape(-1, 1)
-        w = nms_detections[:, 2].reshape(-1, 1)
-        h = nms_detections[:, 3].reshape(-1, 1)
-        boxes = np.concatenate([x, y, x + w, y + h], axis=1)
+        xmin = nms_detections[:, 0].reshape(-1, 1)
+        ymin = nms_detections[:, 1].reshape(-1, 1)
+        width = nms_detections[:, 2].reshape(-1, 1)
+        height = nms_detections[:, 3].reshape(-1, 1)
+        boxes = np.concatenate([xmin, ymin, xmin + width, ymin + height], axis=1)
         scores = nms_detections[:, 4]
         classes = nms_detections[:, 5]
 
@@ -258,14 +258,14 @@ class Detector:
         So downscaling is required for a better fit
         """
         for idx, box in enumerate(bboxes):
-            x1, y1, x2, y2 = tuple(box)
-            center_x = (x1 + x2) / 2
-            center_y = (y1 + y2) / 2
-            scaled_x1 = center_x - ((x2 - x1) / 2 * scale_factor)
-            scaled_x2 = center_x + ((x2 - x1) / 2 * scale_factor)
-            scaled_y1 = center_y - ((y2 - y1) / 2 * scale_factor)
-            scaled_y2 = center_y + ((y2 - y1) / 2 * scale_factor)
-            bboxes[idx] = [scaled_x1, scaled_y1, scaled_x2, scaled_y2]
+            xmin, ymin, xmax, ymax = tuple(box)
+            center_x = (xmin + xmax) / 2
+            center_y = (ymin + ymax) / 2
+            scaled_xmin = center_x - ((xmax - xmin) / 2 * scale_factor)
+            scaled_xmax = center_x + ((xmax - xmin) / 2 * scale_factor)
+            scaled_ymin = center_y - ((ymax - ymin) / 2 * scale_factor)
+            scaled_ymax = center_y + ((ymax - ymin) / 2 * scale_factor)
+            bboxes[idx] = [scaled_xmin, scaled_ymin, scaled_xmax, scaled_ymax]
 
         return bboxes
 
@@ -278,7 +278,7 @@ class Detector:
 
         return:
                 boxes: (Numpy Array) an array of bounding box with
-                    definition like (x1, y1, x2, y2), in a
+                    definition like (xmin, ymin, xmax, ymax), in a
                     coordinate system with origin point in
                     the left top corner
                 labels: (Numpy Array) an array of class labels

@@ -31,7 +31,7 @@ from tensorflow.python.saved_model import tag_constants
 class Detector:
     def __init__(self, config: Dict[str, Any]) -> None:
         """
-        Object detection class using yolo model to find object bboxes
+        Object detection class using TF_TRT yolo model to find object bboxes
         """
         self.config = config
         self.root_dit = config["root"]
