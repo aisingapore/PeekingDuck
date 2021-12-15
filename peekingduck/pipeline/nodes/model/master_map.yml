@@ -10,7 +10,7 @@ model_map: {
 ---
 # This document holds the master class name to object ID mapping.
 # * DO NOT MODIFY *
-master_map: {
+class_id_map: {
     "person": {
         effdet_map: 0,
         yolo_map: 0,

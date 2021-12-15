@@ -17,9 +17,12 @@ Loads configurations for individual nodes.
 """
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, List, Tuple
 
 import yaml
+
+# Master map file for class name to object IDs for object detection models
+MASTER_MAP = "pipeline/models/master_map.yml"
 
 
 class ConfigLoader:  # pylint: disable=too-few-public-methods
@@ -43,6 +46,31 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
         return file_path
 
+    def _load_mapping(self, node_name: str) -> Dict[str, int]:
+        """Loads class name to object ID mapping from the file
+        peekingduck/pipeline/nodes/model/master_map.yml
+
+        Args:
+            node_name (str): Tells function which mapping to load,
+                             Possible values = { model.efficientdet, model.yolo }.
+
+        Returns:
+            Dict[str, int]: Mapping of class names to object IDs relevant to given node_name
+        """
+        assert node_name in (
+            "model.yolo",
+            "model.efficientdet",
+        ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
+
+        master_map_file = self._base_dir / MASTER_MAP
+        with master_map_file.open() as map_file:
+            model_map, class_id_map = yaml.safe_load_all(map_file)
+        print("** model_map")
+        print(model_map)
+        print("** class_id_map")
+        print(class_id_map)
+        return {}
+
     def get(self, node_name: str) -> Dict[str, Any]:
         """Gets node configuration for specified node.
 
@@ -61,3 +89,28 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         # some models require the knowledge of where the root is for loading
         node_config["root"] = self._base_dir
         return node_config
+
+    def change_class_name_to_id(
+        self, node_name: str, key: str, value: List[Any]
+    ) -> Tuple[str, List[int]]:
+        """Process object detection model node's detect_ids key and check for
+        any class names to be converted to object IDs.
+        E.g. person to 0, car to 2
+
+        Args:
+            node_name (str): to determine if node is efficientdet or yolo,
+                             because both lists of object IDs are different.
+            key (str): expected to be "detect_ids"; error otherwise.
+            value (List[Any]): list of class names or object IDs for detection.
+                               If object IDs, do nothing.
+                               If class names, convert to object IDs.
+
+        Returns:
+            Tuple[str, List[int]]: "detect_ids", list of sorted object IDs.
+        """
+        class_id_map = self._load_mapping(node_name)
+        obj_ids_set = {
+            x if isinstance(x, int) else class_id_map.get(x, 0) for x in value
+        }
+        obj_ids_sorted_list = sorted(list(obj_ids_set))
+        return key, obj_ids_sorted_list
