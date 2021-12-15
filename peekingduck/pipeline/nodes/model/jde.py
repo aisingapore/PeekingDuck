@@ -13,15 +13,12 @@
 # limitations under the License.
 
 """
-Human detection and tracking model
+Human detection and tracking model.
 """
 
 from typing import Any, Dict
-import os
 from peekingduck.pipeline.nodes.node import AbstractNode
-from peekingduck.pipeline.nodes.model.jde_mot import jde_model
-
-os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
+from peekingduck.pipeline.nodes.model.jdev1 import jde_model
 
 
 class Node(AbstractNode):
@@ -29,9 +26,10 @@ class Node(AbstractNode):
     image frame.
 
     The JDE model node allows target detection and appearance embedding
-    to be learned in a shared model. In addition, the authors We further
+    to be learned in a shared model. In addition, the authors further
     propose a simple and fast association method that works in conjunction
-    with the joint model.
+    with the joint model. This implementation is inference only, and any
+    training code is stripped from the repository and model weights.
 
     Inputs:
         |img|
@@ -54,7 +52,7 @@ class Node(AbstractNode):
             config file.
         iou_threshold (:obj:`float`): **default = 0.5**. |br|
             Threshold value for intersecton over union of detections.
-        conf_threshold (:obj:`float`): **default = 0.5**. |br|
+        score_threshold (:obj:`float`): **default = 0.5**. |br|
             Object confidence score threshold.
         nms_threshold (:obj:`float`): **default = 0.4**. |br|
             Threshold values for non-max suppression.
@@ -67,18 +65,18 @@ class Node(AbstractNode):
 
     References:
         Towards Real-Time Multi-Object Tracking:
-        https://arxiv.org/abs/1909.12605v2
+            https://arxiv.org/abs/1909.12605v2
 
         Model weights trained by:
-        https://github.com/Zhongdao/Towards-Realtime-MOT
+            https://github.com/Zhongdao/Towards-Realtime-MOT
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = jde_model.JDE(self.config)
+        self.model = jde_model.JDEModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Run JDE model per frame.
+        """Runs JDE model per frame.
 
         Args:
             inputs (Dict[str, Any]): Inputs from nodes before JDE.
@@ -92,4 +90,5 @@ class Node(AbstractNode):
             "obj_tags": obj_tags,
             "bbox_labels": labels,
         }
+
         return outputs
