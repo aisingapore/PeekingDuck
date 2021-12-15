@@ -62,3 +62,95 @@ class TestConfigLoader:
 
         for key in data.keys():
             assert data[key] == config[key]
+
+    def test_config_loader_load_mapping_efficientdet(self, configloader):
+        node_name = "model.efficientdet"
+        test_map = configloader._load_mapping(node_name)
+
+        assert test_map["person"] == 0
+        assert test_map["parking meter"] == 13
+        assert test_map["toothbrush"] == 89
+
+    def test_config_loader_load_mapping_yolo(self, configloader):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+
+        assert test_map["person"] == 0
+        assert test_map["parking meter"] == 12
+        assert test_map["toothbrush"] == 79
+
+    def test_config_loader_change_class_name_to_id_yolo_all_text(self, configloader):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+        key = "detect_ids"
+        val = ["person", "car", "bus", "cell phone", "oven"]
+        ground_truth = ("detect_ids", [0, 2, 5, 67, 69])
+
+        test_res = configloader.change_class_name_to_id(node_name, key, val)
+        assert test_res == ground_truth
+
+    def test_config_loader_change_class_name_to_id_yolo_all_int(self, configloader):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+        key = "detect_ids"
+        val = [0, 1, 2, 3, 5]
+        ground_truth = ("detect_ids", [0, 1, 2, 3, 5])
+
+        test_res = configloader.change_class_name_to_id(node_name, key, val)
+        assert test_res == ground_truth
+
+    def test_config_loader_change_class_name_to_id_yolo_mix_int_text(
+        self, configloader
+    ):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+        key = "detect_ids"
+        val = [4, "bicycle", 10, "laptop", "teddy bear"]
+        ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
+
+        test_res = configloader.change_class_name_to_id(node_name, key, val)
+        assert test_res == ground_truth
+
+    def test_config_loader_change_class_name_to_id_yolo_mix_int_text_duplicates(
+        self, configloader
+    ):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+        key = "detect_ids"
+        val = [
+            4,
+            "bicycle",
+            10,
+            "laptop",
+            "teddy bear",
+            "aeroplane",
+            63,
+            10,
+        ]
+        ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
+
+        test_res = configloader.change_class_name_to_id(node_name, key, val)
+        assert test_res == ground_truth
+
+    def test_config_loader_change_class_name_to_id_yolo_mix_int_text_errors(
+        self, configloader
+    ):
+        node_name = "model.yolo"
+        test_map = configloader._load_mapping(node_name)
+        key = "detect_ids"
+        val = [
+            4,
+            "bicycle",
+            10,
+            "laptop",
+            "teddy bear",
+            "aeroplane",
+            63,
+            10,
+            "pokemon",
+            "scary monster",
+        ]
+        ground_truth = ("detect_ids", [0, 1, 4, 10, 63, 77])
+
+        test_res = configloader.change_class_name_to_id(node_name, key, val)
+        assert test_res == ground_truth

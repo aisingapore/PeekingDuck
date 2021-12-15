@@ -67,7 +67,9 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             "model.efficientdet",
         ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
 
-        master_map_file = self._base_dir / MASTER_MAP
+        # use __file__ instead of self._base_dir as latter can be set to any (temp) path
+        # without `peekingduck/` subdirectory, resulting in master map file not found error
+        master_map_file = Path(__file__).parent / MASTER_MAP
         # read both documents from master_map.yml
         with master_map_file.open() as map_file:
             model_map_dict, class_id_map_dict = yaml.safe_load_all(map_file)
