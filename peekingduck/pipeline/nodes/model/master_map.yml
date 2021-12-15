@@ -1,339 +1,335 @@
 ---
 # This document maps models to master mapping
 # * DO NOT MODIFY *
-model_map: {
-    efficientdet: effdet_map,
-    yolo: yolo_map,
-    yolox: yolo_map,
-}
+efficientdet: map_effdet
+yolo: map_yolo
+yolox: map_yolo
 ...
 ---
 # This document holds the master class name to object ID mapping.
 # * DO NOT MODIFY *
-class_id_map: {
-    "person": {
-        effdet_map: 0,
-        yolo_map: 0,
-    },
-    "bicycle": {
-        effdet_map: 1,
-        yolo_map: 1,
-    },
-    "car": {
-        effdet_map: 2,
-        yolo_map: 2,
-    },
-    "motorcycle": {
-        effdet_map: 3,
-        yolo_map: 3,
-    },
-    "aeroplane": {
-        effdet_map: 4,
-        yolo_map: 4,
-    },
-    "airplane": {
-        effdet_map: 4,
-        yolo_map: 4,
-    },
-    "bus": {
-        effdet_map: 5,
-        yolo_map: 5,
-    },
-    "train": {
-        effdet_map: 6,
-        yolo_map: 6,
-    },
-    "truck": {
-        effdet_map: 7,
-        yolo_map: 7,
-    },
-    "boat": {
-        effdet_map: 8,
-        yolo_map: 8,
-    },
-    "traffic light": {
-        effdet_map: 9,
-        yolo_map: 9,
-    },
-    "fire hydrant": {
-        effdet_map: 10,
-        yolo_map: 10,
-    },
-    "stop sign": {
-        effdet_map: 12,
-        yolo_map: 11,
-    },
-    "parking meter": {
-        effdet_map: 13,
-        yolo_map: 12,
-    },
-    "bench": {
-        effdet_map: 14,
-        yolo_map: 13,
-    },
-    "bird": {
-        effdet_map: 15,
-        yolo_map: 14,
-    },
-    "cat": {
-        effdet_map: 16,
-        yolo_map: 15,
-    },
-    "dog": {
-        effdet_map: 17,
-        yolo_map: 16,
-    },
-    "horse": {
-        effdet_map: 18,
-        yolo_map: 17,
-    },
-    "sheep": {
-        effdet_map: 19,
-        yolo_map: 18,
-    },
-    "cow": {
-        effdet_map: 20,
-        yolo_map: 19,
-    },
-    "elephant": {
-        effdet_map: 21,
-        yolo_map: 20,
-    },
-    "bear": {
-        effdet_map: 22,
-        yolo_map: 21,
-    },
-    "zebra": {
-        effdet_map: 23,
-        yolo_map: 22,
-    },
-    "giraffe": {
-        effdet_map: 24,
-        yolo_map: 23,
-    },
-    "backpack": {
-        effdet_map: 26,
-        yolo_map: 24,
-    },
-    "umbrella": {
-        effdet_map: 27,
-        yolo_map: 25,
-    },
-    "handbag": {
-        effdet_map: 30,
-        yolo_map: 26,
-    },
-    "tie": {
-        effdet_map: 31,
-        yolo_map: 27,
-    },
-    "suitcase": {
-        effdet_map: 32,
-        yolo_map: 28,
-    },
-    "frisbee": {
-        effdet_map: 33,
-        yolo_map: 29,
-    },
-    "skis": {
-        effdet_map: 34,
-        yolo_map: 30,
-    },
-    "snowboard": {
-        effdet_map: 35,
-        yolo_map: 31,
-    },
-    "sports ball": {
-        effdet_map: 36,
-        yolo_map: 32,
-    },
-    "kite": {
-        effdet_map: 37,
-        yolo_map: 33,
-    },
-    "baseball bat": {
-        effdet_map: 38,
-        yolo_map: 34,
-    },
-    "baseball glove": {
-        effdet_map: 39,
-        yolo_map: 35,
-    },
-    "skateboard": {
-        effdet_map: 40,
-        yolo_map: 36,
-    },
-    "surfboard": {
-        effdet_map: 41,
-        yolo_map: 37,
-    },
-    "tennis racket": {
-        effdet_map: 42,
-        yolo_map: 38,
-    },
-    "bottle": {
-        effdet_map: 43,
-        yolo_map: 39,
-    },
-    "wine glass": {
-        effdet_map: 45,
-        yolo_map: 40,
-    },
-    "cup": {
-        effdet_map: 46,
-        yolo_map: 41,
-    },
-    "fork": {
-        effdet_map: 47,
-        yolo_map: 42,
-    },
-    "knife": {
-        effdet_map: 48,
-        yolo_map: 43,
-    },
-    "spoon": {
-        effdet_map: 49,
-        yolo_map: 44,
-    },
-    "bowl": {
-        effdet_map: 50,
-        yolo_map: 45,
-    },
-    "banana": {
-        effdet_map: 51,
-        yolo_map: 46,
-    },
-    "apple": {
-        effdet_map: 52,
-        yolo_map: 47,
-    },
-    "sandwich": {
-        effdet_map: 53,
-        yolo_map: 48,
-    },
-    "orange": {
-        effdet_map: 54,
-        yolo_map: 49,
-    },
-    "broccoli": {
-        effdet_map: 55,
-        yolo_map: 50,
-    },
-    "carrot": {
-        effdet_map: 56,
-        yolo_map: 51,
-    },
-    "hot dog": {
-        effdet_map: 57,
-        yolo_map: 52,
-    },
-    "pizza": {
-        effdet_map: 58,
-        yolo_map: 53,
-    },
-    "donut": {
-        effdet_map: 59,
-        yolo_map: 54,
-    },
-    "cake": {
-        effdet_map: 60,
-        yolo_map: 55,
-    },
-    "chair": {
-        effdet_map: 61,
-        yolo_map: 56,
-    },
-    "couch": {
-        effdet_map: 62,
-        yolo_map: 57,
-    },
-    "potted plant": {
-        effdet_map: 63,
-        yolo_map: 58,
-    },
-    "bed": {
-        effdet_map: 64,
-        yolo_map: 59,
-    },
-    "dining table": {
-        effdet_map: 66,
-        yolo_map: 60,
-    },
-    "toilet": {
-        effdet_map: 69,
-        yolo_map: 61,
-    },
-    "tv": {
-        effdet_map: 71,
-        yolo_map: 62,
-    },
-    "laptop": {
-        effdet_map: 72,
-        yolo_map: 63,
-    },
-    "mouse": {
-        effdet_map: 73,
-        yolo_map: 64,
-    },
-    "remote": {
-        effdet_map: 74,
-        yolo_map: 65,
-    },
-    "keyboard": {
-        effdet_map: 75,
-        yolo_map: 66,
-    },
-    "cell phone": {
-        effdet_map: 76,
-        yolo_map: 67,
-    },
-    "microwave": {
-        effdet_map: 77,
-        yolo_map: 68,
-    },
-    "oven": {
-        effdet_map: 78,
-        yolo_map: 69,
-    },
-    "toaster": {
-        effdet_map: 79,
-        yolo_map: 70,
-    },
-    "sink": {
-        effdet_map: 80,
-        yolo_map: 71,
-    },
-    "refrigerator": {
-        effdet_map: 81,
-        yolo_map: 72,
-    },
-    "book": {
-        effdet_map: 83,
-        yolo_map: 73,
-    },
-    "clock": {
-        effdet_map: 84,
-        yolo_map: 74,
-    },
-    "vase": {
-        effdet_map: 85,
-        yolo_map: 75,
-    },
-    "scissors": {
-        effdet_map: 86,
-        yolo_map: 76,
-    },
-    "teddy bear": {
-        effdet_map: 87,
-        yolo_map: 77,
-    },
-    "hair drier": {
-        effdet_map: 88,
-        yolo_map: 78,
-    },
-    "toothbrush": {
-        effdet_map: 89,
-        yolo_map: 79,
-    },
+"person": {
+    map_effdet: 0,
+    map_yolo: 0,
+}
+"bicycle": {
+    map_effdet: 1,
+    map_yolo: 1,
+}
+"car": {
+    map_effdet: 2,
+    map_yolo: 2,
+}
+"motorcycle": {
+    map_effdet: 3,
+    map_yolo: 3,
+}
+"aeroplane": {
+    map_effdet: 4,
+    map_yolo: 4,
+}
+"airplane": {
+    map_effdet: 4,
+    map_yolo: 4,
+}
+"bus": {
+    map_effdet: 5,
+    map_yolo: 5,
+}
+"train": {
+    map_effdet: 6,
+    map_yolo: 6,
+}
+"truck": {
+    map_effdet: 7,
+    map_yolo: 7,
+}
+"boat": {
+    map_effdet: 8,
+    map_yolo: 8,
+}
+"traffic light": {
+    map_effdet: 9,
+    map_yolo: 9,
+}
+"fire hydrant": {
+    map_effdet: 10,
+    map_yolo: 10,
+}
+"stop sign": {
+    map_effdet: 12,
+    map_yolo: 11,
+}
+"parking meter": {
+    map_effdet: 13,
+    map_yolo: 12,
+}
+"bench": {
+    map_effdet: 14,
+    map_yolo: 13,
+}
+"bird": {
+    map_effdet: 15,
+    map_yolo: 14,
+}
+"cat": {
+    map_effdet: 16,
+    map_yolo: 15,
+}
+"dog": {
+    map_effdet: 17,
+    map_yolo: 16,
+}
+"horse": {
+    map_effdet: 18,
+    map_yolo: 17,
+}
+"sheep": {
+    map_effdet: 19,
+    map_yolo: 18,
+}
+"cow": {
+    map_effdet: 20,
+    map_yolo: 19,
+}
+"elephant": {
+    map_effdet: 21,
+    map_yolo: 20,
+}
+"bear": {
+    map_effdet: 22,
+    map_yolo: 21,
+}
+"zebra": {
+    map_effdet: 23,
+    map_yolo: 22,
+}
+"giraffe": {
+    map_effdet: 24,
+    map_yolo: 23,
+}
+"backpack": {
+    map_effdet: 26,
+    map_yolo: 24,
+}
+"umbrella": {
+    map_effdet: 27,
+    map_yolo: 25,
+}
+"handbag": {
+    map_effdet: 30,
+    map_yolo: 26,
+}
+"tie": {
+    map_effdet: 31,
+    map_yolo: 27,
+}
+"suitcase": {
+    map_effdet: 32,
+    map_yolo: 28,
+}
+"frisbee": {
+    map_effdet: 33,
+    map_yolo: 29,
+}
+"skis": {
+    map_effdet: 34,
+    map_yolo: 30,
+}
+"snowboard": {
+    map_effdet: 35,
+    map_yolo: 31,
+}
+"sports ball": {
+    map_effdet: 36,
+    map_yolo: 32,
+}
+"kite": {
+    map_effdet: 37,
+    map_yolo: 33,
+}
+"baseball bat": {
+    map_effdet: 38,
+    map_yolo: 34,
+}
+"baseball glove": {
+    map_effdet: 39,
+    map_yolo: 35,
+}
+"skateboard": {
+    map_effdet: 40,
+    map_yolo: 36,
+}
+"surfboard": {
+    map_effdet: 41,
+    map_yolo: 37,
+}
+"tennis racket": {
+    map_effdet: 42,
+    map_yolo: 38,
+}
+"bottle": {
+    map_effdet: 43,
+    map_yolo: 39,
+}
+"wine glass": {
+    map_effdet: 45,
+    map_yolo: 40,
+}
+"cup": {
+    map_effdet: 46,
+    map_yolo: 41,
+}
+"fork": {
+    map_effdet: 47,
+    map_yolo: 42,
+}
+"knife": {
+    map_effdet: 48,
+    map_yolo: 43,
+}
+"spoon": {
+    map_effdet: 49,
+    map_yolo: 44,
+}
+"bowl": {
+    map_effdet: 50,
+    map_yolo: 45,
+}
+"banana": {
+    map_effdet: 51,
+    map_yolo: 46,
+}
+"apple": {
+    map_effdet: 52,
+    map_yolo: 47,
+}
+"sandwich": {
+    map_effdet: 53,
+    map_yolo: 48,
+}
+"orange": {
+    map_effdet: 54,
+    map_yolo: 49,
+}
+"broccoli": {
+    map_effdet: 55,
+    map_yolo: 50,
+}
+"carrot": {
+    map_effdet: 56,
+    map_yolo: 51,
+}
+"hot dog": {
+    map_effdet: 57,
+    map_yolo: 52,
+}
+"pizza": {
+    map_effdet: 58,
+    map_yolo: 53,
+}
+"donut": {
+    map_effdet: 59,
+    map_yolo: 54,
+}
+"cake": {
+    map_effdet: 60,
+    map_yolo: 55,
+}
+"chair": {
+    map_effdet: 61,
+    map_yolo: 56,
+}
+"couch": {
+    map_effdet: 62,
+    map_yolo: 57,
+}
+"potted plant": {
+    map_effdet: 63,
+    map_yolo: 58,
+}
+"bed": {
+    map_effdet: 64,
+    map_yolo: 59,
+}
+"dining table": {
+    map_effdet: 66,
+    map_yolo: 60,
+}
+"toilet": {
+    map_effdet: 69,
+    map_yolo: 61,
+}
+"tv": {
+    map_effdet: 71,
+    map_yolo: 62,
+}
+"laptop": {
+    map_effdet: 72,
+    map_yolo: 63,
+}
+"mouse": {
+    map_effdet: 73,
+    map_yolo: 64,
+}
+"remote": {
+    map_effdet: 74,
+    map_yolo: 65,
+}
+"keyboard": {
+    map_effdet: 75,
+    map_yolo: 66,
+}
+"cell phone": {
+    map_effdet: 76,
+    map_yolo: 67,
+}
+"microwave": {
+    map_effdet: 77,
+    map_yolo: 68,
+}
+"oven": {
+    map_effdet: 78,
+    map_yolo: 69,
+}
+"toaster": {
+    map_effdet: 79,
+    map_yolo: 70,
+}
+"sink": {
+    map_effdet: 80,
+    map_yolo: 71,
+}
+"refrigerator": {
+    map_effdet: 81,
+    map_yolo: 72,
+}
+"book": {
+    map_effdet: 83,
+    map_yolo: 73,
+}
+"clock": {
+    map_effdet: 84,
+    map_yolo: 74,
+}
+"vase": {
+    map_effdet: 85,
+    map_yolo: 75,
+}
+"scissors": {
+    map_effdet: 86,
+    map_yolo: 76,
+}
+"teddy bear": {
+    map_effdet: 87,
+    map_yolo: 77,
+}
+"hair drier": {
+    map_effdet: 88,
+    map_yolo: 78,
+}
+"toothbrush": {
+    map_effdet: 89,
+    map_yolo: 79,
 }
 ...

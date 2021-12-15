@@ -22,7 +22,7 @@ from typing import Any, Dict, List, Tuple
 import yaml
 
 # Master map file for class name to object IDs for object detection models
-MASTER_MAP = "pipeline/models/master_map.yml"
+MASTER_MAP = "pipeline/nodes/model/master_map.yml"
 
 
 class ConfigLoader:  # pylint: disable=too-few-public-methods
@@ -56,6 +56,11 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
         Returns:
             Dict[str, int]: Mapping of class names to object IDs relevant to given node_name
+
+        Tech Notes:
+            master_map.yml comprises two documents:
+            1. model mapping: tells which mapping system a particular object detection model uses
+            2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
         """
         assert node_name in (
             "model.yolo",
@@ -63,13 +68,20 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
 
         master_map_file = self._base_dir / MASTER_MAP
+        # read both documents from master_map.yml
         with master_map_file.open() as map_file:
-            model_map, class_id_map = yaml.safe_load_all(map_file)
-        print("** model_map")
-        print(model_map)
-        print("** class_id_map")
-        print(class_id_map)
-        return {}
+            model_map_dict, class_id_map_dict = yaml.safe_load_all(map_file)
+
+        # determine mapping system to use based on given model
+        model = node_name.replace("model.", "")
+        model_map = model_map_dict[model]
+
+        # construct class name->object ID map for the model
+        class_id_map = {}
+        for key, val in class_id_map_dict.items():
+            class_id = val[model_map]
+            class_id_map[key] = class_id
+        return class_id_map
 
     def get(self, node_name: str) -> Dict[str, Any]:
         """Gets node configuration for specified node.
