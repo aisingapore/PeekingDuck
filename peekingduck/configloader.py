@@ -19,6 +19,7 @@ Loads configurations for individual nodes.
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+import logging
 import yaml
 
 # Master map file for class name to object IDs for object detection models
@@ -37,6 +38,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(self, base_dir: Path) -> None:
         self._base_dir = base_dir
+        self.logger = logging.getLogger(__name__)
 
     def _get_config_path(self, node: str) -> Path:
         """Based on the node, return the corresponding node config path"""
@@ -126,6 +128,14 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         """
         class_id_map = self._load_mapping(node_name)
         value_lc = [x.lower() if isinstance(x, str) else x for x in value]
+        # parse value_lc for possible class name errors
+        invalid_class_names = []
+        for class_name in value_lc:
+            if isinstance(class_name, str) and class_id_map.get(class_name, -1) < 0:
+                invalid_class_names.append(class_name)
+        if invalid_class_names:
+            self.logger.warning(f"Invalid class names: {invalid_class_names}")
+        # convert class names to numeric object IDs, any errors default to zero
         obj_ids_set = {
             x if isinstance(x, int) else class_id_map.get(x, 0) for x in value_lc
         }
