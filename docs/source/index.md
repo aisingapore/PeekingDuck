@@ -51,8 +51,8 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%"> |
 | [Face Mask Detection](use_cases/face_mask_detection.md)      | [Crowd Counting](use_cases/crowd_counting.md)                |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif" width="100%"> |
-| [Multi Object Tracking](use_cases/multi_object_tracking.md) |  |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif" width="100%"> |  |
+| [Multi Object Tracking](use_cases/multi_object_tracking.md) | [Human Detection and Tracking](use_cases/human_tracking.md) |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/human_tracking.gif" width="100%"> |
 |                                                              |                                                              |
 
 

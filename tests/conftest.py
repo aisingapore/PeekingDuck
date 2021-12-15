@@ -25,6 +25,7 @@ import tensorflow.keras.backend as K
 
 TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
 TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
+TEST_HUMAN_VIDEOS = ["humans_mot.mp4"]
 
 TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
 TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
@@ -126,6 +127,15 @@ def test_no_lp_images(request):
 
 @pytest.fixture(params=TEST_CROWD_IMAGES)
 def test_crowd_images(request):
+    test_img_dir = PKD_DIR.parent / "images" / "testing"
+
+    yield str(test_img_dir / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=TEST_HUMAN_VIDEOS)
+def test_human_videos(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
 
     yield str(test_img_dir / request.param)
