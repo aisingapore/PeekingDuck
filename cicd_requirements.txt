@@ -16,6 +16,4 @@ texttable # for pretty print scripts/check_links.py output
 # optional requirements
 shapely == 1.7.1
 lap == 0.4.0
-cython == 0.29.24
-cython-bbox == 0.1.3
 -r requirements.txt
