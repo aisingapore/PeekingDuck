@@ -46,13 +46,13 @@ nodes:
 
 This node employs a single network to *simultaneously* output detection results and the corresponding appearance embeddings of the detected boxes. Therefore JDE stands for Joint Detection and Embedding. More information regarding the model, i.e. research paper and repository can be found [here](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.model.jde.Node.html).
 
-JDE employs a DarkNet-53 [yolov3] as the backbone network for human detection. To learn appearance embeddings, a metric learning algorithm with triplet loss together is used. Observations are assigned to tracklets using the Hungarian algorithm. The Kalman filter is used to smooth the trajectories and predict the locations of previous tracklets in the current frame.
+JDE employs a DarkNet-53 [YOLOv3](https://arxiv.org/abs/1804.02767) as the backbone network for human detection. To learn appearance embeddings, a metric learning algorithm with triplet loss together is used. Observations are assigned to tracklets using the Hungarian algorithm. The Kalman filter is used to smooth the trajectories and predict the locations of previous tracklets in the current frame.
 
 **2. Adjusting Node**
 
 With regard to the JDE model node, some common behaviours that you might want to adjust are:
 - `iou_threshold`: This specifies the threshold value for intersection over union of detections (default = 0.5). 
-- `conf_threshold`: This specifies the threshold values for the detection confidence (default = 0.5). You may want to lower this value to increase the number of detections.
+- `score_threshold`: This specifies the threshold values for the detection confidence (default = 0.5). You may want to lower this value to increase the number of detections.
 - `nms_threshold`: This specifies the threshold value for non-maximal suppression (default = 0.4). You may want to lower this value to increase the number of detections.
 - `min_box_area`: Minimum value for area of detected bounding box. Calculated by width * height.
 - `track_buffer`: This value specifies the threshold to remove track if track is lost for more frames than value.
