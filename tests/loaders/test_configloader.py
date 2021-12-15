@@ -83,7 +83,7 @@ class TestConfigLoader:
         node_name = "model.yolo"
         test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
-        val = ["person", "car", "bus", "cell phone", "oven"]
+        val = ["person", "car", "BUS", "CELL PHONE", "oven"]
         ground_truth = ("detect_ids", [0, 2, 5, 67, 69])
 
         test_res = configloader.change_class_name_to_id(node_name, key, val)
@@ -105,7 +105,7 @@ class TestConfigLoader:
         node_name = "model.yolo"
         test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
-        val = [4, "bicycle", 10, "laptop", "teddy bear"]
+        val = [4, "bicycle", 10, "LAPTOP", "teddy bear"]
         ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
 
         test_res = configloader.change_class_name_to_id(node_name, key, val)

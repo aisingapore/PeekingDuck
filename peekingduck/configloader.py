@@ -63,17 +63,18 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             1. model mapping: tells which mapping system a particular object detection model uses
             2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
         """
-        assert node_name in (
-            "model.yolo",
-            "model.efficientdet",
-        ), f"Name Error: expect model.yolo or model.efficientdet but got {node_name}"
-
         # use __file__ instead of self._base_dir as latter can be set to any (temp) path
         # without `peekingduck/` subdirectory, resulting in master map file not found error
         master_map_file = Path(__file__).parent / MASTER_MAP
         # read both documents from master_map.yml
         with master_map_file.open() as map_file:
             model_map_dict, class_id_map_dict = yaml.safe_load_all(map_file)
+
+        # node_name sanity check, to preempt non-object detection model nodes
+        node_name_list = list(map(lambda x: f"model.{x}", model_map_dict.keys()))
+        assert (
+            node_name in node_name_list
+        ), f"Node Name Error: expect one of {node_name_list} but got {node_name}"
 
         # determine mapping system to use based on given model
         model = node_name.replace("model.", "")
@@ -83,7 +84,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         class_id_map = {}
         for key, val in class_id_map_dict.items():
             class_id = val[model_map]
-            class_id_map[key] = class_id
+            class_id_map[key.lower()] = class_id
         return class_id_map
 
     def get(self, node_name: str) -> Dict[str, Any]:
@@ -124,8 +125,9 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             Tuple[str, List[int]]: "detect_ids", list of sorted object IDs.
         """
         class_id_map = self._load_mapping(node_name)
+        value_lc = [x.lower() if isinstance(x, str) else x for x in value]
         obj_ids_set = {
-            x if isinstance(x, int) else class_id_map.get(x, 0) for x in value
+            x if isinstance(x, int) else class_id_map.get(x, 0) for x in value_lc
         }
         obj_ids_sorted_list = sorted(list(obj_ids_set))
         return key, obj_ids_sorted_list
