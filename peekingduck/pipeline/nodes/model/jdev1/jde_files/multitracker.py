@@ -335,13 +335,11 @@ class JDETracker:
         # pred now has lesser number of proposals.
         # Proposals rejected on basis of object confidence score.
         if len(pred) > 0:
-            dets = non_max_suppression(
+            dets = non_max_suppression(  # type: ignore
                 pred.unsqueeze(0),
                 self.opt["score_threshold"],
                 self.opt["nms_threshold"],
-            )[
-                0
-            ].cpu()  # type: ignore
+            )[0].cpu()
             # Final proposals are obtained in dets. Information of bounding box
             # and embeddings also included. Next step changes the detection scales.
             scale_coords(self.opt["img_size"], dets[:, :4], img0.shape).round()
