@@ -46,7 +46,8 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
         return file_path
 
-    def _load_mapping(self, node_name: str) -> Dict[str, int]:
+    @staticmethod
+    def _load_mapping(node_name: str) -> Dict[str, int]:
         """Loads class name to object ID mapping from the file
         peekingduck/pipeline/nodes/model/master_map.yml
 
