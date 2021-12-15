@@ -11,7 +11,7 @@ weights: {
     }
 }
 iou_threshold: 0.5
-conf_threshold: 0.5
+score_threshold: 0.5
 nms_threshold: 0.4
 min_box_area: 200
 track_buffer: 30
