@@ -116,8 +116,8 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         E.g. person to 0, car to 2
 
         Args:
-            node_name (str): to determine if node is efficientdet or yolo,
-                             because both lists of object IDs are different.
+            node_name (str): to determine which object detection model is being used
+                             because different models can use different object IDs.
             key (str): expected to be "detect_ids"; error otherwise.
             value (List[Any]): list of class names or object IDs for detection.
                                If object IDs, do nothing.
@@ -128,13 +128,16 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         """
         class_id_map = self._load_mapping(node_name)
         value_lc = [x.lower() if isinstance(x, str) else x for x in value]
+
         # parse value_lc for possible class name errors
         invalid_class_names = []
         for class_name in value_lc:
             if isinstance(class_name, str) and class_id_map.get(class_name, -1) < 0:
                 invalid_class_names.append(class_name)
+
         if invalid_class_names:
             self.logger.warning(f"Invalid class names: {invalid_class_names}")
+
         # convert class names to numeric object IDs, any errors default to zero
         obj_ids_set = {
             x if isinstance(x, int) else class_id_map.get(x, 0) for x in value_lc
