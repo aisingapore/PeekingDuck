@@ -81,7 +81,6 @@ class TestConfigLoader:
 
     def test_config_loader_change_class_name_to_id_yolo_all_text(self, configloader):
         node_name = "model.yolo"
-        test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
         val = ["person", "car", "BUS", "CELL PHONE", "oven"]
         ground_truth = ("detect_ids", [0, 2, 5, 67, 69])
@@ -91,7 +90,6 @@ class TestConfigLoader:
 
     def test_config_loader_change_class_name_to_id_yolo_all_int(self, configloader):
         node_name = "model.yolo"
-        test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
         val = [0, 1, 2, 3, 5]
         ground_truth = ("detect_ids", [0, 1, 2, 3, 5])
@@ -103,7 +101,6 @@ class TestConfigLoader:
         self, configloader
     ):
         node_name = "model.yolo"
-        test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
         val = [4, "bicycle", 10, "LAPTOP", "teddy bear"]
         ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
@@ -115,7 +112,6 @@ class TestConfigLoader:
         self, configloader
     ):
         node_name = "model.yolo"
-        test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
         val = [
             4,
@@ -136,7 +132,6 @@ class TestConfigLoader:
         self, configloader
     ):
         node_name = "model.yolo"
-        test_map = configloader._load_mapping(node_name)
         key = "detect_ids"
         val = [
             4,
