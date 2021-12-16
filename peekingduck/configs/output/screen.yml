@@ -3,6 +3,7 @@ output: ["pipeline_end"]
 
 window_name: "PeekingDuck"
 window_size: {
+    do_resizing: False,
     width: 1280,
     height: 720 
 }
