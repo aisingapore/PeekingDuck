@@ -178,10 +178,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                         f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
-                    if key == "detect_ids" and node_name in (
-                        "model.yolo",
-                        "model.efficientdet",
-                    ):
+                    if key == "detect_ids":
                         key, value = self.config_loader.change_class_name_to_id(
                             node_name, key, value
                         )
