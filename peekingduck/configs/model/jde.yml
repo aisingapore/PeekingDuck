@@ -1,17 +1,24 @@
 input: ["img"]
-output: ["bboxes", "obj_tags", "bbox_labels"]
+output: ["bboxes", "bbox_labels", "bbox_scores", "obj_tags"]
+
+optional_inputs: ["mot_metadata"]
 
 weights_parent_dir: null
 weights: {
-    model_subdir: jde,
-    blob_file: jde.zip,
-    config_file: yolov3_864x480.cfg,
-    model_file: {
-        jde: jde_864x480_uncertainty-stripped.pt
-    }
+  model_subdir: jde,
+  blob_file: jde.zip,
+  model_file: {
+    864x480: jde_864x480_uncertainty-stripped.pt,
+  },
+  config_file: {
+    864x480: yolov3_864x480.cfg
+  },
 }
+
+model_type: 864x480
 iou_threshold: 0.5
-score_threshold: 0.5
 nms_threshold: 0.4
+score_threshold: 0.5
+
 min_box_area: 200
 track_buffer: 30
