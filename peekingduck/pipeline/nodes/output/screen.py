@@ -52,13 +52,12 @@ class Node(AbstractNode):
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
 
-        if not self.window_size["do_resizing"]:
-            cv2.imshow(self.window_name, inputs["img"])
-        else:
-            resized_img = cv2.resize(
-                inputs["img"], (self.window_size["width"], self.window_size["height"])
+        img = inputs["img"]
+        if self.window_size["do_resizing"]:
+            img = cv2.resize(
+                img, (self.window_size["width"], self.window_size["height"])
             )
-            cv2.imshow(self.window_name, resized_img)
+        cv2.imshow(self.window_name, img)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
             cv2.destroyWindow(self.window_name)
