@@ -238,14 +238,15 @@ class TestJDE:
             {"frame_rate": 10.0, "reset_model": False},
         ],
     )
-    def test_new_video_frame_rate(
-        self, test_human_video_sequences, jde_config, mot_metadata
-    ):
+    def test_reset_model(self, test_human_video_sequences, jde_config, mot_metadata):
+        """_reset_model() should be called when either the frame_rate changes
+        or when reset_model is True.
+        """
         _, detections = test_human_video_sequences
         jde = Node(config=jde_config)
         prev_tags = []
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.jde_mot.jde_model.logger"
+            "peekingduck.pipeline.nodes.model.jde.logger"
         ) as captured:
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
                 # Insert mot_metadata in input to signal a new model should be

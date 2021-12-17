@@ -60,6 +60,18 @@ class Node(AbstractNode):
             outputs (Dict[str, Any]): Tracking IDs of bounding boxes.
             "obj_tags" key is used for compatibility with draw nodes.
         """
+        # Potentially use frame_rate here too since IOUTracker has a
+        # max_time_lost
+        metadata = inputs.get("mot_metadata", {"reset_model": False})
+        reset_model = metadata["reset_model"]
+        if reset_model:
+            self._reset_model()
+
         track_ids = self.tracker.track_detections(inputs)
 
         return {"obj_tags": track_ids}
+
+    def _reset_model(self) -> None:
+        """Creates a new instance of DetectionTracker."""
+        self.logger.info(f"Creating new {self.tracking_type} tracker...")
+        self.tracker = DetectionTracker(self.tracking_type)

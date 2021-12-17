@@ -1,4 +1,6 @@
 input: ["img", "bboxes", "bbox_labels", "bbox_scores"]
 output: ["obj_tags"]
 
+optional_inputs: ["mot_metadata"]
+
 tracking_type: "iou" # [iou, mosse]

@@ -13,9 +13,9 @@
 # limitations under the License.
 
 from pathlib import Path
+from unittest import TestCase
 
 import numpy as np
-import numpy.testing as npt
 import pytest
 
 from peekingduck.pipeline.nodes.dabble.tracking import Node
@@ -186,3 +186,25 @@ class TestTracking:
             elif i > 0:
                 assert outputs["obj_tags"] == prev_tags
             prev_tags = outputs["obj_tags"]
+
+    def test_reset_model(self, tracker, test_human_video_sequences):
+        mot_metadata = {"reset_model": True}
+        _, detections = test_human_video_sequences
+        prev_tags = []
+        with TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.dabble.tracking.logger"
+        ) as captured:
+            for i, inputs in enumerate(detections):
+                # Insert mot_metadata in input to signal a new model should be
+                # created
+                if i == 0:
+                    inputs["mot_metadata"] = mot_metadata
+                outputs = tracker.run(inputs)
+                assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+                if i == 0:
+                    assert captured.records[0].getMessage() == (
+                        f"Creating new {tracker.tracking_type} tracker..."
+                    )
+                if i > 0:
+                    assert outputs["obj_tags"] == prev_tags
+                prev_tags = outputs["obj_tags"]
