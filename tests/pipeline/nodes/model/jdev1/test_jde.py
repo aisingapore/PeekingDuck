@@ -116,6 +116,14 @@ class TestJDE:
     def test_tracking_ids_should_be_consistent_across_frames(
         self, test_human_video_sequences, jde_config
     ):
+        """NOTE: This test includes testing the __repr__ of STrack which uses
+        the **class** variable `track_id` (as opposed to instance variable). So
+        this particular test has to be the first test to be run where
+        detections get tracked, else it will fail.
+
+        The class variable implemention of `track_id` follows the design of the
+        original repo.
+        """
         _, detections = test_human_video_sequences
         jde = Node(jde_config)
         prev_tags = []
@@ -139,6 +147,22 @@ class TestJDE:
             if i > 1:
                 assert output["obj_tags"] == prev_tags
             prev_tags = output["obj_tags"]
+
+    def test_detect_human_bboxes(self, test_human_videos, jde_config):
+        jde = Node(jde_config)
+        frame_id = 0
+        # Create a VideoCapture object and read from input file
+        cap = cv2.VideoCapture(test_human_videos)
+        ret, frame = cap.read()
+        while ret:
+            output = jde.run({"img": frame})
+            if frame_id > 0:
+                assert len(output["bboxes"]) == 3
+                assert len(output["bbox_labels"]) == 3
+            ret, frame = cap.read()
+            frame_id += 1
+        # When everything done, release the video capture object
+        cap.release()
 
     def test_reactivate_tracks(self, test_human_video_sequences, jde_config):
         _, detections = test_human_video_sequences
