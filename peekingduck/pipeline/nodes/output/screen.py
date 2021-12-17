@@ -38,7 +38,8 @@ class Node(AbstractNode):
         window_size (:obj:`Dict`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Resizes the displayed window to the chosen width and weight, if ``do_resizing``
-            is set to ``true``.
+            is set to ``true``. The size of the displayed window can also be adjusted by
+            clicking and dragging.
         window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window, with
             reference from the top left corner of the screen, in pixels.
