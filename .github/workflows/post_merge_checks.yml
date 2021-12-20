@@ -5,7 +5,8 @@ on:
     branches:
       - main
       - dev
-
+      - node-v1.2
+      
 jobs:
   all_tests:
     runs-on: ${{ matrix.os }}

@@ -1,0 +1,23 @@
+input: ["img"]
+output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
+
+model_type: multipose_lightning
+weights_parent_dir: null
+weights: {
+    model_subdir: movenet,
+    blob_file: movenet.zip,
+    model_file: {
+      multipose_lightning: multipose_lightning,
+      singlepose_lightning: singlepose_lightning,
+      singlepose_thunder: singlepose_thunder,
+  }
+}
+resolution: {
+    singlepose_lightning: { height: 192, width: 192 },
+    singlepose_thunder: { height: 256, width: 256 },
+    multipose_lightning: { height: 256, width: 256 }, 
+} # only multipose can use dynamic shape that needs be multiples of 32
+  # recommended shape is 256
+
+bbox_score_threshold: 0.2
+keypoint_score_threshold: 0.3
