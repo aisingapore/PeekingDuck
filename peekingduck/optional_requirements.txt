@@ -1,1 +1,2 @@
 dabble.zone_count PYTHON shapely == 1.7.1
+model.jde PYTHON lap == 0.4.0

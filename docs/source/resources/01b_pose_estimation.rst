@@ -13,6 +13,8 @@ The table below shows the pose estimation models available for each task categor
 |               | HRNet   | :mod:`peekingduck.pipeline.nodes.model.hrnet`   |
 +               +---------+-------------------------------------------------+
 | Whole body    | PoseNet | :mod:`peekingduck.pipeline.nodes.model.posenet` |
++               +---------+-------------------------------------------------+
+|               | MoveNet | :mod:`peekingduck.pipeline.nodes.model.movenet` |
 +---------------+---------+-------------------------------------------------+
 
 Benchmarks

@@ -62,8 +62,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        pkd_base_dir = Path(__file__).resolve().parent
-        self.config_loader = ConfigLoader(pkd_base_dir)
+        self.pkd_base_dir = Path(__file__).resolve().parent
+        self.config_loader = ConfigLoader(self.pkd_base_dir)
 
         self.node_list = self._load_node_list(run_config_path)
         self.config_updates_cli = ast.literal_eval(config_updates_cli)
@@ -166,9 +166,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     def _edit_config(
         self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
     ) -> Dict[str, Any]:
-        """Update value of a nested dictionary of varying depth using
-        recursion
-        """
+        """Update value of a nested dictionary of varying depth using recursion"""
         for key, value in dict_update.items():
             if isinstance(value, collections.abc.Mapping):
                 dict_orig[key] = self._edit_config(
@@ -180,6 +178,11 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                         f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
+                    if key == "detect_ids":
+                        key, value = self.config_loader.change_class_name_to_id(
+                            node_name, key, value
+                        )
+
                     dict_orig[key] = value
                     self.logger.info(
                         f"Config for node {node_name} is updated to: '{key}': {value}"
