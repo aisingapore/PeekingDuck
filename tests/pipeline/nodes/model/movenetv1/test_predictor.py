@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import gc
 from pathlib import Path
 
 import cv2
@@ -19,6 +20,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import tensorflow as tf
+import tensorflow.keras.backend as K
 import yaml
 
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
@@ -37,7 +39,9 @@ def movenet_config():
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
-    return node_config
+    yield node_config
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture
@@ -57,9 +61,7 @@ class TestPredictor:
 
     def test_model_creation(self, movenet_config, model_dir):
         movenet_predictor = Predictor(movenet_config, model_dir)
-        assert (
-            movenet_predictor._create_movenet_model() is not None
-        ), "Model is not loaded"
+        assert movenet_predictor.movenet_model is not None, "Model is not loaded"
 
     def test_get_resolution_as_tuple(self, movenet_config, model_dir):
         resolution = {"height": 256, "width": 256}
