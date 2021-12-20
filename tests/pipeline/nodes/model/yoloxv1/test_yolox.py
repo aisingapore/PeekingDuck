@@ -31,26 +31,12 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def yolox_config():
-    file_path = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "yoloxv1"
-        / "test_yolox.yml"
-    )
+    file_path = Path(__file__).resolve().parent / "test_yolox.yml"
     with open(file_path) as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
-
-
-@pytest.fixture(params=[1, {"some_key": "some_value"}])
-def yolox_bad_detect_ids_config(request, yolox_config):
-    yolox_config["detect_ids"] = request.param
-    return yolox_config
 
 
 @pytest.fixture(
@@ -79,26 +65,11 @@ def yolox_matrix_config(request, yolox_config):
     return yolox_config
 
 
-@pytest.fixture
-def yolox_default(yolox_config):
-    node = Node(yolox_config)
-
-    return node
-
-
-@pytest.fixture
-def yolox_gpu(yolox_matrix_config):
-    node = Node(yolox_matrix_config)
-    return node
-
-
 @pytest.fixture(params=["yolox-l", "yolox-m", "yolox-s", "yolox-tiny"])
-def yolox(request, yolox_matrix_config):
+def yolox_config_cpu(request, yolox_matrix_config):
+    yolox_matrix_config["model_type"] = request.param
     with mock.patch("torch.cuda.is_available", return_value=False):
-        yolox_matrix_config["model_type"] = request.param
-        node = Node(yolox_matrix_config)
-
-        return node
+        yield yolox_matrix_config
 
 
 def replace_download_weights(*_):
@@ -107,8 +78,9 @@ def replace_download_weights(*_):
 
 @pytest.mark.mlmodel
 class TestYOLOX:
-    def test_no_human_image(self, test_no_human_images, yolox):
+    def test_no_human_image(self, test_no_human_images, yolox_config_cpu):
         blank_image = cv2.imread(test_no_human_images)
+        yolox = Node(yolox_config_cpu)
         output = yolox.run({"img": blank_image})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
@@ -120,8 +92,9 @@ class TestYOLOX:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_detect_human_bboxes(self, test_human_images, yolox):
+    def test_detect_human_bboxes(self, test_human_images, yolox_config_cpu):
         test_image = cv2.imread(test_human_images)
+        yolox = Node(yolox_config_cpu)
         output = yolox.run({"img": test_image})
 
         assert "bboxes" in output
@@ -136,15 +109,16 @@ class TestYOLOX:
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
-    def test_detect_human_bboxes_gpu(self, test_human_images, yolox_gpu):
+    def test_detect_human_bboxes_gpu(self, test_human_images, yolox_matrix_config):
         test_image = cv2.imread(test_human_images)
         # Ran on YOLOX-tiny only due to GPU OOM error on some systems
-        output = yolox_gpu.run({"img": test_image})
+        yolox = Node(yolox_matrix_config)
+        output = yolox.run({"img": test_image})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
-        model_type = yolox_gpu.config["model_type"]
+        model_type = yolox.config["model_type"]
         image_name = Path(test_human_images).stem
         expected = GT_RESULTS[model_type][image_name]
 
@@ -152,8 +126,9 @@ class TestYOLOX:
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
-    def test_get_detect_ids(self, yolox_default):
-        assert yolox_default.model.detect_ids == [0]
+    def test_get_detect_ids(self, yolox_config):
+        yolox = Node(yolox_config)
+        assert yolox.model.detect_ids == [0]
 
     def test_no_weights(self, yolox_config):
         weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
@@ -190,9 +165,11 @@ class TestYOLOX:
             )
             assert yolox is not None
 
-    def test_invalid_config_detect_ids(self, yolox_bad_detect_ids_config):
+    @pytest.mark.parametrize("detect_ids", [1, {"some_key": "some_value"}])
+    def test_invalid_config_detect_ids(self, yolox_config, detect_ids):
+        yolox_config["detect_ids"] = detect_ids
         with pytest.raises(TypeError):
-            _ = Node(config=yolox_bad_detect_ids_config)
+            _ = Node(config=yolox_config)
 
     def test_invalid_config_value(self, yolox_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
@@ -209,13 +186,14 @@ class TestYOLOX:
             _ = Node(config=yolox_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 
-    def test_invalid_image(self, test_no_human_images, yolox_default):
+    def test_invalid_image(self, test_no_human_images, yolox_config):
         blank_image = cv2.imread(test_no_human_images)
+        yolox = Node(yolox_config)
         # Potentially passing in a file path or a tuple from image reader
         # output
         with pytest.raises(TypeError) as excinfo:
-            _ = yolox_default.run({"img": Path.cwd()})
+            _ = yolox.run({"img": Path.cwd()})
         assert "image must be a np.ndarray" == str(excinfo.value)
         with pytest.raises(TypeError) as excinfo:
-            _ = yolox_default.run({"img": ("image name", blank_image)})
+            _ = yolox.run({"img": ("image name", blank_image)})
         assert "image must be a np.ndarray" == str(excinfo.value)
