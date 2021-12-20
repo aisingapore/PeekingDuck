@@ -28,7 +28,7 @@ TEST_DIR = Path.cwd() / "images" / "testing"
 
 @pytest.fixture(params=["t2.jpg"])
 def single_person_image(request):
-    yield str(TEST_DIR / request.param)
+    yield request.param
 
 
 @pytest.fixture
@@ -77,7 +77,7 @@ class TestPredictor:
         ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
 
     def test_predict(self, movenet_config, model_dir, single_person_image):
-        img = cv2.imread(single_person_image)
+        img = cv2.imread(str(TEST_DIR / single_person_image))
         movenet_predictor = Predictor(movenet_config, model_dir)
         (
             bboxes,
