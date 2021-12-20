@@ -1,50 +1,43 @@
-"""
-Copyright 2021 AI Singapore
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
-import pytest
-import yaml
-import cv2
 from pathlib import Path
+
+import cv2
 import numpy as np
 import numpy.testing as npt
+import pytest
 import tensorflow as tf
-from peekingduck.pipeline.nodes.model.movenet import Node
+import yaml
+
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
 
-TEST_DIR = Path.joinpath(Path.cwd(), "images", "testing")
+TEST_DIR = Path.cwd() / "images" / "testing"
 
-single_person_images = ["t2.jpg"]
+
+@pytest.fixture(params=["t2.jpg"])
+def single_person_image(request):
+    yield str(TEST_DIR / request.param)
 
 
 @pytest.fixture
 def movenet_config():
-    filepath = Path.joinpath(
-        Path.cwd(),
-        "tests/pipeline/nodes/model/movenetv1/test_movenet.yml",
-    )
-    with open(filepath) as file:
-        node_config = yaml.safe_load(file)
+    with open(Path(__file__).resolve().parent / "test_movenet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
-
-
-@pytest.fixture
-def movenet(movenet_config):
-    node = Node(movenet_config)
-    return node
 
 
 @pytest.fixture
@@ -56,32 +49,24 @@ def model_dir(movenet_config):
     )
 
 
-@pytest.fixture
-def movenet_predictor(movenet_config, model_dir):
-    predictor = Predictor(movenet_config, model_dir)
-    return predictor
-
-
-@pytest.fixture(params=single_person_images)
-def single_person_image(request):
-    yield request.param
-
-
 @pytest.mark.mlmodel
 class TestPredictor:
-    def test_predictor(self):
+    def test_predictor(self, movenet_config, model_dir):
+        movenet_predictor = Predictor(movenet_config, model_dir)
         assert movenet_predictor is not None, "Predictor is not instantiated"
 
-    def test_model_creation(self, movenet_predictor):
+    def test_model_creation(self, movenet_config, model_dir):
+        movenet_predictor = Predictor(movenet_config, model_dir)
         assert (
-            movenet_predictor._create_movenet_model is not None
+            movenet_predictor._create_movenet_model() is not None
         ), "Model is not loaded"
 
-    def test_get_resolution_as_tuple(self, movenet_predictor):
+    def test_get_resolution_as_tuple(self, movenet_config, model_dir):
         resolution = {"height": 256, "width": 256}
+        movenet_predictor = Predictor(movenet_config, model_dir)
         tuple_res = movenet_predictor.get_resolution_as_tuple(resolution)
-        assert (
-            type(tuple_res) is tuple
+        assert isinstance(
+            tuple_res, tuple
         ), f"Resolution in config must be a tuple instead of {type(tuple_res)}"
         assert tuple_res == (
             256,
@@ -91,8 +76,9 @@ class TestPredictor:
             len(tuple_res) == 2
         ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
 
-    def test_predict(self, movenet_predictor, single_person_image):
-        img = cv2.imread(str(Path.joinpath(TEST_DIR, single_person_image)))
+    def test_predict(self, movenet_config, model_dir, single_person_image):
+        img = cv2.imread(single_person_image)
+        movenet_predictor = Predictor(movenet_config, model_dir)
         (
             bboxes,
             valid_keypoints,
@@ -104,12 +90,13 @@ class TestPredictor:
         assert keypoints_scores.shape == (1, 17)
         assert keypoints_conns.shape == (1, 19, 2, 2)
 
-    def test_get_results_single(self, movenet_predictor):
+    def test_get_results_single(self, movenet_config, model_dir):
         # prediction for singlepose model is in shape of [1,1,17,13]
         # generates random tensor with values from 0.3 to 0.9
         prediction = tf.random.uniform(
             (1, 1, 17, 3), minval=0.3, maxval=0.9, dtype=tf.dtypes.float32, seed=24
         )
+        movenet_predictor = Predictor(movenet_config, model_dir)
         (
             bbox,
             valid_keypoints,
@@ -137,36 +124,36 @@ class TestPredictor:
             x=bbox_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected bbox output for prediction with keypoint score below threshold \
-                got {bbox_no_pose} instead of {np.zeros(0)}"
+                "Unexpected bbox output for prediction with keypoint score below "
+                f"threshold got {bbox_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=valid_keypoints_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected valid keypoint output for prediction with keypoint score \
-                below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
+                "Unexpected valid keypoint output for prediction with keypoint score "
+                f"below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=keypoints_scores_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected keypoint score output for prediction with keypoint score \
-                below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
+                "Unexpected keypoint score output for prediction with keypoint score "
+                f"below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=keypoints_conns_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected keypoint connection output for prediction with keypoint score \
-                below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
+                "Unexpected keypoint connection output for prediction with keypoint "
+                f"score below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
             ),
         )
 
-    def test_get_results_multi(self, movenet_predictor):
+    def test_get_results_multi(self, movenet_config, model_dir):
         # prediction for multi model is in shape of [1,6,56]
         # generates random tensor with values from 0.2 to 0.9
         # since threshold in config is at 0.2, this random tensor
@@ -174,6 +161,7 @@ class TestPredictor:
         prediction = tf.random.uniform(
             (1, 6, 56), minval=0.2, maxval=0.9, dtype=tf.dtypes.float32, seed=24
         )
+        movenet_predictor = Predictor(movenet_config, model_dir)
         (
             bbox,
             valid_keypoints,
@@ -206,31 +194,31 @@ class TestPredictor:
             x=bbox_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected bbox output for prediction with keypoint score below threshold \
-                got {bbox_no_pose} instead of {np.zeros(0)}"
+                "Unexpected bbox output for prediction with keypoint score below "
+                f"threshold got {bbox_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=valid_keypoints_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected valid keypoint output for prediction with keypoint score \
-                below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
+                "Unexpected valid keypoint output for prediction with keypoint score "
+                f"below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=keypoints_scores_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected keypoint score output for prediction with keypoint score \
-                below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
+                "Unexpected keypoint score output for prediction with keypoint score "
+                f"below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
             ),
         )
         npt.assert_array_equal(
             x=keypoints_conns_no_pose,
             y=np.zeros(0),
             err_msg=(
-                f"Unexpected keypoint connection output for prediction with keypoint score \
-                below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
+                "Unexpected keypoint connection output for prediction with keypoint "
+                f"score below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
             ),
         )
