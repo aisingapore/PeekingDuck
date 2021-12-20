@@ -17,7 +17,6 @@ from unittest import TestCase
 
 import numpy as np
 import pytest
-
 from peekingduck.pipeline.nodes.dabble.tracking import Node
 
 # Frame index for manual manipulation of detections to trigger some
@@ -160,7 +159,7 @@ class TestTracking:
         # next frame
         detections[SEQ_IDX]["bboxes"] = np.append(
             detections[SEQ_IDX]["bboxes"],
-            [[0.65, 0.45, 0.7, 0.5]],
+            [[0.0, 0.0, 0.3, 0.5]],
             axis=0,
         )
         detections[SEQ_IDX]["bbox_scores"] = np.append(
