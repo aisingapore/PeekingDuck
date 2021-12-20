@@ -52,7 +52,7 @@ def model_dir(mtcnn_config):
     )
 
 
-def replace_download_weights(model_dir, blob_file):
+def replace_download_weights(*_):
     return False
 
 

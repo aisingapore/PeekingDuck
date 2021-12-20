@@ -39,7 +39,7 @@ def hrnet_config():
     return node_config
 
 
-def replace_download_weights(model_dir, blob_file):
+def replace_download_weights(*_):
     return False
 
 

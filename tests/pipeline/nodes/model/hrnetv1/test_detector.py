@@ -54,18 +54,8 @@ def weights_dir(hrnet_config):
     return hrnet_config["root"] / "peekingduck_weights"
 
 
-# @pytest.fixture
-# def hrnet_detector(hrnet_config, model_dir, weights_dir):
-#     if not checker.has_weights(weights_dir, model_dir):
-#         downloader.download_weights(weights_dir, hrnet_config["weights"]["blob_file"])
-
-#     detector = Detector(hrnet_config, model_dir)
-#     return detector
-
-
 @pytest.mark.mlmodel
 class TestDetector:
-    # def test_create_model(self, hrnet_detector):
     def test_create_model(self, hrnet_config, model_dir, weights_dir):
         """Testing hrnet model instantiation."""
         if not checker.has_weights(weights_dir, model_dir):
