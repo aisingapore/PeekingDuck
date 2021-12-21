@@ -30,7 +30,7 @@ from peekingduck.configloader import ConfigLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 
-PEEKINGDUCK_NODE_TYPES = ["input", "model", "draw", "dabble", "output"]
+PEEKINGDUCK_NODE_TYPES = ["input", "preprocess", "model", "draw", "dabble", "output"]
 
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods

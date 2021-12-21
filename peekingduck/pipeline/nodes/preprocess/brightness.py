@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Adjusts brightness of an incoming image.
+Adjusts brightness of an image.
 """
 
 
@@ -42,8 +42,6 @@ class Node(AbstractNode):
     Configs:
         brightness (:obj:`int`): **[-100,100], default = 0**. |br|
             Adjusts the brightness of the image.
-        contrast (:obj:`float`): **[1, 3], default = 1**. |br|
-            Adjusts the contrast of the image.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -55,7 +53,7 @@ class Node(AbstractNode):
         Args:
             inputs (dict): Dictionary with keys "img".
         """
-        img = cv2.convertScaleAbs(
-            inputs["img"], alpha=self.contrast, beta=self.brightness
-        )
+
+        img = cv2.convertScaleAbs(inputs["img"], alpha=1.0, beta=self.beta)
+
         return {"img": img}

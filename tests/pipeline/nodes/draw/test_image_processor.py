@@ -19,7 +19,7 @@ Test for image processor node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.image_processor import Node
+from peekingduck.pipeline.nodes.preprocess.image_processor import Node
 
 
 @pytest.fixture
