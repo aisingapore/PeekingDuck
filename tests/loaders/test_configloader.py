@@ -98,7 +98,7 @@ class TestConfigLoader:
     #
     # Test class name to object ID translation for different input cases
     # NB: We are not testing model operations here (that is done under model tests).
-    #     But a model is required to object a mapping table, and Yolo model was just chosen.
+    #     But a model is required to obtain a mapping table, and Yolo model was just chosen.
     #     Could also test EfficientDet using its own set of ground truths,
     #     but we would only be testing the translations twice.
     #
