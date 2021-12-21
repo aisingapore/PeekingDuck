@@ -55,7 +55,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
         Args:
             node_name (str): Tells function which mapping to load,
-                             Possible values = { model.efficientdet, model.yolo }.
+                             Possible values = { model.efficientdet, model.yolo, model.yolox }.
 
         Returns:
             Dict[str, int]: Mapping of class names to object IDs relevant to given node_name
