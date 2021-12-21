@@ -79,6 +79,15 @@ class TestConfigLoader:
         assert test_map["parking meter"] == 12
         assert test_map["toothbrush"] == 79
 
+    def test_config_loader_load_mapping_yolox(self, configloader):
+        node_name = "model.yolox"
+        test_map = configloader._load_mapping(node_name)
+
+        assert test_map["person"] == 0
+        assert test_map["airplane"] == 4
+        assert test_map["clock"] == 74
+        assert test_map["toothbrush"] == 79
+
     def test_config_loader_change_class_name_to_id_yolo_all_text(self, configloader):
         node_name = "model.yolo"
         key = "detect_ids"
