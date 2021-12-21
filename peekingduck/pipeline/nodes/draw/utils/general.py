@@ -59,4 +59,4 @@ def project_points_onto_original_image(
     projected_points[:, 0] *= width
     projected_points[:, 1] *= height
 
-    return projected_points.astype(int)
+    return np.round(projected_points).astype(int)

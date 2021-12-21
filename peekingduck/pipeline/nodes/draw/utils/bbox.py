@@ -108,7 +108,7 @@ def _draw_label(
     cv2.rectangle(
         frame,
         (top_left[0], top_left[1]),
-        (int(top_left[0] + text_width), int(top_left[1] - text_height - baseline)),
+        (top_left[0] + text_width, top_left[1] - text_height - baseline),
         bg_colour,
         FILLED,
     )
@@ -162,7 +162,7 @@ def _draw_tag(
     )
     bbox_width = btm_right[0] - top_left[0]
     offset = int((bbox_width - text_width) / 2)
-    position = (top_left[0] + offset, int(top_left[1] - baseline))
+    position = (top_left[0] + offset, top_left[1] - baseline)
     cv2.putText(
         frame, tag, position, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, colour, VERY_THICK
     )
