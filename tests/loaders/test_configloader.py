@@ -63,7 +63,12 @@ class TestConfigLoader:
         for key in data.keys():
             assert data[key] == config[key]
 
+    #
+    # Test loading of model mapping system from master_map.yml
+    # Here we need to test each of the object detection models individually.
+    #
     def test_config_loader_load_mapping_efficientdet(self, configloader):
+        """Test mapping system for EfficientDet model is correctly loaded"""
         node_name = "model.efficientdet"
         test_map = configloader._load_mapping(node_name)
 
@@ -72,6 +77,7 @@ class TestConfigLoader:
         assert test_map["toothbrush"] == 89
 
     def test_config_loader_load_mapping_yolo(self, configloader):
+        """Test mapping system for Yolo model is correctly loaded"""
         node_name = "model.yolo"
         test_map = configloader._load_mapping(node_name)
 
@@ -80,6 +86,7 @@ class TestConfigLoader:
         assert test_map["toothbrush"] == 79
 
     def test_config_loader_load_mapping_yolox(self, configloader):
+        """Test mapping system for YoloX model is correctly loaded"""
         node_name = "model.yolox"
         test_map = configloader._load_mapping(node_name)
 
@@ -88,7 +95,15 @@ class TestConfigLoader:
         assert test_map["clock"] == 74
         assert test_map["toothbrush"] == 79
 
-    def test_config_loader_change_class_name_to_id_yolo_all_text(self, configloader):
+    #
+    # Test class name to object ID translation for different input cases
+    # NB: We are not testing model operations here (that is done under model tests).
+    #     But a model is required to object a mapping table, and Yolo model was just chosen.
+    #     Could also test EfficientDet using its own set of ground truths,
+    #     but we would only be testing the translations twice.
+    #
+    def test_config_loader_change_class_name_to_id_all_text(self, configloader):
+        """Test translation on all text inputs"""
         node_name = "model.yolo"
         key = "detect_ids"
         val = ["person", "car", "BUS", "CELL PHONE", "oven"]
@@ -97,7 +112,8 @@ class TestConfigLoader:
         test_res = configloader.change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
 
-    def test_config_loader_change_class_name_to_id_yolo_all_int(self, configloader):
+    def test_config_loader_change_class_name_to_id_all_int(self, configloader):
+        """Test translation on all integer inputs"""
         node_name = "model.yolo"
         key = "detect_ids"
         val = [0, 1, 2, 3, 5]
@@ -106,9 +122,8 @@ class TestConfigLoader:
         test_res = configloader.change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
 
-    def test_config_loader_change_class_name_to_id_yolo_mix_int_text(
-        self, configloader
-    ):
+    def test_config_loader_change_class_name_to_id_mix_int_text(self, configloader):
+        """Test translation on heterogenous inputs"""
         node_name = "model.yolo"
         key = "detect_ids"
         val = [4, "bicycle", 10, "LAPTOP", "teddy bear"]
@@ -117,9 +132,10 @@ class TestConfigLoader:
         test_res = configloader.change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
 
-    def test_config_loader_change_class_name_to_id_yolo_mix_int_text_duplicates(
+    def test_config_loader_change_class_name_to_id_mix_int_text_duplicates(
         self, configloader
     ):
+        """Test translation with heterogenous inputs including duplicates"""
         node_name = "model.yolo"
         key = "detect_ids"
         val = [
@@ -137,9 +153,10 @@ class TestConfigLoader:
         test_res = configloader.change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
 
-    def test_config_loader_change_class_name_to_id_yolo_mix_int_text_errors(
+    def test_config_loader_change_class_name_to_id_mix_int_text_errors(
         self, configloader
     ):
+        """Test translation with heterogenous inputs including errors"""
         node_name = "model.yolo"
         key = "detect_ids"
         val = [
