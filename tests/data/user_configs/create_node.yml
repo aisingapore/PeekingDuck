@@ -1,0 +1,20 @@
+bad_config_paths:
+  - "/custom_nodes"
+bad_config_paths_win:
+  - "C:/custom_nodes"
+bad_config_types:
+  - ddbl
+  - invalid
+bad_config_names:
+  - "n"
+  - "name!"
+  - "nam:e"
+  - "nam/e"
+  - "nam?e"
+  - "nam e"
+  - "124n"
+  - "_name"
+  - "-name"
+  - " name"
+  - "name_"
+  - "name-"
