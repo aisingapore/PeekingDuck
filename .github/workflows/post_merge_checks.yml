@@ -6,7 +6,7 @@ on:
       - main
       - dev
       - node-v1.2
-      
+
 jobs:
   all_tests:
     runs-on: ${{ matrix.os }}
@@ -36,6 +36,6 @@ jobs:
           pip install . --no-dependencies
         shell: bash
       - name: Run all tests
-        run: bash ./scripts/run_tests.sh all
+        run: bash ./scripts/run_tests.sh post_merge
       - name: Run broken link report
         run: python ./scripts/check_links.py
