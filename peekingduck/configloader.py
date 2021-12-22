@@ -133,7 +133,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             value = ["person"]
         elif value == ["*"]:
             self.logger.info("Detecting all object classes")
-            value = class_id_map.keys()
+            value = [*class_id_map]
 
         value_lc = [x.lower() if isinstance(x, str) else x for x in value]
 
