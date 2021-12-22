@@ -127,6 +127,11 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
             Tuple[str, List[int]]: "detect_ids", list of sorted object IDs.
         """
         class_id_map = self._load_mapping(node_name)
+
+        if not value:
+            self.logger.warning("detect_ids list is empty, defaulting to detect person")
+            value = ["person"]
+
         value_lc = [x.lower() if isinstance(x, str) else x for x in value]
 
         # parse value_lc for possible class name errors
