@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.detector import Detect
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YOLOXModel:  # pylint: disable=duplicate-code
+class YOLOXModel:
     """Validates configuration, loads YOLOX model, and performs inference.
 
     Configuration options are validated to ensure they have valid types and
@@ -74,7 +74,7 @@ class YOLOXModel:  # pylint: disable=duplicate-code
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all available classes.")
+            self.logger.info("Detecting all YoloX classes")
         self._detect_ids = ids
 
     def predict(

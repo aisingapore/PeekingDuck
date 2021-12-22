@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YoloModel:  # pylint: disable=duplicate-code
+class YoloModel:
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -62,7 +62,7 @@ class YoloModel:  # pylint: disable=duplicate-code
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all available classes.")
+            self.logger.info("Detecting all Yolo classes")
         self._detect_ids = ids
 
     def predict(

@@ -27,7 +27,7 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detect
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class EfficientDetModel:  # pylint: disable=duplicate-code
+class EfficientDetModel:
     """EfficientDet model with model types: D0-D4"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -68,7 +68,7 @@ class EfficientDetModel:  # pylint: disable=duplicate-code
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all available classes.")
+            self.logger.info("Detecting all EfficientDet classes")
         self._detect_ids = ids
 
     def predict(
