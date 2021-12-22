@@ -16,7 +16,6 @@
 Detector class to handle detection of bboxes for efficientdet
 """
 
-import json
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -39,19 +38,14 @@ class Detector:
 
     GRAPH_MODE = True
 
-    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+    def __init__(
+        self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
+    ) -> None:
         self.logger = logging.getLogger(__name__)
-
         self.config = config
         self.model_dir = model_dir
-
+        self.class_names = class_names
         self.effdet = self._create_effdet_model()
-
-        classes_path = self.model_dir / self.config["weights"]["classes_file"]
-        self.class_names = {
-            value["id"] - 1: value["name"]
-            for value in json.load(open(classes_path, "r")).values()
-        }
 
     def _create_effdet_model(self) -> tf.keras.Model:
         self.model_type = self.config["model_type"]
