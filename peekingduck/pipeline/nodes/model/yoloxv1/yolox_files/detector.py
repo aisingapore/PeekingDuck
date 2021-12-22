@@ -46,11 +46,13 @@ class Detector:  # pylint: disable=too-few-public-methods
         yolox (YOLOX): The YOLOX model for performing inference.
     """
 
-    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+    def __init__(
+        self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
+    ) -> None:
         self.logger = logging.getLogger(__name__)
-
         self.config = config
         self.model_dir = model_dir
+        self.class_names = class_names
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         # Half-precision only supported on CUDA
         self.config["half"] = self.config["half"] and self.device.type == "cuda"
@@ -58,7 +60,7 @@ class Detector:  # pylint: disable=too-few-public-methods
 
     @torch.no_grad()
     def predict_object_bbox_from_image(
-        self, image: np.ndarray, class_names: List[str]
+        self, image: np.ndarray, detect_ids: List[int]
     ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """Detects bounding boxes of selected object categories from an image.
 
@@ -70,8 +72,7 @@ class Detector:  # pylint: disable=too-few-public-methods
 
         Args:
             image (np.ndarray): Input image.
-            class_names (List[str]): List of human-friendly object category
-                names.
+            detect_ids (List[int]): list of label ids to be detected
 
         Returns:
             (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
@@ -80,6 +81,7 @@ class Detector:  # pylint: disable=too-few-public-methods
                 - A list of human-friendly detection class names
                 - A list of detection scores
         """
+        self.update_detect_ids(detect_ids)
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
@@ -88,7 +90,7 @@ class Detector:  # pylint: disable=too-few-public-methods
 
         prediction = self.yolox(image)[0]
         bboxes, classes, scores = self._postprocess(
-            prediction, scale, image_size, class_names
+            prediction, scale, image_size, self.class_names
         )
 
         return bboxes, classes, scores
@@ -113,10 +115,6 @@ class Detector:  # pylint: disable=too-few-public-methods
         Returns:
             (YOLOX): YOLOX model.
         """
-        # self.detect_ids = torch.Tensor(self.config["detect_ids"]).to(self.device)  # type: ignore
-        # if self.config["half"]:
-        #     self.detect_ids = self.detect_ids.half()
-        self.update_detect_ids(self.config["detect_ids"])
         self.input_size = (self.config["input_size"], self.config["input_size"])
         model_type = self.config["model_type"]
         model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
