@@ -27,7 +27,7 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detect
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class EfficientDetModel:
+class EfficientDetModel:  # pylint: disable=duplicate-code
     """EfficientDet model with model types: D0-D4"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -90,4 +90,4 @@ class EfficientDetModel:
             raise TypeError("image must be a np.ndarray")
 
         # returns object_bboxes, object_labels, object_scores
-        return self.detector.predict_bbox_from_image(image, self.detect_ids)
+        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)

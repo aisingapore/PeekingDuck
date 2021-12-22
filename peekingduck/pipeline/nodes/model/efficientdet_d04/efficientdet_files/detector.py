@@ -134,7 +134,7 @@ class Detector:
             labels = np.vectorize(self.class_names.get)(labels)
         return boxes, labels, scores
 
-    def predict_bbox_from_image(
+    def predict_object_bbox_from_image(
         self, image: np.ndarray, detect_ids: List[int]
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Efficientdet bbox prediction function

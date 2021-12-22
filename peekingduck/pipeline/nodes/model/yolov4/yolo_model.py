@@ -25,7 +25,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YoloModel:
+class YoloModel:  # pylint: disable=duplicate-code
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:

@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.detector import Detect
 from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YOLOXModel:
+class YOLOXModel:  # pylint: disable=duplicate-code
     """Validates configuration, loads YOLOX model, and performs inference.
 
     Configuration options are validated to ensure they have valid types and

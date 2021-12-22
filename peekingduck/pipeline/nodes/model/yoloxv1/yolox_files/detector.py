@@ -33,7 +33,7 @@ from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.utils import (
 NUM_CHANNELS = 3
 
 
-class Detector:  # pylint: disable=too-few-public-methods
+class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
     """Object detection class using YOLOX to predict object bboxes.
 
     Attributes:
