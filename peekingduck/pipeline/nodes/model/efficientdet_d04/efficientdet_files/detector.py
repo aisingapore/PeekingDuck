@@ -39,7 +39,7 @@ class Detector:
     GRAPH_MODE = True
 
     def __init__(
-        self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
+        self, config: Dict[str, Any], model_dir: Path, class_names: Dict[str, int]
     ) -> None:
         self.logger = logging.getLogger(__name__)
         self.config = config
