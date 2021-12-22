@@ -131,6 +131,9 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         if not value:
             self.logger.warning("detect_ids list is empty, defaulting to detect person")
             value = ["person"]
+        elif value == ["*"]:
+            self.logger.info("Detecting all object classes")
+            value = class_id_map.keys()
 
         value_lc = [x.lower() if isinstance(x, str) else x for x in value]
 
