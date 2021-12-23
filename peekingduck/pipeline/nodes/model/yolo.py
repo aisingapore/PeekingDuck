@@ -50,6 +50,7 @@ class Node(AbstractNode):
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|
             List of object class IDs to be detected.
+            To detect all classes, see the tech note :ref:`here <general-object-detection-ids>`.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|
             Maximum number of detected instances for each class in an image.
         max_total_size (:obj:`int`): **default = 50**. |br|
