@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Adjusts brightness of an image.
+Adjusts the contrast of an image.
 """
 
 
@@ -25,13 +25,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Changes image contrast and brightness.
-
-    The ``draw.image_processor`` node adjusts contrast and brightness of the
-    given image. Uses algorithm by OpenCV. An article providing a good overview
-    of the algorithm can be found `here <https://programmer.ink/think/
-    adjusting-the-brightness-and-contrast-of-an-image-with-opencv4.3.0-tutorial
-    .html#3、API-convertScaleAbs>`_.
+    """Adjusts the contrast of an image, by multiplying with a gain/
+    `alpha parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
+    linear_transform.html>`_.
 
     Inputs:
         |img|
@@ -40,18 +36,26 @@ class Node(AbstractNode):
         |img|
 
     Configs:
-        contrast (:obj:`float`): **[1, 3], default = 1**. |br|
-            Adjusts the contrast of the image.
+        alpha (:obj:`float`): **[1, 3], default = 1**. |br|
+            Increasing the value of alpha increases the contrast.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
+        if self.alpha > 3 or self.alpha < 1:
+            raise ValueError("alpha for contrast must be between [1, 3]")
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws pose details onto input image.
+        """Adjusts the contrast of an image frame.
 
         Args:
-            inputs (dict): Dictionary with keys "img".
+            inputs (Dict): Inputs dictionary with the key `img`.
+
+        Returns:
+            (Dict): Outputs dictionary with the key `img`.
         """
+
         img = cv2.convertScaleAbs(inputs["img"], alpha=self.alpha, beta=0)
+
         return {"img": img}

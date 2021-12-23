@@ -13,25 +13,22 @@
 # limitations under the License.
 
 """
-Adjusts brightness of an image.
+Adjusts the brightness of an image.
 """
 
 
 from typing import Any, Dict
 
 import cv2
+import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Changes image contrast and brightness.
-
-    The ``draw.image_processor`` node adjusts contrast and brightness of the
-    given image. Uses algorithm by OpenCV. An article providing a good overview
-    of the algorithm can be found `here <https://programmer.ink/think/
-    adjusting-the-brightness-and-contrast-of-an-image-with-opencv4.3.0-tutorial
-    .html#3、API-convertScaleAbs>`_.
+    """Adjusts the brightness of an image, by adding a bias/
+    `beta parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
+    linear_transform.html>`_.
 
     Inputs:
         |img|
@@ -40,20 +37,30 @@ class Node(AbstractNode):
         |img|
 
     Configs:
-        brightness (:obj:`int`): **[-100,100], default = 0**. |br|
-            Adjusts the brightness of the image.
+        beta (:obj:`int`): **[-100,100], default = 0**. |br|
+            Increasing the value of beta increases image brightness, and vice
+            versa.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
+        if self.beta > 100 or self.beta < -100:
+            raise ValueError("beta for brightness must be between [-100, 100]")
+
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws pose details onto input image.
+        """Adjusts the brightness of an image frame.
 
         Args:
-            inputs (dict): Dictionary with keys "img".
+            inputs (Dict): Inputs dictionary with the key `img`.
+
+        Returns:
+            (Dict): Outputs dictionary with the key `img`.
         """
 
-        img = cv2.convertScaleAbs(inputs["img"], alpha=1.0, beta=self.beta)
+        img = inputs["img"].copy()
+        img_vector = np.reshape(img, (1, -1))
+        cv2.add(img_vector, self.beta, img_vector)
+        img = np.reshape(img_vector, (img.shape[0], img.shape[1], img.shape[2]))
 
         return {"img": img}
