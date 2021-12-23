@@ -53,17 +53,17 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         """Loads class name to object ID mapping from the file
         peekingduck/pipeline/nodes/model/master_map.yml
 
+        Tech Notes
+            master_map.yml comprises two documents:
+            1. model mapping: tells which mapping system a particular object detection model uses
+            2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
+
         Args:
             node_name (str): Tells function which mapping to load,
                              Possible values = { model.efficientdet, model.yolo, model.yolox }.
 
         Returns:
             Dict[str, int]: Mapping of class names to object IDs relevant to given node_name
-
-        Tech Notes:
-            master_map.yml comprises two documents:
-            1. model mapping: tells which mapping system a particular object detection model uses
-            2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
         """
         # use __file__ instead of self._base_dir as latter can be set to any (temp) path
         # without `peekingduck/` subdirectory, resulting in master map file not found error
