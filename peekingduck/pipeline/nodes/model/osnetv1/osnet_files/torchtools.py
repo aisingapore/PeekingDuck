@@ -38,12 +38,12 @@ Additional functions for pytorch model inference.
 
 from typing import Any, Dict
 from collections import OrderedDict
+from functools import partial
 from pathlib import Path
 import pickle
 import warnings
 import torch
 import torch.nn as nn
-from functools import partial
 
 
 def check_isfile(fpath: str) -> bool:
