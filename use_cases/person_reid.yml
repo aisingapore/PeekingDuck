@@ -1,0 +1,10 @@
+nodes:
+- input.live
+- model.yolo
+- model.osnet:
+    query_root_dir: <path to dir of person to be queried>
+- dabble.fps
+- draw.bbox
+- draw.tag
+- draw.legend
+- output.screen
