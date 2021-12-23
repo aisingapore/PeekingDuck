@@ -1,1 +1,2 @@
 dabble.zone_count PYTHON shapely == 1.7.1
+model.osnet PYTHON pillow == 8.0.1
