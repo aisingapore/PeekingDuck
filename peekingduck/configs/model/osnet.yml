@@ -1,0 +1,17 @@
+input: ["img", "bboxes"]
+output: ["bboxes", "obj_tags"]
+
+device: "cpu"
+model_type: "osnet"
+query_root_dir: "C:/Users/../../data/input/reid"
+multi_threshold: 0.3
+
+weights_parent_dir: null
+weights: {
+    model_subdir: osnet,
+    blob_file: osnet.zip,
+    model_file: {
+        osnet: osnet_x1_0_imagenet.pth,
+        osnet_ain: osnet_ain_ms_d_c.pth.tar,
+    }
+}
