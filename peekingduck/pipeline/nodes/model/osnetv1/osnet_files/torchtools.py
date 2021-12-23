@@ -46,26 +46,26 @@ import torch
 import torch.nn as nn
 
 
-def check_isfile(fpath: str) -> bool:
+def check_isfile(fpath: Path) -> bool:
     """Checks if the given path is a file.
 
     Args:
-        fpath (str): File path.
+        fpath (pathlib.Path): File path.
 
     Returns:
        bool: True/False if file path exists.
     """
-    isfile = Path(fpath).is_file()
+    isfile = fpath.is_file()
     if not isfile:
         warnings.warn(f"No file found at {fpath}")
     return isfile
 
 
-def load_checkpoint(fpath: str) -> Dict[Any, Any]:
+def load_checkpoint(fpath: Path) -> Dict[Any, Any]:
     """Loads model checkpoint.
 
     Args:
-        fpath (str): Path to checkpoint.
+        fpath (pathlib.Path): Path to checkpoint.
 
     Raises:
         ValueError: File path is not provided.
@@ -77,8 +77,8 @@ def load_checkpoint(fpath: str) -> Dict[Any, Any]:
     if fpath is None:
         raise ValueError("File path is None")
 
-    fpath = Path(fpath).resolve()
-    if not Path(fpath).exists():
+    fpath = fpath.resolve()
+    if not fpath.exists():
         raise FileNotFoundError(f"File is not found at {fpath}")
 
     map_location = None if torch.cuda.is_available() else "cpu"
@@ -95,7 +95,7 @@ def load_checkpoint(fpath: str) -> Dict[Any, Any]:
     return checkpoint
 
 
-def load_pretrained_weights(model: nn.Module, weight_path: str) -> None:
+def load_pretrained_weights(model: nn.Module, weight_path: Path) -> None:
     """Loads pretrained weights to model.
 
     Features:
@@ -104,7 +104,7 @@ def load_pretrained_weights(model: nn.Module, weight_path: str) -> None:
 
     Args:
         model (nn.Module): Model network.
-        weight_path (str): Path to pretrained weights.
+        weight_path (pathlib.Path): Path to pretrained weights.
     """
     checkpoint = load_checkpoint(weight_path)
     if "state_dict" in checkpoint:
@@ -139,6 +139,6 @@ def load_pretrained_weights(model: nn.Module, weight_path: str) -> None:
         if discarded_layers:
             print(
                 "** The following layers are discarded due to unmatched"
-                f"keys or layer size:\n{discarded_layers}\n"
-                "This action is normal."
+                f"keys or layer size:\n{discarded_layers}"
+                " This action is normal."
             )

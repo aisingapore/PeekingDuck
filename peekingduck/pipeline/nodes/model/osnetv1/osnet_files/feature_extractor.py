@@ -38,15 +38,16 @@ API to extract features.
 
 from __future__ import absolute_import
 from typing import List, Tuple, Union
+from pathlib import Path
+from PIL import Image
 import numpy as np
 import torch
 import torchvision.transforms as T
-from PIL import Image
+from peekingduck.pipeline.nodes.model.osnetv1.osnet_files.build_model import build_model
 from peekingduck.pipeline.nodes.model.osnetv1.osnet_files.torchtools import (
     check_isfile,
     load_pretrained_weights,
 )
-from peekingduck.pipeline.nodes.model.osnetv1.osnet_files.build_model import build_model
 
 
 class FeatureExtractor:  # pylint: disable=too-few-public-methods
@@ -84,8 +85,9 @@ class FeatureExtractor:  # pylint: disable=too-few-public-methods
         )
         model.eval()
 
-        if model_path and check_isfile(model_path):
-            load_pretrained_weights(model, model_path)
+        model_fpath = Path(model_path)
+        if model_fpath and check_isfile(model_fpath):
+            load_pretrained_weights(model, model_fpath)
 
         # Build transform functions
         transforms = []
