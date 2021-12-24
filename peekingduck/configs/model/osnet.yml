@@ -3,7 +3,7 @@ output: ["bboxes", "obj_tags"]
 
 device: "cpu"
 model_type: "osnet"
-query_root_dir: "C:/Users/../../data/input/reid"
+query_root_dir: "<root_dir>/data/input/reid"
 multi_threshold: 0.3
 
 weights_parent_dir: null
