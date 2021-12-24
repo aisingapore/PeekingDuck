@@ -83,5 +83,5 @@ class YoloModel:
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
 
-        # return bboxes, object_bboxes, object_labels, object_scores
+        # return object_bboxes, object_labels, object_scores
         return self.detector.predict_object_bbox_from_image(image, self.detect_ids)

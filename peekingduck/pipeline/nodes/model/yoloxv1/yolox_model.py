@@ -74,7 +74,7 @@ class YOLOXModel:
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all YoloX classes")
+            self.logger.info("Detecting all YOLOX classes")
         self._detect_ids = ids
 
     def predict(

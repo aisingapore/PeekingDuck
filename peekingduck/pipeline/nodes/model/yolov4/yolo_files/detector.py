@@ -167,7 +167,7 @@ class Detector:
 
         Args:
             image (np.array): input image
-            detect_ids (List[int]): list of label ids to be detected
+            detect_ids (List[int]): List of label IDs to be detected
 
         Return:
             boxes (np.array): an array of bounding box with definition like
@@ -187,9 +187,9 @@ class Detector:
         )
 
         # convert classes into class names
-        classes = np.array([self.class_names[int(i)] for i in classes])  # type: ignore
+        labels = np.array([self.class_names[int(i)] for i in classes])
 
-        return boxes, classes, scores  # type: ignore
+        return boxes, labels, scores
 
     def setup_gpu(self) -> None:
         """Method to give info on whether the current device code is running on

@@ -72,7 +72,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
 
         Args:
             image (np.ndarray): Input image.
-            detect_ids (List[int]): list of label ids to be detected
+            detect_ids (List[int]): List of label IDs to be detected
 
         Returns:
             (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
