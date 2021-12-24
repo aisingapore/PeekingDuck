@@ -47,6 +47,7 @@ def project_points_onto_original_image(
 
     Returns:
         project_points (np.ndarray): projected points on the original image
+                                     in integer coordinates
     """
     if len(points) == 0:
         return []
@@ -59,4 +60,4 @@ def project_points_onto_original_image(
     projected_points[:, 0] *= width
     projected_points[:, 1] *= height
 
-    return projected_points
+    return np.round(projected_points).astype(int)
