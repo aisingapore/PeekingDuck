@@ -50,7 +50,7 @@ class Node(AbstractNode):
             queried are stored. If path to image is `[root_path]/reid/person1/img1.jpg`,
             `query_root_dir = [root_path]/reid`
         multi_threshold (:obj:`float`): **default=0.3**  |br|
-            Threshold for cosine distance matching.
+            Threshold for cosine distance matching for multiple queries' features.
 
     References:
         Omni-Scale Feature Learning for Person Re-Identification:
@@ -75,7 +75,8 @@ class Node(AbstractNode):
             inputs (Dict): Dict of inputs with keys "img", "bboxes".
 
         Returns:
-            outputs (Dict): Dict output of matching bbox with label.
+            outputs (Dict): Dict output of matching bbox with object tag
+                label. Label comprises of identifier of the person of interest.
         """
         matching_info = self.model.predict(inputs["img"], inputs["bboxes"])
         names = list(matching_info.keys())

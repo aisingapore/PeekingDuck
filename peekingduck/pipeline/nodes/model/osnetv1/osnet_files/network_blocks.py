@@ -56,7 +56,7 @@ class ConvLayer(nn.Module):
         stride: int = 1,
         padding: int = 0,
         groups: int = 1,
-        IN: bool = False,
+        instance_norm: bool = False,
     ) -> None:
         """
         Args:
@@ -68,7 +68,7 @@ class ConvLayer(nn.Module):
                 each dimension in the input. Defaults to 0.
             groups (int): Number of blocked connections from input channels
                 to output channels. Defaults to 1.
-            IN (bool): Applies Instance Normalization. Defaults to False.
+            instance_norm (bool): Applies Instance Normalization. Defaults to False.
         """
         super().__init__()
         self.conv = nn.Conv2d(
@@ -80,7 +80,7 @@ class ConvLayer(nn.Module):
             bias=False,
             groups=groups,
         )
-        if IN:
+        if instance_norm:
             self.bn = nn.InstanceNorm2d(out_channels, affine=True)
         else:
             self.bn = nn.BatchNorm2d(out_channels)  # type: ignore

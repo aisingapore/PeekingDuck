@@ -56,7 +56,6 @@ class OSNetModel:  # pylint: disable=too-few-public-methods
     """OSNet re-ID model for person identification."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
         self.logger = logging.getLogger(__name__)
 
         # Check threshold values
@@ -96,9 +95,11 @@ class OSNetModel:  # pylint: disable=too-few-public-methods
             device=config["device"],
         )
         self.logger.info(
-            f"Model name: {model_names[config['model_type']]}\n"
-            " - params: 2,193,616\n"
-            " - flops: 978,878,352"
+            f"OSNet model loaded with the following configs:\n\t"
+            f"Model name: {model_names[config['model_type']]},\n\t"
+            "Params: 2,193,616\n\t"
+            "Flops: 978,878,352\n\t"
+            f"Multiple query matching threshold: {config['multi_threshold']}"
         )
 
         # Create dict to store tag (folder) name and queried features
