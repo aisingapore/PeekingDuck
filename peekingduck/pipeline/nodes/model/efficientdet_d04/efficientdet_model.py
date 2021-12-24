@@ -17,6 +17,7 @@ EfficientDet model with model types: D0-D4
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
 import json
 import numpy as np
@@ -51,10 +52,7 @@ class EfficientDetModel:
             self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         classes_path = model_dir / config["weights"]["classes_file"]
-        self.class_names = {
-            value["id"] - 1: value["name"]
-            for value in json.load(open(classes_path, "r")).values()
-        }
+        self.class_names = json.loads(Path(classes_path).read_text())
         self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
 
