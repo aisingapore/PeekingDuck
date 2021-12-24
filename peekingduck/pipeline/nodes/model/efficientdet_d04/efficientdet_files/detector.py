@@ -145,8 +145,8 @@ class Detector:
 
         Returns:
             boxes (np.ndarray): array of detected bboxes
-            scores (np.ndarray): array of scores
             labels (np.ndarray): array of labels
+            scores (np.ndarray): array of scores
         """
         img_shape = image.shape[:2]
 
