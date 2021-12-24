@@ -36,7 +36,6 @@
 OSNet-AIN model architecture.
 """
 
-from __future__ import division, absolute_import
 from typing import Any, List, Optional
 import torch
 from torch import nn
@@ -80,17 +79,17 @@ class OSBlock(nn.Module):
         in_channels: int,
         out_channels: int,
         reduction: int = 4,
-        T: int = 4,
+        num_streams: int = 4,
         **kwargs: Any,
     ) -> None:
         super().__init__()
-        assert T >= 1
+        assert num_streams >= 1
         assert out_channels >= reduction and out_channels % reduction == 0
         mid_channels = out_channels // reduction
 
         self.conv1 = Conv1x1(in_channels, mid_channels)
         self.conv2 = nn.ModuleList()
-        for t in range(1, T + 1):
+        for t in range(1, num_streams + 1):
             self.conv2 += [LightConvStream(mid_channels, mid_channels, t)]
         self.gate = ChannelGate(mid_channels)
         self.conv3 = Conv1x1Linear(mid_channels, out_channels)
@@ -121,17 +120,17 @@ class OSBlockINin(nn.Module):
         in_channels: int,
         out_channels: int,
         reduction: int = 4,
-        T: int = 4,
+        num_streams: int = 4,
         **kwargs: Any,
     ) -> None:
         super().__init__()
-        assert T >= 1
+        assert num_streams >= 1
         assert out_channels >= reduction and out_channels % reduction == 0
         mid_channels = out_channels // reduction
 
         self.conv1 = Conv1x1(in_channels, mid_channels)
         self.conv2 = nn.ModuleList()
-        for t in range(1, T + 1):
+        for t in range(1, num_streams + 1):
             self.conv2 += [LightConvStream(mid_channels, mid_channels, t)]
         self.gate = ChannelGate(mid_channels)
         self.conv3 = Conv1x1Linear(mid_channels, out_channels, bn=False)
@@ -168,7 +167,7 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
         channels: List[int],
         feature_dim: int = 512,
         loss: str = "softmax",
-        conv1_IN: bool = False,
+        conv1_instance_norm: bool = False,
         **kwargs: Any,
     ) -> None:
         super().__init__()
@@ -179,7 +178,9 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.feature_dim = feature_dim
 
         # convolutional backbone
-        self.conv1 = ConvLayer(3, channels[0], 7, stride=2, padding=3, IN=conv1_IN)
+        self.conv1 = ConvLayer(
+            3, channels[0], 7, stride=2, padding=3, instance_norm=conv1_instance_norm
+        )
         self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
         self.conv2 = self._make_layer(blocks[0], layers[0], channels[0], channels[1])
         self.pool2 = nn.Sequential(

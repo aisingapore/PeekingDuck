@@ -36,7 +36,6 @@
 Build OSNet model.
 """
 
-from __future__ import absolute_import
 import torch
 from peekingduck.pipeline.nodes.model.osnetv1.osnet_files.osnet import osnet_x1_0
 from peekingduck.pipeline.nodes.model.osnetv1.osnet_files.osnet_ain import (
@@ -66,7 +65,8 @@ def build_model(
         use_gpu (bool): Whether to use gpu. Default is True.
 
     Returns:
-        nn.Module
+        torch.nn.Module: Type of OSNet model. Either "osnet_x1"
+            or "osnet_ain_x1".
     """
     avai_models = list(__model_factory.keys())
     if name not in avai_models:

@@ -36,7 +36,6 @@
 API to extract features.
 """
 
-from __future__ import absolute_import
 from typing import List, Tuple, Union
 from pathlib import Path
 from PIL import Image
@@ -72,8 +71,8 @@ class FeatureExtractor:  # pylint: disable=too-few-public-methods
         model_name: str = "",
         model_path: str = "",
         image_size: Tuple[int, int] = (256, 128),
-        pixel_mean: List = [0.485, 0.456, 0.406],
-        pixel_std: List = [0.229, 0.224, 0.225],
+        pixel_mean: List[float] = [0.485, 0.456, 0.406],
+        pixel_std: List[float] = [0.229, 0.224, 0.225],
         pixel_norm: bool = True,
         device: str = "cuda",
     ) -> None:

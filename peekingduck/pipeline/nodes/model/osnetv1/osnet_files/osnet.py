@@ -36,7 +36,6 @@
 OSNet model architecture.
 """
 
-from __future__ import division, absolute_import
 from typing import Any, List, Optional
 import torch
 from torch import nn
@@ -61,7 +60,7 @@ class OSBlock(nn.Module):  # pylint: disable=too-many-instance-attributes
         self,
         in_channels: int,
         out_channels: int,
-        IN: bool = False,
+        instance_norm: bool = False,
         bottleneck_reduction: int = 4,
         **kwargs: Any,
     ) -> None:
@@ -97,9 +96,9 @@ class OSBlock(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.downsample = None
         if in_channels != out_channels:
             self.downsample = Conv1x1Linear(in_channels, out_channels)
-        self.IN = None
-        if IN:
-            self.IN = nn.InstanceNorm2d(out_channels, affine=True)
+        self.instance_norm = None
+        if instance_norm:
+            self.instance_norm = nn.InstanceNorm2d(out_channels, affine=True)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """Defines the computation performed at every call."""
@@ -114,8 +113,8 @@ class OSBlock(nn.Module):  # pylint: disable=too-many-instance-attributes
         if self.downsample is not None:
             identity = self.downsample(identity)
         out = x3 + identity
-        if self.IN is not None:
-            out = self.IN(out)
+        if self.instance_norm is not None:
+            out = self.instance_norm(out)
         return F.relu(out)
 
 
@@ -131,7 +130,7 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
         channels: List[int],
         feature_dim: int = 512,
         loss: str = "softmax",
-        IN: bool = False,
+        instance_norm: bool = False,
         **kwargs: Any,
     ) -> None:
         """
@@ -144,7 +143,7 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
                 Defaults to 512.
             loss (str): String stores loss type for experiment loss
                 regulation. Defaults to "softmax".
-            IN (bool): Applies Instance Normalization. Defaults to False.
+            instance_norm (bool): Applies Instance Normalization. Defaults to False.
         """
         super().__init__()
         num_blocks = len(blocks)
@@ -154,7 +153,9 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.feature_dim = feature_dim
 
         # convolutional backbone
-        self.conv1 = ConvLayer(3, channels[0], 7, stride=2, padding=3, IN=IN)
+        self.conv1 = ConvLayer(
+            3, channels[0], 7, stride=2, padding=3, instance_norm=instance_norm
+        )
         self.maxpool = nn.MaxPool2d(3, stride=2, padding=1)
         self.conv2 = self._make_layer(
             blocks[0],
@@ -162,7 +163,7 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
             channels[0],
             channels[1],
             reduce_spatial_size=True,
-            IN=IN,
+            instance_norm=instance_norm,
         )
         self.conv3 = self._make_layer(
             blocks[1], layers[1], channels[1], channels[2], reduce_spatial_size=True
@@ -188,14 +189,14 @@ class OSNet(nn.Module):  # pylint: disable=too-many-instance-attributes
         in_channels: int,
         out_channels: int,
         reduce_spatial_size: bool,
-        IN: bool = False,
+        instance_norm: bool = False,
     ) -> nn.Module:
         """Creates a layer block."""
         layers = []
 
-        layers.append(block(in_channels, out_channels, IN=IN))
+        layers.append(block(in_channels, out_channels, IN=instance_norm))
         for _ in range(1, layer):
-            layers.append(block(out_channels, out_channels, IN=IN))
+            layers.append(block(out_channels, out_channels, IN=instance_norm))
 
         if reduce_spatial_size:
             layers.append(
