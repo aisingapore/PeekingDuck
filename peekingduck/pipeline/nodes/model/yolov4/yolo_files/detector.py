@@ -31,12 +31,13 @@ from peekingduck.utils.graph_functions import load_graph
 class Detector:
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+    def __init__(
+        self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
+    ) -> None:
         self.logger = logging.getLogger(__name__)
-
         self.config = config
         self.model_dir = model_dir
-
+        self.class_names = class_names
         self.yolo = self._create_yolo_model()
 
     def _create_yolo_model(self) -> tf.keras.Model:
@@ -160,13 +161,13 @@ class Detector:
 
     # possible that we may want to control what is being detection
     def predict_object_bbox_from_image(
-        self, class_names: List[str], image: np.ndarray, detect_ids: List[int]
+        self, image: np.ndarray, detect_ids: List[int]
     ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """Detect all objects' bounding box from one image
 
         Args:
-            yolo (Model): model like yolov3 or yolov3_tiny
             image (np.array): input image
+            detect_ids (List[int]): List of label IDs to be detected
 
         Return:
             boxes (np.array): an array of bounding box with definition like
@@ -186,9 +187,9 @@ class Detector:
         )
 
         # convert classes into class names
-        classes = np.array([class_names[int(i)] for i in classes])  # type: ignore
+        labels = np.array([self.class_names[int(i)] for i in classes])
 
-        return boxes, classes, scores  # type: ignore
+        return boxes, labels, scores
 
     def setup_gpu(self) -> None:
         """Method to give info on whether the current device code is running on
