@@ -52,7 +52,10 @@ class EfficientDetModel:
             self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
         classes_path = model_dir / config["weights"]["classes_file"]
-        self.class_names = json.loads(Path(classes_path).read_text())
+        self.class_names = {
+            val["id"] - 1: val["name"]
+            for val in json.loads(Path(classes_path).read_text()).values()
+        }
         self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
 
