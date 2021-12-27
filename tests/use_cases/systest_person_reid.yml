@@ -1,0 +1,11 @@
+nodes:
+- input.recorded:
+    input_dir: "/images/testing"
+- model.yolo
+- model.osnet:
+    query_root_dir: "/images/testing/osnet"
+- dabble.fps
+- draw.bbox
+- draw.tag
+- draw.legend
+- output.screen
