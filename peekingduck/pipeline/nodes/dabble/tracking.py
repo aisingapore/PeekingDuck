@@ -27,9 +27,8 @@ class Node(AbstractNode):
     multiple objects.
 
     Currently, two types of tracking algorithms can be selected: MOSSE, IOU.
-
-    Please view each tracker's script, or the "Multi Object Tracking" use case
-    documentation for more details.
+    Information on the algorithms' performance can be found
+    :ref:`here <object-tracking-benchmarks>`.
 
     Inputs:
         |img|
@@ -42,7 +41,8 @@ class Node(AbstractNode):
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
             Type of tracking algorithm to be used. For more information about
-            the trackers, please view the use case documentation.
+            the trackers, please view the `multi object tracking usecase
+            <use_cases/multi_object_tracking.html>`_.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

@@ -76,6 +76,7 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
+    "peekingduck.pipeline.nodes.dabble.trackingv1",
     "peekingduck.pipeline.nodes.dabble.utils",
     "peekingduck.pipeline.nodes.dabble.zoningv1",
     "peekingduck.pipeline.nodes.draw.utils",
