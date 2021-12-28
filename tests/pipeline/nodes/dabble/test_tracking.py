@@ -32,6 +32,8 @@ def tracking_config():
         "root": Path.cwd(),
         "input": ["img", "bboxes"],
         "output": ["obj_tags"],
+        "iou_threshold": 0.1,
+        "max_lost": 10,
     }
 
 
@@ -47,7 +49,7 @@ class TestTracking:
         tracking_config["tracking_type"] = "invalid type"
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config)
-        assert str(excinfo.value) == "tracker_type must be one of ['iou', 'mosse']"
+        assert str(excinfo.value) == "tracking_type must be one of ['iou', 'mosse']"
 
     def test_no_tags(self, create_image, tracker):
         img1 = create_image(SIZE)

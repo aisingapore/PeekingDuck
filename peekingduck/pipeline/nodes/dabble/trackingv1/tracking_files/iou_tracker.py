@@ -64,9 +64,9 @@ class IOUTracker:
         https://github.com/adipandas/multi-object-tracker
     """
 
-    def __init__(self) -> None:
-        self.iou_threshold = 0.1
-        self.max_lost = 10
+    def __init__(self, config: Dict[str, Any]) -> None:
+        self.iou_threshold = config["iou_threshold"]
+        self.max_lost = config["max_lost"]
         self.next_track_id = 0
 
         self.tracks: "OrderedDict[int, Track]" = OrderedDict()

@@ -39,9 +39,9 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             tracker and bbox coordinates.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         self.is_initialised = False
-        self.iou_threshold = 0.1
+        self.iou_threshold = config["iou_threshold"]
         self.next_track_id = 0
         self.tracks: Dict[int, Track] = {}
 
