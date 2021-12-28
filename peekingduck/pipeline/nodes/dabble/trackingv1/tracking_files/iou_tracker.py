@@ -75,8 +75,7 @@ class IOUTracker:
         """Initialises and updates tracker on each frame.
 
         Args:
-            inputs (Dict[str, Any]): Dictionary with keys "img", "bboxes", and
-                "bbox_scores".
+            inputs (Dict[str, Any]): Dictionary with keys "img" and "bboxes".
 
         Returns:
             (List[str]): List of track IDs.
@@ -85,24 +84,22 @@ class IOUTracker:
         frame_size = frame.shape[:2]
         tlwhs = xyxyn2tlwh(inputs["bboxes"], *frame_size)
 
-        detections = list(zip(tlwhs, inputs["bbox_scores"]))
-        tracks = self.update(detections)
+        tracks = self.update(list(tlwhs))
         track_ids = self._order_track_ids_by_bbox(tlwhs, tracks)
 
         return track_ids
 
-    def update(self, detections: List[Tuple[np.ndarray, np.ndarray]]) -> List[Track]:
+    def update(self, detections: np.ndarray) -> List[Track]:
         """Updates the tracker. Creates new tracks for untracked objects,
         updates tracked objects with the new class ID and bounding box
         coordinates. Removes tracks which have not been detected for longer
         than the `max_lost` threshold.
 
         Args:
-            detections (List[Tuple[np.ndarray, np.ndarray]]): List of tuples
-                containing the bounding box coordinates and detection
-                confidence score for each of the detection. The bounding box
-                has the format (t, l, w, h) where (t, l) is the top-left
-                corner, w is the width, and h is the height.
+            detections (np.ndarray): Bounding box coordinates for each of
+                detection. The bounding box has the format (t, l, w, h) where
+                (t, l) is the top-left corner, w is the width, and h is the
+                height.
 
         Returns:
             (List[Track]): All tracked detections in the current frame.
@@ -116,29 +113,27 @@ class IOUTracker:
                     detections, self.tracks[track_id].bbox
                 )
                 if best_iou >= self.iou_threshold:
-                    tlwh, score = best_match
-                    self._update_track(track_id, tlwh, score, best_iou)
+                    self._update_track(track_id, best_match, best_iou)
                     updated_tracks.append(track_id)
                     del detections[idx]
             if not updated_tracks or track_id != updated_tracks[-1]:
                 self.tracks[track_id].lost += 1
                 if self.tracks[track_id].lost > self.max_lost:
                     self._remove_track(track_id)
-        for tlwh, score in detections:
-            self._add_track(tlwh, score)
+        for tlwh in detections:
+            self._add_track(tlwh)
         outputs = self._get_tracks()
         return outputs
 
-    def _add_track(self, bbox: np.ndarray, score: float) -> None:
+    def _add_track(self, bbox: np.ndarray) -> None:
         """Adds a newly detected object to the list of tracked detections.
 
         Args:
             bbox (np.ndarray): Bounding box with format (t, l, w, h) where
                 (t, l) is the top-left corner, w is the width, and h is the
                 height.
-            score (float): Detection confidence score.
         """
-        self.tracks[self.next_track_id] = Track(self.next_track_id, bbox, score)
+        self.tracks[self.next_track_id] = Track(self.next_track_id, bbox)
         self.next_track_id += 1
 
     def _get_tracks(self) -> List[Track]:
@@ -155,9 +150,7 @@ class IOUTracker:
         """
         del self.tracks[track_id]
 
-    def _update_track(
-        self, track_id: int, bbox: np.ndarray, score: float, iou_score: float
-    ) -> None:
+    def _update_track(self, track_id: int, bbox: np.ndarray, iou_score: float) -> None:
         """Updates the specified tracked detection.
 
         Args:
@@ -165,34 +158,31 @@ class IOUTracker:
             bbox (np.ndarray): Bounding box coordinates with (t, l, w, h)
                 format where (t, l) is the top-left corner, w is the width, and
                 h is the height.
-            score (float): Detection confidence score.
             iou_score (float): Intersection-over-Union between the current
                 detection bounding box and its last detected bounding box.
         """
-        self.tracks[track_id].update(bbox, score, iou_score)
+        self.tracks[track_id].update(bbox, iou_score)
 
     @staticmethod
     def get_best_match_by_iou(
-        detections: List[Tuple[np.ndarray, np.ndarray]], tracked_bbox: np.ndarray
-    ) -> Tuple[int, Tuple[np.ndarray, np.ndarray], float]:
+        detections: List[np.ndarray], tracked_bbox: np.ndarray
+    ) -> Tuple[int, np.ndarray, float]:
         """Finds the best match between all the current detections and the
         specified tracked bounding box. Best match is the pair with the largest
         IoU value.
 
         Args:
-            detections (List[Tuple[np.ndarray, np.ndarray]]): List of tuples
-                containing the bounding box coordinates and detection
-                confidence score for each of the detection. The bounding box
-                has the format (t, l, w, h) where (t, l) is the top-left
-                corner, w is the width, and h is the height.
+            detections (List[np.ndarray]): List of tuples containing the
+                bounding box coordinates for each of the detection. The
+                bounding box has the format (t, l, w, h) where (t, l) is the
+                top-left corner, w is the width, and h is the height.
             tracked_bbox (np.ndarray): The specified tracked bounding box.
 
         Returns:
-            (Tuple[int, Tuple[np.ndarray, np.ndarray], float]): The index, the
-            tuple of bounding box and score best match current detection, and
-            the IoU value.
+            (Tuple[int, np.ndarray, float]): The index, bounding box of the
+            best match current detection, and the IoU value.
         """
-        detection_and_iou = lambda det: (det, iou_tlwh(tracked_bbox, det[0]))
+        detection_and_iou = lambda det: (det, iou_tlwh(tracked_bbox, det))
         idx, (best_match, best_iou) = max(
             enumerate(map(detection_and_iou, detections)),
             key=lambda x: x[1][1],
