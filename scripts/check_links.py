@@ -1,19 +1,19 @@
 """Checks for faulty links in documentation"""
 
+import socket
 import urllib.request
 from pathlib import Path
-from typing import Iterator, List, Tuple, Union
+from typing import Iterator, List, Optional, Tuple, Union
 
 import markdown
 from bs4 import BeautifulSoup
 from texttable import Texttable
 
-
 # Currently not in use because Sphinx generated html files
 # do not show in the Peekingduck repo on github
 #
 # def get_html():
-#     # search path is hard coded with ref of this script locaiton
+#     # search path is hard coded with ref of this script location
 #     return [
 #         path
 #         for path in walk(Path.cwd() / "docs" / "build" / "html")
@@ -39,14 +39,53 @@ def get_md_rst_paths() -> List[Path]:
     return [path for path in walk(Path.cwd()) if path.suffix in (".md", ".rst")]
 
 
-def check_for_faulty_links(
-    file_paths: List[Path],
-) -> List[Tuple[Path, str, Union[int, Path]]]:
+def check_link(link: str, path: Path) -> Optional[Tuple[Path, str, str]]:
+    """Checks if the link/ref is valid. For HTTP response status codes
+    handling, we only flag 404 (Not Found) for broken links.
+
+    Args:
+        link (str): An external link or a reference to another document that is
+            found in the currently parsed file.
+        path (Path): Path to the .md/.rst file containing that being parsed.
+
+    Returns:
+        (Optional[Tuple[Path, str, str]]): None when `link` is valid. A tuple
+        containing (path of file being parsed, link/ref, root directory/error
+        code) when the link/ref is faulty.
+    """
+    rel_path = path.relative_to(Path.cwd())
+
+    def faulty_link_info(
+        root_or_error: Union[int, socket.timeout, Path]
+    ) -> Tuple[Path, str, str]:
+        return rel_path, link, str(root_or_error)
+
+    if link.startswith("http"):
+        try:
+            # Validated the URL to start with "http"
+            urllib.request.urlopen(link, timeout=10)  # nosec
+        except urllib.error.HTTPError as error:
+            # This be removed/adjusted to flag multiple error codes
+            if error.code == 404:
+                return faulty_link_info(error.code)
+        except urllib.error.URLError as error:
+            if isinstance(error.reason, socket.timeout):
+                return faulty_link_info(error.reason)
+    else:
+        if not (path.parent / link).exists():
+            condition = ["/peekingduck", "pipeline", "nodes"]
+            if link.split(".")[:3] != condition:
+                rel_path = path.relative_to(Path.cwd())
+                return faulty_link_info(rel_path.parent)
+    return None
+
+
+def check_for_faulty_links(file_paths: List[Path]) -> List[Tuple[Path, str, str]]:
     """Returns faulty links from documentation files in the repository.
 
     Parse the provided .md and .rst files for faulty hyperlinks or faulty
-    relative path links. For URLs, the current implementation only returns links
-    which give HTTP 404.
+    relative path links. For URLs, the current implementation only returns
+    links which give HTTP 404.
 
     Args:
         file_paths (List[Path]): File paths of all .md and .rst files in the
@@ -54,12 +93,11 @@ def check_for_faulty_links(
 
     Returns:
         (List[Tuple[Path, str, Union[int, Path]]]): A list of file paths in
-            which faulty links are found, the corresponding faulty links, and
-            the root folder/request error code.
+        which faulty links are found, the corresponding faulty links, and the
+        root folder/request error code.
     """
-    faulty_links: List[Tuple[Path, str, Union[int, Path]]] = []
+    faulty_links: List[Tuple[Path, str, str]] = []
     for path in file_paths:
-        print(f"===== Checking {path}")
         with open(path, "r", encoding="utf-8") as infile:
             content = infile.read()
             content_html = markdown.markdown(content)
@@ -83,46 +121,25 @@ def check_for_faulty_links(
                 for link in filter(lambda link: "." in link, img_links + href_links)
             ]
         for link in all_links:
-            if link.startswith("http"):
-                try:
-                    # Validated the URL to start with "http"
-                    urllib.request.urlopen(link)  # nosec
-                except urllib.error.HTTPError as error:
-                    # In this implementation only 404 is flagged for broken links
-                    # 404 = http page not found error
-                    # if statement can be removed/adjusted to flag multiple error
-                    # codes such as 404,403,408...
-                    if error.code == 404:
-                        # path is the current file being parsed
-                        # link is the link found in the current parsed file
-                        # e.code is the execption code
-                        rel_path = path.relative_to(Path.cwd())
-                        faulty_links.append((rel_path, link, error.code))
-            else:
-                if not (path.parent / link).exists():
-                    # path is the current file being parsed
-                    # link is the link found in the current parsed file
-                    # root is the root folder of the filepath of current file
-                    condition = ["/peekingduck", "pipeline", "nodes"]
-                    if link.split(".")[:3] != condition:
-                        rel_path = path.relative_to(Path.cwd())
-                        faulty_links.append((rel_path, link, rel_path.parent))
+            output = check_link(link, path)
+            if output is not None:
+                faulty_links.append(output)
         print(f"Checked {path}")
     return faulty_links
 
 
-def print_output(faulty_links: List[Tuple[Path, str, Union[int, Path]]]) -> None:
+def print_output(faulty_links: List[Tuple[Path, str, str]]) -> None:
     """Displays the list of file paths and faulty links in a table
 
     Args:
-        faulty_links (List[Tuple[Path, str, Union[int, Path]]]): A list of file
+        faulty_links (List[Tuple[Path, str, str]]): A list of file
             paths in which faulty links are found, the corresponding faulty
             links, and the root folder/request error code.
     """
     print("\nTable of broken links\n")
     table = Texttable()
     table.set_cols_width([25, 25, 20])
-    table.header(("Filepath", "Broken_Link", "Root_Folder / Request Error Code"))
+    table.header(("Filepath", "Broken_Link", "Root_Folder / Error Code"))
     table.add_rows(faulty_links, False)
     print(table.draw())
 
