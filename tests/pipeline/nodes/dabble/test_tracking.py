@@ -26,6 +26,17 @@ SEQ_IDX = 6
 SIZE = (400, 600, 3)
 
 
+@pytest.fixture(params=[-0.5, 1.5])
+def invalid_threshold(request):
+    yield request.param
+
+
+@pytest.fixture(params=["iou", "mosse"])
+def tracking_config_type(tracking_config, request):
+    tracking_config["tracking_type"] = request.param
+    return tracking_config
+
+
 @pytest.fixture
 def tracking_config():
     return {
@@ -37,10 +48,9 @@ def tracking_config():
     }
 
 
-@pytest.fixture(params=["iou", "mosse"])
-def tracker(request, tracking_config):
-    tracking_config["tracking_type"] = request.param
-    node = Node(tracking_config)
+@pytest.fixture
+def tracker(tracking_config_type):
+    node = Node(tracking_config_type)
     return node
 
 
@@ -50,6 +60,20 @@ class TestTracking:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config)
         assert str(excinfo.value) == "tracking_type must be one of ['iou', 'mosse']"
+
+    def test_should_raise_for_invalid_iou_threshold(
+        self, tracking_config_type, invalid_threshold
+    ):
+        tracking_config_type["iou_threshold"] = invalid_threshold
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(tracking_config_type)
+        assert str(excinfo.value) == "iou_threshold must be in [0, 1]"
+
+    def test_should_raise_for_negative_max_lost(self, tracking_config_type):
+        tracking_config_type["max_lost"] = -1
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(tracking_config_type)
+        assert str(excinfo.value) == "max_lost cannot be negative"
 
     def test_no_tags(self, create_image, tracker):
         img1 = create_image(SIZE)
