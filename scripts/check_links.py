@@ -1,11 +1,10 @@
 """Checks for faulty links in documentation."""
 
-import socket
-import urllib.request
 from pathlib import Path
 from typing import Iterator, List, Optional, Tuple, Union
 
 import markdown
+import requests
 from bs4 import BeautifulSoup
 from texttable import Texttable
 
@@ -41,7 +40,7 @@ def get_md_rst_paths() -> List[Path]:
 
 def check_link(link: str, path: Path) -> Optional[Tuple[Path, str, str]]:
     """Checks if the link/ref is valid. For HTTP response status codes
-    handling, we only flag 404 (Not Found) for broken links.
+    handling, we flag all 4xx (client errors) for broken links.
 
     Args:
         link (str): An external link or a reference to another document that is
@@ -55,22 +54,18 @@ def check_link(link: str, path: Path) -> Optional[Tuple[Path, str, str]]:
     """
     rel_path = path.relative_to(Path.cwd())
 
-    def faulty_link_info(
-        root_or_error: Union[int, socket.timeout, Path]
-    ) -> Tuple[Path, str, str]:
+    def faulty_link_info(root_or_error: Union[int, str, Path]) -> Tuple[Path, str, str]:
         return rel_path, link, str(root_or_error)
 
     if link.startswith("http"):
         try:
-            # Validated the URL to start with "http"
-            urllib.request.urlopen(link, timeout=10)  # nosec
-        except urllib.error.HTTPError as error:
-            # This be removed/adjusted to flag multiple error codes
-            if error.code == 404:
-                return faulty_link_info(error.code)
-        except urllib.error.URLError as error:
-            if isinstance(error.reason, socket.timeout):
-                return faulty_link_info(error.reason)
+            response = requests.get(link, timeout=10)
+            if 400 <= response.status_code < 500:
+                return faulty_link_info(response.status_code)
+        except requests.exceptions.Timeout:
+            return faulty_link_info("timed out")
+        except requests.RequestException:
+            pass
     else:
         if not (path.parent / link).exists():
             condition = ["/peekingduck", "pipeline", "nodes"]
