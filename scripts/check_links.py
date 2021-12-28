@@ -1,4 +1,4 @@
-"""Checks for faulty links in documentation"""
+"""Checks for faulty links in documentation."""
 
 import socket
 import urllib.request
@@ -85,41 +85,35 @@ def check_for_faulty_links(file_paths: List[Path]) -> List[Tuple[Path, str, str]
 
     Parse the provided .md and .rst files for faulty hyperlinks or faulty
     relative path links. For URLs, the current implementation only returns
-    links which give HTTP 404.
+    links which give HTTP 404 and links which times out.
 
     Args:
         file_paths (List[Path]): File paths of all .md and .rst files in the
             repository.
 
     Returns:
-        (List[Tuple[Path, str, Union[int, Path]]]): A list of file paths in
-        which faulty links are found, the corresponding faulty links, and the
-        root folder/request error code.
+        (List[Tuple[Path, str, str]]): A list of file paths in which faulty
+        links are found, the corresponding faulty links, and the root
+        folder/error code.
     """
     faulty_links: List[Tuple[Path, str, str]] = []
     for path in file_paths:
-        with open(path, "r", encoding="utf-8") as infile:
-            content = infile.read()
-            content_html = markdown.markdown(content)
-            soup = BeautifulSoup(content_html, "html.parser")
-            img_links = [
-                tag["src"]
-                for tag in soup.find_all(
-                    lambda tag: tag.name == "img" and tag.get("src")
-                )
-            ]
-            href_links = [
-                tag["href"]
-                for tag in soup.find_all(
-                    lambda tag: tag.name == "a" and tag.get("href")
-                )
-            ]
-            # "." filters out section links, split("#")[0] to filter out URI
-            # fragments
-            all_links = [
-                link.split("#")[0]
-                for link in filter(lambda link: "." in link, img_links + href_links)
-            ]
+        content_html = markdown.markdown(path.read_text("utf-8"))
+        soup = BeautifulSoup(content_html, "html.parser")
+        img_links = [
+            tag["src"]
+            for tag in soup.find_all(lambda tag: tag.name == "img" and tag.get("src"))
+        ]
+        href_links = [
+            tag["href"]
+            for tag in soup.find_all(lambda tag: tag.name == "a" and tag.get("href"))
+        ]
+        # "." filters out section links, split("#")[0] to filter out URI
+        # fragments
+        all_links = [
+            link.split("#")[0]
+            for link in filter(lambda link: "." in link, img_links + href_links)
+        ]
         for link in all_links:
             output = check_link(link, path)
             if output is not None:
@@ -139,7 +133,7 @@ def print_output(faulty_links: List[Tuple[Path, str, str]]) -> None:
     print("\nTable of broken links\n")
     table = Texttable()
     table.set_cols_width([25, 25, 20])
-    table.header(("Filepath", "Broken_Link", "Root_Folder / Error Code"))
+    table.header(("Filepath", "Broken Link", "Root Folder /\nError Code"))
     table.add_rows(faulty_links, False)
     print(table.draw())
 
