@@ -32,9 +32,9 @@ class Node(AbstractNode):
     documentation for more details.
 
     Inputs:
-        |bboxes|
+        |img|
 
-        |bbox_scores|
+        |bboxes|
 
     Outputs:
         |obj_tags|

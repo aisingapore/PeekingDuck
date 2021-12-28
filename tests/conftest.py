@@ -151,10 +151,9 @@ def test_human_video_sequences(request):
     """This actually returns a list of dictionaries each containing:
     - A video frame
     - Bounding boxes
-    - Bounding box detection confidence scores.
 
-    Yielding bounding box and scores allows us to test dabble.tracking without
-    having to attach a object detector before it.
+    Yielding bounding box allows us to test dabble.tracking without having to
+    attach a object detector before it.
 
     Yielding a list of frames instead of a video file allows for better control
     of test data and frame specific manipulations to trigger certain code
@@ -169,7 +168,6 @@ def test_human_video_sequences(request):
         {
             "img": cv2.imread(str(sequence_dir / f"{key}.jpg")),
             "bboxes": np.array(val["bboxes"]),
-            "bbox_scores": np.array(val["bbox_scores"]),
         }
         for key, val in detections.items()
     ]

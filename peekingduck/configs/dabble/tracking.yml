@@ -1,4 +1,4 @@
-input: ["img", "bboxes", "bbox_labels", "bbox_scores"]
+input: ["img", "bboxes"]
 output: ["obj_tags"]
 
 optional_inputs: ["mot_metadata"]

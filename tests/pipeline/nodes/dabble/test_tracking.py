@@ -17,6 +17,7 @@ from unittest import TestCase
 
 import numpy as np
 import pytest
+
 from peekingduck.pipeline.nodes.dabble.tracking import Node
 
 # Frame index for manual manipulation of detections to trigger some
@@ -29,7 +30,7 @@ SIZE = (400, 600, 3)
 def tracking_config():
     return {
         "root": Path.cwd(),
-        "input": ["img", "bboxes", "bbox_scores"],
+        "input": ["img", "bboxes"],
         "output": ["obj_tags"],
     }
 
@@ -51,11 +52,7 @@ class TestTracking:
     def test_no_tags(self, create_image, tracker):
         img1 = create_image(SIZE)
 
-        inputs = {
-            "img": img1,
-            "bboxes": np.empty((0, 4), dtype=np.float32),
-            "bbox_scores": np.empty((0), dtype=np.float32),
-        }
+        inputs = {"img": img1, "bboxes": np.empty((0, 4), dtype=np.float32)}
         outputs = tracker.run(inputs)
 
         assert not outputs["obj_tags"]
@@ -76,12 +73,7 @@ class TestTracking:
         _, detections = test_human_video_sequences
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.1, 0.2, 0.3, 0.4]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
         )
         prev_tags = []
         for i, inputs in enumerate(detections):
@@ -108,12 +100,7 @@ class TestTracking:
         _, detections = test_human_video_sequences
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.1, 0.2, 0.3, 0.4]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
         )
         tracking_config["tracking_type"] = "iou"
         tracker = Node(tracking_config)
@@ -158,12 +145,7 @@ class TestTracking:
         # This is the bbox of a small road divider that gets occluded the
         # next frame
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.0, 0.0, 0.3, 0.5]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.0, 0.0, 0.3, 0.5]], axis=0
         )
         tracking_config["tracking_type"] = "mosse"
         tracker = Node(tracking_config)
