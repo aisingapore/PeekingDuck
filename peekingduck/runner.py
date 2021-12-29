@@ -84,11 +84,11 @@ class Runner:
             sys.exit(1)
         if RequirementChecker.n_update > 0:
             sys.exit(3)
-        if num_iter:
-            self.logger.info(f"Run pipeline for {num_iter} iterations")
-            self.num_iter = num_iter
-        else:
+        if num_iter is None or num_iter <= 0:
             self.num_iter = 0
+        else:
+            self.num_iter = num_iter
+            self.logger.info(f"Run pipeline for {num_iter} iterations")
 
     def run(self) -> None:
         """execute single or continuous inference"""
@@ -115,7 +115,7 @@ class Runner:
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
             num_iter += 1
-            if self.num_iter and num_iter >= self.num_iter:
+            if self.num_iter > 0 and num_iter >= self.num_iter:
                 self.logger.info(f"Stopping pipeline after {num_iter} iterations")
                 break
 
