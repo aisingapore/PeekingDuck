@@ -54,7 +54,7 @@ class Runner:
             provided, initialize by the node stack directly.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         run_config_path: Path = None,
         config_updates_cli: str = None,
