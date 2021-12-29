@@ -82,9 +82,8 @@ structure:
 │       ├── configs
 │       │   └── output
 │       │       └── csv_writer.yml
-│       └── custom_nodes
-│           └── output
-│               └── csv_writer.py
+│       └── output
+│           └── csv_writer.py
 ├── run_config.yml
 ├── results
 ```
