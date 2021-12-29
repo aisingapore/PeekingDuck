@@ -17,12 +17,14 @@ Tracking algorithm that uses OpenCV's MOSSE.
 """
 
 from typing import Any, Dict, List, Tuple, Union
-import numpy as np
+
 import cv2
+import numpy as np
+
 from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import (
     format_boxes,
+    iou,
 )
-from peekingduck.pipeline.nodes.dabble.utils.tracking_files.iou_tracker.utils import iou
 
 
 class OpenCVTracker:  # pylint: disable=too-few-public-methods
@@ -169,7 +171,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             Any: MOSSE Tracker.
         """
         if tracker_type == "MOSSE":
-            tracker = cv2.TrackerMOSSE_create()
+            tracker = cv2.legacy.TrackerMOSSE_create()
         else:
             raise ValueError("Incorrect tracker type.")
 
