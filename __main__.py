@@ -43,7 +43,7 @@ from peekingduck.cli import cli, run
     "--num_iter",
     default=None,
     type=int,
-    help="""Stop pipeline after running this number of iterations""",
+    help="Stop pipeline after running this number of iterations",
 )
 @click.pass_context
 def main(

@@ -101,7 +101,7 @@ def init(custom_folder_name: str) -> None:
     "--num_iter",
     default=None,
     type=int,
-    help="""Stop pipeline after running this number of iterations""",
+    help="Stop pipeline after running this number of iterations",
 )
 def run(
     config_path: str,
