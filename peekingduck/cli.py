@@ -93,18 +93,27 @@ def init(custom_folder_name: str) -> None:
     ),
 )
 @click.option(
+    "--log_level",
+    default="info",
+    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
+)
+@click.option(
     "--node_config",
     default="None",
     help="""Modify node configs by wrapping desired configs in a JSON string.\n
         Example: --node_config '{"node_name": {"param_1": var_1}}'""",
 )
 @click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
+    "--num_iter",
+    default=None,
+    help="""Stop pipeline after running this number of iterations""",
 )
 def run(
-    config_path: str, node_config: str, log_level: str, nodes_parent_dir: str = "src"
+    config_path: str,
+    log_level: str,
+    node_config: str,
+    num_iter: int,
+    nodes_parent_dir: str = "src",
 ) -> None:
     """Runs PeekingDuck"""
     LoggerSetup.set_log_level(log_level)
@@ -115,7 +124,11 @@ def run(
     else:
         run_config_path = Path(config_path)
 
-    runner = Runner(run_config_path, node_config, nodes_parent_dir)
+    print(f"*** cli.py: num_iter={num_iter}")
+    if num_iter:
+        num_iter = int(num_iter)
+
+    runner = Runner(run_config_path, node_config, nodes_parent_dir, num_iter)
     runner.run()
 
 

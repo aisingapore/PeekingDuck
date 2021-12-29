@@ -39,8 +39,15 @@ from peekingduck.cli import cli, run
     default="info",
     help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
 )
+@click.option(
+    "--num_iter",
+    default=None,
+    help="""Stop pipeline after running this number of iterations""",
+)
 @click.pass_context
-def main(context: click.Context, config_path: str, log_level: str) -> None:
+def main(
+    context: click.Context, config_path: str, log_level: str, num_iter: int
+) -> None:
     """Invokes the run() CLI command with some different defaults for
     ``node_config`` and ``nodes_parent_dir``.
     """
@@ -51,14 +58,18 @@ def main(context: click.Context, config_path: str, log_level: str) -> None:
     else:
         nodes_parent_dir = "src"
 
+    if num_iter:
+        num_iter = int(num_iter)
+
     logger = logging.getLogger(__name__)
     logger.info(f"Run path: {config_path}")
 
     context.invoke(
         run,
         config_path=config_path,
-        node_config="None",
         log_level=log_level,
+        node_config="None",
+        num_iter=num_iter,
         nodes_parent_dir=nodes_parent_dir,
     )
 
