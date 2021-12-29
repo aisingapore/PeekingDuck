@@ -77,7 +77,7 @@ def _draw_bbox(
     image_size: Tuple[int, int],
     colour: Tuple[int, int, int],
     bbox_label: str = None,
-) -> np.ndarray:
+) -> None:
     """Draw a single bounding box"""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
     cv2.rectangle(

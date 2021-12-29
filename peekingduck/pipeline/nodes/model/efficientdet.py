@@ -52,6 +52,7 @@ class Node(AbstractNode):
             Threshold to determine if detection should be returned.
         detect_ids (:obj:`List[int]`): **default = [0]**. |br|
             List of object class IDs to be detected.
+            To detect all classes, see the tech note :ref:`here <general-object-detection-ids>`.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by replacing
             ``null`` with an absolute path to the desired directory.

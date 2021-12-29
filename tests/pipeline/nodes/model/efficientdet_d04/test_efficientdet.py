@@ -17,6 +17,7 @@ limitations under the License.
 from pathlib import Path
 
 import cv2
+import json
 import numpy as np
 import numpy.testing as npt
 import pytest
@@ -70,7 +71,12 @@ def efficientdet(request, efficientdet_config):
 @pytest.fixture()
 def efficientdet_detector(efficientdet_config, model_dir):
     efficientdet_config["model_type"] = 0
-    detector = Detector(efficientdet_config, model_dir)
+    classes_path = model_dir / efficientdet_config["weights"]["classes_file"]
+    class_names = {
+        val["id"] - 1: val["name"]
+        for val in json.loads(Path(classes_path).read_text()).values()
+    }
+    detector = Detector(efficientdet_config, model_dir, class_names)
 
     return detector
 

@@ -47,6 +47,7 @@ def project_points_onto_original_image(
 
     Returns:
         project_points (np.ndarray): projected points on the original image
+                                     in integer coordinates
     """
     if len(points) == 0:
         return []

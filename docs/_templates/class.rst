@@ -18,8 +18,7 @@
    (x, y) each representing a single point of reference of bounding boxes for use in zone
    analytics. The order of ``btm_midpoint`` follows the order of ``bboxes``.
 
-.. |count| replace:: ``count`` (:obj:`List[int]`): A list of integers representing the count of
-   a pre-selected object (for example, 'people') detected in each frame through ``bboxes``.
+.. |count| replace:: ``count`` (:obj:`int`): An integer representing the number of counted objects.
 
 .. |keypoints| replace:: ``keypoints`` (:obj:`numpy.ndarray`): A numpy array (N, K, 2) with the
    last dimension representing the coordinates (x, y) of detected poses. N represents the number
@@ -66,6 +65,9 @@
 .. |zone_count| replace:: ``zone_count`` (:obj:`List[int]`): A list of integers representing the
    count of a pre-selected object (for example, "person") detected in each specified zone. The
    order of counts follows the order of ``zones``.
+
+.. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A numpy array that represents
+   the number of persons per pixel. The sum of the array returns the total estimated count of people.
 
 .. |none| replace:: ``none``: No inputs required, or no additional outputs produced.
    Used for ``input`` nodes that require no prior inputs, or ``draw`` nodes that overwrite current

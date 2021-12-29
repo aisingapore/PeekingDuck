@@ -100,7 +100,7 @@ class TestYolo:
             assert yolo is not None
 
     def test_get_detect_ids(self, yolo):
-        assert yolo.model.get_detect_ids() == [0]
+        assert yolo.model.detect_ids == [0]
 
     def test_yolo_model_initialization(self):
         model1 = yolov3()
