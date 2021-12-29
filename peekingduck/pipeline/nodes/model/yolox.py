@@ -49,8 +49,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         input_size (:obj:`int`): **default=416**. |br|
             Input image resolution of the YOLOX model.
         detect_ids (:obj:`List[int]`): **default=[0]**. |br|
-            List of object category IDs to be detected. An empty list will
-            make the model detect all available IDs.
+            List of object category IDs to be detected.
+            To detect all classes, see the tech note :ref:`here <general-object-detection-ids>`.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.

@@ -22,7 +22,7 @@ import sys
 from pathlib import Path
 from typing import List
 
-from peekingduck.declarative_loader import DeclarativeLoader
+from peekingduck.declarative_loader import DeclarativeLoader, NodeList
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.requirement_checker import RequirementChecker
@@ -114,7 +114,7 @@ class Runner:
             if node.name.endswith(".live") or node.name.endswith(".recorded"):
                 node.release_resources()
 
-    def get_run_config(self) -> List[str]:
+    def get_run_config(self) -> NodeList:
         """Retrieves run configuration.
 
         Returns:

@@ -92,6 +92,18 @@ def tmp_dir():
     shutil.rmtree(newpath, ignore_errors=True)  # ignore_errors for windows development
 
 
+@pytest.fixture
+def tmp_project_dir():
+    """To used after `tmp_dir` fixture to simulate that we're in a proper
+    custom PKD project directory
+    """
+    cwd = Path.cwd()
+    (cwd / "tmp_dir").mkdir(parents=True)
+    os.chdir("tmp_dir")
+    yield
+    os.chdir(cwd)
+
+
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
