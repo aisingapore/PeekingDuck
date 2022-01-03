@@ -1,8 +1,9 @@
 import os
-from contextlib import contextmanager
 import subprocess
-from time import perf_counter
+from contextlib import contextmanager
 from pathlib import Path
+from time import perf_counter
+
 import yaml
 
 PKD_ROOT_DIR = Path(__file__).parents[4]  # dependent on __file__ location
@@ -93,7 +94,7 @@ def test_input_threading():
         # run input live test
         num_sec = 60  # to run test for 60 seconds max
         avg_fps = 0
-        cmd = ["python", "PeekingDuck"]
+        cmd = ["python", PKD_ROOT_DIR.name]
         proc = subprocess.Popen(
             cmd,
             cwd=PKD_RUN_DIR,
