@@ -36,15 +36,15 @@ class Node(AbstractNode):
         |img|
 
     Configs:
-        alpha (:obj:`float`): **[1, 3], default = 1**. |br|
+        alpha (:obj:`float`): **[0, 3], default = 1**. |br|
             Increasing the value of alpha increases the contrast.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if not 1.0 <= self.alpha <= 3.0:
-            raise ValueError("alpha for contrast must be between [1, 3]")
+        if not 0 <= self.alpha <= 3.0:
+            raise ValueError("alpha for contrast must be between [0, 3]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the contrast of an image frame.
