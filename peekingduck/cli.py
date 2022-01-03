@@ -16,19 +16,25 @@
 CLI functions for PeekingDuck.
 """
 
-import functools
 import logging
 import math
-import re
 from pathlib import Path
-from typing import Callable, Dict, Optional, Tuple, Union
+from typing import Optional, Tuple
 
 import click
 import yaml
 
 from peekingduck import __version__
-from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
+from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES, DeclarativeLoader
 from peekingduck.runner import Runner
+from peekingduck.utils.create_node_helper import (
+    create_config_and_script_files,
+    ensure_relative_path,
+    ensure_valid_name,
+    ensure_valid_name_partial,
+    get_config_and_script_paths,
+    verify_option,
+)
 from peekingduck.utils.logger import LoggerSetup
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -158,10 +164,19 @@ def run(
     ),
     required=False,
 )
+@click.option(
+    "--config_path",
+    help=(
+        "List of nodes to parse. Will automatically create the config and script file "
+        "for any custom nodes."
+    ),
+    required=False,
+)
 def create_node(
     node_subdir: Optional[str] = None,
     node_type: Optional[str] = None,
     node_name: Optional[str] = None,
+    config_path: Optional[str] = None,
 ) -> None:
     """Automates the creation of a new custom node.
 
@@ -169,74 +184,61 @@ def create_node(
     specified, users will be prompted them for the values while performing
     checks to ensure value validity.
     """
-    click.secho("Creating new custom node...")
-    project_dir = Path.cwd()
+    project_dir = _get_cwd()
     node_type_choices = click.Choice(PEEKINGDUCK_NODE_TYPES)
 
-    node_subdir = _verify_option(node_subdir, value_proc=_ensure_relative_path)
-    if node_subdir is None:
-        node_subdir = click.prompt(
-            f"Enter node directory relative to {project_dir}",
-            default="src/custom_nodes",
-            value_proc=_ensure_relative_path,
+    if config_path is not None and any(
+        arg is not None for arg in (node_subdir, node_type, node_name)
+    ):
+        raise ValueError(
+            "--config_path cannot be use with --node_subdir, --node_type, or "
+            "--node_name!"
         )
-    node_dir = project_dir / node_subdir
-
-    node_type = _verify_option(
-        node_type, value_proc=click.types.convert_type(node_type_choices)
-    )
-    if node_type is None:
-        node_type = click.prompt("Select node type", type=node_type_choices)
-
-    node_name = _verify_option(
-        node_name, value_proc=_ensure_valid_name_partial(node_dir, node_type)
-    )
-    if node_name is None:
-        node_name = click.prompt(
-            "Enter node name",
-            default="my_custom_node",
-            value_proc=_ensure_valid_name_partial(node_dir, node_type),
-        )
-
-    created_paths = _get_config_and_script_paths(
-        node_dir, ("configs", node_type), node_type, node_name
-    )
-    click.echo(f"\nNode directory:\t{node_dir}")
-    click.echo(f"Node type:\t{node_type}")
-    click.echo(f"Node name:\t{node_name}")
-    click.echo("\nCreating the following files:")
-    click.echo(f"\tConfig file: {created_paths['config']}")
-    click.echo(f"\tScript file: {created_paths['script']}")
-
-    proceed = click.confirm("Proceed?", default=True)
-    if proceed:
-        created_paths["config"].parent.mkdir(parents=True, exist_ok=True)
-        created_paths["script"].parent.mkdir(parents=True, exist_ok=True)
-        template_paths = _get_config_and_script_paths(
-            Path(__file__).resolve().parent,
-            "configs",
-            ("pipeline", "nodes"),
-            "node_template",
-        )
-        with open(template_paths["config"]) as template_file, open(
-            created_paths["config"], "w"
-        ) as outfile:
-            outfile.write(template_file.read())
-        with open(template_paths["script"]) as template_file, open(
-            created_paths["script"], "w"
-        ) as outfile:
-            lines = template_file.readlines()
-            start = -1
-            for i, line in enumerate(lines):
-                if line.startswith('"'):
-                    start = i
-                    break
-            # In case we couldn't find a starting line
-            start = max(0, start)
-            outfile.writelines(lines[start:])
-        click.echo("Created node!")
+    if config_path is not None:
+        _create_nodes_from_config_file(config_path, project_dir, node_type_choices)
     else:
-        click.echo("Aborted!")
+        click.secho("Creating new custom node...")
+        node_subdir = verify_option(node_subdir, value_proc=ensure_relative_path)
+        if node_subdir is None:
+            node_subdir = click.prompt(
+                f"Enter node directory relative to {project_dir}",
+                default="src/custom_nodes",
+                value_proc=ensure_relative_path,
+            )
+        node_dir = project_dir / node_subdir
+
+        node_type = verify_option(
+            node_type, value_proc=click.types.convert_type(node_type_choices)
+        )
+        if node_type is None:
+            node_type = click.prompt("Select node type", type=node_type_choices)
+
+        node_name = verify_option(
+            node_name, value_proc=ensure_valid_name_partial(node_dir, node_type)
+        )
+        if node_name is None:
+            node_name = click.prompt(
+                "Enter node name",
+                default="my_custom_node",
+                value_proc=ensure_valid_name_partial(node_dir, node_type),
+            )
+
+        created_paths = get_config_and_script_paths(
+            node_dir, ("configs", node_type), node_type, node_name
+        )
+        click.echo(f"\nNode directory:\t{node_dir}")
+        click.echo(f"Node type:\t{node_type}")
+        click.echo(f"Node name:\t{node_name}")
+        click.echo("\nCreating the following files:")
+        click.echo(f"\tConfig file: {created_paths['config']}")
+        click.echo(f"\tScript file: {created_paths['script']}")
+
+        proceed = click.confirm("Proceed?", default=True)
+        if proceed:
+            create_config_and_script_files(created_paths)
+            click.echo("Created node!")
+        else:
+            click.echo("Aborted!")
 
 
 @cli.command()
@@ -276,30 +278,53 @@ def nodes(type_name: str = None) -> None:
     click.secho("\n")
 
 
-def _ensure_relative_path(node_subdir: str) -> str:
-    """Checks that the subdir path does not contain parent directory
-    navigator (..), is not absolute, and is not "peekingduck/pipeline/nodes".
-    """
-    pkd_node_subdir = "peekingduck/pipeline/nodes"
-    if ".." in node_subdir:
-        raise click.exceptions.UsageError("Path cannot contain '..'!")
-    if Path(node_subdir).is_absolute():
-        raise click.exceptions.UsageError("Path cannot be absolute!")
-    if node_subdir == pkd_node_subdir:
-        raise click.exceptions.UsageError(f"Path cannot be '{pkd_node_subdir}'!")
-    return node_subdir
+def _create_nodes_from_config_file(
+    config_path: str, project_dir: Path, node_type_choices: click.Choice
+) -> None:
+    """Creates custom nodes declared in the config file."""
+    run_config_path = Path(config_path)
+    if not run_config_path.is_absolute():
+        run_config_path = (project_dir / run_config_path).resolve()
+    if not run_config_path.exists():
+        raise FileNotFoundError(
+            f"Config file '{config_path}' is not found at {run_config_path}!"
+        )
+    logger.info(f"Creating custom nodes declared in {run_config_path}.")
+    # Load run config with DeclarativeLoader to ensure consistency
+    loader = DeclarativeLoader(run_config_path, "None", "src")
+    try:
+        node_subdir = project_dir / "src" / loader.custom_nodes_dir
+    except AttributeError as custom_nodes_no_exist:
+        raise ValueError(
+            f"Config file '{config_path}' does not contain custom nodes!"
+        ) from custom_nodes_no_exist
 
-
-def _ensure_valid_name(node_dir: Path, node_type: str, node_name: str) -> str:
-    if re.match(r"^[a-zA-Z][\w\-]*[^\W_]$", node_name) is None:
-        raise click.exceptions.UsageError("Invalid node name!")
-    if (node_dir / node_type / f"{node_name}.py").exists():
-        raise click.exceptions.UsageError("Node name already exists!")
-    return node_name
-
-
-def _ensure_valid_name_partial(node_dir: Path, node_type: str) -> Callable:
-    return functools.partial(_ensure_valid_name, node_dir, node_type)
+    for node_str, _ in loader.node_list:
+        try:
+            node_subdir, node_type, node_name = node_str.split(".")
+        except ValueError:
+            continue
+        try:
+            # Check node string formatting
+            ensure_relative_path(node_subdir)
+            node_dir = project_dir / "src" / node_subdir
+            click.types.convert_type(node_type_choices)(node_type)
+            ensure_valid_name(node_dir, node_type, node_name)
+        except click.exceptions.UsageError as err:
+            logger.warning(
+                f"{node_str} contains invalid formatting: '{err.message}'. "
+                "Skipping..."
+            )
+            continue
+        created_paths = get_config_and_script_paths(
+            node_dir, ("configs", node_type), node_type, node_name
+        )
+        logger.info(
+            f"Creating files for {node_str}:\n\t"
+            f"Config file: {created_paths['config']}\n\t"
+            f"Script file: {created_paths['script']}"
+        )
+        create_config_and_script_files(created_paths)
 
 
 def _get_cwd() -> Path:
@@ -321,28 +346,6 @@ def _get_node_url(node_type: str, node_name: str) -> str:
     url_postfix = ".html#"
 
     return f"{url_prefix}{node_path}{url_postfix}{node_path}"
-
-
-def _get_config_and_script_paths(
-    parent_dir: Path,
-    config_subdir: Union[str, Tuple[str, ...]],
-    script_subdir: Union[str, Tuple[str, ...]],
-    file_stem: str,
-) -> Dict[str, Path]:
-    """Returns the node config file and its corresponding script file."""
-    if isinstance(config_subdir, tuple):
-        config_subpath = Path(*config_subdir)
-    else:
-        config_subpath = Path(config_subdir)
-    if isinstance(script_subdir, tuple):
-        script_subpath = Path(*script_subdir)
-    else:
-        script_subpath = Path(script_subdir)
-
-    return {
-        "config": parent_dir / config_subpath / f"{file_stem}.yml",
-        "script": parent_dir / script_subpath / f"{file_stem}.py",
-    }
 
 
 def _len_enumerate(item: Tuple) -> int:
@@ -370,30 +373,3 @@ def _num_digits(number: int) -> int:
         (int): Number of digits in the given number.
     """
     return int(math.log10(number))
-
-
-def _verify_option(value: Optional[str], value_proc: Callable) -> Optional[str]:
-    """Verifies that input value via click.option matches the expected value.
-
-    This sets ``value`` to ``None`` if it is invalid so the rest of the prompt
-    can flow smoothly.
-
-    Args:
-        value (Optional[str]): Input value.
-        value_proc (Callable): A function to check the validity of ``value``.
-
-    Returns:
-        (Optional[str]): ``value`` if it is a valid value. ``None`` if it is
-            not.
-
-    Raises:
-        click.exceptions.UsageError: When ``value`` is invalid.
-    """
-    if value is None:
-        return value
-    try:
-        value = value_proc(value)
-    except click.exceptions.UsageError as error:
-        click.echo(f"Error: {error.message}", err=True)
-        value = None
-    return value

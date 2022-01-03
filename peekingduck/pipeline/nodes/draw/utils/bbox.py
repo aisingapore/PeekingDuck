@@ -73,7 +73,7 @@ def draw_bboxes(
 
 def _draw_bbox(
     frame: np.ndarray,
-    bbox: List[float],
+    bbox: np.ndarray,
     image_size: Tuple[int, int],
     colour: Tuple[int, int, int],
     bbox_label: str = None,
@@ -108,7 +108,7 @@ def _draw_label(
     cv2.rectangle(
         frame,
         (top_left[0], top_left[1]),
-        (int(top_left[0] + text_width), int(top_left[1] - text_height - baseline)),
+        (top_left[0] + text_width, top_left[1] - text_height - baseline),
         bg_colour,
         FILLED,
     )
@@ -118,7 +118,7 @@ def _draw_label(
     cv2.putText(
         frame,
         bbox_label,
-        (top_left[0], int(top_left[1] - 6)),
+        (top_left[0], top_left[1] - 6),
         FONT_HERSHEY_SIMPLEX,
         NORMAL_FONTSCALE,
         text_colour,
@@ -129,15 +129,15 @@ def _draw_label(
 
 def draw_tags(
     frame: np.ndarray,
-    bboxes: List[List[float]],
+    bboxes: np.ndarray,
     tags: List[str],
     colour: Tuple[int, int, int],
 ) -> None:
     """Draw tags above bboxes.
 
     Args:
-        frame (np.array): image of current frame
-        bboxes (List[List[float]]): bounding box coordinates
+        frame (np.ndarray): image of current frame
+        bboxes (np.ndarray): bounding box coordinates
         tags (List[string]): tag associated with bounding box
         color (Tuple[int, int, int]): color of text
     """
@@ -162,7 +162,7 @@ def _draw_tag(
     )
     bbox_width = btm_right[0] - top_left[0]
     offset = int((bbox_width - text_width) / 2)
-    position = (int(top_left[0] + offset), int(top_left[1] - baseline))
+    position = (top_left[0] + offset, top_left[1] - baseline)
     cv2.putText(
         frame, tag, position, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, colour, VERY_THICK
     )

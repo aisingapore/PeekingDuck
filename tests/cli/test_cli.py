@@ -15,9 +15,9 @@
 import io
 import math
 import os
-import subprocess
 import random
 import string
+import subprocess
 import sys
 import textwrap
 from pathlib import Path
@@ -56,41 +56,6 @@ YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 NODE_TYPES = ["input", "model", "dabble", "draw", "output"]
 PKD_DIR = Path(__file__).resolve().parents[2] / "peekingduck"
 PKD_CONFIG_DIR = PKD_DIR / "configs"
-PKD_NODES_DIR = PKD_DIR / "pipeline" / "nodes"
-
-with open(
-    PKD_DIR.parent / "tests" / "data" / "user_inputs" / "create_node.yml"
-) as infile:
-    CREATE_NODE_INPUT = yaml.safe_load(infile.read())
-
-
-@pytest.fixture(params=[0, 1])
-def create_node_input_abort(request):
-    # Windows has a different absolute path format
-    bad_paths = "bad_paths_win" if sys.platform == "win32" else "bad_paths"
-    yield (
-        CREATE_NODE_INPUT[bad_paths],
-        CREATE_NODE_INPUT["bad_types"],
-        CREATE_NODE_INPUT["bad_names"],
-        CREATE_NODE_INPUT["good_paths"][request.param],
-        CREATE_NODE_INPUT["good_types"][request.param],
-        CREATE_NODE_INPUT["good_names"][request.param],
-        CREATE_NODE_INPUT["proceed"]["reject"],
-    )
-
-
-@pytest.fixture(params=[0, 1])
-def create_node_input_accept(request):
-    bad_paths = "bad_paths_win" if sys.platform == "win32" else "bad_paths"
-    yield (
-        CREATE_NODE_INPUT[bad_paths],
-        CREATE_NODE_INPUT["bad_types"],
-        CREATE_NODE_INPUT["bad_names"],
-        CREATE_NODE_INPUT["good_paths"][request.param],
-        CREATE_NODE_INPUT["good_types"][request.param],
-        CREATE_NODE_INPUT["good_names"][request.param],
-        CREATE_NODE_INPUT["proceed"]["accept"][request.param],
-    )
 
 
 def available_nodes_msg(type_name=None):
@@ -207,33 +172,19 @@ def parent_dir():
     return Path.cwd().parent
 
 
-@pytest.fixture
-def runner():
-    return CliRunner()
-
-
-@pytest.fixture
-def tmp_project_dir():
-    cwd = Path.cwd()
-    (cwd / PROJECT_DIR).mkdir(parents=True)
-    os.chdir(PROJECT_DIR)
-    yield
-    os.chdir(cwd)
-
-
 @pytest.mark.usefixtures("tmp_dir", "tmp_project_dir")
 class TestCli:
-    def test_version(self, runner):
-        result = runner.invoke(cli, ["--version"])
+    def test_version(self):
+        result = CliRunner().invoke(cli, ["--version"])
 
         assert result.exit_code == 0
         # not testing full message as .invoke() sets program name to cli
         # instead of peekingduck
         assert f"version {__version__}" in result.output
 
-    def test_init_default(self, runner, parent_dir, cwd):
+    def test_init_default(self, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            result = runner.invoke(cli, ["init"])
+            result = CliRunner().invoke(cli, ["init"])
 
             assert result.exit_code == 0
             assert (
@@ -246,9 +197,9 @@ class TestCli:
             with open(cwd / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
-    def test_init_custom(self, runner, parent_dir, cwd):
+    def test_init_custom(self, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            result = runner.invoke(
+            result = CliRunner().invoke(
                 cli, ["init", "--custom_folder_name", CUSTOM_FOLDER_NAME]
             )
             assert result.exit_code == 0
@@ -262,10 +213,10 @@ class TestCli:
             with open(cwd / RUN_CONFIG_PATH) as infile:
                 TestCase().assertDictEqual(YML, yaml.safe_load(infile))
 
-    def test_run_default(self, runner):
+    def test_run_default(self):
         setup()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            result = runner.invoke(cli, ["run"])
+            result = CliRunner().invoke(cli, ["run"])
             assert (
                 captured.records[0].getMessage()
                 == "Successfully loaded run_config file."
@@ -274,10 +225,10 @@ class TestCli:
             assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
             assert result.exit_code == 0
 
-    def test_run_custom_path(self, runner):
+    def test_run_custom_path(self):
         setup(True)
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            result = runner.invoke(
+            result = CliRunner().invoke(
                 cli, ["run", "--config_path", CUSTOM_RUN_CONFIG_PATH]
             )
             assert (
@@ -288,7 +239,7 @@ class TestCli:
             assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
             assert result.exit_code == 0
 
-    def test_run_custom_config(self, runner):
+    def test_run_custom_config(self):
         setup()
         node_name = ".".join(PKD_NODE.split(".")[1:])
         config_update_value = "'do_resizing': True"
@@ -296,7 +247,9 @@ class TestCli:
             f"{{'{node_name}': {{'resize': {{ {config_update_value} }} }} }}"
         )
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            result = runner.invoke(cli, ["run", "--node_config", config_update_cli])
+            result = CliRunner().invoke(
+                cli, ["run", "--node_config", config_update_cli]
+            )
             assert (
                 captured.records[0].getMessage()
                 == "Successfully loaded run_config file."
@@ -309,232 +262,16 @@ class TestCli:
             assert captured.records[3].getMessage() == init_msg(PKD_NODE_2)
             assert result.exit_code == 0
 
-    def test_create_node_abort(self, runner, create_node_input_abort):
-        (
-            bad_paths,
-            bad_types,
-            bad_names,
-            good_path,
-            good_type,
-            good_name,
-            proceed,
-        ) = create_node_input_abort
-        result = runner.invoke(
-            cli,
-            ["create-node"],
-            input=bad_paths
-            + good_path
-            + bad_types
-            + good_type
-            + bad_names
-            + good_name
-            + proceed,
-        )
-        # Count only substring we create so we are unaffected by click changes
-        config_subpath, script_subpath = get_custom_node_subpaths(
-            good_path.strip(), good_type.strip(), good_name.strip()
-        )
-        assert result.output.count("Path cannot") == bad_paths.count("\n")
-        assert result.output.count("invalid choice") == bad_types.count("\n")
-        assert result.output.count("Invalid node name") == bad_names.count("\n")
-        assert result.output.count(config_subpath) == 1
-        assert result.output.count(script_subpath) == 1
-        assert result.output.count("Aborted!") == 1
-
-    def test_create_node_accept(self, runner, create_node_input_accept):
-        (
-            bad_paths,
-            bad_types,
-            bad_names,
-            good_path,
-            good_type,
-            good_name,
-            proceed,
-        ) = create_node_input_accept
-        result = runner.invoke(
-            cli,
-            ["create-node"],
-            input=bad_paths
-            + good_path
-            + bad_types
-            + good_type
-            + bad_names
-            + good_name
-            + proceed,
-        )
-        # Count only substring we create so we are unaffected by click changes
-        config_subpath, script_subpath = get_custom_node_subpaths(
-            good_path.strip(), good_type.strip(), good_name.strip()
-        )
-        assert result.output.count("Path cannot") == bad_paths.count("\n")
-        assert result.output.count("invalid choice") == bad_types.count("\n")
-        assert result.output.count("Invalid node name") == bad_names.count("\n")
-        assert result.output.count(config_subpath) == 1
-        assert result.output.count(script_subpath) == 1
-        assert result.output.count("Created node!") == 1
-
-        node_subdir = good_path.strip()
-        node_type = good_type.strip()
-        node_name = good_name.strip()
-        cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name}.py"
-        assert config_path.exists()
-        assert script_path.exists()
-
-        with open(config_path) as actual_file, open(
-            PKD_CONFIG_DIR / "node_template.yml"
-        ) as expected_file:
-            assert actual_file.read() == expected_file.read()
-
-        with open(script_path) as actual_file, open(
-            PKD_NODES_DIR / "node_template.py"
-        ) as expected_file:
-            lines = expected_file.readlines()
-            # Ensuring start exists/is valid is not done here since we expect
-            # it to always be valid
-            for i, line in enumerate(lines):
-                if line.startswith('"'):
-                    start = i
-                    break
-            assert actual_file.readlines() == lines[start:]
-
-    def test_create_node_duplicate_node_name(self, runner, create_node_input_accept):
-        _, _, _, good_path, good_type, good_name, proceed = create_node_input_accept
-
-        node_subdir = good_path.strip()
-        node_type = good_type.strip()
-        node_name = good_name.strip()
-        node_name_2 = "available_node_name"
-        name_input = f"{good_name}{node_name_2}\n"
-        setup_custom_node(node_subdir, node_type, node_name)
-        result = runner.invoke(
-            cli,
-            ["create-node"],
-            input=good_path + good_type + name_input + proceed,
-        )
-        # Only check the "Node name exists" message, others are checked by
-        # previous tests.
-        assert result.output.count("Node name already exists!") == 1
-
-        cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name_2}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name_2}.py"
-        assert config_path.exists()
-        assert script_path.exists()
-
-        with open(config_path) as actual_file, open(
-            PKD_CONFIG_DIR / "node_template.yml"
-        ) as expected_file:
-            assert actual_file.read() == expected_file.read()
-
-        with open(script_path) as actual_file, open(
-            PKD_NODES_DIR / "node_template.py"
-        ) as expected_file:
-            lines = expected_file.readlines()
-            for i, line in enumerate(lines):
-                if line.startswith('"'):
-                    start = i
-                    break
-            assert actual_file.readlines() == lines[start:]
-
-    def test_create_node_cli_options_abort(self, runner, create_node_input_abort):
-        (
-            bad_paths,
-            bad_types,
-            bad_names,
-            good_path,
-            good_type,
-            good_name,
-            proceed,
-        ) = create_node_input_abort
-        result = runner.invoke(
-            cli,
-            [
-                "create-node",
-                "--node_subdir",
-                "../some/path",
-                "--node_type",
-                "some type",
-                "--node_name",
-                "some name",
-            ],
-            input=bad_paths
-            + good_path
-            + bad_types
-            + good_type
-            + bad_names
-            + good_name
-            + proceed,
-        )
-        # Count only substring we create so we are unaffected by click changes
-        config_subpath, script_subpath = get_custom_node_subpaths(
-            good_path.strip(), good_type.strip(), good_name.strip()
-        )
-        assert result.output.count("Path cannot") == bad_paths.count("\n") + 1
-        assert result.output.count("invalid choice") == bad_types.count("\n") + 1
-        assert result.output.count("Invalid node name") == bad_names.count("\n") + 1
-        assert result.output.count(config_subpath) == 1
-        assert result.output.count(script_subpath) == 1
-        assert result.output.count("Aborted!") == 1
-
-    def test_create_node_cli_options_accept(self, runner, create_node_input_accept):
-        _, _, _, good_path, good_type, good_name, proceed = create_node_input_accept
-        node_subdir = good_path.strip()
-        node_type = good_type.strip()
-        node_name = good_name.strip()
-        # Creates only using CLI options with minimal user input
-        result = runner.invoke(
-            cli,
-            [
-                "create-node",
-                "--node_subdir",
-                node_subdir,
-                "--node_type",
-                node_type,
-                "--node_name",
-                node_name,
-            ],
-            input=proceed,
-        )
-        config_subpath, script_subpath = get_custom_node_subpaths(
-            node_subdir, node_type, node_name
-        )
-        assert result.output.count(config_subpath) == 1
-        assert result.output.count(script_subpath) == 1
-        assert result.output.count("Created node!") == 1
-
-        cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name}.py"
-        assert config_path.exists()
-        assert script_path.exists()
-
-        with open(config_path) as actual_file, open(
-            PKD_CONFIG_DIR / "node_template.yml"
-        ) as expected_file:
-            assert actual_file.read() == expected_file.read()
-
-        with open(script_path) as actual_file, open(
-            PKD_NODES_DIR / "node_template.py"
-        ) as expected_file:
-            lines = expected_file.readlines()
-            for i, line in enumerate(lines):
-                if line.startswith('"'):
-                    start = i
-                    break
-            assert actual_file.readlines() == lines[start:]
-
-    def test_nodes_all(self, runner):
-        result = runner.invoke(cli, ["nodes"])
+    def test_nodes_all(self):
+        result = CliRunner().invoke(cli, ["nodes"])
         print(result.exception)
         print(result.output)
         assert result.exit_code == 0
         assert result.output == available_nodes_msg()
 
-    def test_nodes_single(self, runner):
+    def test_nodes_single(self):
         for node_type in NODE_TYPES:
-            result = runner.invoke(cli, ["nodes", node_type])
+            result = CliRunner().invoke(cli, ["nodes", node_type])
             assert result.exit_code == 0
             assert result.output == available_nodes_msg(node_type)
 
