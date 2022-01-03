@@ -45,7 +45,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if self.beta > 100 or self.beta < -100:
+        if not -100 <= self.beta <= 100:
             raise ValueError("beta for brightness must be between [-100, 100]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -57,10 +57,9 @@ class Node(AbstractNode):
         Returns:
             (Dict): Outputs dictionary with the key `img`.
         """
-
-        img = inputs["img"].copy()
-        img_vector = np.reshape(img, (1, -1))
+        orig_shape = inputs["img"].shape
+        img_vector = np.reshape(inputs["img"], (1, -1))
         cv2.add(img_vector, self.beta, img_vector)
-        img = np.reshape(img_vector, (img.shape[0], img.shape[1], img.shape[2]))
+        img = np.reshape(img_vector, orig_shape)
 
         return {"img": img}

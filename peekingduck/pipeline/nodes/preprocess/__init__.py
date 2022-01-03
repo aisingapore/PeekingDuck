@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-Perform image processing. This can be done before or after the model.
+Performs image processing. This can be done before or after the model.
 """

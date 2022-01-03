@@ -1,4 +1,4 @@
 input: ["img"]
 output: ["img"]
 
-alpha: 0
+alpha: 1.0

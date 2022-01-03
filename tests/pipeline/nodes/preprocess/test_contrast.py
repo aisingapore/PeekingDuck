@@ -47,9 +47,8 @@ class TestContrast:
         results = contrast_increase.run(input1)
 
         assert original_img.shape == results["img"].shape
-        np.testing.assert_raises(
-            AssertionError, np.testing.assert_equal, original_img, results["img"]
-        )
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(original_img, results["img"])
         np.testing.assert_equal(results["img"][0][0], original_img[0][0] * 2)
 
     def test_overflow(self, contrast_increase):
@@ -61,9 +60,10 @@ class TestContrast:
         np.testing.assert_equal(results["img"][0][0], np.array([255, 255, 255]))
 
     def test_beta_range(self):
-        np.testing.assert_raises(
-            ValueError, Node, {"input": ["img"], "output": ["img"], "alpha": -0.5}
-        )
-        np.testing.assert_raises(
-            ValueError, Node, {"input": ["img"], "output": ["img"], "alpha": 3.1}
-        )
+        with pytest.raises(ValueError) as excinfo:
+            Node({"input": ["img"], "output": ["img"], "alpha": -0.5})
+        assert str(excinfo.value) == "alpha for contrast must be between [1, 3]"
+
+        with pytest.raises(ValueError) as excinfo:
+            Node({"input": ["img"], "output": ["img"], "alpha": 3.1})
+        assert str(excinfo.value) == "alpha for contrast must be between [1, 3]"

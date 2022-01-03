@@ -49,24 +49,25 @@ class TestBrightness:
 
     def test_brighten_image(self, brightness_increase):
         original_img = np.ones(shape=(28, 28, 3), dtype=np.uint8)
-        input1 = {"img": original_img}
+        input1 = {"img": original_img.copy()}
         results = brightness_increase.run(input1)
 
         assert original_img.shape == results["img"].shape
-        np.testing.assert_raises(
-            AssertionError, np.testing.assert_equal, original_img, results["img"]
-        )
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(original_img, results["img"])
         np.testing.assert_equal(results["img"][0][0], original_img[0][0] + 50)
 
     def test_darken_image(self, brightness_decrease):
+
         original_img = np.ones(shape=(28, 28, 3), dtype=np.uint8) * 100
-        input1 = {"img": original_img}
+        print(original_img[0][0])
+        input1 = {"img": original_img.copy()}
         results = brightness_decrease.run(input1)
+        print(results["img"][0][0], original_img[0][0])
 
         assert original_img.shape == results["img"].shape
-        np.testing.assert_raises(
-            AssertionError, np.testing.assert_equal, original_img, results["img"]
-        )
+        with pytest.raises(AssertionError):
+            np.testing.assert_equal(original_img, results["img"])
         np.testing.assert_equal(results["img"][0][0], original_img[0][0] - 50)
 
     def test_overflow(self, brightness_increase, brightness_decrease):
@@ -85,9 +86,10 @@ class TestBrightness:
         np.testing.assert_equal(results["img"][0][0], np.array([0, 0, 0]))
 
     def test_beta_range(self):
-        np.testing.assert_raises(
-            ValueError, Node, {"input": ["img"], "output": ["img"], "beta": -101}
-        )
-        np.testing.assert_raises(
-            ValueError, Node, {"input": ["img"], "output": ["img"], "beta": 101}
-        )
+        with pytest.raises(ValueError) as excinfo:
+            Node({"input": ["img"], "output": ["img"], "beta": -101})
+        assert str(excinfo.value) == "beta for brightness must be between [-100, 100]"
+
+        with pytest.raises(ValueError) as excinfo:
+            Node({"input": ["img"], "output": ["img"], "beta": 101})
+        assert str(excinfo.value) == "beta for brightness must be between [-100, 100]"

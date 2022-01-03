@@ -43,7 +43,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if self.alpha > 3 or self.alpha < 1:
+        if not 1.0 <= self.alpha <= 3.0:
             raise ValueError("alpha for contrast must be between [1, 3]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -55,7 +55,6 @@ class Node(AbstractNode):
         Returns:
             (Dict): Outputs dictionary with the key `img`.
         """
-
         img = cv2.convertScaleAbs(inputs["img"], alpha=self.alpha, beta=0)
 
         return {"img": img}
