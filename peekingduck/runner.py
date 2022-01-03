@@ -49,15 +49,17 @@ class Runner:
             used with PeekingDuck. For more information on using custom nodes,
             please refer to
             `Getting Started <getting_started/03_custom_nodes.html>`_.
+        num_iter (int): Stop pipeline after running this number of iterations
         nodes (:obj:`List[AbstractNode]` | :obj:`None`): If a list of nodes is
             provided, initialize by the node stack directly.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         run_config_path: Path = None,
         config_updates_cli: str = None,
         custom_nodes_parent_subdir: str = None,
+        num_iter: int = None,
         nodes: List[AbstractNode] = None,
     ):
         self.logger = logging.getLogger(__name__)
@@ -82,9 +84,15 @@ class Runner:
             sys.exit(1)
         if RequirementChecker.n_update > 0:
             sys.exit(3)
+        if num_iter is None or num_iter <= 0:
+            self.num_iter = 0
+        else:
+            self.num_iter = num_iter
+            self.logger.info(f"Run pipeline for {num_iter} iterations")
 
     def run(self) -> None:
         """execute single or continuous inference"""
+        num_iter = 0
         while not self.pipeline.terminate:
             for node in self.pipeline.nodes:
                 if (
@@ -106,6 +114,11 @@ class Runner:
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
+            num_iter += 1
+            if self.num_iter > 0 and num_iter >= self.num_iter:
+                self.logger.info(f"Stopping pipeline after {num_iter} iterations")
+                break
+
         # clean up nodes with threads
         for node in self.pipeline.nodes:
             if node.name.endswith(".live") or node.name.endswith(".recorded"):
