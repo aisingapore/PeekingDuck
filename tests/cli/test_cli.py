@@ -306,3 +306,19 @@ class TestCli:
         exit_status = proc.returncode
         assert "DEBUG" in out_str
         assert exit_status == 0
+
+    def test_num_iter(self):
+        setup()
+        with TestCase.assertLogs("peekingduck.cli.logger") as captured:
+            n = 50  # run test for 50 iterations
+            result = CliRunner().invoke(cli, ["run", "--num_iter", n])
+            assert (
+                captured.records[0].getMessage()
+                == "Successfully loaded run_config file."
+            )
+            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
+            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
+            assert (
+                captured.records[-1].getMessage() == f"Run pipeline for {n} iterations"
+            )
+            assert result.exit_code == 0

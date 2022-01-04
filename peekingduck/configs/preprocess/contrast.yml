@@ -1,5 +1,4 @@
 input: ["img"]
 output: ["img"]
 
-brightness: 0
-contrast: 1
+alpha: 1.0
