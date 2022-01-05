@@ -24,8 +24,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Initialises and use YOLOX to infer from an image frame.
 
     The YOLOX node is capable detecting objects from 80 categories. The table
-    of object categories can be found :term:`here <object detection indices>`.
-    The "yolox-tiny" model is used by default and can be changed to one of
+    of object categories can be found
+    :ref:`here <general-object-detection-ids>`. The "yolox-tiny" model is used
+    by default and can be changed to one of
     (yolox-tiny/yolox-s/yolox-m/yolox-l).
 
     Inputs:

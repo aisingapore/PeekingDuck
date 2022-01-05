@@ -53,6 +53,10 @@ class AbstractNode(metaclass=ABCMeta):
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
+        # This is only initialised when the `optional_inputs` key is found in
+        # the nodes' config file
+        self.optional_inputs: List[str]
+
         # NOTE: config and kwargs_config are similar but are from different
         # inputs config is when users input a dictionary to update the node
         # kwargs_config is when users input parameters to update the node
