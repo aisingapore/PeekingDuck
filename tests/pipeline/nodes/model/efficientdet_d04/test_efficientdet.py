@@ -111,7 +111,9 @@ class TestEfficientDet:
     ):
         test_img1 = create_image((720, 1280, 3))
         test_img2 = create_image((640, 480, 3))
-        efficientdet_detector = detector.Detector(efficientdet_type_0, model_dir, class_names)
+        efficientdet_detector = detector.Detector(
+            efficientdet_type_0, model_dir, class_names
+        )
         actual_img1, actual_scale1 = efficientdet_detector.preprocess(test_img1, 512)
         actual_img2, actual_scale2 = efficientdet_detector.preprocess(test_img2, 512)
 
