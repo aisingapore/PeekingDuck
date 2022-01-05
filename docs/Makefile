@@ -2,8 +2,8 @@
 #
 export READTHEDOCS=1
 
-# Technotes:
-# - exec `make html` from docs/ folder
+# HTML Documentation Technotes:
+# - exec `make html` from docs/ to generate html documentation
 # - first run will display a number of warnings (normal behavior)
 # - second and subsequent runs should not display any warnings
 
@@ -14,14 +14,10 @@ SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 
-# Clean up intermediate system-generated docs for a blank slate
-# NB: need master.rst, so back it up first, then restore
-# clean the working build/ folder
+# Clean up intermediate system-generated docs in source/ and build/
 clean:
-	@echo "clean $(SOURCEDIR) (except master.rst)..."
-	@mv $(SOURCEDIR)/master.rst $(SOURCEDIR)/master.bak
-	@rm -rf $(SOURCEDIR)/*.rst
-	@mv $(SOURCEDIR)/master.bak $(SOURCEDIR)/master.rst
+	@echo "clean $(SOURCEDIR)..."
+	@rm -rf $(SOURCEDIR)/peekingduck*.rst
 	@echo "clean $(BUILDDIR)..."
 	@rm -rf $(BUILDDIR)/doctrees
 	@rm -rf $(BUILDDIR)/html
