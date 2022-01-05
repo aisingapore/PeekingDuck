@@ -26,6 +26,7 @@ Nodes are the core of PeekingDuck. See below for the readily-available nodes and
 
    peekingduck
    peekingduck.pipeline.nodes.input
+   peekingduck.pipeline.nodes.preprocess
    peekingduck.pipeline.nodes.model
    peekingduck.pipeline.nodes.dabble
    peekingduck.pipeline.nodes.draw

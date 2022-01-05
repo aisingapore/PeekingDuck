@@ -102,7 +102,10 @@ def runner(request):
         wraps=replace_declarativeloader_get_pipeline,
     ):
         test_runner = Runner(
-            RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR, request.param
+            run_config_path=RUN_CONFIG_PATH,
+            config_updates_cli=CONFIG_UPDATES_CLI,
+            custom_nodes_parent_subdir=CUSTOM_NODES_DIR,
+            nodes=request.param,
         )
 
         return test_runner
@@ -134,7 +137,10 @@ def runner_with_nodes(test_input_node, test_node_end):
     setup()
     instantiated_nodes = [test_input_node, test_node_end]
     test_runner = Runner(
-        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR, instantiated_nodes
+        run_config_path=RUN_CONFIG_PATH,
+        config_updates_cli=CONFIG_UPDATES_CLI,
+        custom_nodes_parent_subdir=CUSTOM_NODES_DIR,
+        nodes=instantiated_nodes,
     )
 
     return test_runner
@@ -150,11 +156,13 @@ class TestRunner:
     def test_init_nodes_none_config_updates_none(self, test_input_node):
         print(test_input_node)
         with pytest.raises(SystemExit):
-            Runner(RUN_CONFIG_PATH)
+            Runner(run_config_path=RUN_CONFIG_PATH)
 
     def test_init_nodes_none_custom_nodes_none(self):
         with pytest.raises(SystemExit):
-            Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI)
+            Runner(
+                run_config_path=RUN_CONFIG_PATH, config_updates_cli=CONFIG_UPDATES_CLI
+            )
 
     def test_init_nodes_with_instantiated_nodes(self, runner_with_nodes):
         with mock.patch(
@@ -171,7 +179,10 @@ class TestRunner:
             "peekingduck.pipeline.pipeline.Pipeline.__init__", side_effect=ValueError
         ), pytest.raises(SystemExit):
             Runner(
-                RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR, [ground_truth]
+                run_config_path=RUN_CONFIG_PATH,
+                config_updates_cli=CONFIG_UPDATES_CLI,
+                custom_nodes_parent_subdir=CUSTOM_NODES_DIR,
+                nodes=[ground_truth],
             )
 
     def test_init_with_updated_packages(self):
@@ -180,7 +191,11 @@ class TestRunner:
             "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
             wraps=get_pipeline_with_default_node_names,
         ), pytest.raises(SystemExit) as exec_info:
-            Runner(RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, CUSTOM_NODES_DIR)
+            Runner(
+                run_config_path=RUN_CONFIG_PATH,
+                config_updates_cli=CONFIG_UPDATES_CLI,
+                custom_nodes_parent_subdir=CUSTOM_NODES_DIR,
+            )
         # Ensure we are throwing the correct exit code
         assert exec_info.value.code == 3
 
@@ -217,5 +232,5 @@ class TestRunner:
     def test_get_run_config(self, runner):
         node_list = runner.get_run_config()
 
-        for idx, node in enumerate(node_list):
+        for idx, (node, _) in enumerate(node_list):
             assert node == NODES["nodes"][idx]

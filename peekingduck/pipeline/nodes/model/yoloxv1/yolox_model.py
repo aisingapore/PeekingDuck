@@ -61,7 +61,7 @@ class YOLOXModel:
         with open(model_dir / config["weights"]["classes_file"]) as infile:
             self.class_names = [line.strip() for line in infile.readlines()]
 
-        self.detector = Detector(config, model_dir)
+        self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
 
     @property
@@ -74,9 +74,8 @@ class YOLOXModel:
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all available classes.")
+            self.logger.info("Detecting all YOLOX classes")
         self._detect_ids = ids
-        self.detector.update_detect_ids(self._detect_ids)
 
     def predict(
         self, image: np.ndarray
@@ -98,4 +97,4 @@ class YOLOXModel:
         """
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
-        return self.detector.predict_object_bbox_from_image(image, self.class_names)
+        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)

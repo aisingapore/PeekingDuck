@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import json
 from pathlib import Path
 
 import cv2
@@ -53,6 +54,15 @@ def model_dir(efficientdet_config):
         / "peekingduck_weights"
         / efficientdet_config["weights"]["model_subdir"]
     )
+
+
+@pytest.fixture
+def class_names(efficientdet_config, model_dir):
+    classes_path = model_dir / efficientdet_config["weights"]["classes_file"]
+    return {
+        val["id"] - 1: val["name"]
+        for val in json.loads(Path(classes_path).read_text()).values()
+    }
 
 
 @pytest.fixture(params=[0, 1, 2, 3, 4])
@@ -97,11 +107,11 @@ class TestEfficientDet:
         assert output["bbox_scores"].size != 0
 
     def test_efficientdet_preprocess(
-        self, create_image, efficientdet_type_0, model_dir
+        self, create_image, efficientdet_type_0, model_dir, class_names
     ):
         test_img1 = create_image((720, 1280, 3))
         test_img2 = create_image((640, 480, 3))
-        efficientdet_detector = detector.Detector(efficientdet_type_0, model_dir)
+        efficientdet_detector = detector.Detector(efficientdet_type_0, model_dir, class_names)
         actual_img1, actual_scale1 = efficientdet_detector.preprocess(test_img1, 512)
         actual_img2, actual_scale2 = efficientdet_detector.preprocess(test_img2, 512)
 
@@ -112,7 +122,9 @@ class TestEfficientDet:
         assert actual_scale1 == 0.4
         assert actual_scale2 == 0.8
 
-    def test_efficientdet_postprocess(self, efficientdet_type_0, model_dir):
+    def test_efficientdet_postprocess(
+        self, efficientdet_type_0, model_dir, class_names
+    ):
         output_bbox = np.array([[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]])
         output_label = np.array([0, 0])
         output_score = np.array([0.9, 0.2])
@@ -120,7 +132,9 @@ class TestEfficientDet:
         scale = 0.5
         img_shape = (720, 1280)
         detect_ids = [0]
-        efficientdet_detector = detector.Detector(efficientdet_type_0, model_dir)
+        efficientdet_detector = detector.Detector(
+            efficientdet_type_0, model_dir, class_names
+        )
         boxes, labels, scores = efficientdet_detector.postprocess(
             network_output, scale, img_shape, detect_ids
         )

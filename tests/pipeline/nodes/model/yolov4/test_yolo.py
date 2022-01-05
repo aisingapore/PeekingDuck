@@ -101,7 +101,7 @@ class TestYolo:
 
     def test_get_detect_ids(self, yolo_type):
         yolo = Node(yolo_type)
-        assert yolo.model.get_detect_ids() == [0]
+        assert yolo.model.detect_ids == [0]
 
     def test_yolo_model_initialization(self):
         model1 = yolov3()

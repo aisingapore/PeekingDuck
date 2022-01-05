@@ -31,7 +31,7 @@ bad_names: |
   name_
   name-
   name 123
-good_paths: 
+good_paths:
   - "some/other/path\n"
   - "some/path\n"
 good_types:

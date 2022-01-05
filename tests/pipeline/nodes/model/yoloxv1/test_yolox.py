@@ -160,9 +160,7 @@ class TestYOLOX:
             yolox = Node(config=yolox_config)
 
             assert "IDs being detected: []" in captured.records[0].getMessage()
-            assert (
-                captured.records[1].getMessage() == "Detecting all available classes."
-            )
+            assert captured.records[1].getMessage() == "Detecting all YOLOX classes"
             assert yolox is not None
 
     @pytest.mark.parametrize("detect_ids", [1, {"some_key": "some_value"}])

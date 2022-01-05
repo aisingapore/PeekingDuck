@@ -62,7 +62,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 **Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and contains information on how other PeekingDuck nodes may interact with it.
 
-PeekingDuck has 5 types of nodes:
+PeekingDuck has 6 types of nodes:
 
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg">
 

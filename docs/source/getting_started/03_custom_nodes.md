@@ -61,87 +61,17 @@ As PeekingDuck runs the pipeline sequentially, it is important to check if the n
 
 ## Step 3: Generate Template Node Config and Script
 
-We recommend using the `peekingduck create-node` command to generate the template config and script files for your custom node through an interactive process as demonstrated below.
+We recommend using the `peekingduck create-node` command with the `--config_path` flag to generate
+the template config and script files for the custom nodes defined in your `run_config.yml` as
+demonstrated below.
 ```
-> peekingduck create-node
-Creating new custom node...
-Enter node directory relative to /path/to/<project_name> [src/custom_nodes]:
-Select node type (input, model, draw, dabble, output): output
-Enter node name [my_custom_node]: csv_writer
-
-Node directory:	/path/to/<project_name>/src/custom_nodes
-Node type:	output
-Node name:	csv_writer
-
-Creating the following files:
-	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
-	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
-Proceed? [Y/n]: 
-Created node!
+> peekingduck create-node --config_path run_config.yml
 ```
-
-### Step 3a: Enter Your Custom Node Parent Directory
-
-```
-Enter node directory relative to /path/to/<project_name> [src/custom_nodes]:
-```
-Enter the path of your custom node directory, ensure the path is relative to `<project_name>`, e.g.
-`src/<custom_folder_name>`. The default value `src/custom_nodes` is used in this guide.
-
-### Step 3b: Select a Node Type for Your Custom Node
-
-```text
-Select node type (input, model, draw, dabble, output): output
-```
-Select a node type from one of the five node types in PeekingDuck `(input, model, draw, dabble, output)`.
-`output` type is selected in this guide.
-
-### Step 3c: Enter Your Custom Node Name
-
-```
-Enter node name [my_custom_node]: csv_writer
-```
-Enter a name for your custom node. Some checks are performed in the background to ensure that the
-node name is valid and does not already exist (to prevent existing files from being overwritten).
-The default value is `my_custom_node` but `csv_writer` is used in this guide.
-
-### Step 3d: Confirm Node Creation
-
-```
-Node directory:	/path/to/<project_name>/src/custom_nodes
-Node type:	output
-Node name:	csv_writer
-
-Creating the following files:
-	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
-	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
-Proceed? [Y/n]: 
-```
-The full paths of the config and script files to be created will be shown for verification. You can
-abort the process by entering `n`. The default value of `y` is selected in this guide.
-
-### Alternative: Use `peekingduck create-node` with Command-line Options
-
-If you would like to speed things up a little and skip the interactive process, the command-line
-options `--node_subdir`, `--node_type`, `--node_name` can be used with `peekingduck create-node`.
-Step 3a-c from above can be replicated with command-line options as demonstrated below.
-```
-> peekingduck create-node --node_subdir src/custom_nodes --node_type output --node_name csv_writer
-Creating new custom node...
-
-Node directory:	/path/to/<project_name>/src/custom_nodes
-Node type:	output
-Node name:	csv_writer
-
-Creating the following files:
-	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
-	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
-Proceed? [Y/n]: 
-Created node!
-```
-A final confirmation is still required before the files are created. You can use any number and
-combination of the available command-line options. You will be prompted for the missing values
-through the same interactive process.
+**NOTE:** While using `peekingduck create-node` with `--config_path` is efficient for creating a
+large number of custom nodes, nodes with badly formatted names and types will be skipped
+automatically. If you would like to use `peekingduck create-node` interactively and be prompted to
+fix any ill-formattings, please see the [bonus section](#bonus-using-peekingduck-create-node-interactively)
+for more details.
 
 If you have been following along to this guide, you should expect to see the following directory
 structure:
@@ -152,9 +82,8 @@ structure:
 │       ├── configs
 │       │   └── output
 │       │       └── csv_writer.yml
-│       └── custom_nodes
-│           └── output
-│               └── csv_writer.py
+│       └── output
+│           └── csv_writer.py
 ├── run_config.yml
 ├── results
 ```
@@ -348,3 +277,87 @@ for reference.
 **NOTE:**
 
 While running, the CSV file may be empty. This is because the implementation of this CSV logger completes the writing at the end of the instruction.
+
+## Bonus: Using `peekingduck create-node` Interactively
+`peekingduck create-node` can be used interactively to create the template config and script files
+for custom nodes as demonstrated below.
+```
+> peekingduck create-node
+Creating new custom node...
+Enter node directory relative to /path/to/<project_name> [src/custom_nodes]:
+Select node type (input, model, draw, dabble, output): output
+Enter node name [my_custom_node]: csv_writer
+
+Node directory:	/path/to/<project_name>/src/custom_nodes
+Node type:	output
+Node name:	csv_writer
+
+Creating the following files:
+	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
+	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
+Proceed? [Y/n]: 
+Created node!
+```
+
+### Step a: Enter Your Custom Node Parent Directory
+
+```
+Enter node directory relative to /path/to/<project_name> [src/custom_nodes]:
+```
+Enter the path of your custom node directory, ensure the path is relative to `<project_name>`, e.g.
+`src/<custom_folder_name>`. The default value `src/custom_nodes` is used in this guide.
+
+### Step b: Select a Node Type for Your Custom Node
+
+```text
+Select node type (input, model, draw, dabble, output): output
+```
+Select a node type from one of the five node types in PeekingDuck `(input, model, draw, dabble, output)`.
+`output` type is selected in this guide.
+
+### Step c: Enter Your Custom Node Name
+
+```
+Enter node name [my_custom_node]: csv_writer
+```
+Enter a name for your custom node. Some checks are performed in the background to ensure that the
+node name is valid and does not already exist (to prevent existing files from being overwritten).
+The default value is `my_custom_node` but `csv_writer` is used in this guide.
+
+### Step d: Confirm Node Creation
+
+```
+Node directory:	/path/to/<project_name>/src/custom_nodes
+Node type:	output
+Node name:	csv_writer
+
+Creating the following files:
+	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
+	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
+Proceed? [Y/n]: 
+```
+The full paths of the config and script files to be created will be shown for verification. You can
+abort the process by entering `n`. The default value of `y` is selected in this guide.
+
+### Alternative: Use `peekingduck create-node` with Command-line Options
+
+If you would like to speed things up a little and skip the interactive process, the command-line
+options `--node_subdir`, `--node_type`, `--node_name` can be used with `peekingduck create-node`.
+Step 3a-c from above can be replicated with command-line options as demonstrated below.
+```
+> peekingduck create-node --node_subdir src/custom_nodes --node_type output --node_name csv_writer
+Creating new custom node...
+
+Node directory:	/path/to/<project_name>/src/custom_nodes
+Node type:	output
+Node name:	csv_writer
+
+Creating the following files:
+	Config file: /path/to/<project_name>/src/custom_nodes/configs/output/csv_writer.yml
+	Script file: /path/to/<project_name>/src/custom_nodes/output/csv_writer.py
+Proceed? [Y/n]: 
+Created node!
+```
+A final confirmation is still required before the files are created. You can use any number and
+combination of the available command-line options. You will be prompted for the missing values
+through the same interactive process.

@@ -12,4 +12,5 @@ Below are the various articles on Model Resources & Information.
 
    /resources/01a_object_detection
    /resources/01b_pose_estimation
+   /resources/01c_object_tracking
    /resources/02_bibliography

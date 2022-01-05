@@ -29,22 +29,35 @@ class DetectionTracker:  # pylint: disable=too-few-public-methods
     """Tracks detection bounding boxes using the chosen algorithm.
 
     Args:
-        tracker_type (str): Type of tracking algorithm to be used, one of
-            ["iou", "mosse"].
+        config (Dict[str, Any]): Configration dict containing the following:
+            tracking_type (str): Type of tracking algorithm to be used, one of
+                ["iou", "mosse"].
+            iou_threshold (float): Minimum IoU value to be used with the
+                matching logic.
+            max_lost (int): Maximum number of frames to keep "lost" tracks
+                after which they will be removed. Only used in IOUTracker.
 
     Raises:
-        ValueError: `tracker_type` is not one of ["iou", "mosse"].
+        ValueError: `tracking_type` is not one of ["iou", "mosse"].
+        ValueError: `iou_threshold` is not within [0, 1].
+        ValueError: `max_lost` is negative.
     """
 
     tracker_constructors = {"iou": IOUTracker, "mosse": OpenCVTracker}
 
-    def __init__(self, tracker_type: str) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         self.logger = logging.getLogger(__name__)
 
+        # Check threshold values
+        if not 0 <= config["iou_threshold"] <= 1:
+            raise ValueError("iou_threshold must be in [0, 1]")
+        if config["max_lost"] < 0:
+            raise ValueError("max_lost cannot be negative")
+
         try:
-            self.tracker = self.tracker_constructors[tracker_type]()
+            self.tracker = self.tracker_constructors[config["tracking_type"]](config)
         except KeyError as error:
-            raise ValueError("tracker_type must be one of ['iou', 'mosse']") from error
+            raise ValueError("tracking_type must be one of ['iou', 'mosse']") from error
 
     def track_detections(self, inputs: Dict[str, Any]) -> List[str]:
         """Tracks detections using the selected algorithm.

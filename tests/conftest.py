@@ -92,6 +92,18 @@ def tmp_dir():
     shutil.rmtree(newpath, ignore_errors=True)  # ignore_errors for windows development
 
 
+@pytest.fixture
+def tmp_project_dir():
+    """To used after `tmp_dir` fixture to simulate that we're in a proper
+    custom PKD project directory
+    """
+    cwd = Path.cwd()
+    (cwd / "tmp_dir").mkdir(parents=True)
+    os.chdir("tmp_dir")
+    yield
+    os.chdir(cwd)
+
+
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
     test_img_dir = PKD_DIR.parent / "images" / "testing"
@@ -151,10 +163,9 @@ def test_human_video_sequences(request):
     """This actually returns a list of dictionaries each containing:
     - A video frame
     - Bounding boxes
-    - Bounding box detection confidence scores.
 
-    Yielding bounding box and scores allows us to test dabble.tracking without
-    having to attach a object detector before it.
+    Yielding bounding box allows us to test dabble.tracking without having to
+    attach a object detector before it.
 
     Yielding a list of frames instead of a video file allows for better control
     of test data and frame specific manipulations to trigger certain code
@@ -169,7 +180,6 @@ def test_human_video_sequences(request):
         {
             "img": cv2.imread(str(sequence_dir / f"{key}.jpg")),
             "bboxes": np.array(val["bboxes"]),
-            "bbox_scores": np.array(val["bbox_scores"]),
         }
         for key, val in detections.items()
     ]

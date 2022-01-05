@@ -39,9 +39,9 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             tracker and bbox coordinates.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         self.is_initialised = False
-        self.iou_threshold = 0.1
+        self.iou_threshold = config["iou_threshold"]
         self.next_track_id = 0
         self.tracks: Dict[int, Track] = {}
 
@@ -76,7 +76,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             frame (np.ndarray): Image frame parsed from video.
             bbox (np.ndarray): Single detected bounding box.
         """
-        tracker = cv2.TrackerMOSSE_create()
+        tracker = cv2.legacy.TrackerMOSSE_create()
         tracker.init(frame, tuple(bbox))
         self.tracks[self.next_track_id] = Track(tracker, bbox)
         self.next_track_id += 1
@@ -147,5 +147,5 @@ class Track(NamedTuple):
             height of the bounding box.
     """
 
-    tracker: cv2.TrackerMOSSE
+    tracker: cv2.legacy_TrackerMOSSE
     bbox: np.ndarray

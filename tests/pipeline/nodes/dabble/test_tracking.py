@@ -17,6 +17,7 @@ from unittest import TestCase
 
 import numpy as np
 import pytest
+
 from peekingduck.pipeline.nodes.dabble.tracking import Node
 
 # Frame index for manual manipulation of detections to trigger some
@@ -25,19 +26,31 @@ SEQ_IDX = 6
 SIZE = (400, 600, 3)
 
 
+@pytest.fixture(params=[-0.5, 1.5])
+def invalid_threshold(request):
+    yield request.param
+
+
+@pytest.fixture(params=["iou", "mosse"])
+def tracking_config_type(tracking_config, request):
+    tracking_config["tracking_type"] = request.param
+    return tracking_config
+
+
 @pytest.fixture
 def tracking_config():
     return {
         "root": Path.cwd(),
-        "input": ["img", "bboxes", "bbox_scores"],
+        "input": ["img", "bboxes"],
         "output": ["obj_tags"],
+        "iou_threshold": 0.1,
+        "max_lost": 10,
     }
 
 
-@pytest.fixture(params=["iou", "mosse"])
-def tracker(request, tracking_config):
-    tracking_config["tracking_type"] = request.param
-    node = Node(tracking_config)
+@pytest.fixture
+def tracker(tracking_config_type):
+    node = Node(tracking_config_type)
     return node
 
 
@@ -46,16 +59,26 @@ class TestTracking:
         tracking_config["tracking_type"] = "invalid type"
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config)
-        assert str(excinfo.value) == "tracker_type must be one of ['iou', 'mosse']"
+        assert str(excinfo.value) == "tracking_type must be one of ['iou', 'mosse']"
+
+    def test_should_raise_for_invalid_iou_threshold(
+        self, tracking_config_type, invalid_threshold
+    ):
+        tracking_config_type["iou_threshold"] = invalid_threshold
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(tracking_config_type)
+        assert str(excinfo.value) == "iou_threshold must be in [0, 1]"
+
+    def test_should_raise_for_negative_max_lost(self, tracking_config_type):
+        tracking_config_type["max_lost"] = -1
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(tracking_config_type)
+        assert str(excinfo.value) == "max_lost cannot be negative"
 
     def test_no_tags(self, create_image, tracker):
         img1 = create_image(SIZE)
 
-        inputs = {
-            "img": img1,
-            "bboxes": np.empty((0, 4), dtype=np.float32),
-            "bbox_scores": np.empty((0), dtype=np.float32),
-        }
+        inputs = {"img": img1, "bboxes": np.empty((0, 4), dtype=np.float32)}
         outputs = tracker.run(inputs)
 
         assert not outputs["obj_tags"]
@@ -76,12 +99,7 @@ class TestTracking:
         _, detections = test_human_video_sequences
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.1, 0.2, 0.3, 0.4]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
         )
         prev_tags = []
         for i, inputs in enumerate(detections):
@@ -108,12 +126,7 @@ class TestTracking:
         _, detections = test_human_video_sequences
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.1, 0.2, 0.3, 0.4]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
         )
         tracking_config["tracking_type"] = "iou"
         tracker = Node(tracking_config)
@@ -158,12 +171,7 @@ class TestTracking:
         # This is the bbox of a small road divider that gets occluded the
         # next frame
         detections[SEQ_IDX]["bboxes"] = np.append(
-            detections[SEQ_IDX]["bboxes"],
-            [[0.0, 0.0, 0.3, 0.5]],
-            axis=0,
-        )
-        detections[SEQ_IDX]["bbox_scores"] = np.append(
-            detections[SEQ_IDX]["bbox_scores"], [0.4], axis=0
+            detections[SEQ_IDX]["bboxes"], [[0.0, 0.0, 0.3, 0.5]], axis=0
         )
         tracking_config["tracking_type"] = "mosse"
         tracker = Node(tracking_config)

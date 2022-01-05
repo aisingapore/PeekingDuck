@@ -27,14 +27,13 @@ class Node(AbstractNode):
     multiple objects.
 
     Currently, two types of tracking algorithms can be selected: MOSSE, IOU.
-
-    Please view each tracker's script, or the "Multi Object Tracking" use case
-    documentation for more details.
+    Information on the algorithms' performance can be found
+    :ref:`here <object-tracking-benchmarks>`.
 
     Inputs:
-        |bboxes|
+        |img|
 
-        |bbox_scores|
+        |bboxes|
 
     Outputs:
         |obj_tags|
@@ -42,12 +41,18 @@ class Node(AbstractNode):
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
             Type of tracking algorithm to be used. For more information about
-            the trackers, please view the use case documentation.
+            the trackers, please view the `multi object tracking usecase
+            <use_cases/multi_object_tracking.html>`_.
+        iou_threshold (float): **[0, 1], default=0.1**. |br|
+            Minimum IoU value to be used with the matching logic.
+        max_lost (int): **[0, sys.maxsize), default=10**. |br|
+            Maximum number of frames to keep "lost" tracks after which they
+            will be removed. Only used when ``tracking_type = iou``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.tracker = DetectionTracker(self.tracking_type)
+        self.tracker = DetectionTracker(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Tracks detection bounding boxes.
@@ -73,5 +78,5 @@ class Node(AbstractNode):
 
     def _reset_model(self) -> None:
         """Creates a new instance of DetectionTracker."""
-        self.logger.info(f"Creating new {self.tracking_type} tracker...")
-        self.tracker = DetectionTracker(self.tracking_type)
+        self.logger.info(f"Creating new {self.config['tracking_type']} tracker...")
+        self.tracker = DetectionTracker(self.config)

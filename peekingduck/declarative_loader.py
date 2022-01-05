@@ -22,7 +22,7 @@ import importlib
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 
 import yaml
 
@@ -30,7 +30,7 @@ from peekingduck.configloader import ConfigLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 
-PEEKINGDUCK_NODE_TYPES = ["input", "model", "draw", "dabble", "output"]
+PEEKINGDUCK_NODE_TYPES = ["input", "preprocess", "model", "draw", "dabble", "output"]
 
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods
@@ -78,22 +78,28 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
             self.custom_nodes_dir = custom_nodes_dir
 
-    def _load_node_list(self, run_config_path: Path) -> List[str]:
+    def _load_node_list(self, run_config_path: Path) -> "NodeList":
         """Loads a list of nodes from run_config_path.yml"""
         with open(run_config_path) as node_yml:
-            nodes = yaml.safe_load(node_yml)["nodes"]
+            data = yaml.safe_load(node_yml)
+        if not isinstance(data, dict) or "nodes" not in data:
+            raise ValueError(
+                f"{run_config_path} has an invalid structure. "
+                "Missing top-level 'nodes' key."
+            )
+
+        nodes = data["nodes"]
+        if nodes is None:
+            raise ValueError(f"{run_config_path} does not contain any nodes!")
 
         self.logger.info("Successfully loaded run_config file.")
-        return nodes
+        return NodeList(nodes)
 
     def _get_custom_name_from_node_list(self) -> Any:
         custom_name = None
 
-        for node in self.node_list:
-            if isinstance(node, dict):
-                node_type = [*node][0].split(".")[0]
-            else:
-                node_type = node.split(".")[0]
+        for node_str, _ in self.node_list:
+            node_type = node_str.split(".")[0]
 
             if node_type not in PEEKINGDUCK_NODE_TYPES:
                 custom_name = node_type
@@ -105,16 +111,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         """Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
 
-        for node_item in self.node_list:
-            if isinstance(node_item, dict):
-                # node_str = list(node_item.keys())[0]
-                node_str = next(iter(node_item))
-                config_updates_yml = node_item[node_str]
-            else:
-                node_str = node_item
-                config_updates_yml = None
-
+        for node_str, config_updates_yml in self.node_list:
             node_str_split = node_str.split(".")
+
             self.logger.info(f"Initialising {node_str} node...")
 
             if len(node_str_split) == 3:
@@ -201,3 +200,32 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         except ValueError as error:
             self.logger.error(str(error))
             sys.exit(1)
+
+
+class NodeList:
+    """Iterator class to return node string and node configs (if any) from the
+    nodes declared in the run config file.
+    """
+
+    def __init__(self, nodes: List[Union[Dict[str, Any], str]]) -> None:
+        self.nodes = nodes
+        self.length = len(nodes)
+
+    def __iter__(self) -> Iterator[Tuple[str, Optional[Dict[str, Any]]]]:
+        self.current = -1
+        return self
+
+    def __next__(self) -> Tuple[str, Optional[Dict[str, Any]]]:
+        self.current += 1
+        if self.current >= self.length:
+            raise StopIteration
+        node_item = self.nodes[self.current]
+
+        if isinstance(node_item, dict):
+            node_str = next(iter(node_item))
+            config_updates = node_item[node_str]
+        else:
+            node_str = node_item
+            config_updates = None
+
+        return node_str, config_updates

@@ -427,9 +427,21 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         return module_defs
 
     @staticmethod
-    def _postprocess(
-        tlwhs: np.ndarray, image_shape: Tuple[int, ...]
-    ) -> List[np.ndarray]:
+    def _postprocess(tlwhs: np.ndarray, image_shape: Tuple[int, ...]) -> np.ndarray:
+        """Post-processes detection bounding boxes by converting them from
+        [t, l, w, h] to normalised [x1, y1, x2, y2] format which is required by
+        other PeekingDuck draw nodes. (t, l) is the top-left corner, w is
+        width, and h is height. (x1, y1) is the top-left corner and (x2, y2) is
+        the bottom-right corner.
+
+        Args:
+            tlwhs (np.ndarray): Bounding boxes in [t, l, w, h] format.
+            image_shape (Tuple[int, ...]): Dimensions of the original video
+                frame.
+
+        Returns:
+            (np.ndarray): Bounding boxes in normalised [x1, y1, x2, y2] format.
+        """
         return tlwh2xyxyn(tlwhs, *image_shape)
 
 

@@ -42,9 +42,6 @@ class Node(AbstractNode):
         |obj_tags|
 
     Configs:
-        model_type (:obj:`str`): **{"576x320", "865x480", "1088x608},
-            default="576x320"**. |br|
-            Defines the type of JDE model to be used.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
