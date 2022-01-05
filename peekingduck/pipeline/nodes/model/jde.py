@@ -12,24 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Human detection and tracking model.
-"""
+"""Human detection and tracking model."""
 
+from pathlib import Path
 from typing import Any, Dict
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.model.jdev1 import jde_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialise and use the JDE model to detect and track people from
-    image frame.
+    """Initialises and uses JDE tracking model to detect and track people from
+    the supplied image frame.
 
-    The JDE model node allows target detection and appearance embedding
-    to be learned in a shared model. In addition, the authors further
-    propose a simple and fast association method that works in conjunction
-    with the joint model. This implementation is inference only, and any
-    training code is stripped from the repository and model weights.
+    JDE is a fast and high-performance multiple-object tracker that learns the
+    object detection task and appearance embedding task simultaneously in a
+    shared neural network.
 
     Inputs:
         |img|
@@ -37,58 +35,87 @@ class Node(AbstractNode):
     Outputs:
         |bboxes|
 
-        |obj_tags|
-
         |bbox_labels|
 
+        |bbox_scores|
+
+        |obj_tags|
+
     Configs:
-        weights_dir (:obj:`List`):
-            Directory pointing to the model weights.
-        blob_file (:obj:`str`):
-            Mame of file to be downloaded, if weights are not found in
-            ``weights_dir``.
-        model_files (:obj:`Dict`):
-            Dictionary pointing to path of the model weights file and model
-            config file.
+        weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         iou_threshold (:obj:`float`): **default = 0.5**. |br|
-            Threshold value for intersecton over union of detections.
-        score_threshold (:obj:`float`): **default = 0.5**. |br|
-            Object confidence score threshold.
+            Threshold value for Intersecton-over-Union of detections.
         nms_threshold (:obj:`float`): **default = 0.4**. |br|
             Threshold values for non-max suppression.
+        score_threshold (:obj:`float`): **default = 0.5**. |br|
+            Object confidence score threshold.
         min_box_area (:obj:`int`): **default = 200**. |br|
-            Minimum value for area of detected bounding box. Calculated
-            by width * height.
+            Minimum value for area of detected bounding box. Calculated by
+            width * height.
         track_buffer (:obj:`int`): **default = 30**. |br|
             Threshold to remove track if track is lost for more frames
             than value.
 
     References:
         Towards Real-Time Multi-Object Tracking:
-            https://arxiv.org/abs/1909.12605v2
+        https://arxiv.org/abs/1909.12605v2
 
         Model weights trained by:
-            https://github.com/Zhongdao/Towards-Realtime-MOT
+        https://github.com/Zhongdao/Towards-Realtime-MOT
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = jde_model.JDEModel(self.config)
+        self._frame_rate = 30.0
+        self.config["root"] = Path(__file__).resolve().parents[4]
+
+        self.model = jde_model.JDEModel(self.config, self._frame_rate)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Runs JDE model per frame.
+        """Tracks objects from image.
+
+        Specifically for use with MOT evaluation, will attempt to get optional
+        input `mot_metadata` and recreate `JDEModel` with the appropriate
+        frame rate when necessary.
 
         Args:
-            inputs (Dict[str, Any]): Inputs from nodes before JDE.
+            inputs (Dict[str, Any]): Dictionary with keys "img". When running
+                under MOT evaluation, contains "mot_metadata" key as well.
 
         Returns:
-            Dict[str, Any]: Output dict of model predictions.
+            outputs (dict): Dictionary containing:
+            - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
+            - bbox_labels (List[str]): Tracking IDs, for compatibility with
+                draw nodes.
+            - bbox_scores (List[float]): Detection confidence scores.
+            - obj_tags (List[str]): Tracking IDs, specifically for use
+                with `mot_evaluator`.
         """
-        bboxes, obj_tags, labels = self.model.predict(inputs["img"])
-        outputs = {
+        metadata = inputs.get(
+            "mot_metadata", {"frame_rate": self._frame_rate, "reset_model": False}
+        )
+        frame_rate = metadata["frame_rate"]
+        reset_model = metadata["reset_model"]
+
+        if frame_rate != self._frame_rate or reset_model:
+            self._frame_rate = frame_rate
+            self._reset_model()
+
+        bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        return {
             "bboxes": bboxes,
-            "obj_tags": obj_tags,
-            "bbox_labels": labels,
+            "bbox_labels": bbox_labels,
+            "bbox_scores": bbox_scores,
+            "obj_tags": track_ids,
         }
 
-        return outputs
+    def _reset_model(self) -> None:
+        """Creates a new instance of the JDE model with the frame rate
+        supplied by `mot_metadata`.
+        """
+        self.logger.info(
+            f"Creating new model with frame rate: {self._frame_rate:.2f}..."
+        )
+        self.model = jde_model.JDEModel(self.config, self._frame_rate)

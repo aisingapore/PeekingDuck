@@ -2,12 +2,25 @@
 #
 export READTHEDOCS=1
 
+# HTML Documentation Technotes:
+# - exec `make html` from docs/ to generate html documentation
+# - first run will display a number of warnings (normal behavior)
+# - second and subsequent runs should not display any warnings
+
 # You can set these variables from the command line, and also
 # from the environment for the first two.
 SPHINXOPTS    ?=
 SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
+
+# Clean up intermediate system-generated docs in source/ and build/
+clean:
+	@echo "clean $(SOURCEDIR)..."
+	@rm -rf $(SOURCEDIR)/peekingduck*.rst
+	@echo "clean $(BUILDDIR)..."
+	@rm -rf $(BUILDDIR)/doctrees
+	@rm -rf $(BUILDDIR)/html
 
 # Put it first so that "make" without argument is like "make help".
 help:

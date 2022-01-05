@@ -95,10 +95,7 @@ class Runner:
         num_iter = 0
         while not self.pipeline.terminate:
             for node in self.pipeline.nodes:
-                if (
-                    "pipeline_end" in self.pipeline.data
-                    and self.pipeline.data["pipeline_end"]
-                ):
+                if self.pipeline.data.get("pipeline_end", False):
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
                         continue
@@ -111,6 +108,12 @@ class Runner:
                         for key in node.inputs
                         if key in self.pipeline.data
                     }
+                if hasattr(node, "optional_inputs"):
+                    for key in node.optional_inputs:
+                        # The nodes will not receive inputs with the optional
+                        # key if it's not found upstream
+                        if key in self.pipeline.data:
+                            inputs[key] = self.pipeline.data[key]
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
