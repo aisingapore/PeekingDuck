@@ -16,10 +16,12 @@
 Fast Pose Estimation model
 """
 
-from typing import Dict, Any
+from typing import Any, Dict
+
 import numpy as np
-from peekingduck.pipeline.nodes.node import AbstractNode
+
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):

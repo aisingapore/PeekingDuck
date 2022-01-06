@@ -15,7 +15,8 @@
 """MoveNet model with model types: singlepose lightning/thunder, multipose lightning"""
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
+
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
@@ -26,7 +27,6 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
     """MoveNet model with model types: lightning, thunder"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
@@ -40,8 +40,8 @@ class MoveNetModel:  # pylint: disable=too-few-public-methods
             "multipose_lightning",
         ]:
             raise ValueError(
-                """model_type must be one of
-                ["singlepose_lightning","singlepose_thunder","multipose_lightning"]"""
+                "model_type must be one of ['singlepose_lightning', "
+                "'singlepose_thunder', 'multipose_lightning']"
             )
 
         weights_dir, model_dir = finder.find_paths(

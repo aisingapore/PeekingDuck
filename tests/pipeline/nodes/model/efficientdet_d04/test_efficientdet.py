@@ -1,50 +1,36 @@
-"""
-Copyright 2021 AI Singapore
+# Copyright 2021 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-     https://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
-"""
-
+import json
 from pathlib import Path
 
 import cv2
-import json
 import numpy as np
 import numpy.testing as npt
 import pytest
 import yaml
 
 from peekingduck.pipeline.nodes.model.efficientdet import Node
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
-    Detector,
-)
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.model import (
-    efficientdet as edet,
+from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
+    detector,
+    model,
 )
 
 
 @pytest.fixture
 def efficientdet_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "efficientdet_d04"
-        / "test_efficientdet.yml"
-    )
-
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_efficientdet.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 
@@ -60,31 +46,32 @@ def model_dir(efficientdet_config):
     )
 
 
-@pytest.fixture(params=[0, 1, 2, 3, 4])
-def efficientdet(request, efficientdet_config):
-    efficientdet_config["model_type"] = request.param
-    node = Node(efficientdet_config)
-
-    return node
-
-
-@pytest.fixture()
-def efficientdet_detector(efficientdet_config, model_dir):
-    efficientdet_config["model_type"] = 0
+@pytest.fixture
+def class_names(efficientdet_config, model_dir):
     classes_path = model_dir / efficientdet_config["weights"]["classes_file"]
-    class_names = {
+    return {
         val["id"] - 1: val["name"]
         for val in json.loads(Path(classes_path).read_text()).values()
     }
-    detector = Detector(efficientdet_config, model_dir, class_names)
 
-    return detector
+
+@pytest.fixture(params=[0, 1, 2, 3, 4])
+def efficientdet_type(request, efficientdet_config):
+    efficientdet_config["model_type"] = request.param
+    return efficientdet_config
+
+
+@pytest.fixture
+def efficientdet_type_0(efficientdet_config):
+    efficientdet_config["model_type"] = 0
+    return efficientdet_config
 
 
 @pytest.mark.mlmodel
 class TestEfficientDet:
-    def test_no_human_image(self, test_no_human_images, efficientdet):
+    def test_no_human_image(self, test_no_human_images, efficientdet_type):
         blank_image = cv2.imread(test_no_human_images)
+        efficientdet = Node(efficientdet_type)
         output = efficientdet.run({"img": blank_image})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
@@ -97,9 +84,10 @@ class TestEfficientDet:
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
     def test_return_at_least_one_person_and_one_bbox(
-        self, test_human_images, efficientdet
+        self, test_human_images, efficientdet_type
     ):
         test_img = cv2.imread(test_human_images)
+        efficientdet = Node(efficientdet_type)
         output = efficientdet.run({"img": test_img})
         assert "bboxes" in output
         assert "bbox_labels" in output
@@ -108,9 +96,14 @@ class TestEfficientDet:
         assert output["bbox_labels"].size != 0
         assert output["bbox_scores"].size != 0
 
-    def test_efficientdet_preprocess(self, create_image, efficientdet_detector):
+    def test_efficientdet_preprocess(
+        self, create_image, efficientdet_type_0, model_dir, class_names
+    ):
         test_img1 = create_image((720, 1280, 3))
         test_img2 = create_image((640, 480, 3))
+        efficientdet_detector = detector.Detector(
+            efficientdet_type_0, model_dir, class_names
+        )
         actual_img1, actual_scale1 = efficientdet_detector.preprocess(test_img1, 512)
         actual_img2, actual_scale2 = efficientdet_detector.preprocess(test_img2, 512)
 
@@ -121,7 +114,9 @@ class TestEfficientDet:
         assert actual_scale1 == 0.4
         assert actual_scale2 == 0.8
 
-    def test_efficientdet_postprocess(self, efficientdet_detector):
+    def test_efficientdet_postprocess(
+        self, efficientdet_type_0, model_dir, class_names
+    ):
         output_bbox = np.array([[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]])
         output_label = np.array([0, 0])
         output_score = np.array([0.9, 0.2])
@@ -129,6 +124,9 @@ class TestEfficientDet:
         scale = 0.5
         img_shape = (720, 1280)
         detect_ids = [0]
+        efficientdet_detector = detector.Detector(
+            efficientdet_type_0, model_dir, class_names
+        )
         boxes, labels, scores = efficientdet_detector.postprocess(
             network_output, scale, img_shape, detect_ids
         )
@@ -144,10 +142,10 @@ class TestEfficientDet:
 
     def test_efficientdet_model_initializations(self):
         test_models = {}
-        test_models["normal"] = edet(1)
-        test_models["weighted"] = edet(1, weighted_bifpn=False)
-        test_models["detect_quadrangle"] = edet(1, detect_quadrangle=True)
-        test_models["no_separable_conv"] = edet(1, separable_conv=False)
+        test_models["normal"] = model.efficientdet(1)
+        test_models["weighted"] = model.efficientdet(1, weighted_bifpn=False)
+        test_models["detect_quadrangle"] = model.efficientdet(1, detect_quadrangle=True)
+        test_models["no_separable_conv"] = model.efficientdet(1, separable_conv=False)
 
         for key in test_models:
             assert test_models[key] is not None

@@ -26,9 +26,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
 )
 
 TEST_DIR = Path.cwd() / "images"
-NP_FILE = np.load(
-    Path.cwd() / "tests" / "pipeline" / "nodes" / "model" / "posenetv1" / "posenet.npz"
-)
+NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
 
 
 @pytest.fixture
