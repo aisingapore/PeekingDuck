@@ -30,17 +30,7 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import
 
 @pytest.fixture
 def efficientdet_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "efficientdet_d04"
-        / "test_efficientdet.yml"
-    )
-
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_efficientdet.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 

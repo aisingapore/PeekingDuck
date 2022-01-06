@@ -29,16 +29,7 @@ from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector impor
 
 @pytest.fixture
 def yolo_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "yolov4_face"
-        / "test_yolo_face.yml"
-    )
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_yolo_face.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 

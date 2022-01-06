@@ -26,15 +26,7 @@ from peekingduck.pipeline.nodes.model.posenet import Node
 
 @pytest.fixture
 def posenet_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "posenetv1"
-        / "test_posenet.yml"
-    )
+    filepath = Path(__file__).resolve().parent / "test_posenet.yml"
     with open(filepath) as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()

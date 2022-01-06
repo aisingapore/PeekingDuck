@@ -27,16 +27,7 @@ from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detect
 
 @pytest.fixture
 def mtcnn_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "mtcnnv1"
-        / "test_mtcnn.yml"
-    )
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_mtcnn.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 

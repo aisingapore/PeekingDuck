@@ -28,16 +28,9 @@ from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.de
 
 @pytest.fixture
 def yolo_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "yolov4_license_plate"
-        / "test_yolov4_license_plate.yml"
-    )
-    with open(filepath) as file:
+    with open(
+        Path(__file__).resolve().parent / "test_yolov4_license_plate.yml"
+    ) as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 

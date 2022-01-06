@@ -25,16 +25,7 @@ from peekingduck.pipeline.nodes.model.hrnet import Node
 
 @pytest.fixture
 def hrnet_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "hrnetv1"
-        / "test_hrnet.yml"
-    )
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_hrnet.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 

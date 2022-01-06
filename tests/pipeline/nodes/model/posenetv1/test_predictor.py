@@ -28,16 +28,7 @@ TEST_DIR = Path.cwd() / "images" / "testing"
 
 @pytest.fixture
 def posenet_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "posenetv1"
-        / "test_posenet.yml"
-    )
-    with open(filepath) as file:
+    with open(Path(__file__).resolve().parent / "test_posenet.yml") as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
     return node_config

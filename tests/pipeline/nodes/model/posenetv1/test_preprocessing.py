@@ -28,9 +28,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing impo
 )
 
 TEST_DIR = Path.cwd() / "images" / "testing"
-NP_FILE = np.load(
-    Path.cwd() / "tests" / "pipeline" / "nodes" / "model" / "posenetv1" / "posenet.npz"
-)
+NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
 MOBILENET_MODELS = [50, 75, 100]
 
 
