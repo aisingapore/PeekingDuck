@@ -167,7 +167,6 @@ class TestMoveNet:
             )
         assert output["bbox_labels"] == ["Person"]
         ground_truth = GT_RESULTS[model_type][single_person_image]
-        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
         for key in ("bboxes", "keypoints", "keypoint_scores", "keypoint_conns"):
             gt_values = np.asarray(ground_truth[key])
             npt.assert_allclose(
@@ -179,6 +178,7 @@ class TestMoveNet:
                     f"expected {gt_values} got {output[key]}"
                 ),
             )
+        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
         assert (output["bbox_labels"] == ground_truth_bbox_labels).all(), (
             f"unexpected output for bbox_labels: expected {ground_truth_bbox_labels} "
             f"got {output['bbox_labels']}"
@@ -199,8 +199,6 @@ class TestMoveNet:
             ), f"unexpected number of outputs for {i} in multipose"
         npt.assert_array_equal(output["bbox_labels"], "Person")
         ground_truth = GT_RESULTS[model_type][multi_person_image]
-        ground_truth_keypoint_conns = np.asarray(ground_truth["keypoint_conns"])
-        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
         for key in ("bboxes", "keypoints", "keypoint_scores"):
             gt_values = ground_truth[key]
             npt.assert_allclose(
@@ -220,6 +218,7 @@ class TestMoveNet:
         # a list of different length of lists are converted to numpy array.
         # Thus, iterate through the detections and convert the inner List into numpy array before
         # assert testing.
+        ground_truth_keypoint_conns = np.asarray(ground_truth["keypoint_conns"])
         for i in range(output["keypoint_conns"].shape[0]):
             npt.assert_allclose(
                 actual=np.asarray(output["keypoint_conns"][i]),
@@ -231,6 +230,7 @@ class TestMoveNet:
                     f"expected {np.asarray(ground_truth_keypoint_conns[i])} got {np.asarray(output['keypoint_conns'][i])}"
                 ),
             )
+        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
         assert (output["bbox_labels"] == ground_truth_bbox_labels).all(), (
             f"unexpected output for bbox_labels: expected {ground_truth_bbox_labels} "
             f"got {output['bbox_labels']}"
