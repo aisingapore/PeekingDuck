@@ -24,7 +24,7 @@ show_coverage() {
     fi
 }
 
-run_test() {
+run_tests_batch() {
     # runs pytest together with coverage, allows multiple configurations
     # showCoverage: type(bool) - whether to show coverage
     # testType: type(str) - type of test suite to run
@@ -44,7 +44,7 @@ run_test() {
     exit 0
 }
 
-iterate_run_test() {
+run_tests_iteratively() {
     # Iteratively run a fresh pytest instance for each test script marked as
     # mlmodel due to memory constraints. Then runs the rest of the tests in two
     # batches: "not mlmodel and not module" and "module".
@@ -81,19 +81,19 @@ echo "Running ${selectedTest} tests in ${TEST_DIR}"
 
 case "${selectedTest}" in 
     "all")
-        run_test "" true
+        run_tests_batch "" true
         ;;
     "mlmodel")
-        run_test "mlmodel" false
+        run_tests_batch "mlmodel" false
         ;;
     "module")
-        run_test "module" false
+        run_tests_batch "module" false
         ;;
     "post_merge")
-        iterate_run_test true
+        run_tests_iteratively true
         ;;
     "unit")
-        run_test "not mlmodel and not module" false
+        run_tests_batch "not mlmodel and not module" false
         ;;
     *)
         echo "'${selectedTest}' is an illegal argument, choose from: ${ALLOWED_EXT[@]}"
