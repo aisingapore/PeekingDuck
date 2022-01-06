@@ -72,10 +72,6 @@ def yolox_config_cpu(request, yolox_matrix_config):
         yield yolox_matrix_config
 
 
-def replace_download_weights(*_):
-    pass
-
-
 @pytest.mark.mlmodel
 class TestYOLOX:
     def test_no_human_image(self, test_no_human_images, yolox_config_cpu):
@@ -130,7 +126,7 @@ class TestYOLOX:
         yolox = Node(yolox_config)
         assert yolox.model.detect_ids == [0]
 
-    def test_no_weights(self, yolox_config):
+    def test_no_weights(self, yolox_config, replace_download_weights):
         weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False

@@ -42,10 +42,6 @@ def model_dir(csrnet_config):
     )
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestCsrnet:
     def test_no_human(self, test_no_human_images, csrnet_config):
@@ -65,7 +61,7 @@ class TestCsrnet:
         assert list(output.keys()) == ["density_map", "count"]
         assert output["count"] >= 10
 
-    def test_no_weights(self, csrnet_config):
+    def test_no_weights(self, csrnet_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

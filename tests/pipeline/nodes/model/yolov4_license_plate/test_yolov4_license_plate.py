@@ -52,10 +52,6 @@ def yolo_type(request, yolo_config):
     return yolo_config
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestLPYolo:
     def test_no_lp_image(self, test_no_lp_images, yolo_type):
@@ -79,7 +75,7 @@ class TestLPYolo:
         assert len(output["bboxes"]) != 0
         assert len(output["bboxes"]) == len(output["bbox_labels"])
 
-    def test_no_weights(self, yolo_config):
+    def test_no_weights(self, yolo_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

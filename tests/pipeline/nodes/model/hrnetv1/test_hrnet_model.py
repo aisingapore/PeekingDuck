@@ -30,13 +30,9 @@ def hrnet_config():
     return node_config
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestHrnetModel:
-    def test_no_weights(self, hrnet_config):
+    def test_no_weights(self, hrnet_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

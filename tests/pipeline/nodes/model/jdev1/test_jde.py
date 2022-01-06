@@ -74,10 +74,6 @@ def jde_bad_config_value(request, jde_config):
     return jde_config
 
 
-def replace_download_weights(*_):
-    pass
-
-
 def replace_fuse_motion(*args):
     """Manipulate the computed embedding distance so they are too large and
     cause none of the detections to be associated. This forces the Tracker to
@@ -289,7 +285,7 @@ class TestJDE:
             _ = jde.run({"img": ("image name", blank_image)})
         assert str(excinfo.value) == "image must be a np.ndarray"
 
-    def test_no_weights(self, jde_config):
+    def test_no_weights(self, jde_config, replace_download_weights):
         weights_dir = jde_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False

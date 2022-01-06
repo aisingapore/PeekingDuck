@@ -43,10 +43,6 @@ def model_dir(mtcnn_config):
     )
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestMtcnn:
     def test_no_human_face_image(self, test_no_human_images, mtcnn_config):
@@ -72,7 +68,7 @@ class TestMtcnn:
         assert "bboxes" in output
         assert output["bboxes"].size != 0
 
-    def test_no_weights(self, mtcnn_config):
+    def test_no_weights(self, mtcnn_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

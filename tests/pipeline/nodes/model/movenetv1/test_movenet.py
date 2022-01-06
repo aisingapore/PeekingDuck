@@ -83,10 +83,6 @@ def movenet_config_multi(request, movenet_config):
     return movenet_config, movenet_config["model_type"]
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestMoveNet:
     def test_no_human_single(self, empty_image, movenet_config_single):
@@ -111,7 +107,7 @@ class TestMoveNet:
                 ),
             )
 
-    def test_no_weights(self, movenet_config):
+    def test_no_weights(self, movenet_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

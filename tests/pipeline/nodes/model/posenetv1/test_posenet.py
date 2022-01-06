@@ -52,10 +52,6 @@ def posenet_bad_config_value(request, posenet_config):
     return posenet_config
 
 
-def replace_download_weights(*_):
-    return False
-
-
 @pytest.mark.mlmodel
 class TestPoseNet:
     def test_no_detection(self, test_no_human_images, posenet_type):
@@ -88,7 +84,7 @@ class TestPoseNet:
         for label in output["bbox_labels"]:
             assert label == "Person"
 
-    def test_no_weights(self, posenet_config):
+    def test_no_weights(self, posenet_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(
