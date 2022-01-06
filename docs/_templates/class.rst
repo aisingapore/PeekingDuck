@@ -55,8 +55,8 @@
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
 
-.. |obj_tags| replace:: ``obj_tags`` (:obj:`List[str]`): A list of strings to be added to a
-   bounding box for display. The order of the tags follow the order of ``bboxes``.
+.. |obj_tags| replace:: ``obj_tags`` (:obj:`List[str]`): A list of strings representing characteristics
+   of each bounding box. The order of the tags follow the order of ``bboxes``.
 
 .. |zones| replace:: ``zones`` (:obj:`List[List[Tuple[float, ...]]]`): A nested list of
    coordinates, with each sub-list containing the coordinates (x, y) representing the points that
