@@ -126,15 +126,15 @@ def run(
     else:
         run_config_path = Path(config_path)
 
-    st = perf_counter()
+    start_time = perf_counter()
     runner = Runner(
         run_config_path=run_config_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
     )
-    et = perf_counter()
-    logger.info(f"Startup delay = {et - st:.2f} sec")
+    end_time = perf_counter()
+    logger.info(f"Startup delay = {end_time - start_time:.2f} sec")
     runner.run()
 
 
