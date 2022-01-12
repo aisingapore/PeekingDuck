@@ -319,6 +319,6 @@ class TestCli:
             assert captured.records[1].getMessage() == init_msg(PKD_NODE)
             assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
             assert (
-                captured.records[-2].getMessage() == f"Run pipeline for {n} iterations"
+                captured.records[3].getMessage() == f"Run pipeline for {n} iterations"
             )
             assert result.exit_code == 0
