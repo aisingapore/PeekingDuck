@@ -91,7 +91,7 @@ class Runner:
             self.num_iter = num_iter
             self.logger.info(f"Run pipeline for {num_iter} iterations")
 
-    def run(self) -> None:
+    def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
         num_iter = 0
         while not self.pipeline.terminate:
