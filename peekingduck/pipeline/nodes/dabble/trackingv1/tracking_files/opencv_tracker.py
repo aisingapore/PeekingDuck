@@ -45,14 +45,14 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         self.next_track_id = 0
         self.tracks: Dict[int, Track] = {}
 
-    def track_detections(self, inputs: Dict[str, Any]) -> List[str]:
+    def track_detections(self, inputs: Dict[str, Any]) -> List[int]:
         """Initialises and updates the tracker on each frame.
 
         Args:
             inputs (Dict[str, Any]): Dictionary with keys "img" and "boxes".
 
         Returns:
-            (List[str]): Tracking IDs of the detection bounding boxes.
+            (List[int]): Tracking IDs of the detection bounding boxes.
         """
         frame = inputs["img"]
         frame_size = frame.shape[:2]
@@ -63,7 +63,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         else:
             for tlwh in tlwhs:
                 self._initialise_tracker(frame, tlwh)
-            obj_track_ids = list(map(str, self.tracks.keys()))
+            obj_track_ids = list(self.tracks.keys())
             self.is_initialised = True
         self._update_tracker_bboxes(frame)
 
@@ -81,7 +81,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         self.tracks[self.next_track_id] = Track(tracker, bbox)
         self.next_track_id += 1
 
-    def _match_and_track(self, frame: np.ndarray, bboxes: np.ndarray) -> List[str]:
+    def _match_and_track(self, frame: np.ndarray, bboxes: np.ndarray) -> List[int]:
         """Matches detections to tracked bboxes, creates a new track if no
         match is found.
 
@@ -93,7 +93,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
                 respectively.
 
         Returns:
-            (List[str]): A list of track IDs for the detections in the current
+            (List[int]): A list of track IDs for the detections in the current
                 frame.
         """
         obj_track_ids = [""] * len(bboxes)
@@ -111,9 +111,9 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         for bbox, matched_id in matching_dict.items():
             if matched_id is None:
                 self._initialise_tracker(frame, np.array(bbox))
-                track_ids.append(str(list(self.tracks)[-1]))
+                track_ids.append(list(self.tracks)[-1])
             else:
-                track_ids.append(str(list(self.tracks)[matched_id]))
+                track_ids.append(list(self.tracks)[matched_id])
 
         for i, track_id in enumerate(track_ids):
             if track_id not in obj_track_ids:

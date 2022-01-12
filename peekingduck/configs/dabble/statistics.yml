@@ -1,0 +1,19 @@
+input: ["all"]
+output: ["avg", "min", "max"]
+
+# how to deal with lists
+mode: conditional_count #len, conditional_count, nothing
+condition: "TOO CLOSE!" 
+attribute: {
+  primary_key: obj_tags,
+  secondary_key: groups
+}
+
+# "per_frame": "avg", "min", "max"
+# "tracking": "sum"
+
+# count = 8
+# large_groups = [5, 4]                           -> len() = 2
+# obj_tags["groups"] = [5, 5, 5, 4, 4, 4, 4, 4]   -> len() = 8
+# obj_tags["flags"] = ["CLOSE!", "", "CLOSE!"]    -> obj_tags["flags"].count("CLOSE!") = 2
+# obj_tags["ids"] = [0, 2, 4, 5, 6]               -> max() = 6

@@ -54,7 +54,7 @@ class Node(AbstractNode):
 
         If an object is close to another, tag it.
         """
-        obj_tags = [""] * len(inputs["obj_3D_locs"])
+        obj_flags = [""] * len(inputs["obj_3D_locs"])
 
         for idx_1, loc_1 in enumerate(inputs["obj_3D_locs"]):
             for idx_2, loc_2 in enumerate(inputs["obj_3D_locs"]):
@@ -63,7 +63,7 @@ class Node(AbstractNode):
 
                 dist_bet = np.linalg.norm(loc_1 - loc_2)
                 if dist_bet < self.near_threshold:
-                    obj_tags[idx_1] = self.tag_msg
+                    obj_flags[idx_1] = self.tag_msg
                     break
 
-        return {"obj_tags": obj_tags}
+        return {"obj_tags": {"flags": obj_flags}}

@@ -49,14 +49,14 @@
 .. |obj_3D_locs| replace:: ``obj_3D_locs`` (:obj:`List[numpy.ndarray]`): A list of N numpy arrays
    representing the 3D coordinates (x, y, z) of an object associated with a detected bounding box.
 
-.. |obj_groups| replace:: ``obj_groups`` (:obj:`List[int]`): A list of integers representing the
-   assigned group number of an object associated with a detected bounding box.
-
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
 
-.. |obj_tags| replace:: ``obj_tags`` (:obj:`List[str]`): A list of strings to be added to a
-   bounding box for display. The order of the tags follow the order of ``bboxes``.
+.. |obj_tags| replace:: ``obj_tags`` (:obj:`Dict[str, List[Any]]`): A dictionary of attributes
+   associated with each bounding box, in the same order as ``bboxes``. Different nodes that 
+   produce this ``obj_tags`` output type may contribute different attributes. For example, 
+   ``dabble.tracking`` produces the ``ids`` attribute while ``dabble.check_nearby_objs`` produces 
+   the ``flags`` attribute.
 
 .. |zones| replace:: ``zones`` (:obj:`List[List[Tuple[float, ...]]]`): A nested list of
    coordinates, with each sub-list containing the coordinates (x, y) representing the points that
@@ -68,6 +68,8 @@
 
 .. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A numpy array that represents
    the number of persons per pixel. The sum of the array returns the total estimated count of people.
+
+.. |all| replace:: ``all`` (:obj:`Any`): Receive inputs from all preceding nodes in the pipeline.
 
 .. |none| replace:: ``none``: No inputs required, or no additional outputs produced.
    Used for ``input`` nodes that require no prior inputs, or ``draw`` nodes that overwrite current

@@ -31,8 +31,7 @@ class Node(AbstractNode):
     draws fps, object counts and object count in zones.
 
     Inputs:
-        ``all`` (:obj:`Any`): Receives inputs from all preceding outputs to use as
-        dynamic input for legend creation.
+        |all|
 
     Outputs:
         |none|

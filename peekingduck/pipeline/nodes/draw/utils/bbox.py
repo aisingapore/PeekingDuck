@@ -17,7 +17,7 @@
 functions for drawing bounding box related UI components
 """
 
-from typing import List, Tuple
+from typing import Any, List, Tuple
 
 import cv2
 import numpy as np
@@ -130,7 +130,7 @@ def _draw_label(
 def draw_tags(
     frame: np.ndarray,
     bboxes: np.ndarray,
-    tags: List[str],
+    tags: List[Any],
     colour: Tuple[int, int, int],
 ) -> None:
     """Draw tags above bboxes.
@@ -138,12 +138,12 @@ def draw_tags(
     Args:
         frame (np.ndarray): image of current frame
         bboxes (np.ndarray): bounding box coordinates
-        tags (List[string]): tag associated with bounding box
+        tags (List[Any]): tag associated with bounding box
         color (Tuple[int, int, int]): color of text
     """
     image_size = get_image_size(frame)
     for idx, bbox in enumerate(bboxes):
-        _draw_tag(frame, bbox, tags[idx], image_size, colour)
+        _draw_tag(frame, bbox, str(tags[idx]), image_size, colour)
 
 
 def _draw_tag(

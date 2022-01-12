@@ -40,11 +40,13 @@ class Node(AbstractNode):
         |none|
 
     Configs:
-        None.
+        attribute (:obj:`str`): **default = "labels"**. |br|
+            Key from the ``obj_tags`` dictionary, of which the values will be drawn.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.attribute = self.config["attribute"]
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.
@@ -55,6 +57,14 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
-        draw_tags(inputs["img"], inputs["bboxes"], inputs["obj_tags"], TOMATO)
+        if self.attribute not in inputs["obj_tags"]:
+            raise ValueError(
+                f"attribute: {self.attribute} is not a valid key in obj_tags, "
+                f"obj_tags only has {inputs['obj_tags'].keys()}"
+            )
+
+        draw_tags(
+            inputs["img"], inputs["bboxes"], inputs["obj_tags"][self.attribute], TOMATO
+        )
 
         return {}

@@ -201,8 +201,8 @@ class IOUTracker:
             tracks (List[Track]): List of tracked detections.
 
         Returns:
-            (List[str]): Track IDs of the detections in the current frame.
+            (List[int]): Track IDs of the detections in the current frame.
         """
         bbox_to_track_id = {tuple(track.bbox): track.track_id for track in tracks}
-        track_ids = [str(bbox_to_track_id[bbox]) for bbox in map(tuple, bboxes)]
+        track_ids = [bbox_to_track_id[bbox] for bbox in map(tuple, bboxes)]
         return track_ids

@@ -74,7 +74,7 @@ class Node(AbstractNode):
 
         track_ids = self.tracker.track_detections(inputs)
 
-        return {"obj_tags": track_ids}
+        return {"obj_tags": {"ids": track_ids}}
 
     def _reset_model(self) -> None:
         """Creates a new instance of DetectionTracker."""
