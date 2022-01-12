@@ -134,7 +134,7 @@ def run(
         num_iter=num_iter,
     )
     end_time = perf_counter()
-    logger.info(f"Startup delay = {end_time - start_time:.2f} sec")
+    logger.info(f"Startup time = {end_time - start_time:.2f} sec")
     runner.run()
 
 
