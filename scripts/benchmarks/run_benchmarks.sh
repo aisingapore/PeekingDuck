@@ -11,11 +11,33 @@
 #                                      #
 ########################################
 
+# Check we are in the right O/S environment
+case "$OSTYPE" in
+    darwin*) OS="MacOS" ;;
+    linux*) OS="Linux" ;;
+    *)
+        echo "Unsupported operating system: ${OS}"
+        echo "Please run this script in Linux or MacOS, or in Windows WSL"
+        exit 1
+        ;;
+esac
+
 ####################
 #
-# Global vars
+# Global Vars
 #
 ####################
+# Benchmark Data Sources 
+BM_DATA_DIR="data/benchmark"
+GCP_DATA_URL="https://storage.googleapis.com/peekingduck/videos"
+MULTI_PEOPLE_FILE="multiple_people.mp4"
+SINGLE_PERSON_FILE="single_person.mp4"
+MULTI_PEOPLE_DIR="${BM_DATA_DIR}/multi"
+MULTI_PEOPLE_PATH="${MULTI_PEOPLE_DIR}/${MULTI_PEOPLE_FILE}"
+MULTI_PEOPLE_URL="${GCP_DATA_URL}/${MULTI_PEOPLE_FILE}"
+SINGLE_PERSON_DIR="${BM_DATA_DIR}/single"
+SINGLE_PERSON_PATH="${SINGLE_PERSON_DIR}/${SINGLE_PERSON_FILE}"
+SINGLE_PERSON_URL="${GCP_DATA_URL}/${SINGLE_PERSON_FILE}"
 # Object Detection Models
 YXLM=scripts/benchmarks/run_yolox_large_multi.yml
 YXLS=scripts/benchmarks/run_yolox_large_single.yml
@@ -33,11 +55,58 @@ SPT=scripts/benchmarks/run_singlepose_thunder.yml
 LOG=/tmp/benchmark_log.txt
 CURR_RUN=/tmp/benchmark_curr_run.txt
 SUM_FPS=/tmp/benchmark_sum_fps.txt
+SUM_MODEL_INIT=/tmp/benchmark_sum_model_init.txt
 SUM_STARTUP=/tmp/benchmark_sum_startup.txt
 
 ####################
 #
-# Startup configurations
+# Global Functions
+#
+####################
+check_curl_wget() {
+    # Checks if either curl or wget is installed
+    if command -v curl &> /dev/null; then
+        echo "download_curl"
+    elif command -v wget &> /dev/null; then
+        echo "download_wget"
+    else
+        echo ""
+    fi
+}
+
+download_curl() {
+    # This function downloads url to output_path using curl
+    url=$1
+    output_path=$2
+    echo "curl: ${url} to ${output_path}"
+    curl -o ${output_path} ${url}
+}
+
+download_wget() {
+    # This function downloads url to output_path using wget
+    url=$1
+    output_path=$2
+    echo "wget: ${url} to ${output_path}"
+    wget -O ${output_path} --show-progress ${url}
+}
+
+verify_data_files() {
+    # Checks that necessary benchmark data assets are present, else download them
+    [ -d ${MULTI_PEOPLE_DIR} ] || { echo "creating ${MULTI_PEOPLE_DIR}"; mkdir -p ${MULTI_PEOPLE_DIR}; }
+    [ -d ${SINGLE_PERSON_DIR} ] || { echo "creating ${SINGLE_PERSON_DIR}"; mkdir -p ${SINGLE_PERSON_DIR}; }
+    [ -f ${MULTI_PEOPLE_PATH} ] || {
+        echo "${MULTI_PEOPLE_PATH} not found"
+        ${DOWNLOAD} ${MULTI_PEOPLE_URL} ${MULTI_PEOPLE_PATH}
+    }
+    [ -f ${SINGLE_PERSON_PATH} ] || {
+        echo "${SINGLE_PERSON_PATH} not found"
+        ${DOWNLOAD} ${SINGLE_PERSON_URL} ${SINGLE_PERSON_PATH}
+    }
+}
+
+####################
+#
+# Startup Configurations
 #
 ####################
 
@@ -47,20 +116,29 @@ declare -a CMDS=( "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" "${SPL}" "${SPT}" \
 NUM_RUNS=5      # set this to number of consecutive runs desired
 
 # Keep this single task, single run for debugging/testing script changes
-#declare -a CMDS=( "${YXTS}" )
+#declare -a CMDS=( "${SPL}" )
 #NUM_RUNS=1
 
-# Check we are in PeekingDuck/ root folder, else abort
+# Check we are in PeekingDuck's root folder
 if [[ `pwd` == *PeekingDuck ]]; then
     echo "PeekingDuck Benchmarking"
 else
-    echo "Please run this script in PeekingDuck root folder"
+    echo "Please run this script from PeekingDuck root folder, via"
+    echo "> PeekingDuck$ scripts/benchmarks/run_benchmarks.sh"
     exit 1
 fi
 
+# Check we have the necessary tools/utilities
+DOWNLOAD=$(check_curl_wget)
+[ -z ${DOWNLOAD} ] && { echo "curl/wget not found, abort"; exit 1; }
+
+# Make sure we have the necessary benchmarking data files
+verify_data_files
+
+
 ####################
 #
-# Main program loop
+# Main Program Loop
 #
 ####################
 for cmd in ${CMDS[@]}; do
@@ -68,7 +146,9 @@ for cmd in ${CMDS[@]}; do
     echo "cmd = ${CMD}"
     echo "Benchmarking over ${NUM_RUNS} consecutive runs..."
 
+    # local vars for calculations
     sum_startup_time=0
+    sum_model_init_time=0
     sum_fps=0
 
     # Main experiment loop
@@ -78,14 +158,17 @@ for cmd in ${CMDS[@]}; do
 
         { time -p ${CMD} &>${LOG}; } 2>&1  # do not ignore command output
 
-        # compute cumulative startup time
-        # NB: double cut to trim whitespace
-        startup_time=`grep "Startup delay" ${LOG} | cut -d'=' -f2 | cut -d' ' -f2`
-        sum_startup_time=$(echo "scale=4; ${sum_startup_time} + ${startup_time}" | bc)
+        # compute cumulative startup time (NB: double cut to trim whitespace)
+        startup_time=`grep "Startup time" ${LOG} | cut -d'=' -f2 | cut -d' ' -f2`
+        sum_startup_time=$(echo "scale=2; ${sum_startup_time} + ${startup_time}" | bc)
         echo ${sum_startup_time} > ${SUM_STARTUP}
 
+        # compute cumulative model init time
+        model_init_time=`grep "init time" ${LOG} | grep model | cut -d'=' -f2 | cut -d' ' -f2`
+        sum_model_init_time=$(echo "scale=2; ${sum_model_init_time} + ${model_init_time}" | bc)
+        echo ${sum_model_init_time} > ${SUM_MODEL_INIT}
+
         # compute cumulative FPS
-        # NB: double cut to trim whitespace
         num_fps=`grep "all proc" ${LOG} | cut -d':' -f5 | cut -d' ' -f2`
         sum_fps=$(echo "scale=2; ${sum_fps} + ${num_fps}" | bc)
         echo ${sum_fps} > ${SUM_FPS}
@@ -101,11 +184,19 @@ for cmd in ${CMDS[@]}; do
                  #if (ns>0) printf("sys %f\n",  sys/ns)
                }'
 
-    # print average startup delay and FPS
+    # print average startup delay
     sum_startup_time=`cat ${SUM_STARTUP}`
-    avg_startup_time=$(echo "scale=4; ${sum_startup_time} / ${NUM_RUNS}" | bc)
-    echo "Avg startup delay = ${avg_startup_time} sec"
+    avg_startup_time=$(echo "scale=2; ${sum_startup_time} / ${NUM_RUNS}" | bc)
+    echo "Avg startup time = ${avg_startup_time} sec"
 
+    sum_model_init_time=`cat ${SUM_MODEL_INIT}`
+    avg_model_init_time=$(echo "scale=2; ${sum_model_init_time} / ${NUM_RUNS}" | bc)
+    echo "Avg model init delay = ${avg_model_init_time} sec"
+
+    delay_time=$(echo "scale=2; ${avg_startup_time} + ${avg_model_init_time}" | bc)
+    echo "Total startup delay = ${delay_time} sec"
+
+    # print average FPS
     sum_fps=`cat ${SUM_FPS}`
     avg_fps=$(echo "scale=2; ${sum_fps} / ${NUM_RUNS}" | bc)
     echo "Avg FPS = ${avg_fps}"
