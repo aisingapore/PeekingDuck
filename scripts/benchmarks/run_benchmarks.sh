@@ -2,12 +2,12 @@
 
 ########################################
 #                                      #
-#   :                              :   #
+#  :                                :  #
 #                                      #
 #    PeekingDuck Benchmarking Suite    #
 #          by dotw 2022-01-07          #
 #                                      #
-#   :                              :   #
+#  :                                :  #
 #                                      #
 ########################################
 
@@ -16,7 +16,7 @@ case "$OSTYPE" in
     darwin*) OS="MacOS" ;;
     linux*) OS="Linux" ;;
     *)
-        echo "Unsupported operating system: ${OS}"
+        echo "Unsupported operating system: ${OSTYPE}"
         echo "Please run this script in Linux or MacOS, or in Windows WSL"
         exit 1
         ;;
@@ -55,8 +55,8 @@ SPT=scripts/benchmarks/run_singlepose_thunder.yml
 LOG=/tmp/benchmark_log.txt
 CURR_RUN=/tmp/benchmark_curr_run.txt
 SUM_FPS=/tmp/benchmark_sum_fps.txt
-SUM_MODEL_INIT=/tmp/benchmark_sum_model_init.txt
-SUM_STARTUP=/tmp/benchmark_sum_startup.txt
+SUM_SETUP=/tmp/benchmark_sum_setup.txt      # pipeline setup
+SUM_STARTUP=/tmp/benchmark_sum_startup.txt  # system startup
 
 ####################
 #
@@ -92,6 +92,7 @@ download_wget() {
 
 verify_data_files() {
     # Checks that necessary benchmark data assets are present, else download them
+    # Also creates the necessary data directories
     [ -d ${MULTI_PEOPLE_DIR} ] || { echo "creating ${MULTI_PEOPLE_DIR}"; mkdir -p ${MULTI_PEOPLE_DIR}; }
     [ -d ${SINGLE_PERSON_DIR} ] || { echo "creating ${SINGLE_PERSON_DIR}"; mkdir -p ${SINGLE_PERSON_DIR}; }
     [ -f ${MULTI_PEOPLE_PATH} ] || {
@@ -132,7 +133,7 @@ fi
 DOWNLOAD=$(check_curl_wget)
 [ -z ${DOWNLOAD} ] && { echo "curl/wget not found, abort"; exit 1; }
 
-# Make sure we have the necessary benchmarking data files
+# Ensure we have the necessary benchmarking data files
 verify_data_files
 
 
@@ -142,13 +143,13 @@ verify_data_files
 #
 ####################
 for cmd in ${CMDS[@]}; do
-    CMD="python __main__.py --config_path ${cmd}"
+    CMD="python __main__.py --log_level debug --config_path ${cmd}"
     echo "cmd = ${CMD}"
     echo "Benchmarking over ${NUM_RUNS} consecutive runs..."
 
     # local vars for calculations
     sum_startup_time=0
-    sum_model_init_time=0
+    sum_setup_time=0
     sum_fps=0
 
     # Main experiment loop
@@ -163,10 +164,10 @@ for cmd in ${CMDS[@]}; do
         sum_startup_time=$(echo "scale=2; ${sum_startup_time} + ${startup_time}" | bc)
         echo ${sum_startup_time} > ${SUM_STARTUP}
 
-        # compute cumulative model init time
-        model_init_time=`grep "init time" ${LOG} | grep model | cut -d'=' -f2 | cut -d' ' -f2`
-        sum_model_init_time=$(echo "scale=2; ${sum_model_init_time} + ${model_init_time}" | bc)
-        echo ${sum_model_init_time} > ${SUM_MODEL_INIT}
+        # compute cumulative setup time (normally incurred by model nodes)
+        setup_time=`grep "setup time" ${LOG} | grep model | cut -d'=' -f2 | cut -d' ' -f2`
+        sum_setup_time=$(echo "scale=2; ${sum_setup_time} + ${setup_time}" | bc)
+        echo ${sum_setup_time} > ${SUM_SETUP}
 
         # compute cumulative FPS
         num_fps=`grep "all proc" ${LOG} | cut -d':' -f5 | cut -d' ' -f2`
@@ -177,24 +178,24 @@ for cmd in ${CMDS[@]}; do
         /user/ { user = user + $2; nu++ }
         /sys/  { sys  = sys  + $2; ns++}
         END    {
-                 if (nr>0) printf("Avg real time per run = %.4f sec\n", real/nr);
+                 if (nr>0) printf("Avg real time per run = %.2f sec\n", real/nr);
                  # disable the rest, but keep here in case need them in future
                  #if (nr>0) printf("real %f\n", real/nr);
                  #if (nu>0) printf("user %f\n", user/nu);
                  #if (ns>0) printf("sys %f\n",  sys/ns)
                }'
 
-    # print average startup delay
+    # print average total start time (= avg startup time + avg setup time)
     sum_startup_time=`cat ${SUM_STARTUP}`
     avg_startup_time=$(echo "scale=2; ${sum_startup_time} / ${NUM_RUNS}" | bc)
     echo "Avg startup time = ${avg_startup_time} sec"
 
-    sum_model_init_time=`cat ${SUM_MODEL_INIT}`
-    avg_model_init_time=$(echo "scale=2; ${sum_model_init_time} / ${NUM_RUNS}" | bc)
-    echo "Avg model init delay = ${avg_model_init_time} sec"
+    sum_setup_time=`cat ${SUM_SETUP}`
+    avg_setup_time=$(echo "scale=2; ${sum_setup_time} / ${NUM_RUNS}" | bc)
+    echo "Avg setup time = ${avg_setup_time} sec"
 
-    delay_time=$(echo "scale=2; ${avg_startup_time} + ${avg_model_init_time}" | bc)
-    echo "Total startup delay = ${delay_time} sec"
+    avg_total_start_time=$(echo "scale=2; ${avg_startup_time} + ${avg_setup_time}" | bc)
+    echo "Avg total start time = ${avg_total_start_time} sec"
 
     # print average FPS
     sum_fps=`cat ${SUM_FPS}`

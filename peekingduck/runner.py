@@ -96,8 +96,8 @@ class Runner:
         num_iter = 0
         while not self.pipeline.terminate:
             for node in self.pipeline.nodes:
-                if num_iter == 0:  # report init times at first iteration
-                    self.logger.info(f"Initialising {node.name}...")
+                if num_iter == 0:  # report node setup times at first iteration
+                    self.logger.debug(f"First iteration: setup {node.name}...")
                     node_start_time = perf_counter()
                 if self.pipeline.data.get("pipeline_end", False):
                     self.pipeline.terminate = True
@@ -123,8 +123,8 @@ class Runner:
                 self.pipeline.data.update(outputs)
                 if num_iter == 0:
                     node_end_time = perf_counter()
-                    self.logger.info(
-                        f"{node.name} init time = {node_end_time - node_start_time:.2f} sec"
+                    self.logger.debug(
+                        f"{node.name} setup time = {node_end_time - node_start_time:.2f} sec"
                     )
             num_iter += 1
             if self.num_iter > 0 and num_iter >= self.num_iter:
