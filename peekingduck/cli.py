@@ -19,6 +19,7 @@ CLI functions for PeekingDuck.
 import logging
 import math
 from pathlib import Path
+from time import perf_counter
 from typing import Optional, Tuple
 
 import click
@@ -125,12 +126,15 @@ def run(
     else:
         run_config_path = Path(config_path)
 
+    start_time = perf_counter()
     runner = Runner(
         run_config_path=run_config_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
     )
+    end_time = perf_counter()
+    logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
     runner.run()
 
 
