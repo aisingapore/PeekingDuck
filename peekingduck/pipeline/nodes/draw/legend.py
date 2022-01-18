@@ -13,8 +13,7 @@
 # limitations under the License.
 
 """
-Displays info from dabble nodes such as FPS, object count, and zone count in a
-legend box.
+Displays selected information from previous nodes in a legend box.
 """
 
 from typing import Any, Dict, List
@@ -27,8 +26,7 @@ class Node(AbstractNode):
     """Draws legend box and information on image.
 
     The ``draw.legend`` node dynamically pulls the output results of previous
-    nodes and uses it to draw the information into a legend box. Currently
-    draws fps, object counts and object count in zones.
+    nodes and uses it to draw the information into a legend box.
 
     Inputs:
         |all|
@@ -38,17 +36,19 @@ class Node(AbstractNode):
 
     Configs:
         all_legend_items (:obj:`List[str]`):
-            **default = ["fps", "count", "zone_count"]**. |br|
+            **default = ["fps", "count", "zone_count", "avg", "min", "max",
+            "curr"]**. |br|
             A list of all possible items that can be drawn in legend box. The
             information to be drawn is selected by ``include``. This is done so
             we can have the outputs but choose not to draw them on screen.
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
             Position to draw legend box. "top" draws it at the top-left
             position while "bottom" draws it at bottom-left.
-        include (:obj:`List[str]`): **default = ["all_legend_items"]**. |br|
-            List of information to draw. Currently, "fps", "count" and/or
-            "zone_count" can be drawn. The default value "all_legend_items"
-            draws everything dynamically depending on inputs.
+        include (:obj:`List[str]`): **default = ["*"]**. |br|
+            Include in this list the desired information (such as ``fps``) to be
+            drawn within the legend box. The default value is the wildcard ``*``,
+            which draws all the information from ``all_legend_items`` as long as
+            they were produced from previous nodes.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -67,7 +67,7 @@ class Node(AbstractNode):
         """
         if len(self.legend_items) == 0:
             # Check inputs to set legend items to draw
-            if self.include[0] == "all_legend_items":
+            if self.include[0] == "*":
                 self.include = self.all_legend_items
             self._include(inputs)
         if len(self.legend_items) != 0:

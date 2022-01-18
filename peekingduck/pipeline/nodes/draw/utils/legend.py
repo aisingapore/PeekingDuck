@@ -38,7 +38,6 @@ class Legend:
     """Legend class that uses available info to draw legend box on frame"""
 
     def __init__(self) -> None:
-        self.func_reg = self._get_legend_registry()
         self.legend_left_x = 15
 
         self.frame = None
@@ -64,40 +63,28 @@ class Legend:
         self._draw_legend_box(self.frame)
         y_pos = self.legend_starting_y + 20
         for item in items:
-            self.func_reg[item](self.frame, y_pos, inputs[item])
+            if item == "zone_count":
+                self._draw_zone_count(self.frame, y_pos, item, inputs[item])
+            else:
+                self._draw_item_info(self.frame, y_pos, item, inputs[item])
             y_pos += 20
 
-    def _draw_count(self, frame: np.ndarray, y_pos: int, count: int) -> None:
-        """draw count of selected object onto frame
+    def _draw_item_info(
+        self, frame: np.ndarray, y_pos: int, item_name: str, item_info: Any
+    ) -> None:
+        """Draw item name followed by item info onto frame. If item info is
+        of float type, it will be displayed in 2 decimal places.
 
         Args:
             frame (np.array): image of current frame
             y_pos (int): y_position to draw the count text
-            count (int): total count of selected object
-                in current frame
+            item_name (str): name of the legend item
+            item_info (Any): info contained by the legend item
         """
-        text = "COUNT: {0}".format(count)
-        cv2.putText(
-            frame,
-            text,
-            (self.legend_left_x + 10, y_pos),
-            FONT_HERSHEY_SIMPLEX,
-            SMALL_FONTSCALE,
-            WHITE,
-            THICK,
-            LINE_AA,
-        )
-
-    def _draw_fps(self, frame: np.ndarray, y_pos: int, current_fps: float) -> None:
-        """Draw FPS onto frame image
-
-        Args:
-            frame (np.array): image of current frame
-            y_pos (int): y position to draw the count info text
-            current_fps (float): value of the calculated FPS
-        """
-        text = "FPS: {:.05}".format(current_fps)
-
+        if type(item_info) is float:
+            text = f"{item_name.upper()}: {item_info:.2f}"
+        else:
+            text = f"{item_name.upper()}: {str(item_info)}"
         cv2.putText(
             frame,
             text,
@@ -110,7 +97,7 @@ class Legend:
         )
 
     def _draw_zone_count(
-        self, frame: np.ndarray, y_pos: int, counts: List[int]
+        self, frame: np.ndarray, y_pos: int, item: str, counts: List[int]
     ) -> None:
         """Draw zone counts of all zones onto frame image
 
@@ -139,7 +126,7 @@ class Legend:
                 PRIMARY_PALETTE[(i + 1) % PRIMARY_PALETTE_LENGTH],
                 FILLED,
             )
-            text = " ZONE-{0}: {1}".format(i + 1, count)
+            text = f" ZONE-{i+1}: {count}"
             cv2.putText(
                 frame,
                 text,
@@ -180,15 +167,6 @@ class Legend:
             no_of_items += len(inputs["zone_count"])
         return 12 * no_of_items + 8 * (no_of_items - 1) + 20
 
-    def _get_legend_registry(self) -> Dict[str, Any]:
-        """Get registry of functions that draw items
-        available in the legend"""
-        return {
-            "fps": self._draw_fps,
-            "count": self._draw_count,
-            "zone_count": self._draw_zone_count,
-        }
-
     def _set_legend_variables(self, position: str) -> None:
         assert self.legend_height != 0
         if position == "top":
@@ -196,13 +174,3 @@ class Legend:
         else:
             _, image_height = get_image_size(self.frame)
             self.legend_starting_y = image_height - 10 - self.legend_height
-
-    def add_register(self, name: str, method: Any) -> None:
-        """Add new legend drawing information to the registry
-
-        Args:
-            name (str): name of method, corresponding to key to get input
-            method (Any): function of the method. Note that take in 1) image frame
-            and 2) input needed for the method, taken in using inputs[<key>]
-        """
-        self.func_reg[name] = method
