@@ -20,6 +20,12 @@
 
 .. |count| replace:: ``count`` (:obj:`int`): An integer representing the number of counted objects.
 
+.. |avg| replace:: ``avg`` (:obj:`float`): Average of an attribute over time.
+
+.. |max| replace:: ``max`` (:obj:`float/int`): Maximum value of an attribute over time.
+
+.. |min| replace:: ``min`` (:obj:`float/int`): Minimum value of an attribute over time.
+
 .. |keypoints| replace:: ``keypoints`` (:obj:`numpy.ndarray`): A numpy array (N, K, 2) with the
    last dimension representing the coordinates (x, y) of detected poses. N represents the number
    of detected poses, and K represents individual keypoints. Keypoints with low confidence scores

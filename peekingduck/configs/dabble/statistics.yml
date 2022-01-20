@@ -1,23 +1,30 @@
 input: ["all"]
-output: ["avg", "min", "max", "curr"]
+output: ["avg", "min", "max"]
 
-attribute: ["count"]
-calc_method: int # "int", "list_len", "list_max", "list_conditional"
-condition: {
-  operator: null,
-  operand: null
+target: {
+	node_output: count,
+	dict_keys: null,
+} 
+apply: {
+  function: identity,
+  condition: {
+    operator: null,
+    operand: null
+  }
 }
 
 
-# "per_frame": "avg", "min", "max"
-# "tracking": "sum"
+# 1. "int" -> "identity"
+# 2. "apply" -> "function"
+# 3. remove "curr" -> use bbox_count
+# 4. median/mean/mode
+# 5. "obj_tag" -> "obj_attr"
+# 6. curr -> now
+# 7. avg, min, max should be floats
 
 # count = 8
 # large_groups = [5, 4]                           -> len() = 2
 # zone_count = [0, 1]                             -> ?
 # obj_tags["groups"] = [5, 5, 5, 4, 4, 4, 4, 4]   -> len() = 8
-# obj_tags["flags"] = ["CLOSE!", "", "CLOSE!"]    -> obj_tags["flags"].count("CLOSE!") = 2
+# obj_tags["flags"] = ["CLOSE!", "", "CLOSE!"]    -> conditional
 # obj_tags["ids"] = [0, 2, 4, 5, 6]               -> max() = 6
-
-# list: number of items in list, max integer in list, number of items in list given a condition, 
-# int: count

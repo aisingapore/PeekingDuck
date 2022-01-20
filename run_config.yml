@@ -1,4 +1,4 @@
-# # object counting
+# object counting
 # nodes:
 # - input.recorded:
 #     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
@@ -14,57 +14,57 @@
 
 
 # social distancing
-# nodes:
-# - input.recorded:
-#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-# - model.posenet
-# - dabble.keypoints_to_3d_loc
-# - dabble.check_nearby_objs
-# - dabble.statistics:
-#     attribute: ["obj_tags", "flags"]
-#     calc_method: list_conditional
-#     condition: {
-#         operator: "==",
-#         operand: "TOO CLOSE!"
-#     }
-# - draw.bbox
-# - draw.tag:
-#     attribute: flags
-# - draw.legend:
-#     include: ["curr", "max", "avg", "min"]
-# - output.screen
-
-
-# group size checking
 nodes:
 - input.recorded:
     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
 - model.posenet
 - dabble.keypoints_to_3d_loc
-- dabble.group_nearby_objs
-- dabble.check_large_groups:
-    group_size_thres: 2
+- dabble.check_nearby_objs
 - dabble.statistics:
-    attribute: ["large_groups"]
-    calc_method: list_len
+    attribute: ["obj_tags", "flags"]
+    calc_method: list_conditional
+    condition: {
+        operator: "==",
+        operand: "TOO CLOSE!"
+    }
 - draw.bbox
-- draw.group_bbox_and_tag
+- draw.tag:
+    attribute: flags
 - draw.legend:
     include: ["curr", "max", "avg", "min"]
 - output.screen
 
-# object_tracking
-nodes:
-- input.recorded:
-    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-- model.yolo
-- dabble.tracking
-- dabble.statistics:
-    attribute: ["obj_tags", "ids"]
-    calc_method: "list_max"
-- draw.bbox
-- draw.tag:
-    attribute: ids
-- draw.legend:
-    include: ["max"]
-- output.screen
+
+# # group size checking
+# nodes:
+# - input.recorded:
+#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+# - model.posenet
+# - dabble.keypoints_to_3d_loc
+# - dabble.group_nearby_objs
+# - dabble.check_large_groups:
+#     group_size_thres: 2
+# - dabble.statistics:
+#     attribute: ["large_groups"]
+#     calc_method: list_len
+# - draw.bbox
+# - draw.group_bbox_and_tag
+# - draw.legend:
+#     include: ["curr", "max", "avg", "min"]
+# - output.screen
+
+# # object_tracking
+# nodes:
+# - input.recorded:
+#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+# - model.yolo
+# - dabble.tracking
+# - dabble.statistics:
+#     attribute: ["obj_tags", "ids"]
+#     calc_method: "list_max"
+# - draw.bbox
+# - draw.tag:
+#     attribute: ids
+# - draw.legend:
+#     include: ["max"]
+# - output.screen
