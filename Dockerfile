@@ -29,6 +29,7 @@ RUN apt update && \
     wget && \
     apt-get clean
 
+# COPY <repo_dir> <target location within Docker container>
 COPY . ${APP_HOME}/PeekingDuck
 WORKDIR ${APP_HOME}/PeekingDuck
 
