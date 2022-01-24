@@ -84,6 +84,27 @@ def ensure_valid_name_partial(node_dir: Path, node_type: str) -> Callable:
     return functools.partial(ensure_valid_name, node_dir, node_type)
 
 
+def ensure_valid_type(node_type_choices: click.Choice, node_type: str) -> str:
+    """Uses click's convert_type function to check the validity of the
+    specified node_type. Re-raises with a custom error message to ensure
+    consistency across click versions.
+    """
+    try:
+        click.types.convert_type(node_type_choices)(node_type)
+    except click.BadParameter:
+        raise click.exceptions.UsageError(
+            f"'{node_type}' is not one of {', '.join(map(repr, node_type_choices.choices))}."
+        ) from None
+    return node_type
+
+
+def ensure_valid_type_partial(node_type_choices: click.Choice) -> Callable:
+    """Partial function to ensure_valid_type to provide a function that matches
+    the function signature required by ``value_proc`` in ``click.prompt()``.
+    """
+    return functools.partial(ensure_valid_type, node_type_choices)
+
+
 def get_config_and_script_paths(
     parent_dir: Path,
     config_subdir: Union[str, Tuple[str, ...]],
