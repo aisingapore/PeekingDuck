@@ -91,10 +91,10 @@ def ensure_valid_type(node_type_choices: click.Choice, node_type: str) -> str:
     """
     try:
         click.types.convert_type(node_type_choices)(node_type)
-    except click.BadParameter as err:
+    except click.BadParameter:
         raise click.exceptions.UsageError(
             f"'{node_type}' is not one of {', '.join(map(repr, node_type_choices.choices))}."
-        ) from err
+        ) from None
     return node_type
 
 
