@@ -33,6 +33,8 @@ from peekingduck.utils.create_node_helper import (
     ensure_relative_path,
     ensure_valid_name,
     ensure_valid_name_partial,
+    ensure_valid_type,
+    ensure_valid_type_partial,
     get_config_and_script_paths,
     verify_option,
 )
@@ -212,10 +214,13 @@ def create_node(
         node_dir = project_dir / node_subdir
 
         node_type = verify_option(
-            node_type, value_proc=click.types.convert_type(node_type_choices)
+            node_type, value_proc=ensure_valid_type_partial(node_type_choices)
         )
         if node_type is None:
-            node_type = click.prompt("Select node type", type=node_type_choices)
+            node_type = click.prompt(
+                "Select node type",
+                value_proc=ensure_valid_type_partial(node_type_choices),
+            )
 
         node_name = verify_option(
             node_name, value_proc=ensure_valid_name_partial(node_dir, node_type)
@@ -312,7 +317,7 @@ def _create_nodes_from_config_file(
             # Check node string formatting
             ensure_relative_path(node_subdir)
             node_dir = project_dir / "src" / node_subdir
-            click.types.convert_type(node_type_choices)(node_type)
+            ensure_valid_type(node_type_choices, node_type)
             ensure_valid_name(node_dir, node_type, node_name)
         except click.exceptions.UsageError as err:
             logger.warning(
