@@ -18,6 +18,7 @@ BUILDDIR      = build
 clean:
 	@echo "clean $(SOURCEDIR)..."
 	@rm -rf $(SOURCEDIR)/peekingduck*.rst
+	@rm -rf $(SOURCEDIR)/nodes
 	@echo "clean $(BUILDDIR)..."
 	@rm -rf $(BUILDDIR)/doctrees
 	@rm -rf $(BUILDDIR)/html

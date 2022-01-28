@@ -1,4 +1,4 @@
-.. include:: data_type.rst
+.. include:: ../data_type.rst
 
 {{ fullname | escape | underline }}
 

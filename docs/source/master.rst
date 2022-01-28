@@ -20,14 +20,14 @@ API Documentation
 =================
 
 .. autosummary::
-   :toctree:
+   :toctree: nodes
    :caption: API Documentation
    :template: module.rst
    :recursive:
 
-   peekingduck.pipeline.nodes.input
-   peekingduck.pipeline.nodes.preprocess
-   peekingduck.pipeline.nodes.model
-   peekingduck.pipeline.nodes.dabble
-   peekingduck.pipeline.nodes.draw
-   peekingduck.pipeline.nodes.output
+   input
+   preprocess
+   model
+   dabble
+   draw
+   output

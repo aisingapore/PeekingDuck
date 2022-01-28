@@ -22,7 +22,7 @@ There are two main components to our solution: 1) crowd counting; and 2) heat ma
 
 **1. Crowd Counting**
 
-We use an open source crowd counting model known as [CSRNet](https://arxiv.org/pdf/1802.10062.pdf) to predict the number of people in a sparse or dense crowd. By default, the solution uses the sparse crowd model and this can be changed to the dense crowd model if required. The dense and sparse crowd models were trained using data from ShanghaiTech Part A and ShanghaiTech Part B respectively. As a guideline, you might want to use the dense crowd model if the people in a given image or video frame are packed shoulder to shoulder (e.g. stadiums). For more information on how adjust the CSRNet node, checkout the [CSRNet configurable parameters](/peekingduck.pipeline.nodes.model.csrnet). 
+We use an open source crowd counting model known as [CSRNet](https://arxiv.org/pdf/1802.10062.pdf) to predict the number of people in a sparse or dense crowd. By default, the solution uses the sparse crowd model and this can be changed to the dense crowd model if required. The dense and sparse crowd models were trained using data from ShanghaiTech Part A and ShanghaiTech Part B respectively. As a guideline, you might want to use the dense crowd model if the people in a given image or video frame are packed shoulder to shoulder (e.g. stadiums). For more information on how adjust the CSRNet node, checkout the [CSRNet configurable parameters](/nodes/model.csrnet). 
 
 **2. Heat Map Generation (Optional)**
 
@@ -43,7 +43,7 @@ nodes:
 ```
 
 **1. Crowd Counting Node**
-As mentioned, we use CSRNet to estimate the size of a crowd. As the models were trained to recognise congested scenes, the estimates are less accurate if the number of people are low (e.g. less than 10). In such scenarios, you should consider using an object detection model such as the [YOLOX model](/peekingduck.pipeline.nodes.model.yolox) that is included in our repo.
+As mentioned, we use CSRNet to estimate the size of a crowd. As the models were trained to recognise congested scenes, the estimates are less accurate if the number of people are low (e.g. less than 10). In such scenarios, you should consider using an object detection model such as the [YOLOX model](/nodes/model.yolox) that is included in our repo.
 
 **2. Heat Map Generation Node (Optional)**
 The heat map generation node superimposes a heat map over a given image or video frame.
