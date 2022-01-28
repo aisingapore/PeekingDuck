@@ -6,7 +6,8 @@
 
 .. automodule:: {{ fullname }}
 
-{% if not fullname.split(".")[-1] in ["dabble", "draw", "input", "model", "output", "preprocess"] -%}
+{% if not fullname.split(".")[-1] in ["dabble", "draw", "input", "model",
+                                      "output", "preprocess"] -%}
 .. autoclass:: {{ fullname }}.Node
    :members:
    :exclude-members: run
