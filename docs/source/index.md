@@ -27,7 +27,9 @@ A **pipeline** governs the behavior of a chain of nodes. The diagram below shows
 
 The rest of this webpage contains more details about using PeekingDuck, including information on:
 - [Changing PeekingDuck nodes](getting_started/02_configure_pkdk) and their settings
-- [Official documentation](/peekingduck.pipeline.nodes) for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+```{eval-rst}
+- :ref:`API Documentation <api_doc>` for all PeekingDuck nodes, describing their behaviour, inputs, outputs and settings
+```
 - Creating your own [custom nodes](getting_started/03_custom_nodes), and using them with PeekingDuck nodes
 - Using PeekingDuck as an [imported Python module](getting_started/04_import_peekingduck) within your project
 - Benchmarks and class/keypoints IDs for [object detection](resources/01a_object_detection) and [pose estimation](resources/01b_pose_estimation) models.
@@ -56,7 +58,9 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |                                                              |                                                              |
 
 
-We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
+```{eval-rst}
+We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's :ref:`API Documentation <api_doc>`.
+```
 
 
 ## Acknowledgements

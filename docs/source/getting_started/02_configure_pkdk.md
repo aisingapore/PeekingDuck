@@ -4,10 +4,12 @@ This page will guide users on how to control and configure how PeekingDuck behav
 - Selecting which nodes to include in the pipeline
 - Configuring node behaviour
 
-You can refer to our [API Documentation](/peekingduck.pipeline.nodes) section to see the available nodes in PeekingDuck for selection and their respective configurable settings. Alternatively, to get a quick overview of Peekingduck's nodes, run the following command: 
- ```
- > peekingduck nodes
- ```
+```{eval-rst}
+You can refer to our :ref:`API Documentation <api_doc>` section to see the available nodes in PeekingDuck for selection and their respective configurable settings. Alternatively, to get a quick overview of Peekingduck's nodes, run the following command: 
+```
+```
+> peekingduck nodes
+```
 
 In this guide, we will make changes to PeekingDuck config files to run pose estimation models. We will also teach users how to make changes to the default configurations to run a bird detection pipeline on a local video file.
 
@@ -93,4 +95,6 @@ Regardless of the method you choose to configure PeekingDuck, the processed file
 
 ## PeekingDuck API Reference
 We have highlighted the basic configurations for different nodes that you may wish to use for your project.
-To find out what other settings can be tweaked for different nodes, check out the individual node configurations in PeekingDuck's [API Reference](/peekingduck.pipeline.nodes).
+```{eval-rst}
+To find out what other settings can be tweaked for different nodes, check out the individual node configurations in PeekingDuck's :ref:`API Documentation <api_doc>`.
+```

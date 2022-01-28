@@ -75,7 +75,9 @@ Some common node behaviours that you might need to adjust are:
 - `detect_ids`: Object class IDs to be detected. View this [link](https://peekingduck.readthedocs.io/en/stable/resources/02_model_indices.html) for each class' indices.
 - `tracking_type`: The type of tracking to be used, choose one of: [iou, mosse]
 
-For more adjustable node behaviours not listed here, check out the [API reference](/peekingduck.pipeline.nodes).
+```{eval-rst}
+For more adjustable node behaviours not listed here, check out the :ref:`API Documentation <api_doc>`.
+```
 
 ## Tracking Analysis
 

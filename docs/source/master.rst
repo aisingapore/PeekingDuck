@@ -14,6 +14,8 @@ Welcome to PeekingDuck's documentation!
    resources/index
    use_cases/index
 
+.. _api_doc:
+
 API Documentation
 =================
 
