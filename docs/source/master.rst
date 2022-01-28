@@ -23,7 +23,6 @@ API Documentation
    :template: module.rst
    :recursive:
 
-   peekingduck
    peekingduck.pipeline.nodes.input
    peekingduck.pipeline.nodes.preprocess
    peekingduck.pipeline.nodes.model
