@@ -14,9 +14,8 @@ Welcome to PeekingDuck's documentation!
    resources/index
    use_cases/index
 
-Nodes
-=====================================
-Nodes are the core of PeekingDuck. See below for the readily-available nodes and their references.
+API Documentation
+=================
 
 .. autosummary::
    :toctree:
