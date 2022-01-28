@@ -2,7 +2,7 @@
 
 You may need to create your own custom nodes. Perhaps you'd like to take a snapshot of a video frame, and post it to your API endpoint; perhaps you have a model trained on a custom dataset, and would like to use PeekingDuck's input, draw, and output nodes. We've designed PeekingDuck to be very flexible --- you can create your own nodes and use them with ours. This guide will showcase how anyone can develop custom nodes to be used with PeekingDuck.
 
-In this guide, we'll be building a custom `csv_writer` node which writes data into a file. It serves as a data collection step that stores useful metrics into a CSV file. This CSV file can be used for logging purposes and can serve as a base for data analytics. (PeekingDuck already has an [`output.csv_writer`](/peekingduck.pipeline.nodes.output.csv_writer) node, but this is a good example for users to experience creating a custom node from scratch.)
+In this guide, we'll be building a custom `csv_writer` node which writes data into a file. It serves as a data collection step that stores useful metrics into a CSV file. This CSV file can be used for logging purposes and can serve as a base for data analytics. (PeekingDuck already has an [`output.csv_writer`](/nodes/output.csv_writer) node, but this is a good example for users to experience creating a custom node from scratch.)
 
 A step by step instruction to build this custom node is provided below.
 

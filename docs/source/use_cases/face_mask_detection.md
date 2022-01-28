@@ -24,7 +24,7 @@ The main component is the detection of face mask using the custom YOLOv4 model.
 
 We use an open source object detection model known as [YOLOv4](https://arxiv.org/abs/2004.10934) and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of human faces with and without face masks. This allows the application to identify the locations of faces and their corresponding classes (no_mask = 0 or mask = 1) in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human face detected.
 
-The `yolo_face` node detects human faces with and without face masks using the YOLOv4-tiny model by default. The classes are differentiated by the labels and the colours of the bounding boxes when multiple faces are detected. For more information on how adjust the `yolo_face` node, checkout the [`yolo_face` configurable parameters](/peekingduck.pipeline.nodes.model.yolo_face).
+The `yolo_face` node detects human faces with and without face masks using the YOLOv4-tiny model by default. The classes are differentiated by the labels and the colours of the bounding boxes when multiple faces are detected. For more information on how adjust the `yolo_face` node, checkout the [`yolo_face` configurable parameters](/nodes/model.yolo_face).
 
 ## Nodes Used
 
@@ -42,7 +42,7 @@ nodes:
 
 **1. Face Mask Detection Node**
 
-By default, the node uses the YOLOv4-tiny model for face detection. For better accuracy, you can try the [YOLOv4 model](/peekingduck.pipeline.nodes.model.yolo_face) that is included in our repo.
+By default, the node uses the YOLOv4-tiny model for face detection. For better accuracy, you can try the [YOLOv4 model](/nodes/model.yolo_face) that is included in our repo.
 
 **2. Adjusting Nodes**
 

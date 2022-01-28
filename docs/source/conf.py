@@ -14,6 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath("../../peekingduck/pipeline/nodes"))
 
 
 # -- Project information -----------------------------------------------------
@@ -47,7 +48,7 @@ napoleon_custom_sections = [
     ("Outputs", "returns_style"),
 ]
 
-
+add_module_names = False
 autosummary_generate = True
 master_doc = "master"
 
@@ -76,22 +77,21 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
-    "peekingduck.pipeline.nodes.dabble.trackingv1",
-    "peekingduck.pipeline.nodes.dabble.utils",
-    "peekingduck.pipeline.nodes.dabble.zoningv1",
-    "peekingduck.pipeline.nodes.draw.utils",
-    "peekingduck.pipeline.nodes.input.utils",
-    "peekingduck.pipeline.nodes.model.csrnetv1",
-    "peekingduck.pipeline.nodes.model.efficientdet_d04",
-    "peekingduck.pipeline.nodes.model.hrnetv1",
-    "peekingduck.pipeline.nodes.model.jdev1",
-    "peekingduck.pipeline.nodes.model.mtcnnv1",
-    "peekingduck.pipeline.nodes.model.posenetv1",
-    "peekingduck.pipeline.nodes.model.movenetv1",
-    "peekingduck.pipeline.nodes.model.yolov4",
-    "peekingduck.pipeline.nodes.model.yolov4_face",
-    "peekingduck.pipeline.nodes.model.yolov4_license_plate",
-    "peekingduck.pipeline.nodes.model.yoloxv1",
-    "peekingduck.pipeline.nodes.output.utils",
-    "peekingduck.utils",
+    "dabble.trackingv1",
+    "dabble.utils",
+    "dabble.zoningv1",
+    "draw.utils",
+    "input.utils",
+    "model.csrnetv1",
+    "model.efficientdet_d04",
+    "model.hrnetv1",
+    "model.jdev1",
+    "model.mtcnnv1",
+    "model.posenetv1",
+    "model.movenetv1",
+    "model.yolov4",
+    "model.yolov4_face",
+    "model.yolov4_license_plate",
+    "model.yoloxv1",
+    "output.utils",
 ]
