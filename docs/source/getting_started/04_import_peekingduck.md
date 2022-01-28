@@ -14,7 +14,9 @@ Here are some examples where you might want to import PeekingDuck as a module:
 To understand the building blocks, refer to the Introduction [here.](../index.md#how-peekingduck-works)
 
 
-You may also refer to our API Reference to understand PeekingDuck's capabilities [here](/peekingduck.pipeline.nodes).
+```{eval-rst}
+You may also refer to our :ref:`API Documentation <api_doc>` to understand PeekingDuck's capabilities.
+```
 
 Running it in your python scripts can be simple:
 

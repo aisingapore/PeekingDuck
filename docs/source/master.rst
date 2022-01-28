@@ -14,9 +14,10 @@ Welcome to PeekingDuck's documentation!
    resources/index
    use_cases/index
 
-Nodes
-=====================================
-Nodes are the core of PeekingDuck. See below for the readily-available nodes and their references.
+.. _api_doc:
+
+API Documentation
+=================
 
 .. autosummary::
    :toctree:
@@ -24,7 +25,6 @@ Nodes are the core of PeekingDuck. See below for the readily-available nodes and
    :template: module.rst
    :recursive:
 
-   peekingduck
    peekingduck.pipeline.nodes.input
    peekingduck.pipeline.nodes.preprocess
    peekingduck.pipeline.nodes.model

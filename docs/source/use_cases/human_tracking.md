@@ -22,7 +22,7 @@ There are two main components to this MOT: 1) human target detection using AI; a
 
 **1. Human Detection**
 
-We use an open source detection model trained on pedestrian detection and person search datasets known as [JDE](https://arxiv.org/abs/1909.12605) to identify human persons. This allows the application to identify the locations of human persons in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human person detected. For more information on how adjust the JDE node, checkout the [JDE configurable parameters](/peekingduck.pipeline.nodes.model.jde.Node).
+We use an open source detection model trained on pedestrian detection and person search datasets known as [JDE](https://arxiv.org/abs/1909.12605) to identify human persons. This allows the application to identify the locations of human persons in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human person detected. For more information on how adjust the JDE node, checkout the [JDE configurable parameters](/peekingduck.pipeline.nodes.model.jde).
 
 **2. Appearance Embedding Tracking**
 

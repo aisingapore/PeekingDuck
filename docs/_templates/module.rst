@@ -1,57 +1,77 @@
+.. include:: data_type.rst
+
 {{ fullname | escape | underline }}
 
 .. rubric:: Description
 
 .. automodule:: {{ fullname }}
 
-   {% block functions %}
-   {% if functions %}
-   .. rubric:: Functions
+{% if not fullname.split(".")[-1] in ["dabble", "draw", "input", "model",
+                                      "output", "preprocess"] -%}
+.. autoclass:: {{ fullname }}.Node
+   :members:
+   :exclude-members: run
 
-   .. autosummary::
-      :toctree:
-   {% for item in functions %}
-      {{ item }}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
-
-   {% block classes %}
-   {% if classes %}
-   .. rubric:: Classes
-
-   .. autosummary::
-      :toctree:
-      :template: class.rst
-   {% for item in classes %}
-      {{ item }}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
-
-   {% block exceptions %}
-   {% if exceptions %}
-   .. rubric:: Exceptions
-
-   .. autosummary::
-      :toctree:
-      :template: class.rst
-   {% for item in exceptions %}
-      {{ item }}
-   {%- endfor %}
-   {% endif %}
-   {% endblock %}
-
-{% block modules %}
-{% if modules %}
+   {% block methods -%}
+      {% if methods -%}
+.. rubric:: Methods
+         {% for item in all_methods -%}
+            {%- if not item.startswith('_') %}
+               ~{{ name }}.{{ item }}
+            {%- endif -%}
+         {%- endfor %}
+      {% endif -%}
+   {% endblock -%}
+{% else -%}
+   {% block modules -%}
+      {% if modules -%}
 .. rubric:: Modules
 
 .. autosummary::
    :toctree:
    :template: module.rst
    :recursive:
-{% for item in modules %}
-   {{ item }}
-{%- endfor %}
-{% endif %}
-{% endblock %}
+         {% for item in modules %}
+            {{ item }}
+         {%- endfor %}
+      {% endif -%}
+   {% endblock -%}
+
+   {% block classes -%}
+      {% if classes -%}
+.. rubric:: Classes
+
+.. autosummary::
+   :toctree:
+   :template: class.rst
+         {% for item in classes %}
+            {{ item }}
+         {%- endfor %}
+      {% endif -%}
+   {% endblock -%}
+{% endif -%}
+
+{% block functions -%}
+   {% if functions -%}
+.. rubric:: Functions
+
+.. autosummary::
+   :toctree:
+      {% for item in functions %}
+         {{ item }}
+      {%- endfor %}
+   {% endif -%}
+{% endblock -%}
+
+{% block exceptions -%}
+   {% if exceptions -%}
+.. rubric:: Exceptions
+
+.. autosummary::
+   :toctree:
+   :template: class.rst
+      {% for item in exceptions %}
+         {{ item }}
+      {%- endfor %}
+   {% endif -%}
+{% endblock -%}

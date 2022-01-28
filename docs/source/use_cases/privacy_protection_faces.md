@@ -22,7 +22,7 @@ There are two main components to face anonymisation: 1) face detection using AI;
 
 **1. Face Detection**
 
-We use an open source face detection model known as [MTCNN](https://arxiv.org/abs/1604.02878) to identify human faces. This allows the application to identify the locations of human faces in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human face detected. For more information on how adjust the MTCNN node, checkout the [MTCNN configurable parameters](/peekingduck.pipeline.nodes.model.mtcnn.Node).
+We use an open source face detection model known as [MTCNN](https://arxiv.org/abs/1604.02878) to identify human faces. This allows the application to identify the locations of human faces in a video feed. Each of these locations are represented as a pair of (x, y) coordinates in the form [x1, y1, x2, y2], where (x1, y1) is the top-left corner of the bounding box, and (x2, y2) is the bottom-right. These are used to form the bounding box of each human face detected. For more information on how adjust the MTCNN node, checkout the [MTCNN configurable parameters](/peekingduck.pipeline.nodes.model.mtcnn).
 
 **2. Face De-Identification**
 
