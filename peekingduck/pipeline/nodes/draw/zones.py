@@ -35,7 +35,7 @@ class Node(AbstractNode):
         |zones|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         None.

@@ -38,7 +38,7 @@ class Node(AbstractNode):
         |bbox_labels|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         show_labels (:obj:`bool`): **default = False**. |br|

@@ -13,6 +13,8 @@ Welcome to PeekingDuck's documentation!
    getting_started/index
    resources/index
    use_cases/index
+   faq
+   glossary
 
 .. _api_doc:
 
