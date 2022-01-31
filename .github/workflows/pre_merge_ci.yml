@@ -14,13 +14,15 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
-          cache: 'pip'
+          cache: "pip"
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          pip install wheel
+          pip install -r requirements.txt
           pip install -r cicd_requirements.txt
       - name: Run lint checks
-        uses: ./.github/actions/linting-checks  # note only works after checkout@v2
+        uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
         run: bash ./scripts/run_tests.sh unit
       - name: Run broken link report
