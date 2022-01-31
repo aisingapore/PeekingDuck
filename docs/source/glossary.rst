@@ -29,8 +29,6 @@ Glossary
 
 |large_groups|
 
-|none|
-
 (input) |no_input|
 
 (output) |no_output|
