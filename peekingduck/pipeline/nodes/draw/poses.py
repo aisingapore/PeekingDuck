@@ -25,11 +25,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws poses onto image.
 
-    The ``draw.poses`` node uses the ``keypoints``, ``keypoint_scores``, and
+    The :mod:`draw.poses` node uses the ``keypoints``, ``keypoint_scores``, and
     ``keypoint_conns`` predictions from pose models to draw the human poses
     onto the image. For better understanding, check out the pose models such
-    as :py:class:`HRNet <peekingduck.pipeline.nodes.model.hrnet.Node>` and
-    :py:class:`PoseNet <peekingduck.pipeline.nodes.model.posenet.Node>`.
+    as :mod:`HRNet <model.hrnet>` and :mod:`PoseNet <model.posenet>`.
 
     Inputs:
         |img|
