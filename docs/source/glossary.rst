@@ -31,6 +31,10 @@ Glossary
 
 |none|
 
+(input) |no_input|
+
+(output) |no_output|
+
 |obj_3D_locs|
 
 |obj_groups|

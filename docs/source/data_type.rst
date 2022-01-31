@@ -1,5 +1,5 @@
-.. |img| replace:: ``img`` (:obj:`numpy.ndarray`): A NumPy array representation of the image of
-   shape :math:`(height, width, channels)`, in BGR format.
+.. |img| replace:: ``img`` (:obj:`numpy.ndarray`): A NumPy array of shape
+   :math:`(height, width, channels)` containing the image data in BGR format.
 
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number
@@ -73,6 +73,10 @@
 
 .. |none| replace:: ``none``: No inputs required, or no additional outputs produced. Used for
    ``input`` nodes that require no prior inputs, or ``draw`` nodes that modifies current input.
+
+.. |no_input| replace:: ``none``: No inputs required.
+
+.. |no_output| replace:: ``none``: No outputs produced.
 
 .. |br| raw:: html
 

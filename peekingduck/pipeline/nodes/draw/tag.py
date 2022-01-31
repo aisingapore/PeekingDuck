@@ -37,7 +37,7 @@ class Node(AbstractNode):
         |obj_tags|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         None.

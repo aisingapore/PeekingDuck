@@ -35,7 +35,7 @@ class Node(AbstractNode):
         dynamic input for legend creation.
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         all_legend_items (:obj:`List[str]`):

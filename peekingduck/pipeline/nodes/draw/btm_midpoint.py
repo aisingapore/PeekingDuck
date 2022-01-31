@@ -37,7 +37,7 @@ class Node(AbstractNode):
         |btm_midpoint|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         None.

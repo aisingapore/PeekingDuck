@@ -41,7 +41,7 @@ class Node(AbstractNode):
         |keypoint_conns|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         None.

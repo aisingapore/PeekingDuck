@@ -45,7 +45,7 @@ class Node(AbstractNode):
         |pipeline_end|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**. |br|

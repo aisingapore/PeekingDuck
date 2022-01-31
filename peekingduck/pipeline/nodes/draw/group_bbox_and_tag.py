@@ -44,7 +44,7 @@ class Node(AbstractNode):
         |large_groups|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
