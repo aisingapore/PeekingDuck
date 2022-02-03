@@ -1,7 +1,12 @@
 # Mandatory configs
-input: ["in1", "in2"]             # replace values
-output: ["out1", "out2", "out3"]  # replace values
+# Example:
+# Use 'input: ["bboxes", "bbox_labels"]' to receive bounding boxes and their
+# respective labels as input
+input: ["in1", "in2"]
+# Example:
+# Use 'output: ["obj_tags", "custom_key"]' to output `obj_tags` visualization
+# with `draw.tag` node and `custom_key` for use with other custom nodes.
+output: ["out1", "out2", "out3"]
 
 # Optional configs depending on node
-threshold: 0.5                    # example
-
+threshold: 0.5 # example
