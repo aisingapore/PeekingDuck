@@ -20,10 +20,10 @@ Install and Run PeekingDuck
     
    The following files and folders will be created upon running ``peekingduck init``:
    
-   * `run_config.yml` is the main configuration file for PeekingDuck. It currently contains the
+   * ``run_config.yml`` is the main configuration file for PeekingDuck. It currently contains the
      `default configuration <https://github.com/aimakerspace/PeekingDuck/blob/dev/run_config.yml>`_,
      and we'll show you how to modify it in the :doc:`configuration guide </getting_started/02_configure_pkdk>`.
-   * `custom_nodes` is an optional feature that is discussed in the
+   * ``custom_nodes`` is an optional feature that is discussed in the
      :doc:`custom nodes guide </getting_started/03_custom_nodes>`.
 
    .. code-block::
@@ -43,7 +43,7 @@ Install and Run PeekingDuck
    .. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
        :width: 50 %
 
-   The previous command looks for a `run_config.yml` in the current directory. You can also specify
+   The previous command looks for a ``run_config.yml`` in the current directory. You can also specify
    the path of a different config file to be used, as follows::
 
    > peekingduck run --config_path <path_to_config>
