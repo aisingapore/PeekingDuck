@@ -9,7 +9,7 @@ Welcome to PeekingDuck's documentation!
 .. toctree::
    :caption: Contents
 
-   index.md
+   index
    getting_started/index
    resources/index
    use_cases/index

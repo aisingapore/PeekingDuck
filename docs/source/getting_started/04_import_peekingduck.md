@@ -11,8 +11,9 @@ Here are some examples where you might want to import PeekingDuck as a module:
 
 
 ## Sample Code
-To understand the building blocks, refer to the Introduction [here.](../index.md#how-peekingduck-works)
-
+```{eval-rst}
+To understand the building blocks, refer to the :ref:`How PeekingDuck Works <how_peekingduck_works>` section in our Introduction.
+```
 
 ```{eval-rst}
 You may also refer to our :ref:`API Documentation <api_doc>` to understand PeekingDuck's capabilities.
