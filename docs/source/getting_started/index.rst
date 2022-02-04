@@ -12,5 +12,5 @@ Below are the various Getting Started articles.
 
    /getting_started/01_installation
    /getting_started/02_configure_pkdk
-   /getting_started/03_custom_nodes.md
+   /getting_started/03_custom_nodes
    /getting_started/04_import_peekingduck.md
