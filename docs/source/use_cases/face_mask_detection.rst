@@ -46,7 +46,7 @@ right. These are used to form the bounding box of each human face detected.
 The :mod:`model.yolo_face` node detects human faces with and without face masks using the
 YOLOv4-tiny model by default. The classes are differentiated by the labels and the colors of the
 bounding boxes when multiple faces are detected. For more information on how adjust the
-``yolo_face`` node, check out its :mod:`configurable parameters <model.yolo_face>`.
+``yolo_face`` node, check out its :doc:`configurable parameters </nodes/model.yolo_face>`.
 
 Nodes Used
 ==========

@@ -28,7 +28,6 @@ PeekingDuck with the configuration file |run_config|_ as shown::
 
     > peekingduck run --config_path <path/to/crowd_counting.yml>
 
-
 How it Works
 ============
 
@@ -44,7 +43,7 @@ respectively.
 
 As a rule of thumb, you might want to use the dense crowd model if the people in a given image or
 video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how adjust the
-CSRNet node, check out its :mod:`configurable parameters <model.csrnet>`.
+CSRNet node, check out its :doc:`configurable parameters </nodes/model.csrnet>`.
 
 **2. Heat Map Generation (Optional)**
 
