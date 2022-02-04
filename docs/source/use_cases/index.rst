@@ -11,7 +11,7 @@ Below is a gallery of use cases.
    :maxdepth: 1
 
    /use_cases/crowd_counting
-   /use_cases/face_mask_detection.md
+   /use_cases/face_mask_detection
    /use_cases/group_size_checking.md
    /use_cases/object_counting.md
    /use_cases/multi_object_tracking.md
