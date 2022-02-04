@@ -47,15 +47,15 @@ Explore PeekingDuck's Features
 
 The rest of this webpage contains more details about using PeekingDuck, including information on:
 
-* :doc:`Changing PeekingDuck nodes <getting_started/02_configure_pkdk>` and their settings
+* :doc:`Changing PeekingDuck nodes </getting_started/02_configure_pkdk>` and their settings
 * :ref:`API Documentation <api_doc>` for all PeekingDuck nodes, describing their behavior, inputs,
   outputs and settings
-* Creating your own :doc:`custom nodes <getting_started/03_custom_nodes>`, and using them with
+* Creating your own :doc:`custom nodes </getting_started/03_custom_nodes>`, and using them with
   PeekingDuck nodes
-* Using PeekingDuck as an :doc:`imported Python module <getting_started/04_import_peekingduck>` in
+* Using PeekingDuck as an :doc:`imported Python module </getting_started/04_import_peekingduck>` in
   your project
-* Benchmarks and class/keypoints IDs for :doc:`object detection <resources/01a_object_detection>` and
-  :doc:`pose estimation <resources/01b_pose_estimation>` models.
+* Benchmarks and class/keypoints IDs for :doc:`object detection </resources/01a_object_detection>` and
+  :doc:`pose estimation </resources/01b_pose_estimation>` models.
 
 You are also welcome to join discussions about using PeekingDuck in the following channels:
 
@@ -74,61 +74,61 @@ to help combat COVID-19. For more details, click on the heading of each use case
 ..
     Use case table substitutions
 
-.. |social_distancing_doc| replace:: :doc:`Social Distancing <resources/01b_pose_estimation>`
+.. |social_distancing_doc| replace:: :doc:`Social Distancing </use_cases/social_distancing>`
 
 .. |social_distancing_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |zone_counting_doc| replace:: :doc:`Zone Counting <resources/01b_pose_estimation>`
+.. |zone_counting_doc| replace:: :doc:`Zone Counting </use_cases/zone_counting>`
 
 .. |zone_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |group_size_checking_doc| replace:: :doc:`Group Size Checking <resources/01b_pose_estimation>`
+.. |group_size_checking_doc| replace:: :doc:`Group Size Checking </use_cases/group_size_checking>`
 
 .. |group_size_checking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |object_counting_doc| replace:: :doc:`Object Counting <resources/01b_pose_estimation>`
+.. |object_counting_doc| replace:: :doc:`Object Counting </use_cases/object_counting>`
 
 .. |object_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |privacy_protection_face_doc| replace:: :doc:`Privacy Protection (Faces) <resources/01b_pose_estimation>`
+.. |privacy_protection_face_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_face>`
 
 .. |privacy_protection_face_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |privacy_protection_lp_doc| replace:: :doc:`Privacy Protection (License Plates) <resources/01b_pose_estimation>`
+.. |privacy_protection_lp_doc| replace:: :doc:`Privacy Protection (License Plates) </use_cases/privacy_protection_license_plates>`
 
 .. |privacy_protection_lp_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection <resources/01b_pose_estimation>`
+.. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
 .. |face_mask_detection_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |crowd_counting_doc| replace:: :doc:`Crowd Counting <resources/01b_pose_estimation>`
+.. |crowd_counting_doc| replace:: :doc:`Crowd Counting </use_cases/crowd_counting>`
 
 .. |crowd_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking <resources/01b_pose_estimation>`
+.. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking </use_cases/multiple_object_tracking>`
 
 .. |multiple_object_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |human_tracking_doc| replace:: :doc:`Human Detection and Tracking <resources/01b_pose_estimation>`
+.. |human_tracking_doc| replace:: :doc:`Human Detection and Tracking </use_cases/human_tracking>`
 
 .. |human_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/human_tracking.gif
    :class: no-scaled-link
