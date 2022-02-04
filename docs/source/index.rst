@@ -3,16 +3,16 @@ Introduction
 ************
 
 .. image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg
-    :target: https://pypi.org/project/peekingduck
+   :target: https://pypi.org/project/peekingduck
 
 .. image:: https://badge.fury.io/py/peekingduck.svg
-    :target: https://pypi.org/project/peekingduck
+   :target: https://pypi.org/project/peekingduck
 
 .. image:: https://img.shields.io/pypi/dm/peekingduck
-    :target: https://pypi.org/project/peekingduck
+   :target: https://pypi.org/project/peekingduck
     
 .. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
-    :target: https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE
+   :target: https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE
 
 What is PeekingDuck?
 ====================
