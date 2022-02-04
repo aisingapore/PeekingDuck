@@ -15,7 +15,7 @@ the guidelines.
    :width: 70 %
 
 We have trained a custom YOLOv4 model to detect whether or not a person is wearing a face mask.
-This is further elaborated in the `How it Works`_ section.
+This is explained in the `How it Works`_ section.
 
 Demo
 ====

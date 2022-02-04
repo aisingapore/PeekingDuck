@@ -12,7 +12,7 @@ Below is a gallery of use cases.
 
    /use_cases/crowd_counting
    /use_cases/face_mask_detection
-   /use_cases/group_size_checking.md
+   /use_cases/group_size_checking
    /use_cases/object_counting.md
    /use_cases/multi_object_tracking.md
    /use_cases/human_tracking.md

@@ -15,12 +15,12 @@ and prevent human stampedes.
    :width: 100 %
 
 Our solution utilizes CSRNet to estimate the size of a crowd. In addition, it generates a heat map
-that can be used to pinpoint possible bottlenecks at a venue. This is further elaborated in the `How it Works`_ section.
+that can be used to pinpoint possible bottlenecks at a venue. This is explained in the `How it Works`_ section.
 
 Demo
 ====
 
-.. |run_config| replace:: ``crowd_counting.yml``
+.. |run_config| replace:: crowd_counting.yml
 .. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/crowd_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/01_installation>` and run
