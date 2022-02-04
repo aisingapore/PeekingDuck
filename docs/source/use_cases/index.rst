@@ -19,4 +19,4 @@ Below is a gallery of use cases.
    /use_cases/privacy_protection_faces.md
    /use_cases/privacy_protection_license_plate.md
    /use_cases/social_distancing.md
-   /use_cases/zone_counting.md
+   /use_cases/zone_counting
