@@ -46,10 +46,10 @@ There are three main components to obtain the track of an object:
 The MOT node requires a detected bounding box from an object detector model. To achieve this with
 PeekingDuck, you may use our open source models such as YOLOv4, EfficientDet, and `PoseNet <https://arxiv.org/abs/1505.07427>`_
 (for human detection only) which return detected bounding boxes. This allows the application to
-identify where each object is located within the video feed. The location is returned as two `x, y` coordinates in the form
-:math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left corner of the bounding box,
-and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding box of each object
-detected which will then be used to determine a track for each object.
+identify where each object is located within the video feed. The location is returned as two `x, y`
+coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left
+corner of the bounding box, and :math:`(x_2, y_2)` is the bottom right. These are used to form the
+bounding box of each object detected which will then be used to determine a track for each object.
 
 .. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
    :class: no-scaled-link
