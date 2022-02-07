@@ -18,5 +18,5 @@ Below is a gallery of use cases.
    /use_cases/human_tracking.md
    /use_cases/privacy_protection_faces.md
    /use_cases/privacy_protection_license_plate.md
-   /use_cases/social_distancing.md
+   /use_cases/social_distancing
    /use_cases/zone_counting
