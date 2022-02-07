@@ -28,9 +28,11 @@ Demo
 .. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/01_installation>` and run
-PeekingDuck with the configuration file |run_config|_ as shown::
+PeekingDuck with the configuration file |run_config|_ as shown:
 
-    > peekingduck run --config_path <path/to/social_distancing.yml>
+.. parsed-literal::
+
+    > peekingduck run --config_path <path/to/\ |run_config|\ >
 
 How it Works
 ============
