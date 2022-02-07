@@ -43,12 +43,14 @@ The table below shows the frames per second (FPS) of each model type.
 
 Hardware
 ^^^^^^^^
+
 The following hardware were used to conduct the FPS benchmarks:
  | - ``CPU``: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
 ^^^^^^^^^^^^^^^
+
 The following test conditions were followed:
  | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
      inference on videos
@@ -80,7 +82,6 @@ metrics from COCO. Description of these metrics can be found `here <https://coco
 | HRNet (YOLO) | (v4tiny) | 256 × 192 (416) | 33.3 | 56.0                 | 35.1                 | 27.1                | 42.0                | 37.3               | 58.0                | 39.6                 | 29.6                | 47.9               |
 +--------------+----------+-----------------+------+----------------------+----------------------+---------------------+---------------------+--------------------+---------------------+----------------------+---------------------+--------------------+
 
-
 Dataset
 ^^^^^^^
 
@@ -89,7 +90,6 @@ COCO API into the PeekingDuck pipeline for loading the annotations and evaluatin
 the models. All values are reported in percentage.
 
 All images from the "person" category in the MS COCO (val 2017) dataset were processed.
-
 
 Keypoint IDs
 ============
