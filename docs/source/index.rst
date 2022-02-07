@@ -98,9 +98,9 @@ to help combat COVID-19. For more details, click on the heading of each use case
    :class: no-scaled-link
    :width: 100 %
 
-.. |privacy_protection_face_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_face>`
+.. |privacy_protection_faces_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_faces>`
 
-.. |privacy_protection_face_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
+.. |privacy_protection_faces_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -143,9 +143,9 @@ to help combat COVID-19. For more details, click on the heading of each use case
 +--------------------------------+-----------------------------+
 | |group_size_checking_gif|      | |object_counting_gif|       |
 +--------------------------------+-----------------------------+
-| |privacy_protection_face_doc|  | |privacy_protection_lp_doc| |
+| |privacy_protection_faces_doc| | |privacy_protection_lp_doc| |
 +--------------------------------+-----------------------------+
-| |privacy_protection_face_gif|  | |privacy_protection_lp_gif| |
+| |privacy_protection_faces_gif| | |privacy_protection_lp_gif| |
 +--------------------------------+-----------------------------+
 | |face_mask_detection_doc|      | |crowd_counting_doc|        |
 +--------------------------------+-----------------------------+

@@ -29,10 +29,10 @@ class Node(AbstractNode):
     """Draws large bounding boxes over multiple object bounding boxes which
     have been identified as belonging to large groups.
 
-    The ``draw.group_bbox_and_tag`` node uses the ``obj_groups`` and
+    The :mod:``draw.group_bbox_and_tag`` node uses the ``obj_groups`` and
     ``large_groups`` from the ``dabble`` nodes to draw group bboxes and the
     large group message tag onto the image. For better understanding, refer to
-    `group size checking usecase <use_cases/group_size_checking.html>`_.
+    the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
 
     Inputs:
         |img|

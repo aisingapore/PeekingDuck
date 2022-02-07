@@ -41,8 +41,8 @@ class Node(AbstractNode):
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
             Type of tracking algorithm to be used. For more information about
-            the trackers, please view the `multi object tracking usecase
-            <use_cases/multi_object_tracking.html>`_.
+            the trackers, please view the :doc:`Multiple Object Tracking use
+            case </use_cases/multiple_object_tracking>`.
         iou_threshold (float): **[0, 1], default=0.1**. |br|
             Minimum IoU value to be used with the matching logic.
         max_lost (int): **[0, sys.maxsize), default=10**. |br|
