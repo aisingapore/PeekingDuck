@@ -40,8 +40,8 @@ How it Works
 
 There are three main components to obtain the zone counts:
 
-#. The detection from the object detection model, which is the bounding boxes.
-#. The bottom midpoint of the bounding boxes, derived from the bounding boxes.
+#. The detection from the object detection model, which is the bounding boxes,
+#. The bottom midpoint of the bounding boxes, derived from the bounding boxes, and
 #. The zones, which can be set in the :mod:`dabble.zone_count` configurable parameters.
 
 
