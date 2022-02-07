@@ -85,13 +85,13 @@ You can mosaic or blur the faces detected using the :mod:`draw.mosaic_bbox` or
 
 With regard to the MTCNN model, some common node behaviors that you might want to adjust are:
 
-* ``mtcnn_min_size``: Specifies in pixels the minimum height and width of a face to be detected
-  (default = 40). You may want to decrease the minimum size to increase the number of detections.
+* ``mtcnn_min_size``: Specifies in pixels the minimum height and width of a face to be detected.
+  (default = 40) You may want to decrease the minimum size to increase the number of detections.
 * ``mtcnn_thresholds``: This specifies the threshold values for the Proposal Network (P-Net),
-  Refine Network (R-Net), and Output Network (O-Net) in the MTCNN model (default = [0.6, 0.7, 0.7]).
+  Refine Network (R-Net), and Output Network (O-Net) in the MTCNN model. (default = [0.6, 0.7, 0.7])
   Calibration is performed at each stage in which bounding boxes with confidence scores less than
   the specified threshold are discarded. 
-* ``mtcnn_score``: Specifies the threshold value in the final output (default = 0.7). Bounding
+* ``mtcnn_score``: Specifies the threshold value in the final output. (default = 0.7) Bounding
   boxes with confidence scores less than the specified threshold in the final output are discarded.
   You may want to lower ``mtcnn_thresholds`` and ``mtcnn_score`` to increase the number of
   detections.
@@ -100,8 +100,8 @@ In addition, some common node behaviors that you might want to adjust for the
 :mod:`dabble.mosaic_bbox` and :mod:`dabble.blur_bbox` nodes are:
 
 * ``mosaic_level``: Defines the resolution of a mosaic filter (:math:`width \times height`); the
-  value corresponds to the number of rows and columns used to create a mosaic (default = 7). For
+  value corresponds to the number of rows and columns used to create a mosaic. (default = 7) For
   example, the default value creates a :math:`7 \times 7` mosaic filter. Increasing the number
   increases the intensity of pixelation over an area.
 * ``blur_level``:  Defines the standard deviation of the Gaussian kernel used in the Gaussian
-  filter (default = 50). The higher the blur level, the more intense is the blurring.
+  filter. (default = 50) The higher the blur level, the more intense is the blurring.
