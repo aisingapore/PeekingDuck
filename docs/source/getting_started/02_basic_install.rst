@@ -36,9 +36,9 @@ Verify PeekingDuck Installation
     > peekingduck init
     > peekingduck run
 
-    You should see a video of a person waving hand.
+    You should see a video of a person waving hand (`taken from here
+    <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_).
 
     The video will auto-close when it is runs to the end (about 18 seconds). |br|
     To exit earlier, click to select the video window and press ``q``.
-
 
