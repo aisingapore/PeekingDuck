@@ -5,6 +5,14 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
+dt.sig {
+  width: 100%;
+}
+
+.viewcode-link {
+  float: right;
+}
+
 .wy-menu-vertical p.caption {
   color: #ffffff;
 }

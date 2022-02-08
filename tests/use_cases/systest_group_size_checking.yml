@@ -6,9 +6,9 @@ nodes:
     focal_length: 1.14
     torso_factor: 0.9
 - dabble.group_nearby_objs:
-    obj_dist_thres: 1.5
+    obj_dist_thresholdhold: 1.5
 - dabble.check_large_groups:
-    group_size_thres: 2
+    group_size_threshold: 2
 - dabble.fps
 - draw.bbox     # not in demo config, but included here
 - draw.poses

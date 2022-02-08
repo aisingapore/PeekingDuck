@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises and use HRNet model to infer poses from detected bboxes.
+    """Initializes and uses HRNet model to infer poses from detected bboxes.
     Note that HRNet must be used in conjunction with an object detector applied
     prior.
 

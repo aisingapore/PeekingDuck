@@ -32,7 +32,7 @@ class Node(AbstractNode):
         |large_groups|
 
     Configs:
-        group_size_thres (:obj:`int`): **default = 5**. |br|
+        group_size_threshold (:obj:`int`): **default = 5**. |br|
             Threshold of group size.
     """
 
@@ -47,7 +47,7 @@ class Node(AbstractNode):
         large_groups = [
             group
             for group in group_counter
-            if group_counter[group] > self.group_size_thres
+            if group_counter[group] > self.group_size_threshold
         ]
 
         return {"large_groups": large_groups}

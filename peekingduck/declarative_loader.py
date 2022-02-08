@@ -114,7 +114,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         for node_str, config_updates_yml in self.node_list:
             node_str_split = node_str.split(".")
 
-            self.logger.info(f"Initialising {node_str} node...")
+            self.logger.info(f"Initializing {node_str} node...")
 
             if len(node_str_split) == 3:
                 # convert windows/linux filepath to a module path
@@ -145,7 +145,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config_loader: ConfigLoader,
         config_updates_yml: Optional[Dict[str, Any]],
     ) -> AbstractNode:
-        """Imports node to filepath and initialise node with config."""
+        """Imports node to filepath and initializes node with config."""
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 

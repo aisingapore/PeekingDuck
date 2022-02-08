@@ -123,7 +123,7 @@ def get_custom_node_subpaths(node_subdir, node_type, node_name):
 
 
 def init_msg(node_name):
-    return f"Initialising {node_name} node..."
+    return f"Initializing {node_name} node..."
 
 
 def setup_custom_node(node_subdir, node_type, node_name):
