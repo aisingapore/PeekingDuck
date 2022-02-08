@@ -11,6 +11,7 @@ Welcome to PeekingDuck's documentation!
 
    index
    getting_started/index
+   tutorials/index
    resources/index
    use_cases/index
    faq

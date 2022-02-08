@@ -5,12 +5,11 @@
 Getting Started
 ===============
 
-Below are the various Getting Started articles.
+Below are the list of Getting Started articles.
 
 .. toctree::
    :maxdepth: 2
 
-   /getting_started/01_installation
-   /getting_started/02_configure_pkdk
-   /getting_started/03_custom_nodes
-   /getting_started/04_import_peekingduck
+   /getting_started/01_prerequisites
+   /getting_started/02_basic_install
+   /getting_started/03_advanced_install
