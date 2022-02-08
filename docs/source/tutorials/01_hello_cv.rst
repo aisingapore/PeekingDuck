@@ -17,8 +17,8 @@ PeekingDuck allows you to build a CV pipeline to analyze and process images
 and/or videos. This pipeline is made up of nodes: each node can perform certain
 CV-related tasks.
 
-This is a basic level tutorial to demonstrate how to use PeekingDuck for object
-detection and pose estimation via two simple "hello world" examples.
+This section presents two basic "hello world" examples to demonstrate how to use
+PeekingDuck for object detection and pose estimation.
 
 
 Object Detection

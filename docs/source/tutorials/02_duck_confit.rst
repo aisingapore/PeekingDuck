@@ -6,6 +6,16 @@ Duck Confit
 
    <br />
 
-This is an intermediate level tutorial to demonstrate how to configure
-PeekingDuck and to create custom nodes.
+
+This section presents intermediate recipes for cooking PeekingDuck configs and
+custom nodes creation.
+
+
+PeekingDuck Config
+==================
+
+
+
+Creating Custom Nodes
+=====================
 

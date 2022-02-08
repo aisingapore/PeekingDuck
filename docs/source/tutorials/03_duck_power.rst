@@ -6,8 +6,31 @@ Duck Power
 
    <br />
 
-This is an advanced level tutorial to demonstrate object tracking and the
-"power" nodes: ``dabble.statistics``, ``draw.legend``.
+This section illustrates advanced power features such as object tracking
+and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
+
+
+Object Tracking
+===============
+
+
+
+Power Nodes
+===========
+
+``dabble.statistics``
+
+``draw.legend``
+
+
+
+External Interfaces
+===================
+
+``csv_writer``
+
+``SQL``
+
 
 
 
