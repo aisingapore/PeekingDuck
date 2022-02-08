@@ -129,7 +129,7 @@ def letterbox(
     image: np.ndarray,
     height: int,
     width: int,
-    colour: Tuple[float, float, float] = (127.5, 127.5, 127.5),
+    color: Tuple[float, float, float] = (127.5, 127.5, 127.5),
 ) -> np.ndarray:
     """Resizes a rectangular image to a padded rectangular image.
 
@@ -137,7 +137,7 @@ def letterbox(
         image (np.ndarray): Image frame.
         height (int): Height of padded image.
         width (int): Width of padded image.
-        colour (Tuple[float, float, float]): Colour used for padding around
+        color (Tuple[float, float, float]): Color used for padding around
             the image. (127.5, 127.5, 127.5) is chosen as it is used by the
             original project during model training.
 
@@ -158,7 +158,7 @@ def letterbox(
     image = cv2.resize(image, new_shape, interpolation=cv2.INTER_AREA)
     # padded rectangular
     image = cv2.copyMakeBorder(
-        image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=colour
+        image, top, bottom, left, right, cv2.BORDER_CONSTANT, value=color
     )
     return image
 

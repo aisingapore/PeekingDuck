@@ -17,7 +17,7 @@
 Constants used for drawing
 """
 
-# colours
+# colors
 CHAMPAGNE = (156, 223, 244)
 BLIZZARD = (241, 232, 164)
 VIOLET_BLUE = (188, 118, 119)

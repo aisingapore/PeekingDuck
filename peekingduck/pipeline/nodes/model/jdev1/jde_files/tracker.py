@@ -135,7 +135,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         Args:
             padded_image (torch.Tensor): Preprocessed image with letterbox
-                resizing and colour normalisation.
+                resizing and color normalization.
             image (np.ndarray): The original video frame.
 
         Returns:
