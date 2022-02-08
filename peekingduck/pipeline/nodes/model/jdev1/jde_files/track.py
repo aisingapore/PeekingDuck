@@ -268,7 +268,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
 
     @staticmethod
     def multi_predict(stracks: List["STrack"], kalman_filter: KalmanFilter) -> None:
-        """Runs the vectorised version of Kalman filter prediction step.
+        """Runs the vectorized version of Kalman filter prediction step.
 
         Args:
             stracks (List[STrack]): List of STrack.
