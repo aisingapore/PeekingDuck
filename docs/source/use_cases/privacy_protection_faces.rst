@@ -23,7 +23,7 @@ Demo
 .. |run_config| replace:: privacy_protection_faces.yml
 .. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_faces.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/01_installation>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |run_config|_ as shown:
 
 .. parsed-literal::
