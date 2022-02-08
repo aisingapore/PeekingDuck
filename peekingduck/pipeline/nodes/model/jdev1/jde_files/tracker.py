@@ -388,7 +388,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         padded_image = letterbox(
             image, height=self.input_size[1], width=self.input_size[0]
         )
-        # Normalise RGB
+        # Normalize RGB
         padded_image = padded_image[..., ::-1].transpose(2, 0, 1)
         padded_image = np.ascontiguousarray(padded_image, dtype=np.float32)
         padded_image /= 255.0
@@ -429,7 +429,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
     @staticmethod
     def _postprocess(tlwhs: np.ndarray, image_shape: Tuple[int, ...]) -> np.ndarray:
         """Post-processes detection bounding boxes by converting them from
-        [t, l, w, h] to normalised [x1, y1, x2, y2] format which is required by
+        [t, l, w, h] to normalized [x1, y1, x2, y2] format which is required by
         other PeekingDuck draw nodes. (t, l) is the top-left corner, w is
         width, and h is height. (x1, y1) is the top-left corner and (x2, y2) is
         the bottom-right corner.
@@ -440,7 +440,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
                 frame.
 
         Returns:
-            (np.ndarray): Bounding boxes in normalised [x1, y1, x2, y2] format.
+            (np.ndarray): Bounding boxes in normalized [x1, y1, x2, y2] format.
         """
         return tlwh2xyxyn(tlwhs, *image_shape)
 

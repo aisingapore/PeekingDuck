@@ -150,10 +150,10 @@ def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
 
 
 def xyxy2xyxyn(inputs: np.ndarray, height: float, width: float) -> np.ndarray:
-    """Converts from [x1, y1, x2, y2] to normalised [x1, y1, x2, y2].
+    """Converts from [x1, y1, x2, y2] to normalized [x1, y1, x2, y2].
 
     (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
-    Normalised coordinates are w.r.t. original image size.
+    Normalized coordinates are w.r.t. original image size.
     """
     outputs = np.empty_like(inputs)
     outputs[:, [0, 2]] = inputs[:, [0, 2]] / width
