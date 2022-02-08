@@ -180,7 +180,7 @@ def non_max_suppression(
             detections which have all bounding boxes filtered by `nms`, the
             element will be `None` instead.
     """
-    # Initialising this list with torch.empty will likely incur some additional
+    # Initializing this list with torch.empty will likely incur some additional
     # computational cost
     output: List[torch.Tensor] = [None for _ in range(len(prediction))]  # type: ignore
     for i, pred in enumerate(prediction):

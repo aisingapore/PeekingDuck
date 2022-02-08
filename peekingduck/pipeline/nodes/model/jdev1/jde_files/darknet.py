@@ -40,7 +40,7 @@ Modifications include:
     - loss_names
     - losses
     - test_emb
-    - uniform initialisation of batch norm
+    - uniform initialization of batch norm
 - Refactor to remove unused code
     - enumerate in forward()
     - "maxpool" in _create_nodes
