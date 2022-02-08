@@ -96,9 +96,9 @@ These are the nodes used in the earlier demo (also in |run_config|_):
        focal_length: 1.14
        torso_factor: 0.9
    - dabble.group_nearby_objs:
-       obj_dist_thres: 1.5
+       obj_dist_threshold: 1.5
    - dabble.check_large_groups:
-       group_size_thres: 2
+       group_size_threshold: 2
    - dabble.fps
    - draw.poses
    - draw.group_bbox_and_tag
@@ -120,9 +120,9 @@ Some common node behaviors that you might need to adjust are:
 * ``focal_length`` & ``torso_factor``: We calibrated these settings using a Logitech c170 webcam,
   with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup
   and calibrate these accordingly.
-* ``obj_dist_thres``: The maximum distance between 2 individuals, in metres, before they are
+* ``obj_dist_threshold``: The maximum distance between 2 individuals, in metres, before they are
   considered to be part of a group.
-* ``group_size_thres``: The acceptable group size limit.
+* ``group_size_threshold``: The acceptable group size limit.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.
 
