@@ -21,13 +21,12 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Initialises and use YOLOX to infer from an image frame.
+    """Initializes and uses YOLOX to infer from an image frame.
 
     The YOLOX node is capable detecting objects from 80 categories. The table
-    of object categories can be found
-    :ref:`here <general-object-detection-ids>`. The "yolox-tiny" model is used
-    by default and can be changed to one of
-    (yolox-tiny/yolox-s/yolox-m/yolox-l).
+    of object categories can be found :ref:`here <general-object-detection-ids>`.
+    The ``"yolox-tiny"`` model is used by default and can be changed to one of
+    ``("yolox-tiny", "yolox-s", "yolox-m", "yolox-l")``.
 
     Inputs:
         |img|
@@ -49,8 +48,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         input_size (:obj:`int`): **default=416**. |br|
             Input image resolution of the YOLOX model.
         detect_ids (:obj:`List[int]`): **default=[0]**. |br|
-            List of object category IDs to be detected.
-            To detect all classes, see the tech note :ref:`here <general-object-detection-ids>`.
+            List of object category IDs to be detected. To detect all classes,
+            refer to the :ref:`tech note <general-object-detection-ids>`.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.

@@ -16,12 +16,13 @@
 Reader functions for input nodes
 """
 
-from pathlib import Path
-from typing import Any, Tuple
-from threading import Thread, Event
 import logging
 import platform
 import queue
+from pathlib import Path
+from threading import Event, Thread
+from typing import Any, Tuple
+
 import cv2
 
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
@@ -33,7 +34,6 @@ class VideoThread:
     """
 
     # pylint: disable=too-many-instance-attributes
-    # pylint: disable=logging-fstring-interpolation
 
     def __init__(
         self, input_source: str, mirror_image: bool, buffer_frames: bool

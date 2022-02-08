@@ -18,13 +18,12 @@ Fast Object Detection model
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.node import AbstractNode
-
 from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises and use YOLO model to infer bboxes from image frame.
+    """Initializes and uses YOLO model to infer bboxes from image frame.
 
     The yolo node is capable of detecting objects from 80 categories. It uses
     YOLOv4-tiny by default and can be changed to using YOLOv4. The table of
@@ -49,8 +48,8 @@ class Node(AbstractNode):
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|
-            List of object class IDs to be detected.
-            To detect all classes, see the tech note :ref:`here <general-object-detection-ids>`.
+            List of object class IDs to be detected. To detect all classes,
+            refer to the :ref:tech note <general-object-detection-ids>`.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|
             Maximum number of detected instances for each class in an image.
         max_total_size (:obj:`int`): **default = 50**. |br|
@@ -76,7 +75,7 @@ class Node(AbstractNode):
         self.model = yolo_model.YoloModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Reads the image input and returns the bboxes sof the specified
+        """Reads the image input and returns the bboxes of the specified
         objects chosen to be detected.
 
         Args:

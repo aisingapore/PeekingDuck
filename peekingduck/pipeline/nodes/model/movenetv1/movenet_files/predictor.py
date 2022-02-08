@@ -18,7 +18,8 @@ Predictor class to handle detection of poses for movenet
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Any, Tuple
+from typing import Any, Dict, List, Tuple
+
 import cv2 as cv
 import numpy as np
 import tensorflow as tf
@@ -33,8 +34,8 @@ SKELETON = [
 # fmt: on
 
 
-class Predictor:  # pylint: disable=logging-fstring-interpolation
-    """Predictor class to handle detection of poses for MoveNet"""
+class Predictor:
+    """Predictor class to handle detection of poses for MoveNet."""
 
     def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)

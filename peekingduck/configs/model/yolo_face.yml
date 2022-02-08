@@ -13,7 +13,7 @@ weights: {
     }
 }
 size: 416
-detect_ids: [0,1]
+detect_ids: [0, 1]
 max_output_size_per_class: 50
 max_total_size: 50
 yolo_score_threshold: 0.7

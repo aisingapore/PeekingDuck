@@ -40,7 +40,7 @@ Modifications include:
 - Removed training related code in YOLOLayer.forward()
 - Removed loss related member variables
 - Removed img_size in constructor since it's ignored and self.img_size is
-    initialised to 0 by default
+    initialized to 0 by default
 - Removed `layer` member variable in YOLOLayer since it's not used
 - Updating self.img_size after creating grid to avoid recreation
     - Refactored initial value of self.img_size to None to indicate it's

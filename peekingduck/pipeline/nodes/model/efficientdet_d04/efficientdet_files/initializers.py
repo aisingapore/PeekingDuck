@@ -15,7 +15,7 @@
 # limitations under the License.
 
 """
-Functions to control weights initialisation
+Functions to control weights initialization
 """
 
 

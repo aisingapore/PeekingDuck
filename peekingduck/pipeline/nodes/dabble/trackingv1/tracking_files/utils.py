@@ -86,8 +86,8 @@ def iou_tlwh(bbox_1: np.ndarray, bbox_2: np.ndarray) -> float:
 
 def xyxyn2tlwh(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
     """Converts bounding boxes format from (x1, y2, x2, y2) to (t, l, w, h).
-    (x1, y1) is the normalised coordinates of the top-left corner, (x2, y2) is
-    the normalised coordinates of the bottom-right corner. (t, l) is the
+    (x1, y1) is the normalized coordinates of the top-left corner, (x2, y2) is
+    the normalized coordinates of the bottom-right corner. (t, l) is the
     original coordinates of the top-left corner, (w, h) is the original width
     and height of the bounding box.
 
