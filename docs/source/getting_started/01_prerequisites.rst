@@ -23,11 +23,12 @@ Virtual Environments
     it creates an isolated environment for a Python project to install its own
     dependencies and avoid package version conflicts with other projects.
 
-    There are two ways to create Python virtual environments:
+    Below are two possible ways to create a Python virtual environment:
 
-    #. Using `conda`
+    #. Using ``conda``
 
-        Create a new `conda` virtual environment using Python 3.8::
+        To create a new ``conda`` virtual environment using Python 3.8,
+        launch your terminal app and type the following command::
 
         > conda create -n pkd python=3.8
 
@@ -40,9 +41,10 @@ Virtual Environments
         > conda deactivate
 
 
-    #. Using `venv`
+    #. Using ``venv``
 
-        Create a new virtual environment using the current installed version of Python 3::
+        To create a new virtual environment using the current installed version
+        of Python 3, launch your terminal app and type the following command::
 
         > python3 -m venv pkd
 
