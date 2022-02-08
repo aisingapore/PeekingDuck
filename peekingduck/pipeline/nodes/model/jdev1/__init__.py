@@ -12,4 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Initialises and runs JDE model."""
+"""Initializes and runs JDE model."""

@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Initialises and use the YOLO face detection model to infer bboxes from
+    """Initializes and uses the YOLO face detection model to infer bboxes from
     image frame.
 
     The YOLO face model is a two class model capable of differentiating human
@@ -44,8 +44,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         detect_ids (:obj:`List`): **default = [0, 1]**. |br|
             List of object class IDs to be detected where `no_mask` is ``0``
             and `mask` is ``1``.

@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises a PoseNet model to detect human poses from an image.
+    """Initializes a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
     simultaneously per inference and for each detected human figure, 17
@@ -49,8 +49,8 @@ class Node(AbstractNode):
             **{"resnet", "50", "75", "100"}, default="resnet"**. |br|
             Defines the backbone model for PoseNet.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`):
             **default = { height: 225, width: 225 }**. |br|
             Resolution of input array to PoseNet model.
@@ -72,8 +72,8 @@ class Node(AbstractNode):
         self.model = posenet_model.PoseNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """Reads the image input and returns the bboxes of the specified
+        objects chosen to be detected.
         """
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"]

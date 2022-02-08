@@ -279,7 +279,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             track.mark_removed()
             removed_stracks.append(track)
         # after all these confirmation steps, if a new detection is found, it
-        # is initialised for a new track
+        # is initialized for a new track
         # Step 4: Init new stracks
         for i in unmatched_det_indices:
             track = detections[i]

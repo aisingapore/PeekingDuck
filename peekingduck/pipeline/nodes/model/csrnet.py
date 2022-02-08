@@ -18,20 +18,19 @@ Crowd Counting model
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.node import AbstractNode
-
 from peekingduck.pipeline.nodes.model.csrnetv1 import csrnet_model
+from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises and uses CSRNet model to predict the density map and crowd
+    """Initializes and uses CSRNet model to predict the density map and crowd
     count.
 
     The csrnet node is capable of predicting the number of people in dense and
-    sparse crowds. The dense and sparse crowd models were trained using data from
-    ShanghaiTech Part A and ShanghaiTech Part B respectively. As the models were
-    trained to recognise congested scenes, the estimates are less accurate if the
-    number of people are low (e.g. less than 10)
+    sparse crowds. The dense and sparse crowd models were trained using data
+    from ShanghaiTech Part A and ShanghaiTech Part B respectively. As the
+    models were trained to recognize congested scenes, the estimates are less
+    accurate if the number of people are low (e.g. less than 10)
 
     Inputs:
         |img|
@@ -43,22 +42,24 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`): **{"dense", "sparse"}, default="sparse"**. |br|
-            Defines the type of CSRNet model to be used. The node uses the sparse
-            crowd model by default and can be changed to using the dense crowd
-            model. As a guideline, the dense crowd model should be used if the
-            people in a given image or video frame are packed shoulder to shoulder
-            (e.g. stadiums).
+            Defines the type of CSRNet model to be used. The node uses the
+            sparse crowd model by default and can be changed to using the dense
+            crowd model. As a rule of thumb, the dense crowd model should be
+            used if the people in a given image or video frame are packed
+            shoulder to shoulder, e.g., stadiums.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         width (:obj:`int`): **default = 640**. |br|
-            By default, the width of an image will be resized to 640 for inference.
-            The height of the image will be resized proportionally to preserve its
-            aspect ratio. In general, decreasing the width of an image will improve
-            inference speed. However, this might impact the accuracy of the model.
+            By default, the width of an image will be resized to 640 for
+            inference. The height of the image will be resized proportionally
+            to preserve its aspect ratio. In general, decreasing the width of
+            an image will improve inference speed. However, this might impact
+            the accuracy of the model.
 
     References:
-        CSRNet: Dilated Convolutional Neural Networks for Understanding the Highly Congested Scenes:
+        CSRNet: Dilated Convolutional Neural Networks for Understanding the
+        Highly Congested Scenes:
         https://arxiv.org/pdf/1802.10062.pdf
 
         Model weights trained by https://github.com/Neerajj9/CSRNet-keras

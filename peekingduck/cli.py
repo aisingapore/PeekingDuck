@@ -59,7 +59,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 
 
 def create_yml() -> None:
-    """Initialises the declarative *run_config.yml*."""
+    """Initializes the declarative *run_config.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
@@ -80,7 +80,7 @@ def cli() -> None:
 @cli.command()
 @click.option("--custom_folder_name", default="custom_nodes")
 def init(custom_folder_name: str) -> None:
-    """Initialise a PeekingDuck project"""
+    """Initialize a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
     create_yml()

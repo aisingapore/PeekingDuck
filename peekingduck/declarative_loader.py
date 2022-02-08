@@ -145,7 +145,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         config_loader: ConfigLoader,
         config_updates_yml: Optional[Dict[str, Any]],
     ) -> AbstractNode:
-        """Imports node to filepath and initialise node with config."""
+        """Imports node to filepath and initializes node with config."""
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
