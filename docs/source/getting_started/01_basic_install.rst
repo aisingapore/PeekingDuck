@@ -88,13 +88,13 @@ Verify PeekingDuck Installation
 
 To check that PeekingDuck is installed successfully, create a project folder at a convenient location::
 
-    > mkdir pkd_project
-    > cd pkd_project
+    ~ > mkdir pkd_project
+    ~ > cd pkd_project
 
 Then, initialize a PeekingDuck project and run it::
 
-    > peekingduck init
-    > peekingduck run
+    ~/pkd_project > peekingduck init
+    ~/pkd_project > peekingduck run
 
 You should see a video of a person waving hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_).
 
