@@ -8,7 +8,7 @@ Tutorials
 Below are the list of Tutorial articles:
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
 
    /tutorials/01_hello_cv
    /tutorials/02_duck_confit
