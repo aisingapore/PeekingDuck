@@ -99,9 +99,6 @@ Now do a ``peekingduck run`` and you should see a display of the ``demo video``
 with the various objects being highlighted by PeekingDuck in bounding boxes. 
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
 
-You can view all the available nodes and their respective configurable settings in 
-PeekingDuck's :ref:`API documentation <api_doc>`.
-
 
 Record and Save Video File
 --------------------------
@@ -139,8 +136,18 @@ specified directory.
 Creating Custom Nodes
 =====================
 
+You can create your own custom nodes to run with PeekingDuck. 
+Perhaps you'd like to take a snapshot of a video frame, and post it to your API
+endpoint; 
+perhaps you have a model trained on a custom dataset, and would like to use
+PeekingDuck's :ref:`input <api_doc>`, :ref:`draw <api_doc>`, and :ref:`output
+<api_doc>` nodes. 
+PeekingDuck is designed to be very flexible --- you can create your own nodes
+and use them with ours.
+This guide will showcase how anyone can develop custom nodes to be used with
+PeekingDuck.
 
-
+``Todo`` tutorial on drawing bbox coords and confidence score
 
 
 
@@ -149,6 +156,12 @@ Temp Placeholders
 
 Royalty free video of computer hardware from:
 https://www.youtube.com/watch?v=-C1TEGZavko
+
+
+
+.. note::
+   You can view all the available nodes and their respective configurable
+   settings in PeekingDuck's :ref:`API documentation <api_doc>`.
 
 
 
