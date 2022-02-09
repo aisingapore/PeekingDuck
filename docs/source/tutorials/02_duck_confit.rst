@@ -8,14 +8,117 @@ Duck Confit
 
 
 This section presents intermediate recipes for cooking PeekingDuck configs and
-custom nodes creation.
+creating custom nodes to implement custom user functions.
 
 
-PeekingDuck Config
-==================
+Nodes and Configs
+=================
+
+PeekingDuck comes with a rich collection of nodes that you can use to create
+your own CV pipelines. Each node can be customised by changing its
+configurations or settings.
+
+To get a quick overview of PeekingDuck's nodes, run the following command::
+
+   > peekingduck nodes
+
+.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
+   :width: 1575
+   :height: 360
+   :alt: PeekingDuck screenshot : nodes output
+
+You will see a comprehensive list of all PeekingDuck's nodes with links to their
+``readthedocs`` pages for more information.
 
 
+Nodes
+-----
+
+PeekingDuck supports 6 types of nodes:
+
++------------+-----------------------------------------------------------------+
+| Node Type  | Node Description                                                |
++------------+-----------------------------------------------------------------+
+| Input      | Reads a video file from disk or captures images from the webcam |
++------------+-----------------------------------------------------------------+
+| Model      | CV model does the "heaving lifting" here, like object detection |
++------------+-----------------------------------------------------------------+
+| Dabble     | Does the "smaller" computations, like counting number of bboxes |
++------------+-----------------------------------------------------------------+
+| Draw       | Draws things/text onto an image, like bboxes or FPS             |
++------------+-----------------------------------------------------------------+
+| Output     | Shows an image on screen or saves to a video file on disk       |
++------------+-----------------------------------------------------------------+
+| Preprocess | Applies effects onto an image                                   |
++------------+-----------------------------------------------------------------+
+
+
+.. _configure_nodes:
+
+Configuring Nodes: More Object Detection
+----------------------------------------
+
+This section will demonstrate how to change the settings of PeekingDuck's nodes 
+to vary their functionalities.
+
+To follow this guide, first download this `demo video
+<http://orchard.dnsalias.com:8100/computers_800.mp4>`_
+**([Todo]: update to GCP URL)** and save it in a local folder.
+
+Next, create a PeekingDuck project as shown :ref:`earlier <verify_installation>`.
+
+We will modify this project to perform object detection on the ``demo video``.
+Edit the ``run_config.yml`` file as follows:
+
+   .. code-block:: yaml
+
+      nodes:
+      - input.recorded:
+         input_dir: /folder/containing/demo_video.mp4    # replace this with actual path
+      - model.yolo:
+         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+      - draw.bbox:
+         show_labels: True
+      - output.screen
+
+Here is an explanation of what has been done above:
+
+#. ``input.recorded``: tells PeekingDuck to load the ``demo video``.
+
+#. ``model.yolo``: by default, the Yolo model detects ``person`` only. |br|
+   The ``demo video`` contains other classes of objects like cup, cat, laptop,
+   etc. |br|
+   So we have to change the model settings to detect the other object classes.
+#. ``draw.bbox``: reconfigure this node to display the detected object class label.
+
+   .. note::
+      The Yolo model can detect 80 different :ref:`object classes
+      <general-object-detection-ids>`.
+
+Now do a ``peekingduck run`` and you should see a display of the ``demo video`` 
+with the various objects being highlighted by PeekingDuck in bounding boxes. 
+The 30-second video will auto-close at the end, or you can press ``q`` to end early.
+
+You can view all the available nodes and their respective configurable settings in 
+PeekingDuck's :ref:`API documentation <api_doc>`.
+
+
+.. _create_custom_nodes:
 
 Creating Custom Nodes
 =====================
+
+
+
+
+
+
+Temp Placeholders
+=================
+
+Royalty free video of computer hardware from:
+https://www.youtube.com/watch?v=-C1TEGZavko
+
+
+
 
