@@ -108,3 +108,24 @@ div.highlight span.pkd-expandable:before {
 #quickstart-mac:not(:checked) ~ * [data-os="mac"] {
   display: none;
 }
+
+/* Colors */
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}
+
+.green {
+  color: green;
+}
+
+.yellow {
+  color: yellow;
+}
+
+.orange {
+  color: orange;
+}
