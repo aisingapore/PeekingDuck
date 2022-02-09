@@ -63,8 +63,10 @@ Then run:
          ><span class="pkd-expandable" data-venv="conda">conda create -n pkd python=3.8</span
          ><span class="pkd-expandable" data-venv="conda">conda activate pkd</span
          ><span class="pkd-expandable" data-venv="conda">pip install -U peekingduck</span
-         ><span class="pkd-expandable" data-venv="venv">python3 -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate </span
+         ><span class="pkd-expandable" data-venv="venv" data-os="linux">python3 -m venv pkd</span
+         ><span class="pkd-expandable" data-venv="venv" data-os="mac">python3 -m venv pkd</span
+         ><span class="pkd-expandable" data-venv="venv" data-os="windows">python -m venv pkd</span
+         ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate</span
          ><span class="pkd-expandable" data-venv="venv" data-os="mac">source pkd/bin/activate</span
          ><span class="pkd-expandable" data-venv="venv" data-os="windows">pkd\Scripts\activate</span
          ><span class="pkd-expandable" data-venv="venv">pip install -U peekingduck</span
