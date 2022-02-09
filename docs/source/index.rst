@@ -47,12 +47,12 @@ Explore PeekingDuck's Features
 
 The rest of this webpage contains more details about using PeekingDuck, including information on:
 
-* :doc:`Changing PeekingDuck nodes </getting_started/02_configure_pkdk>` and their settings
+* :ref:`Changing PeekingDuck nodes <configure_nodes>` and their settings
 * :ref:`API Documentation <api_doc>` for all PeekingDuck nodes, describing their behavior, inputs,
   outputs and settings
-* Creating your own :doc:`custom nodes </getting_started/03_custom_nodes>`, and using them with
+* Creating your own :ref:`custom nodes <create_custom_nodes>`, and using them with
   PeekingDuck nodes
-* Using PeekingDuck as an :doc:`imported Python module </getting_started/04_import_peekingduck>` in
+* Using PeekingDuck as an :ref:`imported Python module <import_peekingduck>` in
   your project
 * Benchmarks and class/keypoints IDs for :doc:`object detection </resources/01a_object_detection>` and
   :doc:`pose estimation </resources/01b_pose_estimation>` models.
