@@ -73,6 +73,10 @@ Then run:
          ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
        ></pre></div>
 
+It is recommended to install PeekingDuck in a Python virtual environment, as it creates an isolated
+environment for a Python project to install its own dependencies and avoid package version
+conflicts with other projects.
+
 .. note::
 
     For M1 Mac users, please see :ref:`Advanced Install - M1 Mac <m1_mac_installation>`.
