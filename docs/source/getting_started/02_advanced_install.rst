@@ -2,10 +2,6 @@
 Advanced Install
 ****************
 
-.. |br| raw:: html
-
-   <br />
-
 This section covers advanced PeekingDuck installation steps for users with ARM64
 devices or M1 Macs.
 
@@ -81,7 +77,6 @@ MacOS Monterey.
         ``requires compilation from github source, editing of source files``
 
 
-
 Development Version
 ===================
 
@@ -90,9 +85,10 @@ You can try out the development version of PeekingDuck direct from the
 
     > git clone https://github.com/aimakerspace/PeekingDuck.git
 
-This will clone a copy of PeekingDuck development version into the folder
-``PeekingDuck``. |br|
-Test it with the following commands::
+| This will clone a copy of PeekingDuck development version into the folder ``PeekingDuck``.
+| Test it with the following commands:
 
+.. code-block::
+    
     > cd PeekingDuck
     > python __main__.py
