@@ -508,8 +508,9 @@ implement our custom node function.
    It also converts the score into a numeric string with two decimal places.
 
    Line 60 uses the ``opencv`` ``putText`` function to draw the score string
-   onto the image. For more info on the various parameters, please refer to
-   ``opencv``'s API documentation.
+   onto the image at the left-bottom ``org=(x1, y2)`` of the bounding box.
+   For more info on the various parameters, please refer to ``opencv``'s API
+   documentation.
 
    Line 70 returns an empty dictionary ``{}`` to tell PeekingDuck that the node
    has no outputs.
@@ -547,6 +548,10 @@ implement our custom node function.
 
 Execute ``peekingduck run`` to see your custom node in action.
 
+   .. figure:: /assets/tutorials/ss_custom_nodes_1.png
+      :alt: Custom node screenshot - show object detection scores
+
+      Custom Node Showing Object Detection Scores
 
    .. note::
 
