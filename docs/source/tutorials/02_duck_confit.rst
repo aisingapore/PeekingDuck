@@ -562,3 +562,276 @@ Execute ``peekingduck run`` to see your custom node in action.
 
 
 
+Custom Node 2: Show Keypoints and Count Hand Waves
+--------------------------------------------------
+
+This tutorial will create a custom node to analyze the skeletal keypoints of the
+person from the ``wave.mp4`` video in the :ref:`pose estimation tutorial
+<tutorial_pose_estimation>` and to count the number of times he waves.
+
+The PoseNet pose estimation model outputs seventeen keypoints for the person 
+corresponding to the different body parts as documented :ref:`here
+<whole-body-keypoint-ids>`.
+Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
+real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
+
+Starting with a newly initialised PeekingDuck folder, call ``peekingduck
+create-node`` to create a new dabble custom node ``wave`` as shown below:
+
+.. parsed-literal::
+
+   \ :blue:`~/`\ > \ :green:`mkdir custom_project` |br|\
+   \ :blue:`~/`\ > \ :green:`cd custom_project` |br|\
+   \ :blue:`~/custom_project`\ > \ :green:`peekingduck init` |br|\
+   Welcome to PeekingDuck! 
+   2022-02-11 18:17:31 peekingduck.cli  INFO:  Creating custom nodes folder in ~/custom_project/src/custom_nodes 
+   \ :blue:`~/custom_project`\ > \ :green:`peekingduck create-node` |br|\ 
+   Creating new custom node...
+   Enter node directory relative to ~/custom_project [src/custom_nodes]: |Enter|
+   Select node type (input, model, draw, dabble, output): \ :green:`dabble` |br|\
+   Enter node name [my_custom_node]: \ :green:`wave` |br|\
+
+   Node directory:	~/custom_project/src/custom_nodes
+   Node type:	dabble
+   Node name:	wave
+
+   Creating the following files:
+      Config file: ~/custom_project/src/custom_nodes/configs/dabble/wave.yml
+      Script file: ~/custom_project/src/custom_nodes/dabble/wave.py
+   Proceed? [Y/n]: |Enter|
+   Created node!
+
+Also, copy ``wave.mp4`` into the above folder.  You should end up with the
+following folder structure:
+
+.. parsed-literal::
+
+   \ :blue:`custom_project/` \ |Blank|
+   ├── run_config.yml
+   ├── \ :blue:`src/` \ |Blank|
+   │   └── \ :blue:`custom_nodes/` \ |Blank|
+   │      ├── \ :blue:`configs/` \ |Blank|
+   │      │   └── \ :blue:`dabble/` \ |Blank|
+   │      │       └── wave.yml
+   │      └── \ :blue:`dabble/` \ |Blank|
+   │            └── wave.py
+   └── wave.mp4
+
+To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
+``run_config.yml`` are to be edited as follows:
+
+1. **src/custom_nodes/configs/dabble/wave.yml**:
+
+   .. code-block:: yaml
+      :linenos:
+
+      # Dabble node has both input and output
+      input: ["img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores"]
+      output: ["img"]      # need to return image back to pipeline
+
+      # No optional configs
+
+
+2. **src/custom_nodes/dabble/wave.py**:
+
+   .. code-block:: python
+      :linenos:
+
+      """
+      Custom node to show keypoints and count the number of times the person's hand is waved
+      """
+
+      from typing import Any, Dict, List, Tuple
+      import cv2
+      from peekingduck.pipeline.nodes.node import AbstractNode
+
+      FONT = cv2.FONT_HERSHEY_SIMPLEX
+      WHITE = (255, 255, 255)  # opencv loads file in BGR format
+      YELLOW = (0, 255, 255)
+      THRESHOLD = 0.6  # ignore keypoints below this threshold
+
+
+      def map_bbox_to_image_coords(
+         bbox: List[float], image_size: Tuple[int, int]
+      ) -> List[int]:
+         """Convert relative bounding box coords to absolute image coords.
+         Bounding box coords ranges from 0 to 1
+         where (0, 0) = image top-left, (1, 1) = image bottom-right.
+
+         Args:
+            bbox (List[float]): List of 4 floats x1, y1, x2, y2
+            image_size (Tuple[int, int]): Width, Height of image
+
+         Returns:
+            List[int]: x1, y1, x2, y2 in integer image coords
+         """
+         width, height = image_size[0], image_size[1]
+         x1, y1, x2, y2 = bbox
+         x1 *= width
+         x2 *= width
+         y1 *= height
+         y2 *= height
+         return int(x1), int(y1), int(x2), int(y2)
+
+
+      def map_keypoint_to_image_coords(
+         keypoint: List[float], image_size: Tuple[int, int]
+      ) -> List[int]:
+         """Convert relative keypoint coords to absolute image coords.
+         Keypoint coords ranges from 0 to 1
+         where (0, 0) = image top-left, (1, 1) = image bottom-right.
+
+         Args:
+            bbox (List[float]): List of 2 floats x, y (relative)
+            image_size (Tuple[int, int]): Width, Height of image
+
+         Returns:
+            List[int]: x, y in integer image coords
+         """
+         width, height = image_size[0], image_size[1]
+         x, y = keypoint
+         x *= width
+         y *= height
+         return int(x), int(y)
+
+
+      def draw_text(img, x, y, text_str: str, color_code):
+         cv2.putText(
+            img=img,
+            text=text_str,
+            org=(x, y),
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=0.4,
+            color=color_code,
+            thickness=2,
+         )
+
+
+      class Node(AbstractNode):
+         """Custom node to display keypoints and count number of hand waves
+
+         Args:
+            config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+         """
+
+         def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+            super().__init__(config, node_path=__name__, **kwargs)
+            self.right_wrist = None
+            self.direction = None
+            self.num_direction_changes = 0
+            self.num_waves = 0
+
+         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+            """This node draws keypoints and count hand waves
+
+            Args:
+                  inputs (dict): Dictionary with keys
+                     "img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores"
+
+            Returns:
+                  outputs (dict): Dictionary with keys
+                     "img"
+            """
+
+            img = inputs["img"]
+            bboxes = inputs["bboxes"]
+            bbox_scores = inputs["bbox_scores"]
+            keypoints = inputs["keypoints"]
+            keypoint_scores = inputs["keypoint_scores"]
+
+            img_size = (img.shape[1], img.shape[0])  # image width, height
+
+            # bounding box confidence score
+            the_bbox = bboxes[0]  # image only has one person
+            the_bbox_score = bbox_scores[0]  # only one set of scores
+
+            x1, y1, x2, y2 = map_bbox_to_image_coords(the_bbox, img_size)
+            score_str = f"BBox {the_bbox_score:0.2f}"
+            cv2.putText(
+                  img=img,
+                  text=score_str,
+                  org=(x1, y2 - 30),
+                  fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                  fontScale=1.0,
+                  color=WHITE,
+                  thickness=3,
+            )
+
+            # hand wave detection
+            the_keypoints = keypoints[0]  # image only has one person
+            the_keypoint_scores = keypoint_scores[0]  # only one set of scores
+            right_wrist = None
+            right_shoulder = None
+
+            for i, keypoints in enumerate(the_keypoints):
+                  keypoint_score = the_keypoint_scores[i]
+
+                  if keypoint_score >= THRESHOLD:
+                     x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
+                     x_y_str = f"({x}, {y})"
+
+                     if 6 == i:  # right shoulder
+                        right_shoulder = keypoints
+                        the_color = YELLOW
+                     elif i == 8:  # right elbow
+                        right_elbow = keypoints
+                        the_color = YELLOW
+                     elif i == 10:  # right wrist
+                        right_wrist = keypoints
+                        the_color = YELLOW
+                     else:
+                        the_color = WHITE
+
+                     draw_text(img, x, y, x_y_str, the_color)
+
+            if right_wrist is not None and right_shoulder is not None:
+                  if self.right_wrist is None:
+                     self.right_wrist = right_wrist  # first wrist data point
+                  else:
+                     # wait for wrist to be above shoulder to count hand wave
+                     if right_wrist[1] > right_shoulder[1]:
+                        pass
+                     else:
+                        if right_wrist[0] < self.right_wrist[0]:
+                              direction = "left"
+                        else:
+                              direction = "right"
+
+                        if self.direction is None:
+                              self.direction = direction  # first direction data point
+                        else:
+                              # check if hand changes direction
+                              if direction != self.direction:
+                                 self.num_direction_changes += 1
+                              # every three hand direction changes == one wave
+                              if self.num_direction_changes >= 2:
+                                 self.num_waves += 1
+                                 self.num_direction_changes = 0  # reset direction count
+
+                        self.right_wrist = right_wrist  # save last position
+                        self.direction = direction
+
+                  wave_str = f"#waves = {self.num_waves}"
+                  draw_text(img, 20, 30, wave_str, YELLOW)
+
+            return {"img": img}
+
+
+
+
+3. **run_config.yml**:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.recorded:
+         input_dir: wave.mp4
+      - model.yolo
+      - model.posenet
+      - dabble.fps
+      - custom_nodes.dabble.wave
+      - draw.poses
+      - draw.legend
+      - output.screen
+
