@@ -255,7 +255,7 @@ The sub-folders ``src``, ``custom_nodes`` and ``configs`` are empty: they serve
 as placeholders for contents to be added.
 
 
-Custom Node to Show Object Detection Score
+Custom Node 1: Show Object Detection Score
 ------------------------------------------
 
 When the Yolo object detection model detects an object in the image, it assigns 
