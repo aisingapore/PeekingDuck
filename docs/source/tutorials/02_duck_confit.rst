@@ -835,3 +835,13 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       - draw.legend
       - output.screen
 
+
+Execute ``peekingduck run`` to see your custom node in action.
+
+   .. figure:: /assets/tutorials/ss_custom_nodes_2.png
+      :alt: Custom node screenshot - count hand waves
+
+      Custom Node Counting Hand Waves
+
+
+
