@@ -21,6 +21,8 @@ This section presents two basic "hello world" examples to demonstrate how to use
 PeekingDuck for object detection and pose estimation.
 
 
+.. _tutorial_object_detection:
+
 Object Detection
 ================
 
@@ -51,12 +53,17 @@ To exit earlier, click to select the video window and press ``q``.
 You have successfully run an object detection pipeline.
 
 
+**TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
+load an included video file correctly from the right path location**
+
+
+.. _tutorial_pose_estimation:
 
 Pose Estimation
 ===============
 
-You can get PeekingDuck to perform pose estimation by changing the second
-``model`` and the third ``draw`` nodes in  ``run_config.yml`` as follows:
+You can get PeekingDuck to perform pose estimation by changing the second node
+``model`` and the third node ``draw`` in ``run_config.yml`` as follows:
 
 .. code-block:: yaml
    :linenos:
@@ -88,6 +95,7 @@ That's it: you have created a pose estimation pipeline by changing only two line
         For best effect, your video file should contain people performing some activity.
 
 
+.. _tutorial_webcam:
 
 Using a WebCam
 ==============

@@ -100,3 +100,6 @@ You should see a video of a person waving hand (`taken from here <https://www.yo
 
 | The video will auto-close when it is runs to the end (about 18 seconds).
 | To exit earlier, click to select the video window and press ``q``.
+
+**TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
+load an included video file correctly from the right path location**
