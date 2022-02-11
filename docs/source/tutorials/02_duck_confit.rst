@@ -458,12 +458,15 @@ implement our custom node function.
             """This node draws scores on objects detected
 
             Args:
-                  inputs (dict): Dictionary with keys "__", "__".
+                  inputs (dict): Dictionary with keys "img", "bboxes", "bbox_scores"
+
+            Returns:
+                  outputs (dict): Empty dictionary
             """
             img = inputs["img"]
-            img_size = (img.shape[1], img.shape[0])  # width, height
             bboxes = inputs["bboxes"]
             scores = inputs["bbox_scores"]
+            img_size = (img.shape[1], img.shape[0])  # width, height
 
             for i, bbox in enumerate(bboxes):
                   x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
@@ -491,28 +494,29 @@ implement our custom node function.
    Line 9 defines the ``YELLOW`` color code for the score. Note that ``opencv`` 
    uses the BGR-format instead of the common RGB-format.
 
-   Lines 12-32 implements a helper function to map the bounding box coordinates 
-   to the image coordinates, as explained :ref:`above <coordinate_systems>`.
+   Lines 12-32 implement a helper function ``map_bbox_to_image_coords`` to map
+   the bounding box coordinates to the image coordinates, as explained
+   :ref:`above <coordinate_systems>`.
 
    Line 42 is the node object initializer. We do not require any special setup,
    so it simply calls the ``__init__`` method of its parent class.
 
-   Lines 45-68 implements the display score function in the node's ``run``
+   Lines 45-71 implement the display score function in the node's ``run``
    method, which is called by PeekingDuck as it iterates through the pipeline.
 
-   Lines 51-54 extracts the inputs from the pipeline and computes the image size
+   Lines 54-57 extract the inputs from the pipeline and computes the image size
    in ( width, height ).
 
-   Line 56 onwards iterates through all the bounding boxes, whereby it computes
+   Line 59 onwards iterates through all the bounding boxes, whereby it computes
    the (x1, y1) left-top and (x2, y2) right-bottom bounding box coordinates. 
    It also converts the score into a numeric string with two decimal places.
 
-   Line 60 uses the ``opencv`` ``putText`` function to draw the score string
+   Line 63 uses the ``opencv`` ``putText`` function to draw the score string
    onto the image at the left-bottom ``org=(x1, y2)`` of the bounding box.
    For more info on the various parameters, please refer to ``opencv``'s API
    documentation.
 
-   Line 70 returns an empty dictionary ``{}`` to tell PeekingDuck that the node
+   Line 73 returns an empty dictionary ``{}`` to tell PeekingDuck that the node
    has no outputs.
 
 
@@ -576,7 +580,7 @@ Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
 real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
 
 Starting with a newly initialised PeekingDuck folder, call ``peekingduck
-create-node`` to create a new dabble custom node ``wave`` as shown below:
+create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 .. parsed-literal::
 
@@ -627,10 +631,13 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 
       # Dabble node has both input and output
       input: ["img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores"]
-      output: ["img"]      # need to return image back to pipeline
+      output: ["none"]
 
       # No optional configs
 
+We will implement this tutorial using a ``dabble`` node, which will take the 
+inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, ``keypoint_scores`` 
+from the pipeline. The node has no output.
 
 2. **src/custom_nodes/dabble/wave.py**:
 
@@ -722,15 +729,14 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
             self.num_waves = 0
 
          def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            """This node draws keypoints and count hand waves
+            """This node draws keypoints and count hand waves.
 
             Args:
                   inputs (dict): Dictionary with keys
-                     "img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores"
+                     "img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores".
 
             Returns:
-                  outputs (dict): Dictionary with keys
-                     "img"
+                  outputs (dict): Empty dictionary.
             """
 
             img = inputs["img"]
@@ -770,16 +776,13 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
                      x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
                      x_y_str = f"({x}, {y})"
 
-                     if 6 == i:  # right shoulder
+                     if 6 == i:     # right shoulder
                         right_shoulder = keypoints
-                        the_color = YELLOW
-                     elif i == 8:  # right elbow
-                        right_elbow = keypoints
                         the_color = YELLOW
                      elif i == 10:  # right wrist
                         right_wrist = keypoints
                         the_color = YELLOW
-                     else:
+                     else:          # generic keypoint
                         the_color = WHITE
 
                      draw_text(img, x, y, x_y_str, the_color)
@@ -814,8 +817,43 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
                   wave_str = f"#waves = {self.num_waves}"
                   draw_text(img, 20, 30, wave_str, YELLOW)
 
-            return {"img": img}
+            return {}
 
+This long piece of code implements our custom ``dabble`` node. As can be seen, 
+this ``dabble.wave`` code structure is very similar to the other custom 
+node tutorial ``draw.score`` code structure.
+
+Line 6 imports the ``opencv`` library which we will use for drawing onto the 
+image.
+
+Line 7 imports the PeekingDuck's ``AbstractNode`` class which is required for 
+all custom node implementation.
+
+Lines 9-12 set up some working global constants.
+
+Lines 15-35 define a helper function ``map_bbox_to_image_coords`` to convert 
+relative bounding box coordinates to absolute image coordinates.
+
+Lines 38-56 define a second helper function ``map_keypoint_to_image_coords`` to 
+convert relative keypoint coordinates to absolute image coordinates.
+
+Lines 59-68 define another helper function ``draw_text`` to call the ``opencv`` 
+drawing function to improve code readability.
+
+Line 71 onwards implements the custom ``dabble`` node logic.
+
+Lines 96-100 get the required inputs from the pipeline.
+
+Lines 105-118 get the bounding box confidence score and draw it at the
+left-bottom (x1, y2) corner of the bounding box.
+
+Lines 121-172 implement a simple heuristic to count the number of times the 
+person waves his hand. It tracks the direction the right wrist is moving in and 
+notes when the wrist changes direction. Upon encountering two direction changes, 
+e.g. left -> right -> left, one wave is counted.
+The heuristic also waits until the right wrist has been lifted above the right 
+should before it starts tracking hand direction and counting waves.
+The number of waves is displayed at the left-top corner of the screen.
 
 
 
@@ -835,6 +873,9 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       - draw.legend
       - output.screen
 
+We modify the pipeline file ``run_config.yml`` to run both the object detection 
+and pose estimation models to obtain the required inputs for our custom
+``dabble`` node.
 
 Execute ``peekingduck run`` to see your custom node in action.
 
