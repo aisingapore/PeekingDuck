@@ -84,6 +84,7 @@ autosummary_mock_imports = [
     "input.utils",
     "model.csrnetv1",
     "model.efficientdet_d04",
+    "model.fairmotv1",
     "model.hrnetv1",
     "model.jdev1",
     "model.mtcnnv1",

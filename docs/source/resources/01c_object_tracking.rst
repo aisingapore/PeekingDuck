@@ -14,7 +14,9 @@ The table below shows the object tracking models available for each task categor
 +               +----------------------+------------------------+
 | General       | OpenCV MOSSE Tracker | :mod:`dabble.tracking` |
 +---------------+----------------------+------------------------+
-| Human         | JDE                  | :mod:`model.jde`       |
+|               | JDE                  | :mod:`model.jde`       |
++               +----------------------+------------------------+
+| Human         | FairMOT              | :mod:`model.fairmot`   |
 +---------------+----------------------+------------------------+
 
 Benchmarks
@@ -38,6 +40,8 @@ The table below shows the performance of our object tracking models using multip
 | OpenCV MOSSE Tracker with YOLOX | yolox-m              | 32    | 37.6  | 2124   | 7695  | 65268  |
 +---------------------------------+----------------------+-------+-------+--------+-------+--------+
 | JDE                             | --                   | 70.1  | 65.1  | 1321   | 6412  | 25292  |
++---------------------------------+----------------------+-------+-------+--------+-------+--------+
+| FairMOT                         | --                   | 81.8  | 80.9  | 536    | 3663  | 15903  |
 +---------------------------------+----------------------+-------+-------+--------+-------+--------+
 
 Dataset
