@@ -12,6 +12,8 @@ Duck Confit
 
 .. role:: green
 
+.. role:: heading
+
 .. |Blank| unicode:: U+2800 .. Invisible character
 
 .. |Enter| unicode:: U+23CE .. Unicode Enter Key Symbol
@@ -35,7 +37,8 @@ To get a quick overview of PeekingDuck's nodes, run the following command:
 
 .. parsed-literal::
 
-   \ :blue:`~` \ > peekingduck nodes
+   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
+   \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
 
 .. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
 .. image:: /assets/tutorials/ss_pkd_nodes.png
@@ -237,9 +240,10 @@ Let's start by creating a new PeekingDuck project:
 
 .. parsed-literal::
 
-    \ :blue:`~` \ > mkdir custom_project
-    \ :blue:`~` \ > cd custom_project
-    \ :blue:`~/custom_project` \ > peekingduck init
+   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
+   \ :blue:`[~user]` \ > \ :green:`mkdir custom_project` |br|\ 
+   \ :blue:`[~user]` \ > \ :green:`cd custom_project` |br|\ 
+   \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` \ 
 
 This creates the following ``custom_project`` folder structure:
 
@@ -267,11 +271,7 @@ This number is internal and not readily viewable.
 
 We will create a custom node to retrieve this score and display it on screen.
 
-Use the following command to create a custom node:
-
-.. parsed-literal::
-
-    \ :blue:`~/custom_project` \ > peekingduck create-node
+Use the following command to create a custom node: ``peekingduck create-node``
 
 It will prompt you to answer several questions.
 Press ``<enter>`` to accept the default ``custom_nodes`` folder name, then enter 
@@ -283,19 +283,20 @@ The entire interaction is shown here, the answers you type are in shown in
 
 .. parsed-literal::
 
-   \ :blue:`~/custom_project`\ > \ :green:`peekingduck create-node` |br|\ 
+   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` \ |Blank|
+   \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` |br|\ 
    Creating new custom node...
-   Enter node directory relative to ~/custom_project [src/custom_nodes]: |Enter|
+   Enter node directory relative to ~user/custom_project [src/custom_nodes]: |Enter|
    Select node type (input, model, draw, dabble, output): \ :green:`draw` |br|\
    Enter node name [my_custom_node]: \ :green:`score` |br|\
 
-   Node directory:	~/custom_project/src/custom_nodes
+   Node directory:	~user/custom_project/src/custom_nodes
    Node type:	draw
    Node name:	score
 
    Creating the following files:
-      Config file: ~/custom_project/src/custom_nodes/configs/draw/score.yml
-      Script file: ~/custom_project/src/custom_nodes/draw/score.py
+      Config file: ~user/custom_project/src/custom_nodes/configs/draw/score.yml
+      Script file: ~user/custom_project/src/custom_nodes/draw/score.py
    Proceed? [Y/n]: |Enter|
    Created node!
  
@@ -584,25 +585,26 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 .. parsed-literal::
 
-   \ :blue:`~/`\ > \ :green:`mkdir custom_project` |br|\
-   \ :blue:`~/`\ > \ :green:`cd custom_project` |br|\
-   \ :blue:`~/custom_project`\ > \ :green:`peekingduck init` |br|\
+   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
+   \ :blue:`[~user]` \ > \ :green:`mkdir custom_project` |br|\
+   \ :blue:`[~user]` \ > \ :green:`cd custom_project` |br|\
+   \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` |br|\
    Welcome to PeekingDuck! 
-   2022-02-11 18:17:31 peekingduck.cli  INFO:  Creating custom nodes folder in ~/custom_project/src/custom_nodes 
-   \ :blue:`~/custom_project`\ > \ :green:`peekingduck create-node` |br|\ 
+   2022-02-11 18:17:31 peekingduck.cli  INFO:  Creating custom nodes folder in ~user/custom_project/src/custom_nodes 
+   \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` |br|\ 
    Creating new custom node...
-   Enter node directory relative to ~/custom_project [src/custom_nodes]: |Enter|
+   Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` |br|\
    Select node type (input, model, draw, dabble, output): \ :green:`dabble` |br|\
    Enter node name [my_custom_node]: \ :green:`wave` |br|\
 
-   Node directory:	~/custom_project/src/custom_nodes
+   Node directory:	~user/custom_project/src/custom_nodes
    Node type:	dabble
    Node name:	wave
 
    Creating the following files:
-      Config file: ~/custom_project/src/custom_nodes/configs/dabble/wave.yml
-      Script file: ~/custom_project/src/custom_nodes/dabble/wave.py
-   Proceed? [Y/n]: |Enter|
+      Config file: ~user/custom_project/src/custom_nodes/configs/dabble/wave.yml
+      Script file: ~user/custom_project/src/custom_nodes/dabble/wave.py
+   Proceed? [Y/n]: \ :green:`⏎` |br|\
    Created node!
 
 Also, copy ``wave.mp4`` into the above folder.  You should end up with the

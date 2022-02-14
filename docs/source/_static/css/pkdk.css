@@ -129,3 +129,13 @@ div.highlight span.pkd-expandable:before {
 .orange {
   color: orange;
 }
+
+.heading {
+  font-weight: bold;
+  color: white;
+  background-color: steelblue;
+  font-size: 120%;
+}
+
+
+

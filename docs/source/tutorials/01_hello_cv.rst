@@ -6,6 +6,18 @@
 
    <br />
 
+.. role:: red
+
+.. role:: blue
+
+.. role:: green
+
+.. role:: heading
+
+.. |Blank| unicode:: U+2800 .. Invisible character
+
+.. |Enter| unicode:: U+23CE .. Unicode Enter Key Symbol
+
 Computer Vision (or CV) is a field in AI that develops techniques to help
 computers to "see" and "understand" the contents of digital images like
 photographs and videos, and to derive meaningful information.
@@ -19,6 +31,45 @@ CV-related tasks.
 
 This section presents two basic "hello world" examples to demonstrate how to use
 PeekingDuck for object detection and pose estimation.
+
+
+
+.. _tutorial_convention:
+
+Tutorial Convention
+===================
+
+These tutorials are run from the command line interface (CLI) environment, e.g. 
+via `Terminal` in Linux/macOS, or via `Anaconda` in Windows.
+There will be examples of commands you need to type as inputs and text that
+PeekingDuck will display as outputs. The input commands can be dependent on the 
+current folder where they are typed.
+The following colored text are used to illustrate the different contexts:
+
++----------------+------------------------------+----------------------------------+
+| Color          | Context                      | Example                          |
++----------------+------------------------------+----------------------------------+
+| :blue:`Blue`   | Current folder               | :blue:`[~user/src]`              |
++----------------+------------------------------+----------------------------------+
+| :green:`Green` | User input: what you type in | > :green:`peekingduck --version` |
++----------------+------------------------------+----------------------------------+
+| Black          | PeekingDuck's output         | peekingduck, version v1.1.1      |
++----------------+------------------------------+----------------------------------+
+
+The command prompt is assumed to be the symbol ``>``,
+your home directory is assumed to be ``~user``,
+and the symbol \ :green:`⏎` \ means to press the ``<Enter>`` key.
+Putting it altogether, a sample terminal session looks like this:
+
+.. parsed-literal::
+
+    \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
+    \ :blue:`[~user/src]` \ > \ :green:`peekingduck --version` |br|\
+    peekingduck, version v1.1.1
+
+
+
+|Blank|
 
 
 .. _tutorial_object_detection:
