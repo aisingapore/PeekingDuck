@@ -75,14 +75,14 @@ nodes:
 - dabble.statistics:
     target: {
         data_type: obj_attrs,
-        dict_keys: ["a", "b", "ids"]
+        dict_keys: ["ids"]
     }
     apply: {
         function: max
     }
 - draw.bbox
-# - draw.tag:
-#     attribute: ids
+- draw.tag:
+    attribute: ids
 - draw.legend:
     include: ["max"]
 - output.screen
