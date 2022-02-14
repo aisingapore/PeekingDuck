@@ -27,7 +27,6 @@ def fairmot_config():
     with open(file_path) as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
-    node_config["weights_parent_dir"] = "~/code"
 
     with mock.patch("torch.cuda.is_available", return_value=False):
         yield node_config
@@ -42,7 +41,6 @@ def fairmot_config_gpu():
     with open(file_path) as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
-    node_config["weights_parent_dir"] = "~/code"
 
     yield node_config
 
