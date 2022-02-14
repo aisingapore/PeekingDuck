@@ -58,9 +58,9 @@
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
 
-.. |obj_tags| replace:: ``obj_tags`` (:obj:`Dict[str, List[Any]]`): A dictionary of attributes
+.. |obj_attrs| replace:: ``obj_attrs`` (:obj:`Dict[str, List[Any]]`): A dictionary of attributes
    associated with each bounding box, in the same order as ``bboxes``. Different nodes that 
-   produce this ``obj_tags`` output type may contribute different attributes. For example, 
+   produce this ``obj_attrs`` output type may contribute different attributes. For example, 
    ``dabble.tracking`` produces the ``ids`` attribute while ``dabble.check_nearby_objs`` produces 
    the ``flags`` attribute.
 

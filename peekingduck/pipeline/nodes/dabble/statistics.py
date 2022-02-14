@@ -64,10 +64,10 @@ class Node(AbstractNode):
     Configs:
         target (:obj:`Dict`): A dictionary containing information for the target variable
             of interest. |br|
-                - node_output (:obj:`str`): **default="count"** |br|
-                    The output of a prior node in the pipeline, such as ``obj_attrs``. Only node
-                    outputs that are of type ``int``, ``List`` or ``Dict`` are accepted. Aside
-                    from PeekingDuck's standard node outputs, it is also possible to use
+                - data_type (:obj:`str`): **default="count"** |br|
+                    The input data type from a prior node in the pipeline, such as ``obj_attrs``.
+                    Only node inputs that are of type ``int``, ``List`` or ``Dict`` are accepted.
+                    Aside from PeekingDuck's standard node outputs, it is also possible to use
                     customised node outputs from your own custom nodes.
                 - dict_keys (:obj:`Optional[List]`): **default=null** |br|
                     If ``node_output`` is of type ``Dict``, the key of interest of the dictionary
@@ -80,23 +80,18 @@ class Node(AbstractNode):
 
 
         apply (:obj:`Dict`): |br|
-            Attributes are the outputs of previous nodes, for now, this node supports
-            the calculation of attributes that are of ``int`` or ``List`` types. The calc
-            method chosen will create a count of the current desired value ``curr``, from
+            Applies functions to the target value. The calc
+            method chosen will create a count of the current desired value, from
             which ``avg``, ``min`` and ``max`` can be calculated over time. Note that all methods
             are aimed to reduce the input to a single value, e.g. max()
             Create a table - ``int_count`` does... ``list_max`` applies max([..]) if nothing 0 |br|
 
-                - target_type (:obj:`str`): **{"int", "list"}, default="list"** |br|
-                    chap chap chap
-                - function (:obj:`str`): **{"identity", "len", "min", "max"}, default="len"** |br|
+                - function (:obj:`str`): **{"identity", "len", "max", "conditional_count"},
+                    default="identity"** |br|
                 - condition (:obj:`Dict`): **default = {"operator": null, "operand": null}**. |br|
                     Optional application of condition for comparing the attribute
                     with the ``operand`` using ``operator``. To be used if conditional
                     count.
-
-
-
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -109,9 +104,16 @@ class Node(AbstractNode):
         etc
         """
         self.num_iter += 1
-        attr_value = _get_attr_info(self.attribute, 0, inputs)
+        attr_value = _get_attr_info(
+            inputs, self.target["data_type"], self.target["dict_keys"]
+        )
+        print("attr_value", attr_value)
+        _check_data_type(attr_value)
 
-        self.now = self._apply_calc_method(attr_value)
+        self.now = self._apply(
+            attr_value, self.apply["function"], self.apply["condition"]
+        )
+        print("self.now", self.now)
 
         if self.now < self.min:
             self.min = self.now
@@ -127,27 +129,45 @@ class Node(AbstractNode):
 
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
-    def _apply_calc_method(self, attr_value):
-        if self.calc_method == "int":
+    def _apply(self, attr_value, function, condition):
+        if function == "identity":
             return attr_value
-        elif self.calc_method == "list_len":
-            return len(attr_value)
-        elif self.calc_method == "list_max":
-            if attr_value:
+        elif function == "len":
+            if type(attr_value) == list or type(attr_value) == dict:
+                return len(attr_value)
+            raise ValueError("Type has to ...")
+        elif function == "max":
+            if attr_value and (type(attr_value) == list or type(attr_value) == dict):
                 return max(attr_value)
             else:
                 return 0
-        elif self.calc_method == "list_conditional":
-            return _conditional_count(attr_value, self.condition)
+        elif function == "conditional_count":
+            return _conditional_count(attr_value, condition)
         # this method cannot return None in all scenarios
         # check input_name is in datapool + check it's of type int, list or dict
 
 
-def _get_attr_info(attr, attr_idx, data_trunc):
-    if attr_idx == len(attr) - 1:
-        return data_trunc[attr[attr_idx]]
+def _get_attr_info(inputs, data_type, dict_keys):
+    if not dict_keys:
+        return inputs[data_type]
+    return _seek_value(inputs[data_type], dict_keys.copy())
+
+
+def _seek_value(data, dict_keys):
+    if not dict_keys:
+        return data
     else:
-        return _get_attr_info(attr, attr_idx + 1, data_trunc[attr[attr_idx]])
+        key = dict_keys.pop(0)
+        return _seek_value(data[key], dict_keys)
+
+
+def _check_data_type(attr_value):
+    if (
+        type(attr_value) != int
+        and type(attr_value) != list
+        and type(attr_value) != dict
+    ):
+        raise ValueError("it has to be of type int, list, dict...")
 
 
 def _conditional_count(attr_value, condition):

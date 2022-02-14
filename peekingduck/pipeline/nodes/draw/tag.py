@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws tags above bounding boxes.
 
-    The ``draw.tag`` node uses the ``bboxes`` and ``obj_tags`` predictions from
+    The ``draw.tag`` node uses the ``bboxes`` and ``obj_attrs`` predictions from
     ``dabble`` nodes and models to draw the tags of the bboxes onto the image.
 
     Inputs:
@@ -34,14 +34,14 @@ class Node(AbstractNode):
 
         |bboxes|
 
-        |obj_tags|
+        |obj_attrs|
 
     Outputs:
         |none|
 
     Configs:
         attribute (:obj:`str`): **default = "labels"**. |br|
-            Key from the ``obj_tags`` dictionary, of which the values will be drawn.
+            Key from the ``obj_attrs`` dictionary, of which the values will be drawn.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -52,19 +52,19 @@ class Node(AbstractNode):
         """Draws a tag above each bounding box.
 
         Args:
-            inputs (dict): Dictionary with keys "bboxes", "obj_tags", "img".
+            inputs (dict): Dictionary with keys "bboxes", "obj_attrs", "img".
 
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
-        if self.attribute not in inputs["obj_tags"]:
+        if self.attribute not in inputs["obj_attrs"]:
             raise ValueError(
-                f"attribute: {self.attribute} is not a valid key in obj_tags, "
-                f"obj_tags only has {inputs['obj_tags'].keys()}"
+                f"attribute: {self.attribute} is not a valid key in obj_attrs, "
+                f"obj_attrs only has {inputs['obj_attrs'].keys()}"
             )
 
         draw_tags(
-            inputs["img"], inputs["bboxes"], inputs["obj_tags"][self.attribute], TOMATO
+            inputs["img"], inputs["bboxes"], inputs["obj_attrs"][self.attribute], TOMATO
         )
 
         return {}

@@ -1,5 +1,5 @@
-input: ["bboxes", "obj_tags", "img"]
+input: ["bboxes", "obj_attrs", "img"]
 output: ["none"]
 
-attribute: labels
+attribute: flags
 tag_color: [100, 0, 255]

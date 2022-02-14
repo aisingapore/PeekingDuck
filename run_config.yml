@@ -1,38 +1,47 @@
-# object counting
+# # object counting
 # nodes:
 # - input.recorded:
 #     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
 # - model.yolo
 # - dabble.bbox_count
 # - dabble.statistics:
-#     attribute: ["count"]
-#     calc_method: int
+#     target: {
+#         data_type: count
+#     }
+#     apply: {
+#         function: identity
+#     }
 # - draw.bbox
 # - draw.legend:
-#     include: ["curr", "min", "max", "avg"]
+#     include: ["min", "max", "avg"]
 # - output.screen
 
 
-# social distancing
-nodes:
-- input.recorded:
-    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-- model.posenet
-- dabble.keypoints_to_3d_loc
-- dabble.check_nearby_objs
-- dabble.statistics:
-    attribute: ["obj_tags", "flags"]
-    calc_method: list_conditional
-    condition: {
-        operator: "==",
-        operand: "TOO CLOSE!"
-    }
-- draw.bbox
-- draw.tag:
-    attribute: flags
-- draw.legend:
-    include: ["curr", "max", "avg", "min"]
-- output.screen
+# # social distancing
+# nodes:
+# - input.recorded:
+#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+# - model.posenet
+# - dabble.keypoints_to_3d_loc
+# - dabble.check_nearby_objs
+# - dabble.statistics:
+#     target: {
+#         data_type: obj_attrs,
+#         dict_keys: ["flags"]
+#     }
+#     apply: {
+#         function: conditional_count,
+#         condition: {
+#             operator: "==",
+#             operand: "TOO CLOSE!"
+#         }
+#     }
+# - draw.bbox
+# - draw.tag:
+#     attribute: flags
+# - draw.legend:
+#     include: ["max", "avg", "min"]
+# - output.screen
 
 
 # # group size checking
@@ -45,26 +54,35 @@ nodes:
 # - dabble.check_large_groups:
 #     group_size_thres: 2
 # - dabble.statistics:
-#     attribute: ["large_groups"]
-#     calc_method: list_len
+#     target: {
+#         data_type: large_groups
+#     }
+#     apply: {
+#         function: len
+#     }
 # - draw.bbox
 # - draw.group_bbox_and_tag
 # - draw.legend:
-#     include: ["curr", "max", "avg", "min"]
+#     include: ["max", "avg", "min"]
 # - output.screen
 
-# # object_tracking
-# nodes:
-# - input.recorded:
-#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-# - model.yolo
-# - dabble.tracking
-# - dabble.statistics:
-#     attribute: ["obj_tags", "ids"]
-#     calc_method: "list_max"
-# - draw.bbox
+# object_tracking
+nodes:
+- input.recorded:
+    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+- model.yolo
+- dabble.tracking
+- dabble.statistics:
+    target: {
+        data_type: obj_attrs,
+        dict_keys: ["a", "b", "ids"]
+    }
+    apply: {
+        function: max
+    }
+- draw.bbox
 # - draw.tag:
 #     attribute: ids
-# - draw.legend:
-#     include: ["max"]
-# - output.screen
+- draw.legend:
+    include: ["max"]
+- output.screen

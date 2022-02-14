@@ -39,7 +39,7 @@ class Node(AbstractNode):
 
         |bbox_scores|
 
-        |obj_tags|
+        |obj_attrs|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -90,7 +90,7 @@ class Node(AbstractNode):
             - bbox_labels (List[str]): Tracking IDs, for compatibility with
                 draw nodes.
             - bbox_scores (List[float]): Detection confidence scores.
-            - obj_tags (Dict[str, int]): Tracking IDs, specifically for use
+            - obj_attrs (Dict[str, int]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
         """
         metadata = inputs.get(
@@ -108,7 +108,7 @@ class Node(AbstractNode):
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,
             "bbox_scores": bbox_scores,
-            "obj_tags": {"ids": track_ids},
+            "obj_attrs": {"ids": track_ids},
         }
 
     def _reset_model(self) -> None:

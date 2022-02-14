@@ -61,7 +61,7 @@ class Node(AbstractNode):
             if not quickfind.connected(idx_1, idx_2):
                 quickfind.union(idx_1, idx_2)
 
-        return {"obj_tags": {"groups": quickfind.get_group_alloc()}}
+        return {"obj_attrs": {"groups": quickfind.get_group_alloc()}}
 
     @staticmethod
     def _find_nearby_obj_pairs(

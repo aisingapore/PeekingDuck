@@ -2,8 +2,8 @@ input: ["all"]
 output: ["avg", "min", "max"]
 
 target: {
-	node_output: count,
-	dict_keys: null,
+  data_type: count,
+  dict_keys: null,
 } 
 apply: {
   function: identity,

@@ -34,7 +34,7 @@ class Node(AbstractNode):
         |obj_3D_locs|
 
     Outputs:
-        |obj_tags|
+        |obj_attrs|
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
@@ -66,4 +66,4 @@ class Node(AbstractNode):
                     obj_flags[idx_1] = self.tag_msg
                     break
 
-        return {"obj_tags": {"flags": obj_flags}}
+        return {"obj_attrs": {"flags": obj_flags}}

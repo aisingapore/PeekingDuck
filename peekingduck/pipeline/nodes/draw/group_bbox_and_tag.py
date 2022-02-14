@@ -66,7 +66,7 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "none".
         """
         group_bboxes = self._get_group_bbox_coords(
-            inputs["large_groups"], inputs["bboxes"], inputs["obj_tags"]["groups"]
+            inputs["large_groups"], inputs["bboxes"], inputs["obj_attrs"]["groups"]
         )
         group_tags = self._get_group_tags(inputs["large_groups"], self.tag)
 

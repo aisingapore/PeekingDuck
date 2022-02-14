@@ -1,4 +1,4 @@
-input: ["obj_tags"]
+input: ["obj_attrs"]
 output: ["large_groups"]
 
 group_size_thres: 5

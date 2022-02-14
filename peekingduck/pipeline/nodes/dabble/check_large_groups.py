@@ -43,7 +43,7 @@ class Node(AbstractNode):
         """Checks which groups have exceeded the group size threshold,
         and returns a list of such groups.
         """
-        group_counter = Counter(inputs["obj_tags"]["groups"])
+        group_counter = Counter(inputs["obj_attrs"]["groups"])
         large_groups = [
             group
             for group in group_counter
