@@ -61,8 +61,8 @@ Putting it altogether, a sample terminal session looks like this:
 
 .. admonition:: Terminal Session
 
-    \ :blue:`[~user/src]` \ > \ :green:`peekingduck --version` |br|\
-    peekingduck, version v1.1.1
+    | \ :blue:`[~user/src]` \ > \ :green:`peekingduck --version` \
+    | peekingduck, version v1.1.1
 
 
 

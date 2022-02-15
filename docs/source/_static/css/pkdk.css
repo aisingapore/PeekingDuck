@@ -145,3 +145,8 @@ div.highlight span.pkd-expandable:before {
   content: "🖥";
 }
 
+.admonition-terminal-session .line {
+  font-family:'Courier New', Courier, monospace;
+  font-size: 1.0em;
+  line-height: 1.0em;
+}
