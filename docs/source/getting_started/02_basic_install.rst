@@ -2,6 +2,12 @@
 Basic Install
 *************
 
+.. role:: red
+
+.. role:: blue
+
+.. role:: green
+
 Install PeekingDuck
 ===================
 
@@ -86,15 +92,19 @@ conflicts with other projects.
 Verify PeekingDuck Installation
 ===============================
 
-To check that PeekingDuck is installed successfully, create a project folder at a convenient location::
+To check that PeekingDuck is installed successfully, create a project folder at a convenient location:
 
-    ~ > mkdir pkd_project
-    ~ > cd pkd_project
+.. admonition:: Terminal Session
 
-Then, initialize a PeekingDuck project and run it::
+    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
+    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
 
-    ~/pkd_project > peekingduck init
-    ~/pkd_project > peekingduck run
+Then, initialize a PeekingDuck project and run it:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
 
 You should see a video of a person waving hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_).
 
@@ -103,3 +113,4 @@ You should see a video of a person waving hand (`taken from here <https://www.yo
 
 **TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
 load an included video file correctly from the right path location**
+

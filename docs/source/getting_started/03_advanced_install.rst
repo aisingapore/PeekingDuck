@@ -2,6 +2,12 @@
 Advanced Install
 ****************
 
+.. role:: red
+
+.. role:: blue
+
+.. role:: green
+
 This section covers advanced PeekingDuck installation steps for users with ARM64
 devices or M1 Macs.
 
@@ -14,8 +20,8 @@ the ``--no-dependencies`` flag, and separately install the other dependencies
 listed in PeekingDuck's `[requirements.txt]
 <https://github.com/aimakerspace/PeekingDuck/blob/dev/requirements.txt>`_::
 
-    ~ > pip install peekingduck --no-dependencies
-    ~ > [ install additional dependencies as specified within requirements.txt ]
+    [~user] > pip install peekingduck --no-dependencies
+    [~user] > [ install additional dependencies as specified within requirements.txt ]
 
 
 .. _m1_mac_installation:
@@ -35,13 +41,13 @@ MacOS Monterey.
 
         ::
 
-        ~ > brew install miniforge
+        [~user] > brew install miniforge
 
     2. Create conda virtual environment and install base packages::
 
-        ~ > conda create -n pkd python=3.8
-        ~ > conda activate pkd
-        ~ > conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm
+        [~user] > conda create -n pkd python=3.8
+        [~user] > conda activate pkd
+        [~user] > conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm
 
     3. Install Apple's Tensorflow build that is optimised for M1 Macs:
 
@@ -49,30 +55,30 @@ MacOS Monterey.
 
         ::
         
-        ~ > conda install -c apple tensorflow-deps
-        ~ > pip install tensorflow-macos tensorflow-metal
-        ~ > pip install peekingduck —no-dependencies
+        [~user] > conda install -c apple tensorflow-deps
+        [~user] > pip install tensorflow-macos tensorflow-metal
+        [~user] > pip install peekingduck —no-dependencies
 
         * For MacOS Big Sur:
 
         ::
 
-        ~ > conda install -c apple tensorflow-deps=2.6.0
-        ~ > pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0
-        ~ > pip install tensorflow-metal==0.2.0
+        [~user] > conda install -c apple tensorflow-deps=2.6.0
+        [~user] > pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0
+        [~user] > pip install tensorflow-metal==0.2.0
 
     4. Install PeekingDuck::
 
-        ~ > pip install peekingduck --no-dependencies
+        [~user] > pip install peekingduck --no-dependencies
 
     5. Create a new PeekingDuck project and run it::
 
-        ~ > mkdir pkd_project
-        ~ > cd pkd_project
-        ~/pkd_project > peekingduck init
-        ~/pkd_project > peekingduck run
+        [~user] > mkdir pkd_project
+        [~user] > cd pkd_project
+        [~user]/pkd_project > peekingduck init
+        [~user]/pkd_project > peekingduck run
 
-    6. ``Todo`` Install PyTorch and TorchVision for torch models::
+    6. **``Todo`` Install PyTorch and TorchVision for torch models**::
 
         ``requires compilation from github source, editing of source files``
 
@@ -83,12 +89,12 @@ Development Version
 You can try out the development version of PeekingDuck direct from the
 `PeekingDuck Github repository <https://github.com/aimakerspace/PeekingDuck>`_::
 
-    ~ > git clone https://github.com/aimakerspace/PeekingDuck.git
+    [~user] > git clone https://github.com/aimakerspace/PeekingDuck.git
 
 | This will clone a copy of PeekingDuck development version into the folder ``PeekingDuck``.
 | Test it with the following commands:
 
 .. code-block::
     
-    ~ > cd PeekingDuck
-    ~/PeekingDuck > python __main__.py
+    [~user] > cd PeekingDuck
+    [~user]/PeekingDuck > python __main__.py
