@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Displays selected information from previous nodes in a legend box.
+Displays selected information from preceding nodes in a legend box.
 """
 
 from typing import Any, Dict, List
@@ -23,18 +23,18 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws a legend box on the image, containing information from selected data types produced
-    by earlier nodes in the pipeline. Each data type
+    """Draws a translucent legend box on a corner of the image, containing selected information
+    produced by preceding nodes in the format ``<data type>: <value>``. Supports in-built
+    PeekingDuck data types defined in :doc:`Glossary </glossary>` as well as custom data types
+    produced by custom nodes.
 
-    >>> FPS: 23.45
-    >>> COUNT: 8
+    This example screenshot shows ``fps`` from :mod:`dabble.fps`, ``count`` from
+    :mod:`dabble.bbox_count` and ``avg`` from :mod:`dabble.statistics` displayed within the legend
+    box. Note that values of float type such as ``fps`` and ``avg`` are displayed in 2 decimal
+    places.
 
-    .. image:: /distance_estimation.png
-
-
-    Supports in-built PeekingDuck data types defined in `ADD LINK TO GLOSSARY <>`_ as well as custom
-    data types produced by custom nodes.
-
+    .. image:: /assets/api/legend.png
+    |br|
 
     Inputs:
         |all|
@@ -45,32 +45,29 @@ class Node(AbstractNode):
     Configs:
         all_legend_items (:obj:`List[str]`):
             **default = ["fps", "count", "zone_count", "avg", "min", "max"]**. |br|
-            A list of all possible items that can be drawn in legend box. The
-            information to be drawn is selected by ``include``. This is done so
-            we can have the outputs but choose not to draw them on screen.
+            A list of all valid data types that can be processed by this node. To process custom
+            data types produced by custom nodes, add the custom data type to this list. Note that
+            to actually draw the information in the legend box, the data type has to be added to
+            the list in the ``include`` config as well.
 
             .. versionchanged:: 1.2.0
-                It is now possible to
+                Permit adding of custom data types produced by custom nodes. Also added
+                in-built PeekingDuck data types ``avg``, ``min``, ``max`` created from
+                :mod:`dabble.statistics` to default list.
 
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
-            Position to draw legend box. "top" draws it at the top-left
-            position while "bottom" draws it at bottom-left.
+            Position to draw legend box. "top" draws it at the top-left position while "bottom"
+            draws it at bottom-left.
         include (:obj:`List[str]`): **default = ["*"]**. |br|
-            Include in this list the desired information (such as ``fps``) to be
-            drawn within the legend box. The default value is the wildcard ``*``,
-            which draws all the information from ``all_legend_items`` as long as
-            they were produced from previous nodes.
+            Include in this list the desired information to be drawn within the legend box, such
+            as ``["fps", "count", "avg"]`` in the example screenshot. The default value is the
+            wildcard ``*``, which draws all the information from ``all_legend_items`` as long as
+            they were produced from preceding nodes. To draw information from custom data types
+            produced by custom nodes, the data type has to be added both here as well as the list
+            in the ``all_legend_items`` config.
 
-            .. versionchanged:: 1.2
-                See if this works
-
-    .. versionchanged:: 1.2
-        See if this works
-
-    .. deprecated:: 1.0 asdsds
-
-    .. note::
-        do this
+            .. versionchanged:: 1.2.0
+                Default value changed to wildcard character "*".
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

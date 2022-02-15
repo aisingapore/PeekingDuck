@@ -2,8 +2,8 @@ input: ["all"]
 output: ["avg", "min", "max"]
 
 target: {
-  data_type: obj_attrs,
-  dict_keys: ["details", "age"],
+  data_type: count,
+  dict_keys: null,
 } 
 apply: {
   function: identity,

@@ -1,20 +1,21 @@
-# # object counting
-# nodes:
-# - input.recorded:
-#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-# - model.yolo
-# - dabble.bbox_count
-# - dabble.statistics:
-#     target: {
-#         data_type: count
-#     }
-#     apply: {
-#         function: identity
-#     }
-# - draw.bbox
-# - draw.legend:
-#     include: ["min", "max", "avg"]
-# - output.screen
+# object counting
+nodes:
+- input.recorded:
+    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+- model.yolo
+- dabble.bbox_count
+- dabble.fps
+- dabble.statistics:
+    target: {
+        data_type: count
+    }
+    apply: {
+        function: identity
+    }
+- draw.bbox
+- draw.legend:
+    include: ["count", "fps", "avg"]
+- output.screen
 
 
 # # social distancing
@@ -66,23 +67,23 @@
 #     include: ["max", "avg", "min"]
 # - output.screen
 
-# object_tracking
-nodes:
-- input.recorded:
-    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-- model.yolo
-- dabble.tracking
-- dabble.statistics:
-    target: {
-        data_type: obj_attrs,
-        dict_keys: ["ids"]
-    }
-    apply: {
-        function: max
-    }
-- draw.bbox
-- draw.tag:
-    attribute: ids
-- draw.legend:
-    include: ["max"]
-- output.screen
+# # object_tracking
+# nodes:
+# - input.recorded:
+#     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+# - model.yolo
+# - dabble.tracking
+# - dabble.statistics:
+#     target: {
+#         data_type: obj_attrs,
+#         dict_keys: ["ids"]
+#     }
+#     apply: {
+#         function: max
+#     }
+# - draw.bbox
+# - draw.tag:
+#     attribute: ids
+# - draw.legend:
+#     include: ["max"]
+# - output.screen

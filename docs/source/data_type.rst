@@ -1,6 +1,11 @@
 ..
    Data type substitutions
 
+.. |all| replace:: ``all`` (:obj:`Any`): Receive all output data types from preceding nodes in the 
+   pipeline.
+
+.. |avg| replace:: ``avg`` (:obj:`float`): Average of an attribute over time.
+
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number
    of detected objects. Each bounding box is represented as :math:`(x_1, y_1, x_2, y_2)` where
@@ -48,6 +53,10 @@
 
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
+
+.. |max| replace:: ``max`` (:obj:`float/int`): Maximum value of an attribute over time.
+
+.. |min| replace:: ``min`` (:obj:`float/int`): Minimum value of an attribute over time.
 
 .. |no_input| replace:: ``none``: No inputs required.
 
