@@ -166,5 +166,11 @@ around and see PeekingDuck tracking your poses.
 
 To exit, click to select the video window and press ``q``.
 
+    .. note::
+        PeekingDuck assumes the webcam is defaulted to input source 0.
+        If your system is configured differently, you would have to specify the 
+        input source by changing the ``input.live`` configuration.
+        See tutorial on Nodes and Configs.
+
 
 

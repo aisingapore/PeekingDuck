@@ -22,6 +22,8 @@ pipelines by modifying the nodes and their configs.
 It will also show how to create custom nodes to implement custom user functions.
 
 
+.. _nodes_config_intro:
+
 Nodes and Configs
 =================
 
