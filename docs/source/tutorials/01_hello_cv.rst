@@ -12,8 +12,6 @@
 
 .. role:: green
 
-.. role:: heading
-
 .. |Blank| unicode:: U+2800 .. Invisible character
 
 .. |Enter| unicode:: U+23CE .. Unicode Enter Key Symbol
@@ -61,15 +59,15 @@ your home directory is assumed to be ``~user``,
 and the symbol \ :green:`⏎` \ means to press the ``<Enter>`` key.
 Putting it altogether, a sample terminal session looks like this:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
     \ :blue:`[~user/src]` \ > \ :green:`peekingduck --version` |br|\
     peekingduck, version v1.1.1
 
 
 
 |Blank|
+
 
 
 .. _tutorial_object_detection:

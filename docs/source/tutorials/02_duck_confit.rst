@@ -12,11 +12,7 @@ Duck Confit
 
 .. role:: green
 
-.. role:: heading
-
 .. |Blank| unicode:: U+2800 .. Invisible character
-
-.. |Enter| unicode:: U+23CE .. Unicode Enter Key Symbol
 
 .. |nbsp| unicode:: U+00A0 .. Non-breaking space
    :trim:
@@ -35,9 +31,8 @@ configurations or settings.
 
 To get a quick overview of PeekingDuck's nodes, run the following command:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
    \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
 
 .. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
@@ -238,12 +233,12 @@ and use them with ours.
 
 Let's start by creating a new PeekingDuck project:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
    \ :blue:`[~user]` \ > \ :green:`mkdir custom_project` |br|\ 
    \ :blue:`[~user]` \ > \ :green:`cd custom_project` |br|\ 
    \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` \ 
+
 
 This creates the following ``custom_project`` folder structure:
 
@@ -254,6 +249,7 @@ This creates the following ``custom_project`` folder structure:
    └── \ :blue:`src/` \ |Blank|
       └── \ :blue:`custom_nodes/` \ |Blank|
          └── \ :blue:`configs/` \ |Blank|
+
 
 The sub-folders ``src``, ``custom_nodes`` and ``configs`` are empty: they serve 
 as placeholders for contents to be added.
@@ -281,12 +277,12 @@ Finally, press ``<enter>`` to answer ``Y`` when asked to proceed.
 The entire interaction is shown here, the answers you type are in shown in 
 :green:`green text`:
 
-.. parsed-literal::
 
-   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` \ |Blank|
+.. admonition:: Terminal Session
+
    \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` |br|\ 
    Creating new custom node...
-   Enter node directory relative to ~user/custom_project [src/custom_nodes]: |Enter|
+   Enter node directory relative to ~user/custom_project [src/custom_nodes]: ⏎ |br|
    Select node type (input, model, draw, dabble, output): \ :green:`draw` |br|\
    Enter node name [my_custom_node]: \ :green:`score` |br|\
 
@@ -297,9 +293,10 @@ The entire interaction is shown here, the answers you type are in shown in
    Creating the following files:
       Config file: ~user/custom_project/src/custom_nodes/configs/draw/score.yml
       Script file: ~user/custom_project/src/custom_nodes/draw/score.py
-   Proceed? [Y/n]: |Enter|
+   Proceed? [Y/n]: ⏎ |br|
    Created node!
- 
+
+
 This will update the ``custom_project`` folder structure to become like this:
 
 .. parsed-literal::
@@ -583,9 +580,9 @@ real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
 Starting with a newly initialised PeekingDuck folder, call ``peekingduck
 create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
-.. parsed-literal::
 
-   \ :heading:`⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀Terminal Session⠀⠀⠀⠀⠀🖥⠀⠀⠀⠀⠀` |br|\
+.. admonition:: Terminal Session
+
    \ :blue:`[~user]` \ > \ :green:`mkdir custom_project` |br|\
    \ :blue:`[~user]` \ > \ :green:`cd custom_project` |br|\
    \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` |br|\
@@ -607,8 +604,10 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
    Proceed? [Y/n]: \ :green:`⏎` |br|\
    Created node!
 
+
 Also, copy ``wave.mp4`` into the above folder.  You should end up with the
 following folder structure:
+
 
 .. parsed-literal::
 

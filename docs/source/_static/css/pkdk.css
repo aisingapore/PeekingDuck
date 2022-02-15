@@ -130,12 +130,18 @@ div.highlight span.pkd-expandable:before {
   color: orange;
 }
 
-.heading {
-  font-weight: bold;
-  color: white;
-  background-color: steelblue;
-  font-size: 120%;
+.admonition-terminal-session.admonition {
+  background-color: white;
+  color: black;
 }
 
+.admonition-terminal-session .admonition-title {
+  font-weight: bold;
+  background-color: darkslategray;
+  color: darkseagreen;
+}
 
+.admonition-terminal-session .admonition-title::before {
+  content: "🖥";
+}
 
