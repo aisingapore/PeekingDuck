@@ -72,7 +72,7 @@ class IOUTracker:
         self.tracks: "OrderedDict[int, Track]" = OrderedDict()
 
     def track_detections(self, inputs: Dict[str, Any]) -> List[str]:
-        """Initialises and updates tracker on each frame.
+        """Initializes and updates tracker on each frame.
 
         Args:
             inputs (Dict[str, Any]): Dictionary with keys "img" and "bboxes".

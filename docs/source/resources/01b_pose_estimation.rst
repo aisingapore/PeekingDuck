@@ -7,15 +7,15 @@ List of Pose Estimation Models
 
 The table below shows the pose estimation models available for each task category.
 
-+---------------+---------+-------------------------------------------------+
-| Category      | Model   | Documentation                                   |
-+===============+=========+=================================================+
-|               | HRNet   | :mod:`peekingduck.pipeline.nodes.model.hrnet`   |
-+               +---------+-------------------------------------------------+
-| Whole body    | PoseNet | :mod:`peekingduck.pipeline.nodes.model.posenet` |
-+               +---------+-------------------------------------------------+
-|               | MoveNet | :mod:`peekingduck.pipeline.nodes.model.movenet` |
-+---------------+---------+-------------------------------------------------+
++---------------+---------+----------------------+
+| Category      | Model   | Documentation        |
++===============+=========+======================+
+|               | HRNet   | :mod:`model.hrnet`   |
++               +---------+----------------------+
+| Whole body    | PoseNet | :mod:`model.posenet` |
++               +---------+----------------------+
+|               | MoveNet | :mod:`model.movenet` |
++---------------+---------+----------------------+
 
 Benchmarks
 ==========
@@ -43,22 +43,23 @@ The table below shows the frames per second (FPS) of each model type.
 
 Hardware
 ^^^^^^^^
+
 The following hardware were used to conduct the FPS benchmarks:
  | - ``CPU``: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
 ^^^^^^^^^^^^^^^
+
 The following test conditions were followed:
- | - :class:`input.recorded <peekingduck.pipeline.nodes.input.recorded.Node>`, the model of
-    interest, and :class:`dabble.fps <peekingduck.pipeline.nodes.dabble.fps.Node>` nodes were
-    used to perform inference on videos
+ | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
+     inference on videos
  | - 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other
-    with multiple humans (``multiple``)
+     with multiple humans (``multiple``)
  | - Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800
-    frames to process per video
+     frames to process per video
  | - 1280×720 (HD ready) resolution was used, as a bridge between 640×480 (VGA) of poorer quality
-    webcams, and 1920×1080 (Full HD) of CCTVs
+     webcams, and 1920×1080 (Full HD) of CCTVs
  | - All unnecessary processes, such as browsers, were closed to prevent IO/resource contention
 
 Model Accuracy
@@ -81,7 +82,6 @@ metrics from COCO. Description of these metrics can be found `here <https://coco
 | HRNet (YOLO) | (v4tiny) | 256 × 192 (416) | 33.3 | 56.0                 | 35.1                 | 27.1                | 42.0                | 37.3               | 58.0                | 39.6                 | 29.6                | 47.9               |
 +--------------+----------+-----------------+------+----------------------+----------------------+---------------------+---------------------+--------------------+---------------------+----------------------+---------------------+--------------------+
 
-
 Dataset
 ^^^^^^^
 
@@ -90,7 +90,6 @@ COCO API into the PeekingDuck pipeline for loading the annotations and evaluatin
 the models. All values are reported in percentage.
 
 All images from the "person" category in the MS COCO (val 2017) dataset were processed.
-
 
 Keypoint IDs
 ============

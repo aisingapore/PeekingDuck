@@ -7,19 +7,19 @@ List of Object Detection Models
 
 The table below shows the object detection models available for each task category.
 
-+---------------+------------------------+------------------------------------------------------------+
-| Category      | Model                  | Documentation                                              |
-+===============+========================+============================================================+
-|               | EfficientDet           | :mod:`peekingduck.pipeline.nodes.model.efficientdet`       |
-+               +------------------------+------------------------------------------------------------+
-| General       | YOLOv4                 | :mod:`peekingduck.pipeline.nodes.model.yolo`               |
-+---------------+------------------------+------------------------------------------------------------+
-|               | MTCNN                  | :mod:`peekingduck.pipeline.nodes.model.mtcnn`              |
-+               +------------------------+------------------------------------------------------------+
-| Face          | YOLOv4 (Face)          | :mod:`peekingduck.pipeline.nodes.model.yolo_face`          |
-+---------------+------------------------+------------------------------------------------------------+
-| License plate | YOLOv4 (License Plate) | :mod:`peekingduck.pipeline.nodes.model.yolo_license_plate` |
-+---------------+------------------------+------------------------------------------------------------+
++---------------+------------------------+---------------------------------+
+| Category      | Model                  | Documentation                   |
++===============+========================+=================================+
+|               | EfficientDet           | :mod:`model.efficientdet`       |
++               +------------------------+---------------------------------+
+| General       | YOLOv4                 | :mod:`model.yolo`               |
++---------------+------------------------+---------------------------------+
+|               | MTCNN                  | :mod:`model.mtcnn`              |
++               +------------------------+---------------------------------+
+| Face          | YOLOv4 (Face)          | :mod:`model.yolo_face`          |
++---------------+------------------------+---------------------------------+
+| License plate | YOLOv4 (License Plate) | :mod:`model.yolo_license_plate` |
++---------------+------------------------+---------------------------------+
 
 Benchmarks
 ==========
@@ -53,16 +53,17 @@ The table below shows the frames per second (FPS) of each model type.
 
 Hardware
 ^^^^^^^^
+
 The following hardware were used to conduct the FPS benchmarks:
  | - ``CPU``: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
 ^^^^^^^^^^^^^^^
+
 The following test conditions were followed:
- | - :class:`input.recorded <peekingduck.pipeline.nodes.input.recorded.Node>`, the model of
-     interest, and :class:`dabble.fps <peekingduck.pipeline.nodes.dabble.fps.Node>` nodes were
-     used to perform inference on videos
+ | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
+     inference on videos
  | - 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other
      with multiple humans (``multiple``)
  | - Both videos are about 1 minute each, recorded at ~30 FPS, which translates to about 1,800
@@ -113,7 +114,7 @@ General Object Detection
 ------------------------
 
 | The tables below provide the associated indices for each class in object detectors.
-| To detect all classes, specify :code:`detect_ids: ["*"]` under the object detection node configuration in `run_config.yml`.
+| To detect all classes, specify :code:`detect_ids: ["*"]` under the object detection node configuration in ``run_config.yml``.
 
 +---------------+---------------------+----------------+---------------------+
 |               | ID                  |                | ID                  |
@@ -212,7 +213,7 @@ General Object Detection
 Face Detection
 --------------
 
-This table provides the associated indices for the :class:`model.yolo_face <peekingduck.pipeline.nodes.model.yolo_face.Node>` node.
+This table provides the associated indices for the :mod:`model.yolo_face` node.
 
 +------------+----+
 | Class name | ID |

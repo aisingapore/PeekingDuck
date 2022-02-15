@@ -22,7 +22,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises and uses JDE tracking model to detect and track people from
+    """Initializes and uses JDE tracking model to detect and track people from
     the supplied image frame.
 
     JDE is a fast and high-performance multiple-object tracker that learns the

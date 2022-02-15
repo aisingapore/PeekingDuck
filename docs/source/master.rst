@@ -9,25 +9,28 @@ Welcome to PeekingDuck's documentation!
 .. toctree::
    :caption: Contents
 
-   index.md
+   index
    getting_started/index
+   tutorials/index
    resources/index
    use_cases/index
+   faq
+   glossary
 
-Nodes
-=====================================
-Nodes are the core of PeekingDuck. See below for the readily-available nodes and their references.
+.. _api_doc:
+
+API Documentation
+=================
 
 .. autosummary::
-   :toctree:
+   :toctree: nodes
    :caption: API Documentation
    :template: module.rst
    :recursive:
 
-   peekingduck
-   peekingduck.pipeline.nodes.input
-   peekingduck.pipeline.nodes.preprocess
-   peekingduck.pipeline.nodes.model
-   peekingduck.pipeline.nodes.dabble
-   peekingduck.pipeline.nodes.draw
-   peekingduck.pipeline.nodes.output
+   input
+   preprocess
+   model
+   dabble
+   draw
+   output

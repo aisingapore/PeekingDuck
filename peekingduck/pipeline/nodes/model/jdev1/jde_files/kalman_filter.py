@@ -145,7 +145,7 @@ class KalmanFilter:
         Returns:
             (Tuple[np.ndarray, np.ndarray]): The mean vector (8 dimensional)
             and covariance matrix (8x8 dimensional) of the new track.
-            Unobserved velocities are initialised to 0 mean.
+            Unobserved velocities are initialized to 0 mean.
         """
         mean_pos = measurement
         mean_vel = np.zeros_like(mean_pos)
@@ -178,7 +178,7 @@ class KalmanFilter:
         Returns:
             (Tuple[np.ndarray, np.ndarray]): The mean vector and covariance
             matrix of the predicted state. Unobserved velocities are
-            initialised to 0 mean.
+            initialized to 0 mean.
         """
         std_pos = [
             self._std_weight_position * mean[:, 3],

@@ -124,7 +124,7 @@ class TestCliCreateNode:
             good_path.strip(), good_type.strip(), good_name.strip()
         )
         assert result.output.count("Path cannot") == bad_paths.count("\n")
-        assert result.output.count("invalid choice") == bad_types.count("\n")
+        assert result.output.count("is not one of") == bad_types.count("\n")
         assert result.output.count("Invalid node name") == bad_names.count("\n")
         assert result.output.count(config_subpath) == 1
         assert result.output.count(script_subpath) == 1
@@ -156,7 +156,7 @@ class TestCliCreateNode:
             good_path.strip(), good_type.strip(), good_name.strip()
         )
         assert result.output.count("Path cannot") == bad_paths.count("\n")
-        assert result.output.count("invalid choice") == bad_types.count("\n")
+        assert result.output.count("is not one of") == bad_types.count("\n")
         assert result.output.count("Invalid node name") == bad_names.count("\n")
         assert result.output.count(config_subpath) == 1
         assert result.output.count(script_subpath) == 1
@@ -261,7 +261,7 @@ class TestCliCreateNode:
             good_path.strip(), good_type.strip(), good_name.strip()
         )
         assert result.output.count("Path cannot") == bad_paths.count("\n") + 1
-        assert result.output.count("invalid choice") == bad_types.count("\n") + 1
+        assert result.output.count("is not one of") == bad_types.count("\n") + 1
         assert result.output.count("Invalid node name") == bad_names.count("\n") + 1
         assert result.output.count(config_subpath) == 1
         assert result.output.count(script_subpath) == 1
@@ -454,8 +454,10 @@ class TestCliCreateNode:
                 ) == captured.records[offset + counter].getMessage()
                 counter += 1
             for node_string in bad_types:
+                # Invalid type error message begins with a 'user_input' so we
+                # just check for the presence of the double single quote
                 assert (
-                    f"{node_string} contains invalid formatting: 'invalid choice: "
+                    f"{node_string} contains invalid formatting: ''"
                 ) in captured.records[offset + counter].getMessage()
                 counter += 1
             for node_string in bad_names:

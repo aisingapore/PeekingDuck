@@ -1,0 +1,6 @@
+nodes:
+- input.recorded:
+    input_dir: data/benchmark/single
+- model.movenet:
+    model_type: singlepose_thunder
+- dabble.fps

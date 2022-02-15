@@ -53,7 +53,7 @@ class AbstractNode(metaclass=ABCMeta):
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
-        # This is only initialised when the `optional_inputs` key is found in
+        # This is only initialized when the `optional_inputs` key is found in
         # the nodes' config file
         self.optional_inputs: List[str]
 

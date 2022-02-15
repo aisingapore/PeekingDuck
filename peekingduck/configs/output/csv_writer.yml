@@ -3,4 +3,4 @@ output: ["none"]
 
 stats_to_track: ["keypoints", "bboxes", "bbox_labels"]
 file_path: "PeekingDuck/data/stats.csv"
-logging_interval: 1 #in terms of seconds between each log
+logging_interval: 1 # in terms of seconds between each log

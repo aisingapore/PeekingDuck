@@ -19,6 +19,7 @@ CLI functions for PeekingDuck.
 import logging
 import math
 from pathlib import Path
+from time import perf_counter
 from typing import Optional, Tuple
 
 import click
@@ -32,6 +33,8 @@ from peekingduck.utils.create_node_helper import (
     ensure_relative_path,
     ensure_valid_name,
     ensure_valid_name_partial,
+    ensure_valid_type,
+    ensure_valid_type_partial,
     get_config_and_script_paths,
     verify_option,
 )
@@ -56,7 +59,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 
 
 def create_yml() -> None:
-    """Initialises the declarative *run_config.yml*."""
+    """Initializes the declarative *run_config.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
@@ -77,7 +80,7 @@ def cli() -> None:
 @cli.command()
 @click.option("--custom_folder_name", default="custom_nodes")
 def init(custom_folder_name: str) -> None:
-    """Initialise a PeekingDuck project"""
+    """Initialize a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
     create_yml()
@@ -125,12 +128,15 @@ def run(
     else:
         run_config_path = Path(config_path)
 
+    start_time = perf_counter()
     runner = Runner(
         run_config_path=run_config_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
     )
+    end_time = perf_counter()
+    logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
     runner.run()
 
 
@@ -208,10 +214,13 @@ def create_node(
         node_dir = project_dir / node_subdir
 
         node_type = verify_option(
-            node_type, value_proc=click.types.convert_type(node_type_choices)
+            node_type, value_proc=ensure_valid_type_partial(node_type_choices)
         )
         if node_type is None:
-            node_type = click.prompt("Select node type", type=node_type_choices)
+            node_type = click.prompt(
+                "Select node type",
+                value_proc=ensure_valid_type_partial(node_type_choices),
+            )
 
         node_name = verify_option(
             node_name, value_proc=ensure_valid_name_partial(node_dir, node_type)
@@ -308,7 +317,7 @@ def _create_nodes_from_config_file(
             # Check node string formatting
             ensure_relative_path(node_subdir)
             node_dir = project_dir / "src" / node_subdir
-            click.types.convert_type(node_type_choices)(node_type)
+            ensure_valid_type(node_type_choices, node_type)
             ensure_valid_name(node_dir, node_type, node_name)
         except click.exceptions.UsageError as err:
             logger.warning(

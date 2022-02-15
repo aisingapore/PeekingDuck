@@ -123,7 +123,7 @@ def get_custom_node_subpaths(node_subdir, node_type, node_name):
 
 
 def init_msg(node_name):
-    return f"Initialising {node_name} node..."
+    return f"Initializing {node_name} node..."
 
 
 def setup_custom_node(node_subdir, node_type, node_name):
@@ -319,6 +319,6 @@ class TestCli:
             assert captured.records[1].getMessage() == init_msg(PKD_NODE)
             assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
             assert (
-                captured.records[-1].getMessage() == f"Run pipeline for {n} iterations"
+                captured.records[3].getMessage() == f"Run pipeline for {n} iterations"
             )
             assert result.exit_code == 0

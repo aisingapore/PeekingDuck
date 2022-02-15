@@ -37,7 +37,7 @@ class Node(AbstractNode):
         |obj_attrs|
 
     Outputs:
-        |none|
+        |no_output|
 
     Configs:
         attribute (:obj:`str`): **default = "labels"**. |br|

@@ -23,7 +23,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
-    """Initialises and uses YOLO model to infer bboxes from image frame.
+    """Initializes and uses YOLO model to infer bboxes from image frame.
 
     The YOLO node is capable of detecting objects from a single class (License
     Plate). It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
@@ -42,8 +42,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**. |br|
             Defines the type of YOLO model to be used.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
             Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
