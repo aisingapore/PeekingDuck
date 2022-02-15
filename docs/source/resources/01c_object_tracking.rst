@@ -24,6 +24,44 @@ Benchmarks
 
 .. _object-tracking-benchmarks:
 
+
+Inference Speed
+---------------
+
+The table below shows the frames per second (FPS) of each model type.
+
++---------------------------------+----------------------+------------+-------+--------+
+| Model                           | Object Detector Type | Input Size | CPU   | GPU    |
++=================================+======================+============+=======+========+
+| IoU Tracker with YOLOX          | yolox-m              | --         | 7.93  | 36.64  |
++---------------------------------+----------------------+------------+-------+--------+
+| OpenCV MOSSE Tracker with YOLOX | yolox-m              | --         | 6.81  | 21.57  |
++---------------------------------+----------------------+------------+-------+--------+
+| JDE                             | --                   | --         | 1.89  | 26.27  |
++---------------------------------+----------------------+------------+-------+--------+
+| FairMOT                         | --                   | 864 × 480  | 0.31  | 22.55  |
++---------------------------------+----------------------+------------+-------+--------+
+
+
+Hardware
+^^^^^^^^
+
+The following hardware were used to conduct the FPS benchmarks:
+ | - ``CPU``: 2.8 GHz 4-Core Intel Xeon (Cascade Lake) CPU and 16GB RAM
+ | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
+
+Test Conditions
+^^^^^^^^^^^^^^^
+
+The following test conditions were followed:
+ | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
+     inference on videos
+ | - A video sequence from the MOT Challenge dataset (MOT16-04) was used
+ | - The video sequence has 1050 frames and is encoded at 30 FPS, which translates to about 35 seconds
+ | - 1280×720 (HD ready) resolution was used, as a bridge between 640×480 (VGA) of poorer quality
+     webcams, and 1920×1080 (Full HD) of CCTVs
+ | - All unnecessary processes, such as browsers, were closed to prevent IO/resource contention
+
 Model Accuracy
 --------------
 
