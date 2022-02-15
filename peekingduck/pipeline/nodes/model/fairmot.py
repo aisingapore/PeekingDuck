@@ -72,7 +72,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._frame_rate = 30.0
-        # self.config["root"] = Path(__file__).resolve().parents[4]
 
         self.model = fairmot_model.FairMOTModel(self.config, self._frame_rate)
 
