@@ -23,24 +23,35 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws legend box and information on image.
+    """Draws a legend box on the image, containing information from selected data types produced
+    by earlier nodes in the pipeline. Each data type
 
-    The ``draw.legend`` node dynamically pulls the output results of previous
-    nodes and uses it to draw the information into a legend box.
+    >>> FPS: 23.45
+    >>> COUNT: 8
+
+    .. image:: /distance_estimation.png
+
+
+    Supports in-built PeekingDuck data types defined in `ADD LINK TO GLOSSARY <>`_ as well as custom
+    data types produced by custom nodes.
+
 
     Inputs:
         |all|
 
     Outputs:
-        |none|
+        |img|
 
     Configs:
         all_legend_items (:obj:`List[str]`):
-            **default = ["fps", "count", "zone_count", "avg", "min", "max",
-            "curr"]**. |br|
+            **default = ["fps", "count", "zone_count", "avg", "min", "max"]**. |br|
             A list of all possible items that can be drawn in legend box. The
             information to be drawn is selected by ``include``. This is done so
             we can have the outputs but choose not to draw them on screen.
+
+            .. versionchanged:: 1.2.0
+                It is now possible to
+
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
             Position to draw legend box. "top" draws it at the top-left
             position while "bottom" draws it at bottom-left.
@@ -49,6 +60,17 @@ class Node(AbstractNode):
             drawn within the legend box. The default value is the wildcard ``*``,
             which draws all the information from ``all_legend_items`` as long as
             they were produced from previous nodes.
+
+            .. versionchanged:: 1.2
+                See if this works
+
+    .. versionchanged:: 1.2
+        See if this works
+
+    .. deprecated:: 1.0 asdsds
+
+    .. note::
+        do this
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
