@@ -57,6 +57,8 @@ class BasicBlock(nn.Module):
         dilation (int): Spacing between kernel elements. Default is 1.
     """
 
+    # pylint: disable=redefined-builtin
+
     def __init__(
         self, in_channels: int, out_channels: int, stride: int = 1, dilation: int = 1
     ) -> None:
@@ -85,20 +87,20 @@ class BasicBlock(nn.Module):
         self.stride = stride
 
     def forward(
-        self, inputs: torch.Tensor, residual: torch.Tensor = None
+        self, input: torch.Tensor, residual: torch.Tensor = None
     ) -> torch.Tensor:
         """Defines the computation performed at every call.
 
         Args:
-            inputs (torch.Tensor): Input from the previous layer.
+            input (torch.Tensor): Input from the previous layer.
 
         Returns:
             (torch.Tensor): The output tensor of the block.
         """
         if residual is None:
-            residual = inputs
+            residual = input
 
-        out = self.conv1(inputs)
+        out = self.conv1(input)
         out = self.bn1(out)
         out = self.relu(out)
 
@@ -119,6 +121,8 @@ class DeformConv(nn.Module):
         out_channels (int): Number of channels produced by the convolution.
     """
 
+    # pylint: disable=redefined-builtin
+
     def __init__(self, in_channels: int, out_channels: int) -> None:
         super().__init__()
         self.actf = nn.Sequential(
@@ -134,18 +138,18 @@ class DeformConv(nn.Module):
             deformable_groups=1,
         )
 
-    def forward(self, x: torch.Tensor) -> torch.Tensor:  # pylint: disable=invalid-name
+    def forward(self, input: torch.Tensor) -> torch.Tensor:
         """Defines the computation performed at every call.
 
         Args:
-            x (torch.Tensor): Input from the previous layer.
+            input (torch.Tensor): Input from the previous layer.
 
         Returns:
             (torch.Tensor): The output tensor of the block.
         """
-        x = self.conv(x)
-        x = self.actf(x)
-        return x
+        out = self.conv(input)
+        out = self.actf(out)
+        return out
 
 
 class Root(nn.Module):
@@ -216,6 +220,8 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
             used in the Root node. Default is False.
     """
 
+    # pylint: disable=redefined-builtin
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         level: int,
@@ -280,14 +286,14 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     def forward(
         self,
-        inputs: torch.Tensor,
+        input: torch.Tensor,
         residual: torch.Tensor = None,
         children: List[torch.Tensor] = None,
     ) -> torch.Tensor:
         """Defines the computation performed at every call.
 
         Args:
-            inputs (torch.Tensor): Input from the previous layer.
+            input (torch.Tensor): Input from the previous layer.
             residual (torch.Tensor): Residual from the connected node.
             children (List[torch.Tensor]): Inputs from child nodes of the
                 current node.
@@ -296,11 +302,11 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
             (torch.Tensor): The output tensor of the block.
         """
         children = [] if children is None else children
-        bottom = self.downsample(inputs) if self.downsample else inputs
+        bottom = self.downsample(input) if self.downsample else input
         residual = self.project(bottom) if self.project else bottom
         if self.level_root:
             children.append(bottom)
-        out_1 = self.tree1(inputs, residual)
+        out_1 = self.tree1(input, residual)
         if self.levels == 1:
             out_2 = self.tree2(out_1)
             out = self.root([out_2, out_1] + children)

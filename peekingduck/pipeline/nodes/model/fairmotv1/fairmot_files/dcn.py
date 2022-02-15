@@ -82,7 +82,7 @@ class DCNv2(nn.Module):
         https://github.com/ifzhang/DCNv2/tree/pytorch_1.7
     """
 
-    # pylint: disable=redefined-builtin,too-many-instance-attributes
+    # pylint: disable=redefined-builtin, too-many-instance-attributes
 
     num_chunks = 3  # Num channels for offset + mask
 

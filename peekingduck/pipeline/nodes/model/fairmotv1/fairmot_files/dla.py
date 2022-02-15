@@ -84,6 +84,8 @@ class DLASeg(nn.Module):
         head_conv (int): Number of channels in all heads. Default is 256.
     """
 
+    # pylint: disable=redefined-builtin
+
     def __init__(
         self,
         heads: Dict[str, int],
@@ -125,18 +127,18 @@ class DLASeg(nn.Module):
             self.__setattr__(head, head_network)
 
     def forward(  # pylint: disable=invalid-name
-        self, x: torch.Tensor
+        self, input: torch.Tensor
     ) -> Dict[str, torch.Tensor]:
         """Defines the computation performed at every call.
 
         Args:
-            x (torch.Tensor): Input from the previous layer.
+            input (torch.Tensor): Input from the previous layer.
 
         Returns:
             (Dict[str, torch.Tensor]): A dictionary of tensors with keys
             corresponding to `self.heads`.
         """
-        layers = self.base(x)
+        layers = self.base(input)
         layers = self.dla_up(layers)
 
         y = [layers[i].clone() for i in range(self.last_level - self.first_level)]
@@ -160,6 +162,8 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
         residual_root (bool): Flag to indicate if a residual layer should be
             used in the root block. Default is False.
     """
+
+    # pylint: disable=redefined-builtin
 
     def __init__(
         self,
@@ -227,23 +231,21 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
             bias=True,
         )
 
-    def forward(  # pylint: disable=invalid-name
-        self, x: torch.Tensor
-    ) -> List[torch.Tensor]:
+    def forward(self, input: torch.Tensor) -> List[torch.Tensor]:
         """Defines the computation performed at every call.
 
         Args:
-            x (torch.Tensor): Input from the previous layer.
+            input (torch.Tensor): Input from the previous layer.
 
         Returns:
             (List[torch.Tensor]): A list of tensors containing the output at
             every stage.
         """
         outputs = []
-        x = self.base_layer(x)
+        input = self.base_layer(input)
         for i in range(6):
-            x = getattr(self, f"level{i}")(x)
-            outputs.append(x)
+            input = getattr(self, f"level{i}")(input)
+            outputs.append(input)
         return outputs
 
     @staticmethod

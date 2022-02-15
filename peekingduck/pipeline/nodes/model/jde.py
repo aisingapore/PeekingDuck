@@ -14,7 +14,6 @@
 
 """Human detection and tracking model."""
 
-from pathlib import Path
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.model.jdev1 import jde_model
