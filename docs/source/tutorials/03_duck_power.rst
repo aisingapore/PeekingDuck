@@ -279,6 +279,14 @@ Examine the created database as follows:
 Type ``CTRL-D`` to exit from ``sqlite3``.
 
 
+.. note::
+
+   The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
+   If your system does not have ``sqlite3``, please see the `SQLite Home Page 
+   <http://www.sqlite.org/>`_ for installation instructions.
+
+
+
 .. _import_peekingduck:
 
 Import PeekingDuck
