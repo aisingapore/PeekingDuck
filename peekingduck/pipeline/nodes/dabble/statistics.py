@@ -41,7 +41,7 @@ class Node(AbstractNode):
     >>> # 2. List example
     >>> {"large_groups": [4, 5]}
     >>> # 3. Dict example
-    >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": ["52","17"]}}
+    >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
 
     To note: |br|
     - This node focuses on calculating the statistics of target variables accumulated over time.

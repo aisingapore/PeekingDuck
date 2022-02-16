@@ -1,48 +1,48 @@
-# object counting
-nodes:
-- input.recorded:
-    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-- model.yolo
-- dabble.bbox_count
-- dabble.fps
-- dabble.statistics:
-    target: {
-        data_type: count
-    }
-    apply: {
-        function: identity
-    }
-- draw.bbox
-- draw.legend:
-    include: ["count", "fps", "avg"]
-- output.screen
-
-
-# # social distancing
+# # object counting
 # nodes:
 # - input.recorded:
 #     input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
-# - model.posenet
-# - dabble.keypoints_to_3d_loc
-# - dabble.check_nearby_objs
+# - model.yolo
+# - dabble.bbox_count
+# - dabble.fps
 # - dabble.statistics:
 #     target: {
-#         data_type: obj_attrs,
-#         dict_keys: ["flags"]
+#         data_type: count
 #     }
 #     apply: {
-#         function: conditional_count,
-#         condition: {
-#             operator: "==",
-#             operand: "TOO CLOSE!"
-#         }
+#         function: identity
 #     }
 # - draw.bbox
-# - draw.tag:
-#     attribute: flags
 # - draw.legend:
-#     include: ["max", "avg", "min"]
+#     include: ["count", "fps", "avg"]
 # - output.screen
+
+
+# social distancing
+nodes:
+- input.recorded:
+    input_dir: /Users/ngleeping/Desktop/benchmark/multiple_people.mp4
+- model.posenet
+- dabble.keypoints_to_3d_loc
+- dabble.check_nearby_objs
+- dabble.statistics:
+    target: {
+        data_type: obj_attrs,
+        dict_keys: ["flags"]
+    }
+    apply: {
+        function: conditional_count,
+        condition: {
+            operator: "==",
+            operand: "TOO CLOSE!"
+        }
+    }
+- draw.bbox
+- draw.tag:
+    get: []
+- draw.legend:
+    include: ["max", "avg", "min"]
+- output.screen
 
 
 # # group size checking

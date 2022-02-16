@@ -1,8 +1,9 @@
 ..
    Data type substitutions
 
-.. |all| replace:: ``all`` (:obj:`Any`): Receive all output data types from preceding nodes in the 
-   pipeline.
+.. |all_input| replace:: ``all`` (:obj:`Any`): Receives inputs from all preceding outputs. For example, 
+   in :mod:`draw.legend`, this is used as dynamic input for legend creation. In 
+   :mod:`output.csv_writer`, this is used as flexible input for statistics to track.
 
 .. |avg| replace:: ``avg`` (:obj:`float`): Average of an attribute over time.
 
@@ -66,11 +67,11 @@
    arrays representing the 3D coordinates :math:`(x, y, z)` of an object associated with a detected
    bounding box.
 
-.. |obj_groups| replace:: ``obj_groups`` (:obj:`List[int]`): A list of integers representing the
-   assigned group number of an object associated with a detected bounding box.
-
-.. |obj_tags| replace:: ``obj_tags`` (:obj:`List[str]`): A list of strings to be added to a
-   bounding box for display. The order corresponds to ``bboxes``.
+.. |obj_attrs| replace:: ``obj_attrs`` (:obj:`Dict[str, Any]`): A dictionary of attributes
+   associated with each bounding box, in the same order as ``bboxes``. Different nodes that 
+   produce this ``obj_attrs`` output type may contribute different attributes. For example, 
+   ``dabble.tracking`` produces the ``ids`` attribute while ``dabble.check_nearby_objs`` produces 
+   the ``flags`` attribute.
 
 .. |pipeline_end| replace:: ``pipeline_end`` (:obj:`bool`): A boolean that evaluates to ``True``
    when the pipeline is completed. Suitable for operations that require the entire inference
@@ -86,6 +87,7 @@
 .. |zone_count| replace:: ``zone_count`` (:obj:`List[int]`): A list of integers representing the
    count of a pre-selected object class (for example, "person") detected in each specified zone.
    The order corresponds to ``zones``.
+
 
 ..
    Utility substitutions

@@ -93,8 +93,7 @@ class Node(AbstractNode):
             Legend().draw(inputs, self.legend_items, self.position)
         else:
             return {}
-        # cv2 weighted does not update the referenced image. Need to return and
-        # replace.
+        # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
     def _include(self, inputs: Dict[str, Any]) -> None:
