@@ -162,12 +162,6 @@ def _draw_tag(
     offset = int((bbox_width - text_width) / 2)
     position = (top_left[0] + offset, top_left[1] - baseline)
 
-    if type(tag) != str and type(tag) != int:
-        raise ValueError(
-            f"The tag to be drawn by draw.tag is: {tag} and of type: {type(tag)}"
-            f"Ensure that the tag of type 'int' or 'str' to be drawable."
-        )
-
     cv2.putText(
         frame, tag, position, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, color, VERY_THICK
     )

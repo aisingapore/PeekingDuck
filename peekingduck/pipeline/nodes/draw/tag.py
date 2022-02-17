@@ -25,22 +25,25 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws a tag above each bounding box in the image. Information for the tag is obtained from
-    ``obj_attrs``.
+    """Draws a tag above each bounding box in the image, using information from selected attributes
+    in ``obj_attrs``. In `Example 1` below, ``obj_attrs`` has 2 attributes (`<attr a>` and
+    `<attr b>`). There are `x` detected bounding boxes, and each attribute has `x` corresponding
+    tags stored in a list. The ``get`` config described subsequently is used to choose the
+    attribute to be drawn.
 
-    TODO:
-    1. Explain <attribute>: [<tag1>, <tag2>]. List of tags
-    2. Have a ValueError check for list.
-    3. Update ValueError check for str or int in utils/bbox.py
-    4. Check that no error when nothing is detected
+    >>> # Example 1
+    >>> {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag x>], <attr b>: [<tag 1>, ..., <tag x>]}}
 
-    >>> # Example
+    The following type conventions need to be observed: |br|
+    1. Each attribute must be of type :obj:`List`, e.g. ``<attr a>: [<tag 1>, ..., <tag x>]`` |br|
+    2. Each tag within the list must be of type :obj:`str` or :obj:`int`
+
+    In `Example 2` below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
+    the last 2 attributes are nested within `"details"`. There are 2 detected bounding boxes, and
+    for the first one, possible tags to be drawn are `1`, `"female"` or `52`.
+
+    >>> # Example 2
     >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
-
-    In this example, there are 2 detected objects/ bounding boxes. For the first object, possible
-    ``<attribute>: <tag>`` combinations are ``"ids": 1``, ``"gender": "female"`` or ``"age": 52``.
-    The ``get`` config described below is used to choose the tag to be drawn. Tag has to be of type
-    :obj:`str` or :obj:`int`, such as `1`, `"female"` or `52` here.
 
     Inputs:
         |img|
@@ -54,8 +57,8 @@ class Node(AbstractNode):
 
     Configs:
         get (:obj:`List[str]`): **default = []**. |br|
-            List the keys of the ``obj_attrs`` dictionary required to get the desired tag. From
-            the above example, to draw the tag given by the attribute `"ids"`, the required key
+            List the keys of the ``obj_attrs`` dictionary required to get the desired tag. For
+            example 2, to draw the tag given by the attribute `"ids"`, the required key
             is `["ids"]`. To draw the tag given by the attribute `"age"`, as `"age"` is nested
             within `"details"`, the required keys are `["details", "age"]`.
     """
@@ -74,15 +77,25 @@ class Node(AbstractNode):
         """
 
         keys = deque(self.get)
-        tag = _get_value(inputs["obj_attrs"], keys)
-        # if type(tag) != int and type(tag) != str:
-        #     raise ValueError(
-        #         f"The tag selected here is: {tag} and of type: {type(tag)}. "
-        #         f"Ensure that the config 'get' lists the correct keys pointing to the desired tag, "
-        #         f"and that the tag is of type 'int' or 'str'."
-        #     )
+        attribute = _get_value(inputs["obj_attrs"], keys)
+        if type(attribute) != list:
+            raise ValueError(
+                f"The attribute of interest has to be of type 'list', containing a list of tags. "
+                f"However, the attribute chosen here was: {attribute} which is of type: "
+                f"{type(attribute)}."
+            )
+        # if empty list, nothing to draw
+        if not attribute:
+            return {}
 
-        draw_tags(inputs["img"], inputs["bboxes"], tag, TOMATO)
+        if type(attribute[0]) != int and type(attribute[0]) != str:
+            raise ValueError(
+                f"Each tag has to be of type 'int' or 'str'. "
+                f"However, the first detected tag here was {attribute[0]} which is of type: "
+                f"{type(attribute[0])}."
+            )
+
+        draw_tags(inputs["img"], inputs["bboxes"], attribute, TOMATO)
 
         return {}
 
