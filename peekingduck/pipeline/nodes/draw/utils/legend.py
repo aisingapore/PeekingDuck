@@ -16,7 +16,7 @@
 functions for drawing legend related UI components
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import cv2
 import numpy as np
@@ -70,7 +70,11 @@ class Legend:
             y_pos += 20
 
     def _draw_item_info(
-        self, frame: np.ndarray, y_pos: int, item_name: str, item_info: Any
+        self,
+        frame: np.ndarray,
+        y_pos: int,
+        item_name: str,
+        item_info: Union[int, float, str],
     ) -> None:
         """Draw item name followed by item info onto frame. If item info is
         of float type, it will be displayed in 2 decimal places.
@@ -81,7 +85,18 @@ class Legend:
             item_name (str): name of the legend item
             item_info (Any): info contained by the legend item
         """
-        if type(item_info) is float:
+        if (
+            type(item_info) != int
+            and type(item_info) != float
+            and type(item_info) != str
+        ):
+            raise ValueError(
+                f"The draw.legend node only draws values that are of type 'int', 'float' or 'str' "
+                f"within the legend box. The value: {item_info} from the data type: {item_name} "
+                f"is of type: {type(item_info)} and is unable to be drawn."
+            )
+
+        if type(item_info) == float:
             text = f"{item_name.upper()}: {item_info:.2f}"
         else:
             text = f"{item_name.upper()}: {str(item_info)}"

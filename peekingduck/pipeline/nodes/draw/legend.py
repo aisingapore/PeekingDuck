@@ -16,7 +16,7 @@
 Displays selected information from preceding nodes in a legend box.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -30,50 +30,37 @@ class Node(AbstractNode):
 
     This example screenshot shows ``fps`` from :mod:`dabble.fps`, ``count`` from
     :mod:`dabble.bbox_count` and ``avg`` from :mod:`dabble.statistics` displayed within the legend
-    box. Note that values of float type such as ``fps`` and ``avg`` are displayed in 2 decimal
-    places.
+    box.
 
     .. image:: /assets/api/legend.png
     |br|
 
+    Supported types that can be drawn are :obj:`int`, :obj:`float` and :obj:`str`.
+    Note that values of float type such as ``fps`` and ``avg`` are displayed in 2 decimal places.
+
     Inputs:
-        |all|
+        |all_input|
 
     Outputs:
         |img|
 
     Configs:
-        all_legend_items (:obj:`List[str]`):
-            **default = ["fps", "count", "zone_count", "avg", "min", "max"]**. |br|
-            A list of all valid data types that can be processed by this node. To process custom
-            data types produced by custom nodes, add the custom data type to this list. Note that
-            to actually draw the information in the legend box, the data type has to be added to
-            the list in the ``include`` config as well.
-
-            .. versionchanged:: 1.2.0
-                Permit adding of custom data types produced by custom nodes. Also added
-                in-built PeekingDuck data types ``avg``, ``min``, ``max`` created from
-                :mod:`dabble.statistics` to default list.
-
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
             Position to draw legend box. "top" draws it at the top-left position while "bottom"
             draws it at bottom-left.
-        include (:obj:`List[str]`): **default = ["*"]**. |br|
-            Include in this list the desired information to be drawn within the legend box, such
-            as ``["fps", "count", "avg"]`` in the example screenshot. The default value is the
-            wildcard ``*``, which draws all the information from ``all_legend_items`` as long as
-            they were produced from preceding nodes. To draw information from custom data types
-            produced by custom nodes, the data type has to be added both here as well as the list
-            in the ``all_legend_items`` config.
+        show (:obj:`List[str]`): **default = []**. |br|
+            Include in this list the desired data type(s) to be drawn within the legend box, such
+            as ``["fps", "count", "avg"]`` in the example screenshot. Custom data types produced
+            by custom nodes are also supported.
 
-            .. versionchanged:: 1.2.0
-                Default value changed to wildcard character "*".
+    .. versionchanged:: 1.2.0
+        Merged previous ``all_legend_items`` and ``include`` configs into a single ``show`` config
+        for greater clarity. Added support for drawing custom data types produced by custom nodes,
+        to improve the flexibility of this node.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.include: List[str]
-        self.legend_items: List[str] = []
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws legend box with information from nodes.
@@ -84,19 +71,7 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
-        if len(self.legend_items) == 0:
-            # Check inputs to set legend items to draw
-            if self.include[0] == "*":
-                self.include = self.all_legend_items
-            self._include(inputs)
-        if len(self.legend_items) != 0:
-            Legend().draw(inputs, self.legend_items, self.position)
-        else:
-            return {}
+        if self.show:
+            Legend().draw(inputs, self.show, self.position)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
-
-    def _include(self, inputs: Dict[str, Any]) -> None:
-        for item in self.all_legend_items:
-            if item in inputs.keys() and item in self.include:
-                self.legend_items.append(item)

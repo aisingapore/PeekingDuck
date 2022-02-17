@@ -61,6 +61,11 @@ class Node(AbstractNode):
             example 2, to draw the tag given by the attribute `"ids"`, the required key
             is `["ids"]`. To draw the tag given by the attribute `"age"`, as `"age"` is nested
             within `"details"`, the required keys are `["details", "age"]`.
+
+    .. versionchanged:: 1.2.0 |br|
+        :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input data type,
+        which has been deprecated and now subsumed under ``obj_attrs``
+        (:obj:`Dict[str, List[Any]]`), giving this node more flexibility.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

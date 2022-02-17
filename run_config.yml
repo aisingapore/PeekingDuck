@@ -14,7 +14,7 @@
 #     }
 # - draw.bbox
 # - draw.legend:
-#     include: ["count", "fps", "avg"]
+#     show: ["count", "fps", "avg"]
 # - output.screen
 
 
@@ -39,9 +39,9 @@ nodes:
     }
 - draw.bbox
 - draw.tag:
-    get: []
+    get: ["flags"]
 - draw.legend:
-    include: ["max", "avg", "min"]
+    show: ["max", "avg", "min"]
 - output.screen
 
 
@@ -64,7 +64,7 @@ nodes:
 # - draw.bbox
 # - draw.group_bbox_and_tag
 # - draw.legend:
-#     include: ["max", "avg", "min"]
+#     show: ["max", "avg", "min"]
 # - output.screen
 
 # # object_tracking
@@ -85,5 +85,5 @@ nodes:
 # - draw.tag:
 #     attribute: ids
 # - draw.legend:
-#     include: ["max"]
+#     show: ["max"]
 # - output.screen

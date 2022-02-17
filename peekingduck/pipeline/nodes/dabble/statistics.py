@@ -107,13 +107,11 @@ class Node(AbstractNode):
         attr_value = _get_attr_info(
             inputs, self.target["data_type"], self.target["dict_keys"]
         )
-        print("attr_value", attr_value)
         _check_data_type(attr_value)
 
         self.now = self._apply(
             attr_value, self.apply["function"], self.apply["condition"]
         )
-        print("self.now", self.now)
 
         if self.now < self.min:
             self.min = self.now
