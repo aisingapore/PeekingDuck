@@ -16,9 +16,11 @@
 A flexible node created for calculating the average, minimum and maximum of a single target
 variable of interest over time.
 """
+
+from collections import deque
 import operator
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Union
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -33,26 +35,51 @@ OPS = {
 
 class Node(AbstractNode):
     """A flexible node created for calculating the average, minimum and maximum of a single target
-    variable of interest over time. As there are many ways to use this node, the 3 examples below
-    will be used to aid subsequent explanations.
+    variable of interest over time. Supports in-built PeekingDuck data types defined in
+    :doc:`Glossary </glossary>` as well as custom data types produced by custom nodes.
 
-    >>> # 1. int example
-    >>> {"count": 8}
-    >>> # 2. List example
-    >>> {"large_groups": [4, 5]}
-    >>> # 3. Dict example
-    >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
+    The 3 examples below illustrate different ways of using this node. The ``target`` and ``apply``
+    configs are used to extract the target variable of interest, which is for the current frame.
+    The average is then re-computed with the new current value. This current value is also compared
+    with the previous maximum value, and if higher, the maximum value is updated. The same applies
+    for the minimum value.
 
-    To note: |br|
-    - This node focuses on calculating the statistics of target variables accumulated over time.
-    To obtain instantaneous counts, it is more suitable to use the ``dabble.bbox_count`` node
-    which produces the output ``count``, which in fact is used in the first example. |br|
-    - While the PeekingDuck team will continue to expand the capabilities of this node, you may
-    have a specific use case that is best tackled by adapting from this node to create your own
-    custom node.
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Type                          | int           | list                | dict                           |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Example                       | count: 8      | large_groups: [4,5] | obj_attrs: {                   |
+    |                               |               |                     |                                |
+    |                               |               |                     |                                |
+    |                               |               |                     |   ids: [1,2],                  |
+    |                               |               |                     |                                |
+    |                               |               |                     |   details: {                   |
+    |                               |               |                     |                                |
+    |                               |               |                     |     gender: ["female","male"], |
+    |                               |               |                     |                                |
+    |                               |               |                     |     age: [52,17] }}            |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Objective                     | The given     | Number of items in  | Number of occurrences where    |
+    |                               |               |                     | ``age`` >= 30                  |
+    |                               | number itself | ``large_groups``    |                                |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Resulting Current Value       | 8             | 2                   | 1                              |
+    |                               |               | (len[4,5] is 2)     | (only 52 >= 30)                |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Configs                                                                                              |
+    +--------+----------------------+---------------+---------------------+--------------------------------+
+    | target | data_type            | :mod:`count`  | :mod:`large_groups` | :mod:`obj_attrs`               |
+    +        +----------------------+---------------+---------------------+--------------------------------+
+    |        | get                  | null          | null                | ["details", "age"]             |
+    +--------+----------------------+---------------+---------------------+--------------------------------+
+    | apply  | function             | identity      | len                 | conditional_count              |
+    |        +-----------+----------+---------------+---------------------+--------------------------------+
+    |        | condition | operator | null          | null                | ">="                           |
+    |        |           +----------+---------------+---------------------+--------------------------------+
+    |        |           | operand  | null          | null                | 30                             |
+    +--------+-----------+----------+---------------+---------------------+--------------------------------+
 
     Inputs:
-        |all|
+        |all_input|
 
     Outputs:
         |avg|
@@ -61,37 +88,58 @@ class Node(AbstractNode):
 
         |max|
 
+    The 3 examples in the table above illustrate how these configs can be used for different
+    scenarios.
+
     Configs:
-        target (:obj:`Dict`): A dictionary containing information for the target variable
-            of interest. |br|
-                - data_type (:obj:`str`): **default="count"** |br|
-                    The input data type from a prior node in the pipeline, such as ``obj_attrs``.
-                    Only node inputs that are of type ``int``, ``List`` or ``Dict`` are accepted.
-                    Aside from PeekingDuck's standard node outputs, it is also possible to use
-                    customised node outputs from your own custom nodes.
-                - dict_keys (:obj:`Optional[List]`): **default=null** |br|
-                    If ``node_output`` is of type ``Dict``, the key of interest of the dictionary
-                    are to be included here. Using the "Dict example" above where the target of
-                    interest is "age":
+        target (:obj:`Dict`) |br|
 
-                    >>> # 3. Dict example
-                    >>> node_output: obj_attrs
-                    >>> dict_keys: ["details", "age"]
+            - data_type (:obj:`str`): **default=""** |br|
+                The input data type from a prior node in the pipeline, such as ``obj_attrs``.
+                Only node inputs that are of type ``int``, ``List`` or ``Dict`` are accepted.
+                Aside from in-built PeekingDuck data types, it is also possible to use
+                custom data types produced by custom nodes.
+
+            - get (:obj:`Optional[List]`): **default=null** |br|
+                If ``node_output`` is of type ``Dict``, the key of interest of the dictionary
+                are to be included here. Using the "Dict example" above where the target of
+                interest is "age". List the keys of the ``obj_attrs`` dictionary required to get the desired tag. For
+                example 2, to draw the tag given by the attribute `"ids"`, the required key
+                is `["ids"]`. To draw the tag given by the attribute `"age"`, as `"age"` is nested
+                within `"details"`, the required keys are `["details", "age"]`.
 
 
-        apply (:obj:`Dict`): |br|
-            Applies functions to the target value. The calc
-            method chosen will create a count of the current desired value, from
-            which ``avg``, ``min`` and ``max`` can be calculated over time. Note that all methods
-            are aimed to reduce the input to a single value, e.g. max()
-            Create a table - ``int_count`` does... ``list_max`` applies max([..]) if nothing 0 |br|
+        apply (:obj:`Dict`) |br|
 
-                - function (:obj:`str`): **{"identity", "len", "max", "conditional_count"},
-                    default="identity"** |br|
-                - condition (:obj:`Dict`): **default = {"operator": null, "operand": null}**. |br|
-                    Optional application of condition for comparing the attribute
-                    with the ``operand`` using ``operator``. To be used if conditional
-                    count.
+            - function (:obj:`str`): **{"identity", "len", "max", "conditional_count"}, default="identity"** |br|
+                The function used to obtain the target variable from the original data type input.
+
+                +-------------------+------------------+---------------------------------------------+
+                | function          | valid data types | action                                      |
+                +-------------------+------------------+---------------------------------------------+
+                | identity          | int, float       | returns the same                            |
+                +-------------------+------------------+---------------------------------------------+
+                | len               | list, dict       | length of list or dict                      |
+                +-------------------+------------------+---------------------------------------------+
+                | max               | list             | max value of a list                         |
+                +-------------------+------------------+---------------------------------------------+
+                | conditional_count | list             | counts the number of occurrences within the |
+                |                   |                  |                                             |
+                |                   |                  | list that satisfies conditions stated in    |
+                |                   |                  |                                             |
+                |                   |                  | condition config                            |
+                +-------------------+------------------+---------------------------------------------+
+
+            - condition (:obj:`Dict`): **default = {"operator": null, "operand": null}**. |br|
+                Optional application of condition for comparing the attribute
+                with the ``operand`` using ``operator``. To be used if conditional
+                count. Operators are ``==``, ``>``, ``>=``, ``<``, ``<=``.
+
+
+    TO DO:
+    - Check that curr value is of type int or float.
+    - Write the above in instructions.
+
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -104,9 +152,8 @@ class Node(AbstractNode):
         etc
         """
         self.num_iter += 1
-        attr_value = _get_attr_info(
-            inputs, self.target["data_type"], self.target["dict_keys"]
-        )
+        keys = deque(self.target["get"])
+        attr_value = _get_value(inputs[self.target["data_type"]], keys)
         _check_data_type(attr_value)
 
         self.now = self._apply(
@@ -117,6 +164,7 @@ class Node(AbstractNode):
             self.min = self.now
         if self.now > self.max:
             self.max = self.now
+        # https://ubuntuincident.wordpress.com/2012/04/25/calculating-the-average-incrementally/
         self.avg = (self.avg * self.num_iter + self.now) / (self.num_iter + 1)
 
         # only for prototyping
@@ -145,18 +193,11 @@ class Node(AbstractNode):
         # check input_name is in datapool + check it's of type int, list or dict
 
 
-def _get_attr_info(inputs, data_type, dict_keys):
-    if not dict_keys:
-        return inputs[data_type]
-    return _seek_value(inputs[data_type], dict_keys.copy())
-
-
-def _seek_value(data, dict_keys):
-    if not dict_keys:
+def _get_value(data: Dict[str, Any], keys: deque) -> List[Union[str, int]]:
+    if not keys:
         return data
-    else:
-        key = dict_keys.pop(0)
-        return _seek_value(data[key], dict_keys)
+    key = keys.popleft()
+    return _get_value(data[key], keys)
 
 
 def _check_data_type(attr_value):

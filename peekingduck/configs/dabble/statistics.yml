@@ -3,7 +3,7 @@ output: ["avg", "min", "max"]
 
 target: {
   data_type: count,
-  dict_keys: null,
+  get: null,
 } 
 apply: {
   function: identity,

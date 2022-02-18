@@ -55,9 +55,9 @@
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
 
-.. |max| replace:: ``max`` (:obj:`float/int`): Maximum value of an attribute over time.
+.. |max| replace:: ``max`` (:obj:`float | int`): Maximum value of an attribute over time.
 
-.. |min| replace:: ``min`` (:obj:`float/int`): Minimum value of an attribute over time.
+.. |min| replace:: ``min`` (:obj:`float | int`): Minimum value of an attribute over time.
 
 .. |no_input| replace:: ``none``: No inputs required.
 

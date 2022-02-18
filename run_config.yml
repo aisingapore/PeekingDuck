@@ -28,7 +28,7 @@ nodes:
 - dabble.statistics:
     target: {
         data_type: obj_attrs,
-        dict_keys: ["flags"]
+        get: ["flags"]
     }
     apply: {
         function: conditional_count,
@@ -76,7 +76,7 @@ nodes:
 # - dabble.statistics:
 #     target: {
 #         data_type: obj_attrs,
-#         dict_keys: ["ids"]
+#         get: ["ids"]
 #     }
 #     apply: {
 #         function: max
