@@ -13,10 +13,9 @@
 # limitations under the License.
 
 """
-A flexible node created for calculating the average, minimum and maximum of a single target
+A flexible node created for calculating the average, minimum and maximum of a single 
 variable of interest over time.
 """
-
 from collections import deque
 import operator
 
@@ -34,15 +33,22 @@ OPS = {
 
 
 class Node(AbstractNode):
-    """A flexible node created for calculating the average, minimum and maximum of a single target
-    variable of interest over time. Supports in-built PeekingDuck data types defined in
-    :doc:`Glossary </glossary>` as well as custom data types produced by custom nodes.
+    """A flexible node created for calculating the average, minimum and maximum of a single 
+    variable of interest over time. 
 
-    The 3 examples below illustrate different ways of using this node. The ``target`` and ``apply``
-    configs are used to extract the target variable of interest, which is for the current frame.
-    The average is then re-computed with the new current value. This current value is also compared
-    with the previous maximum value, and if higher, the maximum value is updated. The same applies
-    for the minimum value.
+    The data received by this node is processed in 2 steps. Firstly, as this node receives the 
+    :obj:`all` input, the ``target`` config is used to narrow down the specific data type of 
+    interest and dictionary keys (if required). Both in-built PeekingDuck data types defined in 
+    :doc:`Glossary </glossary>` as well as custom data types produced by custom nodes are 
+    supported. We refer to the result of step 1 as `target attribute`.
+
+    Secondly, the ``apply`` config is used to apply a function and condition (if required) to 
+    `target attribute`, to obtain a final result which we refer to here as the `current value`. 
+    This `current value` is then used to recalculate the values of average, minimum and maximum.
+    Note that in order to calculate these statistics, *current value* must be of type :obj:`int` 
+    or :obj:`float`.
+
+    The 3 examples below illustrate different ways of using this node.
 
     +-------------------------------+---------------+---------------------+--------------------------------+
     | Type                          | int           | list                | dict                           |
@@ -62,13 +68,10 @@ class Node(AbstractNode):
     |                               |               |                     | ``age`` >= 30                  |
     |                               | number itself | ``large_groups``    |                                |
     +-------------------------------+---------------+---------------------+--------------------------------+
-    | Resulting Current Value       | 8             | 2                   | 1                              |
-    |                               |               | (len[4,5] is 2)     | (only 52 >= 30)                |
-    +-------------------------------+---------------+---------------------+--------------------------------+
-    | Configs                                                                                              |
+    |                                               `Configs`                                              |
     +--------+----------------------+---------------+---------------------+--------------------------------+
     | target | data_type            | :mod:`count`  | :mod:`large_groups` | :mod:`obj_attrs`               |
-    +        +----------------------+---------------+---------------------+--------------------------------+
+    |        +----------------------+---------------+---------------------+--------------------------------+
     |        | get                  | null          | null                | ["details", "age"]             |
     +--------+----------------------+---------------+---------------------+--------------------------------+
     | apply  | function             | identity      | len                 | conditional_count              |
@@ -77,6 +80,15 @@ class Node(AbstractNode):
     |        |           +----------+---------------+---------------------+--------------------------------+
     |        |           | operand  | null          | null                | 30                             |
     +--------+-----------+----------+---------------+---------------------+--------------------------------+
+    |                                               `Results`                                              |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Step 1: `Target attribute`    | 8             | [4,5]               | [52,17]                        |
+    | after ``target`` config       |               |                     |                                |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+    | Step 2: `Current value`       | 8             | 2                   | 1                              |
+    | after ``apply`` config        |               | (len[4,5] is 2)     | (only 52 >= 30)                |
+    +-------------------------------+---------------+---------------------+--------------------------------+
+
 
     Inputs:
         |all_input|
@@ -94,126 +106,144 @@ class Node(AbstractNode):
     Configs:
         target (:obj:`Dict`) |br|
 
-            - data_type (:obj:`str`): **default=""** |br|
-                The input data type from a prior node in the pipeline, such as ``obj_attrs``.
-                Only node inputs that are of type ``int``, ``List`` or ``Dict`` are accepted.
-                Aside from in-built PeekingDuck data types, it is also possible to use
-                custom data types produced by custom nodes.
+            - data_type (:obj:`str`): **default=null** |br|
+                The input data type from a preceding node in the pipeline, such as ``obj_attrs``.
+                Aside from in-built PeekingDuck data types, it is also possible to use custom
+                data types produced by custom nodes.
 
             - get (:obj:`Optional[List]`): **default=null** |br|
-                If ``node_output`` is of type ``Dict``, the key of interest of the dictionary
-                are to be included here. Using the "Dict example" above where the target of
-                interest is "age". List the keys of the ``obj_attrs`` dictionary required to get the desired tag. For
-                example 2, to draw the tag given by the attribute `"ids"`, the required key
-                is `["ids"]`. To draw the tag given by the attribute `"age"`, as `"age"` is nested
-                within `"details"`, the required keys are `["details", "age"]`.
+                If ``data_type`` is of type ``dict``, list the keys of its dictionary required to
+                get the desired value. In the *dict* example, to get the current value for 
+                `"age"`, as `"age"` is nested within `"details"`, the required keys are
+                `["details", "age"]`.
 
 
         apply (:obj:`Dict`) |br|
 
-            - function (:obj:`str`): **{"identity", "len", "max", "conditional_count"}, default="identity"** |br|
-                The function used to obtain the target variable from the original data type input.
+            - function (:obj:`str`): **{"identity", "len", "max", "conditional_count"}, \
+                default="identity"** |br|
+                The function used to further reduce the `target attribute` into `current value`. 
+                `Target attribute` has to fulfil type requirements listed below.
 
-                +-------------------+------------------+---------------------------------------------+
-                | function          | valid data types | action                                      |
-                +-------------------+------------------+---------------------------------------------+
-                | identity          | int, float       | returns the same                            |
-                +-------------------+------------------+---------------------------------------------+
-                | len               | list, dict       | length of list or dict                      |
-                +-------------------+------------------+---------------------------------------------+
-                | max               | list             | max value of a list                         |
-                +-------------------+------------------+---------------------------------------------+
-                | conditional_count | list             | counts the number of occurrences within the |
-                |                   |                  |                                             |
-                |                   |                  | list that satisfies conditions stated in    |
-                |                   |                  |                                             |
-                |                   |                  | condition config                            |
-                +-------------------+------------------+---------------------------------------------+
+                +-------------------+------------------------------------+--------------------------------------------+
+                | function          | Valid types for `target attribute` | Action                                     |
+                +-------------------+------------------------------------+--------------------------------------------+
+                | identity          | int, float                         | returns the same value                     |
+                +-------------------+------------------------------------+--------------------------------------------+
+                | len               | list, dict                         | length of list or dict                     |
+                +-------------------+------------------------------------+--------------------------------------------+
+                | min               | list, dict                         | finds the minimum                          |
+                +-------------------+------------------------------------+--------------------------------------------+
+                | max               | list, dict                         | finds the maximum                          |
+                +-------------------+------------------------------------+--------------------------------------------+
+                | conditional_count | list                               | counts the number of occurrences within a  |
+                |                   |                                    |                                            |
+                |                   |                                    | list that satisfies the condition stated   |
+                |                   |                                    |                                            |
+                |                   |                                    | in the ``condition`` config                |
+                +-------------------+------------------------------------+--------------------------------------------+
 
             - condition (:obj:`Dict`): **default = {"operator": null, "operand": null}**. |br|
-                Optional application of condition for comparing the attribute
-                with the ``operand`` using ``operator``. To be used if conditional
-                count. Operators are ``==``, ``>``, ``>=``, ``<``, ``<=``.
-
-
-    TO DO:
-    - Check that curr value is of type int or float.
-    - Write the above in instructions.
-
+                Only used if ``conditional_count`` is selected for the ``function`` config. It
+                counts the number of elements within the `target attribute` list that satisfy 
+                the comparison with the ``operand`` using ``operator``. Supported operators are 
+                ``==``, ``>``, ``>=``, ``<``, ``<=``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.avg, self.min, self.max = 0, 0, 0
+        self.avg, self.min, self.max = 0, float("inf"), 0
         self.num_iter = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Counts ...
-        etc
+        """Calculates the average, minimum and maximum of a single variable of interest over time.
+
+        Args:
+            inputs (dict): Dictionary with all available keys.
+
+        Returns:
+            outputs (dict): Dictionary with keys "avg", "min" and "max".
         """
+        target_attr = self._get_target_attr(inputs)
+        self.curr = _apply_func(target_attr, self.apply)
+
+        # if no detections in this frame, return stats from previous
+        # detections
+        if not self.curr:
+            return {"avg": self.avg, "min": self.min, "max": self.max}
+
         self.num_iter += 1
-        keys = deque(self.target["get"])
-        attr_value = _get_value(inputs[self.target["data_type"]], keys)
-        _check_data_type(attr_value)
-
-        self.now = self._apply(
-            attr_value, self.apply["function"], self.apply["condition"]
-        )
-
-        if self.now < self.min:
-            self.min = self.now
-        if self.now > self.max:
-            self.max = self.now
-        # https://ubuntuincident.wordpress.com/2012/04/25/calculating-the-average-incrementally/
-        self.avg = (self.avg * self.num_iter + self.now) / (self.num_iter + 1)
-
-        # only for prototyping
-        if not self.num_iter % 10:
-            print(
-                f"avg: {self.avg:.2f}, min: {self.min}, max: {self.max}, now: {self.now}"
-            )
+        self._update_stats(self.curr)
 
         return {"avg": self.avg, "min": self.min, "max": self.max}
 
-    def _apply(self, attr_value, function, condition):
-        if function == "identity":
-            return attr_value
-        elif function == "len":
-            if type(attr_value) == list or type(attr_value) == dict:
-                return len(attr_value)
-            raise ValueError("Type has to ...")
-        elif function == "max":
-            if attr_value and (type(attr_value) == list or type(attr_value) == dict):
-                return max(attr_value)
-            else:
-                return 0
-        elif function == "conditional_count":
-            return _conditional_count(attr_value, condition)
-        # this method cannot return None in all scenarios
-        # check input_name is in datapool + check it's of type int, list or dict
+    def _get_target_attr(self, inputs):
+        if self.target["get"]:
+            keys = deque(self.target["get"])
+            return _get_value(inputs[self.target["data_type"]], keys)
+        return inputs[self.target["data_type"]]
+
+    def _update_stats(self, curr):
+        if type(curr) != int and type(curr) != float:
+            raise ValueError(
+                f"The current value has to be of type 'int' or 'float' to calculate statistics."
+                f"However, the current value here is: '{curr}' which is of type: {type(curr)}."
+            )
+        if curr < self.min:
+            self.min = curr
+        if curr > self.max:
+            self.max = curr
+        self.avg = (self.avg * self.num_iter + curr) / (self.num_iter + 1)
 
 
-def _get_value(data: Dict[str, Any], keys: deque) -> List[Union[str, int]]:
+def _get_value(data: Dict[str, Any], keys: List[str]) -> List[Union[str, int]]:
     if not keys:
         return data
     key = keys.popleft()
     return _get_value(data[key], keys)
 
 
-def _check_data_type(attr_value):
-    if (
-        type(attr_value) != int
-        and type(attr_value) != list
-        and type(attr_value) != dict
-    ):
-        raise ValueError("it has to be of type int, list, dict...")
+def _apply_func(target_attr, apply):
+    function = apply["function"]
+    condition = apply["condition"]
+    if function == "identity":
+        _check_type(target_attr, function, int, float)
+        return target_attr
+    elif function == "len":
+        _check_type(target_attr, function, dict, list)
+        return len(target_attr)
+    elif function == "min":
+        _check_type(target_attr, function, dict, list)
+        if not target_attr:
+            return None
+        return min(target_attr)
+    elif function == "max":
+        _check_type(target_attr, function, dict, list)
+        if not target_attr:
+            return None
+        return max(target_attr)
+    elif function == "conditional_count":
+        _check_type(target_attr, function, list)
+        return _conditional_count(target_attr, condition)
 
 
-def _conditional_count(attr_value, condition):
+def _check_type(target_attr, function, *types):
+    correct = False
+    for obj_type in types:
+        if type(target_attr) == obj_type:
+            correct = True
+    if not correct:
+        raise ValueError(
+            f"For the chosen function: '{function}', valid target attribute types are: {types}. "
+            f"However, this target attribute: {target_attr} is of type: {type(target_attr)}."
+        )
+
+
+def _conditional_count(target_attr, condition):
     operator, operand = condition["operator"], condition["operand"]
     count = 0
     op_func = OPS[operator]
-    for item in attr_value:
+    for item in target_attr:
         if op_func(item, operand):
             count += 1
     return count

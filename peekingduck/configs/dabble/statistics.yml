@@ -2,7 +2,7 @@ input: ["all"]
 output: ["avg", "min", "max"]
 
 target: {
-  data_type: count,
+  data_type: null,
   get: null,
 } 
 apply: {
