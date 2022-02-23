@@ -59,7 +59,7 @@ class DetectionTracker:  # pylint: disable=too-few-public-methods
         except KeyError as error:
             raise ValueError("tracking_type must be one of ['iou', 'mosse']") from error
 
-    def track_detections(self, inputs: Dict[str, Any]) -> List[str]:
+    def track_detections(self, inputs: Dict[str, Any]) -> List[int]:
         """Tracks detections using the selected algorithm.
 
         Args:
@@ -67,7 +67,7 @@ class DetectionTracker:  # pylint: disable=too-few-public-methods
                 "bbox_scores.
 
         Returns:
-            (List[str]): Tracking IDs of the detection bounding boxes.
+            (List[int]): Tracking IDs of the detection bounding boxes.
         """
         track_ids = self.tracker.track_detections(inputs)
         return track_ids

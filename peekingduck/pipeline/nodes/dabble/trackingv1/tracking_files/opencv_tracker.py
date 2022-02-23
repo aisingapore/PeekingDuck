@@ -119,6 +119,8 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             if track_id not in obj_track_ids:
                 obj_track_ids[i] = track_id
 
+        print(obj_track_ids)
+
         return obj_track_ids
 
     def _update_tracker_bboxes(self, frame: np.ndarray) -> None:
@@ -141,7 +143,7 @@ class Track(NamedTuple):
     coordinates.
 
     Attributes:
-        tracker (cv2.TrackerMOSSE): OpenCV MOSSE tracker.
+        tracker (cv2.legacy_TrackerMOSSE): OpenCV MOSSE tracker.
         bbox (np.ndarray): Bounding box coordinates in (t, l, w, h) format where
             (t, l) is the top-left coordinate, w is the width, and h is the
             height of the bounding box.

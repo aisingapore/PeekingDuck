@@ -13,18 +13,24 @@ apply: {
   }
 }
 
+# conditional_count: null
+# identity: null
 
-# 1. "int" -> "identity"
-# 2. "apply" -> "function"
-# 3. remove "curr" -> use bbox_count
-# 4. median/mean/mode
-# 5. "obj_tag" -> "obj_attr"
-# 6. curr -> now
-# 7. avg, min, max should be floats
 
-# count = 8
-# large_groups = [5, 4]                           -> len() = 2
-# zone_count = [0, 1]                             -> ?
-# obj_tags["groups"] = [5, 5, 5, 4, 4, 4, 4, 4]   -> len() = 8
-# obj_tags["flags"] = ["CLOSE!", "", "CLOSE!"]    -> conditional
-# obj_tags["ids"] = [0, 2, 4, 5, 6]               -> max() = 6
+
+# data_type: obj_attrs["flags"]
+# function: conditional_count, ">=", 40
+
+# function: identity
+
+
+# dabble.statistics:
+
+#   identity: count
+#   conditional_count: "obj_attrs['flags'] >= 40"
+
+#   len: large_groups
+#   max: obj_attrs["flags"]
+
+#   get: [details->age, details->gender]
+

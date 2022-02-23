@@ -64,12 +64,12 @@ class Legend:
         y_pos = self.legend_starting_y + 20
         for item in items:
             if item == "zone_count":
-                self._draw_zone_count(self.frame, y_pos, item, inputs[item])
+                self._draw_zone_count(self.frame, y_pos, inputs[item])
             else:
-                self._draw_item_info(self.frame, y_pos, item, inputs[item])
+                self.draw_item_info(self.frame, y_pos, item, inputs[item])
             y_pos += 20
 
-    def _draw_item_info(
+    def draw_item_info(
         self,
         frame: np.ndarray,
         y_pos: int,
@@ -86,9 +86,9 @@ class Legend:
             item_info (Any): info contained by the legend item
         """
         if (
-            type(item_info) != int
-            and type(item_info) != float
-            and type(item_info) != str
+            not isinstance(item_info, int)
+            and not isinstance(item_info, float)
+            and not isinstance(item_info, str)
         ):
             raise ValueError(
                 f"The draw.legend node only draws values that are of type 'int', 'float' or 'str' "
@@ -96,7 +96,7 @@ class Legend:
                 f"is of type: {type(item_info)} and is unable to be drawn."
             )
 
-        if type(item_info) == float:
+        if isinstance(item_info, float):
             text = f"{item_name.upper()}: {item_info:.2f}"
         else:
             text = f"{item_name.upper()}: {str(item_info)}"
@@ -112,7 +112,7 @@ class Legend:
         )
 
     def _draw_zone_count(
-        self, frame: np.ndarray, y_pos: int, item: str, counts: List[int]
+        self, frame: np.ndarray, y_pos: int, counts: List[int]
     ) -> None:
         """Draw zone counts of all zones onto frame image
 

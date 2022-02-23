@@ -17,7 +17,7 @@ Checks if number of objects in a group exceeds a threshold.
 """
 
 from collections import Counter
-from typing import Any, Dict, List
+from typing import Any, Counter, Dict, List
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -26,7 +26,7 @@ class Node(AbstractNode):
     """Checks which groups have exceeded the group size threshold.
 
     Inputs:
-        |obj_groups|
+        |obj_attrs|
 
     Outputs:
         |large_groups|
@@ -39,10 +39,11 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    def run(self, inputs: Dict[str, List[int]]) -> Dict[str, List[int]]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, List[int]]:
         """Checks which groups have exceeded the group size threshold,
         and returns a list of such groups.
         """
+        group_counter: Counter
         group_counter = Counter(inputs["obj_attrs"]["groups"])
         large_groups = [
             group

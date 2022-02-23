@@ -83,7 +83,7 @@ class Node(AbstractNode):
 
         keys = deque(self.get)
         attribute = _get_value(inputs["obj_attrs"], keys)
-        if type(attribute) != list:
+        if not isinstance(attribute, list):
             raise ValueError(
                 f"The attribute of interest has to be of type 'list', containing a list of tags. "
                 f"However, the attribute chosen here was: {attribute} which is of type: "
@@ -93,7 +93,7 @@ class Node(AbstractNode):
         if not attribute:
             return {}
 
-        if type(attribute[0]) != int and type(attribute[0]) != str:
+        if not isinstance(attribute[0], int) and not isinstance(attribute[0], str):
             raise ValueError(
                 f"Each tag has to be of type 'int' or 'str'. "
                 f"However, the first detected tag here was {attribute[0]} which is of type: "
@@ -105,7 +105,7 @@ class Node(AbstractNode):
         return {}
 
 
-def _get_value(data: Dict[str, Any], keys: deque) -> List[Union[str, int]]:
+def _get_value(data: Dict[str, Any], keys: deque) -> Dict[str, Any]:
     if not keys:
         return data
     key = keys.popleft()
