@@ -333,9 +333,9 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         ]
         self.tracked_stracks = _combine_stracks(self.tracked_stracks, activated_stracks)
         self.tracked_stracks = _combine_stracks(self.tracked_stracks, refind_stracks)
-        self.lost_stracks = _substract_stracks(self.lost_stracks, self.tracked_stracks)
+        self.lost_stracks = _subtract_stracks(self.lost_stracks, self.tracked_stracks)
         self.lost_stracks.extend(lost_stracks)
-        self.lost_stracks = _substract_stracks(self.lost_stracks, self.removed_stracks)
+        self.lost_stracks = _subtract_stracks(self.lost_stracks, self.removed_stracks)
         self.removed_stracks.extend(removed_stracks)
         self.tracked_stracks, self.lost_stracks = _remove_duplicate_stracks(
             self.tracked_stracks, self.lost_stracks
@@ -471,9 +471,7 @@ def _remove_duplicate_stracks(
     )
 
 
-def _substract_stracks(
-    stracks_1: List[STrack], stracks_2: List[STrack]
-) -> List[STrack]:
+def _subtract_stracks(stracks_1: List[STrack], stracks_2: List[STrack]) -> List[STrack]:
     """Removes stracks_2 from stracks_1.
 
     Args:

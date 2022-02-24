@@ -189,7 +189,7 @@ class Decoder:  # pylint: disable=too-few-public-methods
 
     def _trim_outputs(self, detections: np.ndarray) -> np.ndarray:
         """In the case of multi-class detections, trims the output to be
-        <=`max_per_image.
+        <=`self.max_per_image`.
 
         Args:
             detections (np.ndarray): Object detection results.

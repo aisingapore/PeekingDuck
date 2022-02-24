@@ -57,8 +57,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             Threshold to remove track if track is lost for more frames
             than value.
         input_size (:obj:`List[int]`): **default = [864, 480]**. |br|
-            Size of the input image to the model. Raw video/image frames will
-            be resized to the ``input_size`` before they are fed to the model.
+            Size (width, height) of the input image to the model. Raw
+            video/image frames will be resized to the ``input_size`` before
+            they are fed to the model.
 
     References:
         FairMOT: On the Fairness of Detection and Re-Identification in Multiple

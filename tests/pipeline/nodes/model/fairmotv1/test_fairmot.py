@@ -70,10 +70,6 @@ def fairmot_negative_config_value(request, fairmot_config):
     return fairmot_config
 
 
-# def replace_download_weights(*_):
-#     pass
-
-
 def replace_fuse_motion(*args):
     """Manipulate the computed embedding distance so they are too large and
     cause none of the detections to be associated. This forces the Tracker to
@@ -185,7 +181,7 @@ class TestFairMOT:
     ):
         """Manipulate both embedding and iou distance to be above the cost
         limit so nothing gets associated and all gets marked for removal. As a
-        result, the Tracker should no produce any track IDs.
+        result, the Tracker should not produce any track IDs.
         """
         _, detections = test_human_video_sequences
         fairmot = Node(fairmot_config)
@@ -199,7 +195,7 @@ class TestFairMOT:
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
                 output = fairmot.run(inputs)
                 if i == 0:
-                    # Skipping the assert on the first frame FairMOT sets
+                    # Skipping the assert on the first frame. FairMOT sets
                     # STrack to is_activated=True on when frame_id=1 but JDE
                     # doesn't
                     continue
@@ -288,10 +284,6 @@ class TestFairMOT:
 
     def test_no_weights(self, fairmot_config, replace_download_weights):
         weights_dir = fairmot_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        # weights_dir = (
-        #     Path(fairmot_config["weights_parent_dir"]).expanduser()
-        #     / PEEKINGDUCK_WEIGHTS_SUBDIR
-        # )
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(
