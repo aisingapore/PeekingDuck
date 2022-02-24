@@ -14,12 +14,227 @@ Import PeekingDuck as a Python Module
 
 .. role:: green
 
-**TODO: Update links**
+.. warning::
+    TODO: Update all links
+    TODO: Update code line numbers
+
+Running in a Script
+===================
+
+As an alternative to running PeekingDuck using the command-line interface (CLI), users can also
+import PeekingDuck as a Python module and run it in a Python script. This demo corresponds to the
+:ref:`Record and Save Video File with FPS <configure_nodes_media_writer>` Section of the "Duck
+Confit" tutorial.
+
+In addition, we will demonstrate basic debugging techniques which users can employ when
+troubleshooting PeekingDuck projects.
+
+Setting up
+----------
+
+Create a PeekingDuck project using:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
+    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
+    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck init` \
+
+Then, download the `demo video <link>`_ to the ``pkd_project`` folder and create a Python script
+``demo_debug.py`` in the same folder.
+
+You should have the following directory structure at this point:
+
+.. parsed-literal::
+
+   \ :blue:`pkd_project/` \ |Blank|
+   ├── computers_800.mp4
+   ├── demo_debug.py
+   └── \ :blue:`src/` \ |Blank|
+
+Create a Custom Node for Debugging
+----------------------------------
+
+Run the following to create a ``dabble`` node for debugging:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck create-node --node_subdir src/custom_nodes --node_type dabble --node_name debug` \
+
+The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
+shown:
+
+.. parsed-literal::
+
+   \ :blue:`pkd_project/` \ |Blank|
+   ├── computers_800.mp4
+   ├── demo_debug.py
+   └── \ :blue:`src/` \ |Blank|
+       └── \ :blue:`custom_nodes/` \ |Blank|
+           ├── \ :blue:`configs/` \ |Blank|
+           │   └── \ :blue:`dabble/` \ |Blank|
+           │       └── \ debug.yml
+           └── \ :blue:`dabble/` \ |Blank|
+               └── debug.py
+
+Change the content of ``debug.yml`` to:
+
+.. code-block:: yaml
+    :linenos:
+
+    input: ["all"]
+    output: ["none"]
+
+Line 1: The data type ``all`` allows the node to receive all outputs from the previous nodes as
+its input. Please see the :doc:`Glossary </glossary>` for a list of available data types.
+
+Change the content of ``debug.py`` to:
+
+.. code-block:: python
+    :linenos:
+
+    from typing import Any, Dict
+
+    import numpy as np
+
+    from peekingduck.pipeline.nodes.node import AbstractNode
+
+
+    class Node(AbstractNode):
+        def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+            super().__init__(config, node_path=__name__, **kwargs)
+            self.frame = 0
+
+        def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+            if "cat" in inputs["bbox_labels"]:
+                print(
+                    f"{self.frame} {inputs['bbox_scores'][np.where(inputs['bbox_labels'] == 'cat')]}"
+                )
+            self.frame += 1
+            return {}
+
+Line 14 - 17: Print out the frame number and the confidence scores of bounding boxes which are
+detected as "cat".
+
+Line 18: Increment the frame number each time ``run()`` is called.
+
+Creating the Python Script
+--------------------------
+
+Change the content of ``demo_debug.py`` to:
+
+.. code-block:: python
+    :linenos:
+
+    from pathlib import Path
+
+    from peekingduck.configloader import ConfigLoader
+    from peekingduck.pipeline.nodes import dabble, draw, input, model, output
+    from peekingduck.runner import Runner
+    from src.custom_nodes.dabble import debug
+
+
+    def main():
+        debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
+
+        recorded_config = {"input_dir": str(Path.cwd().resolve() / "computers_800.mp4")}
+        recorded_node = input.recorded.Node(**recorded_config)
+
+        # Have to do our own mapping if we want to avoid instantiating ConfigLoader
+        class_label_to_id = ConfigLoader._load_mapping("model.yolo")
+        class_labels = ["cup", "cat", "laptop", "keyboard", "mouse"]
+        yolo_config = {"detect_ids": [class_label_to_id[label] for label in class_labels]}
+        yolo_node = model.yolo.Node(**yolo_config)
+
+        bbox_config = {"show_labels": True}
+        bbox_node = draw.bbox.Node(**bbox_config)
+
+        fps_node = dabble.fps.Node()
+        legend_node = draw.legend.Node()
+        screen_node = output.screen.Node()
+
+        media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
+        media_writer_node = output.media_writer.Node(**media_writer_config)
+
+        runner = Runner(
+            nodes=[
+                recorded_node,
+                yolo_node,
+                debug_node,
+                bbox_node,
+                fps_node,
+                legend_node,
+                screen_node,
+                media_writer_node,
+            ]
+        )
+        runner.run()
+
+
+    if __name__ == "__main__":
+        main()
+
+Line 6, 10: Import and initialize the ``debug`` custom node. Pass in the 
+``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
+the custom node to be loaded properly.
+
+Line 12 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
+:ref:`Record and Save Video File with FPS <configure_nodes_media_writer>` tutorial.
+
+Line 31 - 43: Initialize the PeekingDuck ``Runner`` from
+`runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
+list of nodes passed in via the ``nodes`` argument.
+
+Running the Python Script
+-------------------------
+
+Run the ``demo_debug.py`` script using:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]/pkd_project` \ > \ :green:`python demo_debug.py` \
+
+You should the following output in your terminal:
+
+.. code-block:: text
+    :linenos:
+
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': [~user]/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: [~user]/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
+        Model type: v4tiny, 
+        Input resolution: 416, 
+        IDs being detected: [41, 15, 63, 66, 64] 
+        Max Detections per class: 50, 
+        Max Total Detections: 50, 
+        IOU threshold: 0.5, 
+        Score threshold: 0.2 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': [~user]/pkd_project/results 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: [~user]/pkd_project/results 
+    0 [0.90861976]
+    1 [0.9082737]
+    2 [0.90818006]
+    3 [0.8888804]
+    4 [0.8877487]
+    5 [0.9071386]
+    6 [0.870267]
+
+    [Truncated]
+
+Line 17 - 23: The debugging output showing the frame number and the confidence score of bounding boxes
+predicted as "cat".
+
+Running in a Notebook
+=====================
 
 The modular design of PeekingDuck allows users to pick and choose the nodes they want to use. Users
 are also able to use PeekingDuck nodes with external libraries when designing their pipeline.
 
-In this tutorial, we demonstrate how to users can construct a custom PeekingDuck pipeline using:
+In this demo, we will show how users can construct a custom PeekingDuck pipeline using:
 
     * Data loaders such as `tf.keras.utils.image_dataset_from_directory
       <https://www.tensorflow.org/api_docs/python/tf/keras/utils/image_dataset_from_directory>`_
@@ -33,11 +248,11 @@ PeekingDuck repository and is also available at a `Colab notebook <link>`_.
 
 .. raw:: html
 
-    <h2>Running locally</h2>
+    <h3>Running locally</h3>
 
 .. raw:: html
 
-    <h3>Prerequisites</h3>
+    <h4>Prerequisites</h4>
 
 .. code-block:: text
 
@@ -80,7 +295,7 @@ You should have the following directory structure at this point:
                └── \ :blue:`car/` \ |Blank|
 
 Importing the Modules
-=====================
+---------------------
 
 .. code-block:: python
     :linenos:
@@ -105,8 +320,16 @@ Line 9: We recommend importing PeekingDuck modules using::
 
 as it isolates the namespace to avoid potential conflicts.
 
+.. note::
+
+    Users with M1 Mac or ARM-based devices may have to import using::
+
+        from peekingduck.pipeline.nodes.model import yolo
+    
+    due to package incompatibility.
+
 Initialize PeekingDuck nodes
-============================
+----------------------------
 
 .. code-block:: python
     :linenos:
@@ -116,13 +339,13 @@ Initialize PeekingDuck nodes
     bbox_config = {"show_labels": True}
     bbox_node = draw.bbox.Node(**bbox_config)
 
-Line 3 - 4: To change the node configuration, you can pass the new values to the `Node()`
+Line 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
 constructor as keyword arguments.
 
 Refer to the :ref:`API Documentation <api_doc>` for the configurable settings for each node.
 
 Create a Dataset Loader
-=======================
+-----------------------
 
 .. code-block:: python
     :linenos:
@@ -136,7 +359,7 @@ Line 2: We create the data loader using ``tf.keras.utils.image_dataset_from_dire
 also create your own data loader class.
 
 Create a License Plate Parser Class
-===================================
+-----------------------------------
 
 .. code-block:: python
     :linenos:
@@ -153,16 +376,15 @@ Create a License Plate Parser Class
     
     reader = LPReader(False)
 
-We chose to create the license plate parser class in a Python class using ``easyocr`` to
-demonstrate how users can integrate the PeekingDuck pipeline with external processes. It is also
-possible to create a custom node for parsing license plates and run the pipeline through the
-command-line interface (CLI) instead. Refer to the `custom nodes <link>`_ tutorial for more
-information.
+We create the license plate parser class in a Python class using ``easyocr`` to demonstrate how
+users can integrate the PeekingDuck pipeline with external processes.
 
-**TODO: update link**
+Alternatively, users can create a custom node for parsing license plates and run the pipeline
+through the command-line interface (CLI) instead. Refer to the `custom nodes <link>`_ tutorial for
+more information.
 
 The Inference Loop
-==================
+------------------
 
 .. code-block:: python
     :linenos:
@@ -221,17 +443,15 @@ The Inference Loop
 
 
 
-Line 1 - 11: We define a utility function for retrieving the image region of the license plate with a
-highest confidence score to improve code clarity. For more information on how to convert between
-bounding box and image coordinates, please refer to the `Bounding Box vs Image Coordinates <link>`_
+Line 1 - 11: We define a utility function for retrieving the image region of the license plate with
+a highest confidence score to improve code clarity. For more information on how to convert between
+bounding box and image coordinates, please refer to the :ref:`Bounding Box vs Image Coordinates <coordinate_systems>`
 section in our tutorials.
 
 Line 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
-inference loop without having to use PeekingDuck's `Runner <link>`_.
+inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.
 
 Line 36 - 37: We plot the data for debugging and visualization purposes.
 
 Line 41 - 47: We integrate the inference loop external processes such as the license plate parser
 we have created earlier.
-
-**TODO: update link**
