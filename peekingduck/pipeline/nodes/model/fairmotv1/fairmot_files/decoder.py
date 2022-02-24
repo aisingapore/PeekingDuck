@@ -116,7 +116,8 @@ class Decoder:  # pylint: disable=too-few-public-methods
         )
         detections = torch.cat([bboxes, scores, classes], dim=2)
         detections = self._post_process(detections, orig_shape, input_shape)
-        detections = self._trim_outputs(detections)
+        # Currently not needed as FairMOT only detect one class
+        # detections = self._trim_outputs(detections)
 
         return detections, indices
 
@@ -187,7 +188,7 @@ class Decoder:  # pylint: disable=too-few-public-methods
 
         return topk_score, topk_indices, topk_classes, topk_y_coords, topk_x_coords
 
-    def _trim_outputs(self, detections: np.ndarray) -> np.ndarray:
+    def _trim_outputs(self, detections: np.ndarray) -> np.ndarray:  # pragma: no cover
         """In the case of multi-class detections, trims the output to be
         <=`self.max_per_image`.
 
@@ -197,7 +198,7 @@ class Decoder:  # pylint: disable=too-few-public-methods
         Returns:
             (np.ndarray): Trimmed detection results.
         """
-        if len(detections) > self.max_per_image:  # pragma: no cover
+        if len(detections) > self.max_per_image:
             # FairMOT only detects one class so this is never called.
             kth = len(detections) - self.max_per_image
             cut_off = np.partition(detections[:, 4], kth)[kth]
