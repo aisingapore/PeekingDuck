@@ -38,14 +38,14 @@ The table below shows the frames per second (FPS) of each model type.
 +--------------+----------+-----------------+--------+----------+--------+----------+
 | PoseNet      | resnet   | 225             |  15.27 |   14.32  |  73.15 |   51.65  |
 +--------------+----------+-----------------+--------+----------+--------+----------+
-| HRNet (YOLO) | (v4tiny) | 256 × 192 (416) |  5.86  |   1.09   |  21.91 |   13.86  |
+| HRNet (YOLO) | (v4tiny) | 256 × 192 (416) |  7.59  |   1.61   |  21.91 |   13.86  |
 +--------------+----------+-----------------+--------+----------+--------+----------+
 
 Hardware
 ^^^^^^^^
 
 The following hardware were used to conduct the FPS benchmarks:
- | - ``CPU``: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
+ | - ``CPU``: 2.8 GHz Quad-Core Intel Xeon (Cascade Lake) and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions

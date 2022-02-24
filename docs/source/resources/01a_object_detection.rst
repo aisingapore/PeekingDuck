@@ -34,9 +34,9 @@ The table below shows the frames per second (FPS) of each model type.
 |              |        |      +--------+----------+--------+----------+
 | Model        | Type   | Size | single | multiple | single | multiple |
 +==============+========+======+========+==========+========+==========+
-|              | v4tiny | 416  | 22.42  | 21.71    | 65.24  | 57.50    |
+|              | v4tiny | 416  | 25.72  | 25.41    | 65.24  | 57.50    |
 |              +--------+------+--------+----------+--------+----------+
-| YOLO         | v4     | 416  | 2.62   | 2.59     | 30.40  | 28.71    |
+| YOLO         | v4     | 416  | 3.16   | 3.14     | 30.40  | 28.71    |
 +--------------+--------+------+--------+----------+--------+----------+
 |              | 0      | 512  | 5.24   | 5.25     | 29.51  | 29.39    |
 |              +--------+------+--------+----------+--------+----------+
@@ -48,14 +48,14 @@ The table below shows the frames per second (FPS) of each model type.
 |              +--------+------+--------+----------+--------+----------+
 | EfficientDet | 4      | 1024 | 0.43   | 0.42     | 11.74  | 11.88    |
 +--------------+--------+------+--------+----------+--------+----------+
-| MTCNN        | --     | --   | 32.42  | 18.53    | 56.35  | 51.45    |
+| MTCNN        | --     | --   | 28.82  | 24.54    | 56.35  | 51.45    |
 +--------------+--------+------+--------+----------+--------+----------+
 
 Hardware
 ^^^^^^^^
 
 The following hardware were used to conduct the FPS benchmarks:
- | - ``CPU``: MacBook Pro 2017, with 2.9 GHz Quad-Core Intel Core i7 and 16GB RAM
+ | - ``CPU``: 2.8 GHz Quad-Core Intel Xeon (Cascade Lake) and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
