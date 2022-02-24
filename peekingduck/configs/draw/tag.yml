@@ -3,3 +3,6 @@ output: ["none"]
 
 get: []
 tag_color: [100, 0, 255]
+
+
+# [details->age, details->gender]

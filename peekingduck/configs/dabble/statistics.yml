@@ -1,36 +1,16 @@
 input: ["all"]
 output: ["avg", "min", "max"]
 
-target: {
-  data_type: null,
-  get: null,
-} 
-apply: {
-  function: identity,
-  condition: {
-    operator: null,
-    operand: null
-  }
-}
+identity: null
+conditional_count: null
+length: null
+minimum: null
+maximum: null
 
-# conditional_count: null
-# identity: null
+# identity: count
+# conditional_count: "obj_attrs['flags'] == 'TOO CLOSE!'"
+# length: large_groups
+# minimum: null
+# maximum: obj_attrs['ids']
 
-
-
-# data_type: obj_attrs["flags"]
-# function: conditional_count, ">=", 40
-
-# function: identity
-
-
-# dabble.statistics:
-
-#   identity: count
-#   conditional_count: "obj_attrs['flags'] >= 40"
-
-#   len: large_groups
-#   max: obj_attrs["flags"]
-
-#   get: [details->age, details->gender]
 
