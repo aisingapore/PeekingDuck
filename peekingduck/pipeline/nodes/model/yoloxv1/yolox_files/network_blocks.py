@@ -52,7 +52,11 @@ class BaseConv(nn.Module):
 
     # pylint: disable=invalid-name
     def __init__(
-        self, in_channels: int, out_channels: int, ksize: int, stride: int,
+        self,
+        in_channels: int,
+        out_channels: int,
+        ksize: int,
+        stride: int,
     ) -> None:
         super().__init__()
         # same padding
@@ -165,7 +169,11 @@ class Focus(nn.Module):
 
     # pylint: disable=invalid-name
     def __init__(
-        self, in_channels: int, out_channels: int, ksize: int = 1, stride: int = 1,
+        self,
+        in_channels: int,
+        out_channels: int,
+        ksize: int = 1,
+        stride: int = 1,
     ) -> None:
         super().__init__()
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride)

@@ -165,9 +165,11 @@ class Detector:
                 np.squeeze(labels.numpy()),
             )
         else:
-            (boxes, scores, labels,) = self.effdet.predict_on_batch(
-                [np.expand_dims(image, axis=0)]
-            )
+            (
+                boxes,
+                scores,
+                labels,
+            ) = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
             network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
 
         boxes, labels, scores = self.postprocess(

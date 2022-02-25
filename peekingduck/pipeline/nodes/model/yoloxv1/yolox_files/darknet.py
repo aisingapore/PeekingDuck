@@ -63,7 +63,10 @@ class CSPDarknet(nn.Module):
 
     # pylint: disable=arguments-differ
     def __init__(
-        self, dep_mul: float, wid_mul: float, out_features: Tuple[str, str, str],
+        self,
+        dep_mul: float,
+        wid_mul: float,
+        out_features: Tuple[str, str, str],
     ) -> None:
         super().__init__()
         self.out_features = out_features

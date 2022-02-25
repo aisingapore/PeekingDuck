@@ -64,7 +64,12 @@ class YOLOX(nn.Module):
     """
 
     # pylint: disable=arguments-differ
-    def __init__(self, num_classes: int, depth: float, width: float,) -> None:
+    def __init__(
+        self,
+        num_classes: int,
+        depth: float,
+        width: float,
+    ) -> None:
         super().__init__()
         self.backbone = YOLOPAFPN(depth, width)
         self.head = YOLOXHead(num_classes, width)
@@ -91,7 +96,9 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     # pylint: disable=arguments-differ, dangerous-default-value, invalid-name
     def __init__(
-        self, depth: float = 1.0, width: float = 1.0,
+        self,
+        depth: float = 1.0,
+        width: float = 1.0,
     ):
         super().__init__()
         n_bottleneck = round(3 * depth)
@@ -183,7 +190,10 @@ class YOLOXHead(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     # pylint: disable=arguments-differ, dangerous-default-value, invalid-name
     def __init__(
-        self, num_classes: int, width: float = 1.0, strides: List[int] = [8, 16, 32],
+        self,
+        num_classes: int,
+        width: float = 1.0,
+        strides: List[int] = [8, 16, 32],
     ) -> None:
         super().__init__()
 

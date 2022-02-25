@@ -94,7 +94,10 @@ class KalmanFilter:
         self._std_weight_velocity = 1.0 / 160
 
     def gating_distance(
-        self, mean: np.ndarray, covariance: np.ndarray, measurements: np.ndarray,
+        self,
+        mean: np.ndarray,
+        covariance: np.ndarray,
+        measurements: np.ndarray,
     ) -> np.ndarray:
         """Computes gating distance between state distribution and
         measurements using Mahalanobis distance.
