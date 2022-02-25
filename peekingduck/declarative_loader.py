@@ -29,6 +29,7 @@ import yaml
 from peekingduck.configloader import ConfigLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "preprocess", "model", "draw", "dabble", "output"]
 
@@ -178,7 +179,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     )
                 else:
                     if key == "detect_ids":
-                        key, value = self.config_loader.change_class_name_to_id(
+                        key, value = obj_det_change_class_name_to_id(
                             node_name, key, value
                         )
 
