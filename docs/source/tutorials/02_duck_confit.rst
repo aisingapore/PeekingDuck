@@ -136,6 +136,8 @@ highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
 
 
+.. _configure_nodes_media_writer:
+
 Record and Save Video File with FPS
 -----------------------------------
 
