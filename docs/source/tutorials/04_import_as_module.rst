@@ -16,6 +16,7 @@ Import PeekingDuck as a Python Module
 
 .. warning::
     TODO: Update all links
+
     TODO: Update code line numbers
 
 Running in a Script
@@ -60,7 +61,7 @@ Run the following to create a ``dabble`` node for debugging:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck create-node --node_subdir src/custom_nodes --node_type dabble --node_name debug` \
+    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
 The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
 shown:
