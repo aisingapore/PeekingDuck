@@ -65,11 +65,7 @@ class AbstractNode(metaclass=ABCMeta):
         self.load_node_config(config, kwargs)  # type: ignore
 
         # For object detection nodes, convert class names to class ids, if any
-        if (
-            self.node_name == "model.yolo"
-            or self.node_name == "model.efficientdet"
-            or self.node_name == "model.yolox"
-        ):
+        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
             current_ids = self.config["detect_ids"]
             _, updated_ids = obj_det_change_class_name_to_id(
                 self.node_name, "detect_ids", current_ids

@@ -208,7 +208,7 @@ def obj_det_change_class_name_to_id(
     # parse value_lc for possible class name errors
     invalid_class_names = []
     for class_name in value_lc:
-        if isinstance(class_name, str) and class_id_map.get(class_name, -1) < 0:
+        if isinstance(class_name, str) and class_name not in class_id_map:
             invalid_class_names.append(class_name)
 
     if invalid_class_names:
