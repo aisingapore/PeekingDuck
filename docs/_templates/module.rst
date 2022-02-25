@@ -10,7 +10,7 @@
                                       "output", "preprocess"] -%}
 .. autoclass:: {{ fullname }}.Node
    :members:
-   :exclude-members: run
+   :exclude-members: run, release_resources
 
    {% block methods -%}
       {% if methods -%}
