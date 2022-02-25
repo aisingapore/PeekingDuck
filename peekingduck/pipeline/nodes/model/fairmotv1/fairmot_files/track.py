@@ -1,4 +1,4 @@
-# Modifications copyright 2021 AI Singapore
+# Modifications copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Original copyright (c) 2019 ZhongdaoWang
+# Original copyright (c) 2020 YifuZhang
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -49,7 +49,9 @@ from typing import Deque, List
 import numpy as np
 import torch
 
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
+    KalmanFilter,
+)
 
 
 class TrackState:  # pylint: disable=too-few-public-methods
@@ -137,6 +139,8 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         buffer_size (int): Maximum of past embeddings to store.
     """
 
+    shared_kalman = KalmanFilter()
+
     def __init__(
         self,
         tlwh: np.ndarray,
@@ -205,8 +209,27 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
 
         self.tracklet_len = 0
         self.state = TrackState.TRACKED
+        if frame_id == 1:
+            self.is_activated = True
         self.frame_id = frame_id
         self.start_frame = frame_id
+
+    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
+        """Re-activates STrack.
+
+        Args:
+            new_track (STrack): New STrack.
+            frame_id (int): Current frame ID.
+        """
+        self.mean, self.covariance = self.kalman_filter.update(
+            self.mean, self.covariance, self.tlwh2xyah(new_track.tlwh)
+        )
+
+        self.update_features(new_track.curr_feat)
+        self.tracklet_len = 0
+        self.state = TrackState.TRACKED
+        self.is_activated = True
+        self.frame_id = frame_id
 
     def update(
         self, new_track: "STrack", frame_id: int, update_feature: bool = True
@@ -232,23 +255,6 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         if update_feature:
             self.update_features(new_track.curr_feat)
 
-    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
-        """Re-activates STrack.
-
-        Args:
-            new_track (STrack): New STrack.
-            frame_id (int): Current frame ID.
-        """
-        self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, self.tlwh2xyah(new_track.tlwh)
-        )
-
-        self.update_features(new_track.curr_feat)
-        self.tracklet_len = 0
-        self.state = TrackState.TRACKED
-        self.is_activated = True
-        self.frame_id = frame_id
-
     def update_features(self, feat: np.ndarray) -> None:
         """Updates the features (embeddings).
 
@@ -265,12 +271,11 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.smooth_feat /= np.linalg.norm(self.smooth_feat)
 
     @staticmethod
-    def multi_predict(stracks: List["STrack"], kalman_filter: KalmanFilter) -> None:
+    def multi_predict(stracks: List["STrack"]) -> None:
         """Runs the vectorized version of Kalman filter prediction step.
 
         Args:
             stracks (List[STrack]): List of STrack.
-            kalman_filter (KalmanFilter): Kalman filter for state estimation.
         """
         if not stracks:
             return
@@ -279,7 +284,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         for i, strack in enumerate(stracks):
             if strack.state != TrackState.TRACKED:
                 multi_mean[i][7] = 0
-        multi_mean, multi_covariance = kalman_filter.multi_predict(
+        multi_mean, multi_covariance = STrack.shared_kalman.multi_predict(
             multi_mean, multi_covariance
         )
         for i, (mean, cov) in enumerate(zip(multi_mean, multi_covariance)):
@@ -294,7 +299,6 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         Args:
             tlwh (np.ndarray): Input bounding box with format `(top left x,
                 top left y, width, height)`.
-
         Returns:
             (np.ndarray): Bounding box with (x, y, a, h) format.
         """
