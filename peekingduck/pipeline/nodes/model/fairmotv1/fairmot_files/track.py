@@ -45,7 +45,6 @@ Modifications include:
 
 from abc import ABC, abstractmethod
 from collections import deque
-from enum import Enum
 from typing import Deque, List
 
 import numpy as np
@@ -56,7 +55,7 @@ from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter impo
 )
 
 
-class TrackState(Enum):
+class TrackState:  # pylint: disable=too-few-public-methods
     """Numbered states of Track.
 
     Attributes:

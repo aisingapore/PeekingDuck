@@ -170,7 +170,6 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
         levels: List[int],
         channels: List[int],
         num_classes: int = 1000,
-        residual_root: bool = False,
     ) -> None:
         super().__init__()
         # DLA-34 (used by FairMOT) uses basic blocks as the residual block
@@ -192,7 +191,6 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
             channels[2],
             2,
             level_root=False,
-            root_residual=residual_root,
         )
         self.level3 = Tree(
             levels[3],
@@ -201,7 +199,6 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
             channels[3],
             2,
             level_root=True,
-            root_residual=residual_root,
         )
         self.level4 = Tree(
             levels[4],
@@ -210,7 +207,6 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
             channels[4],
             2,
             level_root=True,
-            root_residual=residual_root,
         )
         self.level5 = Tree(
             levels[5],
@@ -219,7 +215,6 @@ class DLA(nn.Module):  # pylint: disable=too-many-instance-attributes
             channels[5],
             2,
             level_root=True,
-            root_residual=residual_root,
         )
         # Apparently not needed
         self.fc = nn.Conv2d(  # pylint: disable=invalid-name

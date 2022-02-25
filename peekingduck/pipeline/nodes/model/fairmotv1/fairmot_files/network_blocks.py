@@ -35,6 +35,8 @@
 """Modifications:
 - Rename planes to channels to be consistent to Conv2d argument naming
 - Rearrange argument order in Tree
+- Remove root_residual argument in Tree
+- Remove self.residual in Root
 """
 
 from typing import Callable, List, Union
@@ -163,9 +165,7 @@ class Root(nn.Module):
         residual (bool): Flag to indicate if a residual layer should be used.
     """
 
-    def __init__(
-        self, in_channels: int, out_channels: int, kernel_size: int, residual: bool
-    ) -> None:
+    def __init__(self, in_channels: int, out_channels: int, kernel_size: int) -> None:
         super().__init__()
         self.conv = nn.Conv2d(
             in_channels,
@@ -179,7 +179,6 @@ class Root(nn.Module):
             out_channels, momentum=BN_MOMENTUM
         )
         self.relu = nn.ReLU(inplace=True)
-        self.residual = residual
 
     def forward(self, inputs: List[torch.Tensor]) -> torch.Tensor:
         """Defines the computation performed at every call.
@@ -190,12 +189,8 @@ class Root(nn.Module):
         Returns:
             (torch.Tensor): The output tensor of the block.
         """
-        children = inputs
         out = self.conv(torch.cat(inputs, 1))
         out = self.bn(out)
-        if self.residual:  # pragma: no cover
-            # Only root_residual=False is used by FairMOT
-            out += children[0]
         out = self.relu(out)
 
         return out
@@ -233,7 +228,6 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
         dilation: int = 1,
         root_dim: int = 0,
         root_kernel_size: int = 1,
-        root_residual: bool = False,
     ) -> None:
         super().__init__()
         self.tree1: Union[BasicBlock, Tree]
@@ -255,7 +249,6 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
                 dilation=dilation,
                 root_dim=0,
                 root_kernel_size=root_kernel_size,
-                root_residual=root_residual,
             )
             self.tree2 = Tree(
                 level - 1,
@@ -265,10 +258,9 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
                 dilation=dilation,
                 root_dim=root_dim + out_channels,
                 root_kernel_size=root_kernel_size,
-                root_residual=root_residual,
             )
         if level == 1:
-            self.root = Root(root_dim, out_channels, root_kernel_size, root_residual)
+            self.root = Root(root_dim, out_channels, root_kernel_size)
         self.level_root = level_root
         self.root_dim = root_dim
         self.downsample = None
