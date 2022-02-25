@@ -1,4 +1,4 @@
-# Modifications copyright 2021 AI Singapore
+# Modifications copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -94,10 +94,7 @@ class KalmanFilter:
         self._std_weight_velocity = 1.0 / 160
 
     def gating_distance(
-        self,
-        mean: np.ndarray,
-        covariance: np.ndarray,
-        measurements: np.ndarray,
+        self, mean: np.ndarray, covariance: np.ndarray, measurements: np.ndarray,
     ) -> np.ndarray:
         """Computes gating distance between state distribution and
         measurements using Mahalanobis distance.

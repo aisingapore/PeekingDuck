@@ -1,4 +1,4 @@
-# Modifications copyright 2021 AI Singapore
+# Modifications copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -163,8 +163,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             # Final proposals are obtained in dets. Information of bounding box
             # and embeddings also included
             dets = non_max_suppression(
-                pred.unsqueeze(0),
-                self.config["nms_threshold"],
+                pred.unsqueeze(0), self.config["nms_threshold"],
             )[0].cpu()
             # Next step changes the detection scales
             scale_coords(self.input_size, dets[:, :4], image.shape[:2]).round()

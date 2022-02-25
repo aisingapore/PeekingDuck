@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -142,9 +142,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             (YOLOX): YOLOX model.
         """
         return YOLOX(
-            self.config["num_classes"],
-            model_size["depth"],
-            model_size["width"],
+            self.config["num_classes"], model_size["depth"], model_size["width"],
         )
 
     def _load_yolox_weights(
@@ -262,9 +260,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
         scaled_height = int(image.shape[0] * scale)
         scaled_width = int(image.shape[1] * scale)
         resized_img = cv2.resize(
-            image,
-            (scaled_width, scaled_height),
-            interpolation=cv2.INTER_LINEAR,
+            image, (scaled_width, scaled_height), interpolation=cv2.INTER_LINEAR,
         ).astype(np.uint8)
         padded_img[:scaled_height, :scaled_width] = resized_img
 

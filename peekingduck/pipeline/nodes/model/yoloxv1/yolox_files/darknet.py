@@ -1,4 +1,4 @@
-# Modifications copyright 2021 AI Singapore
+# Modifications copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -63,10 +63,7 @@ class CSPDarknet(nn.Module):
 
     # pylint: disable=arguments-differ
     def __init__(
-        self,
-        dep_mul: float,
-        wid_mul: float,
-        out_features: Tuple[str, str, str],
+        self, dep_mul: float, wid_mul: float, out_features: Tuple[str, str, str],
     ) -> None:
         super().__init__()
         self.out_features = out_features
