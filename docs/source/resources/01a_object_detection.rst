@@ -55,7 +55,7 @@ Hardware
 ^^^^^^^^
 
 The following hardware were used to conduct the FPS benchmarks:
- | - ``CPU``: 2.8GHz Quad-Core Intel Xeon (Cascade Lake) and 16GB RAM
+ | - ``CPU``: 2.8 GHz 4-Core Intel Xeon (2020, Cascade Lake) CPU and 16GB RAM
  | - ``GPU``: NVIDIA A100, paired with 2.2 GHz 6-Core Intel Xeon CPU and 85GB RAM
 
 Test Conditions
