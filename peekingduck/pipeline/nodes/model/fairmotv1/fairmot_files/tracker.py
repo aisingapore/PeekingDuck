@@ -424,18 +424,12 @@ def _combine_stracks(stracks_1: List[STrack], stracks_2: List[STrack]) -> List[S
     Returns:
         (List[STrack]): Combined list of STrack.
     """
-    exists = {}
-    res = []
-    for track in stracks_1:
-        exists[track.track_id] = True
-        res.append(track)
+    stracks = {track.track_id: track for track in stracks_1}
     for track in stracks_2:
         tid = track.track_id
-        # Only add to the list of the track ID has not added before
-        if not exists.get(tid, False):
-            exists[tid] = True
-            res.append(track)
-    return res
+        if tid not in stracks:
+            stracks[tid] = track
+    return list(stracks.values())
 
 
 def _remove_duplicate_stracks(
