@@ -15,3 +15,17 @@
 """
 Deep learning model nodes for computer vision.
 """
+
+from . import (
+    csrnet,
+    efficientdet,
+    hrnet,
+    jde,
+    movenet,
+    mtcnn,
+    posenet,
+    yolo,
+    yolo_face,
+    yolo_license_plate,
+    yolox,
+)

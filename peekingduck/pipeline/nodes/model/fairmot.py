@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,21 +12,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Human detection and tracking model."""
+"""Human detection and tracking model that balances the importance between
+detection and re-ID tasks.
+"""
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.model.jdev1 import jde_model
+from peekingduck.pipeline.nodes.model.fairmotv1 import fairmot_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):
-    """Initializes and uses JDE tracking model to detect and track people from
-    the supplied image frame.
+class Node(AbstractNode):  # pylint: disable=too-few-public-methods
+    """Initializes and uses FairMOT tracking model to detect and track people
+    from the supplied image frame.
 
-    JDE is a fast and high-performance multiple-object tracker that learns the
-    object detection task and appearance embedding task simultaneously in a
-    shared neural network.
+    FairMOT is based on the anchor-free object detector CenterNet with
+    modifications to balance the importance between detection and
+    re-identification tasks in an object tracker.
 
     Inputs:
         |img|
@@ -44,38 +46,41 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        iou_threshold (:obj:`float`): **default = 0.5**. |br|
-            Threshold value for Intersecton-over-Union of detections.
-        nms_threshold (:obj:`float`): **default = 0.4**. |br|
-            Threshold values for non-max suppression.
         score_threshold (:obj:`float`): **default = 0.5**. |br|
             Object confidence score threshold.
-        min_box_area (:obj:`int`): **default = 200**. |br|
+        K (:obj:`int`): **default = 500**. |br|
+            Maximum number of objects output during the object detection stage.
+        min_box_area (:obj:`int`): **default = 100**. |br|
             Minimum value for area of detected bounding box. Calculated by
             width * height.
         track_buffer (:obj:`int`): **default = 30**. |br|
             Threshold to remove track if track is lost for more frames
             than value.
+        input_size (:obj:`List[int]`): **default = [864, 480]**. |br|
+            Size (width, height) of the input image to the model. Raw
+            video/image frames will be resized to the ``input_size`` before
+            they are fed to the model.
 
     References:
-        Towards Real-Time Multi-Object Tracking:
-        https://arxiv.org/abs/1909.12605v2
+        FairMOT: On the Fairness of Detection and Re-Identification in Multiple
+        Object Tracking
+        https://arxiv.org/abs/2004.01888
 
         Model weights trained by:
-        https://github.com/Zhongdao/Towards-Realtime-MOT
+        https://github.com/ifzhang/FairMOT
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._frame_rate = 30.0
 
-        self.model = jde_model.JDEModel(self.config, self._frame_rate)
+        self.model = fairmot_model.FairMOTModel(self.config, self._frame_rate)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Tracks objects from image.
 
         Specifically for use with MOT evaluation, will attempt to get optional
-        input `mot_metadata` and recreate `JDEModel` with the appropriate
+        input `mot_metadata` and recreate `FairMOTModel` with the appropriate
         frame rate when necessary.
 
         Args:
@@ -83,7 +88,7 @@ class Node(AbstractNode):
                 under MOT evaluation, contains "mot_metadata" key as well.
 
         Returns:
-            outputs (dict): Dictionary containing:
+            (Dict[str, Any]): Dictionary containing:
             - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
             - bbox_labels (List[str]): Tracking IDs, for compatibility with
                 draw nodes.
@@ -102,18 +107,19 @@ class Node(AbstractNode):
             self._reset_model()
 
         bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
-        return {
+        outputs = {
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,
             "bbox_scores": bbox_scores,
             "obj_tags": track_ids,
         }
+        return outputs
 
     def _reset_model(self) -> None:
-        """Creates a new instance of the JDE model with the frame rate
+        """Creates a new instance of the FairMOT model with the frame rate
         supplied by `mot_metadata`.
         """
         self.logger.info(
             f"Creating new model with frame rate: {self._frame_rate:.2f}..."
         )
-        self.model = jde_model.JDEModel(self.config, self._frame_rate)
+        self.model = fairmot_model.FairMOTModel(self.config, self._frame_rate)

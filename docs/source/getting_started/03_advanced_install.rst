@@ -26,7 +26,7 @@ listed in PeekingDuck's `[requirements.txt]
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck --no-dependencies` \
+    | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
     | \ :blue:`[~user]` \ > [ install additional dependencies as specified within requirements.txt ]
 
 
@@ -80,7 +80,7 @@ MacOS Monterey.
 
         .. admonition:: Terminal Session
 
-            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck --no-dependencies` \
+            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
 
     5. Create a new PeekingDuck project and run it:
 

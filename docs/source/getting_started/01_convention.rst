@@ -19,15 +19,15 @@ current folder where they are typed.
 
 The following text color scheme is used to illustrate these different contexts:
 
-+----------------+------------------------------+----------------------------------+
-| Color          | Context                      | Example                          |
-+----------------+------------------------------+----------------------------------+
-| :blue:`Blue`   | Current folder               | :blue:`[~user/src]`              |
-+----------------+------------------------------+----------------------------------+
-| :green:`Green` | User input: what you type in | > :green:`peekingduck --version` |
-+----------------+------------------------------+----------------------------------+
-| Black          | PeekingDuck's output         | peekingduck, version v1.1.1      |
-+----------------+------------------------------+----------------------------------+
++----------------+------------------------------+-----------------------------------+
+| Color          | Context                      | Example                           |
++----------------+------------------------------+-----------------------------------+
+| :blue:`Blue`   | Current folder               | :blue:`[~user/src]`               |
++----------------+------------------------------+-----------------------------------+
+| :green:`Green` | User input: what you type in | > :green:`peekingduck -\-version` |
++----------------+------------------------------+-----------------------------------+
+| Black          | PeekingDuck's output         | peekingduck, version v1.1.1       |
++----------------+------------------------------+-----------------------------------+
 
 The command prompt is assumed to be the symbol ``>``,
 your home directory is assumed to be ``~user``,
@@ -37,6 +37,6 @@ Putting it altogether, a sample terminal session looks like this:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user/src]` \ > \ :green:`peekingduck --version` \
+    | \ :blue:`[~user/src]` \ > \ :green:`peekingduck -\-version` \
     | peekingduck, version v1.1.1
 

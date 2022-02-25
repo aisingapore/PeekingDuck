@@ -96,7 +96,9 @@ def fuse_model(model: YOLOX) -> YOLOX:
     return model
 
 
-def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: no cover
+def strip_optimizer(
+    weights_path: Path, key_to_keep: str = "model", half: bool = False
+) -> None:  # pragma: no cover
     """Removes non-model items from the weights file.
 
     The inference Detector requires only "model" parameters from the weights
@@ -106,6 +108,8 @@ def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: 
 
     Args:
         weights_path (Path): Path to weights file.
+        key_to_keep (str): The key which contains the models weights. Default
+            is "model".
         half (bool): Flag to determine if float and double parameters should
             be converted to half-precision.
     """
@@ -116,14 +120,14 @@ def strip_optimizer(weights_path: Path, half: bool = False) -> None:  # pragma: 
     orig_filesize = weights_path.stat().st_size / 1e6
     ckpt = torch.load(str(weights_path), map_location=torch.device("cpu"))
     # Remove all data other than "model", such as amp, optimizer, start_epoch
-    delete_keys = [key for key in ckpt.keys() if key != "model"]
+    delete_keys = [key for key in ckpt.keys() if key != key_to_keep]
     for key in delete_keys:
         del ckpt[key]
-    for param in ckpt["model"]:
+    for param in ckpt[key_to_keep]:
         # Only convert double and float to half-precision
-        if half and ckpt["model"][param].dtype in (torch.double, torch.float):
-            ckpt["model"][param] = ckpt["model"][param].half()
-        ckpt["model"][param].requires_grad = False
+        if half and ckpt[key_to_keep][param].dtype in (torch.double, torch.float):
+            ckpt[key_to_keep][param] = ckpt[key_to_keep][param].half()
+        ckpt[key_to_keep][param].requires_grad = False
 
     torch.save(ckpt, str(stripped_weights_path))
     stripped_filesize = stripped_weights_path.stat().st_size / 1e6
