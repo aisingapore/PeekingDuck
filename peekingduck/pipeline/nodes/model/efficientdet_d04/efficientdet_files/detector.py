@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -165,11 +165,9 @@ class Detector:
                 np.squeeze(labels.numpy()),
             )
         else:
-            (
-                boxes,
-                scores,
-                labels,
-            ) = self.effdet.predict_on_batch([np.expand_dims(image, axis=0)])
+            (boxes, scores, labels,) = self.effdet.predict_on_batch(
+                [np.expand_dims(image, axis=0)]
+            )
             network_output = np.squeeze(boxes), np.squeeze(scores), np.squeeze(labels)
 
         boxes, labels, scores = self.postprocess(
