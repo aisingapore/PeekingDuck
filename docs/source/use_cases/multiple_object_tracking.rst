@@ -26,7 +26,7 @@ Demo
 .. |run_config| replace:: object_tracking.yml
 .. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_tracking.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/01_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |run_config|_ as shown:
 
 .. parsed-literal::

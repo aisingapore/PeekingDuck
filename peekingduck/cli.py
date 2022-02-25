@@ -218,7 +218,7 @@ def create_node(
         )
         if node_type is None:
             node_type = click.prompt(
-                "Select node type",
+                f"Select node type ({', '.join(node_type_choices.choices)})",
                 value_proc=ensure_valid_type_partial(node_type_choices),
             )
 

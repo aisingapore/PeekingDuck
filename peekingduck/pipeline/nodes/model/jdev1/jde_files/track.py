@@ -35,7 +35,6 @@
 """Track states and STrack to store information for each tracked detection.
 
 Modifications include:
-- Make TrackState inherit Enum for clarity
 - Make BaseTrack an ABC and use abstractmethod decorator for clarity
     - Removed update() method as it's not used in the current implementation of
         JDE.
@@ -45,7 +44,6 @@ Modifications include:
 
 from abc import ABC, abstractmethod
 from collections import deque
-from enum import Enum
 from typing import Deque, List
 
 import numpy as np
@@ -54,7 +52,7 @@ import torch
 from peekingduck.pipeline.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
 
 
-class TrackState(Enum):
+class TrackState:  # pylint: disable=too-few-public-methods
     """Numbered states of Track.
 
     Attributes:

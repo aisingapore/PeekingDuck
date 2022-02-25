@@ -62,7 +62,7 @@ class Runner:
         custom_nodes_parent_subdir: str = None,
         num_iter: int = None,
         nodes: List[AbstractNode] = None,
-    ):
+    ) -> None:
         self.logger = logging.getLogger(__name__)
         try:
             if nodes:
