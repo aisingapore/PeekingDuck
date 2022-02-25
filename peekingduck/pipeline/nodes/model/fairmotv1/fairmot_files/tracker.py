@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Original copyright (c) 2019 ZhongdaoWang
+# Original copyright (c) 2020 YifuZhang
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -32,13 +32,16 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-"""JDE Multi-object Tracker.
+"""FairMOT Multi-object Tracker.
 
 Modifications include:
 - Rearranged comments to they appear before the relevant lines of code
 - Refactor variable names in update() for clarity
 - Refactor subtract_stracks() to use list comprehension
 - Refactor combine_stracks() to use bool for dictionary values instead
+- Renamed head keys from hm, wh, and reg to heatmap, size, and offset
+    respectively
+- Refactor model prediction to a separate method
 """
 
 import logging
@@ -47,21 +50,27 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import torch
+import torch.nn.functional as F
 
-from peekingduck.pipeline.nodes.model.jdev1.jde_files import matching
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.darknet import Darknet
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.track import STrack, TrackState
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.utils import (
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files import matching
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.decoder import Decoder
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.dla import DLASeg
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
+    KalmanFilter,
+)
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.track import (
+    STrack,
+    TrackState,
+)
+from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.utils import (
     letterbox,
-    non_max_suppression,
-    scale_coords,
     tlwh2xyxyn,
+    transpose_and_gather_feat,
 )
 
 
 class Tracker:  # pylint: disable=too-many-instance-attributes
-    """JDE Multi-object Tracker.
+    """FairMOT Multi-object Tracker.
 
     Args:
         config (Dict[str, Any]): Model configuration options.
@@ -70,6 +79,12 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             for computing size of track buffer.
     """
 
+    heads = {"hm": 1, "wh": 4, "id": 128, "reg": 2}
+    down_ratio = 4
+
+    mean = np.array([0.408, 0.447, 0.470], dtype=np.float32).reshape((1, 1, 3))
+    std = np.array([0.289, 0.274, 0.278], dtype=np.float32).reshape((1, 1, 3))
+
     def __init__(
         self, config: Dict[str, Any], model_dir: Path, frame_rate: float
     ) -> None:
@@ -77,7 +92,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         self.config = config
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = self._create_darknet_model(model_dir)
+        self.model = self._create_model(model_dir)
 
         self.tracked_stracks: List[STrack] = []
         self.lost_stracks: List[STrack] = []
@@ -85,8 +100,41 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         self.frame_id = 0
         self.max_time_lost = int(frame_rate / 30.0 * config["track_buffer"])
+        self.max_per_image = self.config["K"]
 
+        self.decoder = Decoder(self.max_per_image, self.down_ratio)
         self.kalman_filter = KalmanFilter()
+
+    @torch.no_grad()
+    def predict(
+        self, padded_image: torch.Tensor, image: np.ndarray
+    ) -> Tuple[torch.Tensor, torch.Tensor]:
+        """Predicts bounding boxes from the image and their associated Re-ID
+        embeddings.
+
+        Args:
+            padded_image (torch.Tensor): Preprocessed image with letterbox
+                resizing and colour normalisation.
+            image (np.ndarray): The original video frame.
+
+        Returns:
+            (Tuple[torch.Tensor, torch.Tensor]): The predicted bounding boxes
+            and their associated Re-ID embeddings.
+        """
+        output = self.model(padded_image)
+        heatmap = output["hm"].sigmoid_()
+        size = output["wh"]
+        id_feature = F.normalize(output["id"], dim=1)
+        offset = output["reg"]
+
+        detections, indices = self.decoder(
+            heatmap, size, offset, image.shape, padded_image.shape
+        )
+        id_feature = transpose_and_gather_feat(id_feature, indices)
+        id_feature = id_feature.squeeze(0).cpu().numpy()
+
+        id_feature = id_feature[detections[:, 4] > self.config["score_threshold"]]
+        return detections, id_feature
 
     def track_objects_from_image(
         self, image: np.ndarray
@@ -106,7 +154,8 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         padded_image = self._preprocess(image)
         padded_image = torch.from_numpy(padded_image).to(self.device).unsqueeze(0)
 
-        online_targets = self.update(padded_image, image)
+        detections, embeddings = self.predict(padded_image, image)
+        online_targets = self.update(detections, embeddings)
         online_tlwhs = []
         online_ids = []
         scores = []
@@ -124,56 +173,34 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         return bboxes, online_ids, scores
 
-    @torch.no_grad()
     def update(  # pylint: disable=too-many-branches,too-many-locals,too-many-statements
-        self, padded_image: torch.Tensor, image: np.ndarray
+        self, pred_detections: torch.Tensor, pred_embeddings: torch.Tensor
     ) -> List[STrack]:
-        """Processes the image frame and finds bounding box (detections).
-
-        Associates the detection with corresponding tracklets and also handles
-        lost, removed, re-found and active tracklets
+        """Associates the detections with corresponding tracklets and also
+        handles lost, removed, re-found and active tracklets.
 
         Args:
-            padded_image (torch.Tensor): Preprocessed image with letterbox
-                resizing and color normalization.
-            image (np.ndarray): The original video frame.
-
+            pred_detections (torch.Tensor): Detections from the image, has the
+                shape [N, 5].
+            pred_embeddings (torch.Tensor): Re-ID embedding corresponding to
+                each detection, has the shape [N, 128].
         Returns:
             (List[STrack]): The list contains information regarding the
             online tracklets for the received image tensor.
         """
         self.frame_id += 1
-        # For storing active tracks, for the current frame
         activated_stracks = []
-        # Lost Tracks whose detections are obtained in the current frame
         refind_stracks = []
-        # The tracks which are not obtained in the current frame but are not
-        # removed. (Lost for some time less than the threshold for removing)
         lost_stracks = []
         removed_stracks = []
 
         # Step 1: Network forward, get detections & embeddings
-        # pred is tensor of all the proposals (default number of proposals:
-        # 54264). Proposals have information associated with the bounding box
-        # and embeddings
-        pred = self.model(padded_image)
-        # Proposals rejected on basis of object confidence score
-        pred = pred[pred[..., 4] > self.config["score_threshold"]]
-        if len(pred) > 0:
-            # Final proposals are obtained in dets. Information of bounding box
-            # and embeddings also included
-            dets = non_max_suppression(
-                pred.unsqueeze(0),
-                self.config["nms_threshold"],
-            )[0].cpu()
-            # Next step changes the detection scales
-            scale_coords(self.input_size, dets[:, :4], image.shape[:2]).round()
-
+        if len(pred_detections) > 0 and len(pred_embeddings) > 0:
             # Detections is list of (x1, y1, x2, y2, object_conf, class_score,
             # class_pred) class_pred is the embeddings.
             detections = [
-                STrack(STrack.xyxy2tlwh(xyxys[:4]), xyxys[4], f.numpy())
-                for (xyxys, f) in zip(dets[:, :5], dets[:, 6:])
+                STrack(STrack.xyxy2tlwh(xyxys[:4]), xyxys[4], emb, 30)
+                for (xyxys, emb) in zip(pred_detections[:, :5], pred_embeddings)
             ]
         else:
             detections = []
@@ -194,7 +221,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         # Combining currently tracked_stracks and lost_stracks
         strack_pool = _combine_stracks(tracked_stracks, self.lost_stracks)
         # Predict the current location with KF
-        STrack.multi_predict(strack_pool, self.kalman_filter)
+        STrack.multi_predict(strack_pool)
 
         # The dists is a matrix of distances of the detection with the tracks
         # in strack_pool
@@ -206,7 +233,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             matches,
             unmatched_track_indices,
             unmatched_det_indices,
-        ) = matching.linear_assignment(dists, threshold=0.7)
+        ) = matching.linear_assignment(dists, threshold=0.4)
 
         for tracked_idx, det_idx in matches:
             # tracked_idx is the id of the track and det_idx is the detection
@@ -278,6 +305,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             track = unconfirmed[i]
             track.mark_removed()
             removed_stracks.append(track)
+
         # after all these confirmation steps, if a new detection is found, it
         # is initialized for a new track
         # Step 4: Init new stracks
@@ -285,7 +313,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             track = detections[i]
             if track.score < self.config["score_threshold"]:  # pragma: no cover
                 # This shouldn't be reached since we already rejected proposals
-                # on basis of object confidence score earlier
+                # on basis of object confidence score in predict()
                 continue
             track.activate(self.kalman_filter, self.frame_id)
             activated_stracks.append(track)
@@ -318,59 +346,29 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         return output_stracks
 
-    def _create_darknet_model(self, model_dir: Path) -> Darknet:
-        """Creates a Darknet-53 model corresponding specified `model_type`.
-
-        Args:
-            model_dir (Path): Directory containing model weights files and
-                backbone configuration files.
-
-        Returns:
-            (Darknet): Darknet backbone of the specified architecture and
-                weights.
-        """
+    def _create_model(self, model_dir: Path) -> DLASeg:
         model_type = self.config["model_type"]
         model_path = model_dir / self.config["weights"]["model_file"][model_type]
-        model_settings = self._parse_model_config(
-            model_dir / self.config["weights"]["config_file"][model_type]
-        )
-        self.input_size = [
-            int(model_settings[0]["width"]),
-            int(model_settings[0]["height"]),
-        ]
         self.logger.info(
-            "JDE model loaded with the following configs:\n\t"
-            f"Model type: {self.config['model_type']}\n\t"
-            f"Input resolution: {self.input_size}\n\t"
-            f"IOU threshold: {self.config['iou_threshold']}\n\t"
-            f"NMS threshold: {self.config['nms_threshold']}\n\t"
+            "FairMOT model loaded with the following config:\n\t"
+            f"Model type: {model_type}\n\t"
             f"Score threshold: {self.config['score_threshold']}\n\t"
+            f"Max number of output objects: {self.config['K']}\n\t"
             f"Min bounding box area: {self.config['min_box_area']}\n\t"
-            f"Track buffer: {self.config['track_buffer']}"
+            f"Track buffer: {self.config['track_buffer']}\n\t"
+            f"Input size: {self.config['input_size']}"
         )
-        return self._load_darknet_weights(model_path, model_settings)
+        return self._load_model_weights(model_path)
 
-    def _load_darknet_weights(
-        self, model_path: Path, model_settings: List[Dict[str, Any]]
-    ) -> Darknet:
-        """Loads pretrained Darknet-53 weights.
-
-        Args:
-            model_path (Path): Path to weights file.
-            model_settings (List[Dict[str, Any]]): Model architecture
-                configurations.
-
-        Returns:
-            (Darknet): Darknet backbone of the specified architecture and
-                weights.
-        """
+    def _load_model_weights(self, model_path: Path) -> DLASeg:
         if not model_path.is_file():
             raise ValueError(
                 f"Model file does not exist. Please check that {model_path} exists."
             )
+
         ckpt = torch.load(str(model_path), map_location="cpu")
-        model = Darknet(model_settings, self.device, num_identities=14455)
-        model.load_state_dict(ckpt["model"], strict=False)
+        model = DLASeg(self.heads, self.down_ratio)
+        model.load_state_dict(ckpt["state_dict"], strict=False)
         model.to(self.device).eval()
         return model
 
@@ -386,7 +384,9 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         """
         # Padded resize
         padded_image = letterbox(
-            image, height=self.input_size[1], width=self.input_size[0]
+            image,
+            height=self.config["input_size"][1],
+            width=self.config["input_size"][0],
         )
         # Normalize RGB
         padded_image = padded_image[..., ::-1].transpose(2, 0, 1)
@@ -394,37 +394,6 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         padded_image /= 255.0
 
         return padded_image
-
-    @staticmethod
-    def _parse_model_config(config_path: Path) -> List[Dict[str, Any]]:
-        """Parse model configuration. Currently parses all values to string.
-
-        Args:
-            config_path (Path): Path to model configuration file.
-
-        Returns:
-            (List[Dict[str, Any]]): A list of dictionaries each containing
-                the configuration of a layer/module.
-        """
-        with open(config_path) as infile:
-            lines = [
-                line
-                for line in map(str.strip, infile.readlines())
-                if line and not line.startswith("#")
-            ]
-        module_defs: List[Dict[str, Any]] = []
-        for line in lines:
-            if line.startswith("["):
-                module_defs.append({})
-                module_defs[-1]["type"] = line[1:-1].rstrip()
-                if module_defs[-1]["type"] == "convolutional":
-                    module_defs[-1]["batch_normalize"] = 0
-            else:
-                key, value = tuple(map(str.strip, line.split("=")))
-                if value.startswith("$"):
-                    value = module_defs[0].get(value.strip("$"), None)
-                module_defs[-1][key] = value
-        return module_defs
 
     @staticmethod
     def _postprocess(tlwhs: np.ndarray, image_shape: Tuple[int, ...]) -> np.ndarray:
