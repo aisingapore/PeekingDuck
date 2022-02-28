@@ -434,7 +434,7 @@ def _verify_install() -> None:
     """
     LoggerSetup.set_log_level("info")
 
-    config_file_name = "verify_config.yml"
+    config_file_name = "verification_pipeline.yml"
     _setup_verification(config_file_name)
 
     runner = Runner(
