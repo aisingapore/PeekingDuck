@@ -36,16 +36,16 @@ PeekingDuck for object detection and pose estimation.
 Object Detection
 ================
 
-When you did a ``peekingduck run`` to :ref:`verify your installation
-<verify_installation>` earlier, you are running the default pipeline in the file
-``run_config.yml`` as shown below:
+When you ran ``peekingduck --verify_install`` to :ref:`verify your installation
+<verify_installation>` earlier, you are running a object detection pipeline in the file
+``verification_pipeline.yml`` as shown below:
 
 .. code-block:: yaml
    :linenos:
 
    nodes:
    - input.recorded:
-       input_dir: "images/testing/wave.mp4"
+       input_dir: "data/verification/wave.mp4"
    - model.yolo
    - draw.bbox
    - output.screen
@@ -62,39 +62,45 @@ To exit earlier, click to select the video window and press ``q``.
 
 You have successfully run an object detection pipeline.
 
-
-**TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
-load an included video file correctly from the right path location**
-
-
 .. _tutorial_pose_estimation:
 
 Pose Estimation
 ===============
 
-You can get PeekingDuck to perform pose estimation by changing the second node
-``model`` (line 4) and the third node ``draw`` (line 5) in ``run_config.yml`` as
-follows:
+To perform pose estimation with PeekingDuck, initialize the PeekingDuck project using:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+
+Then, modify the ``pipeline.yml`` as follows:
 
 .. code-block:: yaml
    :linenos:
 
    nodes:
    - input.recorded:
-       input_dir: "images/testing/wave.mp4"
+       input_dir: "data/verification/wave.mp4"
    - model.posenet      # use pose estimation model
    - draw.poses         # draw skeletal poses
    - output.screen
 
-Now do a ``peekingduck run`` again and you will see the same video with skeletal
-poses drawn on it and which track the hand movement.
+The important changes are to the second node ``model`` (Line 4) and the third node ``draw`` (Line 5).
+
+Now, run the pipeline using
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
+
+You should see the same video with skeletal poses drawn on it and which track the hand movement.
 
 The above **pose estimation pipeline** comprises four nodes that do the following:
 
-    2. ``input.recorded``: reads the file ``wave.mp4``, |br|
-    4. ``model.posenet``: runs the ``Posenet`` pose estimation model on it, |br|
-    5. ``draw.poses``: draws the human skeletal frame to show the detected poses, |br|
-    6. ``output.screen``: outputs everything onto the screen for display.
+    1. ``input.recorded``: reads the file ``wave.mp4``, |br|
+    2. ``model.posenet``: runs the ``Posenet`` pose estimation model on it, |br|
+    3. ``draw.poses``: draws the human skeletal frame to show the detected poses, |br|
+    4. ``output.screen``: outputs everything onto the screen for display.
 
 The 18-second video will auto-close when it is completed. |br|
 To exit earlier, click to select the video window and press ``q``.

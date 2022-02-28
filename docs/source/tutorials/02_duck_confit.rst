@@ -17,6 +17,10 @@ Duck Confit
 .. |nbsp| unicode:: U+00A0 .. Non-breaking space
    :trim:
 
+.. warning::
+
+   Update screen with new nodes output
+
 This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.
 It will also show how to create custom nodes to implement custom user functions.
@@ -90,9 +94,8 @@ First, create a PeekingDuck project as shown below:
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
 Then, download this `demo video
-<http://orchard.dnsalias.com:8100/computers_800.mp4>`_
-(**TODO: to update demo_video.mp4 link to GCP URL**)
-and save it into the created ``pkd_project`` folder.
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ and save it into the
+created ``pkd_project`` folder.
 
 The folder should contain the following:
 
@@ -101,9 +104,9 @@ The folder should contain the following:
    \ :blue:`pkd_project` \ |Blank|
    ├── run_config.yml
    ├── \ :blue:`src/` \ |Blank|
-   └── demo_video.mp4
+   └── cat_and_computer.mp4
 
-To perform object detection on the ``demo video.mp4`` file.  edit the
+To perform object detection on the ``cat_and_computer.mp4`` file.  edit the
 ``run_config.yml`` file as follows:
 
    .. code-block:: yaml
@@ -111,7 +114,7 @@ To perform object detection on the ``demo video.mp4`` file.  edit the
 
       nodes:
       - input.recorded:
-         input_dir: demo_video.mp4
+         input_dir: cat_and_computer.mp4
       - model.yolo:
          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
@@ -120,9 +123,9 @@ To perform object detection on the ``demo video.mp4`` file.  edit the
 
 Here is an explanation of what has been done above:
 
-   | Line 2 ``input.recorded``: tells PeekingDuck to load the ``demo video``.
+   | Line 2 ``input.recorded``: tells PeekingDuck to load the ``cat_and_computer.mp4``.
    | Line 4 ``model.yolo``: by default, the Yolo model detects ``person`` only.
-   |        The ``demo video`` contains other classes of objects like cup, cat, laptop, etc. 
+   |        The ``cat_and_computer.mp4`` contains other classes of objects like cup, cat, laptop, etc. 
    |        So we have to change the model settings to detect the other object classes.
    | Line 6 ``draw.bbox``: reconfigure this node to display the detected object class label.
 
@@ -131,10 +134,9 @@ Here is an explanation of what has been done above:
       <general-object-detection-ids>`.
 
 Run the above with the command ``peekingduck run``. |br|
-You should see a display of the ``demo video`` with the various objects being
+You should see a display of the ``cat_and_computer.mp4`` with the various objects being
 highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
-
 
 .. _configure_nodes_media_writer:
 
@@ -152,7 +154,7 @@ Edit ``run_config.yml`` as shown below:
 
       nodes:
       - input.recorded:
-         input_dir: /folder/containing/demo_video.mp4    # replace this with actual path
+         input_dir: cat_and_computer.mp4    # replace this with actual path
       - model.yolo:
          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
@@ -557,7 +559,7 @@ implement our custom node function.
 
       nodes:
       - input.recorded:
-          input_dir: /folder/containing/demo_video.mp4
+          input_dir: cat_and_computer.mp4
       - model.yolo:
          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
@@ -588,8 +590,9 @@ Custom Node 2: Show Keypoints and Count Hand Waves
 --------------------------------------------------
 
 This tutorial will create a custom node to analyze the skeletal keypoints of the
-person from the ``wave.mp4`` video in the :ref:`pose estimation tutorial
-<tutorial_pose_estimation>` and to count the number of times he waves.
+person from the `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_
+video in the :ref:`pose estimation tutorial <tutorial_pose_estimation>` and to
+count the number of times he waves.
 
 The PoseNet pose estimation model outputs seventeen keypoints for the person 
 corresponding to the different body parts as documented :ref:`here
@@ -597,7 +600,7 @@ corresponding to the different body parts as documented :ref:`here
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
 real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
 
-Starting with a newly initialised PeekingDuck folder, call ``peekingduck
+Starting with a newly initialized PeekingDuck folder, call ``peekingduck
 create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 
@@ -636,8 +639,8 @@ following folder structure:
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
-   │       │   └── \ :blue:`dabble/` \ |Blank|
-   │       │       └── wave.yml
+   │       │   └── \ :blue:`dabble/` \ |Blank|
+   │       │       └── wave.yml
    │       └── \ :blue:`dabble/` \ |Blank|
    │           └── wave.py
    └── wave.mp4
@@ -876,8 +879,6 @@ The heuristic also waits until the right wrist has been lifted above the right
 should before it starts tracking hand direction and counting waves.
 The number of waves is displayed at the left-top corner of the screen.
 
-
-
 3. **run_config.yml**:
 
    .. code-block:: yaml
@@ -904,6 +905,3 @@ Execute ``peekingduck run`` to see your custom node in action.
       :alt: Custom node screenshot - count hand waves
 
       Custom Node Counting Hand Waves
-
-
-

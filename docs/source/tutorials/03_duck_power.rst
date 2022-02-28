@@ -87,14 +87,14 @@ The updated folder structure would be:
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
-   │       │   ├── \ :blue:`dabble/` \ |Blank|
-   │       │   │   └── wave.yml
-   │       │   └── \ :blue:`output/` \ |Blank|
-   │       │       └── sqlite.yml
+   │       │   ├── \ :blue:`dabble/` \ |Blank|
+   │       │   │   └── wave.yml
+   │       │   └── \ :blue:`output/` \ |Blank|
+   │       │       └── sqlite.yml
    │       ├── \ :blue:`dabble/` \ |Blank|
    │       │   └── wave.py
-   │       └── \ :blue:`output/` \ |Blank|
-   │           └── sqlite.py
+   │       └── \ :blue:`output/` \ |Blank|
+   │           └── sqlite.py
    └── wave.mp4
 
 
