@@ -20,15 +20,15 @@ This is explained in the `How it Works`_ section.
 Demo
 ====
 
-.. |run_config| replace:: face_mask_detection.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/face_mask_detection.yml
+.. |pipeline_config| replace:: face_mask_detection.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/face_mask_detection.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -53,7 +53,7 @@ bounding boxes when multiple faces are detected. For more information on how adj
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 
