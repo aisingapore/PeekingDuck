@@ -131,7 +131,6 @@ Change the content of ``demo_debug.py`` to:
 
     from pathlib import Path
 
-    from peekingduck.configloader import ConfigLoader
     from peekingduck.pipeline.nodes import dabble, draw, input, model, output
     from peekingduck.runner import Runner
     from src.custom_nodes.dabble import debug
@@ -143,10 +142,7 @@ Change the content of ``demo_debug.py`` to:
         recorded_config = {"input_dir": str(Path.cwd().resolve() / "computers_800.mp4")}
         recorded_node = input.recorded.Node(**recorded_config)
 
-        # Have to do our own mapping if we want to avoid instantiating ConfigLoader
-        class_label_to_id = ConfigLoader._load_mapping("model.yolo")
-        class_labels = ["cup", "cat", "laptop", "keyboard", "mouse"]
-        yolo_config = {"detect_ids": [class_label_to_id[label] for label in class_labels]}
+        yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
         yolo_node = model.yolo.Node(**yolo_config)
 
         bbox_config = {"show_labels": True}
@@ -177,14 +173,14 @@ Change the content of ``demo_debug.py`` to:
     if __name__ == "__main__":
         main()
 
-Line 6, 10: Import and initialize the ``debug`` custom node. Pass in the 
+Line 5, 9: Import and initialize the ``debug`` custom node. Pass in the 
 ``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
 the custom node to be loaded properly.
 
-Line 12 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
+Line 11 - 25: Create the PeekingDuck nodes necessary to replicate the demo shown in the
 :ref:`Record and Save Video File with FPS <configure_nodes_media_writer>` tutorial.
 
-Line 31 - 43: Initialize the PeekingDuck ``Runner`` from
+Line 27 - 38: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
