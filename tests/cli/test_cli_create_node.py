@@ -315,8 +315,8 @@ class TestCliCreateNode:
             assert actual_file.readlines() == lines[start:]
 
     def test_poorly_formatted_config_file(self, cwd):
-        no_top_level_key = cwd / "run_config_no_top_level_key.yml"
-        wrong_top_level_key = cwd / "run_config_wrong_top_level_key.yml"
+        no_top_level_key = cwd / "pipeline_no_top_level_key.yml"
+        wrong_top_level_key = cwd / "pipeline_wrong_top_level_key.yml"
         with open(no_top_level_key, "w") as outfile:
             yaml.dump(DEFAULT_NODES, outfile)
         with open(wrong_top_level_key, "w") as outfile:
@@ -335,7 +335,7 @@ class TestCliCreateNode:
             )
 
     def test_no_nodes_config_file(self, cwd):
-        no_nodes = cwd / "run_config_no_nodes.yml"
+        no_nodes = cwd / "pipeline_no_nodes.yml"
         with open(no_nodes, "w") as outfile:
             data = {"nodes": None}
             # ``yaml`` will create 'nodes: null' by default. Manually replace
@@ -393,7 +393,7 @@ class TestCliCreateNode:
         """Tests when the config file doesn't contain any custom nodes, so
         there's nothing to create.
         """
-        config_file = "run_config_default_nodes_only.yml"
+        config_file = "pipeline_default_nodes_only.yml"
         default_nodes_only = cwd / config_file
         with open(default_nodes_only, "w") as outfile:
             yaml.dump({"nodes": DEFAULT_NODES}, outfile)
@@ -427,7 +427,7 @@ class TestCliCreateNode:
             f"{GOOD_SUBDIR}.{GOOD_TYPE}.{node_name}"
             for node_name in CREATE_NODE_CONFIG["bad_config_names"]
         ]
-        config_file = "run_config_invalid_custom_node_string.yml"
+        config_file = "pipeline_invalid_custom_node_string.yml"
         default_nodes_only = cwd / config_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides
@@ -476,7 +476,7 @@ class TestCliCreateNode:
             cwd / "src" / GOOD_SUBDIR / "configs" / GOOD_TYPE / f"{GOOD_NAME}.yml"
         )
         created_script_path = cwd / "src" / GOOD_SUBDIR / GOOD_TYPE / f"{GOOD_NAME}.py"
-        config_file = "run_config_invalid_custom_node_string.yml"
+        config_file = "pipeline_invalid_custom_node_string.yml"
         default_nodes_only = cwd / config_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides
@@ -504,7 +504,7 @@ class TestCliCreateNode:
         formatting. So all will be skipped.
         """
         node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
-        config_file = "run_config_invalid_custom_node_string.yml"
+        config_file = "pipeline_invalid_custom_node_string.yml"
         default_nodes_only = cwd / config_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides

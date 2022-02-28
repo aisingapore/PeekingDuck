@@ -58,12 +58,12 @@ def create_custom_folder(custom_folder_name: str) -> None:
     custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 
 
-def create_yml() -> None:
-    """Initializes the declarative *run_config.yml*."""
+def create_pipeline_yml() -> None:
+    """Initializes the declarative *pipeline.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
-    with open("run_config.yml", "w") as yml_file:
+    with open("pipeline.yml", "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
@@ -83,7 +83,7 @@ def init(custom_folder_name: str) -> None:
     """Initialize a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
-    create_yml()
+    create_pipeline_yml()
 
 
 @cli.command()
@@ -92,7 +92,7 @@ def init(custom_folder_name: str) -> None:
     default=None,
     type=click.Path(),
     help=(
-        "List of nodes to run. None assumes run_config.yml at current working directory"
+        "List of nodes to run. None assumes pipeline.yml at current working directory"
     ),
 )
 @click.option(
@@ -124,13 +124,17 @@ def run(
 
     curr_dir = _get_cwd()
     if config_path is None:
-        run_config_path = curr_dir / "run_config.yml"
-    else:
-        run_config_path = Path(config_path)
+        if Path(curr_dir / "pipeline.yml").is_file():
+            config_path = curr_dir / "pipeline.yml"
+        elif Path(curr_dir / "run_config.yml").is_file():
+            config_path = curr_dir / "run_config.yml"
+        else:
+            config_path = curr_dir / "pipeline.yml"
+    pipeline_path = Path(config_path)
 
     start_time = perf_counter()
     runner = Runner(
-        run_config_path=run_config_path,
+        pipeline_path=pipeline_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
@@ -291,16 +295,16 @@ def _create_nodes_from_config_file(
     config_path: str, project_dir: Path, node_type_choices: click.Choice
 ) -> None:
     """Creates custom nodes declared in the config file."""
-    run_config_path = Path(config_path)
-    if not run_config_path.is_absolute():
-        run_config_path = (project_dir / run_config_path).resolve()
-    if not run_config_path.exists():
+    pipeline_path = Path(config_path)
+    if not pipeline_path.is_absolute():
+        pipeline_path = (project_dir / pipeline_path).resolve()
+    if not pipeline_path.exists():
         raise FileNotFoundError(
-            f"Config file '{config_path}' is not found at {run_config_path}!"
+            f"Config file '{config_path}' is not found at {pipeline_path}!"
         )
-    logger.info(f"Creating custom nodes declared in {run_config_path}.")
+    logger.info(f"Creating custom nodes declared in {pipeline_path}.")
     # Load run config with DeclarativeLoader to ensure consistency
-    loader = DeclarativeLoader(run_config_path, "None", "src")
+    loader = DeclarativeLoader(pipeline_path, "None", "src")
     try:
         node_subdir = project_dir / "src" / loader.custom_nodes_dir
     except AttributeError as custom_nodes_no_exist:

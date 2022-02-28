@@ -38,7 +38,7 @@ Object Detection
 
 When you did a ``peekingduck run`` to :ref:`verify your installation
 <verify_installation>` earlier, you are running the default pipeline in the file
-``run_config.yml`` as shown below:
+``pipeline.yml`` as shown below:
 
 .. code-block:: yaml
    :linenos:
@@ -73,7 +73,7 @@ Pose Estimation
 ===============
 
 You can get PeekingDuck to perform pose estimation by changing the second node
-``model`` (line 4) and the third node ``draw`` (line 5) in ``run_config.yml`` as
+``model`` (line 4) and the third node ``draw`` (line 5) in ``pipeline.yml`` as
 follows:
 
 .. code-block:: yaml
