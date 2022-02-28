@@ -92,69 +92,6 @@ def cli(ctx: click.Context, verify_install: bool) -> None:
 
 
 @cli.command()
-@click.option("--custom_folder_name", default="custom_nodes")
-def init(custom_folder_name: str) -> None:
-    """Initializes a PeekingDuck project"""
-    print("Welcome to PeekingDuck!")
-    create_custom_folder(custom_folder_name)
-    create_yml()
-
-
-@cli.command()
-@click.option(
-    "--config_path",
-    default=None,
-    type=click.Path(),
-    help=(
-        "List of nodes to run. None assumes run_config.yml at current working directory"
-    ),
-)
-@click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
-)
-@click.option(
-    "--node_config",
-    default="None",
-    help="""Modify node configs by wrapping desired configs in a JSON string.\n
-        Example: --node_config '{"node_name": {"param_1": var_1}}'""",
-)
-@click.option(
-    "--num_iter",
-    default=None,
-    type=int,
-    help="Stop pipeline after running this number of iterations",
-)
-def run(
-    config_path: str,
-    log_level: str,
-    node_config: str,
-    num_iter: int,
-    nodes_parent_dir: str = "src",
-) -> None:
-    """Runs PeekingDuck"""
-    LoggerSetup.set_log_level(log_level)
-
-    curr_dir = _get_cwd()
-    if config_path is None:
-        run_config_path = curr_dir / "run_config.yml"
-    else:
-        run_config_path = Path(config_path)
-
-    start_time = perf_counter()
-    runner = Runner(
-        run_config_path=run_config_path,
-        config_updates_cli=node_config,
-        custom_nodes_parent_subdir=nodes_parent_dir,
-        num_iter=num_iter,
-    )
-    end_time = perf_counter()
-    logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
-    runner.run()
-
-
-@cli.command()
 @click.option(
     "--node_subdir",
     help=(
@@ -265,6 +202,15 @@ def create_node(
 
 
 @cli.command()
+@click.option("--custom_folder_name", default="custom_nodes")
+def init(custom_folder_name: str) -> None:
+    """Initializes a PeekingDuck project"""
+    print("Welcome to PeekingDuck!")
+    create_custom_folder(custom_folder_name)
+    create_yml()
+
+
+@cli.command()
 @click.argument("type_name", required=False)
 def nodes(type_name: str = None) -> None:
     """Lists available nodes in PeekingDuck. When no argument is given, all
@@ -299,6 +245,60 @@ def nodes(type_name: str = None) -> None:
             click.secho(url)
 
     click.secho("\n")
+
+
+@cli.command()
+@click.option(
+    "--config_path",
+    default=None,
+    type=click.Path(),
+    help=(
+        "List of nodes to run. None assumes run_config.yml at current working directory"
+    ),
+)
+@click.option(
+    "--log_level",
+    default="info",
+    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
+)
+@click.option(
+    "--node_config",
+    default="None",
+    help="""Modify node configs by wrapping desired configs in a JSON string.\n
+        Example: --node_config '{"node_name": {"param_1": var_1}}'""",
+)
+@click.option(
+    "--num_iter",
+    default=None,
+    type=int,
+    help="Stop pipeline after running this number of iterations",
+)
+def run(
+    config_path: str,
+    log_level: str,
+    node_config: str,
+    num_iter: int,
+    nodes_parent_dir: str = "src",
+) -> None:
+    """Runs PeekingDuck"""
+    LoggerSetup.set_log_level(log_level)
+
+    curr_dir = _get_cwd()
+    if config_path is None:
+        run_config_path = curr_dir / "run_config.yml"
+    else:
+        run_config_path = Path(config_path)
+
+    start_time = perf_counter()
+    runner = Runner(
+        run_config_path=run_config_path,
+        config_updates_cli=node_config,
+        custom_nodes_parent_subdir=nodes_parent_dir,
+        num_iter=num_iter,
+    )
+    end_time = perf_counter()
+    logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
+    runner.run()
 
 
 def _create_nodes_from_config_file(
