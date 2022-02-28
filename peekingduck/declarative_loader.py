@@ -150,7 +150,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
-        # First, override default configs with values from pipeline.yml
+        # First, override default configs with values from pipeline_config.yml
         if config_updates_yml is not None:
             config = self._edit_config(config, config_updates_yml, node_name)
 

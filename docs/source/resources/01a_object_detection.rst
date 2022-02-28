@@ -122,7 +122,7 @@ General Object Detection
 ------------------------
 
 | The tables below provide the associated indices for each class in object detectors.
-| To detect all classes, specify :code:`detect_ids: ["*"]` under the object detection node configuration in ``pipeline.yml``.
+| To detect all classes, specify :code:`detect_ids: ["*"]` under the object detection node configuration in ``pipeline_config.yml``.
 
 +---------------+---------------------+----------------+---------------------+
 |               | ID                  |                | ID                  |

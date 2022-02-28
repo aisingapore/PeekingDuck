@@ -37,7 +37,7 @@ class Runner:
 
     Args:
         pipeline_path (:obj:`pathlib.Path` | :obj:`None`): If a path to
-            *pipeline.yml* is provided, uses
+            *pipeline_config.yml* is provided, uses
             :py:class:`DeclarativeLoader <peekingduck.declarative_loader.DeclarativeLoader>`
             to load the YAML file according to PeekingDuck's specified schema
             to obtain the declared nodes that would be sequentially initialized

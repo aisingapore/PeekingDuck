@@ -49,8 +49,8 @@ CUSTOM_NODE_DIR = MODULE_DIR / CUSTOM_FOLDER_NAME
 CUSTOM_NODE_CONFIG_DIR = CUSTOM_NODE_DIR / "configs"
 CUSTOM_PKD_NODE_DIR = MODULE_DIR / CUSTOM_FOLDER_NAME / PKD_NODE_TYPE
 CUSTOM_PKD_NODE_CONFIG_DIR = CUSTOM_NODE_CONFIG_DIR / PKD_NODE_TYPE
-PIPELINE_PATH = Path("pipeline.yml")
-CUSTOM_PIPELINE_PATH = Path("custom_dir") / "pipeline.yml"
+PIPELINE_PATH = Path("pipeline_config.yml")
+CUSTOM_PIPELINE_PATH = Path("custom_dir") / "pipeline_config.yml"
 YML = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
 NODE_TYPES = ["input", "model", "dabble", "draw", "output"]

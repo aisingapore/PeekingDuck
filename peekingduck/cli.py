@@ -58,12 +58,12 @@ def create_custom_folder(custom_folder_name: str) -> None:
     custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 
 
-def create_pipeline_yml() -> None:
-    """Initializes the declarative *pipeline.yml*."""
+def create_pipeline_config_yml() -> None:
+    """Initializes the declarative *pipeline_config.yml*."""
     # Default yml to be discussed
     default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
 
-    with open("pipeline.yml", "w") as yml_file:
+    with open("pipeline_config.yml", "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
@@ -83,7 +83,7 @@ def init(custom_folder_name: str) -> None:
     """Initialize a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
-    create_pipeline_yml()
+    create_pipeline_config_yml()
 
 
 @cli.command()
@@ -92,7 +92,7 @@ def init(custom_folder_name: str) -> None:
     default=None,
     type=click.Path(),
     help=(
-        "List of nodes to run. None assumes pipeline.yml at current working directory"
+        "List of nodes to run. None assumes pipeline_config.yml at current working directory"
     ),
 )
 @click.option(
@@ -122,19 +122,18 @@ def run(
     """Runs PeekingDuck"""
     LoggerSetup.set_log_level(log_level)
 
-    curr_dir = _get_cwd()
     if config_path is None:
-        if Path(curr_dir / "pipeline.yml").is_file():
-            config_path = curr_dir / "pipeline.yml"
-        elif Path(curr_dir / "run_config.yml").is_file():
+        curr_dir = _get_cwd()
+        if (curr_dir / "pipeline_config.yml").is_file():
+            config_path = curr_dir / "pipeline_config.yml"
+        elif (curr_dir / "run_config.yml").is_file():
             config_path = curr_dir / "run_config.yml"
         else:
-            config_path = curr_dir / "pipeline.yml"
-    pipeline_path = Path(config_path)
+            config_path = curr_dir / "pipeline_config.yml"
 
     start_time = perf_counter()
     runner = Runner(
-        pipeline_path=pipeline_path,
+        pipeline_path=config_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
@@ -294,7 +293,7 @@ def nodes(type_name: str = None) -> None:
 def _create_nodes_from_config_file(
     config_path: str, project_dir: Path, node_type_choices: click.Choice
 ) -> None:
-    """Creates custom nodes declared in the config file."""
+    """Creates custom nodes declared in the pipeline config file."""
     pipeline_path = Path(config_path)
     if not pipeline_path.is_absolute():
         pipeline_path = (project_dir / pipeline_path).resolve()

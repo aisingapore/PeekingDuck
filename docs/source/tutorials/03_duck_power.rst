@@ -83,7 +83,7 @@ The updated folder structure would be:
 .. parsed-literal::
 
    \ :blue:`custom_project/` \ |Blank|
-   ├── pipeline.yml
+   ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
@@ -233,7 +233,7 @@ These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's
 data pool for subsequent consumption.
 
 
-5. **pipeline.yml**:
+5. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :lineno-start: 10

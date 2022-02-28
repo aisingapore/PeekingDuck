@@ -108,7 +108,7 @@ Then, initialize a PeekingDuck project and run it:
 
 You should see a video of a person waving hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_).
 
-| The video will auto-close when it is runs to the end (about 18 seconds).
+| The video will auto-close when it is run to the end (about 18 seconds).
 | To exit earlier, click to select the video window and press ``q``.
 
 **TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 

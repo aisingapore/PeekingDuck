@@ -43,7 +43,7 @@ UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for _ in range(8))
 CUSTOM_NODES_DIR_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 
 MODULE_DIR = Path("tmp_dir")
-PIPELINE_PATH = MODULE_DIR / "pipeline.yml"
+PIPELINE_PATH = MODULE_DIR / "pipeline_config.yml"
 CUSTOM_NODES_DIR = MODULE_DIR / CUSTOM_NODES_DIR_NAME
 PKD_NODE_DIR = MODULE_DIR / PKD_NODE_TYPE
 CUSTOM_NODE_DIR = CUSTOM_NODES_DIR / CUSTOM_NODE_TYPE
