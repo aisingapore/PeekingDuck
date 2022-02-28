@@ -408,7 +408,7 @@ def _setup_verification(config_file_name: str) -> None:
     """
     create_yml(
         [
-            {"input.recorded": {"input_dir": "data/verification"}},
+            {"input.recorded": {"input_dir": "data/verification/wave.mp4"}},
             "model.yolo",
             "draw.bbox",
             "output.screen",
@@ -426,6 +426,7 @@ def _setup_verification(config_file_name: str) -> None:
     )
     logger.info("Downloading sample video")
     save_response_content(response, input_dir / file_name)
+    logger.info("Download complete")
 
 
 def _verify_install() -> None:
