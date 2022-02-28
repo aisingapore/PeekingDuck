@@ -20,9 +20,10 @@ import logging
 import math
 from pathlib import Path
 from time import perf_counter
-from typing import Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import click
+import requests
 import yaml
 
 from peekingduck import __version__
@@ -39,6 +40,7 @@ from peekingduck.utils.create_node_helper import (
     verify_option,
 )
 from peekingduck.utils.logger import LoggerSetup
+from peekingduck.weights_utils.downloader import save_response_content
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -58,29 +60,41 @@ def create_custom_folder(custom_folder_name: str) -> None:
     custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 
 
-def create_yml() -> None:
+def create_yml(
+    default_nodes: List[Union[str, Dict[str, Any]]] = None,
+    default_path: str = "run_config.yml",
+) -> None:
     """Initializes the declarative *run_config.yml*."""
     # Default yml to be discussed
-    default_yml = dict(nodes=["input.live", "model.yolo", "draw.bbox", "output.screen"])
+    if default_nodes is None:
+        default_nodes = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+    default_yml = dict(nodes=default_nodes)
 
-    with open("run_config.yml", "w") as yml_file:
+    with open(default_path, "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
-@click.group()
+@click.group(invoke_without_command=True)
 @click.version_option(__version__)
-def cli() -> None:
+@click.option("--verify_install", is_flag=True, help="Verify PeekingDuck installation")
+@click.pass_context
+def cli(ctx: click.Context, verify_install: bool) -> None:
     """
     PeekingDuck is a modular computer vision inference framework.
 
     Developed by Computer Vision Hub at AI Singapore.
     """
+    if ctx.invoked_subcommand is None:
+        if verify_install:
+            _verify_install()
+        else:
+            print(ctx.get_help())
 
 
 @cli.command()
 @click.option("--custom_folder_name", default="custom_nodes")
 def init(custom_folder_name: str) -> None:
-    """Initialize a PeekingDuck project"""
+    """Initializes a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
     create_yml()
@@ -382,3 +396,51 @@ def _num_digits(number: int) -> int:
         (int): Number of digits in the given number.
     """
     return int(math.log10(number))
+
+
+def _setup_verification(config_file_name: str) -> None:
+    """Sets up the directory structure and downloads demo video for verifying
+    PeekingDuck installation.
+
+    Args:
+        config_file_name (str): Name of the config YAML file for verifying
+            PeekingDuck installation.
+    """
+    create_yml(
+        [
+            {"input.recorded": {"input_dir": "data/verification"}},
+            "model.yolo",
+            "draw.bbox",
+            "output.screen",
+        ],
+        config_file_name,
+    )
+    input_dir = _get_cwd() / "data" / "verification"
+    input_dir.mkdir(parents=True, exist_ok=True)
+
+    # Download demo video
+    file_name = "wave.mp4"
+    session = requests.Session()
+    response = session.get(
+        f"https://storage.googleapis.com/peekingduck/videos/{file_name}", stream=True
+    )
+    logger.info("Downloading sample video")
+    save_response_content(response, input_dir / file_name)
+
+
+def _verify_install() -> None:
+    """Verifies PeekingDuck installation by running object detection on
+    'wave.mp4'.
+    """
+    LoggerSetup.set_log_level("info")
+
+    config_file_name = "verify_config.yml"
+    _setup_verification(config_file_name)
+
+    runner = Runner(
+        run_config_path=_get_cwd() / config_file_name,
+        config_updates_cli="None",
+        custom_nodes_parent_subdir="src",
+        num_iter=None,
+    )
+    runner.run()
