@@ -2,10 +2,10 @@ input: ["all"]
 output: ["avg", "min", "max"]
 
 identity: null
-conditional_count: null
 length: null
 minimum: null
 maximum: null
+conditional_count: null
 
 # identity: count
 # conditional_count: "obj_attrs['flags'] == 'TOO CLOSE!'"
@@ -13,4 +13,16 @@ maximum: null
 # minimum: null
 # maximum: obj_attrs['ids']
 
+# Rules:
 
+# a. String operands need to be wrapped in single/double quotes
+# b. Spaces in the expression will be ignored except for string operands
+
+# Say that don't put stuff in square brackets, we using regex
+# Unit tests
+
+# 1. All operators work
+# 2. Don't accept multiple operators
+# 3. Spaces not included
+# 4. 4 nulls and only 1 mode not null
+# 5. "'asdasd'" and '"asfgasf"'

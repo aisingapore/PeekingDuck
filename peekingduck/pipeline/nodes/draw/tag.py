@@ -17,7 +17,7 @@ Draws a tag (from ``obj_attrs``) above each bounding box
 """
 
 from collections import deque
-from typing import Any, Dict, List, Union
+from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
 from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO

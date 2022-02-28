@@ -77,6 +77,7 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
+    "dabble.statisticsv1",
     "dabble.trackingv1",
     "dabble.utils",
     "dabble.zoningv1",

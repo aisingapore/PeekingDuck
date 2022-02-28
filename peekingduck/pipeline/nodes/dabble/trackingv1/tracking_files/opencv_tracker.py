@@ -96,7 +96,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             (List[int]): A list of track IDs for the detections in the current
                 frame.
         """
-        obj_track_ids = [""] * len(bboxes)
+        obj_track_ids = [-1] * len(bboxes)  # temporary fix for linting
 
         prev_tracked_bboxes = [track.bbox for _, track in self.tracks.items()]
         matching_dict = {}

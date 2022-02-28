@@ -16,7 +16,7 @@
 Draws detected groups and their tags.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List
 
 import numpy as np
 
@@ -29,7 +29,7 @@ class Node(AbstractNode):
     """Draws large bounding boxes over multiple object bounding boxes which
     have been identified as belonging to large groups.
 
-    The :mod:``draw.group_bbox_and_tag`` node uses the ``obj_groups`` and
+    The :mod:``draw.group_bbox_and_tag`` node uses the ``obj_attrs`` and
     ``large_groups`` from the ``dabble`` nodes to draw group bboxes and the
     large group message tag onto the image. For better understanding, refer to
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
@@ -39,7 +39,7 @@ class Node(AbstractNode):
 
         |bboxes|
 
-        |obj_groups|
+        |obj_attrs|
 
         |large_groups|
 
@@ -59,7 +59,7 @@ class Node(AbstractNode):
         which have been identified as belonging to large groups.
 
         Args:
-            inputs (dict): Dictionary with keys "img", "bboxes", "obj_groups",
+            inputs (dict): Dictionary with keys "img", "bboxes", "obj_attrs",
                 "large_groups".
 
         Returns:

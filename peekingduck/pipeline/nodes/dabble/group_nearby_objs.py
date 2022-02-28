@@ -34,7 +34,7 @@ class Node(AbstractNode):
         |obj_3D_locs|
 
     Outputs:
-        |obj_groups|
+        |obj_attrs|
 
     Configs:
         obj_dist_threshold (:obj:`float`): **default = 1.5**. |br|

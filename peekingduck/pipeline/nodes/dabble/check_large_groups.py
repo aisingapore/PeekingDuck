@@ -17,7 +17,7 @@ Checks if number of objects in a group exceeds a threshold.
 """
 
 from collections import Counter
-from typing import Any, Counter, Dict, List
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
