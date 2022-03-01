@@ -36,8 +36,8 @@ class Runner:
     which is used to run inference.
 
     Args:
-        run_config_path (:obj:`pathlib.Path` | :obj:`None`): If a path to
-            *run_config.yml* is provided, uses
+        pipeline_path (:obj:`pathlib.Path` | :obj:`None`): If a path to
+            *pipeline_config.yml* is provided, uses
             :py:class:`DeclarativeLoader <peekingduck.declarative_loader.DeclarativeLoader>`
             to load the YAML file according to PeekingDuck's specified schema
             to obtain the declared nodes that would be sequentially initialized
@@ -57,7 +57,7 @@ class Runner:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        run_config_path: Path = None,
+        pipeline_path: Path = None,
         config_updates_cli: str = None,
         custom_nodes_parent_subdir: str = None,
         num_iter: int = None,
@@ -68,16 +68,16 @@ class Runner:
             if nodes:
                 # instantiated_nodes is created differently when given nodes
                 self.pipeline = Pipeline(nodes)
-            elif run_config_path and config_updates_cli and custom_nodes_parent_subdir:
+            elif pipeline_path and config_updates_cli and custom_nodes_parent_subdir:
                 # create Graph to run
                 self.node_loader = DeclarativeLoader(
-                    run_config_path, config_updates_cli, custom_nodes_parent_subdir
+                    pipeline_path, config_updates_cli, custom_nodes_parent_subdir
                 )
                 self.pipeline = self.node_loader.get_pipeline()
             else:
                 raise ValueError(
                     "Arguments error! Pass in either nodes to load directly via "
-                    "Pipeline or run_config_path, config_updates_cli, and "
+                    "Pipeline or pipeline_path, config_updates_cli, and "
                     "custom_nodes_parent_subdir to load via DeclarativeLoader."
                 )
         except ValueError as error:
@@ -136,7 +136,7 @@ class Runner:
             if node.name.endswith(".live") or node.name.endswith(".recorded"):
                 node.release_resources()
 
-    def get_run_config(self) -> NodeList:
+    def get_pipeline(self) -> NodeList:
         """Retrieves run configuration.
 
         Returns:

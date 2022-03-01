@@ -24,15 +24,15 @@ from 2D videos, circumventing this limitation. This is explained in the `How it 
 Demo
 ====
 
-.. |run_config| replace:: social_distancing.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
+.. |pipeline_config| replace:: social_distancing.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -79,7 +79,7 @@ between each pair of individuals and check if they are too close to each other.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 
