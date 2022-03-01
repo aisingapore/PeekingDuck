@@ -17,9 +17,9 @@ Duck Confit
 .. |nbsp| unicode:: U+00A0 .. Non-breaking space
    :trim:
 
-.. warning::
+.. |W| replace:: :math:`W`
 
-   Update screen with new nodes output
+.. |H| replace:: :math:`H`
 
 This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.
@@ -57,7 +57,7 @@ PeekingDuck supports 6 types of nodes:
 
 +------------+-----------------------------------------------------------------+
 | Node Type  | Node Description                                                |
-+------------+-----------------------------------------------------------------+
++============+=================================================================+
 | Input      | Reads a video file from disk or captures images from the webcam |
 +------------+-----------------------------------------------------------------+
 | Model      | CV model does the "heaving lifting" here, like object detection |
@@ -138,6 +138,7 @@ You should see a display of the ``cat_and_computer.mp4`` with the various object
 highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
 
+
 .. _configure_nodes_media_writer:
 
 Record and Save Video File with FPS
@@ -199,39 +200,37 @@ PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
       PeekingDuck's Image vs Bounding Box Coordinates
 
 * Absolute image coordinates
-   For an image of width W and height H, the absolute image coordinates are 
-   integers from (0, |nbsp| 0) to (W-1, |nbsp| H-1). |br|
+   For an image of width |W| and height |H|, the absolute image
+   coordinates are integers from :math:`(0, 0)` to :math:`(W-1, H-1)`. |br|
    E.g. For a 720 x 480 image, the absolute coordinates range from 
-   (0, |nbsp| 0) to (719, |nbsp| 479)
+   :math:`(0, 0)` to :math:`(719, 479)`.
 
 * Relative bounding box coordinates
-   For an image of width W and height H, the relative image coordinates are 
-   real numbers from (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0). |br|
+   For an image of width |W| and height |H|, the relative image coordinates are 
+   real numbers from :math:`(0.0, 0.0)` to :math:`(1.0, 1.0)`. |br|
    E.g. For a 720 x 480 image, the relative coordinates range from 
-   (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0)
+   :math:`(0.0, 0.0)` to :math:`(1.0, 1.0)`.
 
 This means that in order to draw a bounding box onto an image, the bounding box 
 relative coordinates would have to be converted to the image absolute coordinates.
 
 Using the above figure as an illustration, the bounding box coordinates are
-given as ( 0.18, 0.10 ) left-top and ( 0.52, 0.88 ) right-bottom.
+given as :math:`(0.18, 0.10)` left-top and :math:`(0.52, 0.88)` right-bottom.
 To convert them to image coordinates, multiply the x-coordinates by the image 
 width and the y-coordinates by the image height, and round the results into 
 integers.
 
 .. math::
 
-   0.18 -> 0.18 * 720 = 129.6 = 130 \: (int) 
+   \begin{array}{ll}
+      0.18 \rightarrow 0.18 * 720 = 129.6 = 130 & (int)\\
+      0.10 \rightarrow 0.10 * 720 = 72.0 = 72 & (int)\\
+      &\\
+      0.52 \rightarrow 0.52 * 720 = 374.4 = 374 & (int)\\
+      0.88 \rightarrow 0.88 * 720 = 633.6 = 634 & (int)
+   \end{array}
 
-   0.10 -> 0.10 * 720 = 72.0 = 72 \: (int)
-
-.. math::
-
-   0.52 -> 0.52 * 720 = 374.4 = 374 \: (int) 
-   
-   0.88 -> 0.88 * 720 = 633.6 = 634 \: (int)
-
-Thus, the image coordinates are ( 130, 72 ) left-top and ( 374, 634 ) right-bottom.
+Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)` right-bottom.
 
    .. note::
       The ``model`` nodes return results in relative coordinates.
@@ -273,7 +272,7 @@ This creates the following ``custom_project`` folder structure:
            └── \ :blue:`configs/` \ |Blank|
 
 
-The sub-folders ``src``, ``custom_nodes`` and ``configs`` are empty: they serve 
+The sub-folders ``src``, ``custom_nodes``, and ``configs`` are empty: they serve 
 as placeholders for contents to be added.
 
 
