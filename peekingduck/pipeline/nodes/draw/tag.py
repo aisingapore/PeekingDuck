@@ -16,8 +16,8 @@
 Draws a tag (from ``obj_attrs``) above each bounding box
 """
 
-from collections import deque
-from typing import Any, Dict
+import re
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
 from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
@@ -26,24 +26,45 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     """Draws a tag above each bounding box in the image, using information from selected attributes
-    in ``obj_attrs``. In `Example 1` below, ``obj_attrs`` has 2 attributes (`<attr a>` and
-    `<attr b>`). There are `x` detected bounding boxes, and each attribute has `x` corresponding
-    tags stored in a list. The ``get`` config described subsequently is used to choose the
-    attribute to be drawn.
+    in ``obj_attrs``. In the general example below, ``obj_attrs`` has 2 attributes (`<attr a>` and
+    `<attr b>`). There are `n` detected bounding boxes, and each attribute has `n` corresponding
+    tags stored in a list. The ``show`` config described subsequently is used to choose the
+    attribute or attributes to be drawn.
 
-    >>> # Example 1
-    >>> {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag x>], <attr b>: [<tag 1>, ..., <tag x>]}}
+    >>> {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag n>], <attr b>: [<tag 1>, ..., <tag n>]}}
 
-    The following type conventions need to be observed: |br|
-    1. Each attribute must be of type :obj:`List`, e.g. ``<attr a>: [<tag 1>, ..., <tag x>]`` |br|
-    2. Each tag within the list must be of type :obj:`str` or :obj:`int`
+    The following type conventions should be noted:
 
-    In `Example 2` below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
+    * Each attribute must be of type :obj:`List`, e.g. ``<attr a>: [<tag 1>, ..., <tag n>]`` \
+
+    * Each tag within the list will be converted into :obj:`str` type to be drawn
+
+    In the example below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
     the last 2 attributes are nested within `"details"`. There are 2 detected bounding boxes, and
-    for the first one, possible tags to be drawn are `1`, `"female"` or `52`.
+    thus each attribute consists of a list with 2 tags.
 
-    >>> # Example 2
+    >>> # Example
     >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
+
+    The table below illustrates how ``show`` can be configured to achieve different outcomes. Key
+    takeaways are:
+
+    * To draw nested attributes, include all the keys leading to them (within the ``obj_attrs`` \
+    dictionary), separating each key with a ``->``. \
+
+    * To draw multiple attributes above each bounding box, add them to the list of ``show`` \
+    config. Attributes will be separated by ``, `` when drawn.
+
+    +-----+-----------------------------------------+---------------+---------------+
+    | No. | ``show`` config                         | Tag above 1st | Tag above 2nd |
+    |     |                                         | bounding box  | bounding box  |
+    +-----+-----------------------------------------+---------------+---------------+
+    | 1.  | ["ids"]                                 | "1"           | "2"           |
+    +-----+-----------------------------------------+---------------+---------------+
+    | 2.  | ["details -> gender"]                   | "female"      | "male"        |
+    +-----+-----------------------------------------+---------------+---------------+
+    | 3.  | ["details -> age", "details -> gender"] | "52, female"  | "17, male"    |
+    +-----+-----------------------------------------+---------------+---------------+
 
     Inputs:
         |img|
@@ -56,20 +77,22 @@ class Node(AbstractNode):
         |no_output|
 
     Configs:
-        get (:obj:`List[str]`): **default = []**. |br|
-            List the keys of the ``obj_attrs`` dictionary required to get the desired tag. For
-            example 2, to draw the tag given by the attribute `"ids"`, the required key
-            is `["ids"]`. To draw the tag given by the attribute `"age"`, as `"age"` is nested
-            within `"details"`, the required keys are `["details", "age"]`.
+        show (:obj:`List[str]`): **default = []**. |br|
+            List the desired attributes to be drawn. For more details on how to use this config,
+            see the section above.
 
     .. versionchanged:: 1.2.0 |br|
         :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input data type,
-        which has been deprecated and now subsumed under ``obj_attrs``
-        (:obj:`Dict[str, List[Any]]`), giving this node more flexibility.
+        which has been deprecated and now subsumed under ``obj_attrs`` (:obj:`Dict[str, Any]`),
+        giving this node more flexibility.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.attr_keys = []
+        for attr in self.show:
+            attr = re.sub(" ", "", attr)
+            self.attr_keys.append(re.split(r"->", attr))
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.
@@ -80,33 +103,32 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
+        all_attrs: List[List[Any]] = []
+        for attr_key in self.attr_keys:
+            attr = _get_value(inputs["obj_attrs"], attr_key.copy())
+            if not isinstance(attr, list):
+                raise ValueError(
+                    f"The attribute of interest has to be of type 'list', containing a list of "
+                    f"tags. However, the attribute chosen here was: {attr} which is of type: "
+                    f"{type(attr)}."
+                )
+            all_attrs.append(attr)
 
-        keys = deque(self.get)
-        attribute = _get_value(inputs["obj_attrs"], keys)
-        if not isinstance(attribute, list):
-            raise ValueError(
-                f"The attribute of interest has to be of type 'list', containing a list of tags. "
-                f"However, the attribute chosen here was: {attribute} which is of type: "
-                f"{type(attribute)}."
-            )
+        tags = []
+        for attr in list(zip(*all_attrs)):
+            attr_str = map(str, attr)
+            tags.append(", ".join(attr_str))
+
         # if empty list, nothing to draw
-        if not attribute:
+        if not tags:
             return {}
-
-        if not isinstance(attribute[0], int) and not isinstance(attribute[0], str):
-            raise ValueError(
-                f"Each tag has to be of type 'int' or 'str'. "
-                f"However, the first detected tag here was {attribute[0]} which is of type: "
-                f"{type(attribute[0])}."
-            )
-
-        draw_tags(inputs["img"], inputs["bboxes"], attribute, TOMATO)
+        draw_tags(inputs["img"], inputs["bboxes"], tags, TOMATO)
 
         return {}
 
 
-def _get_value(data: Dict[str, Any], keys: deque) -> Dict[str, Any]:
+def _get_value(data: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
     if not keys:
         return data
-    key = keys.popleft()
+    key = keys.pop(0)
     return _get_value(data[key], keys)

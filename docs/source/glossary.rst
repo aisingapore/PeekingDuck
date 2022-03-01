@@ -58,11 +58,11 @@ types when working with custom nodes.
 
 .. deprecated:: 1.2.0 |br|
     ``obj_tags`` (:obj:`List[str]`) is deprecated and now subsumed under
-    ``obj_attrs`` (:obj:`Dict[str, List[Any]]`). :mod:`dabble.check_nearby_objs` now accesses
+    ``obj_attrs`` (:obj:`Dict[str, Any]`). :mod:`dabble.check_nearby_objs` now accesses
     this attribute by the ``flags`` key of ``obj_attrs``. :mod:`draw.tag` has been refactored
     for more drawing flexibility by accepting ``obj_attrs`` as input. |br|
 
     ``obj_groups`` (:obj:`List[int]`) is deprecated and now subsumed under 
-    ``obj_attrs`` (:obj:`Dict[str, List[Any]]`). Affected nodes (:mod:`dabble.group_nearby_objs`, 
+    ``obj_attrs`` (:obj:`Dict[str, Any]`). Affected nodes (:mod:`dabble.group_nearby_objs`, 
     :mod:`dabble.check_large_groups`, :mod:`draw.group_bbox_and_tag`) now access this attribute 
     by the ``groups`` key of ``obj_attrs``.
