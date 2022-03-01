@@ -93,6 +93,8 @@ macOS Monterey.
         Finally, one line needs to be added to a Python file in the installed ``torch``
         package.
 
+        **Prerequisites: This section assumes Xcode has already been installed.**
+
         .. admonition:: Terminal Session
 
             | \ :blue:`[~user]` \ > \ :green:`conda install pytorch-cpu` \
