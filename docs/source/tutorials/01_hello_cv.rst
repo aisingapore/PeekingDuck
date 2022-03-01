@@ -126,7 +126,7 @@ To exit, click to select the video window and press ``q``.
         PeekingDuck assumes the webcam is defaulted to input source 0.
         If your system is configured differently, you would have to specify the 
         input source by changing the ``input.live`` configuration.
-        See tutorial on Nodes and Configs.
+        See tutorial on :ref:`Nodes and Configs <nodes_config_intro>`.
 
 
 

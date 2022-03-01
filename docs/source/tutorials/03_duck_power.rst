@@ -174,7 +174,7 @@ This tutorial uses the ``sqlite3`` package to interface with the database.
 
 Line 10 specifies the name of the database file as ``wave.db``.
 
-The node initialiser code in lines 23-35 will establish a connection to the
+The node initializer code in lines 23-35 will establish a connection to the
 database and will create a table called ``wavetable`` if it does not exist.
 This table will be used to store the hand direction and wave count data.
 On first run, this code will also create the ``wave.db`` database file.

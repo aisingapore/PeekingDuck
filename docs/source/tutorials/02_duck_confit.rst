@@ -4,10 +4,6 @@ Duck Confit
 
 .. include:: /include/substitution.rst
 
-.. |W| replace:: :math:`W`
-
-.. |H| replace:: :math:`H`
-
 This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.
 It will also show how to create custom nodes to implement custom user functions.
@@ -101,11 +97,11 @@ To perform object detection on the ``demo video.mp4`` file.  edit the
 
       nodes:
       - input.recorded:
-         input_dir: cat_and_computer.mp4
+          input_dir: cat_and_computer.mp4
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - output.screen
 
 Here is an explanation of what has been done above:
@@ -142,16 +138,16 @@ Edit ``pipeline_config.yml`` as shown below:
 
       nodes:
       - input.recorded:
-         input_dir: cat_and_computer.mp4    # replace this with actual path
+          input_dir: cat_and_computer.mp4    # replace this with actual path
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - dabble.fps                           # line 1: add new dabble node
       - draw.legend                          # line 2: show fps
       - output.screen
       - output.media_writer:                 # line 3: add new output node
-         output_dir: /folder/to/save/video   # line 4: this is a folder name
+          output_dir: /folder/to/save/video   # line 4: this is a folder name
 
 The additions are:
 
@@ -179,7 +175,7 @@ specified folder.
 Bounding Box vs Image Coordinates
 =================================
 
-PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
+PeekingDuck has two coordinate systems, with top-left corner as origin :math:`(0, 0)`:
 
    .. figure:: /assets/tutorials/bbox_image_coords.png
       :alt: Image vs Bounding Box Coordinates
@@ -314,8 +310,8 @@ This will update the ``custom_project`` folder structure to become like this:
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            ├── \ :blue:`configs/` \ |Blank|
-           │   └── \ :blue:`draw/` \ |Blank|
-           │       └── score.yml
+           │   └── \ :blue:`draw/` \ |Blank|
+           │       └── score.yml
            └── \ :blue:`draw/` \ |Blank|
                └── score.py
 
@@ -546,9 +542,9 @@ implement our custom node function.
       - input.recorded:
           input_dir: cat_and_computer.mp4
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - custom_nodes.draw.score
       - output.screen
 
@@ -871,7 +867,7 @@ The number of waves is displayed at the left-top corner of the screen.
 
       nodes:
       - input.recorded:
-         input_dir: wave.mp4
+          input_dir: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps

@@ -36,7 +36,7 @@ MacOS Monterey.
 
     1. Prerequisites:
 
-        - Install [homebrew](https://brew.sh/)
+        - Install `homebrew <https://brew.sh/>`_
         - Install miniforge using homebrew: |br| |br|
 
         .. admonition:: Terminal Session
@@ -51,7 +51,7 @@ MacOS Monterey.
             | \ :blue:`[~user]` \ > \ :green:`conda activate pkd` \
             | \ :blue:`[~user]` \ > \ :green:`conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm` \
 
-    3. Install Apple's Tensorflow build that is optimised for M1 Macs:
+    3. Install Apple's Tensorflow build that is optimized for M1 Macs:
 
         * For MacOS Monterey: |br| |br|
 
