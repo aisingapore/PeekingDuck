@@ -12,7 +12,9 @@ The table below shows the object detection models available for each task catego
 +===============+========================+=================================+
 |               | EfficientDet           | :mod:`model.efficientdet`       |
 +               +------------------------+---------------------------------+
-| General       | YOLOv4                 | :mod:`model.yolo`               |
+|               | YOLOv4                 | :mod:`model.yolo`               |
++               +------------------------+---------------------------------+
+| General       | YOLOX                  | :mod:`model.yolox`              |
 +---------------+------------------------+---------------------------------+
 |               | MTCNN                  | :mod:`model.mtcnn`              |
 +               +------------------------+---------------------------------+

@@ -2,11 +2,8 @@
 Documentation Convention
 ************************
 
-.. role:: red
+.. include:: /include/substitution.rst
 
-.. role:: blue
-
-.. role:: green
 
 .. _documentation_convention:
 

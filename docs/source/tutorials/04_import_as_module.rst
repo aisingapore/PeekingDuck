@@ -2,17 +2,7 @@
 Import PeekingDuck as a Python Module
 *************************************
 
-.. |br| raw:: html
-
-   <br />
-
-.. |Blank| unicode:: U+2800 .. Invisible character
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
+.. include:: /include/substitution.rst
 
 .. warning::
     TODO: Update all links
