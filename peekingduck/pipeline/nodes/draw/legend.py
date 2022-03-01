@@ -71,7 +71,17 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
+        _check_data_type(inputs, self.show)
         if self.show:
             Legend().draw(inputs, self.show, self.position)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
+
+
+def _check_data_type(inputs, show):
+    for item in show:
+        if item not in inputs:
+            raise KeyError(
+                f"{item} was selected for drawing, but is not a valid data type from preceding "
+                f"nodes."
+            )

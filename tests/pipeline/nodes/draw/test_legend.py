@@ -23,14 +23,26 @@ from peekingduck.pipeline.nodes.draw.legend import Node
 
 
 @pytest.fixture
+def draw_legend_no_show():
+    node = Node(
+        {
+            "input": ["all"],
+            "output": ["img"],
+            "show": [],
+            "position": "bottom",
+        }
+    )
+    return node
+
+
+@pytest.fixture
 def draw_legend_bottom():
     node = Node(
         {
             "input": ["all"],
             "output": ["img"],
-            "all_legend_items": ["fps", "count", "zone_count"],
+            "show": ["fps", "count", "zone_count"],
             "position": "bottom",
-            "include": ["all_legend_items"],
         }
     )
     return node
@@ -42,9 +54,8 @@ def draw_legend_top():
         {
             "input": ["all"],
             "output": ["img"],
-            "all_legend_items": ["fps", "count", "zone_count"],
+            "show": ["fps", "count", "zone_count"],
             "position": "top",
-            "include": ["all_legend_items"],
         }
     )
     return node
@@ -56,21 +67,22 @@ def draw_legend_fps_only():
         {
             "input": ["all"],
             "output": ["img"],
-            "all_legend_items": ["fps", "count", "zone_count"],
+            "show": ["fps", "count", "zone_count"],
             "position": "top",
-            "include": ["fps"],
         }
     )
     return node
 
 
 class TestLegend:
-    def test_no_relevant_inputs(self, draw_legend_bottom, create_image):
+    def test_no_relevant_inputs(self, draw_legend_no_show, create_image):
         original_img = create_image((28, 28, 3))
-        input1 = {"img": original_img}
-        expected_output = {}
-        results = draw_legend_bottom.run(input1)
-        assert results == expected_output
+        output_img = original_img.copy()
+        input1 = {"img": output_img}
+        results = draw_legend_no_show.run(input1)
+        np.testing.assert_raises(
+            AssertionError, np.testing.assert_equal, original_img, results["img"]
+        )
 
     # formula: processed image = contrast * image + brightness
     def test_draw_legend_bottom_and_top(
@@ -99,8 +111,9 @@ class TestLegend:
             "img": output_img,
             "fps": 50.5,
         }
-        results = draw_legend_fps_only.run(input1)
-
-        np.testing.assert_raises(
-            AssertionError, np.testing.assert_equal, original_img, results["img"]
+        with pytest.raises(KeyError) as excinfo:
+            draw_legend_fps_only.run(input1)
+        assert (
+            str(excinfo.value)
+            == "'count was selected for drawing, but is not a valid data type from preceding nodes.'"
         )

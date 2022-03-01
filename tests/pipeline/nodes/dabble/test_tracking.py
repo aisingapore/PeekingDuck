@@ -42,7 +42,7 @@ def tracking_config():
     return {
         "root": Path.cwd(),
         "input": ["img", "bboxes"],
-        "output": ["obj_tags"],
+        "output": ["obj_attrs"],
         "iou_threshold": 0.1,
         "max_lost": 10,
     }
@@ -81,7 +81,7 @@ class TestTracking:
         inputs = {"img": img1, "bboxes": np.empty((0, 4), dtype=np.float32)}
         outputs = tracker.run(inputs)
 
-        assert not outputs["obj_tags"]
+        assert not outputs["obj_attrs"]["ids"]
 
     def test_tracking_ids_should_be_consistent_across_frames(
         self, tracker, test_human_video_sequences
@@ -90,10 +90,11 @@ class TestTracking:
         prev_tags = []
         for i, inputs in enumerate(detections):
             outputs = tracker.run(inputs)
-            assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+            print(i, prev_tags, outputs["obj_attrs"]["ids"])
+            assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
             if i > 0:
-                assert outputs["obj_tags"] == prev_tags
-            prev_tags = outputs["obj_tags"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags
+            prev_tags = outputs["obj_attrs"]["ids"]
 
     def test_should_track_new_detection(self, tracker, test_human_video_sequences):
         _, detections = test_human_video_sequences
@@ -104,16 +105,16 @@ class TestTracking:
         prev_tags = []
         for i, inputs in enumerate(detections):
             outputs = tracker.run(inputs)
-            assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+            assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
             # Special handling of comparing tag during and right after
             # seq_idx since a detection got added and removed
             if i == SEQ_IDX:
-                assert outputs["obj_tags"] == prev_tags + ["2"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags + [2]
             elif i == SEQ_IDX + 1:
-                assert outputs["obj_tags"] == prev_tags[:-1]
+                assert outputs["obj_attrs"]["ids"] == prev_tags[:-1]
             elif i > 0:
-                assert outputs["obj_tags"] == prev_tags
-            prev_tags = outputs["obj_tags"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags
+            prev_tags = outputs["obj_attrs"]["ids"]
 
     def test_should_remove_lost_tracks(
         self, tracking_config, test_human_video_sequences
@@ -139,19 +140,19 @@ class TestTracking:
                     tracker.tracker.tracker.max_lost + 1
                 )
             outputs = tracker.run(inputs)
-            assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+            assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
             # This happens to be true for the test case, not a guaranteed
             # behaviour during normal operation.
             assert len(tracker.tracker.tracker.tracks) == len(inputs["bboxes"])
             # Special handling of comparing tag during and right after
             # seq_idx since a detection got added and removed
             if i == SEQ_IDX:
-                assert outputs["obj_tags"] == prev_tags + ["2"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags + [2]
             elif i == SEQ_IDX + 1:
-                assert outputs["obj_tags"] == prev_tags[:-1]
+                assert outputs["obj_attrs"]["ids"] == prev_tags[:-1]
             elif i > 0:
-                assert outputs["obj_tags"] == prev_tags
-            prev_tags = outputs["obj_tags"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags
+            prev_tags = outputs["obj_attrs"]["ids"]
 
     def test_should_remove_update_failures(
         self, tracking_config, test_human_video_sequences
@@ -180,19 +181,19 @@ class TestTracking:
             # Set the track which doesn't have a detection to be "lost"
             # by setting `lost > max_lost`
             outputs = tracker.run(inputs)
-            assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+            assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
             # This happens to be true for the test case, not a guaranteed
             # behaviour during normal operation.
             assert len(tracker.tracker.tracker.tracks) == len(inputs["bboxes"])
             # Special handling of comparing tag during and right after
             # seq_idx since a detection got added and removed
             if i == SEQ_IDX:
-                assert outputs["obj_tags"] == prev_tags + ["2"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags + [2]
             elif i == SEQ_IDX + 1:
-                assert outputs["obj_tags"] == prev_tags[:-1]
+                assert outputs["obj_attrs"]["ids"] == prev_tags[:-1]
             elif i > 0:
-                assert outputs["obj_tags"] == prev_tags
-            prev_tags = outputs["obj_tags"]
+                assert outputs["obj_attrs"]["ids"] == prev_tags
+            prev_tags = outputs["obj_attrs"]["ids"]
 
     def test_reset_model(self, tracker, test_human_video_sequences):
         mot_metadata = {"reset_model": True}
@@ -207,11 +208,11 @@ class TestTracking:
                 if i == 0:
                     inputs["mot_metadata"] = mot_metadata
                 outputs = tracker.run(inputs)
-                assert len(outputs["obj_tags"]) == len(inputs["bboxes"])
+                assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
                 if i == 0:
                     assert captured.records[0].getMessage() == (
                         f"Creating new {tracker.tracking_type} tracker..."
                     )
                 if i > 0:
-                    assert outputs["obj_tags"] == prev_tags
-                prev_tags = outputs["obj_tags"]
+                    assert outputs["obj_attrs"]["ids"] == prev_tags
+                prev_tags = outputs["obj_attrs"]["ids"]

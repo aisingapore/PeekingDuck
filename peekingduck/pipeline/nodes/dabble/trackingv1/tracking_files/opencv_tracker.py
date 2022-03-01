@@ -96,8 +96,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             (List[int]): A list of track IDs for the detections in the current
                 frame.
         """
-        obj_track_ids = [-1] * len(bboxes)  # temporary fix for linting
-
         prev_tracked_bboxes = [track.bbox for _, track in self.tracks.items()]
         matching_dict = {}
 
@@ -115,13 +113,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             else:
                 track_ids.append(list(self.tracks)[matched_id])
 
-        for i, track_id in enumerate(track_ids):
-            if track_id not in obj_track_ids:
-                obj_track_ids[i] = track_id
-
-        print(obj_track_ids)
-
-        return obj_track_ids
+        return track_ids
 
     def _update_tracker_bboxes(self, frame: np.ndarray) -> None:
         """Updates location of previously tracked detections in subsequent
