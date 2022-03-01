@@ -260,127 +260,139 @@ implement our custom node function.
 
 #. **src/custom_nodes/draw/score.py** (default content):
 
-   .. code-block:: python
-      :linenos:
+   .. container:: toggle
 
-      """
-      Node template for creating custom nodes.
-      """
+      .. container:: header
 
-      from typing import Any, Dict
+         **Show/Hide Code**
 
-      from peekingduck.pipeline.nodes.node import AbstractNode
-
-
-      class Node(AbstractNode):
-         """This is a template class of how to write a node for PeekingDuck.
-
-         Args:
-            config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+      .. code-block:: python
+         :linenos:
+   
          """
-
-         def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-            super().__init__(config, node_path=__name__, **kwargs)
-
-            # initialize/load any configs and models here
-            # configs can be called by self.<config_name> e.g. self.filepath
-            # self.logger.info(f"model loaded with configs: config")
-
-         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            """This node does ___.
-
+         Node template for creating custom nodes.
+         """
+   
+         from typing import Any, Dict
+   
+         from peekingduck.pipeline.nodes.node import AbstractNode
+   
+   
+         class Node(AbstractNode):
+            """This is a template class of how to write a node for PeekingDuck.
+   
             Args:
-                  inputs (dict): Dictionary with keys "__", "__".
-
-            Returns:
-                  outputs (dict): Dictionary with keys "__".
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
             """
-
-            # result = do_something(inputs["in1"], inputs["in2"])
-            # outputs = {"out1": result}
-            # return outputs
+   
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+   
+               # initialize/load any configs and models here
+               # configs can be called by self.<config_name> e.g. self.filepath
+               # self.logger.info(f"model loaded with configs: config")
+   
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """This node does ___.
+   
+               Args:
+                     inputs (dict): Dictionary with keys "__", "__".
+   
+               Returns:
+                     outputs (dict): Dictionary with keys "__".
+               """
+   
+               # result = do_something(inputs["in1"], inputs["in2"])
+               # outputs = {"out1": result}
+               # return outputs
 
    The second file ``score.py`` contains the boilerplate code for creating a
    custom node. Update the code to implement the desired behavior for the node.
 
    We will show the modified ``score.py`` below and explain what has been done:
 
-   .. code-block:: python
-      :linenos:
+   .. container:: toggle
 
-      """
-      Custom node to show object detection scores
-      """
+      .. container:: header
 
-      from typing import Any, Dict, List, Tuple
-      import cv2
-      from peekingduck.pipeline.nodes.node import AbstractNode
+         **Show/Hide Code**
 
-      YELLOW = (0, 255, 255)  # opencv loads file in BGR format
-
-
-      def map_bbox_to_image_coords(
-         bbox: List[float], image_size: Tuple[int, int]
-      ) -> List[int]:
-         """Convert relative bounding box coords to absolute image coords.
-         Bounding box coords ranges from 0 to 1
-         where (0, 0) = image top-left, (1, 1) = image bottom-right.
-
-         Args:
-            bbox (List[float]): List of 4 floats x1, y1, x2, y2
-            image_size (Tuple[int, int]): Width, Height of image
-
-         Returns:
-            List[int]: x1, y1, x2, y2 in integer image coords
+      .. code-block:: python
+         :linenos:
+   
          """
-         width, height = image_size[0], image_size[1]
-         x1, y1, x2, y2 = bbox
-         x1 *= width
-         x2 *= width
-         y1 *= height
-         y2 *= height
-         return int(x1), int(y1), int(x2), int(y2)
-
-
-      class Node(AbstractNode):
-         """This is a template class of how to write a node for PeekingDuck.
-
-         Args:
-            config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+         Custom node to show object detection scores
          """
-
-         def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-            super().__init__(config, node_path=__name__, **kwargs)
-
-         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            """This node draws scores on objects detected
-
+   
+         from typing import Any, Dict, List, Tuple
+         import cv2
+         from peekingduck.pipeline.nodes.node import AbstractNode
+   
+         YELLOW = (0, 255, 255)  # opencv loads file in BGR format
+   
+   
+         def map_bbox_to_image_coords(
+            bbox: List[float], image_size: Tuple[int, int]
+         ) -> List[int]:
+            """Convert relative bounding box coords to absolute image coords.
+            Bounding box coords ranges from 0 to 1
+            where (0, 0) = image top-left, (1, 1) = image bottom-right.
+   
             Args:
-                  inputs (dict): Dictionary with keys "img", "bboxes", "bbox_scores"
-
+               bbox (List[float]): List of 4 floats x1, y1, x2, y2
+               image_size (Tuple[int, int]): Width, Height of image
+   
             Returns:
-                  outputs (dict): Empty dictionary
+               List[int]: x1, y1, x2, y2 in integer image coords
             """
-            img = inputs["img"]
-            bboxes = inputs["bboxes"]
-            scores = inputs["bbox_scores"]
-            img_size = (img.shape[1], img.shape[0])  # width, height
-
-            for i, bbox in enumerate(bboxes):
-                  x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
-                  score = scores[i]
-                  score_str = f"{score:0.2f}"
-                  cv2.putText(
-                     img=img,
-                     text=score_str,
-                     org=(x1, y2),
-                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                     fontScale=1.0,
-                     color=YELLOW,
-                     thickness=3,
-                  )
-
-            return {}
+            width, height = image_size[0], image_size[1]
+            x1, y1, x2, y2 = bbox
+            x1 *= width
+            x2 *= width
+            y1 *= height
+            y2 *= height
+            return int(x1), int(y1), int(x2), int(y2)
+   
+   
+         class Node(AbstractNode):
+            """This is a template class of how to write a node for PeekingDuck.
+   
+            Args:
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+            """
+   
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+   
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """This node draws scores on objects detected
+   
+               Args:
+                     inputs (dict): Dictionary with keys "img", "bboxes", "bbox_scores"
+   
+               Returns:
+                     outputs (dict): Empty dictionary
+               """
+               img = inputs["img"]
+               bboxes = inputs["bboxes"]
+               scores = inputs["bbox_scores"]
+               img_size = (img.shape[1], img.shape[0])  # width, height
+   
+               for i, bbox in enumerate(bboxes):
+                     x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
+                     score = scores[i]
+                     score_str = f"{score:0.2f}"
+                     cv2.putText(
+                        img=img,
+                        text=score_str,
+                        org=(x1, y2),
+                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                        fontScale=1.0,
+                        color=YELLOW,
+                        thickness=3,
+                     )
+   
+               return {}
 
    Line 6 imports the `opencv <https://opencv.org>`_ library which we will use
    to display the score. ``opencv`` would have been installed alongside
@@ -521,7 +533,7 @@ following folder structure:
 To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 ``pipeline_config.yml`` are to be edited as follows:
 
-1. **src/custom_nodes/configs/dabble/wave.yml**:
+#. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -536,223 +548,229 @@ We will implement this tutorial using a ``dabble`` node, which will take the
 inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, and ``keypoint_scores`` 
 from the pipeline. The node has no output.
 
-2. **src/custom_nodes/dabble/wave.py**:
+#. **src/custom_nodes/dabble/wave.py**:
 
-   .. code-block:: python
-      :linenos:
+   .. container:: toggle
 
-      """
-      Custom node to show keypoints and count the number of times the person's hand is waved
-      """
+      .. container:: header
 
-      from typing import Any, Dict, List, Tuple
-      import cv2
-      from peekingduck.pipeline.nodes.node import AbstractNode
+         **Show/Hide Code**
 
-      FONT = cv2.FONT_HERSHEY_SIMPLEX
-      WHITE = (255, 255, 255)  # opencv loads file in BGR format
-      YELLOW = (0, 255, 255)
-      THRESHOLD = 0.6  # ignore keypoints below this threshold
-
-
-      def map_bbox_to_image_coords(
-         bbox: List[float], image_size: Tuple[int, int]
-      ) -> List[int]:
-         """Convert relative bounding box coords to absolute image coords.
-         Bounding box coords ranges from 0 to 1
-         where (0, 0) = image top-left, (1, 1) = image bottom-right.
-
-         Args:
-            bbox (List[float]): List of 4 floats x1, y1, x2, y2
-            image_size (Tuple[int, int]): Width, Height of image
-
-         Returns:
-            List[int]: x1, y1, x2, y2 in integer image coords
+      .. code-block:: python
+         :linenos:
+   
          """
-         width, height = image_size[0], image_size[1]
-         x1, y1, x2, y2 = bbox
-         x1 *= width
-         x2 *= width
-         y1 *= height
-         y2 *= height
-         return int(x1), int(y1), int(x2), int(y2)
-
-
-      def map_keypoint_to_image_coords(
-         keypoint: List[float], image_size: Tuple[int, int]
-      ) -> List[int]:
-         """Convert relative keypoint coords to absolute image coords.
-         Keypoint coords ranges from 0 to 1
-         where (0, 0) = image top-left, (1, 1) = image bottom-right.
-
-         Args:
-            bbox (List[float]): List of 2 floats x, y (relative)
-            image_size (Tuple[int, int]): Width, Height of image
-
-         Returns:
-            List[int]: x, y in integer image coords
+         Custom node to show keypoints and count the number of times the person's hand is waved
          """
-         width, height = image_size[0], image_size[1]
-         x, y = keypoint
-         x *= width
-         y *= height
-         return int(x), int(y)
-
-
-      def draw_text(img, x, y, text_str: str, color_code):
-         cv2.putText(
-            img=img,
-            text=text_str,
-            org=(x, y),
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=0.4,
-            color=color_code,
-            thickness=2,
-         )
-
-
-      class Node(AbstractNode):
-         """Custom node to display keypoints and count number of hand waves
-
-         Args:
-            config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
-         """
-
-         def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-            super().__init__(config, node_path=__name__, **kwargs)
-            self.right_wrist = None
-            self.direction = None
-            self.num_direction_changes = 0
-            self.num_waves = 0
-
-         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            """This node draws keypoints and count hand waves.
-
+   
+         from typing import Any, Dict, List, Tuple
+         import cv2
+         from peekingduck.pipeline.nodes.node import AbstractNode
+   
+         FONT = cv2.FONT_HERSHEY_SIMPLEX
+         WHITE = (255, 255, 255)  # opencv loads file in BGR format
+         YELLOW = (0, 255, 255)
+         THRESHOLD = 0.6  # ignore keypoints below this threshold
+   
+   
+         def map_bbox_to_image_coords(
+            bbox: List[float], image_size: Tuple[int, int]
+         ) -> List[int]:
+            """Convert relative bounding box coords to absolute image coords.
+            Bounding box coords ranges from 0 to 1
+            where (0, 0) = image top-left, (1, 1) = image bottom-right.
+   
             Args:
-                  inputs (dict): Dictionary with keys
-                     "img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores".
-
+               bbox (List[float]): List of 4 floats x1, y1, x2, y2
+               image_size (Tuple[int, int]): Width, Height of image
+   
             Returns:
-                  outputs (dict): Empty dictionary.
+               List[int]: x1, y1, x2, y2 in integer image coords
             """
-
-            img = inputs["img"]
-            bboxes = inputs["bboxes"]
-            bbox_scores = inputs["bbox_scores"]
-            keypoints = inputs["keypoints"]
-            keypoint_scores = inputs["keypoint_scores"]
-
-            img_size = (img.shape[1], img.shape[0])  # image width, height
-
-            # bounding box confidence score
-            the_bbox = bboxes[0]  # image only has one person
-            the_bbox_score = bbox_scores[0]  # only one set of scores
-
-            x1, y1, x2, y2 = map_bbox_to_image_coords(the_bbox, img_size)
-            score_str = f"BBox {the_bbox_score:0.2f}"
+            width, height = image_size[0], image_size[1]
+            x1, y1, x2, y2 = bbox
+            x1 *= width
+            x2 *= width
+            y1 *= height
+            y2 *= height
+            return int(x1), int(y1), int(x2), int(y2)
+   
+   
+         def map_keypoint_to_image_coords(
+            keypoint: List[float], image_size: Tuple[int, int]
+         ) -> List[int]:
+            """Convert relative keypoint coords to absolute image coords.
+            Keypoint coords ranges from 0 to 1
+            where (0, 0) = image top-left, (1, 1) = image bottom-right.
+   
+            Args:
+               bbox (List[float]): List of 2 floats x, y (relative)
+               image_size (Tuple[int, int]): Width, Height of image
+   
+            Returns:
+               List[int]: x, y in integer image coords
+            """
+            width, height = image_size[0], image_size[1]
+            x, y = keypoint
+            x *= width
+            y *= height
+            return int(x), int(y)
+   
+   
+         def draw_text(img, x, y, text_str: str, color_code):
             cv2.putText(
-                  img=img,
-                  text=score_str,
-                  org=(x1, y2 - 30),
-                  fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                  fontScale=1.0,
-                  color=WHITE,
-                  thickness=3,
+               img=img,
+               text=text_str,
+               org=(x, y),
+               fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+               fontScale=0.4,
+               color=color_code,
+               thickness=2,
             )
-
-            # hand wave detection
-            the_keypoints = keypoints[0]  # image only has one person
-            the_keypoint_scores = keypoint_scores[0]  # only one set of scores
-            right_wrist = None
-            right_shoulder = None
-
-            for i, keypoints in enumerate(the_keypoints):
-                  keypoint_score = the_keypoint_scores[i]
-
-                  if keypoint_score >= THRESHOLD:
-                     x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
-                     x_y_str = f"({x}, {y})"
-
-                     if 6 == i:     # right shoulder
-                        right_shoulder = keypoints
-                        the_color = YELLOW
-                     elif i == 10:  # right wrist
-                        right_wrist = keypoints
-                        the_color = YELLOW
-                     else:          # generic keypoint
-                        the_color = WHITE
-
-                     draw_text(img, x, y, x_y_str, the_color)
-
-            if right_wrist is not None and right_shoulder is not None:
-                  if self.right_wrist is None:
-                     self.right_wrist = right_wrist  # first wrist data point
-                  else:
-                     # wait for wrist to be above shoulder to count hand wave
-                     if right_wrist[1] > right_shoulder[1]:
-                        pass
+   
+   
+         class Node(AbstractNode):
+            """Custom node to display keypoints and count number of hand waves
+   
+            Args:
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+            """
+   
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+               self.right_wrist = None
+               self.direction = None
+               self.num_direction_changes = 0
+               self.num_waves = 0
+   
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """This node draws keypoints and count hand waves.
+   
+               Args:
+                     inputs (dict): Dictionary with keys
+                        "img", "bboxes", "bbox_scores", "keypoints", "keypoint_scores".
+   
+               Returns:
+                     outputs (dict): Empty dictionary.
+               """
+   
+               img = inputs["img"]
+               bboxes = inputs["bboxes"]
+               bbox_scores = inputs["bbox_scores"]
+               keypoints = inputs["keypoints"]
+               keypoint_scores = inputs["keypoint_scores"]
+   
+               img_size = (img.shape[1], img.shape[0])  # image width, height
+   
+               # bounding box confidence score
+               the_bbox = bboxes[0]  # image only has one person
+               the_bbox_score = bbox_scores[0]  # only one set of scores
+   
+               x1, y1, x2, y2 = map_bbox_to_image_coords(the_bbox, img_size)
+               score_str = f"BBox {the_bbox_score:0.2f}"
+               cv2.putText(
+                     img=img,
+                     text=score_str,
+                     org=(x1, y2 - 30),
+                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                     fontScale=1.0,
+                     color=WHITE,
+                     thickness=3,
+               )
+   
+               # hand wave detection
+               the_keypoints = keypoints[0]  # image only has one person
+               the_keypoint_scores = keypoint_scores[0]  # only one set of scores
+               right_wrist = None
+               right_shoulder = None
+   
+               for i, keypoints in enumerate(the_keypoints):
+                     keypoint_score = the_keypoint_scores[i]
+   
+                     if keypoint_score >= THRESHOLD:
+                        x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
+                        x_y_str = f"({x}, {y})"
+   
+                        if 6 == i:     # right shoulder
+                           right_shoulder = keypoints
+                           the_color = YELLOW
+                        elif i == 10:  # right wrist
+                           right_wrist = keypoints
+                           the_color = YELLOW
+                        else:          # generic keypoint
+                           the_color = WHITE
+   
+                        draw_text(img, x, y, x_y_str, the_color)
+   
+               if right_wrist is not None and right_shoulder is not None:
+                     if self.right_wrist is None:
+                        self.right_wrist = right_wrist  # first wrist data point
                      else:
-                        if right_wrist[0] < self.right_wrist[0]:
-                              direction = "left"
+                        # wait for wrist to be above shoulder to count hand wave
+                        if right_wrist[1] > right_shoulder[1]:
+                           pass
                         else:
-                              direction = "right"
+                           if right_wrist[0] < self.right_wrist[0]:
+                                 direction = "left"
+                           else:
+                                 direction = "right"
+   
+                           if self.direction is None:
+                                 self.direction = direction  # first direction data point
+                           else:
+                                 # check if hand changes direction
+                                 if direction != self.direction:
+                                    self.num_direction_changes += 1
+                                 # every three hand direction changes == one wave
+                                 if self.num_direction_changes >= 2:
+                                    self.num_waves += 1
+                                    self.num_direction_changes = 0  # reset direction count
+   
+                           self.right_wrist = right_wrist  # save last position
+                           self.direction = direction
+   
+                     wave_str = f"#waves = {self.num_waves}"
+                     draw_text(img, 20, 30, wave_str, YELLOW)
+   
+               return {}
 
-                        if self.direction is None:
-                              self.direction = direction  # first direction data point
-                        else:
-                              # check if hand changes direction
-                              if direction != self.direction:
-                                 self.num_direction_changes += 1
-                              # every three hand direction changes == one wave
-                              if self.num_direction_changes >= 2:
-                                 self.num_waves += 1
-                                 self.num_direction_changes = 0  # reset direction count
+   This long piece of code implements our custom ``dabble`` node. As can be seen, 
+   this ``dabble.wave`` code structure is very similar to the other custom 
+   node tutorial ``draw.score`` code structure.
+   
+   Line 6 imports the ``opencv`` library which we will use for drawing onto the 
+   image.
+   
+   Line 7 imports the PeekingDuck's ``AbstractNode`` class which is required for 
+   all custom node implementation.
+   
+   Lines 9-12 set up some working global constants.
+   
+   Lines 15-35 define a helper function ``map_bbox_to_image_coords`` to convert 
+   relative bounding box coordinates to absolute image coordinates.
+   
+   Lines 38-56 define a second helper function ``map_keypoint_to_image_coords`` to 
+   convert relative keypoint coordinates to absolute image coordinates.
+   
+   Lines 59-68 define another helper function ``draw_text`` to call the ``opencv`` 
+   drawing function to improve code readability.
+   
+   Line 71 onwards implements the custom ``dabble`` node logic.
+   
+   Lines 96-100 get the required inputs from the pipeline.
+   
+   Lines 105-118 get the bounding box confidence score and draw it at the
+   left-bottom (x1, y2) corner of the bounding box.
+   
+   Lines 121-172 implement a simple heuristic to count the number of times the 
+   person waves his hand. It tracks the direction the right wrist is moving in and 
+   notes when the wrist changes direction. Upon encountering two direction changes, 
+   e.g., left -> right -> left, one wave is counted.
+   The heuristic also waits until the right wrist has been lifted above the right 
+   should before it starts tracking hand direction and counting waves.
+   The number of waves is displayed at the left-top corner of the screen.
 
-                        self.right_wrist = right_wrist  # save last position
-                        self.direction = direction
-
-                  wave_str = f"#waves = {self.num_waves}"
-                  draw_text(img, 20, 30, wave_str, YELLOW)
-
-            return {}
-
-This long piece of code implements our custom ``dabble`` node. As can be seen, 
-this ``dabble.wave`` code structure is very similar to the other custom 
-node tutorial ``draw.score`` code structure.
-
-Line 6 imports the ``opencv`` library which we will use for drawing onto the 
-image.
-
-Line 7 imports the PeekingDuck's ``AbstractNode`` class which is required for 
-all custom node implementation.
-
-Lines 9-12 set up some working global constants.
-
-Lines 15-35 define a helper function ``map_bbox_to_image_coords`` to convert 
-relative bounding box coordinates to absolute image coordinates.
-
-Lines 38-56 define a second helper function ``map_keypoint_to_image_coords`` to 
-convert relative keypoint coordinates to absolute image coordinates.
-
-Lines 59-68 define another helper function ``draw_text`` to call the ``opencv`` 
-drawing function to improve code readability.
-
-Line 71 onwards implements the custom ``dabble`` node logic.
-
-Lines 96-100 get the required inputs from the pipeline.
-
-Lines 105-118 get the bounding box confidence score and draw it at the
-left-bottom (x1, y2) corner of the bounding box.
-
-Lines 121-172 implement a simple heuristic to count the number of times the 
-person waves his hand. It tracks the direction the right wrist is moving in and 
-notes when the wrist changes direction. Upon encountering two direction changes, 
-e.g., left -> right -> left, one wave is counted.
-The heuristic also waits until the right wrist has been lifted above the right 
-should before it starts tracking hand direction and counting waves.
-The number of waves is displayed at the left-top corner of the screen.
-
-3. **pipeline_config.yml**:
+#. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -768,8 +786,8 @@ The number of waves is displayed at the left-top corner of the screen.
       - draw.legend
       - output.screen
 
-We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
-models to obtain the required inputs for our custom ``dabble`` node.
+   We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
+   models to obtain the required inputs for our custom ``dabble`` node.
 
 Execute ``peekingduck run`` to see your custom node in action.
 
