@@ -2,19 +2,7 @@
 "Hello Computer Vision"
 ***********************
 
-.. |br| raw:: html
-
-   <br />
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
-
-.. |Blank| unicode:: U+2800 .. Invisible character
-
-.. |Enter| unicode:: U+23CE .. Unicode Enter Key Symbol
+.. include:: 00_include.rst
 
 Computer Vision (or CV) is a field in AI that develops techniques to help
 computers to "see" and "understand" the contents of digital images like

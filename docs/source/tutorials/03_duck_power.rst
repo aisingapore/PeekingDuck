@@ -2,20 +2,7 @@
 Power Duck
 **********
 
-.. |br| raw:: html
-
-   <br />
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
-
-.. |Blank| unicode:: U+2800 .. Invisible character
-
-.. |nbsp| unicode:: U+00A0 .. Non-breaking space
-   :trim:
+.. include:: 00_include.rst
 
 This section illustrates advanced power features such as object tracking
 and the "power" nodes: ``dabble.statistics``, ``draw.legend``.

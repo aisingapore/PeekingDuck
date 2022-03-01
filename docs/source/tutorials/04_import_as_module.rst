@@ -2,17 +2,7 @@
 Import PeekingDuck as a Python Module
 *************************************
 
-.. |br| raw:: html
-
-   <br />
-
-.. |Blank| unicode:: U+2800 .. Invisible character
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
+.. include:: 00_include.rst
 
 .. warning::
     TODO: Update all links
@@ -39,7 +29,7 @@ Create a PeekingDuck project using:
 
     | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
     | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck init` \
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
 Then, download the `demo video <link>`_ to the ``pkd_project`` folder and create a Python script
 ``demo_debug.py`` in the same folder.
@@ -61,7 +51,7 @@ Run the following to create a ``dabble`` node for debugging:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
 The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
 shown:
@@ -191,16 +181,16 @@ Run the ``demo_debug.py`` script using:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]/pkd_project` \ > \ :green:`python demo_debug.py` \
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`python demo_debug.py` \
 
 You should the following output in your terminal:
 
 .. code-block:: text
     :linenos:
 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': [~user]/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/computers_800.mp4 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: [~user]/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/computers_800.mp4 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
         Model type: v4tiny, 
@@ -212,8 +202,8 @@ You should the following output in your terminal:
         Score threshold: 0.2 
     2022-02-24 16:33:07 peekingduck.pipeline.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
     2022-02-24 16:33:07 peekingduck.pipeline.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': [~user]/pkd_project/results 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: [~user]/pkd_project/results 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': ~user/pkd_project/results 
+    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: ~user/pkd_project/results 
     0 [0.90861976]
     1 [0.9082737]
     2 [0.90818006]
@@ -278,7 +268,7 @@ Run the following command after installing:
 
     | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
     | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-    | \ :blue:`[~user]/pkd_project` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
 You should have the following directory structure at this point:
 

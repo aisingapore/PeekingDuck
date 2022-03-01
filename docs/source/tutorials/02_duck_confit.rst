@@ -2,20 +2,7 @@
 Duck Confit
 ***********
 
-.. |br| raw:: html
-
-   <br />
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
-
-.. |Blank| unicode:: U+2800 .. Invisible character
-
-.. |nbsp| unicode:: U+00A0 .. Non-breaking space
-   :trim:
+.. include:: 00_include.rst
 
 This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.

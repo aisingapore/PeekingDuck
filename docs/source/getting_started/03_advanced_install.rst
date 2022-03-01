@@ -88,8 +88,8 @@ MacOS Monterey.
 
             | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
             | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-            | \ :blue:`[~user/pkd_project`] \ > \ :green:`peekingduck init` \
-            | \ :blue:`[~user/pkd_project`] \ > \ :green:`peekingduck run` \
+            | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+            | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
 
     6. **``Todo`` Install PyTorch and TorchVision for torch models**:
 
@@ -112,4 +112,4 @@ You can try out the development version of PeekingDuck direct from the
     .. admonition:: Terminal Session
 
         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
-        | \ :blue:`[~user/PeekingDuck`] \ > \ :green:`python __main__.py` \
+        | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python __main__.py` \
