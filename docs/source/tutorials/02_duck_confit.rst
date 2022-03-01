@@ -9,7 +9,6 @@ pipelines by modifying the nodes and their configs.
 It will also show how to create custom nodes to implement custom user functions.
 
 
-
 .. _tutorial_configure_nodes:
 
 More Object Detection
@@ -34,25 +33,25 @@ The folder should contain the following:
 
 .. parsed-literal::
 
-   \ :blue:`pkd_project` \ |Blank|
+   \ :blue:`pkd_project/` \ |Blank|
    ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
    └── cat_and_computer.mp4
 
 To perform object detection on the ``demo video.mp4`` file.  edit the
-``run_config.yml`` file as follows:
+``pipeline_config.yml`` file as follows:
 
-   .. code-block:: yaml
-      :linenos:
+.. code-block:: yaml
+   :linenos:
 
-      nodes:
-      - input.recorded:
-          input_dir: cat_and_computer.mp4
-      - model.yolo:
-          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
-      - draw.bbox:
-          show_labels: True
-      - output.screen
+   nodes:
+   - input.recorded:
+       input_dir: cat_and_computer.mp4
+   - model.yolo:
+       detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+   - draw.bbox:
+       show_labels: True
+   - output.screen
 
 Here is an explanation of what has been done above:
 
@@ -62,9 +61,10 @@ Here is an explanation of what has been done above:
    |        So we have to change the model settings to detect the other object classes.
    | Line 6 ``draw.bbox``: reconfigure this node to display the detected object class label.
 
-   .. note::
-      The Yolo model can detect 80 different :ref:`object classes
-      <general-object-detection-ids>`.
+.. note::
+
+   The Yolo model can detect 80 different :ref:`object classes
+   <general-object-detection-ids>`.
 
 Run the above with the command ``peekingduck run``. |br|
 You should see a display of the ``cat_and_computer.mp4`` with the various objects being
@@ -83,21 +83,21 @@ frames per second (FPS) and to show the FPS.
 
 Edit ``pipeline_config.yml`` as shown below:
 
-   .. code-block:: yaml
-      :linenos:
+.. code-block:: yaml
+   :linenos:
 
-      nodes:
-      - input.recorded:
-          input_dir: cat_and_computer.mp4    # replace this with actual path
-      - model.yolo:
-          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
-      - draw.bbox:
-          show_labels: True
-      - dabble.fps                           # line 1: add new dabble node
-      - draw.legend                          # line 2: show fps
-      - output.screen
-      - output.media_writer:                 # line 3: add new output node
-          output_dir: /folder/to/save/video   # line 4: this is a folder name
+   nodes:
+   - input.recorded:
+       input_dir: cat_and_computer.mp4
+   - model.yolo:
+       detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+   - draw.bbox:
+       show_labels: True
+   - dabble.fps                           # add new dabble node
+   - draw.legend                          # show fps
+   - output.screen
+   - output.media_writer:                 # add new output node
+       output_dir: /folder/to/save/video  # this is a folder name
 
 The additions are:
 
@@ -113,13 +113,10 @@ You will see the same video being played, but now it has the FPS counter.
 When the video ends, an ``mp4`` video file will be created and saved in the
 specified folder.
 
+.. note::
 
-   .. note::
-      You can view all the available nodes and their respective configurable
-      settings in PeekingDuck's :ref:`API documentation <api_doc>`.
-
-
-
+   You can view all the available nodes and their respective configurable
+   settings in PeekingDuck's :ref:`API documentation <api_doc>`.
 
 
 .. _tutorial_custom_nodes:
@@ -145,7 +142,6 @@ Let's start by creating a new PeekingDuck project:
    | \ :blue:`[~user]` \ > \ :green:`cd custom_project` \ 
    | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` \ 
 
-
 This creates the following ``custom_project`` folder structure:
 
 .. parsed-literal::
@@ -155,7 +151,6 @@ This creates the following ``custom_project`` folder structure:
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            └── \ :blue:`configs/` \ |Blank|
-
 
 The sub-folders ``src``, ``custom_nodes``, and ``configs`` are empty: they serve 
 as placeholders for contents to be added.
@@ -178,19 +173,18 @@ We will create a custom node to retrieve this score and display it on screen.
 Use the following command to create a custom node: ``peekingduck create-node``
 
 It will prompt you to answer several questions.
-Press ``<enter>`` to accept the default ``custom_nodes`` folder name, then enter 
+Press ``<Enter>`` to accept the default ``custom_nodes`` folder name, then enter 
 ``draw`` for node type and ``score`` for node name.
-Finally, press ``<enter>`` to answer ``Y`` when asked to proceed.
+Finally, press ``<Enter>`` to answer ``Y`` when asked to proceed.
 
 The entire interaction is shown here, the answers you type are in shown in 
 :green:`green text`:
-
 
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
-   | Enter node directory relative to ~user/custom_project [src/custom_nodes]: ⏎
+   | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
    | Select node type (input, model, draw, dabble, output): \ :green:`draw` \
    | Enter node name [my_custom_node]: \ :green:`score` \
    | 
@@ -201,9 +195,8 @@ The entire interaction is shown here, the answers you type are in shown in
    | Creating the following files:
    |    Config file: ~user/custom_project/src/custom_nodes/configs/draw/score.yml
    |    Script file: ~user/custom_project/src/custom_nodes/draw/score.py
-   | Proceed? [Y/n]: ⏎
+   | Proceed? [Y/n]: \ :green:`⏎` \
    | Created node!
-
 
 This will update the ``custom_project`` folder structure to become like this:
 
@@ -222,7 +215,7 @@ This will update the ``custom_project`` folder structure to become like this:
 ``custom_project`` now contains **three files** that we need to modify to
 implement our custom node function.
 
-1. **src/custom_nodes/configs/draw/score.yml** (default content):
+#. **src/custom_nodes/configs/draw/score.yml** (default content):
 
    .. code-block:: yaml
       :linenos:
@@ -235,20 +228,20 @@ implement our custom node function.
       threshold: 0.5                    # example
 
    The first file ``score.yml`` defines the properties of the custom node. |br|
-   Lines 2-3 show the mandatory configs ``input`` and ``output``.
+   Lines 2 - 3 show the mandatory configs ``input`` and ``output``.
 
    ``input`` defines the data the node would consume, to be read from the pipeline. |br|
    ``output`` defines the data the node would produce, to be put into the pipeline.
 
    To display the bounding box confidence score, our node requires three pieces
    of input data: the bounding box, the score to display, and the image to draw on.
-   These are defined as ``img``, ``bboxes``, ``bbox_scores`` respectively in the 
+   These are defined as ``bboxes``, ``bbox_scores``, and ``img`` respectively in the 
    :ref:`API docs <api_doc>`.
 
    Our custom node only displays the score on screen and does not produce any
    outputs for the pipeline, so the output is ``none``.
 
-   There are also no optional configs, so lines 5-6 can be removed.
+   There are also no optional configs, so lines 5 - 6 can be removed.
    The updated ``score.yml`` is:
 
    .. code-block:: yaml
@@ -261,12 +254,11 @@ implement our custom node function.
       # No optional configs
 
    .. note::
+
       Comments in yaml files start with ``#`` |br|
-      It is possible for a node to have input: [ \``none`` ]
+      It is possible for a node to have ``input: ["none"]``
 
-
-
-2. **src/custom_nodes/draw/score.py** (default content):
+#. **src/custom_nodes/draw/score.py** (default content):
 
    .. code-block:: python
       :linenos:
@@ -425,8 +417,7 @@ implement our custom node function.
    Line 73 returns an empty dictionary ``{}`` to tell PeekingDuck that the node
    has no outputs.
 
-
-3. **pipeline_config.yml** (default content):
+#. **pipeline_config.yml** (default content):
 
    .. code-block:: yaml
       :linenos:
@@ -462,11 +453,10 @@ Execute ``peekingduck run`` to see your custom node in action.
 
       Custom Node Showing Object Detection Scores
 
-   .. note::
+.. note::
 
-      Royalty free video of computer hardware from:
-      https://www.youtube.com/watch?v=-C1TEGZavko
-
+   Royalty free video of computer hardware from:
+   https://www.youtube.com/watch?v=-C1TEGZavko
 
 
 .. _tutorial_count_hand_wave:
@@ -487,7 +477,6 @@ real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
 
 Starting with a newly initialized PeekingDuck folder, call ``peekingduck
 create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
-
 
 .. admonition:: Terminal Session
 
@@ -515,7 +504,6 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 Also, copy ``wave.mp4`` into the above folder.  You should end up with the
 following folder structure:
-
 
 .. parsed-literal::
 
@@ -545,7 +533,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       # No optional configs
 
 We will implement this tutorial using a ``dabble`` node, which will take the 
-inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, ``keypoint_scores`` 
+inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, and ``keypoint_scores`` 
 from the pipeline. The node has no output.
 
 2. **src/custom_nodes/dabble/wave.py**:
@@ -759,7 +747,7 @@ left-bottom (x1, y2) corner of the bounding box.
 Lines 121-172 implement a simple heuristic to count the number of times the 
 person waves his hand. It tracks the direction the right wrist is moving in and 
 notes when the wrist changes direction. Upon encountering two direction changes, 
-e.g. left -> right -> left, one wave is counted.
+e.g., left -> right -> left, one wave is counted.
 The heuristic also waits until the right wrist has been lifted above the right 
 should before it starts tracking hand direction and counting waves.
 The number of waves is displayed at the left-top corner of the screen.
@@ -789,7 +777,6 @@ Execute ``peekingduck run`` to see your custom node in action.
       :alt: Custom node screenshot - count hand waves
 
       Custom Node Counting Hand Waves
-
 
 
 .. _tutorial_debugging:

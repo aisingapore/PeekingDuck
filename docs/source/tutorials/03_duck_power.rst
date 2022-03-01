@@ -8,7 +8,6 @@ This tutorial presents advanced power features of PeekingDuck such as
 object tracking and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
 
 
-
 .. _tutorial_sql:
 
 Interfacing with SQL
@@ -59,11 +58,9 @@ The updated folder structure would be:
    └── wave.mp4
 
 
-
 Edit the following **5 files** as described below:
 
-
-1. **src/custom_nodes/configs/output/sqlite.yml**:
+#. **src/custom_nodes/configs/output/sqlite.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -78,7 +75,7 @@ The new ``output.sqlite`` custom node will take in the hand direction and the
 current number of hand waves to save to the external database.
 
 
-2. **src/custom_nodes/output/sqlite.py**:
+#. **src/custom_nodes/output/sqlite.py**:
 
    .. code-block:: python
       :linenos:
@@ -161,7 +158,7 @@ Lines 56-58 of the node's ``run`` method retrieves the required inputs from the
 pipeline's data pool and calls ``self.update_db`` to save the data.
 
 
-3. **src/custom_nodes/configs/dabble/wave.yml**:
+#. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -177,7 +174,7 @@ modify the ``dabble.wave`` custom node to return the current hand direction
 ``hand_direction`` and the current wave count ``num_waves``.
 
 
-4. **src/custom_nodes/dabble/wave.py**:
+#. **src/custom_nodes/dabble/wave.py**:
 
    .. code-block:: python
       :lineno-start: 173
@@ -194,7 +191,7 @@ These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's
 data pool for subsequent consumption.
 
 
-5. **pipeline_config.yml**:
+#. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :lineno-start: 10
@@ -245,7 +242,6 @@ Type ``CTRL-D`` to exit from ``sqlite3``.
    The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
    If your system does not have ``sqlite3``, please see the `SQLite Home Page 
    <http://www.sqlite.org/>`_ for installation instructions.
-
 
 
 .. _tutorial_object_tracking:

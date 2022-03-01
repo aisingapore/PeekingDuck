@@ -23,6 +23,7 @@ Confit" tutorial.
 In addition, we will demonstrate basic debugging techniques which users can employ when
 troubleshooting PeekingDuck projects.
 
+
 Setting up
 ----------
 
@@ -46,6 +47,7 @@ You should have the following directory structure at this point:
    ├── demo_debug.py
    ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
+
 
 Create a Custom Node for Debugging
 ----------------------------------
@@ -114,6 +116,7 @@ detected as "cat".
 
 Line 18: Increment the frame number each time ``run()`` is called.
 
+
 Creating the Python Script
 --------------------------
 
@@ -177,6 +180,7 @@ Line 27 - 38: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
+
 Running the Python Script
 -------------------------
 
@@ -220,6 +224,7 @@ You should the following output in your terminal:
 Line 17 - 23: The debugging output showing the frame number and the confidence score of bounding boxes
 predicted as "cat".
 
+
 Running in a Notebook
 =====================
 
@@ -238,9 +243,11 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
 The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available at a `Colab notebook <link>`_.
 
+
 .. raw:: html
 
     <h3>Running locally</h3>
+
 
 .. raw:: html
 
@@ -255,6 +262,7 @@ PeekingDuck repository and is also available at a `Colab notebook <link>`_.
 .. note::
     
     The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+
 
 .. raw:: html
 
@@ -285,6 +293,7 @@ You should have the following directory structure at this point:
            ├── \ :blue:`metadata/` \ |Blank|
            └── \ :blue:`train/` \ |Blank|
                └── \ :blue:`car/` \ |Blank|
+
 
 Importing the Modules
 ---------------------
@@ -320,6 +329,7 @@ as it isolates the namespace to avoid potential conflicts.
     
     due to package incompatibility.
 
+
 Initialize PeekingDuck nodes
 ----------------------------
 
@@ -336,6 +346,7 @@ constructor as keyword arguments.
 
 Refer to the :ref:`API Documentation <api_doc>` for the configurable settings for each node.
 
+
 Create a Dataset Loader
 -----------------------
 
@@ -349,6 +360,7 @@ Create a Dataset Loader
 
 Line 2: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
 also create your own data loader class.
+
 
 Create a License Plate Parser Class
 -----------------------------------
@@ -374,6 +386,7 @@ users can integrate the PeekingDuck pipeline with external processes.
 Alternatively, users can create a custom node for parsing license plates and run the pipeline
 through the command-line interface (CLI) instead. Refer to the :ref:`custom nodes <tutorial_custom_nodes>`
 tutorial for more information.
+
 
 The Inference Loop
 ------------------
