@@ -9,12 +9,15 @@ Import PeekingDuck as a Python Module
 
     TODO: Update code line numbers
 
+
+.. _tutorial_import_peekingduck:
+
 Running in a Script
 ===================
 
 As an alternative to running PeekingDuck using the command-line interface (CLI), users can also
 import PeekingDuck as a Python module and run it in a Python script. This demo corresponds to the
-:ref:`Record and Save Video File with FPS <configure_nodes_media_writer>` Section of the "Duck
+:ref:`Record and Save Video File with FPS <tutorial_media_writer>` Section of the "Duck
 Confit" tutorial.
 
 In addition, we will demonstrate basic debugging techniques which users can employ when
@@ -168,7 +171,7 @@ Line 5, 9: Import and initialize the ``debug`` custom node. Pass in the
 the custom node to be loaded properly.
 
 Line 11 - 25: Create the PeekingDuck nodes necessary to replicate the demo shown in the
-:ref:`Record and Save Video File with FPS <configure_nodes_media_writer>` tutorial.
+:ref:`Record and Save Video File with FPS <tutorial_media_writer>` tutorial.
 
 Line 27 - 38: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
@@ -432,10 +435,11 @@ The Inference Loop
 
 
 
-Line 1 - 11: We define a utility function for retrieving the image region of the license plate with
-a highest confidence score to improve code clarity. For more information on how to convert between
-bounding box and image coordinates, please refer to the :ref:`Bounding Box vs Image Coordinates <coordinate_systems>`
-section in our tutorials.
+Line 1 - 11: We define a utility function for retrieving the image region of the license
+plate with a highest confidence score to improve code clarity. For more information on
+how to convert between bounding box and image coordinates, please refer to the
+:ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` section in our
+tutorials.
 
 Line 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
 inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.

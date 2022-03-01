@@ -122,4 +122,100 @@ To exit, click to select the video window and press ``q``.
         See tutorial on Nodes and Configs.
 
 
+.. _tutorial_nodes_config:
 
+Pipelines, Nodes and Configs
+============================
+
+PeekingDuck comes with a rich collection of nodes that you can use to create
+your own CV pipelines. Each node can be customized by changing its
+configurations or settings.
+
+To get a quick overview of PeekingDuck's nodes, run the following command:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
+
+
+.. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
+.. image:: /assets/tutorials/ss_pkd_nodes.png
+   :alt: PeekingDuck screenshot : nodes output
+
+You will see a comprehensive list of all PeekingDuck's nodes with links to their
+``readthedocs`` pages for more information.
+
+
+PeekingDuck supports 6 types of nodes:
+
++-----------+-----------------------------------------------------------------+
+| Node Type | Node Description                                                |
++-----------+-----------------------------------------------------------------+
+| Input     | Reads a video file from disk or captures images from the webcam |
++-----------+-----------------------------------------------------------------+
+| Model     | CV model does the "heaving lifting" here, like object detection |
++-----------+-----------------------------------------------------------------+
+| Dabble    | Does the "smaller" computations, like counting number of bboxes |
++-----------+-----------------------------------------------------------------+
+| Draw      | Draws things/text onto an image, like bboxes or FPS             |
++-----------+-----------------------------------------------------------------+
+| Output    | Shows an image on screen or saves to a video file on disk       |
++-----------+-----------------------------------------------------------------+
+| Augment   | Applies effects onto an image                                   |
++-----------+-----------------------------------------------------------------+
+
+A PeekingDuck pipeline is created by stringing together a series of nodes that 
+perform a logical sequence of operations.
+Each node has its own set of configurable settings that can be modified to
+change its behavior.
+
+
+.. _tutorial_coordinate_systems:
+
+Bounding Box vs Image Coordinates
+=================================
+
+PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
+
+   .. figure:: /assets/tutorials/bbox_image_coords.png
+      :alt: Image vs Bounding Box Coordinates
+
+      PeekingDuck's Image vs Bounding Box Coordinates
+
+* Absolute image coordinates
+   For an image of width W and height H, the absolute image coordinates are 
+   integers from (0, |nbsp| 0) to (W-1, |nbsp| H-1). |br|
+   E.g. For a 720 x 480 image, the absolute coordinates range from 
+   (0, |nbsp| 0) to (719, |nbsp| 479)
+
+* Relative bounding box coordinates
+   For an image of width W and height H, the relative image coordinates are 
+   real numbers from (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0). |br|
+   E.g. For a 720 x 480 image, the relative coordinates range from 
+   (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0)
+
+This means that in order to draw a bounding box onto an image, the bounding box 
+relative coordinates would have to be converted to the image absolute coordinates.
+
+Using the above figure as an illustration, the bounding box coordinates are
+given as ( 0.18, 0.10 ) left-top and ( 0.52, 0.88 ) right-bottom.
+To convert them to image coordinates, multiply the x-coordinates by the image 
+width and the y-coordinates by the image height, and round the results into 
+integers.
+
+.. math::
+
+   0.18 -> 0.18 * 720 = 129.6 = 130 \: (int) 
+
+   0.10 -> 0.10 * 720 = 72.0 = 72 \: (int)
+
+.. math::
+
+   0.52 -> 0.52 * 720 = 374.4 = 374 \: (int) 
+   
+   0.88 -> 0.88 * 720 = 633.6 = 634 \: (int)
+
+Thus, the image coordinates are ( 130, 72 ) left-top and ( 374, 634 ) right-bottom.
+
+   .. note::
+      The ``model`` nodes return results in relative coordinates.

@@ -9,61 +9,11 @@ pipelines by modifying the nodes and their configs.
 It will also show how to create custom nodes to implement custom user functions.
 
 
-.. _nodes_config_intro:
 
-Nodes and Configs
-=================
-
-PeekingDuck comes with a rich collection of nodes that you can use to create
-your own CV pipelines. Each node can be customized by changing its
-configurations or settings.
-
-To get a quick overview of PeekingDuck's nodes, run the following command:
-
-.. admonition:: Terminal Session
-
-   | \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
-
-
-.. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
-.. image:: /assets/tutorials/ss_pkd_nodes.png
-   :alt: PeekingDuck screenshot : nodes output
-
-You will see a comprehensive list of all PeekingDuck's nodes with links to their
-``readthedocs`` pages for more information.
-
-
-Pipelines, Nodes, Configs
--------------------------
-
-PeekingDuck supports 6 types of nodes:
-
-+------------+-----------------------------------------------------------------+
-| Node Type  | Node Description                                                |
-+------------+-----------------------------------------------------------------+
-| Input      | Reads a video file from disk or captures images from the webcam |
-+------------+-----------------------------------------------------------------+
-| Model      | CV model does the "heaving lifting" here, like object detection |
-+------------+-----------------------------------------------------------------+
-| Dabble     | Does the "smaller" computations, like counting number of bboxes |
-+------------+-----------------------------------------------------------------+
-| Draw       | Draws things/text onto an image, like bboxes or FPS             |
-+------------+-----------------------------------------------------------------+
-| Output     | Shows an image on screen or saves to a video file on disk       |
-+------------+-----------------------------------------------------------------+
-| Preprocess | Applies effects onto an image                                   |
-+------------+-----------------------------------------------------------------+
-
-A PeekingDuck pipeline is created by stringing together a series of nodes that 
-perform a logical sequence of operations.
-Each node has its own set of configurable settings that can be modified to
-change its behavior.
-
-
-.. _configure_nodes:
+.. _tutorial_configure_nodes:
 
 More Object Detection
----------------------
+=====================
 
 This section will demonstrate how to change the settings of PeekingDuck's nodes 
 to vary their functionalities.
@@ -123,10 +73,10 @@ highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
 
 
-.. _configure_nodes_media_writer:
+.. _tutorial_media_writer:
 
-Record and Save Video File with FPS
------------------------------------
+Record Video File with FPS
+==========================
 
 This section demonstrates how to record PeekingDuck's output into a video file.
 In addition, we will modify the pipeline by adding new nodes to calculate the
@@ -171,59 +121,9 @@ specified folder.
 
 
 
-.. _coordinate_systems:
-
-Bounding Box vs Image Coordinates
-=================================
-
-PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
-
-   .. figure:: /assets/tutorials/bbox_image_coords.png
-      :alt: Image vs Bounding Box Coordinates
-
-      PeekingDuck's Image vs Bounding Box Coordinates
-
-* Absolute image coordinates
-   For an image of width W and height H, the absolute image coordinates are 
-   integers from (0, |nbsp| 0) to (W-1, |nbsp| H-1). |br|
-   E.g. For a 720 x 480 image, the absolute coordinates range from 
-   (0, |nbsp| 0) to (719, |nbsp| 479)
-
-* Relative bounding box coordinates
-   For an image of width W and height H, the relative image coordinates are 
-   real numbers from (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0). |br|
-   E.g. For a 720 x 480 image, the relative coordinates range from 
-   (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0)
-
-This means that in order to draw a bounding box onto an image, the bounding box 
-relative coordinates would have to be converted to the image absolute coordinates.
-
-Using the above figure as an illustration, the bounding box coordinates are
-given as ( 0.18, 0.10 ) left-top and ( 0.52, 0.88 ) right-bottom.
-To convert them to image coordinates, multiply the x-coordinates by the image 
-width and the y-coordinates by the image height, and round the results into 
-integers.
-
-.. math::
-
-   0.18 -> 0.18 * 720 = 129.6 = 130 \: (int) 
-
-   0.10 -> 0.10 * 720 = 72.0 = 72 \: (int)
-
-.. math::
-
-   0.52 -> 0.52 * 720 = 374.4 = 374 \: (int) 
-   
-   0.88 -> 0.88 * 720 = 633.6 = 634 \: (int)
-
-Thus, the image coordinates are ( 130, 72 ) left-top and ( 374, 634 ) right-bottom.
-
-   .. note::
-      The ``model`` nodes return results in relative coordinates.
 
 
-
-.. _create_custom_nodes:
+.. _tutorial_custom_nodes:
 
 Custom Nodes
 ============
@@ -262,8 +162,10 @@ The sub-folders ``src``, ``custom_nodes`` and ``configs`` are empty: they serve
 as placeholders for contents to be added.
 
 
-Custom Node 1: Show Object Detection Score
-------------------------------------------
+.. _tutorial_object_detection_score:
+
+Recipe 1: Object Detection Score
+--------------------------------
 
 When the Yolo object detection model detects an object in the image, it assigns 
 a bounding box and a score to it.
@@ -500,8 +402,8 @@ implement our custom node function.
    uses the BGR-format instead of the common RGB-format.
 
    Lines 12-32 implement a helper function ``map_bbox_to_image_coords`` to map
-   the bounding box coordinates to the image coordinates, as explained
-   :ref:`above <coordinate_systems>`.
+   the bounding box coordinates to the image coordinates, as explained in 
+   :ref:`this section <tutorial_coordinate_systems>`.
 
    Line 42 is the node object initializer. We do not require any special setup,
    so it simply calls the ``__init__`` method of its parent class.
@@ -568,10 +470,10 @@ Execute ``peekingduck run`` to see your custom node in action.
 
 
 
-.. _count_hand_wave:
+.. _tutorial_count_hand_wave:
 
-Custom Node 2: Show Keypoints and Count Hand Waves
---------------------------------------------------
+Recipe 2: Keypoints, Count Hand Waves
+-------------------------------------
 
 This tutorial will create a custom node to analyze the skeletal keypoints of the
 person from the ``wave.mp4`` video in the :ref:`pose estimation tutorial
@@ -891,4 +793,9 @@ Execute ``peekingduck run`` to see your custom node in action.
       Custom Node Counting Hand Waves
 
 
+
+.. _tutorial_debugging:
+
+Recipe 3: Debugging
+-------------------
 
