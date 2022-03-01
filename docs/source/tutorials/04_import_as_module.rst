@@ -7,8 +7,6 @@ Import PeekingDuck as a Python Module
 .. warning::
     TODO: Update all links
 
-    TODO: Update code line numbers
-
 Running in a Script
 ===================
 
@@ -31,15 +29,15 @@ Create a PeekingDuck project using:
     | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, download the `demo video <link>`_ to the ``pkd_project`` folder and create a Python script
-``demo_debug.py`` in the same folder.
+Then, download the `demo video <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_
+to the ``pkd_project`` folder and create a Python script ``demo_debug.py`` in the same folder.
 
 You should have the following directory structure at this point:
 
 .. parsed-literal::
 
    \ :blue:`pkd_project/` \ |Blank|
-   ├── computers_800.mp4
+   ├── cat_and_computer.mp4
    ├── demo_debug.py
    ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
@@ -59,7 +57,7 @@ shown:
 .. parsed-literal::
 
    \ :blue:`pkd_project/` \ |Blank|
-   ├── computers_800.mp4
+   ├── cat_and_computer.mp4
    ├── demo_debug.py
    ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
@@ -129,7 +127,7 @@ Change the content of ``demo_debug.py`` to:
     def main():
         debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
 
-        recorded_config = {"input_dir": str(Path.cwd().resolve() / "computers_800.mp4")}
+        recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
         recorded_node = input.recorded.Node(**recorded_config)
 
         yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
@@ -188,9 +186,9 @@ You should the following output in your terminal:
 .. code-block:: text
     :linenos:
 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/cat_and_computer.mp4 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/computers_800.mp4 
+    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
     2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
         Model type: v4tiny, 
@@ -232,7 +230,7 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
       <https://pypi.org/project/easyocr/>`_, and
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
-The notebook corresponding in this tutorial can be found in the `notebooks <link>`_ folder of the
+The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available at a `Colab notebook <link>`_.
 
 .. raw:: html
@@ -369,8 +367,8 @@ We create the license plate parser class in a Python class using ``easyocr`` to 
 users can integrate the PeekingDuck pipeline with external processes.
 
 Alternatively, users can create a custom node for parsing license plates and run the pipeline
-through the command-line interface (CLI) instead. Refer to the `custom nodes <link>`_ tutorial for
-more information.
+through the command-line interface (CLI) instead. Refer to the :ref:`custom nodes <create_custom_nodes>`
+tutorial for more information.
 
 The Inference Loop
 ------------------

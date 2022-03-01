@@ -12,7 +12,6 @@
 .. role:: green
 
 
-
 ..
    Substitutions for HTML rendering
 
@@ -31,3 +30,10 @@
    :trim:
 
 .. |times| unicode:: U+000D7 .. MULTIPLICATION SIGN
+
+..
+   Substitutions for Maths rendering
+
+.. |W| replace:: :math:`W`
+
+.. |H| replace:: :math:`H`

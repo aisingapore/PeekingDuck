@@ -40,7 +40,7 @@ PeekingDuck supports 6 types of nodes:
 
 +------------+-----------------------------------------------------------------+
 | Node Type  | Node Description                                                |
-+------------+-----------------------------------------------------------------+
++============+=================================================================+
 | Input      | Reads a video file from disk or captures images from the webcam |
 +------------+-----------------------------------------------------------------+
 | Model      | CV model does the "heaving lifting" here, like object detection |
@@ -77,9 +77,8 @@ First, create a PeekingDuck project as shown below:
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
 Then, download this `demo video
-<http://orchard.dnsalias.com:8100/computers_800.mp4>`_
-(**TODO: to update demo_video.mp4 link to GCP URL**)
-and save it into the created ``pkd_project`` folder.
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ and save it into the
+created ``pkd_project`` folder.
 
 The folder should contain the following:
 
@@ -88,28 +87,28 @@ The folder should contain the following:
    \ :blue:`pkd_project` \ |Blank|
    ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
-   └── demo_video.mp4
+   └── cat_and_computer.mp4
 
 To perform object detection on the ``demo video.mp4`` file.  edit the
-``pipeline_config.yml`` file as follows:
+``run_config.yml`` file as follows:
 
    .. code-block:: yaml
       :linenos:
 
       nodes:
       - input.recorded:
-         input_dir: demo_video.mp4
+          input_dir: cat_and_computer.mp4
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - output.screen
 
 Here is an explanation of what has been done above:
 
-   | Line 2 ``input.recorded``: tells PeekingDuck to load the ``demo video``.
+   | Line 2 ``input.recorded``: tells PeekingDuck to load the ``cat_and_computer.mp4``.
    | Line 4 ``model.yolo``: by default, the Yolo model detects ``person`` only.
-   |        The ``demo video`` contains other classes of objects like cup, cat, laptop, etc. 
+   |        The ``cat_and_computer.mp4`` contains other classes of objects like cup, cat, laptop, etc. 
    |        So we have to change the model settings to detect the other object classes.
    | Line 6 ``draw.bbox``: reconfigure this node to display the detected object class label.
 
@@ -118,7 +117,7 @@ Here is an explanation of what has been done above:
       <general-object-detection-ids>`.
 
 Run the above with the command ``peekingduck run``. |br|
-You should see a display of the ``demo video`` with the various objects being
+You should see a display of the ``cat_and_computer.mp4`` with the various objects being
 highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press ``q`` to end early.
 
@@ -139,16 +138,16 @@ Edit ``pipeline_config.yml`` as shown below:
 
       nodes:
       - input.recorded:
-         input_dir: /folder/containing/demo_video.mp4    # replace this with actual path
+          input_dir: cat_and_computer.mp4    # replace this with actual path
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - dabble.fps                           # line 1: add new dabble node
       - draw.legend                          # line 2: show fps
       - output.screen
       - output.media_writer:                 # line 3: add new output node
-         output_dir: /folder/to/save/video   # line 4: this is a folder name
+          output_dir: /folder/to/save/video   # line 4: this is a folder name
 
 The additions are:
 
@@ -176,7 +175,7 @@ specified folder.
 Bounding Box vs Image Coordinates
 =================================
 
-PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
+PeekingDuck has two coordinate systems, with top-left corner as origin :math:`(0, 0)`:
 
    .. figure:: /assets/tutorials/bbox_image_coords.png
       :alt: Image vs Bounding Box Coordinates
@@ -184,39 +183,37 @@ PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
       PeekingDuck's Image vs Bounding Box Coordinates
 
 * Absolute image coordinates
-   For an image of width W and height H, the absolute image coordinates are 
-   integers from (0, |nbsp| 0) to (W-1, |nbsp| H-1). |br|
+   For an image of width |W| and height |H|, the absolute image
+   coordinates are integers from :math:`(0, 0)` to :math:`(W-1, H-1)`. |br|
    E.g. For a 720 x 480 image, the absolute coordinates range from 
-   (0, |nbsp| 0) to (719, |nbsp| 479)
+   :math:`(0, 0)` to :math:`(719, 479)`.
 
 * Relative bounding box coordinates
-   For an image of width W and height H, the relative image coordinates are 
-   real numbers from (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0). |br|
+   For an image of width |W| and height |H|, the relative image coordinates are 
+   real numbers from :math:`(0.0, 0.0)` to :math:`(1.0, 1.0)`. |br|
    E.g. For a 720 x 480 image, the relative coordinates range from 
-   (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0)
+   :math:`(0.0, 0.0)` to :math:`(1.0, 1.0)`.
 
 This means that in order to draw a bounding box onto an image, the bounding box 
 relative coordinates would have to be converted to the image absolute coordinates.
 
 Using the above figure as an illustration, the bounding box coordinates are
-given as ( 0.18, 0.10 ) left-top and ( 0.52, 0.88 ) right-bottom.
+given as :math:`(0.18, 0.10)` left-top and :math:`(0.52, 0.88)` right-bottom.
 To convert them to image coordinates, multiply the x-coordinates by the image 
 width and the y-coordinates by the image height, and round the results into 
 integers.
 
 .. math::
 
-   0.18 -> 0.18 * 720 = 129.6 = 130 \: (int) 
+   \begin{array}{ll}
+      0.18 \rightarrow 0.18 * 720 = 129.6 = 130 & (int)\\
+      0.10 \rightarrow 0.10 * 720 = 72.0 = 72 & (int)\\
+      &\\
+      0.52 \rightarrow 0.52 * 720 = 374.4 = 374 & (int)\\
+      0.88 \rightarrow 0.88 * 720 = 633.6 = 634 & (int)
+   \end{array}
 
-   0.10 -> 0.10 * 720 = 72.0 = 72 \: (int)
-
-.. math::
-
-   0.52 -> 0.52 * 720 = 374.4 = 374 \: (int) 
-   
-   0.88 -> 0.88 * 720 = 633.6 = 634 \: (int)
-
-Thus, the image coordinates are ( 130, 72 ) left-top and ( 374, 634 ) right-bottom.
+Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)` right-bottom.
 
    .. note::
       The ``model`` nodes return results in relative coordinates.
@@ -258,7 +255,7 @@ This creates the following ``custom_project`` folder structure:
            └── \ :blue:`configs/` \ |Blank|
 
 
-The sub-folders ``src``, ``custom_nodes`` and ``configs`` are empty: they serve 
+The sub-folders ``src``, ``custom_nodes``, and ``configs`` are empty: they serve 
 as placeholders for contents to be added.
 
 
@@ -313,8 +310,8 @@ This will update the ``custom_project`` folder structure to become like this:
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            ├── \ :blue:`configs/` \ |Blank|
-           │   └── \ :blue:`draw/` \ |Blank|
-           │       └── score.yml
+           │   └── \ :blue:`draw/` \ |Blank|
+           │       └── score.yml
            └── \ :blue:`draw/` \ |Blank|
                └── score.py
 
@@ -543,11 +540,11 @@ implement our custom node function.
 
       nodes:
       - input.recorded:
-          input_dir: /folder/containing/demo_video.mp4
+          input_dir: cat_and_computer.mp4
       - model.yolo:
-         detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
-         show_labels: True
+          show_labels: True
       - custom_nodes.draw.score
       - output.screen
 
@@ -574,8 +571,9 @@ Custom Node 2: Show Keypoints and Count Hand Waves
 --------------------------------------------------
 
 This tutorial will create a custom node to analyze the skeletal keypoints of the
-person from the ``wave.mp4`` video in the :ref:`pose estimation tutorial
-<tutorial_pose_estimation>` and to count the number of times he waves.
+person from the `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_
+video in the :ref:`pose estimation tutorial <tutorial_pose_estimation>` and to
+count the number of times he waves.
 
 The PoseNet pose estimation model outputs seventeen keypoints for the person 
 corresponding to the different body parts as documented :ref:`here
@@ -583,7 +581,7 @@ corresponding to the different body parts as documented :ref:`here
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
 real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
 
-Starting with a newly initialised PeekingDuck folder, call ``peekingduck
+Starting with a newly initialized PeekingDuck folder, call ``peekingduck
 create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 
@@ -622,8 +620,8 @@ following folder structure:
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
-   │       │   └── \ :blue:`dabble/` \ |Blank|
-   │       │       └── wave.yml
+   │       │   └── \ :blue:`dabble/` \ |Blank|
+   │       │       └── wave.yml
    │       └── \ :blue:`dabble/` \ |Blank|
    │           └── wave.py
    └── wave.mp4
@@ -862,8 +860,6 @@ The heuristic also waits until the right wrist has been lifted above the right
 should before it starts tracking hand direction and counting waves.
 The number of waves is displayed at the left-top corner of the screen.
 
-
-
 3. **pipeline_config.yml**:
 
    .. code-block:: yaml
@@ -871,7 +867,7 @@ The number of waves is displayed at the left-top corner of the screen.
 
       nodes:
       - input.recorded:
-         input_dir: wave.mp4
+          input_dir: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps
@@ -889,6 +885,3 @@ Execute ``peekingduck run`` to see your custom node in action.
       :alt: Custom node screenshot - count hand waves
 
       Custom Node Counting Hand Waves
-
-
-
