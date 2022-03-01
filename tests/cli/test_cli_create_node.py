@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -315,8 +315,8 @@ class TestCliCreateNode:
             assert actual_file.readlines() == lines[start:]
 
     def test_poorly_formatted_config_file(self, cwd):
-        no_top_level_key = cwd / "run_config_no_top_level_key.yml"
-        wrong_top_level_key = cwd / "run_config_wrong_top_level_key.yml"
+        no_top_level_key = cwd / "pipeline_no_top_level_key.yml"
+        wrong_top_level_key = cwd / "pipeline_wrong_top_level_key.yml"
         with open(no_top_level_key, "w") as outfile:
             yaml.dump(DEFAULT_NODES, outfile)
         with open(wrong_top_level_key, "w") as outfile:
@@ -334,8 +334,8 @@ class TestCliCreateNode:
                 excinfo.value
             )
 
-    def test_no_nodes_config_file(self, cwd):
-        no_nodes = cwd / "run_config_no_nodes.yml"
+    def test_no_nodes_pipeline_file(self, cwd):
+        no_nodes = cwd / "pipeline_no_nodes.yml"
         with open(no_nodes, "w") as outfile:
             data = {"nodes": None}
             # ``yaml`` will create 'nodes: null' by default. Manually replace
@@ -390,25 +390,26 @@ class TestCliCreateNode:
         assert f"Config file '{config_file}' is not found at" in str(excinfo.value)
 
     def test_no_custom_nodes(self, cwd):
-        """Tests when the config file doesn't contain any custom nodes, so
+        """Tests when the pipeline file doesn't contain any custom nodes, so
         there's nothing to create.
         """
-        config_file = "run_config_default_nodes_only.yml"
-        default_nodes_only = cwd / config_file
+        pipeline_file = "pipeline_default_nodes_only.yml"
+        default_nodes_only = cwd / pipeline_file
         with open(default_nodes_only, "w") as outfile:
             yaml.dump({"nodes": DEFAULT_NODES}, outfile)
         with pytest.raises(ValueError) as excinfo:
             CliRunner().invoke(
                 cli,
-                ["create-node", "--config_path", config_file],
+                ["create-node", "--config_path", pipeline_file],
                 catch_exceptions=False,
             )
-            assert f"Config file '{config_file}' does not contain custom nodes!" == str(
-                excinfo.value
+            assert (
+                f"Config file '{pipeline_file}' does not contain custom nodes!"
+                == str(excinfo.value)
             )
 
     def test_invalid_custom_node_string(self, cwd):
-        """The custom nodes declared in the config file only contains poor
+        """The custom nodes declared in the pipeline file only contains poor
         formatting. So all will be skipped.
         """
         bad_paths = [
@@ -427,8 +428,8 @@ class TestCliCreateNode:
             f"{GOOD_SUBDIR}.{GOOD_TYPE}.{node_name}"
             for node_name in CREATE_NODE_CONFIG["bad_config_names"]
         ]
-        config_file = "run_config_invalid_custom_node_string.yml"
-        default_nodes_only = cwd / config_file
+        pipeline_file = "pipeline_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / pipeline_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides
             data = {
@@ -444,7 +445,7 @@ class TestCliCreateNode:
             }
             yaml.dump(data, outfile)
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
             offset = 2  # First 2 message is about info about loading config
             counter = 0
             for node_string in bad_paths:
@@ -468,7 +469,7 @@ class TestCliCreateNode:
                 counter += 1
 
     def test_create_nodes_from_config_success(self, cwd):
-        """The custom nodes declared in the config file only contains poor
+        """The custom nodes declared in the pipeline file only contains poor
         formatting. So all will be skipped.
         """
         node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
@@ -476,8 +477,8 @@ class TestCliCreateNode:
             cwd / "src" / GOOD_SUBDIR / "configs" / GOOD_TYPE / f"{GOOD_NAME}.yml"
         )
         created_script_path = cwd / "src" / GOOD_SUBDIR / GOOD_TYPE / f"{GOOD_NAME}.py"
-        config_file = "run_config_invalid_custom_node_string.yml"
-        default_nodes_only = cwd / config_file
+        pipeline_file = "pipeline_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / pipeline_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides
             data = {
@@ -491,7 +492,7 @@ class TestCliCreateNode:
             }
             yaml.dump(data, outfile)
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
             # First 2 message is about info about loading config
             assert (
                 f"Creating files for {node_string}:\n\t"
@@ -500,12 +501,12 @@ class TestCliCreateNode:
             ) == captured.records[2].getMessage()
 
     def test_create_nodes_from_config_duplicate_node_name(self, cwd):
-        """The custom nodes declared in the config file only contains poor
+        """The custom nodes declared in the pipeline file only contains poor
         formatting. So all will be skipped.
         """
         node_string = f"{GOOD_SUBDIR}.{GOOD_TYPE}.{GOOD_NAME}"
-        config_file = "run_config_invalid_custom_node_string.yml"
-        default_nodes_only = cwd / config_file
+        pipeline_file = "pipeline_invalid_custom_node_string.yml"
+        default_nodes_only = cwd / pipeline_file
         with open(default_nodes_only, "w") as outfile:
             # Create a "challenging" file, with some config overrides
             data = {
@@ -519,9 +520,9 @@ class TestCliCreateNode:
             }
             yaml.dump(data, outfile)
         # Create the node first so we trigger the duplicate name warning
-        CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+        CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
-            CliRunner().invoke(cli, ["create-node", "--config_path", config_file])
+            CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
             # First 2 message is about info about loading config
             assert (
                 f"{node_string} contains invalid formatting: 'Node name already "

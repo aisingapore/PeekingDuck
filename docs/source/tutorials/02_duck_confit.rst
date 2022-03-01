@@ -102,11 +102,11 @@ The folder should contain the following:
 .. parsed-literal::
 
    \ :blue:`pkd_project` \ |Blank|
-   ├── run_config.yml
+   ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
    └── cat_and_computer.mp4
 
-To perform object detection on the ``cat_and_computer.mp4`` file.  edit the
+To perform object detection on the ``demo video.mp4`` file.  edit the
 ``run_config.yml`` file as follows:
 
    .. code-block:: yaml
@@ -147,7 +147,7 @@ This section demonstrates how to record PeekingDuck's output into a video file.
 In addition, we will modify the pipeline by adding new nodes to calculate the
 frames per second (FPS) and to show the FPS.
 
-Edit ``run_config.yml`` as shown below:
+Edit ``pipeline_config.yml`` as shown below:
 
    .. code-block:: yaml
       :linenos:
@@ -267,7 +267,7 @@ This creates the following ``custom_project`` folder structure:
 .. parsed-literal::
 
    \ :blue:`custom_project/` \ |Blank|
-   ├── run_config.yml
+   ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            └── \ :blue:`configs/` \ |Blank|
@@ -324,7 +324,7 @@ This will update the ``custom_project`` folder structure to become like this:
 .. parsed-literal::
 
    \ :blue:`custom_project/` \ |Blank|
-   ├── run_config.yml
+   ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            ├── \ :blue:`configs/` \ |Blank|
@@ -540,7 +540,7 @@ implement our custom node function.
    has no outputs.
 
 
-3. **run_config.yml** (default content):
+3. **pipeline_config.yml** (default content):
 
    .. code-block:: yaml
       :linenos:
@@ -551,8 +551,7 @@ implement our custom node function.
       - draw.bbox
       - output.screen
 
-   Finally, the ``run_config.yml`` file implements the pipeline. 
-   Modify the default pipeline to the one shown below:
+   This file implements the pipeline.  Modify the default pipeline to the one shown below:
 
    .. code-block:: yaml
       :linenos:
@@ -635,7 +634,7 @@ following folder structure:
 .. parsed-literal::
 
    \ :blue:`custom_project/` \ |Blank|
-   ├── run_config.yml
+   ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
@@ -646,7 +645,7 @@ following folder structure:
    └── wave.mp4
 
 To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
-``run_config.yml`` are to be edited as follows:
+``pipeline_config.yml`` are to be edited as follows:
 
 1. **src/custom_nodes/configs/dabble/wave.yml**:
 
@@ -879,7 +878,7 @@ The heuristic also waits until the right wrist has been lifted above the right
 should before it starts tracking hand direction and counting waves.
 The number of waves is displayed at the left-top corner of the screen.
 
-3. **run_config.yml**:
+3. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -895,9 +894,8 @@ The number of waves is displayed at the left-top corner of the screen.
       - draw.legend
       - output.screen
 
-We modify the pipeline file ``run_config.yml`` to run both the object detection 
-and pose estimation models to obtain the required inputs for our custom
-``dabble`` node.
+We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
+models to obtain the required inputs for our custom ``dabble`` node.
 
 Execute ``peekingduck run`` to see your custom node in action.
 

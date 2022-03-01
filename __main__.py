@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,7 +30,7 @@ from peekingduck.cli import cli, run
     default=None,
     type=click.Path(),
     help=(
-        "List of nodes to run. None assumes run_config.yml is in the same "
+        "List of nodes to run. None assumes pipeline_config.yml is in the same "
         "directory as __main__.py"
     ),
 )
@@ -54,7 +54,12 @@ def main(
     """
     if config_path is None:
         pkd_dir = Path(__file__).resolve().parent
-        config_path = str(pkd_dir / "run_config.yml")
+        if (pkd_dir / "pipeline_config.yml").is_file():
+            config_path = str(pkd_dir / "pipeline_config.yml")
+        elif (pkd_dir / "run_config.yml").is_file():
+            config_path = str(pkd_dir / "run_config.yml")
+        else:
+            config_path = str(pkd_dir / "pipeline_config.yml")
         nodes_parent_dir = pkd_dir.name
     else:
         nodes_parent_dir = "src"

@@ -49,7 +49,7 @@ You should have the following directory structure at this point:
    \ :blue:`pkd_project/` \ |Blank|
    ├── cat_and_computer.mp4
    ├── demo_debug.py
-   ├── run_config.yml
+   ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
 
 Create a Custom Node for Debugging
@@ -69,7 +69,7 @@ shown:
    \ :blue:`pkd_project/` \ |Blank|
    ├── cat_and_computer.mp4
    ├── demo_debug.py
-   ├── run_config.yml
+   ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
            ├── \ :blue:`configs/` \ |Blank|

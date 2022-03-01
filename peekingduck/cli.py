@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -60,17 +60,24 @@ def create_custom_folder(custom_folder_name: str) -> None:
     custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
 
 
-def create_yml(
+def create_pipeline_config_yml(
     default_nodes: List[Union[str, Dict[str, Any]]] = None,
-    default_path: str = "run_config.yml",
+    default_name: str = "pipeline_config.yml",
 ) -> None:
-    """Initializes the declarative *run_config.yml*."""
+    """Initializes the declarative *pipeline_config.yml*.
+
+    Args:
+        default_nodes (List[Union[str, Dict[str, Any]]]): A list of PeekingDuck
+            node. For nodes with custom configuration, use a dictionary instead
+            of a string.
+        default_name (str): Name of the pipeline config file.
+    """
     # Default yml to be discussed
     if default_nodes is None:
         default_nodes = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
     default_yml = dict(nodes=default_nodes)
 
-    with open(default_path, "w") as yml_file:
+    with open(default_name, "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
@@ -204,10 +211,10 @@ def create_node(
 @cli.command()
 @click.option("--custom_folder_name", default="custom_nodes")
 def init(custom_folder_name: str) -> None:
-    """Initializes a PeekingDuck project"""
+    """Initialize a PeekingDuck project"""
     print("Welcome to PeekingDuck!")
     create_custom_folder(custom_folder_name)
-    create_yml()
+    create_pipeline_config_yml()
 
 
 @cli.command()
@@ -253,7 +260,7 @@ def nodes(type_name: str = None) -> None:
     default=None,
     type=click.Path(),
     help=(
-        "List of nodes to run. None assumes run_config.yml at current working directory"
+        "List of nodes to run. None assumes pipeline_config.yml at current working directory"
     ),
 )
 @click.option(
@@ -283,15 +290,19 @@ def run(
     """Runs PeekingDuck"""
     LoggerSetup.set_log_level(log_level)
 
-    curr_dir = _get_cwd()
     if config_path is None:
-        run_config_path = curr_dir / "run_config.yml"
-    else:
-        run_config_path = Path(config_path)
+        curr_dir = _get_cwd()
+        if (curr_dir / "pipeline_config.yml").is_file():
+            config_path = curr_dir / "pipeline_config.yml"
+        elif (curr_dir / "run_config.yml").is_file():
+            config_path = curr_dir / "run_config.yml"
+        else:
+            config_path = curr_dir / "pipeline_config.yml"
+    pipeline_config_path = Path(config_path)
 
     start_time = perf_counter()
     runner = Runner(
-        run_config_path=run_config_path,
+        pipeline_path=pipeline_config_path,
         config_updates_cli=node_config,
         custom_nodes_parent_subdir=nodes_parent_dir,
         num_iter=num_iter,
@@ -304,17 +315,17 @@ def run(
 def _create_nodes_from_config_file(
     config_path: str, project_dir: Path, node_type_choices: click.Choice
 ) -> None:
-    """Creates custom nodes declared in the config file."""
-    run_config_path = Path(config_path)
-    if not run_config_path.is_absolute():
-        run_config_path = (project_dir / run_config_path).resolve()
-    if not run_config_path.exists():
+    """Creates custom nodes declared in the pipeline config file."""
+    pipeline_path = Path(config_path)
+    if not pipeline_path.is_absolute():
+        pipeline_path = (project_dir / pipeline_path).resolve()
+    if not pipeline_path.exists():
         raise FileNotFoundError(
-            f"Config file '{config_path}' is not found at {run_config_path}!"
+            f"Config file '{config_path}' is not found at {pipeline_path}!"
         )
-    logger.info(f"Creating custom nodes declared in {run_config_path}.")
+    logger.info(f"Creating custom nodes declared in {pipeline_path}.")
     # Load run config with DeclarativeLoader to ensure consistency
-    loader = DeclarativeLoader(run_config_path, "None", "src")
+    loader = DeclarativeLoader(pipeline_path, "None", "src")
     try:
         node_subdir = project_dir / "src" / loader.custom_nodes_dir
     except AttributeError as custom_nodes_no_exist:
@@ -398,22 +409,22 @@ def _num_digits(number: int) -> int:
     return int(math.log10(number))
 
 
-def _setup_verification(config_file_name: str) -> None:
+def _setup_verification(pipeline_config_name: str) -> None:
     """Sets up the directory structure and downloads demo video for verifying
     PeekingDuck installation.
 
     Args:
-        config_file_name (str): Name of the config YAML file for verifying
+        pipeline_config_name (str): Name of the config YAML file for verifying
             PeekingDuck installation.
     """
-    create_yml(
+    create_pipeline_config_yml(
         [
             {"input.recorded": {"input_dir": "data/verification/wave.mp4"}},
             "model.yolo",
             "draw.bbox",
             "output.screen",
         ],
-        config_file_name,
+        pipeline_config_name,
     )
     input_dir = _get_cwd() / "data" / "verification"
     input_dir.mkdir(parents=True, exist_ok=True)
@@ -435,11 +446,11 @@ def _verify_install() -> None:
     """
     LoggerSetup.set_log_level("info")
 
-    config_file_name = "verification_pipeline.yml"
-    _setup_verification(config_file_name)
+    pipeline_config_name = "verification_pipeline.yml"
+    _setup_verification(pipeline_config_name)
 
     runner = Runner(
-        run_config_path=_get_cwd() / config_file_name,
+        pipeline_path=_get_cwd() / pipeline_config_name,
         config_updates_cli="None",
         custom_nodes_parent_subdir="src",
         num_iter=None,

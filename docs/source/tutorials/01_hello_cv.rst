@@ -37,7 +37,7 @@ Object Detection
 ================
 
 When you ran ``peekingduck --verify_install`` to :ref:`verify your installation
-<verify_installation>` earlier, you are running a object detection pipeline in the file
+<verify_installation>` earlier, you are running the default pipeline in the file
 ``verification_pipeline.yml`` as shown below:
 
 .. code-block:: yaml
@@ -73,7 +73,7 @@ To perform pose estimation with PeekingDuck, initialize the PeekingDuck project 
 
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, modify the ``pipeline.yml`` as follows:
+Then, modify the ``pipeline_config.yml`` as follows:
 
 .. code-block:: yaml
    :linenos:
