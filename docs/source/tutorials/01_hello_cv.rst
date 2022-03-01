@@ -2,7 +2,7 @@
 "Hello Computer Vision"
 ***********************
 
-.. include:: 00_include.rst
+.. include:: /include/substitution.rst
 
 Computer Vision (or CV) is a field in AI that develops techniques to help
 computers to "see" and "understand" the contents of digital images like

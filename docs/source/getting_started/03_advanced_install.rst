@@ -2,15 +2,8 @@
 Advanced Install
 ****************
 
-.. |br| raw:: html
+.. include:: /include/substitution.rst
 
-   <br />
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
 
 This section covers advanced PeekingDuck installation steps for users with ARM64
 devices or M1 Macs.

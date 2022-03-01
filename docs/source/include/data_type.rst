@@ -77,15 +77,3 @@
 .. |zone_count| replace:: ``zone_count`` (:obj:`List[int]`): A list of integers representing the
    count of a pre-selected object class (for example, "person") detected in each specified zone.
    The order corresponds to ``zones``.
-
-..
-   Utility substitutions
-
-.. |br| raw:: html
-
-   <br />
-
-.. |tab| unicode:: 0xA0 0xA0 0xA0 0xA0
-   :trim:
-
-.. |times| unicode:: U+000D7 .. MULTIPLICATION SIGN

@@ -2,7 +2,7 @@
 Power Duck
 **********
 
-.. include:: 00_include.rst
+.. include:: /include/substitution.rst
 
 This section illustrates advanced power features such as object tracking
 and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
@@ -49,7 +49,7 @@ folder:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/custom_project]` \ ❯ \ :green:`peekingduck create-node` \
+   | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
    | Creating new custom node...
    | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
    | Select node type (input, model, draw, dabble, output): \ :green:`output` \
@@ -238,7 +238,7 @@ Examine the created database as follows:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/custom_project]` \ ❯ \ :green:`sqlite3` \
+   | \ :blue:`[~user/custom_project]` \ > \ :green:`sqlite3` \
    | SQLite version 3.37.0 2021-11-27 14:13:22
    | Enter ".help" for usage hints.
    | Connected to a transient in-memory database.
@@ -274,12 +274,6 @@ Type ``CTRL-D`` to exit from ``sqlite3``.
 
 
 
-.. _import_peekingduck:
-
-Import PeekingDuck
-==================
-
-**[Todo] ``Import PeekingDuck``**
 
 
 

@@ -2,7 +2,7 @@
 Import PeekingDuck as a Python Module
 *************************************
 
-.. include:: 00_include.rst
+.. include:: /include/substitution.rst
 
 .. warning::
     TODO: Update all links

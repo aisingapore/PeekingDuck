@@ -2,11 +2,8 @@
 Basic Install
 *************
 
-.. role:: red
+.. include:: /include/substitution.rst
 
-.. role:: blue
-
-.. role:: green
 
 Install PeekingDuck
 ===================

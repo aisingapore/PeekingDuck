@@ -2,7 +2,7 @@
 Duck Confit
 ***********
 
-.. include:: 00_include.rst
+.. include:: /include/substitution.rst
 
 This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.
