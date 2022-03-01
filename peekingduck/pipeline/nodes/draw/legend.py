@@ -16,7 +16,7 @@
 Displays selected information from preceding nodes in a legend box.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -78,7 +78,8 @@ class Node(AbstractNode):
         return {"img": inputs["img"]}
 
 
-def _check_data_type(inputs, show):
+def _check_data_type(inputs: Dict[str, Any], show: List[str]) -> None:
+    """Checks if the data types provided in show were produced from preceding nodes."""
     for item in show:
         if item not in inputs:
             raise KeyError(
