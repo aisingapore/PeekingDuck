@@ -4,45 +4,19 @@ Power Duck
 
 .. include:: /include/substitution.rst
 
-This section illustrates advanced power features such as object tracking
-and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
+This tutorial presents advanced power features of PeekingDuck such as 
+object tracking and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
 
 
-Object Tracking
-===============
 
-Object tracking is the application of CV models to automatically detect objects 
-in a video and to assign a unique identity to each of them.
-These objects can be either living (e.g. person) or non-living (e.g. car). 
-Then, as these objects moved around in the video, they are identified based on 
-their assigned identities and tracked according to their movements.
-
-**[Todo] object tracking using JDE**
-
-
-Power Nodes
-===========
-
-PeekingDuck include some power nodes that are capable of processing the contents 
-or outputs of the other nodes and to accumulate information over time.
-An example is the ``dabble.statistics`` node which can accumulate statistical 
-information, such as calculating the mean and max of particular objects (like
-people or cars).
-
-
-**[Todo] ``dabble.statistics``**
-
-**[Todo] ``draw.legend`` (?)**
-
-
+.. _tutorial_sql:
 
 Interfacing with SQL
 ====================
 
 This tutorial demonstrates how to save data to an SQLite database.
-We will extend the tutorial for :ref:`counting hand waves<count_hand_wave>` with
-a new custom ``output`` node that writes information into a local sqlite
-database.
+We will extend the tutorial for :ref:`counting hand waves<tutorial_count_hand_wave>`
+with a new custom ``output`` node that writes information into a local sqlite database.
 
 First, create a new custom ``output.sqlite`` node in the ``custom_project``
 folder:
@@ -74,14 +48,14 @@ The updated folder structure would be:
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
    │       ├── \ :blue:`configs/` \ |Blank|
-   │       │   ├── \ :blue:`dabble/` \ |Blank|
-   │       │   │   └── wave.yml
-   │       │   └── \ :blue:`output/` \ |Blank|
-   │       │       └── sqlite.yml
+   │       │   ├── \ :blue:`dabble/` \ |Blank|
+   │       │   │   └── wave.yml
+   │       │   └── \ :blue:`output/` \ |Blank|
+   │       │       └── sqlite.yml
    │       ├── \ :blue:`dabble/` \ |Blank|
    │       │   └── wave.py
-   │       └── \ :blue:`output/` \ |Blank|
-   │           └── sqlite.py
+   │       └── \ :blue:`output/` \ |Blank|
+   │           └── sqlite.py
    └── wave.mp4
 
 
@@ -174,7 +148,7 @@ This tutorial uses the ``sqlite3`` package to interface with the database.
 
 Line 10 specifies the name of the database file as ``wave.db``.
 
-The node initialiser code in lines 23-35 will establish a connection to the
+The node initializer code in lines 23-35 will establish a connection to the
 database and will create a table called ``wavetable`` if it does not exist.
 This table will be used to store the hand direction and wave count data.
 On first run, this code will also create the ``wave.db`` database file.
@@ -271,6 +245,39 @@ Type ``CTRL-D`` to exit from ``sqlite3``.
    The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
    If your system does not have ``sqlite3``, please see the `SQLite Home Page 
    <http://www.sqlite.org/>`_ for installation instructions.
+
+
+
+.. _tutorial_object_tracking:
+
+Object Tracking
+===============
+
+Object tracking is the application of CV models to automatically detect objects 
+in a video and to assign a unique identity to each of them.
+These objects can be either living (e.g. person) or non-living (e.g. car). 
+Then, as these objects moved around in the video, they are identified based on 
+their assigned identities and tracked according to their movements.
+
+**[Todo] object tracking using JDE**
+
+
+
+.. _tutorial_power_nodes:
+
+Power Nodes
+===========
+
+PeekingDuck include some power nodes that are capable of processing the contents 
+or outputs of the other nodes and to accumulate information over time.
+An example is the ``dabble.statistics`` node which can accumulate statistical 
+information, such as calculating the mean and max of particular objects (like
+people or cars).
+
+
+**[Todo] ``dabble.statistics``**
+
+**[Todo] ``draw.legend`` (?)**
 
 
 

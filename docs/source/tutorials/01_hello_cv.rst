@@ -24,16 +24,16 @@ PeekingDuck for object detection and pose estimation.
 Object Detection
 ================
 
-When you did a ``peekingduck run`` to :ref:`verify your installation
+When you ran ``peekingduck --verify_install`` to :ref:`verify your installation
 <verify_installation>` earlier, you are running the default pipeline in the file
-``pipeline_config.yml`` as shown below:
+``verification_pipeline.yml`` as shown below:
 
 .. code-block:: yaml
    :linenos:
 
    nodes:
    - input.recorded:
-       input_dir: "images/testing/wave.mp4"
+       input_dir: "data/verification/wave.mp4"
    - model.yolo
    - draw.bbox
    - output.screen
@@ -50,38 +50,45 @@ To exit earlier, click to select the video window and press ``q``.
 
 You have successfully run an object detection pipeline.
 
-
-**TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
-load an included video file correctly from the right path location**
-
-
 .. _tutorial_pose_estimation:
 
 Pose Estimation
 ===============
 
-You can get PeekingDuck to perform pose estimation by changing the second node ``model``
-and the third node ``draw`` (lines 4-5) in ``pipeline_config.yml`` as follows:
+To perform pose estimation with PeekingDuck, initialize the PeekingDuck project using:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+
+Then, modify the ``pipeline_config.yml`` as follows:
 
 .. code-block:: yaml
    :linenos:
 
    nodes:
    - input.recorded:
-       input_dir: "images/testing/wave.mp4"
+       input_dir: "data/verification/wave.mp4"
    - model.posenet      # use pose estimation model
    - draw.poses         # draw skeletal poses
    - output.screen
 
-Now do a ``peekingduck run`` again and you will see the same video with skeletal
-poses drawn on it and which track the hand movement.
+The important changes are to the second node ``model`` (Line 4) and the third node ``draw`` (Line 5).
+
+Now, run the pipeline using
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
+
+You should see the same video with skeletal poses drawn on it and which track the hand movement.
 
 The above **pose estimation pipeline** comprises four nodes that do the following:
 
-    2. ``input.recorded``: reads the file ``wave.mp4``, |br|
-    4. ``model.posenet``: runs the ``Posenet`` pose estimation model on it, |br|
-    5. ``draw.poses``: draws the human skeletal frame to show the detected poses, |br|
-    6. ``output.screen``: outputs everything onto the screen for display.
+    1. ``input.recorded``: reads the file ``wave.mp4``, |br|
+    2. ``model.posenet``: runs the ``Posenet`` pose estimation model on it, |br|
+    3. ``draw.poses``: draws the human skeletal frame to show the detected poses, |br|
+    4. ``output.screen``: outputs everything onto the screen for display.
 
 The 18-second video will auto-close when it is completed. |br|
 To exit earlier, click to select the video window and press ``q``.
@@ -119,7 +126,103 @@ To exit, click to select the video window and press ``q``.
         PeekingDuck assumes the webcam is defaulted to input source 0.
         If your system is configured differently, you would have to specify the 
         input source by changing the ``input.live`` configuration.
-        See tutorial on Nodes and Configs.
+        See tutorial on :ref:`Nodes and Configs <tutorial_nodes_config>`.
 
 
+.. _tutorial_nodes_config:
 
+Pipelines, Nodes and Configs
+============================
+
+PeekingDuck comes with a rich collection of nodes that you can use to create
+your own CV pipelines. Each node can be customized by changing its
+configurations or settings.
+
+To get a quick overview of PeekingDuck's nodes, run the following command:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
+
+
+.. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
+.. image:: /assets/tutorials/ss_pkd_nodes.png
+   :alt: PeekingDuck screenshot : nodes output
+
+You will see a comprehensive list of all PeekingDuck's nodes with links to their
+``readthedocs`` pages for more information.
+
+
+PeekingDuck supports 6 types of nodes:
+
++-----------+-----------------------------------------------------------------+
+| Node Type | Node Description                                                |
++-----------+-----------------------------------------------------------------+
+| Input     | Reads a video file from disk or captures images from the webcam |
++-----------+-----------------------------------------------------------------+
+| Model     | CV model does the "heaving lifting" here, like object detection |
++-----------+-----------------------------------------------------------------+
+| Dabble    | Does the "smaller" computations, like counting number of bboxes |
++-----------+-----------------------------------------------------------------+
+| Draw      | Draws things/text onto an image, like bboxes or FPS             |
++-----------+-----------------------------------------------------------------+
+| Output    | Shows an image on screen or saves to a video file on disk       |
++-----------+-----------------------------------------------------------------+
+| Augment   | Applies effects onto an image                                   |
++-----------+-----------------------------------------------------------------+
+
+A PeekingDuck pipeline is created by stringing together a series of nodes that 
+perform a logical sequence of operations.
+Each node has its own set of configurable settings that can be modified to
+change its behavior.
+
+
+.. _tutorial_coordinate_systems:
+
+Bounding Box vs Image Coordinates
+=================================
+
+PeekingDuck has two coordinate systems, with top-left corner as origin (0, 0):
+
+   .. figure:: /assets/tutorials/bbox_image_coords.png
+      :alt: Image vs Bounding Box Coordinates
+
+      PeekingDuck's Image vs Bounding Box Coordinates
+
+* Absolute image coordinates
+   For an image of width W and height H, the absolute image coordinates are 
+   integers from (0, |nbsp| 0) to (W-1, |nbsp| H-1). |br|
+   E.g. For a 720 x 480 image, the absolute coordinates range from 
+   (0, |nbsp| 0) to (719, |nbsp| 479)
+
+* Relative bounding box coordinates
+   For an image of width W and height H, the relative image coordinates are 
+   real numbers from (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0). |br|
+   E.g. For a 720 x 480 image, the relative coordinates range from 
+   (0.0, |nbsp| 0.0) to (1.0, |nbsp| 1.0)
+
+This means that in order to draw a bounding box onto an image, the bounding box 
+relative coordinates would have to be converted to the image absolute coordinates.
+
+Using the above figure as an illustration, the bounding box coordinates are
+given as ( 0.18, 0.10 ) left-top and ( 0.52, 0.88 ) right-bottom.
+To convert them to image coordinates, multiply the x-coordinates by the image 
+width and the y-coordinates by the image height, and round the results into 
+integers.
+
+.. math::
+
+   0.18 -> 0.18 * 720 = 129.6 = 130 \: (int) 
+
+   0.10 -> 0.10 * 720 = 72.0 = 72 \: (int)
+
+.. math::
+
+   0.52 -> 0.52 * 720 = 374.4 = 374 \: (int) 
+   
+   0.88 -> 0.88 * 720 = 633.6 = 634 \: (int)
+
+Thus, the image coordinates are ( 130, 72 ) left-top and ( 374, 634 ) right-bottom.
+
+   .. note::
+      The ``model`` nodes return results in relative coordinates.
