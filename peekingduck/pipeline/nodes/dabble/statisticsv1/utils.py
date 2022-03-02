@@ -69,7 +69,7 @@ class Stats:
             - curr (Union[float, int, None]): Current resulting value.
 
         """
-        target_attr = _get_value(inputs, keys)
+        target_attr = _deep_get_value(inputs, keys)
         curr = _apply_method(target_attr, self.method, self.condition)
 
         return curr
@@ -154,12 +154,14 @@ def _get_operand(operand_raw: str) -> Union[str, float]:
         ) from error
 
 
-def _get_value(data: Dict[str, Any], keys: List[str]) -> Union[int, float, list, dict]:
+def _deep_get_value(
+    data: Dict[str, Any], keys: List[str]
+) -> Union[int, float, list, dict]:
     """Recursively goes through the keys of a dictionary to obtain the final value."""
     if not keys:
         return data
     key = keys.pop(0)
-    return _get_value(data[key], keys)
+    return _deep_get_value(data[key], keys)
 
 
 def _apply_method(

@@ -75,14 +75,14 @@ def draw_legend_fps_only():
 
 
 class TestLegend:
-    def test_no_relevant_inputs(self, draw_legend_no_show, create_image):
-        original_img = create_image((28, 28, 3))
-        output_img = original_img.copy()
-        input1 = {"img": output_img}
-        results = draw_legend_no_show.run(input1)
-        np.testing.assert_raises(
-            AssertionError, np.testing.assert_equal, original_img, results["img"]
-        )
+    # def test_no_relevant_inputs(self, draw_legend_no_show, create_image):
+    #     original_img = create_image((28, 28, 3))
+    #     output_img = original_img.copy()
+    #     input1 = {"img": output_img}
+    #     results = draw_legend_no_show.run(input1)
+    #     np.testing.assert_raises(
+    #         AssertionError, np.testing.assert_equal, original_img, results["img"]
+    #     )
 
     # formula: processed image = contrast * image + brightness
     def test_draw_legend_bottom_and_top(

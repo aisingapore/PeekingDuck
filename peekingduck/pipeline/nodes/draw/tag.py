@@ -33,11 +33,12 @@ class Node(AbstractNode):
 
     >>> {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag n>], <attr b>: [<tag 1>, ..., <tag n>]}}
 
-    The following type conventions should be noted:
+    The following type conventions need to be observed:
 
     * Each attribute must be of type :obj:`List`, e.g. ``<attr a>: [<tag 1>, ..., <tag n>]`` \
 
-    * Each tag within the list will be converted into :obj:`str` type to be drawn
+    * Each tag must be of type :obj:`str`, :obj:`int`, :obj:`float` or :obj:`bool` to be \
+    convertable into :obj:`str` type for drawing
 
     In the example below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
     the last 2 attributes are nested within `"details"`. There are 2 detected bounding boxes, and
@@ -90,6 +91,11 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.attr_keys = []
+        if not self.show:
+            raise KeyError(
+                "The 'show' config is currently empty. Add the desired attributes to be drawn "
+                "to the list, in order to proceed."
+            )
         for attr in self.show:
             attr = re.sub(" ", "", attr)
             self.attr_keys.append(re.split(r"->", attr))
@@ -103,11 +109,21 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
+        tags = self._tags_from_obj_attrs(inputs["obj_attrs"])
+        # if empty list, nothing to draw
+        if not tags:
+            return {}
+        draw_tags(inputs["img"], inputs["bboxes"], tags, TOMATO)
+
+        return {}
+
+    def _tags_from_obj_attrs(self, inputs: Dict[str, Any]) -> List[str]:
+        """Process inputs from various attributes into tags for drawing."""
         all_attrs: List[List[Any]] = []
         for attr_key in self.attr_keys:
-            attr = _get_value(inputs["obj_attrs"], attr_key.copy())
+            attr = _deep_get_value(inputs, attr_key.copy())
             if not isinstance(attr, list):
-                raise ValueError(
+                raise TypeError(
                     f"The attribute of interest has to be of type 'list', containing a list of "
                     f"tags. However, the attribute chosen here was: {attr} which is of type: "
                     f"{type(attr)}."
@@ -116,19 +132,27 @@ class Node(AbstractNode):
 
         tags = []
         for attr in list(zip(*all_attrs)):
+            if attr:
+                if (
+                    not isinstance(attr[0], str)
+                    and not isinstance(attr[0], int)
+                    and not isinstance(attr[0], float)
+                    and not isinstance(attr[0], bool)
+                ):
+                    raise TypeError(
+                        f"A tag has to be of type 'str', 'int', 'float' or 'bool' to be "
+                        f"convertable to a string. However, the tag: {attr[0]} is of type: "
+                        f"{type(attr[0])}"
+                    )
             attr_str = map(str, attr)
             tags.append(", ".join(attr_str))
 
-        # if empty list, nothing to draw
-        if not tags:
-            return {}
-        draw_tags(inputs["img"], inputs["bboxes"], tags, TOMATO)
-
-        return {}
+        return tags
 
 
-def _get_value(data: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
+def _deep_get_value(data: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
+    """Recursively goes through the keys of a dictionary to obtain the final value."""
     if not keys:
         return data
     key = keys.pop(0)
-    return _get_value(data[key], keys)
+    return _deep_get_value(data[key], keys)
