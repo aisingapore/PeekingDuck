@@ -95,7 +95,7 @@ Edit the following **5 files** as described below:
          from peekingduck.pipeline.nodes.node import AbstractNode
          import sqlite3
    
-         DB_FILE = "wave.db"
+         DB_FILE = "wave.db"           # name of database file
    
    
          class Node(AbstractNode):
@@ -110,6 +110,8 @@ Edit the following **5 files** as described below:
    
                self.conn = None
                try:
+                  # try to establish connection to database,
+                  # will create DB_FILE if it does not exist
                   self.conn = sqlite3.connect(DB_FILE)
                   self.logger.info(f"Connected to {DB_FILE}")
                   sql = """ CREATE TABLE IF NOT EXISTS wavetable (
@@ -123,6 +125,9 @@ Edit the following **5 files** as described below:
                   self.logger.info(f"SQL Error: {e}")
    
             def update_db(self, hand_direction: str, num_waves: int) -> None:
+               """Helper function to save current time stamp, hand direction and 
+               wave count into DB wavetable.
+               """
                now = datetime.now()
                dt_str = f"{now:%Y-%m-%d %H:%M:%S}"
                sql = """ INSERT INTO wavetable(datetime,hand_direction,wave_count) 
@@ -132,7 +137,7 @@ Edit the following **5 files** as described below:
                self.conn.commit()
    
             def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-               """This node does ___.
+               """Node to output hand wave data into sqlite database.
    
                Args:
                      inputs (dict): Dictionary with keys "hand_direction", "num_waves"
@@ -148,20 +153,18 @@ Edit the following **5 files** as described below:
                return {}
 
    This tutorial uses the ``sqlite3`` package to interface with the database.
+
+   On first run, the node initializer will create the ``wave.db`` database file.
+   It will establish a connection to the database and create a table called
+   ``wavetable`` if it does not exist.
+   This table is used to store the hand direction and wave count data.
    
-   Line 10 specifies the name of the database file as ``wave.db``.
-   
-   The node initializer code in lines 23-35 will establish a connection to the
-   database and will create a table called ``wavetable`` if it does not exist.
-   This table will be used to store the hand direction and wave count data.
-   On first run, this code will also create the ``wave.db`` database file.
-   
-   Lines 37-44 is a helper function ``update_db`` to update the database.
+   A helper function ``update_db`` is called to update the database.
    It saves the current date time stamp, hand direction and wave count into the 
    ``wavetable``.
    
-   Lines 56-58 of the node's ``run`` method retrieves the required inputs from the 
-   pipeline's data pool and calls ``self.update_db`` to save the data.
+   The node's ``run`` method retrieves the required inputs from the pipeline's 
+   data pool and calls ``self.update_db`` to save the data.
 
 
 #. **src/custom_nodes/configs/dabble/wave.yml**:
@@ -191,10 +194,11 @@ Edit the following **5 files** as described below:
             "num_waves": self.num_waves,
          }
 
-   This file is the same as the previous one, except for the changes to the last 
-   line 174 as shown above.
+   This file is the same as the ``wave.py`` in the :ref:`counting hand
+   waves<tutorial_count_hand_wave>` tutorial, except for the changes in the last few
+   lines as shown above.
    These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's 
-   data pool for subsequent consumption.
+   data pool for subsequent consumption by the new ``output.sqlite`` custom node.
 
 
 #. **pipeline_config.yml**:
@@ -205,8 +209,8 @@ Edit the following **5 files** as described below:
       ... same as previous ...
       - custom_nodes.output.sqlite
 
-   The pipeline is the same as the previous one, except for the new line 11 that 
-   has been added to call the new custom node.
+   Likewise, the pipeline is the same as in the previous tutorial, except for 
+   line 11 that has been added to call the new custom node.
    
 Run this project with ``peekingduck run`` and when completed, a new ``wave.db`` 
 sqlite database file would be created in the current folder.
