@@ -59,7 +59,6 @@ macOS Monterey.
 
             | \ :blue:`[~user]` \ > \ :green:`conda install -c apple tensorflow-deps` \
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-macos tensorflow-metal` \
-            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
 
         * For macOS Big Sur: |br| |br|
 
@@ -69,60 +68,18 @@ macOS Monterey.
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0` \
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-metal==0.2.0` \
 
-    4. Install PeekingDuck:
+    4. Install PyTorch (currently CPU-only):
+
+        .. admonition:: Terminal Session
+
+            | \ :blue:`[~user]` \ > \ :green:`pip install torch torchvision` \
+
+    5. Install PeekingDuck and verify installation:
 
         .. admonition:: Terminal Session
 
             | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
-
-    5. Create a new PeekingDuck project and run it:
-
-        .. admonition:: Terminal Session
-
-            | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-            | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-            | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
-            | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
-
-    6. Install PyTorch and TorchVision (Unofficial):
-
-        Some PeekingDuck models are built on PyTorch, and require ``torch`` and 
-        ``torchvision`` to be installed. |br|
-        This guide will install the ``pytorch-cpu`` package from Conda,
-        and download ``torchvision`` from GitHub, compile and install it from source.
-        Finally, one line needs to be added to a Python file in the installed ``torch``
-        package.
-
-        **Prerequisites: This section assumes Xcode has already been installed.**
-
-        .. admonition:: Terminal Session
-
-            | \ :blue:`[~user]` \ > \ :green:`conda install pytorch-cpu` \
-            | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/pytorch/vision.git` \
-            | \ :blue:`[~user]` \ > \ :green:`cd vision` \
-            | # For macOS Big Sur:
-            | \ :blue:`[~user/vision]` \ > \ :green:`MACOS_DEVELOPMENT_TARGET=11.6 CC=clang CXX=clang++ python setup.py install` \
-            | # For macOS Monterey:
-            | \ :blue:`[~user/vision]` \ > \ :green:`MACOS_DEVELOPMENT_TARGET=11.7 CC=clang CXX=clang++ python setup.py install` \
-
-        6a) Edit the file ``torch/ao/quantization/__init__.py``. |br|
-        This file is located where the ``torch`` package is installed.
-        For instance, using ``miniforge`` ``conda`` environment ``pkd`` and Python 3.8, 
-        this file is located (on our M1 Macs) at:
-        ``/opt/homebrew/Caskroom/miniforge/base/envs/pkd/lib/python3.8/site-packages/torch/ao/quantization/__init__.py``
-
-        6b) Add this line at the end of the file and save.
-
-        .. code-block:: text
-
-            [ original __init__.py contents here ]
-            from .stubs import *
-
-        .. note::
-            This Torch installation guide is based on our in-house experimentation and
-            testing.  As PyTorch and TorchVision are not officially supported on M1 Macs
-            currently, we are unable to provide support for their installation if these
-            instructions do not work on your M1 system.
+            | \ :blue:`[~user]` \ > \ :green:`peekingduck --verify_install` \
 
 
 
