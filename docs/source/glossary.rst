@@ -8,8 +8,6 @@ types when working with custom nodes.
 
 (input) |all_input|
 
-|avg|
-
 |bboxes|
 
 |bbox_labels|
@@ -19,6 +17,8 @@ types when working with custom nodes.
 |btm_midpoint|
 
 |count|
+
+|cum_avg|
 
 |density_map|
 

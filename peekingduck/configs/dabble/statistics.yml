@@ -1,14 +1,14 @@
 input: ["all"]
-output: ["avg", "min", "max"]
+output: ["cum_avg", "min", "max"]
 
 identity: null
 length: null
 minimum: null
 maximum: null
-conditional_count: null
+cond_count: null
 
 # identity: count
-# conditional_count: "obj_attrs['flags'] == 'TOO CLOSE!'"
+# cond_count: "obj_attrs['flags'] == 'TOO CLOSE!'"
 # length: large_groups
 # minimum: null
 # maximum: obj_attrs['ids']
@@ -19,10 +19,3 @@ conditional_count: null
 # b. Spaces in the expression will be ignored except for string operands
 
 # Say that don't put stuff in square brackets, we using regex
-# Unit tests
-
-# 1. All operators work
-# 2. Don't accept multiple operators
-# 3. Spaces not included
-# 4. 4 nulls and only 1 mode not null
-# 5. "'asdasd'" and '"asfgasf"'

@@ -56,7 +56,7 @@ class Stats:
 
         return self.data_type, self.keys
 
-    def get_curr(self, inputs: Any, keys: List[str]) -> Union[float, int, None]:
+    def get_curr_result(self, inputs: Any, keys: List[str]) -> Union[float, int, None]:
         """
         Extracts the current resulting value from the incoming data.
 
@@ -79,11 +79,11 @@ class Stats:
         self.condition."""
         ops_expr = "(" + ")|(".join(self.ops.keys()) + ")"
         match = re.search(ops_expr, self.expr)
-        if not match and self.method == "conditional_count":
+        if not match and self.method == "cond_count":
             raise ValueError(
                 f"The chosen method: {self.method} should have an operator for comparison."
             )
-        if match and self.method != "conditional_count":
+        if match and self.method != "cond_count":
             raise ValueError(
                 f"The chosen method: {self.method} should not have the {match.group()} "
                 f"operator."
@@ -94,7 +94,7 @@ class Stats:
             op_idx_start, op_idx_end = match.span()
             target_attr = self.expr[:op_idx_start]
             # check int/float/str for operand
-            operand_raw = self.expr[op_idx_end + 1 :]
+            operand_raw = self.expr[op_idx_end:]
             self.condition["operand"] = _get_operand(operand_raw)  # type: ignore
         else:
             target_attr = self.expr
@@ -124,8 +124,7 @@ def _get_method_expr(all_methods: Dict[str, Union[str, None]]) -> Tuple[str, str
 
 def _get_data_type_and_keys(target_attr: str) -> Tuple[str, List[str]]:
     """Extract the name of data_type and its associated keys in a list, if any."""
-    target_attr = re.sub(r"'|\"", "", target_attr)
-    target_attr = target_attr.strip()
+    target_attr = re.sub(r"'|\"| ", "", target_attr)
     keys = re.findall(r"\[(.*?)\]", target_attr)
     if not keys:
         data_type = target_attr
@@ -184,9 +183,9 @@ def _apply_method(
     if method == "maximum":
         _check_type(target_attr, method, dict, list)
         return max(target_attr)
-    # if method == "conditional_count"
+    # if method == "cond_count"
     _check_type(target_attr, method, list)
-    return _conditional_count(target_attr, condition)
+    return _cond_count(target_attr, condition)
 
 
 def _check_type(
@@ -204,7 +203,7 @@ def _check_type(
         )
 
 
-def _conditional_count(target_attr: Any, condition: Dict[str, Any]) -> int:
+def _cond_count(target_attr: Any, condition: Dict[str, Any]) -> int:
     """Counts the number of elements in a list given an operator and operand for comparison."""
     count = 0
     for item in target_attr:

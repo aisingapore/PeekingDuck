@@ -13,8 +13,8 @@
 # limitations under the License.
 
 """
-A flexible node created for calculating the average, minimum and maximum of a single variable of
-interest over time.
+A flexible node created for calculating the cumulative average, minimum and maximum of a single
+variable of interest over time.
 """
 
 import operator
@@ -35,12 +35,12 @@ OPS = {
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
-    """A flexible node created for calculating the average, minimum and maximum of a single
-    variable of interest (defined as ``current result`` here) over time. The configurations
+    """A flexible node created for calculating the cumulative average, minimum and maximum of a
+    single variable of interest (defined as ``current result`` here) over time. The configurations
     for this node offer several methods to reduce the incoming data type into a single
     ``current result`` of type :obj:`int` or :obj:`float`, which is valid for the current
-    video frame. ``current result`` is then used to recalculate the values of average, minimum,
-    and maximum for PeekingDuck's running duration thus far.
+    video frame. ``current result`` is then used to recalculate the values of cumulative average,
+    minimum, and maximum for PeekingDuck's running duration thus far.
 
     The configurations for this node are in the form ``<method>``: ``<expression>``. By default,
     all available methods have the ``null`` value for their ``<expression>`` values. To start off,
@@ -56,10 +56,10 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     :doc:`Glossary </glossary>` as well as custom data types produced by custom nodes are \
     supported.
 
-    * ``<operator>`` (optional, only used for ``conditional_count`` method): The operator used \
+    * ``<operator>`` (optional, only used for ``cond_count`` method): The operator used \
     for comparison, out of these 5 options: ``==``, ``>``, ``>=``, ``<``, ``<=``.
 
-    * ``<operand>`` (optional, only used for ``conditional_count`` method): The operand used for \
+    * ``<operand>`` (optional, only used for ``cond_count`` method): The operand used for \
     comparison. If it is intended to be of :obj:`str` type, it should be enclosed by single or \
     double quotes. Else, it will be assumed to be of types :obj:`int` or :obj:`float`, and \
     converted into a :obj:`float` type for calculations.
@@ -78,11 +78,11 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     |                                       | maximum:                        | 52          |
     |   ids: [1,2,4],                       | obj_attrs["details"]["age"]     |             |
     |                                       +---------------------------------+-------------+
-    |   details: {                          | conditional_count:              | 2           |
+    |   details: {                          | cond_count:                     | 2           |
     |                                       | obj_attrs["details"]["gender"]  |             |
     |     gender: ["male","male","female"], | == "male"                       |             |
     |                                       +---------------------------------+-------------+
-    |     age: [52,17,48] }}                | conditional_count:              | 3           |
+    |     age: [52,17,48] }}                | cond_count:                     | 3           |
     |                                       | obj_attrs["details"]["age"]     |             |
     |                                       | < 60                            |             |
     +---------------------------------------+---------------------------------+-------------+
@@ -91,7 +91,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         |all_input|
 
     Outputs:
-        |avg|
+        |cum_avg|
 
         |min|
 
@@ -110,7 +110,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         maximum (:obj:`str`): **default=null** |br|
             Accepts ``<target attribute>`` of types :obj:`List[float | int]` or
             :obj:`Dict[str, float | int]`, and returns the maximum element within.
-        conditional_count (:obj:`str`): **default=null** |br|
+        cond_count (:obj:`str`): **default=null** |br|
             Accepts ``<target attribute>`` of types :obj:`List[float | int | str]`, and compares
             each element with ``<operand>`` using the ``<operator>``. The number of elements that
             fulfil the condition are counted towards ``<current result>``.
@@ -118,10 +118,10 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.avg, self.min, self.max = 0.0, float("inf"), 0
+        self.cum_avg, self.min, self.max = 0.0, float("inf"), 0
         self.num_iter = 0
         all_methods = {
-            "conditional_count": self.conditional_count,
+            "cond_count": self.cond_count,
             "identity": self.identity,
             "length": self.length,
             "minimum": self.minimum,
@@ -137,22 +137,22 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             inputs (dict): Dictionary with all available keys.
 
         Returns:
-            outputs (dict): Dictionary with keys "avg", "min" and "max".
+            outputs (dict): Dictionary with keys "cum_avg", "min" and "max".
         """
 
-        self.curr = self.stats.get_curr(inputs[self.data_type], self.keys.copy())
+        self.curr = self.stats.get_curr_result(inputs[self.data_type], self.keys.copy())
 
         # if no detections in this frame, return stats from previous detections
         if not self.curr:
-            return {"avg": self.avg, "min": self.min, "max": self.max}
+            return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
 
         self.num_iter += 1
         self._update_stats(self.curr)
 
-        return {"avg": self.avg, "min": self.min, "max": self.max}
+        return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
 
     def _update_stats(self, curr: Union[float, int]) -> None:
-        """Updates the avg, min and max values with the current value."""
+        """Updates the cum_avg, min and max values with the current value."""
         if not isinstance(curr, int) and not isinstance(curr, int):
             raise ValueError(
                 f"The current value has to be of type 'int' or 'float' to calculate statistics."
@@ -162,4 +162,4 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             self.min = curr
         if curr > self.max:
             self.max = curr
-        self.avg = (self.avg * self.num_iter + curr) / (self.num_iter + 1)
+        self.cum_avg = (self.cum_avg * self.num_iter + curr) / (self.num_iter + 1)

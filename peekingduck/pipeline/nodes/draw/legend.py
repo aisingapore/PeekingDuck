@@ -29,14 +29,15 @@ class Node(AbstractNode):
     produced by custom nodes.
 
     This example screenshot shows ``fps`` from :mod:`dabble.fps`, ``count`` from
-    :mod:`dabble.bbox_count` and ``avg`` from :mod:`dabble.statistics` displayed within the legend
-    box.
+    :mod:`dabble.bbox_count` and ``cum_avg`` from :mod:`dabble.statistics` displayed within the
+    legend box.
 
     .. image:: /assets/api/legend.png
     |br|
 
     Supported types that can be drawn are :obj:`int`, :obj:`float` and :obj:`str`.
-    Note that values of float type such as ``fps`` and ``avg`` are displayed in 2 decimal places.
+    Note that values of float type such as ``fps`` and ``cum_avg`` are displayed in 2 decimal
+    places.
 
     Inputs:
         |all_input|
@@ -50,8 +51,8 @@ class Node(AbstractNode):
             draws it at bottom-left.
         show (:obj:`List[str]`): **default = []**. |br|
             Include in this list the desired data type(s) to be drawn within the legend box, such
-            as ``["fps", "count", "avg"]`` in the example screenshot. Custom data types produced
-            by custom nodes are also supported.
+            as ``["fps", "count", "cum_avg"]`` in the example screenshot. Custom data types
+            produced by custom nodes are also supported.
 
     .. versionchanged:: 1.2.0
         Merged previous ``all_legend_items`` and ``include`` configs into a single ``show`` config

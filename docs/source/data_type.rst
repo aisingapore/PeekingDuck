@@ -5,7 +5,7 @@
    in :mod:`draw.legend`, this is used as dynamic input for legend creation. In 
    :mod:`output.csv_writer`, this is used as flexible input for statistics to track.
 
-.. |avg| replace:: ``avg`` (:obj:`float`): Average of an attribute over time.
+.. |cum_avg| replace:: ``cum_avg`` (:obj:`float`): Cumulative average of an attribute over time.
 
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number
