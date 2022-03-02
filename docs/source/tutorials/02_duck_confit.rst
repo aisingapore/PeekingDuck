@@ -441,24 +441,24 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user]` \ > \ :green:`mkdir custom_project` \
-   | \ :blue:`[~user]` \ > \ :green:`cd custom_project` \
-   | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck init` \
+   | \ :blue:`[~user]` \ > \ :green:`mkdir wave_project` \
+   | \ :blue:`[~user]` \ > \ :green:`cd wave_project` \
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck init` \
    | Welcome to PeekingDuck! 
-   | 2022-02-11 18:17:31 peekingduck.cli  INFO:  Creating custom nodes folder in ~user/custom_project/src/custom_nodes 
-   | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \ 
+   | 2022-02-11 18:17:31 peekingduck.cli  INFO:  Creating custom nodes folder in ~user/wave_project/src/custom_nodes 
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
-   | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
+   | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
    | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
    | Enter node name [my_custom_node]: \ :green:`wave` \
    | 
-   | Node directory:	~user/custom_project/src/custom_nodes
+   | Node directory:	~user/wave_project/src/custom_nodes
    | Node type:	dabble
    | Node name:	wave
    | 
    | Creating the following files:
-   |    Config file: ~user/custom_project/src/custom_nodes/configs/dabble/wave.yml
-   |    Script file: ~user/custom_project/src/custom_nodes/dabble/wave.py
+   |    Config file: ~user/wave_project/src/custom_nodes/configs/dabble/wave.yml
+   |    Script file: ~user/wave_project/src/custom_nodes/dabble/wave.py
    | Proceed? [Y/n]: \ :green:`⏎` \
    | Created node!
 
@@ -468,7 +468,7 @@ following folder structure:
 
 .. parsed-literal::
 
-   \ :blue:`custom_project/` \ |Blank|
+   \ :blue:`wave_project/` \ |Blank|
    ├── pipeline_config.yml
    ├── \ :blue:`src/` \ |Blank|
    │   └── \ :blue:`custom_nodes/` \ |Blank|
