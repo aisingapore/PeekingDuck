@@ -315,16 +315,16 @@ Edit ``pipeline_config.yml`` as follows:
 
    nodes:
    - input.recorded:
-      input_dir: highway_cars.mp4
+       input_dir: highway_cars.mp4
    - model.yolo:
-      detect_ids: ["car"]
+       detect_ids: ["car"]
    - dabble.bbox_count
    - dabble.fps
    - dabble.statistics:
-      identity: count
+       identity: count
    - draw.bbox
    - draw.legend:
-      show: ["fps", "count", "max", "min"]
+       show: ["fps", "count", "max", "min"]
    - output.screen
 
 Run it with ``peekingduck run`` and you should see a video of cars travelling across a
