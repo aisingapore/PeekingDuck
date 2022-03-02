@@ -81,7 +81,7 @@ Edit the following **5 files** as described below:
 
       .. container:: header
 
-         **Show/Hide Code**
+         **Show/Hide Code for sqlite.py**
 
       .. code-block:: python
          :linenos:

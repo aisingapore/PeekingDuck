@@ -506,7 +506,7 @@ from the pipeline. The node has no output.
 
       .. container:: header
 
-         **Show/Hide Code**
+         **Show/Hide Code for wave.py**
 
       .. code-block:: python
          :linenos:
