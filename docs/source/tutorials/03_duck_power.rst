@@ -8,7 +8,6 @@ This tutorial presents advanced power features of PeekingDuck such as
 object tracking and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
 
 
-
 .. _tutorial_sql:
 
 Interfacing with SQL
@@ -59,11 +58,9 @@ The updated folder structure would be:
    └── wave.mp4
 
 
-
 Edit the following **5 files** as described below:
 
-
-1. **src/custom_nodes/configs/output/sqlite.yml**:
+#. **src/custom_nodes/configs/output/sqlite.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -74,94 +71,100 @@ Edit the following **5 files** as described below:
 
       # No optional configs
 
-The new ``output.sqlite`` custom node will take in the hand direction and the
-current number of hand waves to save to the external database.
+   The new ``output.sqlite`` custom node will take in the hand direction and the
+   current number of hand waves to save to the external database.
 
 
-2. **src/custom_nodes/output/sqlite.py**:
+#. **src/custom_nodes/output/sqlite.py**:
 
-   .. code-block:: python
-      :linenos:
+   .. container:: toggle
 
-      """
-      Custom node to save data to external database.
-      """
+      .. container:: header
 
-      from typing import Any, Dict
-      from datetime import datetime
-      from peekingduck.pipeline.nodes.node import AbstractNode
-      import sqlite3
+         **Show/Hide Code**
 
-      DB_FILE = "wave.db"
-
-
-      class Node(AbstractNode):
-         """Custom node to save hand direction and current wave count to database.
-
-         Args:
-            config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+      .. code-block:: python
+         :linenos:
+   
          """
-
-         def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-            super().__init__(config, node_path=__name__, **kwargs)
-
-            self.conn = None
-            try:
-               self.conn = sqlite3.connect(DB_FILE)
-               self.logger.info(f"Connected to {DB_FILE}")
-               sql = """ CREATE TABLE IF NOT EXISTS wavetable (
-                              datetime text,
-                              hand_direction text,
-                              wave_count integer
-                         ); """
-               cur = self.conn.cursor()
-               cur.execute(sql)
-            except sqlite3.Error as e:
-               self.logger.info(f"SQL Error: {e}")
-
-         def update_db(self, hand_direction: str, num_waves: int) -> None:
-            now = datetime.now()
-            dt_str = f"{now:%Y-%m-%d %H:%M:%S}"
-            sql = """ INSERT INTO wavetable(datetime,hand_direction,wave_count) 
-                      values (?,?,?) """
-            cur = self.conn.cursor()
-            cur.execute(sql, (dt_str, hand_direction, num_waves))
-            self.conn.commit()
-
-         def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            """This node does ___.
-
+         Custom node to save data to external database.
+         """
+   
+         from typing import Any, Dict
+         from datetime import datetime
+         from peekingduck.pipeline.nodes.node import AbstractNode
+         import sqlite3
+   
+         DB_FILE = "wave.db"
+   
+   
+         class Node(AbstractNode):
+            """Custom node to save hand direction and current wave count to database.
+   
             Args:
-                  inputs (dict): Dictionary with keys "hand_direction", "num_waves"
-
-            Returns:
-                  outputs (dict): Empty dictionary
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
             """
+   
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+   
+               self.conn = None
+               try:
+                  self.conn = sqlite3.connect(DB_FILE)
+                  self.logger.info(f"Connected to {DB_FILE}")
+                  sql = """ CREATE TABLE IF NOT EXISTS wavetable (
+                                 datetime text,
+                                 hand_direction text,
+                                 wave_count integer
+                            ); """
+                  cur = self.conn.cursor()
+                  cur.execute(sql)
+               except sqlite3.Error as e:
+                  self.logger.info(f"SQL Error: {e}")
+   
+            def update_db(self, hand_direction: str, num_waves: int) -> None:
+               now = datetime.now()
+               dt_str = f"{now:%Y-%m-%d %H:%M:%S}"
+               sql = """ INSERT INTO wavetable(datetime,hand_direction,wave_count) 
+                         values (?,?,?) """
+               cur = self.conn.cursor()
+               cur.execute(sql, (dt_str, hand_direction, num_waves))
+               self.conn.commit()
+   
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """This node does ___.
+   
+               Args:
+                     inputs (dict): Dictionary with keys "hand_direction", "num_waves"
+   
+               Returns:
+                     outputs (dict): Empty dictionary
+               """
+   
+               hand_direction = inputs["hand_direction"]
+               num_waves = inputs["num_waves"]
+               self.update_db(hand_direction, num_waves)
+   
+               return {}
 
-            hand_direction = inputs["hand_direction"]
-            num_waves = inputs["num_waves"]
-            self.update_db(hand_direction, num_waves)
-
-            return {}
-
-This tutorial uses the ``sqlite3`` package to interface with the database.
-
-Line 10 specifies the name of the database file as ``wave.db``.
-
-The node initializer code in lines 23-35 will establish a connection to the
-database and will create a table called ``wavetable`` if it does not exist.
-This table will be used to store the hand direction and wave count data.
-On first run, this code will also create the ``wave.db`` database file.
-
-Lines 37-44 is a helper function ``update_db`` to update the database.
-It saves the current date time stamp, hand direction and wave count into the 
-``wavetable``.
-
-Lines 56-58 of the node's ``run`` method retrieves the required inputs from the 
-pipeline's data pool and calls ``self.update_db`` to save the data.
+   This tutorial uses the ``sqlite3`` package to interface with the database.
+   
+   Line 10 specifies the name of the database file as ``wave.db``.
+   
+   The node initializer code in lines 23-35 will establish a connection to the
+   database and will create a table called ``wavetable`` if it does not exist.
+   This table will be used to store the hand direction and wave count data.
+   On first run, this code will also create the ``wave.db`` database file.
+   
+   Lines 37-44 is a helper function ``update_db`` to update the database.
+   It saves the current date time stamp, hand direction and wave count into the 
+   ``wavetable``.
+   
+   Lines 56-58 of the node's ``run`` method retrieves the required inputs from the 
+   pipeline's data pool and calls ``self.update_db`` to save the data.
 
 
-3. **src/custom_nodes/configs/dabble/wave.yml**:
+#. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -172,12 +175,12 @@ pipeline's data pool and calls ``self.update_db`` to save the data.
 
       # No optional configs
 
-To support the ``output.sqlite`` custom node's input requirements, we need to 
-modify the ``dabble.wave`` custom node to return the current hand direction
-``hand_direction`` and the current wave count ``num_waves``.
+   To support the ``output.sqlite`` custom node's input requirements, we need to 
+   modify the ``dabble.wave`` custom node to return the current hand direction
+   ``hand_direction`` and the current wave count ``num_waves``.
 
 
-4. **src/custom_nodes/dabble/wave.py**:
+#. **src/custom_nodes/dabble/wave.py**:
 
    .. code-block:: python
       :lineno-start: 173
@@ -188,13 +191,13 @@ modify the ``dabble.wave`` custom node to return the current hand direction
             "num_waves": self.num_waves,
          }
 
-This file is the same as the previous one, except for the changes to the last 
-line 174 as shown above.
-These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's 
-data pool for subsequent consumption.
+   This file is the same as the previous one, except for the changes to the last 
+   line 174 as shown above.
+   These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's 
+   data pool for subsequent consumption.
 
 
-5. **pipeline_config.yml**:
+#. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :lineno-start: 10
@@ -202,9 +205,9 @@ data pool for subsequent consumption.
       ... same as previous ...
       - custom_nodes.output.sqlite
 
-The pipeline is the same as the previous one, except for the new line 11 that 
-has been added to call the new custom node.
-
+   The pipeline is the same as the previous one, except for the new line 11 that 
+   has been added to call the new custom node.
+   
 Run this project with ``peekingduck run`` and when completed, a new ``wave.db`` 
 sqlite database file would be created in the current folder.
 Examine the created database as follows:
@@ -245,7 +248,6 @@ Type ``CTRL-D`` to exit from ``sqlite3``.
    The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
    If your system does not have ``sqlite3``, please see the `SQLite Home Page 
    <http://www.sqlite.org/>`_ for installation instructions.
-
 
 
 .. _tutorial_object_tracking:

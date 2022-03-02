@@ -59,7 +59,7 @@ macOS Monterey.
 
             | \ :blue:`[~user]` \ > \ :green:`conda install -c apple tensorflow-deps` \
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-macos tensorflow-metal` \
-            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck —no-dependencies` \
+            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
 
         * For macOS Big Sur: |br| |br|
 

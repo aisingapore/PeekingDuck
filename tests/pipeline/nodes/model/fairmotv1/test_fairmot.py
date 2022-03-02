@@ -86,6 +86,7 @@ def replace_iou_distance(*args):
     return np.ones_like(iou_distance(*args))
 
 
+@pytest.mark.mlmodel
 class TestFairMOT:
     def test_should_give_empty_output_for_no_human_images(
         self, test_no_human_images, fairmot_config

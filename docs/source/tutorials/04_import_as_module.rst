@@ -23,6 +23,7 @@ Confit" tutorial.
 In addition, we will demonstrate basic debugging techniques which users can employ when
 troubleshooting PeekingDuck projects.
 
+
 Setting up
 ----------
 
@@ -30,9 +31,9 @@ Create a PeekingDuck project using:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+   | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
+   | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
+   | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
 Then, download the `demo video <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_
 to the ``pkd_project`` folder and create a Python script ``demo_debug.py`` in the same folder.
@@ -47,6 +48,7 @@ You should have the following directory structure at this point:
    ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
 
+
 Create a Custom Node for Debugging
 ----------------------------------
 
@@ -54,7 +56,7 @@ Run the following to create a ``dabble`` node for debugging:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
+   | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
 The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
 shown:
@@ -76,95 +78,108 @@ shown:
 Change the content of ``debug.yml`` to:
 
 .. code-block:: yaml
-    :linenos:
+   :linenos:
 
-    input: ["all"]
-    output: ["none"]
+   input: ["all"]
+   output: ["none"]
 
 Line 1: The data type ``all`` allows the node to receive all outputs from the previous nodes as
 its input. Please see the :doc:`Glossary </glossary>` for a list of available data types.
 
 Change the content of ``debug.py`` to:
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    from typing import Any, Dict
+   .. container:: header
 
-    import numpy as np
-
-    from peekingduck.pipeline.nodes.node import AbstractNode
-
-
-    class Node(AbstractNode):
-        def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-            super().__init__(config, node_path=__name__, **kwargs)
-            self.frame = 0
-
-        def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-            if "cat" in inputs["bbox_labels"]:
-                print(
-                    f"{self.frame} {inputs['bbox_scores'][np.where(inputs['bbox_labels'] == 'cat')]}"
-                )
-            self.frame += 1
-            return {}
+      **Show/Hide Code**
+    
+   .. code-block:: python
+      :linenos:
+  
+      from typing import Any, Dict
+  
+      import numpy as np
+  
+      from peekingduck.pipeline.nodes.node import AbstractNode
+  
+  
+      class Node(AbstractNode):
+          def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+              super().__init__(config, node_path=__name__, **kwargs)
+              self.frame = 0
+  
+          def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+              if "cat" in inputs["bbox_labels"]:
+                  print(
+                      f"{self.frame} {inputs['bbox_scores'][np.where(inputs['bbox_labels'] == 'cat')]}"
+                  )
+              self.frame += 1
+              return {}
 
 Line 14 - 17: Print out the frame number and the confidence scores of bounding boxes which are
 detected as "cat".
 
 Line 18: Increment the frame number each time ``run()`` is called.
 
+
 Creating the Python Script
 --------------------------
 
 Change the content of ``demo_debug.py`` to:
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    from pathlib import Path
+   .. container:: header
 
-    from peekingduck.pipeline.nodes import dabble, draw, input, model, output
-    from peekingduck.runner import Runner
-    from src.custom_nodes.dabble import debug
+      **Show/Hide Code**
 
-
-    def main():
-        debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
-
-        recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
-        recorded_node = input.recorded.Node(**recorded_config)
-
-        yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
-        yolo_node = model.yolo.Node(**yolo_config)
-
-        bbox_config = {"show_labels": True}
-        bbox_node = draw.bbox.Node(**bbox_config)
-
-        fps_node = dabble.fps.Node()
-        legend_node = draw.legend.Node()
-        screen_node = output.screen.Node()
-
-        media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
-        media_writer_node = output.media_writer.Node(**media_writer_config)
-
-        runner = Runner(
-            nodes=[
-                recorded_node,
-                yolo_node,
-                debug_node,
-                bbox_node,
-                fps_node,
-                legend_node,
-                screen_node,
-                media_writer_node,
-            ]
-        )
-        runner.run()
-
-
-    if __name__ == "__main__":
-        main()
+   .. code-block:: python
+      :linenos:
+  
+      from pathlib import Path
+  
+      from peekingduck.pipeline.nodes import dabble, draw, input, model, output
+      from peekingduck.runner import Runner
+      from src.custom_nodes.dabble import debug
+  
+  
+      def main():
+          debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
+  
+          recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
+          recorded_node = input.recorded.Node(**recorded_config)
+  
+          yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
+          yolo_node = model.yolo.Node(**yolo_config)
+  
+          bbox_config = {"show_labels": True}
+          bbox_node = draw.bbox.Node(**bbox_config)
+  
+          fps_node = dabble.fps.Node()
+          legend_node = draw.legend.Node()
+          screen_node = output.screen.Node()
+  
+          media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
+          media_writer_node = output.media_writer.Node(**media_writer_config)
+  
+          runner = Runner(
+              nodes=[
+                  recorded_node,
+                  yolo_node,
+                  debug_node,
+                  bbox_node,
+                  fps_node,
+                  legend_node,
+                  screen_node,
+                  media_writer_node,
+              ]
+          )
+          runner.run()
+  
+  
+      if __name__ == "__main__":
+          main()
 
 Line 5, 9: Import and initialize the ``debug`` custom node. Pass in the 
 ``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
@@ -177,6 +192,7 @@ Line 27 - 38: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
+
 Running the Python Script
 -------------------------
 
@@ -184,41 +200,42 @@ Run the ``demo_debug.py`` script using:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`python demo_debug.py` \
+   | \ :blue:`[~user/pkd_project]` \ > \ :green:`python demo_debug.py` \
 
 You should the following output in your terminal:
 
 .. code-block:: text
-    :linenos:
+   :linenos:
 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/cat_and_computer.mp4 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
-    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
-        Model type: v4tiny, 
-        Input resolution: 416, 
-        IDs being detected: [41, 15, 63, 66, 64] 
-        Max Detections per class: 50, 
-        Max Total Detections: 50, 
-        IOU threshold: 0.5, 
-        Score threshold: 0.2 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': ~user/pkd_project/results 
-    2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: ~user/pkd_project/results 
-    0 [0.90861976]
-    1 [0.9082737]
-    2 [0.90818006]
-    3 [0.8888804]
-    4 [0.8877487]
-    5 [0.9071386]
-    6 [0.870267]
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
+       Model type: v4tiny, 
+       Input resolution: 416, 
+       IDs being detected: [41, 15, 63, 66, 64] 
+       Max Detections per class: 50, 
+       Max Total Detections: 50, 
+       IOU threshold: 0.5, 
+       Score threshold: 0.2 
+   2022-02-24 16:33:07 peekingduck.pipeline.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
+   2022-02-24 16:33:07 peekingduck.pipeline.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
+   2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': ~user/pkd_project/results 
+   2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: ~user/pkd_project/results 
+   0 [0.90861976]
+   1 [0.9082737]
+   2 [0.90818006]
+   3 [0.8888804]
+   4 [0.8877487]
+   5 [0.9071386]
+   6 [0.870267]
 
-    [Truncated]
+   [Truncated]
 
 Line 17 - 23: The debugging output showing the frame number and the confidence score of bounding boxes
 predicted as "cat".
+
 
 Running in a Notebook
 =====================
@@ -238,9 +255,11 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
 The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available at a `Colab notebook <link>`_.
 
+
 .. raw:: html
 
     <h3>Running locally</h3>
+
 
 .. raw:: html
 
@@ -256,6 +275,7 @@ PeekingDuck repository and is also available at a `Colab notebook <link>`_.
     
     The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
 
+
 .. raw:: html
 
     <h3>Download Demo Data</h3>
@@ -269,9 +289,9 @@ Run the following command after installing:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
+   | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
+   | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
+   | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
 You should have the following directory structure at this point:
 
@@ -286,23 +306,30 @@ You should have the following directory structure at this point:
            └── \ :blue:`train/` \ |Blank|
                └── \ :blue:`car/` \ |Blank|
 
+
 Importing the Modules
 ---------------------
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    import os
-    from pathlib import Path
+   .. container:: header
 
-    import cv2
-    import easyocr
-    import matplotlib.pyplot as plt
-    import numpy as np
-    import tensorflow as tf
-    from peekingduck.pipeline.nodes import draw, model
-
-    %matplotlib inline
+      **Show/Hide Code** 
+      
+   .. code-block:: python
+      :linenos:
+  
+      import os
+      from pathlib import Path
+  
+      import cv2
+      import easyocr
+      import matplotlib.pyplot as plt
+      import numpy as np
+      import tensorflow as tf
+      from peekingduck.pipeline.nodes import draw, model
+  
+      %matplotlib inline
 
 Line 9: We recommend importing PeekingDuck modules using::
 
@@ -320,53 +347,74 @@ as it isolates the namespace to avoid potential conflicts.
     
     due to package incompatibility.
 
+
 Initialize PeekingDuck nodes
 ----------------------------
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    yolo_lp_node = model.yolo_license_plate.Node()
+   .. container:: header 
 
-    bbox_config = {"show_labels": True}
-    bbox_node = draw.bbox.Node(**bbox_config)
+      **Show/Hide Code**
+
+   .. code-block:: python
+      :linenos:
+  
+      yolo_lp_node = model.yolo_license_plate.Node()
+  
+      bbox_config = {"show_labels": True}
+      bbox_node = draw.bbox.Node(**bbox_config)
 
 Line 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
 constructor as keyword arguments.
 
 Refer to the :ref:`API Documentation <api_doc>` for the configurable settings for each node.
 
+
 Create a Dataset Loader
 -----------------------
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    data_dir = Path.cwd().resolve() / "data" / "oidv6" / "train"
-    dataset = tf.keras.utils.image_dataset_from_directory(
-        data_dir, batch_size=1, shuffle=False
-    )
+   .. container:: header
+
+      **Show/Hide Code**
+
+   .. code-block:: python
+      :linenos:
+  
+      data_dir = Path.cwd().resolve() / "data" / "oidv6" / "train"
+      dataset = tf.keras.utils.image_dataset_from_directory(
+          data_dir, batch_size=1, shuffle=False
+      )
 
 Line 2: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
 also create your own data loader class.
 
+
 Create a License Plate Parser Class
 -----------------------------------
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    class LPReader:
-        def __init__(self, use_gpu):
-            self.reader = easyocr.Reader(["en"], gpu=use_gpu)
+   .. container:: header
 
-        def read(self, image):
-            """Reads text from the image and joins multiple multiple strings to a
-            single string.
-            """
-            return " ".join(self.reader.readtext(image, detail=0))
-    
-    reader = LPReader(False)
+      **Show/Hide Code** 
+
+   .. code-block:: python
+      :linenos:
+  
+      class LPReader:
+          def __init__(self, use_gpu):
+              self.reader = easyocr.Reader(["en"], gpu=use_gpu)
+  
+          def read(self, image):
+              """Reads text from the image and joins multiple multiple strings to a
+              single string.
+              """
+              return " ".join(self.reader.readtext(image, detail=0))
+      
+      reader = LPReader(False)
 
 We create the license plate parser class in a Python class using ``easyocr`` to demonstrate how
 users can integrate the PeekingDuck pipeline with external processes.
@@ -375,65 +423,70 @@ Alternatively, users can create a custom node for parsing license plates and run
 through the command-line interface (CLI) instead. Refer to the :ref:`custom nodes <tutorial_custom_nodes>`
 tutorial for more information.
 
+
 The Inference Loop
 ------------------
 
-.. code-block:: python
-    :linenos:
+.. container:: toggle
 
-    def get_best_license_plate(frame, bboxes, bbox_scores, width, height):
-        """Returns the image region enclosed by the bounding box with the highest
-        confidence score.
-        """
-        best_idx = np.argmax(bbox_scores)
-        best_bbox = bboxes[best_idx].astype(np.float32).reshape((-1, 2))
-        best_bbox[:, 0] *= width
-        best_bbox[:, 1] *= height
-        best_bbox = np.round(best_bbox).astype(int)
+   .. container:: header
 
-        return frame[slice(*best_bbox[:, 1]), slice(*best_bbox[:, 0])]
-    
-    num_col = 3
-    # For visualization, we plot 3 columns, 1) the original image, 2) image with
-    # bounding box, and 3) the detected license plate region with license plate
-    # number prediction shown as the plot title 
-    fig, ax = plt.subplots(
-        len(dataset), num_col, figsize=(num_col * 3, len(dataset) * 3)
-    )
-    for i, (element, path) in enumerate(zip(dataset, dataset.file_paths)):
-        # TODO: Ensure model takes in BGR image after it's fixed
-        image_orig = cv2.imread(path)
-        image_orig = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
-        height, width = image_orig.shape[:2]
+      **Show/Hide Code** 
 
-        image = element[0].numpy().astype("uint8")[0].copy()
-
-        yolo_lp_input = {"img": image}
-        yolo_lp_output = yolo_lp_node.run(yolo_lp_input)
-
-        bbox_input = {
-            "img": image,
-            "bboxes": yolo_lp_output["bboxes"],
-            "bbox_labels": yolo_lp_output["bbox_labels"],
-        }
-        _ = bbox_node.run(bbox_input)
-
-        ax[i][0].imshow(image_orig)
-        ax[i][1].imshow(image)
-        # If there are any license plates detected, try to predict the license
-        # plate number
-        if len(yolo_lp_output["bboxes"]) > 0:
-            lp_image = get_best_license_plate(
-                image_orig, yolo_lp_output["bboxes"],
-                yolo_lp_output["bbox_scores"],
-                width,
-                height,
-            )
-            lp_pred = reader.read(lp_image)
-            ax[i][2].imshow(lp_image)
-            ax[i][2].title.set_text(f"Pred: {lp_pred}")
-
-
+   .. code-block:: python
+      :linenos:
+  
+      def get_best_license_plate(frame, bboxes, bbox_scores, width, height):
+          """Returns the image region enclosed by the bounding box with the highest
+          confidence score.
+          """
+          best_idx = np.argmax(bbox_scores)
+          best_bbox = bboxes[best_idx].astype(np.float32).reshape((-1, 2))
+          best_bbox[:, 0] *= width
+          best_bbox[:, 1] *= height
+          best_bbox = np.round(best_bbox).astype(int)
+  
+          return frame[slice(*best_bbox[:, 1]), slice(*best_bbox[:, 0])]
+      
+      num_col = 3
+      # For visualization, we plot 3 columns, 1) the original image, 2) image with
+      # bounding box, and 3) the detected license plate region with license plate
+      # number prediction shown as the plot title 
+      fig, ax = plt.subplots(
+          len(dataset), num_col, figsize=(num_col * 3, len(dataset) * 3)
+      )
+      for i, (element, path) in enumerate(zip(dataset, dataset.file_paths)):
+          # TODO: Ensure model takes in BGR image after it's fixed
+          image_orig = cv2.imread(path)
+          image_orig = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
+          height, width = image_orig.shape[:2]
+  
+          image = element[0].numpy().astype("uint8")[0].copy()
+  
+          yolo_lp_input = {"img": image}
+          yolo_lp_output = yolo_lp_node.run(yolo_lp_input)
+  
+          bbox_input = {
+              "img": image,
+              "bboxes": yolo_lp_output["bboxes"],
+              "bbox_labels": yolo_lp_output["bbox_labels"],
+          }
+          _ = bbox_node.run(bbox_input)
+  
+          ax[i][0].imshow(image_orig)
+          ax[i][1].imshow(image)
+          # If there are any license plates detected, try to predict the license
+          # plate number
+          if len(yolo_lp_output["bboxes"]) > 0:
+              lp_image = get_best_license_plate(
+                  image_orig, yolo_lp_output["bboxes"],
+                  yolo_lp_output["bbox_scores"],
+                  width,
+                  height,
+              )
+              lp_pred = reader.read(lp_image)
+              ax[i][2].imshow(lp_image)
+              ax[i][2].title.set_text(f"Pred: {lp_pred}")
 
 Line 1 - 11: We define a utility function for retrieving the image region of the license
 plate with a highest confidence score to improve code clarity. For more information on

@@ -102,7 +102,7 @@ Then, initialize the PeekingDuck project and verify the PeekingDuck installation
 
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck -\-verify_install` \
 
-You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_
+You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
 with bounding boxes overlaid.
 
 | The video will auto-close when it is run to the end (about 18 seconds).
