@@ -746,5 +746,157 @@ Execute ``peekingduck run`` to see your custom node in action.
 Recipe 3: Debugging
 -------------------
 
-**TODO**
+When working with PeekingDuck's pipeline, you may sometimes wonder what is available 
+in the data pool, or whether a particular data object has been correctly computed.
+This tutorial will show you how to use a custom node to help with troubleshooting and 
+debugging PeekingDuck's pipeline.
 
+Continuing from the above tutorial, create a new ``dabble.debug`` custom node:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
+   | Creating new custom node...
+   | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
+   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Enter node name [my_custom_node]: \ :green:`debug` \
+   | 
+   | Node directory:	~user/wave_project/src/custom_nodes
+   | Node type:	dabble
+   | Node name:	debug
+   | 
+   | Creating the following files:
+   |    Config file: ~user/wave_project/src/custom_nodes/configs/dabble/debug.yml
+   |    Script file: ~user/wave_project/src/custom_nodes/dabble/debug.py
+   | Proceed? [Y/n]: \ :green:`⏎` \
+   | Created node!
+
+Updated folder structure:
+
+.. parsed-literal::
+
+   \ :blue:`wave_project/` \ |Blank|
+   ├── pipeline_config.yml
+   ├── \ :blue:`src` \ |Blank|
+   │   └── \ :blue:`custom_nodes` \ |Blank|
+   │       ├── \ :blue:`configs` \ |Blank|
+   │       │   └── \ :blue:`dabble` \ |Blank|
+   │       │       ├── debug.yml
+   │       │       └── wave.yml
+   │       └── \ :blue:`dabble` \ |Blank|
+   │           ├── debug.py
+   │           └── wave.py
+   ├── wave.db
+   └── wave.mp4
+
+Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follows:
+
+   .. code-block:: yaml
+      :linenos:
+
+      # Mandatory configs
+      input: ["all"]
+      output: ["none"]
+
+      # No optional configs
+
+Update ``debug.py`` as shown below:
+
+   .. container:: toggle
+
+      .. container:: header
+
+         **Show/Hide Code for debug.py**
+
+      .. code-block:: python
+         :linenos:
+
+         """
+         A custom node for debugging
+         """
+
+         from typing import Any, Dict
+
+         from peekingduck.pipeline.nodes.node import AbstractNode
+
+
+         class Node(AbstractNode):
+            """This is a simple example of creating a custom node to help with debugging.
+
+            Args:
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+            """
+
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """A simple debugging custom node
+
+               Args:
+                     inputs (dict): "all", to view everything in data pool
+
+               Returns:
+                     outputs (dict): "none"
+               """
+
+               self.logger.info("-- debug --")
+               # show what is available in PeekingDuck's data pool
+               self.logger.info(f"input.keys={list(inputs.keys())}")
+               # debug specific data: bboxes
+               bboxes = inputs["bboxes"]
+               bbox_labels = inputs["bbox_labels"]
+               bbox_scores = inputs["bbox_scores"]
+               self.logger.info(f"num bboxes={len(bboxes)}")
+               for i, bbox in enumerate(bboxes):
+                     label, score = bbox_labels[i], bbox_scores[i]
+                     self.logger.info(f"bbox {i}:")
+                     self.logger.info(f"  label={label}, score={score:0.2f}")
+                     self.logger.info(f"  coords={bbox}")
+
+               return {}  # no outputs
+
+The custom node code shows how to see what is available in PeekingDuck's pipeline 
+data pool by printing the input dictionary keys.
+It also demonstrates how to debug a specific data object, such as ``bboxes``, by
+printing relevant information for each item within the data.
+
+Update **pipeline_config.yml** and call ``peekingduck run``:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.recorded:
+          input_dir: wave.mp4
+      - model.yolo
+      - model.posenet
+      - dabble.fps
+      - custom_nodes.dabble.wave
+      - custom_nodes.dabble.debug
+      - draw.poses
+      - draw.legend
+      - output.screen
+
+A sample debug output is shown below:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck run` \ 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline_config file. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising input.recorded node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.recorded is updated to: 'input_dir': wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 710 by 540 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising model.yolo node.\.\. 
+   |                     [ .\.\. many lines of output deleted here .\.\. ]
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising custom_nodes.dabble.debug node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.poses node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.legend node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising output.screen node.\.\. 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  -- debug -- 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  input.keys=['img', 'pipeline_end', 'filename', 'saved_video_fps', 'bboxes', 'bbox_labels', 'bbox_scores', 'keypoints', 'keypoint_scores', 'keypoint_conns', 'hand_direction', 'num_waves', 'fps'] 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  num bboxes=1 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  bbox 0: 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| label=Person, score=0.91 
+   | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| coords=[0.40047657 0.21553655 0.85199741 1.02150181] 
