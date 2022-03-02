@@ -53,7 +53,7 @@ To perform object detection on the ``demo video.mp4`` file.  edit the
        show_labels: True
    - output.screen
 
-Here is an explanation of what has been done above:
+Here is a step-by-step explanation of what has been done:
 
    | Line 2 ``input.recorded``: tells PeekingDuck to load the ``cat_and_computer.mp4``.
    | Line 4 ``model.yolo``: by default, the Yolo model detects ``person`` only.
@@ -170,10 +170,9 @@ This number is internal and not readily viewable.
 
 We will create a custom node to retrieve this score and display it on screen.
 
-Use the following command to create a custom node: ``peekingduck create-node``
-
+Use the following command to create a custom node: ``peekingduck create-node`` |br|
 It will prompt you to answer several questions.
-Press ``<Enter>`` to accept the default ``custom_nodes`` folder name, then enter 
+Press ``<Enter>`` to accept the default ``custom_nodes`` folder name, then key in 
 ``draw`` for node type and ``score`` for node name.
 Finally, press ``<Enter>`` to answer ``Y`` when asked to proceed.
 
@@ -198,7 +197,7 @@ The entire interaction is shown here, the answers you type are in shown in
    | Proceed? [Y/n]: \ :green:`⏎` \
    | Created node!
 
-This will update the ``custom_project`` folder structure to become like this:
+This will update the ``custom_project`` folder structure to this:
 
 .. parsed-literal::
 
@@ -215,7 +214,9 @@ This will update the ``custom_project`` folder structure to become like this:
 ``custom_project`` now contains **three files** that we need to modify to
 implement our custom node function.
 
-#. **src/custom_nodes/configs/draw/score.yml** (default content):
+#. **src/custom_nodes/configs/draw/score.yml**:
+
+   ``score.yml`` initial content:
 
    .. code-block:: yaml
       :linenos:
@@ -242,7 +243,8 @@ implement our custom node function.
    outputs for the pipeline, so the output is ``none``.
 
    There are also no optional configs, so lines 5 - 6 can be removed.
-   The updated ``score.yml`` is:
+
+   ``score.yml`` updated content:
 
    .. code-block:: yaml
       :linenos:
@@ -258,64 +260,16 @@ implement our custom node function.
       Comments in yaml files start with ``#`` |br|
       It is possible for a node to have ``input: ["none"]``
 
-#. **src/custom_nodes/draw/score.py** (default content):
-
-   .. container:: toggle
-
-      .. container:: header
-
-         **Show/Hide Code**
-
-      .. code-block:: python
-         :linenos:
-   
-         """
-         Node template for creating custom nodes.
-         """
-   
-         from typing import Any, Dict
-   
-         from peekingduck.pipeline.nodes.node import AbstractNode
-   
-   
-         class Node(AbstractNode):
-            """This is a template class of how to write a node for PeekingDuck.
-   
-            Args:
-               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
-            """
-   
-            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
-               super().__init__(config, node_path=__name__, **kwargs)
-   
-               # initialize/load any configs and models here
-               # configs can be called by self.<config_name> e.g. self.filepath
-               # self.logger.info(f"model loaded with configs: config")
-   
-            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-               """This node does ___.
-   
-               Args:
-                     inputs (dict): Dictionary with keys "__", "__".
-   
-               Returns:
-                     outputs (dict): Dictionary with keys "__".
-               """
-   
-               # result = do_something(inputs["in1"], inputs["in2"])
-               # outputs = {"out1": result}
-               # return outputs
+#. **src/custom_nodes/draw/score.py**:
 
    The second file ``score.py`` contains the boilerplate code for creating a
    custom node. Update the code to implement the desired behavior for the node.
 
-   We will show the modified ``score.py`` below and explain what has been done:
-
    .. container:: toggle
 
       .. container:: header
 
-         **Show/Hide Code**
+         **Show/Hide Code for score.py**
 
       .. code-block:: python
          :linenos:
@@ -328,13 +282,14 @@ implement our custom node function.
          import cv2
          from peekingduck.pipeline.nodes.node import AbstractNode
    
-         YELLOW = (0, 255, 255)  # opencv loads file in BGR format
+         YELLOW = (0, 255, 255)        # in BGR format, per opencv's convention
    
    
          def map_bbox_to_image_coords(
             bbox: List[float], image_size: Tuple[int, int]
          ) -> List[int]:
-            """Convert relative bounding box coords to absolute image coords.
+            """This is a helper function to map bounding box coords (relative) to 
+            image coords (absolute).
             Bounding box coords ranges from 0 to 1
             where (0, 0) = image top-left, (1, 1) = image bottom-right.
    
@@ -355,17 +310,26 @@ implement our custom node function.
    
    
          class Node(AbstractNode):
-            """This is a template class of how to write a node for PeekingDuck.
-   
+            """This is a template class of how to write a node for PeekingDuck,
+               using AbstractNode as the parent class.
+               This node draws scores on objects detected.
+
             Args:
                config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
             """
    
             def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               """Node initializer
+
+               Since we do not require any special setup, it only calls the __init__
+               method of its parent class.
+               """
                super().__init__(config, node_path=__name__, **kwargs)
    
             def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-               """This node draws scores on objects detected
+               """This method implements the display score function. 
+               As PeekingDuck iterates through the CV pipeline, this 'run' method 
+               is called at each iteration.
    
                Args:
                      inputs (dict): Dictionary with keys "img", "bboxes", "bbox_scores"
@@ -373,63 +337,46 @@ implement our custom node function.
                Returns:
                      outputs (dict): Empty dictionary
                """
+
+               # extract pipeline inputs and compute image size in (width, height)
                img = inputs["img"]
                bboxes = inputs["bboxes"]
                scores = inputs["bbox_scores"]
                img_size = (img.shape[1], img.shape[0])  # width, height
    
                for i, bbox in enumerate(bboxes):
-                     x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
-                     score = scores[i]
-                     score_str = f"{score:0.2f}"
-                     cv2.putText(
-                        img=img,
-                        text=score_str,
-                        org=(x1, y2),
-                        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                        fontScale=1.0,
-                        color=YELLOW,
-                        thickness=3,
-                     )
+                  # for each bounding box:
+                  #   - compute (x1, y1) left-top, (x2, y2) right-bottom coordinates
+                  #   - convert score into a two decimal place numeric string
+                  #   - draw score string onto image using opencv's putText()
+                  #     (see opencv's API docs for more info)
+                  x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
+                  score = scores[i]
+                  score_str = f"{score:0.2f}"
+                  cv2.putText(
+                     img=img,
+                     text=score_str,
+                     org=(x1, y2),
+                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                     fontScale=1.0,
+                     color=YELLOW,
+                     thickness=3,
+                  )
    
-               return {}
+               return {}               # node has no outputs
 
-   Line 6 imports the `opencv <https://opencv.org>`_ library which we will use
-   to display the score. ``opencv`` would have been installed alongside
-   PeekingDuck as it is a dependency.
+   The updated node code defines a helper function ``map_bbox_to_image_coords`` to map
+   the bounding box coordinates to the image coordinates, as explained in :ref:`this
+   section <tutorial_coordinate_systems>`.
 
-   Line 7 imports the ``AbstractNode`` class from PeekingDuck which will serve 
-   as the parent class for our custom node.
+   The ``run`` method implements the main logic which processes every bounding box to 
+   compute its on-screen coordinates and to draw the bounding box confidence score at 
+   its left-bottom position.
 
-   Line 9 defines the ``YELLOW`` color code for the score. Note that ``opencv`` 
-   uses the BGR-format instead of the common RGB-format.
 
-   Lines 12-32 implement a helper function ``map_bbox_to_image_coords`` to map
-   the bounding box coordinates to the image coordinates, as explained in 
-   :ref:`this section <tutorial_coordinate_systems>`.
+#. **pipeline_config.yml**:
 
-   Line 42 is the node object initializer. We do not require any special setup,
-   so it simply calls the ``__init__`` method of its parent class.
-
-   Lines 45-71 implement the display score function in the node's ``run``
-   method, which is called by PeekingDuck as it iterates through the pipeline.
-
-   Lines 54-57 extract the inputs from the pipeline and computes the image size
-   in ( width, height ).
-
-   Line 59 onwards iterates through all the bounding boxes, whereby it computes
-   the (x1, y1) left-top and (x2, y2) right-bottom bounding box coordinates. 
-   It also converts the score into a numeric string with two decimal places.
-
-   Line 63 uses the ``opencv`` ``putText`` function to draw the score string
-   onto the image at the left-bottom ``org=(x1, y2)`` of the bounding box.
-   For more info on the various parameters, please refer to ``opencv``'s API
-   documentation.
-
-   Line 73 returns an empty dictionary ``{}`` to tell PeekingDuck that the node
-   has no outputs.
-
-#. **pipeline_config.yml** (default content):
+   ``pipeline_config.yml`` initial content:
 
    .. code-block:: yaml
       :linenos:
@@ -441,6 +388,8 @@ implement our custom node function.
       - output.screen
 
    This file implements the pipeline.  Modify the default pipeline to the one shown below:
+
+   ``pipeline_config.yml`` updated content:
 
    .. code-block:: yaml
       :linenos:
@@ -467,7 +416,7 @@ Execute ``peekingduck run`` to see your custom node in action.
 
 .. note::
 
-   Royalty free video of computer hardware from:
+   Royalty free video of cat and computer from:
    https://www.youtube.com/watch?v=-C1TEGZavko
 
 
@@ -479,13 +428,13 @@ Recipe 2: Keypoints, Count Hand Waves
 This tutorial will create a custom node to analyze the skeletal keypoints of the
 person from the `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_
 video in the :ref:`pose estimation tutorial <tutorial_pose_estimation>` and to
-count the number of times he waves.
+count the number of times the person waves his hand.
 
 The PoseNet pose estimation model outputs seventeen keypoints for the person 
 corresponding to the different body parts as documented :ref:`here
 <whole-body-keypoint-ids>`.
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
-real numbers ranging from 0.0 to 1.0 (using the relative coordinate system).
+real numbers ranging from 0.0 to 1.0 (using relative coordinates).
 
 Starting with a newly initialized PeekingDuck folder, call ``peekingduck
 create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
@@ -550,6 +499,9 @@ from the pipeline. The node has no output.
 
 #. **src/custom_nodes/dabble/wave.py**:
 
+   The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure
+   in the other custom node tutorial.
+
    .. container:: toggle
 
       .. container:: header
@@ -567,16 +519,20 @@ from the pipeline. The node has no output.
          import cv2
          from peekingduck.pipeline.nodes.node import AbstractNode
    
+         # setup global constants
          FONT = cv2.FONT_HERSHEY_SIMPLEX
-         WHITE = (255, 255, 255)  # opencv loads file in BGR format
+         WHITE = (255, 255, 255)       # opencv loads file in BGR format
          YELLOW = (0, 255, 255)
-         THRESHOLD = 0.6  # ignore keypoints below this threshold
+         THRESHOLD = 0.6               # ignore keypoints below this threshold
+         KP_RIGHT_SHOULDER = 6         # PoseNet's skeletal keypoints
+         KP_RIGHT_WRIST = 10
    
    
          def map_bbox_to_image_coords(
             bbox: List[float], image_size: Tuple[int, int]
          ) -> List[int]:
-            """Convert relative bounding box coords to absolute image coords.
+            """First helper function to convert relative bounding box coordinates to
+            absolute image coordinates.
             Bounding box coords ranges from 0 to 1
             where (0, 0) = image top-left, (1, 1) = image bottom-right.
    
@@ -599,7 +555,8 @@ from the pipeline. The node has no output.
          def map_keypoint_to_image_coords(
             keypoint: List[float], image_size: Tuple[int, int]
          ) -> List[int]:
-            """Convert relative keypoint coords to absolute image coords.
+            """Second helper function to convert relative keypoint coordinates to
+            absolute image coordinates.
             Keypoint coords ranges from 0 to 1
             where (0, 0) = image top-left, (1, 1) = image bottom-right.
    
@@ -618,6 +575,9 @@ from the pipeline. The node has no output.
    
    
          def draw_text(img, x, y, text_str: str, color_code):
+            """Helper function to call opencv's drawing function, 
+            to improve code readability in node's run() method.
+            """
             cv2.putText(
                img=img,
                text=text_str,
@@ -638,6 +598,7 @@ from the pipeline. The node has no output.
    
             def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
                super().__init__(config, node_path=__name__, **kwargs)
+               # setup object working variables
                self.right_wrist = None
                self.direction = None
                self.num_direction_changes = 0
@@ -654,6 +615,7 @@ from the pipeline. The node has no output.
                      outputs (dict): Empty dictionary.
                """
    
+               # get required inputs from pipeline
                img = inputs["img"]
                bboxes = inputs["bboxes"]
                bbox_scores = inputs["bbox_scores"]
@@ -662,113 +624,95 @@ from the pipeline. The node has no output.
    
                img_size = (img.shape[1], img.shape[0])  # image width, height
    
-               # bounding box confidence score
-               the_bbox = bboxes[0]  # image only has one person
+               # get bounding box confidence score and draw it at the 
+               # left-bottom (x1, y2) corner of the bounding box (offset by 30 pixels)
+               the_bbox = bboxes[0]             # image only has one person
                the_bbox_score = bbox_scores[0]  # only one set of scores
    
                x1, y1, x2, y2 = map_bbox_to_image_coords(the_bbox, img_size)
                score_str = f"BBox {the_bbox_score:0.2f}"
                cv2.putText(
-                     img=img,
-                     text=score_str,
-                     org=(x1, y2 - 30),
-                     fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                     fontScale=1.0,
-                     color=WHITE,
-                     thickness=3,
+                  img=img,
+                  text=score_str,
+                  org=(x1, y2 - 30),            # offset by 30 pixels
+                  fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                  fontScale=1.0,
+                  color=WHITE,
+                  thickness=3,
                )
    
-               # hand wave detection
-               the_keypoints = keypoints[0]  # image only has one person
+               # hand wave detection using a simple heuristic of tracking the 
+               # right wrist movement
+               the_keypoints = keypoints[0]              # image only has one person
                the_keypoint_scores = keypoint_scores[0]  # only one set of scores
                right_wrist = None
                right_shoulder = None
    
                for i, keypoints in enumerate(the_keypoints):
-                     keypoint_score = the_keypoint_scores[i]
-   
-                     if keypoint_score >= THRESHOLD:
-                        x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
-                        x_y_str = f"({x}, {y})"
-   
-                        if 6 == i:     # right shoulder
-                           right_shoulder = keypoints
-                           the_color = YELLOW
-                        elif i == 10:  # right wrist
-                           right_wrist = keypoints
-                           the_color = YELLOW
-                        else:          # generic keypoint
-                           the_color = WHITE
-   
-                        draw_text(img, x, y, x_y_str, the_color)
+                  keypoint_score = the_keypoint_scores[i]
+
+                  if keypoint_score >= THRESHOLD:
+                     x, y = map_keypoint_to_image_coords(keypoints.tolist(), img_size)
+                     x_y_str = f"({x}, {y})"
+
+                     if i == KP_RIGHT_SHOULDER:
+                        right_shoulder = keypoints
+                        the_color = YELLOW
+                     elif i == KP_RIGHT_WRIST:
+                        right_wrist = keypoints
+                        the_color = YELLOW
+                     else:                   # generic keypoint
+                        the_color = WHITE
+
+                     draw_text(img, x, y, x_y_str, the_color)
    
                if right_wrist is not None and right_shoulder is not None:
-                     if self.right_wrist is None:
-                        self.right_wrist = right_wrist  # first wrist data point
+                  # only count number of hand waves after we have gotten the 
+                  # skeletal poses for the right wrist and right shoulder
+                  if self.right_wrist is None:
+                     self.right_wrist = right_wrist            # first wrist data point
+                  else:
+                     # wait for wrist to be above shoulder to count hand wave
+                     if right_wrist[1] > right_shoulder[1]:
+                        pass
                      else:
-                        # wait for wrist to be above shoulder to count hand wave
-                        if right_wrist[1] > right_shoulder[1]:
-                           pass
+                        if right_wrist[0] < self.right_wrist[0]:
+                           direction = "left"
                         else:
-                           if right_wrist[0] < self.right_wrist[0]:
-                                 direction = "left"
-                           else:
-                                 direction = "right"
+                           direction = "right"
+
+                        if self.direction is None:
+                           self.direction = direction          # first direction data point
+                        else:
+                           # check if hand changes direction
+                           if direction != self.direction:
+                              self.num_direction_changes += 1
+                           # every two hand direction changes == one wave
+                           if self.num_direction_changes >= 2:
+                              self.num_waves += 1
+                              self.num_direction_changes = 0   # reset direction count
+
+                        self.right_wrist = right_wrist         # save last position
+                        self.direction = direction
    
-                           if self.direction is None:
-                                 self.direction = direction  # first direction data point
-                           else:
-                                 # check if hand changes direction
-                                 if direction != self.direction:
-                                    self.num_direction_changes += 1
-                                 # every three hand direction changes == one wave
-                                 if self.num_direction_changes >= 2:
-                                    self.num_waves += 1
-                                    self.num_direction_changes = 0  # reset direction count
-   
-                           self.right_wrist = right_wrist  # save last position
-                           self.direction = direction
-   
-                     wave_str = f"#waves = {self.num_waves}"
-                     draw_text(img, 20, 30, wave_str, YELLOW)
+                  wave_str = f"#waves = {self.num_waves}"
+                  draw_text(img, 20, 30, wave_str, YELLOW)
    
                return {}
 
-   This long piece of code implements our custom ``dabble`` node. As can be seen, 
-   this ``dabble.wave`` code structure is very similar to the other custom 
-   node tutorial ``draw.score`` code structure.
-   
-   Line 6 imports the ``opencv`` library which we will use for drawing onto the 
-   image.
-   
-   Line 7 imports the PeekingDuck's ``AbstractNode`` class which is required for 
-   all custom node implementation.
-   
-   Lines 9-12 set up some working global constants.
-   
-   Lines 15-35 define a helper function ``map_bbox_to_image_coords`` to convert 
-   relative bounding box coordinates to absolute image coordinates.
-   
-   Lines 38-56 define a second helper function ``map_keypoint_to_image_coords`` to 
-   convert relative keypoint coordinates to absolute image coordinates.
-   
-   Lines 59-68 define another helper function ``draw_text`` to call the ``opencv`` 
-   drawing function to improve code readability.
-   
-   Line 71 onwards implements the custom ``dabble`` node logic.
-   
-   Lines 96-100 get the required inputs from the pipeline.
-   
-   Lines 105-118 get the bounding box confidence score and draw it at the
-   left-bottom (x1, y2) corner of the bounding box.
-   
-   Lines 121-172 implement a simple heuristic to count the number of times the 
-   person waves his hand. It tracks the direction the right wrist is moving in and 
-   notes when the wrist changes direction. Upon encountering two direction changes, 
-   e.g., left -> right -> left, one wave is counted.
+   This (long) piece of code implements our custom ``dabble`` node. 
+   It defines three helper functions to convert relative to absolute coordinates 
+   and to draw text on-screen.
+   The number of hand waves is displayed at the left-top corner of the screen.
+
+   A simple heuristic is used to count the number of times the person waves his hand. 
+   It tracks the direction the right wrist is moving in and notes when the wrist changes
+   direction. 
+   Upon encountering two direction changes, e.g., left -> right -> left, one wave is
+   counted.
+
    The heuristic also waits until the right wrist has been lifted above the right 
    should before it starts tracking hand direction and counting waves.
-   The number of waves is displayed at the left-top corner of the screen.
 
 #. **pipeline_config.yml**:
 

@@ -75,7 +75,8 @@ Then, modify the ``pipeline_config.yml`` as follows:
    - draw.poses         # draw skeletal poses
    - output.screen
 
-The important changes are to the second node ``model`` (Line 4) and the third node ``draw`` (Line 5).
+The important changes are to the second node ``model`` and the third node ``draw``
+(Lines 4-5).
 
 Now, run the pipeline using
 
