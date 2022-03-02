@@ -131,20 +131,17 @@ class Node(AbstractNode):
             all_attrs.append(attr)
 
         tags = []
-        for attr in list(zip(*all_attrs)):
-            if attr:
-                if (
-                    not isinstance(attr[0], str)
-                    and not isinstance(attr[0], int)
-                    and not isinstance(attr[0], float)
-                    and not isinstance(attr[0], bool)
-                ):
-                    raise TypeError(
-                        f"A tag has to be of type 'str', 'int', 'float' or 'bool' to be "
-                        f"convertable to a string. However, the tag: {attr[0]} is of type: "
-                        f"{type(attr[0])}"
-                    )
-            attr_str = map(str, attr)
+        # all_attrs: [["a","b"], [1,2]] -> list(zip): [("a",1), ("b",2)] -> tags: ["a, 1", "b, 2"]
+        for idx, obj in enumerate(list(zip(*all_attrs))):
+            if idx == 0:
+                for tag in obj:
+                    if not _check_valid_type(tag, str, int, float, bool):
+                        raise TypeError(
+                            f"A tag has to be of type 'str', 'int', 'float' or 'bool' to be "
+                            f"convertable to a string. However, the tag: {tag} is of type: "
+                            f"{type(tag)}"
+                        )
+            attr_str = map(str, obj)
             tags.append(", ".join(attr_str))
 
         return tags
@@ -156,3 +153,11 @@ def _deep_get_value(data: Dict[str, Any], keys: List[str]) -> Dict[str, Any]:
         return data
     key = keys.pop(0)
     return _deep_get_value(data[key], keys)
+
+
+def _check_valid_type(tag: Any, *types: type) -> bool:
+    """Checks the type of tag against all given types."""
+    for data_type in types:
+        if isinstance(tag, data_type):
+            return True
+    return False
