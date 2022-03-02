@@ -281,7 +281,74 @@ information, such as calculating the mean and max of particular objects (like
 people or cars).
 
 
-**[Todo] ``dabble.statistics``**
+.. _tutorial_counting_cars:
+
+Counting Cars
+-------------
+
+This tutorial demonstrates using the ``dabble.statistics`` node to count the number of 
+cars travelling across a highway over time.
+
+Create a new PeekingDuck project, download the `highway cars video
+<http://orchard.dnsalias.com:8100/highway_cars.mp4>`_ and save it into the project
+folder.
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]` \ > \ :green:`mkdir car_project` \
+    | \ :blue:`[~user]` \ > \ :green:`cd car_project` \
+    | \ :blue:`[~user/car_project]` \ > \ :green:`peekingduck init` \
+
+The ``car_project`` folder structure:
+
+.. parsed-literal::
+
+   \ :blue:`car_project/` \ |Blank|
+   ├── pipeline_config.yml
+   ├── \ :blue:`src/` \ |Blank|
+   └── highway_cars.mp4
+
+Edit ``pipeline_config.yml`` as follows:
+
+.. code-block:: yaml
+   :linenos:
+
+   nodes:
+   - input.recorded:
+      input_dir: highway_cars.mp4
+   - model.yolo:
+      detect_ids: ["car"]
+   - dabble.bbox_count
+   - dabble.fps
+   - dabble.statistics:
+      identity: count
+   - draw.bbox
+   - draw.legend:
+      show: ["fps", "count", "max", "min"]
+   - output.screen
+
+Run it with ``peekingduck run`` and you should see a video of cars travelling across a
+highway with a legend box on the bottom left showing the realtime count of the number
+of cars on-screen, the maximum and minimum number of cars detected since the video started.
+The sample screenshot below shows:
+
+   * there are currently 3 cars on-screen
+   * the maximum number of cars "seen" was 10
+   * the minimum number of cars was 1
+
+   .. figure:: /assets/tutorials/ss_dabble_stats_cars.png
+      :alt: PeekingDuck screenshot - counting cars
+
+      Counting Cars on a Highway
+
+.. note::
+
+   Royalty free video of cars on highway from:
+   https://www.youtube.com/watch?v=8yP1gjg4b2w
+
+
+
+
 
 **[Todo] ``draw.legend`` (?)**
 
