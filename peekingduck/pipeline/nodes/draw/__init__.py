@@ -15,8 +15,9 @@
 """
 Draws results/outputs to an image.
 
-For information from dabble nodes such as ``fps``, ``bbox_count`` and
-``zone_count``, use ``draw.legend`` to display them.
+.. deprecated:: 1.2.0 |br|
+    :mod:`draw.image_processor` is deprecated, and replaced by the nodes :mod:`augment.brightness`
+    and :mod:`augment.contrast`.
 """
 
 from . import (

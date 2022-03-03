@@ -43,9 +43,10 @@ class Node(AbstractNode):
             group.
 
     .. versionchanged:: 1.2.0 |br|
-    :mod:`draw.group_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
-    data type, which has been deprecated and now subsumed under ``obj_attrs``
-    (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of ``obj_attrs``.
+        :mod:`draw.group_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
+        data type, which has been deprecated and now subsumed under ``obj_attrs``
+        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of
+        ``obj_attrs``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
