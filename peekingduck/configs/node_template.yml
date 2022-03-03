@@ -4,9 +4,9 @@
 # be found at https://peekingduck.readthedocs.io/en/stable/glossary.html.
 input: ["bboxes", "bbox_labels"]
 # Example:
-# Output `obj_tags` for visualization with `draw.tag` node and `custom_key` for
+# Output `obj_attrs` for visualization with `draw.tag` node and `custom_key` for
 # use with other custom nodes. Replace as required.
-output: ["obj_tags", "custom_key"]
+output: ["obj_attrs", "custom_key"]
 
 # Optional configs depending on node
 threshold: 0.5 # example

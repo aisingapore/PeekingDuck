@@ -99,13 +99,15 @@ class TestFairMOT:
             "bboxes": [],
             "bbox_labels": [],
             "bbox_scores": [],
-            "obj_tags": [],
+            "obj_attrs": {"ids": []},
         }
         assert output.keys() == expected_output.keys()
         npt.assert_equal(output["bboxes"], expected_output["bboxes"])
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
-        npt.assert_equal(output["obj_tags"], expected_output["obj_tags"])
+        npt.assert_equal(
+            output["obj_attrs"]["ids"], expected_output["obj_attrs"]["ids"]
+        )
 
     def test_tracking_ids_should_be_consistent_across_frames(
         self, test_human_video_sequences, fairmot_config
@@ -118,8 +120,8 @@ class TestFairMOT:
             if i > 1:
                 for track_id, track in enumerate(fairmot.model.tracker.tracked_stracks):
                     assert repr(track) == f"OT_{track_id + 1}_(1-{i + 1})"
-                assert output["obj_tags"] == prev_tags
-            prev_tags = output["obj_tags"]
+                assert output["obj_attrs"]["ids"] == prev_tags
+            prev_tags = output["obj_attrs"]["ids"]
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
     def test_tracking_ids_should_be_consistent_across_frames_gpu(
@@ -131,8 +133,8 @@ class TestFairMOT:
         for i, inputs in enumerate({"img": x["img"]} for x in detections):
             output = fairmot.run(inputs)
             if i > 1:
-                assert output["obj_tags"] == prev_tags
-            prev_tags = output["obj_tags"]
+                assert output["obj_attrs"]["ids"] == prev_tags
+            prev_tags = output["obj_attrs"]["ids"]
 
     def test_should_activate_unconfirmed_tracks_subsequently(
         self, test_human_video_sequences, fairmot_config
@@ -146,8 +148,8 @@ class TestFairMOT:
         for i, inputs in enumerate({"img": x["img"]} for x in detections):
             output = fairmot.run(inputs)
             if i > 1:
-                assert output["obj_tags"] == prev_tags
-            prev_tags = output["obj_tags"]
+                assert output["obj_attrs"]["ids"] == prev_tags
+            prev_tags = output["obj_attrs"]["ids"]
 
     def test_reactivate_tracks(self, test_human_video_sequences, fairmot_config):
         _, detections = test_human_video_sequences
@@ -160,8 +162,8 @@ class TestFairMOT:
                     track.mark_lost()
             output = fairmot.run(inputs)
             if i > 1:
-                assert output["obj_tags"] == prev_tags
-            prev_tags = output["obj_tags"]
+                assert output["obj_attrs"]["ids"] == prev_tags
+            prev_tags = output["obj_attrs"]["ids"]
 
     def test_associate_with_iou(self, test_human_video_sequences, fairmot_config):
         _, detections = test_human_video_sequences
@@ -174,8 +176,8 @@ class TestFairMOT:
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
                 output = fairmot.run(inputs)
                 if i > 1:
-                    assert output["obj_tags"] == prev_tags
-                prev_tags = output["obj_tags"]
+                    assert output["obj_attrs"]["ids"] == prev_tags
+                prev_tags = output["obj_attrs"]["ids"]
 
     def test_mark_unconfirmed_tracks_for_removal(
         self, test_human_video_sequences, fairmot_config
@@ -200,7 +202,7 @@ class TestFairMOT:
                     # STrack to is_activated=True on when frame_id=1 but JDE
                     # doesn't
                     continue
-                assert not output["obj_tags"]
+                assert not output["obj_attrs"]["ids"]
 
     def test_remove_lost_tracks(self, test_human_video_sequences, fairmot_config):
         # Set buffer and as a result `max_time_lost` to extremely short so
@@ -216,10 +218,10 @@ class TestFairMOT:
             # switched to black image from SEQ_IDX onwards, nothing should be
             # detected on this frame ID
             if i == SEQ_IDX:
-                assert not output["obj_tags"]
+                assert not output["obj_attrs"]["ids"]
             elif i > 1:
-                assert output["obj_tags"] == prev_tags
-            prev_tags = output["obj_tags"]
+                assert output["obj_attrs"]["ids"] == prev_tags
+            prev_tags = output["obj_attrs"]["ids"]
 
     @pytest.mark.parametrize(
         "mot_metadata",
@@ -249,9 +251,9 @@ class TestFairMOT:
                         f"{mot_metadata['frame_rate']:.2f}..."
                     )
                 if i > 1:
-                    assert output["obj_tags"] == prev_tags
+                    assert output["obj_attrs"]["ids"] == prev_tags
                 assert fairmot._frame_rate == pytest.approx(mot_metadata["frame_rate"])
-                prev_tags = output["obj_tags"]
+                prev_tags = output["obj_attrs"]["ids"]
 
     def test_invalid_config_value(self, fairmot_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
