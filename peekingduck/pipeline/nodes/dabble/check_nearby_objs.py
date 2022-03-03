@@ -43,6 +43,11 @@ class Node(AbstractNode):
             'near'.
         tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
+
+    .. versionchanged:: 1.2.0 |br|
+    :mod:`draw.check_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
+    data type, which has been deprecated and now subsumed under ``obj_attrs``
+    (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``flags`` key of ``obj_attrs``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

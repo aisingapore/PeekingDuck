@@ -94,7 +94,6 @@ class TestTracking:
         prev_tags = []
         for i, inputs in enumerate(detections):
             outputs = tracker.run(inputs)
-            print(i, prev_tags, outputs["obj_attrs"]["ids"])
             assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
             if i > 0:
                 assert outputs["obj_attrs"]["ids"] == prev_tags

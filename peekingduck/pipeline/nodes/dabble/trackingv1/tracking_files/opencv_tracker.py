@@ -46,7 +46,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         self.tracks: Dict[int, Track] = {}
 
     def track_detections(self, inputs: Dict[str, Any]) -> List[int]:
-        """Initialises and updates the tracker on each frame.
+        """Initializes and updates the tracker on each frame.
 
         Args:
             inputs (Dict[str, Any]): Dictionary with keys "img" and "boxes".

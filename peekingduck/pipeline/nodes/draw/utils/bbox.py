@@ -129,19 +129,19 @@ def draw_tags(
     frame: np.ndarray,
     bboxes: np.ndarray,
     tags: List[str],
-    colour: Tuple[int, int, int],
+    color: Tuple[int, int, int],
 ) -> None:
     """Draw tags above bboxes.
 
     Args:
-        frame (np.ndarray): Image of current frame
-        bboxes (np.ndarray): Bounding box coordinates
+        frame (np.ndarray): Image of current frame.
+        bboxes (np.ndarray): Bounding box coordinates.
         tags (Union[List[str], List[int]]): Tag associated with bounding box.
-        color (Tuple[int, int, int]): Color of text
+        color (Tuple[int, int, int]): Color of text.
     """
     image_size = get_image_size(frame)
     for idx, bbox in enumerate(bboxes):
-        _draw_tag(frame, bbox, tags[idx], image_size, colour)
+        _draw_tag(frame, bbox, tags[idx], image_size, color)
 
 
 def _draw_tag(

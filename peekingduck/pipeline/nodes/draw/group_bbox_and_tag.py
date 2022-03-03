@@ -49,6 +49,11 @@ class Node(AbstractNode):
     Configs:
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
             The string message printed when a large group is detected.
+
+    .. versionchanged:: 1.2.0 |br|
+    :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input
+    data type, which has been deprecated and now subsumed under ``obj_attrs``
+    (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of ``obj_attrs``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
