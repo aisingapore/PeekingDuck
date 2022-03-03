@@ -62,7 +62,8 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     * ``<operand>`` (optional, only used for ``cond_count`` method): The operand used for \
     comparison. If it is intended to be of :obj:`str` type, it should be enclosed by single or \
     double quotes. Else, it will be assumed to be of types :obj:`int` or :obj:`float`, and \
-    converted into a :obj:`float` type for calculations.
+    converted into a :obj:`float` type for calculations. Square brackets (``[]``) should not \
+    be included here, as they are used to enclose dictionary keys for ``<target attribute>``.
 
     The examples in the table below illustrate how ``<method>``: ``<expression>`` choices reduce
     the incoming data type into the ``current result``.
@@ -118,7 +119,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.cum_avg, self.min, self.max = 0.0, float("inf"), 0
+        self.cum_avg, self.min, self.max = 0.0, float("inf"), 0.0
         self.num_iter = 0
         all_methods = {
             "cond_count": self.cond_count,
@@ -146,15 +147,15 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         if not self.curr:
             return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
 
-        self.num_iter += 1
         self._update_stats(self.curr)
+        self.num_iter += 1
 
         return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
 
     def _update_stats(self, curr: Union[float, int]) -> None:
         """Updates the cum_avg, min and max values with the current value."""
-        if not isinstance(curr, int) and not isinstance(curr, int):
-            raise ValueError(
+        if not isinstance(curr, float) and not isinstance(curr, int):
+            raise TypeError(
                 f"The current value has to be of type 'int' or 'float' to calculate statistics."
                 f"However, the current value here is: '{curr}' which is of type: {type(curr)}."
             )

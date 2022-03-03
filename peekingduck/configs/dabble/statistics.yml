@@ -6,16 +6,3 @@ length: null
 minimum: null
 maximum: null
 cond_count: null
-
-# identity: count
-# cond_count: "obj_attrs['flags'] == 'TOO CLOSE!'"
-# length: large_groups
-# minimum: null
-# maximum: obj_attrs['ids']
-
-# Rules:
-
-# a. String operands need to be wrapped in single/double quotes
-# b. Spaces in the expression will be ignored except for string operands
-
-# Say that don't put stuff in square brackets, we using regex

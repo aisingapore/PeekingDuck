@@ -144,8 +144,8 @@ def _get_operand(operand_raw: str) -> Union[str, float]:
         return operand
     try:
         return float(operand_raw)
-    except TypeError as error:
-        raise TypeError(
+    except ValueError as error:
+        raise ValueError(
             f"The detected operand here is: {operand_raw}."
             f"If the operand is intended to be a string, ensure that it is enclosed by single "
             f"or double quotes. Else, it is assumed to be of integer or float type, and will be "
@@ -171,20 +171,35 @@ def _apply_method(
     """Applies a method and optional condition to a target attribute."""
     if not target_attr:
         return None
+    allowable_types = {
+        "identity": (int, float),
+        "length": (dict, list),
+        "minimum": (dict, list),
+        "maximum": (dict, list),
+        "cond_count": (list),
+    }
+    _check_type(target_attr, method, allowable_types[method])  # type: ignore
     if method == "identity":
-        _check_type(target_attr, method, int, float)
         return target_attr
     if method == "length":
-        _check_type(target_attr, method, dict, list)
         return len(target_attr)
     if method == "minimum":
-        _check_type(target_attr, method, dict, list)
-        return min(target_attr)
+        try:
+            return min(target_attr)
+        except ValueError as error:
+            raise ValueError(
+                "To use the 'minimum' method, all elements within the target attribute has to be"
+                " of type 'int' or 'float'."
+            ) from error
     if method == "maximum":
-        _check_type(target_attr, method, dict, list)
-        return max(target_attr)
+        try:
+            return max(target_attr)
+        except ValueError as error:
+            raise ValueError(
+                "To use the 'maximum' method, all elements within the target attribute has to be"
+                " of type 'int' or 'float'."
+            ) from error
     # if method == "cond_count"
-    _check_type(target_attr, method, list)
     return _cond_count(target_attr, condition)
 
 
@@ -197,7 +212,7 @@ def _check_type(
         if isinstance(target_attr, obj_type):
             correct = True
     if not correct:
-        raise ValueError(
+        raise TypeError(
             f"For the chosen method: '{method}', valid target attribute types are: {types}. "
             f"However, this target attribute: {target_attr} is of type: {type(target_attr)}."
         )

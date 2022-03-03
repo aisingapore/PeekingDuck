@@ -12,6 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+# This node has to handle several types of scenarios, hence there are many test cases here.
+# The test cases are grouped into 3 main classes here:
+# 1) TestDataTypeKeysCond - To test that the correct data type, keys, and conditions are obtained
+# by regex from various user inputs
+# 2) TestNodeOperation - To test that this node handles correct or incorrect types appropriately
+# 3) TestStatisticsCalcs - To test that the calculations of cum_avg, max, min are correct
+
 import operator
 import pytest
 
@@ -170,8 +178,13 @@ class TestDataTypeKeysCond:
             stats_class.prepare_data(all_methods)
             assert stats_class.condition["operand"] == ans
 
+        all_methods["cond_count"] = "obj_groups >= []"
+        with pytest.raises(ValueError) as excinfo:
+            stats_class.prepare_data(all_methods)
+        assert "The detected operand here is" in str(excinfo.value)
 
-class TestStatistics:
+
+class TestNodeOperation:
     def test_no_methods_chosen(self, stats_config):
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
@@ -183,3 +196,116 @@ class TestStatistics:
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
         assert "only one method should be selected" in str(excinfo.value)
+
+    def test_target_attr_type_identity(self, stats_config):
+        stats_config["identity"] = "count"
+
+        input1 = {"count": 9}
+        Node(stats_config).run(input1)
+
+        input2 = {"count": 9.0}
+        Node(stats_config).run(input2)
+
+        input3 = {"count": "9"}
+        with pytest.raises(TypeError) as excinfo:
+            Node(stats_config).run(input3)
+        assert "However, this target attribute" in str(excinfo.value)
+
+    def test_target_attr_type_length_maximum_minimum(self, stats_config):
+        for method in ["length", "maximum", "minimum"]:
+            stats_config[method] = "obj_attrs"
+
+            input1 = {"obj_attrs": [1, 2, 3, 4]}
+            Node(stats_config).run(input1)
+
+            input2 = {"obj_attrs": {1: 1, 2: 2, 3: 3, 4: 4}}
+            Node(stats_config).run(input2)
+
+            input3 = {"obj_attrs": []}
+            Node(stats_config).run(input3)
+
+            input4 = {"obj_attrs": {}}
+            Node(stats_config).run(input4)
+
+            input5 = {"obj_attrs": "9"}
+            with pytest.raises(TypeError) as excinfo:
+                Node(stats_config).run(input5)
+            assert "However, this target attribute" in str(excinfo.value)
+
+            stats_config[method] = None
+
+    def test_target_attr_type_cond_count(self, stats_config):
+        stats_config["cond_count"] = "obj_attrs == 4"
+
+        input1 = {"obj_attrs": [1, 2, 3, 4]}
+        Node(stats_config).run(input1)
+
+        input2 = {"obj_attrs": ["1", "2", "3", "4"]}
+        Node(stats_config).run(input2)
+
+        input3 = {"obj_attrs": [1.0, 2.0, 3.0, 4.0]}
+        Node(stats_config).run(input3)
+
+        input4 = {"obj_attrs": "9"}
+        with pytest.raises(TypeError) as excinfo:
+            Node(stats_config).run(input4)
+        assert "However, this target attribute" in str(excinfo.value)
+
+    def test_curr_result_type(self, stats_config):
+        stats_config["maximum"] = "obj_attrs"
+
+        input1 = {"obj_attrs": ["1", "2", "3", "4"]}
+        with pytest.raises(TypeError) as excinfo:
+            Node(stats_config).run(input1)
+        assert (
+            "The current value has to be of type 'int' or 'float' to calculate statistics"
+            in str(excinfo.value)
+        )
+
+
+class TestStatisticsCalcs:
+    def test_no_detections_init_values(self, stats_config):
+        stats_config["length"] = "obj_attrs"
+
+        input1 = {"obj_attrs": []}
+        result = Node(stats_config).run(input1)
+
+        assert result["cum_avg"] == 0.0
+        assert result["max"] == 0.0
+        assert result["min"] == float("inf")
+
+    def test_ascending_sequence(self, stats_config):
+        stats_config["identity"] = "count"
+        node = Node(stats_config)
+        sequence = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+        for curr_result in sequence:
+            result = node.run({"count": curr_result})
+
+        assert result["cum_avg"] == 5.0
+        assert result["max"] == 9.0
+        assert result["min"] == 1.0
+
+    def test_descending_sequence(self, stats_config):
+        stats_config["identity"] = "count"
+        node = Node(stats_config)
+        sequence = [9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+        for curr_result in sequence:
+            result = node.run({"count": curr_result})
+
+        assert result["cum_avg"] == 5.0
+        assert result["max"] == 9.0
+        assert result["min"] == 1.0
+
+    def test_mixed_sequence(self, stats_config):
+        stats_config["identity"] = "count"
+        node = Node(stats_config)
+        sequence = [5, 8, 4, 1, 3, 6, 2, 9, 7]
+
+        for curr_result in sequence:
+            result = node.run({"count": curr_result})
+
+        assert result["cum_avg"] == 5.0
+        assert result["max"] == 9.0
+        assert result["min"] == 1.0
