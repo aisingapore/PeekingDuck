@@ -131,7 +131,7 @@ The following are commonly used conventions which we adhere to:
   - `CapWords` for `ClassName`, `ExceptionName`
   - Fully capitalised for `GLOBAL_CONSTANT_NAME`
   - `_dir` postfix for full paths of directories, e.g. where weights are stored
-  - `_path` postfix for full paths to files, e.g. `~/demo/run_config.yml`
+  - `_path` postfix for full paths to files, e.g. `~/demo/pipeline_config.yml`
   - `_subdir` postfix for part of paths, e.g. `src/custom_nodes`
   - `_name` postfix for file names, e.g. `output.mp4`
 - Docstrings and comments

@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath("../../peekingduck/pipeline/nodes"))
 # -- Project information -----------------------------------------------------
 
 project = "PeekingDuck"
-copyright = "2021, CVHub AI Singapore"
+copyright = "2022, CVHub AI Singapore"
 author = "CVHub AI Singapore"
 
 # The full version, including alpha/beta/rc tags
@@ -58,7 +58,7 @@ templates_path = ["../_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ["**/_template_*.rst"]
 source_suffix = [".rst", ".md"]
 # -- Options for HTML output -------------------------------------------------
 
@@ -85,6 +85,7 @@ autosummary_mock_imports = [
     "input.utils",
     "model.csrnetv1",
     "model.efficientdet_d04",
+    "model.fairmotv1",
     "model.hrnetv1",
     "model.jdev1",
     "model.mtcnnv1",

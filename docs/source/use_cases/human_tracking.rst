@@ -19,15 +19,15 @@ Our solution automatically detects and tracks human persons. This is explained i
 Demo
 ====
 
-.. |run_config| replace:: human_tracking.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/human_tracking.yml
+.. |pipeline_config| replace:: human_tracking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/human_tracking.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/01_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -56,7 +56,7 @@ detection based on the appearance embedding learned.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

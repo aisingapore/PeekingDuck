@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,3 +18,16 @@ Draws results/outputs to an image.
 For information from dabble nodes such as ``fps``, ``bbox_count`` and
 ``zone_count``, use ``draw.legend`` to display them.
 """
+
+from . import (
+    bbox,
+    blur_bbox,
+    btm_midpoint,
+    group_bbox_and_tag,
+    heat_map,
+    legend,
+    mosaic_bbox,
+    poses,
+    tag,
+    zones,
+)

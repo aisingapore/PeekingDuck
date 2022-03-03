@@ -1,4 +1,5 @@
-.. include:: /data_type.rst
+.. include:: /include/data_type.rst
+.. include:: /include/substitution.rst
 
 {{ fullname | escape | underline }}
 
@@ -10,7 +11,7 @@
                                       "output", "preprocess"] -%}
 .. autoclass:: {{ fullname }}.Node
    :members:
-   :exclude-members: run
+   :exclude-members: run, release_resources
 
    {% block methods -%}
       {% if methods -%}

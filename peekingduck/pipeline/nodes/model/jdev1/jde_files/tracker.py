@@ -1,4 +1,4 @@
-# Modifications copyright 2021 AI Singapore
+# Modifications copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -305,9 +305,9 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         ]
         self.tracked_stracks = _combine_stracks(self.tracked_stracks, activated_stracks)
         self.tracked_stracks = _combine_stracks(self.tracked_stracks, refind_stracks)
-        self.lost_stracks = _substract_stracks(self.lost_stracks, self.tracked_stracks)
+        self.lost_stracks = _subtract_stracks(self.lost_stracks, self.tracked_stracks)
         self.lost_stracks.extend(lost_stracks)
-        self.lost_stracks = _substract_stracks(self.lost_stracks, self.removed_stracks)
+        self.lost_stracks = _subtract_stracks(self.lost_stracks, self.removed_stracks)
         self.removed_stracks.extend(removed_stracks)
         self.tracked_stracks, self.lost_stracks = _remove_duplicate_stracks(
             self.tracked_stracks, self.lost_stracks
@@ -455,18 +455,12 @@ def _combine_stracks(stracks_1: List[STrack], stracks_2: List[STrack]) -> List[S
     Returns:
         (List[STrack]): Combined list of STrack.
     """
-    exists = {}
-    res = []
-    for track in stracks_1:
-        exists[track.track_id] = True
-        res.append(track)
+    stracks = {track.track_id: track for track in stracks_1}
     for track in stracks_2:
         tid = track.track_id
-        # Only add to the list of the track ID has not added before
-        if not exists.get(tid, False):
-            exists[tid] = True
-            res.append(track)
-    return res
+        if tid not in stracks:
+            stracks[tid] = track
+    return list(stracks.values())
 
 
 def _remove_duplicate_stracks(
@@ -502,9 +496,7 @@ def _remove_duplicate_stracks(
     )
 
 
-def _substract_stracks(
-    stracks_1: List[STrack], stracks_2: List[STrack]
-) -> List[STrack]:
+def _subtract_stracks(stracks_1: List[STrack], stracks_2: List[STrack]) -> List[STrack]:
     """Removes stracks_2 from stracks_1.
 
     Args:

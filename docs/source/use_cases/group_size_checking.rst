@@ -25,15 +25,15 @@ from 2D videos, circumventing this limitation. This is further elaborated in the
 Demo
 ====
 
-.. |run_config| replace:: group_size_checking.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
+.. |pipeline_config| replace:: group_size_checking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/01_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -85,7 +85,7 @@ to solve it.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

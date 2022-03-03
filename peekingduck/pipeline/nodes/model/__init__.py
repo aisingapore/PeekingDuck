@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,3 +15,17 @@
 """
 Deep learning model nodes for computer vision.
 """
+
+from . import (
+    csrnet,
+    efficientdet,
+    hrnet,
+    jde,
+    movenet,
+    mtcnn,
+    posenet,
+    yolo,
+    yolo_face,
+    yolo_license_plate,
+    yolox,
+)

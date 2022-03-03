@@ -66,8 +66,7 @@ div.versionchanged {
  * https://spacy.io/usage/#quickstart page.
  * See the original javascript implementation
  * https://github.com/ines/quickstart
- */
-
+ *****************************************************************************/
 /* style input radio and checkbox */
 div.install > input {
   -moz-appearance: none;
@@ -150,6 +149,9 @@ div.highlight span.pkd-expandable:before {
   color: orange;
 }
 
+/*****************************************************************************
+ * Terminal session box
+ *****************************************************************************/
 .admonition-terminal-session.admonition {
   background-color: white;
   color: black;
@@ -166,7 +168,27 @@ div.highlight span.pkd-expandable:before {
 }
 
 .admonition-terminal-session .line {
-  font-family:'Courier New', Courier, monospace;
-  font-size: 1.0em;
-  line-height: 1.0em;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+  line-height: 1em;
+}
+
+/*****************************************************************************
+ * Toggle container
+ *****************************************************************************/
+.toggle .header {
+  display: block;
+  clear: both;
+}
+
+.toggle .header p {
+  display: inline;
+}
+
+.toggle .header:before {
+  content: "▶";
+}
+
+.toggle .header.open:before {
+  content: "▼";
 }

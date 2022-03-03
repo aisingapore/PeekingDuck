@@ -1,4 +1,5 @@
-.. include:: /data_type.rst
+.. include:: /include/data_type.rst
+.. include:: /include/substitution.rst
 
 Glossary
 ========

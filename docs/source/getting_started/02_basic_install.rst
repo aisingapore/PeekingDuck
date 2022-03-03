@@ -2,6 +2,9 @@
 Basic Install
 *************
 
+.. include:: /include/substitution.rst
+
+
 Install PeekingDuck
 ===================
 
@@ -86,20 +89,21 @@ conflicts with other projects.
 Verify PeekingDuck Installation
 ===============================
 
-To check that PeekingDuck is installed successfully, create a project folder at a convenient location::
+To check that PeekingDuck is installed successfully, create a project folder at a convenient location:
 
-    ~ > mkdir pkd_project
-    ~ > cd pkd_project
+.. admonition:: Terminal Session
 
-Then, initialize a PeekingDuck project and run it::
+    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
+    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
 
-    ~/pkd_project > peekingduck init
-    ~/pkd_project > peekingduck run
+Then, initialize the PeekingDuck project and verify the PeekingDuck installation:
 
-You should see a video of a person waving hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_).
+.. admonition:: Terminal Session
 
-| The video will auto-close when it is runs to the end (about 18 seconds).
+    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck -\-verify_install` \
+
+You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
+with bounding boxes overlaid.
+
+| The video will auto-close when it is run to the end (about 18 seconds).
 | To exit earlier, click to select the video window and press ``q``.
-
-**TODO: double check `pip install peekingduck` and `peekingduck run` can indeed 
-load an included video file correctly from the right path location**

@@ -19,15 +19,15 @@ Our solution automatically detects and blurs vehicles' license plates. This is e
 Demo
 ====
 
-.. |run_config| replace:: privacy_protection_license_plate.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plate.yml
+.. |pipeline_config| replace:: privacy_protection_license_plate.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plate.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/01_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -56,7 +56,7 @@ using a Gaussian function (Gaussian blur).
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

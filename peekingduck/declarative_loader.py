@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -29,6 +29,7 @@ import yaml
 from peekingduck.configloader import ConfigLoader
 from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "preprocess", "model", "draw", "dabble", "output"]
 
@@ -42,7 +43,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     inference.
 
     Args:
-        run_config_path (:obj:`pathlib.Path`): Path to a YAML file that
+        pipeline_path (:obj:`pathlib.Path`): Path to a YAML file that
             declares the node sequence to be used in the pipeline.
         config_updates_cli (:obj:`str`): Stringified nested dictionaries of
             configuration changes passed as part of CLI command. Used to modify
@@ -56,7 +57,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(
         self,
-        run_config_path: Path,
+        pipeline_path: Path,
         config_updates_cli: str,
         custom_nodes_parent_subdir: str,
     ) -> None:
@@ -65,7 +66,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         self.pkd_base_dir = Path(__file__).resolve().parent
         self.config_loader = ConfigLoader(self.pkd_base_dir)
 
-        self.node_list = self._load_node_list(run_config_path)
+        self.node_list = self._load_node_list(pipeline_path)
         self.config_updates_cli = ast.literal_eval(config_updates_cli)
 
         custom_nodes_name = self._get_custom_name_from_node_list()
@@ -78,21 +79,21 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
             self.custom_nodes_dir = custom_nodes_dir
 
-    def _load_node_list(self, run_config_path: Path) -> "NodeList":
-        """Loads a list of nodes from run_config_path.yml"""
-        with open(run_config_path) as node_yml:
+    def _load_node_list(self, pipeline_path: Path) -> "NodeList":
+        """Loads a list of nodes from pipeline_path.yml"""
+        with open(pipeline_path) as node_yml:
             data = yaml.safe_load(node_yml)
         if not isinstance(data, dict) or "nodes" not in data:
             raise ValueError(
-                f"{run_config_path} has an invalid structure. "
+                f"{pipeline_path} has an invalid structure. "
                 "Missing top-level 'nodes' key."
             )
 
         nodes = data["nodes"]
         if nodes is None:
-            raise ValueError(f"{run_config_path} does not contain any nodes!")
+            raise ValueError(f"{pipeline_path} does not contain any nodes!")
 
-        self.logger.info("Successfully loaded run_config file.")
+        self.logger.info("Successfully loaded pipeline file.")
         return NodeList(nodes)
 
     def _get_custom_name_from_node_list(self) -> Any:
@@ -149,7 +150,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         node = importlib.import_module(path_to_node + node_name)
         config = config_loader.get(node_name)
 
-        # First, override default configs with values from run_config.yml
+        # First, override default configs with values from pipeline_config.yml
         if config_updates_yml is not None:
             config = self._edit_config(config, config_updates_yml, node_name)
 
@@ -178,7 +179,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     )
                 else:
                     if key == "detect_ids":
-                        key, value = self.config_loader.change_class_name_to_id(
+                        key, value = obj_det_change_class_name_to_id(
                             node_name, key, value
                         )
 
