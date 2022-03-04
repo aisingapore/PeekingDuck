@@ -8,7 +8,7 @@
 .. automodule:: {{ fullname }}
 
 {% if not fullname.split(".")[-1] in ["dabble", "draw", "input", "model",
-                                      "output", "preprocess"] -%}
+                                      "output", "augment"] -%}
 .. autoclass:: {{ fullname }}.Node
    :members:
    :exclude-members: run, release_resources

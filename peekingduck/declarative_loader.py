@@ -31,7 +31,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
-PEEKINGDUCK_NODE_TYPES = ["input", "preprocess", "model", "draw", "dabble", "output"]
+PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
 
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods
