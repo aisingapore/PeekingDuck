@@ -62,6 +62,11 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        if not self.show:
+            raise KeyError(
+                "To display information in the legend box, at least one data type must be "
+                "selected in the 'show' config."
+            )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws legend box with information from nodes.
@@ -73,17 +78,17 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "none".
         """
         _check_data_type(inputs, self.show)
-        if self.show:
-            Legend().draw(inputs, self.show, self.position)
+        Legend().draw(inputs, self.show, self.position)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
 
 def _check_data_type(inputs: Dict[str, Any], show: List[str]) -> None:
     """Checks if the data types provided in show were produced from preceding nodes."""
+
     for item in show:
         if item not in inputs:
             raise KeyError(
-                f"{item} was selected for drawing, but is not a valid data type from preceding "
+                f"'{item}' was selected for drawing, but is not a valid data type from preceding "
                 f"nodes."
             )
