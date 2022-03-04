@@ -4,11 +4,6 @@ Import PeekingDuck as a Python Module
 
 .. include:: /include/substitution.rst
 
-.. warning::
-    TODO: Update all links
-
-    TODO: Update code line numbers
-
 
 .. _tutorial_import_peekingduck:
 
@@ -139,7 +134,11 @@ Change the content of ``demo_debug.py`` to:
   
       from pathlib import Path
   
-      from peekingduck.pipeline.nodes import dabble, draw, input, model, output
+      from peekingduck.pipeline.nodes.dabble import fps
+      from peekingduck.pipeline.nodes.draw import bbox, legend
+      from peekingduck.pipeline.nodes.input import recorded
+      from peekingduck.pipeline.nodes.model import yolo
+      from peekingduck.pipeline.nodes.output import media_writer, screen
       from peekingduck.runner import Runner
       from src.custom_nodes.dabble import debug
   
@@ -148,20 +147,20 @@ Change the content of ``demo_debug.py`` to:
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
   
           recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
-          recorded_node = input.recorded.Node(**recorded_config)
+          recorded_node = recorded.Node(**recorded_config)
   
           yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
-          yolo_node = model.yolo.Node(**yolo_config)
+          yolo_node = yolo.Node(**yolo_config)
   
           bbox_config = {"show_labels": True}
-          bbox_node = draw.bbox.Node(**bbox_config)
+          bbox_node = bbox.Node(**bbox_config)
   
-          fps_node = dabble.fps.Node()
-          legend_node = draw.legend.Node()
-          screen_node = output.screen.Node()
+          fps_node = fps.Node()
+          legend_node = legend.Node()
+          screen_node = screen.Node()
   
           media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
-          media_writer_node = output.media_writer.Node(**media_writer_config)
+          media_writer_node = media_writer.Node(**media_writer_config)
   
           runner = Runner(
               nodes=[
@@ -181,14 +180,14 @@ Change the content of ``demo_debug.py`` to:
       if __name__ == "__main__":
           main()
 
-Line 5, 9: Import and initialize the ``debug`` custom node. Pass in the 
+Line 9, 13: Import and initialize the ``debug`` custom node. Pass in the 
 ``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
 the custom node to be loaded properly.
 
-Line 11 - 25: Create the PeekingDuck nodes necessary to replicate the demo shown in the
+Line 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
 :ref:`Record Video File with FPS <tutorial_media_writer>` tutorial.
 
-Line 27 - 38: Initialize the PeekingDuck ``Runner`` from
+Line 31 - 42: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
@@ -327,25 +326,18 @@ Importing the Modules
       import matplotlib.pyplot as plt
       import numpy as np
       import tensorflow as tf
-      from peekingduck.pipeline.nodes import draw, model
+      from peekingduck.pipeline.nodes.draw import bbox
+      from peekingduck.pipeline.nodes.model import yolo_license_plate
   
       %matplotlib inline
 
-Line 9: We recommend importing PeekingDuck modules using::
+Line 9 - 10: You can also do::
 
-    from peekingduck.pipeline.nodes import model
+    from peekingduck.pipeline.nodes.input import live as pkd_live
 
-    yolo_node = model.yolo.Node()
+    live_node = pkd_live.Node()
 
-as it isolates the namespace to avoid potential conflicts.
-
-.. note::
-
-    Users with M1 Mac or ARM-based devices may have to import using::
-
-        from peekingduck.pipeline.nodes.model import yolo
-    
-    due to package incompatibility.
+to avoid potential name conflicts.
 
 
 Initialize PeekingDuck nodes
@@ -360,10 +352,10 @@ Initialize PeekingDuck nodes
    .. code-block:: python
       :linenos:
   
-      yolo_lp_node = model.yolo_license_plate.Node()
+      yolo_lp_node = yolo_license_plate.Node()
   
       bbox_config = {"show_labels": True}
-      bbox_node = draw.bbox.Node(**bbox_config)
+      bbox_node = bbox.Node(**bbox_config)
 
 Line 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
 constructor as keyword arguments.
@@ -388,7 +380,7 @@ Create a Dataset Loader
           data_dir, batch_size=1, shuffle=False
       )
 
-Line 2: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
+Line 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
 also create your own data loader class.
 
 
