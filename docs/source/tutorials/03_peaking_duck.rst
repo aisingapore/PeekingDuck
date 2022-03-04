@@ -1,11 +1,17 @@
-**********
-Power Duck
-**********
+************
+Peaking Duck
+************
 
 .. include:: /include/substitution.rst
 
-This tutorial presents advanced power features of PeekingDuck such as 
-object tracking and the "power" nodes: ``dabble.statistics``, ``draw.legend``.
+PeekingDuck include some "power" nodes that are capable of processing the contents 
+or outputs of the other nodes and to accumulate information over time.
+An example is the ``dabble.statistics`` node which can accumulate statistical 
+information, such as calculating the cumulative average and maximum of particular 
+objects (like people or cars).
+This tutorial presents advanced recipes to showcase the power features of 
+PeekingDuck, such as using ``dabble.statistics`` for object counting and tracking.
+
 
 
 .. _tutorial_sql:
@@ -254,37 +260,12 @@ Type ``CTRL-D`` to exit from ``sqlite3``.
    <http://www.sqlite.org/>`_ for installation instructions.
 
 
-.. _tutorial_object_tracking:
-
-Object Tracking
-===============
-
-Object tracking is the application of CV models to automatically detect objects 
-in a video and to assign a unique identity to each of them.
-These objects can be either living (e.g. person) or non-living (e.g. car). 
-Then, as these objects moved around in the video, they are identified based on 
-their assigned identities and tracked according to their movements.
-
-**[Todo] object tracking using JDE**
-
-
-
-.. _tutorial_power_nodes:
-
-Power Nodes
-===========
-
-PeekingDuck include some power nodes that are capable of processing the contents 
-or outputs of the other nodes and to accumulate information over time.
-An example is the ``dabble.statistics`` node which can accumulate statistical 
-information, such as calculating the mean and max of particular objects (like
-people or cars).
 
 
 .. _tutorial_counting_cars:
 
 Counting Cars
--------------
+=============
 
 This tutorial demonstrates using the ``dabble.statistics`` node to count the number of 
 cars travelling across a highway over time.
@@ -295,18 +276,21 @@ folder.
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`mkdir car_project` \
-    | \ :blue:`[~user]` \ > \ :green:`cd car_project` \
-    | \ :blue:`[~user/car_project]` \ > \ :green:`peekingduck init` \
+   | \ :blue:`[~user]` \ > \ :green:`mkdir car_project` \
+   | \ :blue:`[~user]` \ > \ :green:`cd car_project` \
+   | \ :blue:`[~user/car_project]` \ > \ :green:`peekingduck init` \
 
 The ``car_project`` folder structure:
 
 .. parsed-literal::
 
    \ :blue:`car_project/` \ |Blank|
+   ├── highway_cars.mp4
    ├── pipeline_config.yml
-   ├── \ :blue:`src/` \ |Blank|
-   └── highway_cars.mp4
+   └── \ :blue:`src` \ |Blank|
+      └── custom_nodes
+         └── configs
+
 
 Edit ``pipeline_config.yml`` as follows:
 
@@ -324,19 +308,20 @@ Edit ``pipeline_config.yml`` as follows:
        identity: count
    - draw.bbox
    - draw.legend:
-       show: ["fps", "count", "max", "min"]
+       show: ["fps", "count", "cum_max", "cum_min"]
    - output.screen
 
 Run it with ``peekingduck run`` and you should see a video of cars travelling across a
-highway with a legend box on the bottom left showing the realtime count of the number
-of cars on-screen, the maximum and minimum number of cars detected since the video started.
+highway with a legend box on the bottom left showing the realtime count of the number of
+cars on-screen, the cumulative maximum and minimum number of cars detected since the
+video started.
 The sample screenshot below shows:
 
    * there are currently 3 cars on-screen
-   * the maximum number of cars "seen" was 10
-   * the minimum number of cars was 1
+   * the cumulative maximum number of cars "seen" was 5
+   * the cumulative minimum number of cars was 1
 
-   .. figure:: /assets/tutorials/ss_dabble_stats_cars.png
+   .. figure:: /assets/tutorials/ss_highway_cars.png
       :alt: PeekingDuck screenshot - counting cars
 
       Counting Cars on a Highway
@@ -348,14 +333,101 @@ The sample screenshot below shows:
 
 
 
+.. _tutorial_object_tracking:
+
+Object Tracking
+===============
+
+Object tracking is the application of CV models to automatically detect objects 
+in a video and to assign a unique identity to each of them.
+These objects can be either living (e.g. person) or non-living (e.g. car). 
+Then, as these objects moved around in the video, they are identified based on 
+their assigned identities and tracked according to their movements.
+
+This tutorial demonstrates using ``dabble.statistics`` with a custom node to 
+track the number of people walking down a path.
+
+Create a new PeekingDuck project, download the `people walking video
+<http://orchard.dnsalias.com:8100/people_walking.mp4>`_ and save it into the project
+folder.
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`mkdir people_walking` \
+   | \ :blue:`[~user]` \ > \ :green:`cd people_walking` \
+   | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck init` \
+
+Create the following ``pipeline_config.yml``:
+
+.. code-block:: yaml
+   :linenos:
+
+   nodes:
+   - input.recorded:
+      input_dir: people_walking.mp4
+   - model.yolo:
+      detect_ids: ["person"]
+   - dabble.tracking
+   - dabble.statistics:
+      maximum: obj_attrs["ids"]
+   - dabble.fps
+   - draw.bbox
+   - draw.legend:
+      show: ["fps", "max", "min", "cum_avg"]
+   - draw.tag:
+      show: ["ids"]
+   - output.screen
+
+The above pipeline uses the Yolo model to detect people in the video and uses 
+the ``dabble.tracking`` node to track the people as they walk.
+Each person is assigned a tracking ID and ``dabble.tracking`` returns a list of 
+tracking IDs.
+``dabble.statistics`` is used to process these tracking IDs: since each person is 
+assigned a monotonically increasing integer ID, the maximum ID tells us the number 
+of persons tracked so far.
+
+Do a ``peekingduck run`` and you will see the following display:
+
+   .. figure:: /assets/tutorials/ss_people_walking_1.png
+      :alt: PeekingDuck screenshot - people walking
+
+      People Walking
 
 
-**[Todo] ``draw.legend`` (?)**
 
 
+.. admonition:: Terminal Session
 
+   | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck create-node` \
+   | Creating new custom node...
+   | Enter node directory relative to ~user/people_walking [src/custom_nodes]: \ :green:`⏎` \
+   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
+   |
+   | Node directory:	/user/people_walking/src/custom_nodes
+   | Node type:	dabble
+   | Node name:	filter_bbox
+   |
+   | Creating the following files:
+   |    Config file: ~user/people_walking/src/custom_nodes/configs/dabble/filter_bbox.yml
+   |    Script file: ~user/people_walking/src/custom_nodes/dabble/filter_bbox.py
+   | Proceed? [Y/n]: \ :green:`⏎` \
+   | Created node!
 
+The folder structure looks like this:
 
+.. parsed-literal::
+
+   \ :blue:`people_walking/` \ |Blank|
+   ├── people_walking.mp4
+   ├── pipeline_config.yml
+   └── src
+      └── custom_nodes
+         ├── configs
+         │   └── dabble
+         │       └── filter_bbox.yml
+         └── dabble
+               └── filter_bbox.py
 
 
 

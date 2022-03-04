@@ -12,5 +12,5 @@ Below are the list of Tutorial articles:
 
    /tutorials/01_hello_cv
    /tutorials/02_duck_confit
-   /tutorials/03_duck_power
+   /tutorials/03_peaking_duck
    /tutorials/04_import_as_module
