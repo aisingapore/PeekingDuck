@@ -94,9 +94,9 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     Outputs:
         |cum_avg|
 
-        |min|
+        |cum_max|
 
-        |max|
+        |cum_min|
 
     Configs:
         identity (:obj:`str`): **default=null** |br|
@@ -107,10 +107,14 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             and returns its length.
         minimum (:obj:`str`): **default=null** |br|
             Accepts ``<target attribute>`` of types :obj:`List[float | int]` or
-            :obj:`Dict[str, float | int]`, and returns the minimum element within.
+            :obj:`Dict[str, float | int]`, and returns the minimum element within for the current
+            frame. Not to be confused with the ``cum_min`` output data type, which represents the
+            cumulative minimum over time.
         maximum (:obj:`str`): **default=null** |br|
             Accepts ``<target attribute>`` of types :obj:`List[float | int]` or
-            :obj:`Dict[str, float | int]`, and returns the maximum element within.
+            :obj:`Dict[str, float | int]`, and returns the maximum element within for the current
+            frame. Not to be confused with the ``cum_max`` output data type, which represents the
+            cumulative maximum over time.
         cond_count (:obj:`str`): **default=null** |br|
             Accepts ``<target attribute>`` of types :obj:`List[float | int | str]`, and compares
             each element with ``<operand>`` using the ``<operator>``. The number of elements that
@@ -119,7 +123,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.cum_avg, self.min, self.max = 0.0, float("inf"), 0.0
+        self.cum_avg, self.cum_min, self.cum_max = 0.0, float("inf"), 0.0
         self.num_iter = 0
         all_methods = {
             "cond_count": self.cond_count,
@@ -138,29 +142,37 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             inputs (dict): Dictionary with all available keys.
 
         Returns:
-            outputs (dict): Dictionary with keys "cum_avg", "min" and "max".
+            outputs (dict): Dictionary with keys "cum_avg", "cum_min" and "cum_max".
         """
 
         self.curr = self.stats.get_curr_result(inputs[self.data_type], self.keys.copy())
 
         # if no detections in this frame, return stats from previous detections
         if not self.curr:
-            return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
+            return {
+                "cum_avg": self.cum_avg,
+                "cum_min": self.cum_min,
+                "cum_max": self.cum_max,
+            }
 
         self._update_stats(self.curr)
         self.num_iter += 1
 
-        return {"cum_avg": self.cum_avg, "min": self.min, "max": self.max}
+        return {
+            "cum_avg": self.cum_avg,
+            "cum_min": self.cum_min,
+            "cum_max": self.cum_max,
+        }
 
     def _update_stats(self, curr: Union[float, int]) -> None:
-        """Updates the cum_avg, min and max values with the current value."""
+        """Updates the cum_avg, cum_min and cum_max values with the current value."""
         if not isinstance(curr, float) and not isinstance(curr, int):
             raise TypeError(
                 f"The current value has to be of type 'int' or 'float' to calculate statistics."
                 f"However, the current value here is: '{curr}' which is of type: {type(curr)}."
             )
-        if curr < self.min:
-            self.min = curr
-        if curr > self.max:
-            self.max = curr
+        if curr < self.cum_min:
+            self.cum_min = curr
+        if curr > self.cum_max:
+            self.cum_max = curr
         self.cum_avg = (self.cum_avg * self.num_iter + curr) / (self.num_iter + 1)

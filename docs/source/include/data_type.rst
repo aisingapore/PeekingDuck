@@ -5,8 +5,6 @@
    :mod:`draw.legend` and :mod:`dabble.statistics`. This data type contains all the outputs from
    preceding nodes, granting the "power" nodes a large degree of flexibility.
 
-.. |cum_avg| replace:: ``cum_avg`` (:obj:`float`): Cumulative average of an attribute over time.
-
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number
    of detected objects. Each bounding box is represented as :math:`(x_1, y_1, x_2, y_2)` where
@@ -25,6 +23,12 @@
    in zone analytics. The order of corresponds to ``bboxes``.
 
 .. |count| replace:: ``count`` (:obj:`int`): An integer representing the number of counted objects.
+
+.. |cum_avg| replace:: ``cum_avg`` (:obj:`float`): Cumulative average of an attribute over time.
+
+.. |cum_max| replace:: ``cum_max`` (:obj:`float | int`): Cumulative maximum of an attribute over time.
+
+.. |cum_min| replace:: ``cum_min`` (:obj:`float | int`): Cumulative minimum of an attribute over time.
 
 .. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A NumPy array representing the
    number of persons per pixel. The sum of the array returns the total estimated count of people.
@@ -53,10 +57,6 @@
 
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`): A list of integers representing
    the group IDs of groups that have exceeded the size threshold.
-
-.. |max| replace:: ``max`` (:obj:`float | int`): Maximum value of an attribute over time.
-
-.. |min| replace:: ``min`` (:obj:`float | int`): Minimum value of an attribute over time.
 
 .. |no_input| replace:: ``none``: No inputs required.
 

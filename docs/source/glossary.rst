@@ -21,6 +21,10 @@ types when working with custom nodes.
 
 |cum_avg|
 
+|cum_max|
+
+|cum_min|
+
 |density_map|
 
 |filename|
@@ -36,10 +40,6 @@ types when working with custom nodes.
 |keypoint_scores|
 
 |large_groups|
-
-|max|
-
-|min|
 
 (input) |no_input|
 

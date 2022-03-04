@@ -18,7 +18,7 @@
 # 1) TestDataTypeKeysCond - To test that the correct data type, keys, and conditions are obtained
 # by regex from various user inputs
 # 2) TestNodeOperation - To test that this node handles correct or incorrect types appropriately
-# 3) TestStatisticsCalcs - To test that the calculations of cum_avg, max, min are correct
+# 3) TestStatisticsCalcs - To test that the calculations of cum_avg, cum_max, cum_min are correct
 
 import operator
 import pytest
@@ -54,7 +54,7 @@ def all_methods():
 def stats_config():
     return {
         "input": ["all"],
-        "output": ["cum_avg", "min", "max"],
+        "output": ["cum_avg", "cum_min", "cum_max"],
         "identity": None,
         "minimum": None,
         "maximum": None,
@@ -271,8 +271,8 @@ class TestStatisticsCalcs:
         result = Node(stats_config).run(input1)
 
         assert result["cum_avg"] == 0.0
-        assert result["max"] == 0.0
-        assert result["min"] == float("inf")
+        assert result["cum_max"] == 0.0
+        assert result["cum_min"] == float("inf")
 
     def test_ascending_sequence(self, stats_config):
         stats_config["identity"] = "count"
@@ -283,8 +283,8 @@ class TestStatisticsCalcs:
             result = node.run({"count": curr_result})
 
         assert result["cum_avg"] == 5.0
-        assert result["max"] == 9.0
-        assert result["min"] == 1.0
+        assert result["cum_max"] == 9.0
+        assert result["cum_min"] == 1.0
 
     def test_descending_sequence(self, stats_config):
         stats_config["identity"] = "count"
@@ -295,8 +295,8 @@ class TestStatisticsCalcs:
             result = node.run({"count": curr_result})
 
         assert result["cum_avg"] == 5.0
-        assert result["max"] == 9.0
-        assert result["min"] == 1.0
+        assert result["cum_max"] == 9.0
+        assert result["cum_min"] == 1.0
 
     def test_mixed_sequence(self, stats_config):
         stats_config["identity"] = "count"
@@ -307,5 +307,5 @@ class TestStatisticsCalcs:
             result = node.run({"count": curr_result})
 
         assert result["cum_avg"] == 5.0
-        assert result["max"] == 9.0
-        assert result["min"] == 1.0
+        assert result["cum_max"] == 9.0
+        assert result["cum_min"] == 1.0
