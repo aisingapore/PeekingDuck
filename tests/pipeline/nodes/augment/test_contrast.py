@@ -13,13 +13,13 @@
 # limitations under the License.
 
 """
-Test for preprocess contrast node
+Test for augment contrast node
 """
 
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.preprocess.contrast import Node
+from peekingduck.pipeline.nodes.augment.contrast import Node
 
 
 @pytest.fixture
