@@ -14,6 +14,12 @@ SPHINXBUILD   ?= sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = build
 
+# Put it first so that "make" without argument is like "make help".
+help:
+	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
+
+.PHONY: help Makefile
+
 # Clean up intermediate system-generated docs in source/ and build/
 clean:
 	@echo "clean $(SOURCEDIR)..."
@@ -22,12 +28,6 @@ clean:
 	@echo "clean $(BUILDDIR)..."
 	@rm -rf $(BUILDDIR)/doctrees
 	@rm -rf $(BUILDDIR)/html
-
-# Put it first so that "make" without argument is like "make help".
-help:
-	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
-
-.PHONY: help Makefile
 
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
