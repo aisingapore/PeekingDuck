@@ -26,42 +26,42 @@ with a new custom ``output`` node that writes information into a local sqlite da
 First, create a new custom ``output.sqlite`` node in the ``custom_project``
 folder:
 
-.. admonition:: Terminal Session
+   .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
-   | Creating new custom node...
-   | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`output` \
-   | Enter node name [my_custom_node]: \ :green:`sqlite` \
-   |
-   | Node directory:	/user/custom_project/src/custom_nodes
-   | Node type:	output
-   | Node name:	sqlite
-   |
-   | Creating the following files:
-   |    Config file: ~user/custom_project/src/custom_nodes/configs/output/sqlite.yml
-   |    Script file: ~user/custom_project/src/custom_nodes/output/sqlite.py
-   | Proceed? [Y/n]: \ :green:`⏎` \
-   | Created node!
+      | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
+      | Creating new custom node...
+      | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
+      | Select node type (input, model, draw, dabble, output): \ :green:`output` \
+      | Enter node name [my_custom_node]: \ :green:`sqlite` \
+      |
+      | Node directory:	/user/custom_project/src/custom_nodes
+      | Node type:	output
+      | Node name:	sqlite
+      |
+      | Creating the following files:
+      |    Config file: ~user/custom_project/src/custom_nodes/configs/output/sqlite.yml
+      |    Script file: ~user/custom_project/src/custom_nodes/output/sqlite.py
+      | Proceed? [Y/n]: \ :green:`⏎` \
+      | Created node!
 
 The updated folder structure would be:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-   \ :blue:`custom_project/` \ |Blank|
-   ├── pipeline_config.yml
-   ├── \ :blue:`src/` \ |Blank|
-   │   └── \ :blue:`custom_nodes/` \ |Blank|
-   │       ├── \ :blue:`configs/` \ |Blank|
-   │       │   ├── \ :blue:`dabble/` \ |Blank|
-   │       │   │   └── wave.yml
-   │       │   └── \ :blue:`output/` \ |Blank|
-   │       │       └── sqlite.yml
-   │       ├── \ :blue:`dabble/` \ |Blank|
-   │       │   └── wave.py
-   │       └── \ :blue:`output/` \ |Blank|
-   │           └── sqlite.py
-   └── wave.mp4
+      \ :blue:`custom_project/` \ |Blank|
+      ├── pipeline_config.yml
+      ├── \ :blue:`src/` \ |Blank|
+      │   └── \ :blue:`custom_nodes/` \ |Blank|
+      │       ├── \ :blue:`configs/` \ |Blank|
+      │       │   ├── \ :blue:`dabble/` \ |Blank|
+      │       │   │   └── wave.yml
+      │       │   └── \ :blue:`output/` \ |Blank|
+      │       │       └── sqlite.yml
+      │       ├── \ :blue:`dabble/` \ |Blank|
+      │       │   └── wave.py
+      │       └── \ :blue:`output/` \ |Blank|
+      │           └── sqlite.py
+      └── wave.mp4
 
 
 Edit the following **5 files** as described below:
@@ -222,42 +222,41 @@ Run this project with ``peekingduck run`` and when completed, a new ``wave.db``
 sqlite database file would be created in the current folder.
 Examine the created database as follows:
 
+   .. admonition:: Terminal Session
 
-.. admonition:: Terminal Session
-
-   | \ :blue:`[~user/custom_project]` \ > \ :green:`sqlite3` \
-   | SQLite version 3.37.0 2021-11-27 14:13:22
-   | Enter ".help" for usage hints.
-   | Connected to a transient in-memory database.
-   | Use ".open FILENAME" to reopen on a persistent database.
-   | sqlite> \ :green:`.open wave.db` \
-   | sqlite> \ :green:`.schema wavetable` \
-   | CREATE TABLE wavetable (
-   |                             datetime text,
-   |                             hand_direction text,
-   |                             wave_count integer
-   |                         );
-   | sqlite> \ :green:`select * from wavetable where wave_count > 0 limit 5;` \
-   | 2022-02-15 19:26:16|left|1
-   | 2022-02-15 19:26:16|right|1
-   | 2022-02-15 19:26:16|left|2
-   | 2022-02-15 19:26:16|right|2
-   | 2022-02-15 19:26:16|right|2
-   | sqlite> \ :green:`select * from wavetable order by datetime desc limit 5;` \
-   | 2022-02-15 19:26:44|right|72
-   | 2022-02-15 19:26:44|right|72
-   | 2022-02-15 19:26:44|right|72
-   | 2022-02-15 19:26:44|right|72
-   | 2022-02-15 19:26:43|right|70
+      | \ :blue:`[~user/custom_project]` \ > \ :green:`sqlite3` \
+      | SQLite version 3.37.0 2021-11-27 14:13:22
+      | Enter ".help" for usage hints.
+      | Connected to a transient in-memory database.
+      | Use ".open FILENAME" to reopen on a persistent database.
+      | sqlite> \ :green:`.open wave.db` \
+      | sqlite> \ :green:`.schema wavetable` \
+      | CREATE TABLE wavetable (
+      |                             datetime text,
+      |                             hand_direction text,
+      |                             wave_count integer
+      |                         );
+      | sqlite> \ :green:`select * from wavetable where wave_count > 0 limit 5;` \
+      | 2022-02-15 19:26:16|left|1
+      | 2022-02-15 19:26:16|right|1
+      | 2022-02-15 19:26:16|left|2
+      | 2022-02-15 19:26:16|right|2
+      | 2022-02-15 19:26:16|right|2
+      | sqlite> \ :green:`select * from wavetable order by datetime desc limit 5;` \
+      | 2022-02-15 19:26:44|right|72
+      | 2022-02-15 19:26:44|right|72
+      | 2022-02-15 19:26:44|right|72
+      | 2022-02-15 19:26:44|right|72
+      | 2022-02-15 19:26:43|right|70
 
 Type ``CTRL-D`` to exit from ``sqlite3``.
 
 
-.. note::
+   .. note::
 
-   The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
-   If your system does not have ``sqlite3``, please see the `SQLite Home Page 
-   <http://www.sqlite.org/>`_ for installation instructions.
+      The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
+      If your system does not have ``sqlite3``, please see the `SQLite Home Page 
+      <http://www.sqlite.org/>`_ for installation instructions.
 
 
 
@@ -268,48 +267,49 @@ Counting Cars
 =============
 
 This tutorial demonstrates using the ``dabble.statistics`` node to count the number of 
-cars travelling across a highway over time.
+cars travelling across a highway over time and the ``draw.legend`` node to display the 
+relevant statistics.
 
 Create a new PeekingDuck project, download the `highway cars video
 <http://orchard.dnsalias.com:8100/highway_cars.mp4>`_ and save it into the project
 folder.
 
-.. admonition:: Terminal Session
+   .. admonition:: Terminal Session
 
-   | \ :blue:`[~user]` \ > \ :green:`mkdir car_project` \
-   | \ :blue:`[~user]` \ > \ :green:`cd car_project` \
-   | \ :blue:`[~user/car_project]` \ > \ :green:`peekingduck init` \
+      | \ :blue:`[~user]` \ > \ :green:`mkdir car_project` \
+      | \ :blue:`[~user]` \ > \ :green:`cd car_project` \
+      | \ :blue:`[~user/car_project]` \ > \ :green:`peekingduck init` \
 
 The ``car_project`` folder structure:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-   \ :blue:`car_project/` \ |Blank|
-   ├── highway_cars.mp4
-   ├── pipeline_config.yml
-   └── \ :blue:`src` \ |Blank|
-      └── custom_nodes
-         └── configs
+      \ :blue:`car_project/` \ |Blank|
+      ├── highway_cars.mp4
+      ├── pipeline_config.yml
+      └── \ :blue:`src` \ |Blank|
+         └── custom_nodes
+            └── configs
 
 
 Edit ``pipeline_config.yml`` as follows:
 
-.. code-block:: yaml
-   :linenos:
+   .. code-block:: yaml
+      :linenos:
 
-   nodes:
-   - input.recorded:
-       input_dir: highway_cars.mp4
-   - model.yolo:
-       detect_ids: ["car"]
-   - dabble.bbox_count
-   - dabble.fps
-   - dabble.statistics:
-       identity: count
-   - draw.bbox
-   - draw.legend:
-       show: ["fps", "count", "cum_max", "cum_min"]
-   - output.screen
+      nodes:
+      - input.recorded:
+          input_dir: highway_cars.mp4
+      - model.yolo:
+          detect_ids: ["car"]
+      - dabble.bbox_count
+      - dabble.fps
+      - dabble.statistics:
+          identity: count
+      - draw.bbox
+      - draw.legend:
+          show: ["fps", "count", "cum_max", "cum_min"]
+      - output.screen
 
 Run it with ``peekingduck run`` and you should see a video of cars travelling across a
 highway with a legend box on the bottom left showing the realtime count of the number of
@@ -317,8 +317,8 @@ cars on-screen, the cumulative maximum and minimum number of cars detected since
 video started.
 The sample screenshot below shows:
 
-   * there are currently 3 cars on-screen
-   * the cumulative maximum number of cars "seen" was 5
+   * the count that there are currently 3 cars on-screen
+   * the cumulative maximum number of cars "seen" previously was 5
    * the cumulative minimum number of cars was 1
 
    .. figure:: /assets/tutorials/ss_highway_cars.png
@@ -326,10 +326,10 @@ The sample screenshot below shows:
 
       Counting Cars on a Highway
 
-.. note::
+   .. note::
 
-   Royalty free video of cars on highway from:
-   https://www.youtube.com/watch?v=8yP1gjg4b2w
+      Royalty free video of cars on highway from:
+      https://www.youtube.com/watch?v=8yP1gjg4b2w
 
 
 
@@ -351,40 +351,42 @@ Create a new PeekingDuck project, download the `people walking video
 <http://orchard.dnsalias.com:8100/people_walking.mp4>`_ and save it into the project
 folder.
 
-.. admonition:: Terminal Session
+   .. admonition:: Terminal Session
 
-   | \ :blue:`[~user]` \ > \ :green:`mkdir people_walking` \
-   | \ :blue:`[~user]` \ > \ :green:`cd people_walking` \
-   | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck init` \
+      | \ :blue:`[~user]` \ > \ :green:`mkdir people_walking` \
+      | \ :blue:`[~user]` \ > \ :green:`cd people_walking` \
+      | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck init` \
 
 Create the following ``pipeline_config.yml``:
 
-.. code-block:: yaml
-   :linenos:
+   .. code-block:: yaml
+      :linenos:
 
-   nodes:
-   - input.recorded:
-      input_dir: people_walking.mp4
-   - model.yolo:
-      detect_ids: ["person"]
-   - dabble.tracking
-   - dabble.statistics:
-      maximum: obj_attrs["ids"]
-   - dabble.fps
-   - draw.bbox
-   - draw.legend:
-      show: ["fps", "max", "min", "cum_avg"]
-   - draw.tag:
-      show: ["ids"]
-   - output.screen
+      nodes:
+      - input.recorded:
+          input_dir: people_walking.mp4
+      - model.yolo:
+          detect_ids: ["person"]
+      - dabble.tracking
+      - dabble.statistics:
+          maximum: obj_attrs["ids"]
+      - dabble.fps
+      - draw.bbox
+      - draw.legend:
+          show: ["fps", "cum_max", "cum_min", "cum_avg"]
+      - draw.tag:
+          show: ["ids"]
+      - output.screen
 
 The above pipeline uses the Yolo model to detect people in the video and uses 
 the ``dabble.tracking`` node to track the people as they walk.
 Each person is assigned a tracking ID and ``dabble.tracking`` returns a list of 
 tracking IDs.
 ``dabble.statistics`` is used to process these tracking IDs: since each person is 
-assigned a monotonically increasing integer ID, the maximum ID tells us the number 
-of persons tracked so far.
+assigned a monotonically increasing integer ID, the maximum ID within the list 
+tells us the number of persons tracked so far.
+``draw.legend`` is used to display the various statistics: the FPS, and the 
+cumulative maximum, minimum and average relating to the number of persons tracked.
 
 Do a ``peekingduck run`` and you will see the following display:
 
@@ -393,42 +395,179 @@ Do a ``peekingduck run`` and you will see the following display:
 
       People Walking
 
+   .. note::
+
+      Royalty free video of people walking from:
+      https://www.youtube.com/watch?v=du74nvmRUzo
 
 
+Tracking People within a Zone
+-----------------------------
 
-.. admonition:: Terminal Session
+Suppose we are only interested in people walking down the center of the video 
+(imagine a carpet running down the middle).
+We can create a custom node to tell PeekingDuck to focus on the middle zone, 
+by filtering away the detected bounding boxes outside the zone.
 
-   | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck create-node` \
-   | Creating new custom node...
-   | Enter node directory relative to ~user/people_walking [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
-   | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
-   |
-   | Node directory:	/user/people_walking/src/custom_nodes
-   | Node type:	dabble
-   | Node name:	filter_bbox
-   |
-   | Creating the following files:
-   |    Config file: ~user/people_walking/src/custom_nodes/configs/dabble/filter_bbox.yml
-   |    Script file: ~user/people_walking/src/custom_nodes/dabble/filter_bbox.py
-   | Proceed? [Y/n]: \ :green:`⏎` \
-   | Created node!
+Start by creating a custom node ``dabble.filter_bbox``:
+
+   .. admonition:: Terminal Session
+
+      | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck create-node` \
+      | Creating new custom node...
+      | Enter node directory relative to ~user/people_walking [src/custom_nodes]: \ :green:`⏎` \
+      | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+      | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
+      |
+      | Node directory:	/user/people_walking/src/custom_nodes
+      | Node type:	dabble
+      | Node name:	filter_bbox
+      |
+      | Creating the following files:
+      |    Config file: ~user/people_walking/src/custom_nodes/configs/dabble/filter_bbox.yml
+      |    Script file: ~user/people_walking/src/custom_nodes/dabble/filter_bbox.py
+      | Proceed? [Y/n]: \ :green:`⏎` \
+      | Created node!
 
 The folder structure looks like this:
 
-.. parsed-literal::
+   .. parsed-literal::
 
-   \ :blue:`people_walking/` \ |Blank|
-   ├── people_walking.mp4
-   ├── pipeline_config.yml
-   └── src
-      └── custom_nodes
-         ├── configs
-         │   └── dabble
-         │       └── filter_bbox.yml
-         └── dabble
-               └── filter_bbox.py
+      \ :blue:`people_walking/` \ |Blank|
+      ├── people_walking.mp4
+      ├── pipeline_config.yml
+      └── src
+         └── custom_nodes
+            ├── configs
+            │   └── dabble
+            │       └── filter_bbox.yml
+            └── dabble
+                  └── filter_bbox.py
 
 
+Change ``pipeline_config.yml`` to the following:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.recorded:
+          input_dir: people_walking.mp4
+      - model.yolo:
+          detect_ids: ["person"]
+      - dabble.bbox_to_btm_midpoint
+      - dabble.zone_count:
+          resolution: [720, 480]
+          zones: [
+            [[0.35,0], [0.65,0], [0.65,1], [0.35,1]],
+          ]
+      - custom_nodes.dabble.filter_bbox:
+          zones: [
+            [[0.35,0], [0.65,0], [0.65,1], [0.35,1]],
+          ]
+      - dabble.tracking
+      - dabble.statistics:
+          maximum: obj_attrs["ids"]
+      - dabble.fps
+      - draw.bbox
+      - draw.zones
+      - draw.legend:
+          show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
+      - draw.tag:
+          show: ["ids"]
+      - output.screen
+
+We make use of ``dabble.zone_count`` and ``dabble.bbox_to_btm_midpoint`` nodes to 
+create a zone in the middle. The zone is defined by a rectangle with the 
+four corners (0.35, 0.0) - (0.65, 0.0) - (0.65, 1.0) - (0.35, 1.0).
+(For more info, see :doc:`Zone Counting </use_cases/zone_counting>`)
+This zone is also passed to our custom node ``dabble.filter_bbox`` for bounding box
+filtering.
+What ``dabble.filter_bbox`` will do is to take the list of bboxes as input and 
+output a list of bboxes within the zone, dropping all bboxes outside it.
+Then, ``dabble.tracking`` is used to track the people walking and 
+``dabble.statistics`` is used to determine the number of people walking in the zone,
+by getting the maximum of the tracked IDs.
+``draw.legend`` has a new item ``zone_count`` which displays the number of people 
+walking in the zone currently.
+
+The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
+
+**src/custom_nodes/configs/dabble/filter_bbox.yml**:
+
+   .. code-block:: yaml
+      :linenos:
+
+      # Mandatory configs
+      input: ["bboxes"]
+      output: ["bboxes"]
+
+      zones: [
+         [[0,0], [0,1], [1,1], [1,0]],
+      ]
+
+**src/custom_nodes/dabble/filter_bbox.py**:
+
+   .. container:: toggle
+
+      .. container:: header
+
+         **Show/Hide Code for filter_bbox.py**
+
+      .. code-block:: python
+         :linenos:
+
+         """
+         Custom node to filter bboxes outside a zone
+         """
+
+         from typing import Any, Dict
+         import numpy as np
+         from peekingduck.pipeline.nodes.node import AbstractNode
+
+
+         class Node(AbstractNode):
+            """Custom node to filter bboxes outside a zone
+
+            Args:
+               config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+            """
+
+            def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+               super().__init__(config, node_path=__name__, **kwargs)
+
+            def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
+               """Checks bounding box x-coordinates against the zone left and right borders.
+               Retain bounding box if within, otherwise discard it.
+
+               Args:
+                     inputs (dict): Dictionary with keys "bboxes"
+
+               Returns:
+                     outputs (dict): Dictionary with keys "bboxes".
+               """
+               bboxes = inputs["bboxes"]
+               zones = self.config["zones"]
+               zone = zones[0]         # only work with one zone currently
+               # convert zone with 4 points to a zone bbox with (x1, y1), (x2, y2)
+               x1, y1 = zone[0]
+               x2, y2 = zone[2]
+               zone_bbox = np.asarray([x1, y1, x2, y2])
+
+               retained_bboxes = []
+               for bbox in bboxes:
+                  # filter by left and right borders (ignore top and bottom)
+                  if bbox[0] > zone_bbox[0] and bbox[2] < zone_bbox[2]:
+                     retained_bboxes.append(bbox)
+
+               return {"bboxes": np.asarray(retained_bboxes)}
+
+
+Do a ``peekingduck run`` and you will see the following display:
+
+   .. figure:: /assets/tutorials/ss_people_walking_2.png
+      :alt: PeekingDuck screenshot - count people walking in a zone
+
+      Count People Walking in a Zone
 
 
