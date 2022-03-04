@@ -90,8 +90,9 @@ class Legend:
             and not isinstance(item_info, float)
             and not isinstance(item_info, str)
         ):
-            raise ValueError(
-                f"The draw.legend node only draws values that are of type 'int', 'float' or 'str' "
+            raise TypeError(
+                f"With the exception of the 'zone_count' data type, "
+                f"the draw.legend node only draws values that are of type 'int', 'float' or 'str' "
                 f"within the legend box. The value: {item_info} from the data type: {item_name} "
                 f"is of type: {type(item_info)} and is unable to be drawn."
             )

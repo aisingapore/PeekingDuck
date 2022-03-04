@@ -23,7 +23,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Checks which groups have exceeded the group size threshold.
+    """
+    Checks which groups have exceeded the group size threshold. The group associated with each
+    object is accessed by the ``groups`` key of ``obj_attrs``.
 
     Inputs:
         |obj_attrs|

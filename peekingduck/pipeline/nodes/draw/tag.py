@@ -47,14 +47,14 @@ class Node(AbstractNode):
     >>> # Example
     >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
 
-    The table below illustrates how ``show`` can be configured to achieve different outcomes. Key
-    takeaways are:
+    The table below illustrates how ``show`` can be configured to achieve different outcomes for
+    this example. Key takeaways are:
 
     * To draw nested attributes, include all the keys leading to them (within the ``obj_attrs`` \
     dictionary), separating each key with a ``->``. \
 
     * To draw multiple attributes above each bounding box, add them to the list of ``show`` \
-    config. Attributes will be separated by ``, `` when drawn.
+    config. Attributes will be separated by ``,`` when drawn.
 
     +-----+-----------------------------------------+---------------+---------------+
     | No. | ``show`` config                         | Tag above 1st | Tag above 2nd |

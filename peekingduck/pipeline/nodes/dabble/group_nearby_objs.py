@@ -27,8 +27,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Groups objects that are near each other.
 
-    It does so by comparing the 3D location of all objects, and assigning
-    objects near each other to the same group.
+    It does so by comparing the 3D location of all objects, and assigning objects near each other
+    to the same group. The group associated with each object is accessed by the ``groups`` key of
+    ``obj_attrs``.
 
     Inputs:
         |obj_3D_locs|

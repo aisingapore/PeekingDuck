@@ -35,9 +35,10 @@ class Node(AbstractNode):
     .. image:: /assets/api/legend.png
     |br|
 
-    Supported types that can be drawn are :obj:`int`, :obj:`float` and :obj:`str`.
-    Note that values of float type such as ``fps`` and ``cum_avg`` are displayed in 2 decimal
-    places.
+    With the exception of the ``zone_count`` data type from :mod:`dabble.zone_count`, all other
+    selected in-built PeekingDuck data types or custom data types must be of types :obj:`int`,
+    :obj:`float`, :obj:`str`. Note that values of float type such as ``fps`` and ``cum_avg`` are
+    displayed in 2 decimal places.
 
     Inputs:
         |all_input|
@@ -52,7 +53,8 @@ class Node(AbstractNode):
         show (:obj:`List[str]`): **default = []**. |br|
             Include in this list the desired data type(s) to be drawn within the legend box, such
             as ``["fps", "count", "cum_avg"]`` in the example screenshot. Custom data types
-            produced by custom nodes are also supported.
+            produced by custom nodes are also supported. If no data types are included, an error
+            will be produced.
 
     .. versionchanged:: 1.2.0
         Merged previous ``all_legend_items`` and ``include`` configs into a single ``show`` config

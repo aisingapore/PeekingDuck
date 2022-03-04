@@ -23,19 +23,6 @@ from peekingduck.pipeline.nodes.draw.legend import Node
 
 
 @pytest.fixture
-def draw_legend_no_show():
-    node = Node(
-        {
-            "input": ["all"],
-            "output": ["img"],
-            "show": [],
-            "position": "bottom",
-        }
-    )
-    return node
-
-
-@pytest.fixture
 def draw_legend_bottom():
     node = Node(
         {
@@ -96,7 +83,7 @@ class TestLegend:
             AssertionError, np.testing.assert_equal, original_img, results_top["img"]
         )
 
-    def test_invalid_data_type(self, draw_legend_top, create_image):
+    def test_selected_data_type_not_in_data_pool(self, draw_legend_top, create_image):
         original_img = create_image((640, 480, 3))
         output_img = original_img.copy()
         input1 = {
@@ -108,4 +95,14 @@ class TestLegend:
         assert (
             "was selected for drawing, but is not a valid data type from preceding nodes"
             in str(excinfo.value)
+        )
+
+    def test_invalid_draw_type(self, draw_legend_top, create_image):
+        original_img = create_image((640, 480, 3))
+        output_img = original_img.copy()
+        input1 = {"img": output_img, "fps": [1, 1], "count": 2, "zone_count": [1, 1]}
+        with pytest.raises(TypeError) as excinfo:
+            draw_legend_top.run(input1)
+        assert "the draw.legend node only draws values that are of type" in str(
+            excinfo.value
         )

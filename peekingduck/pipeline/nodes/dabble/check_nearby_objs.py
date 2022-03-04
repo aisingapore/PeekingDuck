@@ -26,9 +26,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Checks if any objects are near each other.
 
-    It does so by comparing the 3D locations of all objects to see which ones
-    are near each other. If the distance between two objects is less than the
-    minimum threshold, both would be tagged as near with ``tag_msg``.
+    It does so by comparing the 3D locations of all objects to see which ones are near each other.
+    If the distance between two objects is less than the minimum threshold, both would be flagged
+    as near with ``tag_msg``. These flags can be accessed by the ``flags`` key of ``obj_attrs``.
 
     Inputs:
         |obj_3D_locs|
@@ -38,9 +38,8 @@ class Node(AbstractNode):
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
-            Threshold of distance, in metres, between two objects. Objects with
-            distance less than ``near_threshold`` would be considered as
-            'near'.
+            Threshold of distance, in metres, between two objects. Objects with distance less than
+            ``near_threshold`` would be considered as 'near'.
         tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
 

@@ -1,9 +1,9 @@
 ..
    Data type substitutions
 
-.. |all_input| replace:: ``all`` (:obj:`Any`): Receives inputs from all preceding outputs. For example, 
-   in :mod:`draw.legend`, this is used as dynamic input for legend creation. In 
-   :mod:`output.csv_writer`, this is used as flexible input for statistics to track.
+.. |all_input| replace:: ``all`` (:obj:`Any`): Used in PeekingDuck's "power" nodes such as
+   :mod:`draw.legend` and :mod:`dabble.statistics`. This data type contains all the outputs from
+   preceding nodes, granting the "power" nodes a large degree of flexibility.
 
 .. |cum_avg| replace:: ``cum_avg`` (:obj:`float`): Cumulative average of an attribute over time.
 
@@ -31,9 +31,8 @@
 
 .. |filename| replace:: ``filename`` (:obj:`str`): The filename of video/image being read.
 
-.. |fps| replace:: ``fps`` (:obj:`List[float]`): A list of floats representing the frames per
-   second (FPS) per frame. The FPS returned can either be a moving average or an instantaneous
-   value. This setting can be changed in the *configs/dabble/fps.yml* file.
+.. |fps| replace:: ``fps`` (:obj:`float`): A float representing the Frames Per Second (FPS) when
+   processing a live video stream or a recorded video.
 
 .. |img| replace:: ``img`` (:obj:`numpy.ndarray`): A NumPy array of shape
    :math:`(height, width, channels)` containing the image data in BGR format.

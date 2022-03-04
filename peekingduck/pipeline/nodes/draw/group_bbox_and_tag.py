@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Draws detected groups and their tags.
+Draws large bounding boxes with tags, over identified groups of bounding boxes.
 """
 
 from typing import Any, Dict, List
@@ -26,12 +26,14 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws large bounding boxes over multiple object bounding boxes which
-    have been identified as belonging to large groups.
+    """Draws large bounding boxes with tags over multiple object bounding boxes which have been
+    identified as belonging to the same group.
 
-    The :mod:``draw.group_bbox_and_tag`` node uses the ``obj_attrs`` and
-    ``large_groups`` from the ``dabble`` nodes to draw group bboxes and the
-    large group message tag onto the image. For better understanding, refer to
+    The ``large_groups`` data type from :mod:`dabble.check_large_groups`, and the ``groups`` key
+    of the ``obj_attrs`` data type from :mod:`dabble.group_nearby_objs`, are inputs to this node
+    which identify the different groups, and the group associated with each bounding box.
+
+    For better understanding, refer to
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
 
     Inputs:
