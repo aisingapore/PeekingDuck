@@ -252,7 +252,7 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
 The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
-PeekingDuck repository and is also available at a `Colab notebook <link>`_.
+PeekingDuck repository and is also available at a `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
 
 
 .. raw:: html
