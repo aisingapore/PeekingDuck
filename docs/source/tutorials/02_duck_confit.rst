@@ -815,14 +815,14 @@ Updated folder structure:
    \ :blue:`wave_project/` \ |Blank|
    ├── pipeline_config.yml
    ├── \ :blue:`src` \ |Blank|
-   │   └── \ :blue:`custom_nodes` \ |Blank|
-   │       ├── \ :blue:`configs` \ |Blank|
-   │       │   └── \ :blue:`dabble` \ |Blank|
-   │       │       ├── debug.yml
-   │       │       └── wave.yml
-   │       └── \ :blue:`dabble` \ |Blank|
-   │           ├── debug.py
-   │           └── wave.py
+   │   └── \ :blue:`custom_nodes` \ |Blank|
+   │       ├── \ :blue:`configs` \ |Blank|
+   │       │   └── \ :blue:`dabble` \ |Blank|
+   │       │       ├── debug.yml
+   │       │       └── wave.yml
+   │       └── \ :blue:`dabble` \ |Blank|
+   │           ├── debug.py
+   │           └── wave.py
    ├── wave.db
    └── wave.mp4
 

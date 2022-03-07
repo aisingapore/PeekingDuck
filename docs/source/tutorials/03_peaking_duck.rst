@@ -439,8 +439,8 @@ The folder structure looks like this:
       └── src
          └── custom_nodes
             ├── configs
-            │   └── dabble
-            │       └── filter_bbox.yml
+            │   └── dabble
+            │       └── filter_bbox.yml
             └── dabble
                   └── filter_bbox.py
 
