@@ -108,7 +108,7 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
         self,
         depth: float = 1.0,
         width: float = 1.0,
-    ):
+    ) -> None:
         super().__init__()
         n_bottleneck = round(3 * depth)
         self.in_features = ("dark3", "dark4", "dark5")
