@@ -118,7 +118,7 @@ to help combat COVID-19. For more details, click on the heading of each use case
 
 .. |crowd_counting_doc| replace:: :doc:`Crowd Counting </use_cases/crowd_counting>`
 
-.. |crowd_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
+.. |crowd_counting_gif| image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
