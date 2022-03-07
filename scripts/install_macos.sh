@@ -46,7 +46,7 @@ else
 fi
 
 # Install conda packages
-conda install -y click colorama opencv openblas pyyaml request scipy shapely tqdm
+conda install -y click colorama opencv openblas pyyaml requests scipy shapely tqdm
 
 # Install pip packages: Tensorflow and PyTorch
 if [[ $MACOS == 12.* ]]; then
