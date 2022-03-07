@@ -73,6 +73,7 @@ class YOLOX(nn.Module):
         super().__init__()
         self.backbone = YOLOPAFPN(depth, width)
         self.head = YOLOXHead(num_classes, width)
+        self.apply(YOLOX.initialize_batch_norm)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Defines the computation performed at every call.
@@ -89,6 +90,14 @@ class YOLOX(nn.Module):
         # FPN output content features of [dark3, dark4, dark5]
         fpn_outs = self.backbone(inputs)
         return self.head(fpn_outs)
+
+    @staticmethod
+    def initialize_batch_norm(module: nn.Module) -> None:
+        """Initializes the BatchNorm2d layers."""
+        for mod in module.modules():
+            if isinstance(mod, nn.BatchNorm2d):
+                mod.eps = 1e-3
+                mod.momentum = 0.03
 
 
 class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
