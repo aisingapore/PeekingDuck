@@ -2,16 +2,26 @@
 set -e              # tell bash to exit on error
 
 #
-# PeekingDuck Installation Script for macOS Monterey/Big Sur
+# PeekingDuck Installation Script for M1 macOS Monterey/Big Sur
 # by dotw 2021-03-06
 #
 
-echo "PeekingDuck Installation Script for macOS Monterey/Big Sur"
-echo "----------------------------------------------------------"
+echo "PeekingDuck Installation Script for M1 macOS Monterey/Big Sur"
+echo "-------------------------------------------------------------"
 
 # Global working vars
+ARCHI=`uname -p`
 CONDA=`which conda`
 MACOS=`sw_vers -productVersion`
+
+# Detect hardware
+if [[ $ARCHI != arm ]]; then
+    echo "hardware $ARCHI unsupported, this script only works for M1 Macs"
+    echo "installation aborted"
+    exit 1
+else
+    echo "hardware $ARCHI M1 Mac found"
+fi
 
 # Detect macOS
 if [[ $MACOS != 12.* && $MACOS != 11.* ]]; then
