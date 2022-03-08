@@ -76,43 +76,43 @@ to help combat COVID-19. For more details, click on the heading of each use case
 
 .. |social_distancing_doc| replace:: :doc:`Social Distancing </use_cases/social_distancing>`
 
-.. |social_distancing_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif
+.. |social_distancing_gif| image:: /assets/use_cases/social_distancing.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |zone_counting_doc| replace:: :doc:`Zone Counting </use_cases/zone_counting>`
 
-.. |zone_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif
+.. |zone_counting_gif| image:: /assets/use_cases/zone_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |group_size_checking_doc| replace:: :doc:`Group Size Checking </use_cases/group_size_checking>`
 
-.. |group_size_checking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif
+.. |group_size_checking_gif| image:: /assets/use_cases/group_size_check_2.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |object_counting_doc| replace:: :doc:`Object Counting </use_cases/object_counting>`
 
-.. |object_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif
+.. |object_counting_gif| image:: /assets/use_cases/object_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |privacy_protection_faces_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_faces>`
 
-.. |privacy_protection_faces_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
+.. |privacy_protection_faces_gif| image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |privacy_protection_lp_doc| replace:: :doc:`Privacy Protection (License Plates) </use_cases/privacy_protection_license_plates>`
 
-.. |privacy_protection_lp_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif
+.. |privacy_protection_lp_gif| image:: /assets/use_cases/privacy_protection_license_plates.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
-.. |face_mask_detection_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif
+.. |face_mask_detection_gif| image:: /assets/use_cases/mask_detection.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -124,13 +124,13 @@ to help combat COVID-19. For more details, click on the heading of each use case
 
 .. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking </use_cases/multiple_object_tracking>`
 
-.. |multiple_object_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif
+.. |multiple_object_tracking_gif| image:: /assets/use_cases/vehicles_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |human_tracking_doc| replace:: :doc:`Human Detection and Tracking </use_cases/human_tracking>`
 
-.. |human_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/human_tracking.gif
+.. |human_tracking_gif| image:: /assets/use_cases/human_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 

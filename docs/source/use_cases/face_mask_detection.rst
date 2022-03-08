@@ -10,7 +10,7 @@ public places. AI Singapore has developed a solution that checks whether or not 
 a face mask. This can be used in places such as in malls or shops to ensure that visitors adhere to
 the guidelines.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif
+.. image:: /assets/use_cases/mask_detection.gif
    :class: no-scaled-link
    :width: 70 %
 

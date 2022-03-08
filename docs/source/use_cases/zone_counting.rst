@@ -16,7 +16,7 @@ above mentioned guidelines.
 
 .. _zone_counting_gif:
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif
+.. image:: /assets/use_cases/zone_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -58,7 +58,7 @@ and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding 
 detected. For more information on how adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
+.. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -83,7 +83,7 @@ was created using the following zone::
 
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]]
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/coordinates_explanation.png
+.. image:: /assets/use_cases/coordinates_explanation.png
    :class: no-scaled-link
    :width: 100 %
 
