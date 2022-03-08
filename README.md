@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="30%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/peekingduck.png" width="30%">
     <h1>PeekingDuck</h1>
 </div>
 
@@ -48,7 +48,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
     If you have a webcam, you should see the demo running live:
 
-    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="50%">
+    <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/yolo_demo.gif" width="50%">
 
     The previous command looks for a `pipeline_config.yml` in the current directory. You
     can also specify the path of a different config file to be used, as follows:
@@ -67,11 +67,11 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 
 PeekingDuck has 6 types of nodes:
 
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/diagrams/node_types.drawio.svg">
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one node will be the input to another. For example, `input.live` produces "img", which is taken in by `model.yolo`, and `model.yolo` produces "bboxes", which is taken in by `draw.bbox`. For ease of visualisation, not all the inputs and outputs of these nodes are included in this diagram.
 
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/diagrams/yolo_demo.drawio.svg">
 
 To list the available nodes in PeekingDuck and get their respective documentation's URL: 
  ```

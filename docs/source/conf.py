@@ -72,7 +72,7 @@ html_theme = "sphinx_rtd_theme"
 # so a file named 'default.css' will overwrite the builtin 'default.css'.
 html_static_path = ["_static"]
 html_style = "css/pkdk.css"
-html_logo = "../../images/readme/peekingduck.png"
+html_logo = "assets/peekingduck.png"
 html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 

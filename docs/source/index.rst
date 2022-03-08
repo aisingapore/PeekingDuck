@@ -14,6 +14,7 @@ Introduction
 .. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
    :target: https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE
 
+
 What is PeekingDuck?
 ====================
 
@@ -21,6 +22,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 inference. It helps to significantly cut down development time when building CV pipelines. The name
 "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in
 `duck typing <https://en.wikipedia.org/wiki/Duck_typing>`_ used in Python.
+
 
 .. _how_peekingduck_works:
 
@@ -31,7 +33,7 @@ How PeekingDuck Works
 
 PeekingDuck has 6 types of nodes:
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg
+.. image:: /assets/diagrams/node_types.drawio.svg
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used
 in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one
@@ -40,7 +42,8 @@ in by :mod:`model.yolo`, and :mod:`model.yolo` produces ``bboxes``, which is tak
 :mod:`draw.bbox`. For ease of visualization, not all the inputs and outputs of these nodes are
 included in this diagram.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg
+.. image:: /assets/diagrams/yolo_demo.drawio.svg
+
 
 Explore PeekingDuck's Features
 ==============================
