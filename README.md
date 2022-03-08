@@ -100,13 +100,13 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |                                                              |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [Social Distancing](https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html) | [Zone Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html) |
-| ![Social Distancing](docs/source/assets/use_cases/social_distancing.gif) | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%"> |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/social_distancing.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/zone_counting.gif" width="100%"> |
 | [Group Size Checking](https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html) | [Object Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting.html) |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/object_counting.gif" width="100%"> |
 | [Privacy Protection (Faces)](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html) | [Privacy Protection (License Plates)](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_license_plates.html) |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif" width="100%"> |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_faces.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_license_plates.gif" width="100%"> |
 | [Face Mask Detection](https://peekingduck.readthedocs.io/en/stable/use_cases/face_mask_detection.html) |                                                              |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif" width="100%"> |                                                              |
+| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/mask_detection.gif" width="100%"> |                                                              |
 
 We're constantly developing new nodes to increase PeekingDuck's capabilities. You've gotten a taste of some of our commonly used nodes in the previous demos, but PeekingDuck can do a lot more. To see what other nodes are available, check out PeekingDuck's [API Reference](https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html).
 
