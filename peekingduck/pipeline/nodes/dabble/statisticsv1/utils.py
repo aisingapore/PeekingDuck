@@ -35,6 +35,13 @@ class Stats:
         self.condition = {"op_func": Callable, "operand": str}
         self.data_type: str
         self.keys: List[str] = []
+        self.method_map: Dict[str, Dict[str, Any]] = {
+            "identity": {"types": (int, float), "func": _func_identity},
+            "length": {"types": (dict, list), "func": _func_length},
+            "minimum": {"types": (dict, list), "func": _func_minimum},
+            "maximum": {"types": (dict, list), "func": _func_maximum},
+            "cond_count": {"types": (list), "func": _func_cond_count},
+        }
 
     def prepare_data(
         self, all_methods: Dict[str, Union[str, None]]
@@ -70,7 +77,7 @@ class Stats:
 
         """
         target_attr = _deep_get_value(inputs, keys)
-        curr = _apply_method(target_attr, self.method, self.condition)
+        curr = self._apply_method(target_attr)
 
         return curr
 
@@ -100,6 +107,15 @@ class Stats:
             target_attr = self.expr
 
         self.data_type, self.keys = _get_data_type_and_keys(target_attr)
+
+    def _apply_method(self, target_attr: Any) -> Union[int, float, None]:
+        """Applies a method and optional condition to a target attribute."""
+        if not target_attr:
+            return None
+
+        _check_type(target_attr, self.method, self.method_map[self.method]["types"])
+        args = (target_attr, self.condition)
+        return self.method_map[self.method]["func"](*args)
 
 
 def _get_method_expr(all_methods: Dict[str, Union[str, None]]) -> Tuple[str, str]:
@@ -163,44 +179,56 @@ def _deep_get_value(
     return _deep_get_value(data[key], keys)
 
 
-def _apply_method(
-    target_attr: Any,
-    method: str,
-    condition: Dict[str, Any],
-) -> Union[int, float, None]:
-    """Applies a method and optional condition to a target attribute."""
-    if not target_attr:
-        return None
-    allowable_types = {
-        "identity": (int, float),
-        "length": (dict, list),
-        "minimum": (dict, list),
-        "maximum": (dict, list),
-        "cond_count": (list),
-    }
-    _check_type(target_attr, method, allowable_types[method])  # type: ignore
-    if method == "identity":
-        return target_attr
-    if method == "length":
-        return len(target_attr)
-    if method == "minimum":
-        try:
-            return min(target_attr)
-        except ValueError as error:
-            raise ValueError(
-                "To use the 'minimum' method, all elements within the target attribute has to be"
-                " of type 'int' or 'float'."
-            ) from error
-    if method == "maximum":
-        try:
-            return max(target_attr)
-        except ValueError as error:
-            raise ValueError(
-                "To use the 'maximum' method, all elements within the target attribute has to be"
-                " of type 'int' or 'float'."
-            ) from error
-    # if method == "cond_count"
-    return _cond_count(target_attr, condition)
+def _func_identity(target_attr: Any, *_: Any) -> Union[float, int]:
+    """Function for returning the identity of an integer or float."""
+    return target_attr
+
+
+def _func_length(target_attr: Union[Dict[str, Any], List[Any]], *_: Any) -> int:
+    """Function for returning the length of a dictionary or list."""
+    return len(target_attr)
+
+
+def _func_minimum(
+    target_attr: Union[
+        Dict[Union[float, int], Union[float, int]], List[Union[float, int]]
+    ],
+    *_: Any,
+) -> Union[float, int]:
+    """Function for returning the minimum element of a list or dictionary."""
+    try:
+        return min(target_attr)
+    except ValueError as error:
+        raise ValueError(
+            "To use the 'minimum' method, all elements within the target attribute has to be"
+            " of type 'int' or 'float'."
+        ) from error
+
+
+def _func_maximum(
+    target_attr: Union[
+        Dict[Union[float, int], Union[float, int]], List[Union[float, int]]
+    ],
+    *_: Any,
+) -> Union[float, int]:
+    """Function for returning the maximum element of a list or dictionary."""
+    try:
+        return max(target_attr)
+    except ValueError as error:
+        raise ValueError(
+            "To use the 'maximum' method, all elements within the target attribute has to be"
+            " of type 'int' or 'float'."
+        ) from error
+
+
+def _func_cond_count(target_attr: Any, condition: Dict[str, Any]) -> int:
+    """Function for counting the number of elements in a list, given an operator and operand
+    for comparison."""
+    count = 0
+    for item in target_attr:
+        if condition["op_func"](item, condition["operand"]):
+            count += 1
+    return count
 
 
 def _check_type(
@@ -216,12 +244,3 @@ def _check_type(
             f"For the chosen method: '{method}', valid target attribute types are: {types}. "
             f"However, this target attribute: {target_attr} is of type: {type(target_attr)}."
         )
-
-
-def _cond_count(target_attr: Any, condition: Dict[str, Any]) -> int:
-    """Counts the number of elements in a list given an operator and operand for comparison."""
-    count = 0
-    for item in target_attr:
-        if condition["op_func"](item, condition["operand"]):
-            count += 1
-    return count

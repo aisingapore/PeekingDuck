@@ -1,9 +1,9 @@
 ..
    Data type substitutions
 
-.. |all_input| replace:: ``all`` (:obj:`Any`): Used in PeekingDuck's "power" nodes such as
-   :mod:`draw.legend` and :mod:`dabble.statistics`. This data type contains all the outputs from
-   preceding nodes, granting the "power" nodes a large degree of flexibility.
+.. |all_input| replace:: ``all`` (:obj:`Any`): This data type contains all the outputs from
+   preceding nodes, granting a large degree of flexibility to nodes that receive it. Examples of
+   such nodes include :mod:`draw.legend`, :mod:`dabble.statistics`, and :mod:`output.csv_writer`.
 
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number

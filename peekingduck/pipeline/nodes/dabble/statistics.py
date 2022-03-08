@@ -13,8 +13,7 @@
 # limitations under the License.
 
 """
-A flexible node created for calculating the cumulative average, minimum and maximum of a single
-variable of interest over time.
+Calculates the cumulative average, minimum and maximum of a single variable of interest over time.
 """
 
 import operator
@@ -35,58 +34,72 @@ OPS = {
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
-    """A flexible node created for calculating the cumulative average, minimum and maximum of a
-    single variable of interest (defined as ``current result`` here) over time. The configurations
-    for this node offer several methods to reduce the incoming data type into a single
-    ``current result`` of type :obj:`int` or :obj:`float`, which is valid for the current
-    video frame. ``current result`` is then used to recalculate the values of cumulative average,
-    minimum, and maximum for PeekingDuck's running duration thus far.
+    """Calculates the cumulative average, minimum and maximum of a single variable of interest
+    (defined as ``current result`` here) over time. The configurations for this node offer several
+    methods to reduce the incoming data type into a single ``current result`` of type :obj:`int`
+    or :obj:`float`, which is valid for the current video frame. ``current result`` is then used to
+    recalculate the values of cumulative average, minimum, and maximum for PeekingDuck's running
+    duration thus far.
 
-    The configurations for this node are in the form ``<method>``: ``<expression>``. By default,
-    all available methods have the ``null`` value for their ``<expression>`` values. To start off,
-    **only one** ``<method>`` should be used, and you would choose it by replacing ``null`` with a
-    valid ``<expression>`` string. More information about each ``<method>`` is provided in the
-    **Configs** section below.
+    The configuration for this node is described below using a combination of the `Extended Brackus
+    -Naur Form (EBNF) <https://en.wikipedia.org/wiki/Extended_Backus–Naur_form>`_ and `Augmented
+    Brackus-Naur Form (ABNF) <https://en.wikipedia.org/wiki/Augmented_Backus–Naur_form>`_
+    metasyntax. Concrete examples are provided later to faciliate understanding. ::
 
-    As for ``<expression>`` string, it should be provided in the order ``<target attribute>
-    <operator> <operand>``, where:
+        pkd_data_type   = ? PeekingDuck built-in data types ?
+                        e.g. count, large_groups, obj_attrs
+        user_data_type  = ? user data types produced by custom nodes ?
+                        e.g. my_var, my_attrs
+        keys            = ? Keys if pkd_data_type or user_data_type is a dictionary ?
+                        e.g. ["ids"], ["details"]["age"]
+        data_with_keys  = pkd_data_type keys | user_data_type keys
+        data_wo_keys    = pkd_data_type | user_data_type
+        target_attr     = data_with_keys | data_wo_keys
 
-    * ``<target attribute>``: The input data type of interest, and dictionary keys (if required) \
-    within square brackets (``[]``). Both in-built PeekingDuck data types defined in \
-    :doc:`Glossary </glossary>` as well as custom data types produced by custom nodes are \
-    supported.
+        unary_function  = "identity" | "length" | "maximum" | "minimum"
+        unary_expr      = unary_function ":" target_attr
 
-    * ``<operator>`` (optional, only used for ``cond_count`` method): The operator used \
-    for comparison, out of these 5 options: ``==``, ``>``, ``>=``, ``<``, ``<=``.
+        operator        = "==" | ">=" | "<=" | ">" | "<"
+        numbers         = ? Python integers or floats ?
+        numeric_op      = operator numbers
 
-    * ``<operand>`` (optional, only used for ``cond_count`` method): The operand used for \
-    comparison. If it is intended to be of :obj:`str` type, it should be enclosed by single or \
-    double quotes. Else, it will be assumed to be of types :obj:`int` or :obj:`float`, and \
-    converted into a :obj:`float` type for calculations. Square brackets (``[]``) should not \
-    be included here, as they are used to enclose dictionary keys for ``<target attribute>``.
+        strings         = ? Python strings enclosed by single or double quotes ?
+        string_op       = "==" strings
 
-    The examples in the table below illustrate how ``<method>``: ``<expression>`` choices reduce
-    the incoming data type into the ``current result``.
+        cond_expr       = "cond_count" ":" target_attr ( numeric_op | string_op )
 
-    +---------------------------------------+---------------------------------+-------------+
-    | **<data type>: <value>**              | ``<method>``: ``<expression>``  | ``<current  |
-    |                                       |                                 | result>``   |
-    +---------------------------------------+---------------------------------+-------------+
-    | count: 8                              | identity: count                 | 8           |
-    +---------------------------------------+---------------------------------+-------------+
-    | obj_attrs: {                          | length: obj_attrs["ids"]        | 3           |
-    |                                       +---------------------------------+-------------+
-    |                                       | maximum:                        | 52          |
-    |   ids: [1,2,4],                       | obj_attrs["details"]["age"]     |             |
-    |                                       +---------------------------------+-------------+
-    |   details: {                          | cond_count:                     | 2           |
-    |                                       | obj_attrs["details"]["gender"]  |             |
-    |     gender: ["male","male","female"], | == "male"                       |             |
-    |                                       +---------------------------------+-------------+
-    |     age: [52,17,48] }}                | cond_count:                     | 3           |
-    |                                       | obj_attrs["details"]["age"]     |             |
-    |                                       | < 60                            |             |
-    +---------------------------------------+---------------------------------+-------------+
+        configuration   = unary_expr | cond_expr
+
+    It should be noted that square brackets (``[]``) should only be included in ``<keys>``. The
+    table below illustrates how configuration choices reduce the incoming data type into the
+    ``<current result>``.
+
+    # pylint: disable=line-too-long
+    +---------------------------------------+-------------------+--------------------------------+-------------+
+    | ``<pkd_data_type>``: value            | ``<target_attr>`` | ``<unary_expr>``               | ``<current  |
+    |                                       |                   |                                | result>``   |
+    | or                                    |                   | or                             |             |
+    |                                       |                   |                                |             |
+    | ``<user_data_type>``: value           |                   | ``<cond_expr>``                |             |
+    +---------------------------------------+-------------------+--------------------------------+-------------+
+    | count: 8                              | count             | identity: count                | 8           |
+    +---------------------------------------+-------------------+--------------------------------+-------------+
+    | obj_attrs: {                          | obj_attrs["ids"]  | length: obj_attrs["ids"]       | 3           |
+    |                                       +-------------------+--------------------------------+-------------+
+    |                                       | obj_attrs         | maximum:                       | 52          |
+    |   ids: [1,2,4],                       | ["details"]       | obj_attrs["details"]["age"]    |             |
+    |                                       | ["age"]           |                                |             |
+    |   details: {                          +-------------------+--------------------------------+-------------+
+    |                                       | obj_attrs         | cond_count:                    | 2           |
+    |     gender: ["male","male","female"], | ["details"]       | obj_attrs["details"]["gender"] |             |
+    |                                       | ["gender"]        |                                |             |
+    |     age: [52,17,48] }}                |                   | == "male"                      |             |
+    |                                       +-------------------+--------------------------------+-------------+
+    |                                       | obj_attrs         | cond_count:                    | 3           |
+    |                                       | ["details"]       | obj_attrs["details"]["age"]    |             |
+    |                                       | ["age"]           |                                |             |
+    |                                       |                   | < 60                           |             |
+    +---------------------------------------+-------------------+--------------------------------+-------------+
 
     Inputs:
         |all_input|
@@ -123,7 +136,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.cum_avg, self.cum_min, self.cum_max = 0.0, float("inf"), 0.0
+        self.cum_avg, self.cum_min, self.cum_max = 0.0, float("inf"), float("-inf")
         self.num_iter = 0
         all_methods = {
             "cond_count": self.cond_count,
@@ -156,7 +169,6 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             }
 
         self._update_stats(self.curr)
-        self.num_iter += 1
 
         return {
             "cum_avg": self.cum_avg,
@@ -171,8 +183,13 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                 f"The current value has to be of type 'int' or 'float' to calculate statistics."
                 f"However, the current value here is: '{curr}' which is of type: {type(curr)}."
             )
+
         if curr < self.cum_min:
             self.cum_min = curr
         if curr > self.cum_max:
             self.cum_max = curr
-        self.cum_avg = (self.cum_avg * self.num_iter + curr) / (self.num_iter + 1)
+        if self.num_iter == 0:
+            self.cum_avg = curr
+        else:
+            self.cum_avg = (self.cum_avg * self.num_iter + curr) / (self.num_iter + 1)
+        self.num_iter += 1

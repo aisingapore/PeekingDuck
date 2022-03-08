@@ -33,6 +33,7 @@ class Node(AbstractNode):
     legend box.
 
     .. image:: /assets/api/legend.png
+
     |br|
 
     With the exception of the ``zone_count`` data type from :mod:`dabble.zone_count`, all other

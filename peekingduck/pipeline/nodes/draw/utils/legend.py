@@ -83,13 +83,11 @@ class Legend:
             frame (np.array): image of current frame
             y_pos (int): y_position to draw the count text
             item_name (str): name of the legend item
-            item_info (Any): info contained by the legend item
+            item_info: Union[int, float, str]: info contained by the legend item
         """
-        if (
-            not isinstance(item_info, int)
-            and not isinstance(item_info, float)
-            and not isinstance(item_info, str)
-        ):
+        if isinstance(item_info, (int, float, str)):
+            pass
+        else:
             raise TypeError(
                 f"With the exception of the 'zone_count' data type, "
                 f"the draw.legend node only draws values that are of type 'int', 'float' or 'str' "

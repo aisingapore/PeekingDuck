@@ -20,6 +20,7 @@
 # 2) TestNodeOperation - To test that this node handles correct or incorrect types appropriately
 # 3) TestStatisticsCalcs - To test that the calculations of cum_avg, cum_max, cum_min are correct
 
+from contextlib import contextmanager
 import operator
 import pytest
 
@@ -201,10 +202,12 @@ class TestNodeOperation:
         stats_config["identity"] = "count"
 
         input1 = {"count": 9}
-        Node(stats_config).run(input1)
+        with not_raises(TypeError):
+            Node(stats_config).run(input1)
 
         input2 = {"count": 9.0}
-        Node(stats_config).run(input2)
+        with not_raises(TypeError):
+            Node(stats_config).run(input2)
 
         input3 = {"count": "9"}
         with pytest.raises(TypeError) as excinfo:
@@ -216,16 +219,20 @@ class TestNodeOperation:
             stats_config[method] = "obj_attrs"
 
             input1 = {"obj_attrs": [1, 2, 3, 4]}
-            Node(stats_config).run(input1)
+            with not_raises(TypeError):
+                Node(stats_config).run(input1)
 
             input2 = {"obj_attrs": {1: 1, 2: 2, 3: 3, 4: 4}}
-            Node(stats_config).run(input2)
+            with not_raises(TypeError):
+                Node(stats_config).run(input2)
 
             input3 = {"obj_attrs": []}
-            Node(stats_config).run(input3)
+            with not_raises(TypeError):
+                Node(stats_config).run(input3)
 
             input4 = {"obj_attrs": {}}
-            Node(stats_config).run(input4)
+            with not_raises(TypeError):
+                Node(stats_config).run(input4)
 
             input5 = {"obj_attrs": "9"}
             with pytest.raises(TypeError) as excinfo:
@@ -238,13 +245,16 @@ class TestNodeOperation:
         stats_config["cond_count"] = "obj_attrs == 4"
 
         input1 = {"obj_attrs": [1, 2, 3, 4]}
-        Node(stats_config).run(input1)
+        with not_raises(TypeError):
+            Node(stats_config).run(input1)
 
         input2 = {"obj_attrs": ["1", "2", "3", "4"]}
-        Node(stats_config).run(input2)
+        with not_raises(TypeError):
+            Node(stats_config).run(input2)
 
         input3 = {"obj_attrs": [1.0, 2.0, 3.0, 4.0]}
-        Node(stats_config).run(input3)
+        with not_raises(TypeError):
+            Node(stats_config).run(input3)
 
         input4 = {"obj_attrs": "9"}
         with pytest.raises(TypeError) as excinfo:
@@ -271,7 +281,7 @@ class TestStatisticsCalcs:
         result = Node(stats_config).run(input1)
 
         assert result["cum_avg"] == 0.0
-        assert result["cum_max"] == 0.0
+        assert result["cum_max"] == float("-inf")
         assert result["cum_min"] == float("inf")
 
     def test_ascending_sequence(self, stats_config):
@@ -309,3 +319,11 @@ class TestStatisticsCalcs:
         assert result["cum_avg"] == 5.0
         assert result["cum_max"] == 9.0
         assert result["cum_min"] == 1.0
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

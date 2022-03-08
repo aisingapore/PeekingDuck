@@ -53,8 +53,8 @@ class Node(AbstractNode):
     * To draw nested attributes, include all the keys leading to them (within the ``obj_attrs`` \
     dictionary), separating each key with a ``->``. \
 
-    * To draw multiple attributes above each bounding box, add them to the list of ``show`` \
-    config. Attributes will be separated by ``,`` when drawn.
+    * To draw multiple comma-separated attributes above each bounding box, add them to the list \
+    of ``show`` config.
 
     +-----+-----------------------------------------+---------------+---------------+
     | No. | ``show`` config                         | Tag above 1st | Tag above 2nd |
@@ -97,7 +97,7 @@ class Node(AbstractNode):
                 "to the list, in order to proceed."
             )
         for attr in self.show:
-            attr = re.sub(" ", "", attr)
+            attr = attr.replace(" ", "")
             self.attr_keys.append(re.split(r"->", attr))
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -120,8 +120,8 @@ class Node(AbstractNode):
     def _tags_from_obj_attrs(self, inputs: Dict[str, Any]) -> List[str]:
         """Process inputs from various attributes into tags for drawing."""
         all_attrs: List[List[Any]] = []
-        for attr_key in self.attr_keys:
-            attr = _deep_get_value(inputs, attr_key.copy())
+        for attr_key in self.attr_keys.copy():
+            attr = _deep_get_value(inputs, attr_key)
             if not isinstance(attr, list):
                 raise TypeError(
                     f"The attribute of interest has to be of type 'list', containing a list of "
@@ -133,6 +133,7 @@ class Node(AbstractNode):
         tags = []
         # all_attrs: [["a","b"], [1,2]] -> list(zip): [("a",1), ("b",2)] -> tags: ["a, 1", "b, 2"]
         for idx, obj in enumerate(list(zip(*all_attrs))):
+            # only check for the first object for efficiency
             if idx == 0:
                 for tag in obj:
                     if not _check_valid_type(tag, str, int, float, bool):
