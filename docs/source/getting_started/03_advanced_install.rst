@@ -79,7 +79,7 @@ macOS Monterey.
         .. admonition:: Terminal Session
 
             | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
-            | \ :blue:`[~user]` \ > \ :green:`peekingduck --verify_install` \
+            | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
 
 
 
