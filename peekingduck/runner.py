@@ -84,6 +84,11 @@ class Runner:
             self.logger.error(str(error))
             sys.exit(1)
         if RequirementChecker.n_update > 0:
+            self.logger.warning(
+                f"{RequirementChecker.n_update} package"
+                f"{'s' * int(RequirementChecker.n_update > 1)} updated. "
+                "Please rerun for the updates to take effect."
+            )
             sys.exit(3)
         if num_iter is None or num_iter <= 0:
             self.num_iter = 0

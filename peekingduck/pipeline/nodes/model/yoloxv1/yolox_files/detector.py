@@ -127,6 +127,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             f"IDs being detected: {self.config['detect_ids']}\n\t"
             f"IOU threshold: {self.config['iou_threshold']}\n\t"
             f"Score threshold: {self.config['score_threshold']}\n\t"
+            f"Class agnostic NMS: {self.config['agnostic_nms']}\n\t"
             f"Half-precision floating-point: {self.config['half']}\n\t"
             f"Fuse convolution and batch normalization layers: {self.config['fuse']}"
         )
@@ -218,11 +219,19 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             return np.empty((0, 4)), np.empty(0), np.empty(0)
 
         # Class agnostic NMS
-        nms_out_index = torchvision.ops.nms(
-            detections[:, :4],
-            detections[:, 4] * detections[:, 5],
-            self.config["iou_threshold"],
-        )
+        if self.config["agnostic_nms"]:
+            nms_out_index = torchvision.ops.nms(
+                detections[:, :4],
+                detections[:, 4] * detections[:, 5],
+                self.config["iou_threshold"],
+            )
+        else:
+            nms_out_index = torchvision.ops.batched_nms(
+                detections[:, :4],
+                detections[:, 4] * detections[:, 5],
+                detections[:, 6],
+                self.config["iou_threshold"],
+            )
         output = detections[nms_out_index]
 
         # Filter by detect ids

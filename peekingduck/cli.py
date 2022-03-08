@@ -375,9 +375,9 @@ def _get_node_url(node_type: str, node_name: str) -> str:
     Returns:
         (str): Full URL to the documentation of the specified node.
     """
-    node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
-    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
-    url_postfix = ".html#"
+    node_path = f"{node_type}.{node_name}"
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/nodes/"
+    url_postfix = ".html#module-"
 
     return f"{url_prefix}{node_path}{url_postfix}{node_path}"
 

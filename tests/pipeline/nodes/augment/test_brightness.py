@@ -13,13 +13,13 @@
 # limitations under the License.
 
 """
-Test for preprocess brightness node
+Test for augment brightness node
 """
 
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.preprocess.brightness import Node
+from peekingduck.pipeline.nodes.augment.brightness import Node
 
 
 @pytest.fixture

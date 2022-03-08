@@ -119,6 +119,43 @@ specified folder.
    settings in PeekingDuck's :ref:`API documentation <api_doc>`.
 
 
+.. _tutorial_augment:
+
+Augmenting Images
+=================
+
+PeekingDuck has a class of ``augment`` nodes that can be used to perform preprocessing
+or postprocessing of images/videos.
+Augment currently lets you modify the brightness and contrast.
+
+The ``pipeline_config.yml`` below shows how to use the ``augment.brightness`` node
+within the pipeline:
+
+.. code-block:: yaml
+   :linenos:
+
+   nodes:
+   - input.recorded:
+       input_dir: "data/verification/wave.mp4"
+   - model.yolo
+   - augment.brightness:
+       beta: 50         # ranges from -100 (darken) to +100 (brighten)
+   - draw.bbox
+   - output.screen
+
+The following figure shows the difference between the original vs the brightened image:
+
+   .. figure:: /assets/tutorials/augment_brightness.png
+      :alt: augment.brightness screenshot - original vs brightened image
+
+      Augment Brightness: Original vs Brightened Image
+
+
+|br|
+
+
+
+
 .. _tutorial_custom_nodes:
 
 Custom Nodes

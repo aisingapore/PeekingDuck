@@ -29,7 +29,7 @@ API Documentation
    :recursive:
 
    input
-   preprocess
+   augment
    model
    dabble
    draw
