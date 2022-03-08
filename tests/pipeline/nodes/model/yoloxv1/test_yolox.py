@@ -54,10 +54,14 @@ def yolox_bad_config_value(request, yolox_config):
 
 @pytest.fixture(
     params=[
-        {"fuse": True, "half": True},
-        {"fuse": True, "half": False},
-        {"fuse": False, "half": True},
-        {"fuse": False, "half": False},
+        {"agnostic_nms": True, "fuse": True, "half": True},
+        {"agnostic_nms": True, "fuse": True, "half": False},
+        {"agnostic_nms": True, "fuse": False, "half": True},
+        {"agnostic_nms": True, "fuse": False, "half": False},
+        {"agnostic_nms": False, "fuse": True, "half": True},
+        {"agnostic_nms": False, "fuse": True, "half": False},
+        {"agnostic_nms": False, "fuse": False, "half": True},
+        {"agnostic_nms": False, "fuse": False, "half": False},
     ]
 )
 def yolox_matrix_config(request, yolox_config):
@@ -148,20 +152,8 @@ class TestYOLOX:
             )
             assert yolox is not None
 
-    def test_empty_detect_ids(self, yolox_config):
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
-        ) as captured:
-            yolox_config["detect_ids"] = []
-            yolox = Node(config=yolox_config)
-
-            assert "IDs being detected: []" in captured.records[0].getMessage()
-            assert captured.records[1].getMessage() == "Detecting all YOLOX classes"
-            assert yolox is not None
-
-    @pytest.mark.parametrize("detect_ids", [1, {"some_key": "some_value"}])
-    def test_invalid_config_detect_ids(self, yolox_config, detect_ids):
-        yolox_config["detect_ids"] = detect_ids
+    def test_invalid_config_detect_ids(self, yolox_config):
+        yolox_config["detect_ids"] = 1
         with pytest.raises(TypeError):
             _ = Node(config=yolox_config)
 
