@@ -25,7 +25,7 @@ from peekingduck.utils.requirement_checker import (
 )
 
 INSTALL_FAQ_LINK = (
-    "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html"
+    "https://peekingduck.readthedocs.io/en/stable/master.html#api-documentation"
 )
 PKG_REQ_TYPE_PYTHON = "PYTHON"
 PKG_REQ_TYPE_SYSTEM = "SYSTEM"

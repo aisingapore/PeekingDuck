@@ -29,5 +29,6 @@ input_size: 416
 detect_ids: [0]
 iou_threshold: 0.45
 score_threshold: 0.25
+agnostic_nms: true
 half: false
 fuse: false

@@ -68,15 +68,15 @@ def available_nodes_msg(type_name=None):
     else:
         node_types = [type_name]
 
-    url_prefix = "https://peekingduck.readthedocs.io/en/stable/"
-    url_postfix = ".html#"
+    url_prefix = "https://peekingduck.readthedocs.io/en/stable/nodes/"
+    url_postfix = ".html#module-"
     for node_type in node_types:
         node_names = [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")]
         max_length = len_enumerate(max(enumerate(node_names), key=len_enumerate))
         print(f"\nPeekingDuck has the following {node_type} nodes:", file=output)
         for num, node_name in enumerate(node_names):
             idx = num + 1
-            node_path = f"peekingduck.pipeline.nodes.{node_type}.{node_name}.Node"
+            node_path = f"{node_type}.{node_name}"
             url = f"{url_prefix}{node_path}{url_postfix}{node_path}"
             node_width = max_length + 1 - int(math.log10(idx))
             print(f"{idx}:{node_name: <{node_width}}Info: {url}", file=output)
@@ -278,7 +278,9 @@ class TestCli:
         print(f"\ntmp_dir={tmp_dir}")
         test_config_path = tmp_dir / "test_config.yml"
         nodes = {
-            "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
+            "nodes": [
+                {"input.recorded": {"input_dir": "PeekingDuck/tests/data/images"}}
+            ]
         }
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)

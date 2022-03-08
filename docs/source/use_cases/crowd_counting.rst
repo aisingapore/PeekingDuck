@@ -10,7 +10,7 @@ people in a crowd. AI Singapore has developed a solution that predicts the numbe
 crowd. This can be used to estimate the number of people attending an event, monitor crowd levels
 and prevent human stampedes.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
+.. image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
    :width: 100 %
 

@@ -2,7 +2,7 @@
 Introduction
 ************
 
-.. image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8-blue.svg
+.. image:: https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue.svg
    :target: https://pypi.org/project/peekingduck
 
 .. image:: https://badge.fury.io/py/peekingduck.svg
@@ -14,6 +14,7 @@ Introduction
 .. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
    :target: https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE
 
+
 What is PeekingDuck?
 ====================
 
@@ -21,6 +22,7 @@ PeekingDuck is an open-source, modular framework in Python, built for Computer V
 inference. It helps to significantly cut down development time when building CV pipelines. The name
 "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in
 `duck typing <https://en.wikipedia.org/wiki/Duck_typing>`_ used in Python.
+
 
 .. _how_peekingduck_works:
 
@@ -31,7 +33,7 @@ How PeekingDuck Works
 
 PeekingDuck has 6 types of nodes:
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/node_types.drawio.svg
+.. image:: /assets/diagrams/node_types.drawio.svg
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used
 in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one
@@ -40,7 +42,8 @@ in by :mod:`model.yolo`, and :mod:`model.yolo` produces ``bboxes``, which is tak
 :mod:`draw.bbox`. For ease of visualization, not all the inputs and outputs of these nodes are
 included in this diagram.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/diagrams/yolo_demo.drawio.svg
+.. image:: /assets/diagrams/yolo_demo.drawio.svg
+
 
 Explore PeekingDuck's Features
 ==============================
@@ -76,61 +79,61 @@ to help combat COVID-19. For more details, click on the heading of each use case
 
 .. |social_distancing_doc| replace:: :doc:`Social Distancing </use_cases/social_distancing>`
 
-.. |social_distancing_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif
+.. |social_distancing_gif| image:: /assets/use_cases/social_distancing.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |zone_counting_doc| replace:: :doc:`Zone Counting </use_cases/zone_counting>`
 
-.. |zone_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif
+.. |zone_counting_gif| image:: /assets/use_cases/zone_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |group_size_checking_doc| replace:: :doc:`Group Size Checking </use_cases/group_size_checking>`
 
-.. |group_size_checking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif
+.. |group_size_checking_gif| image:: /assets/use_cases/group_size_check_2.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |object_counting_doc| replace:: :doc:`Object Counting </use_cases/object_counting>`
 
-.. |object_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif
+.. |object_counting_gif| image:: /assets/use_cases/object_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |privacy_protection_faces_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_faces>`
 
-.. |privacy_protection_faces_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
+.. |privacy_protection_faces_gif| image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |privacy_protection_lp_doc| replace:: :doc:`Privacy Protection (License Plates) </use_cases/privacy_protection_license_plates>`
 
-.. |privacy_protection_lp_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif
+.. |privacy_protection_lp_gif| image:: /assets/use_cases/privacy_protection_license_plates.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
-.. |face_mask_detection_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/mask_detection.gif
+.. |face_mask_detection_gif| image:: /assets/use_cases/mask_detection.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |crowd_counting_doc| replace:: :doc:`Crowd Counting </use_cases/crowd_counting>`
 
-.. |crowd_counting_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
+.. |crowd_counting_gif| image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking </use_cases/multiple_object_tracking>`
 
-.. |multiple_object_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif
+.. |multiple_object_tracking_gif| image:: /assets/use_cases/vehicles_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 
 .. |human_tracking_doc| replace:: :doc:`Human Detection and Tracking </use_cases/human_tracking>`
 
-.. |human_tracking_gif| image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/human_tracking.gif
+.. |human_tracking_gif| image:: /assets/use_cases/human_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 

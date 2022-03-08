@@ -73,6 +73,7 @@ class YOLOX(nn.Module):
         super().__init__()
         self.backbone = YOLOPAFPN(depth, width)
         self.head = YOLOXHead(num_classes, width)
+        self.apply(YOLOX.initialize_batch_norm)
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Defines the computation performed at every call.
@@ -90,6 +91,14 @@ class YOLOX(nn.Module):
         fpn_outs = self.backbone(inputs)
         return self.head(fpn_outs)
 
+    @staticmethod
+    def initialize_batch_norm(module: nn.Module) -> None:
+        """Initializes the BatchNorm2d layers."""
+        for mod in module.modules():
+            if isinstance(mod, nn.BatchNorm2d):
+                mod.eps = 1e-3
+                mod.momentum = 0.03
+
 
 class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
     """YOLOv3 model. Darknet 53 is the default backbone of this model."""
@@ -99,7 +108,7 @@ class YOLOPAFPN(nn.Module):  # pylint: disable=too-many-instance-attributes
         self,
         depth: float = 1.0,
         width: float = 1.0,
-    ):
+    ) -> None:
         super().__init__()
         n_bottleneck = round(3 * depth)
         self.in_features = ("dark3", "dark4", "dark5")

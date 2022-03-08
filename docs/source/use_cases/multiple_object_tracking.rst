@@ -13,7 +13,7 @@ that tracks multiple moving objects. This tracking capability is to be used in t
 object detection model. Objects to track can be, for example, pedestrians on the street, vehicles
 in the road, sport players on the court, groups of animals and more.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif
+.. image:: /assets/use_cases/vehicles_tracking.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -53,7 +53,7 @@ coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` i
 corner of the bounding box, and :math:`(x_2, y_2)` is the bottom right. These are used to form the
 bounding box of each object detected which will then be used to determine a track for each object.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
+.. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
