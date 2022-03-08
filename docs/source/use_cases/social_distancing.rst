@@ -12,7 +12,7 @@ example of the latter is `HP Inc. <https://aisingapore.org/2020/06/hp-social-dis
 collaborated with us to deploy this solution on edge devices in its manufacturing facility in
 Singapore.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif
+.. image:: /assets/use_cases/social_distancing.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -47,7 +47,7 @@ to identify key human skeletal points. This allows the application to identify w
 are located within the video feed. The coordinates of the various skeletal points will then be used
 to determine the distance between individuals.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif
+.. image:: /assets/use_cases/posenet_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -57,7 +57,7 @@ To measure the distance between individuals, we have to estimate the 3D world co
 keypoints in 2D coordinates. To achieve this, we compute the depth :math:`Z` from the `x, y` coordinates
 using the relationship below:
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/distance_estimation.png
+.. image:: /assets/use_cases/distance_estimation.png
    :class: no-scaled-link
    :width: 70 %
 

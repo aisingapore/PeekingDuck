@@ -31,7 +31,7 @@ PKD_DIR = Path(__file__).resolve().parents[3]
 
 @pytest.fixture(params=TEST_IMAGE)
 def test_image(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
+    test_img_dir = PKD_DIR.parent / "tests" / "data" / "images"
 
     yield test_img_dir / request.param
 

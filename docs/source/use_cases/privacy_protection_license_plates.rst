@@ -10,7 +10,7 @@ number to reveal our personal information or being vulnerable to license plate c
 Singapore has developed a solution that performs license plate anonymization. This can also be used
 to comply with the General Data Protection Regulation (GDPR) or other data privacy laws.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_license_plates.gif
+.. image:: /assets/use_cases/privacy_protection_license_plates.gif
    :class: no-scaled-link
    :width: 100 %
 
