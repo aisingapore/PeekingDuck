@@ -100,7 +100,7 @@ AI models are cool and fun, but we're even more interested to use them to solve 
 |                                                              |                                                              |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [Social Distancing](https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html) | [Zone Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html) |
-| <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/social_distancing.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%"> |
+| ![Social Distancing](docs/source/assets/use_cases/social_distancing.gif) | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/zone_counting.gif" width="100%"> |
 | [Group Size Checking](https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html) | [Object Counting](https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting.html) |
 | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif" width="100%"> | <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif" width="100%"> |
 | [Privacy Protection (Faces)](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html) | [Privacy Protection (License Plates)](https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_license_plates.html) |
