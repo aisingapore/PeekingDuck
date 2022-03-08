@@ -25,7 +25,7 @@ import yaml
 
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
 
-TEST_DIR = Path.cwd() / "images" / "testing"
+TEST_DIR = Path.cwd() / "tests" / "data" / "images"
 
 
 @pytest.fixture(params=["t2.jpg"])

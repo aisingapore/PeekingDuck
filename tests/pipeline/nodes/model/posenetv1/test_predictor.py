@@ -23,7 +23,7 @@ import yaml
 from peekingduck.pipeline.nodes.model.posenet import Node
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
-TEST_DIR = Path.cwd() / "images" / "testing"
+TEST_DIR = Path.cwd() / "tests" / "data" / "images"
 
 
 @pytest.fixture
