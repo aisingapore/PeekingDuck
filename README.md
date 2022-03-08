@@ -54,8 +54,8 @@ Terminate the program by clicking on the output screen and pressing `q`.
 Use `peekingduck --help` to display help information for PeekingDuck's command line interface.
 
 
-Explore PeekingDuck's Features
-------------------------------
+Documentation
+-------------
 
 The [complete documentation](https://peekingduck.readthedocs.io/en/docs-v1.2/) for PeekingDuck includes information on:
 - [Tutorials](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/index.html) to get you familiarized with PeekingDuck's features
@@ -88,6 +88,5 @@ Even so, your organization may require legal proof of its right to use PeekingDu
 Communication
 -------------
 
-You are also welcome to join discussions about using PeekingDuck in the following channels:
 - [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
 - [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/)
