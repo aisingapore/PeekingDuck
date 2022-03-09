@@ -59,7 +59,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 > peekingduck --verify_install
 ```
 
-GIF
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif" width="50%">
 
 you should see pose estimation and detection
 
@@ -80,7 +80,7 @@ Run the demo pipeline.
 
 If you have a webcam, you should see the demo running live:
 
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif" width="50%">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif" width="50%">
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
