@@ -59,9 +59,13 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 > peekingduck --verify_install
 ```
 
+You should see a video of a person waving his hand with bounding boxes overlaid as shown below.
+
 <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif" width="50%">
 
-you should see pose estimation and detection
+
+The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
+
 
 Usage
 -----
