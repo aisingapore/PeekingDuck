@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="16%" align="right">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/peekingduck.png" width="16%" align="right">
 
 PeekingDuck
 ===========
@@ -9,7 +9,36 @@ PeekingDuck
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/peekingduck/badge/?version=stable)](https://peekingduck.readthedocs.io/en/stable/?badge=stable)
 
-**PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
+<h3 align="center">
+  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/index.html">Geting started</a>
+  <span> · </span>
+  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/index.html">Tutorials</a>
+  <span> · </span>
+  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/master.html#api-documentation">API documentation</a>
+  <span> · </span>
+  <a href="https://github.com/aimakerspace/PeekingDuck/issues">Report a bug</a>
+  <span> · </span>
+  <a href="#communities">Communities</a>
+</h3>
+
+**PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. The name "PeekingDuck" is a play on: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
+
+<p align="center">
+  <strong>Low-code development</strong> · <strong>Flexible</strong> · <strong>Extensible</strong>
+</p>
+
+
+Features
+--------
+
+### Build realtime CV pipelines
+PeekingDuck enables you to build powerful CV pipelines with minimal lines of code.
+
+### Leverage on various SOTA models
+PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
+
+### Create custom nodes
+PeekingDuck can be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/04_import_as_module.html) to fit into your existing workflows. You can also create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements.
 
 
 Installation
@@ -25,6 +54,14 @@ Install from [PyPI](https://pypi.org/project/peekingduck/) using `pip`
 
 PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_basic_install.html).
 
+
+```
+> peekingduck --verify_install
+```
+
+GIF
+
+you should see pose estimation and detection
 
 Usage
 -----
@@ -50,16 +87,8 @@ Terminate the program by clicking on the output screen and pressing `q`.
 Use `peekingduck --help` to display help information for PeekingDuck's command line interface.
 
 
-Documentation
--------------
-
-The [complete documentation](https://peekingduck.readthedocs.io/en/docs-v1.2/) for PeekingDuck includes information on:
-- [Tutorials](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/index.html) to get you familiarized with PeekingDuck's features
-- [API documentation](https://peekingduck.readthedocs.io/en/docs-v1.2/master.html#api-documentation) for all PeekingDuck nodes and their configurations
-- [Benchmarks](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/index.html) for various models that comes with PeekingDuck.
-- [Class IDs](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html#object-detection-ids) for object detection models
-- [Keypoint IDs](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html#keypoint-ids) for pose estimation models
-- [Use case solutions](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html) created using PeekingDuck nodes
+Showcase/Gallery
+----------------
 
 
 Acknowledgements
@@ -81,8 +110,8 @@ Even so, your organization may require legal proof of its right to use PeekingDu
 [Contact us](https://aisingapore.org/home/contact/) if any of these circumstances apply to you.
 
 
-Communication
--------------
+Communities
+-----------
 
-- [Github discussion board](https://github.com/aimakerspace/PeekingDuck/discussions)
-- [AI Singapore's Community forum](https://community.aisingapore.org/groups/computer-vision/forum/)
+- [AI Singapore community forum](https://community.aisingapore.org/groups/computer-vision/forum/)
+- [Discuss on GitHub](https://github.com/aimakerspace/PeekingDuck/discussions)
