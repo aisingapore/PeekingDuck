@@ -32,13 +32,13 @@ Features
 --------
 
 ### Build realtime CV pipelines
-PeekingDuck enables you to build powerful CV pipelines with minimal lines of code.
+* PeekingDuck enables you to build powerful CV pipelines with minimal lines of code.
 
 ### Leverage on various SOTA models
-PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
+* PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
 
 ### Create custom nodes
-PeekingDuck can be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/04_import_as_module.html) to fit into your existing workflows. You can also create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements.
+* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/04_import_as_module.html) to fit into your existing workflows.
 
 
 Installation
@@ -50,7 +50,7 @@ Install from [PyPI](https://pypi.org/project/peekingduck/) using `pip`
 > pip install peekingduck
 ```
 
-*Note: for users with ARM-based devices such as a Raspberry Pi or M1 MacBook, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_advanced_install.html).*
+*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_advanced_install.html).*
 
 PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_basic_install.html).
 
