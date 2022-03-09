@@ -1,13 +1,24 @@
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="15%" align="right" style="padding: 10px 0px 10px 10px;">
+<div style="display: block;">
+  <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="15%" align="right" style="padding: 20px 0px 10px 10px;">
 
-PeekingDuck
-===========
-
-[![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue.svg)](https://pypi.org/project/peekingduck/)
-[![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
-[![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
-[![Documentation Status](https://readthedocs.org/projects/peekingduck/badge/?version=stable)](https://peekingduck.readthedocs.io/en/stable/?badge=stable)
+  <h1>PeekingDuck</h1>
+  
+  <a href="https://pypi.org/project/peekingduck/">
+    <img src="https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue.svg" alt="Python version">
+  </a>
+  <a href="https://pypi.org/project/peekingduck/">
+    <img src="https://badge.fury.io/py/peekingduck.svg" alt="PyPI version">
+  </a>
+  <a href="https://pypi.org/project/peekingduck/">
+    <img src="https://img.shields.io/pypi/dm/peekingduck" alt="PyPI Downloads">
+  </a>
+  <a href="https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE">
+    <img src="https://img.shields.io/badge/license-Apache%202.0-blue.svg" alt="License">
+  </a>
+  <a href="https://peekingduck.readthedocs.io/en/stable/?badge=stable">
+    <img src="https://readthedocs.org/projects/peekingduck/badge/?version=stable" alt="Documentation status">
+  </a>
+</div>
 
 **PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. It helps to significantly cut down development time when building CV pipelines. The name "PeekingDuck" is a play on these words: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
