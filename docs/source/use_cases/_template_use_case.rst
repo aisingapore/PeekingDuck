@@ -15,7 +15,7 @@ Overview
 ..
     Use case demo gif
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
+.. image:: /assets/use_cases/demo_use_case.gif
    :class: no-scaled-link
    :width: 100 %
 

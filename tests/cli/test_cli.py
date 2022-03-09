@@ -278,7 +278,9 @@ class TestCli:
         print(f"\ntmp_dir={tmp_dir}")
         test_config_path = tmp_dir / "test_config.yml"
         nodes = {
-            "nodes": [{"input.recorded": {"input_dir": "PeekingDuck/images/testing"}}]
+            "nodes": [
+                {"input.recorded": {"input_dir": "PeekingDuck/tests/data/images"}}
+            ]
         }
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)

@@ -35,7 +35,10 @@ TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
 
 TEST_CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
 
+# Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
+TEST_DATA_DIR = PKD_DIR.parent / "tests" / "data"
+TEST_IMAGES_DIR = TEST_DATA_DIR / "images"
 
 
 @pytest.fixture
@@ -114,54 +117,42 @@ def tmp_project_dir():
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
 def test_no_human_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_LP_IMAGES)
 def test_lp_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_LP_IMAGES)
 def test_no_lp_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_CROWD_IMAGES)
 def test_crowd_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_HUMAN_VIDEOS)
 def test_human_videos(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
@@ -179,7 +170,7 @@ def test_human_video_sequences(request):
     of test data and frame specific manipulations to trigger certain code
     branches.
     """
-    sequence_dir = PKD_DIR.parent / "tests" / "data" / "video_sequences" / request.param
+    sequence_dir = TEST_DATA_DIR / "video_sequences" / request.param
     with open(sequence_dir / "detections.yml") as infile:
         detections = yaml.safe_load(infile.read())
     # Yielding video sequence name as well in case there are specific things to

@@ -10,7 +10,7 @@ videos. AI Singapore has developed a solution that performs human detection and 
 single model. This application can have a wide range of applications, starting from video
 surveillance and human computer interaction to robotics.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/human_tracking.gif
+.. image:: /assets/use_cases/human_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 

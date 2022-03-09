@@ -10,7 +10,7 @@ in public and private places. AI Singapore has developed a solution that perform
 anonymization. This can be used to comply with the General Data Protection Regulation (GDPR) or
 other data privacy laws.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
+.. image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 

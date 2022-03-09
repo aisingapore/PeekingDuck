@@ -13,7 +13,7 @@ malls, shops or factories for crowd control, or other general object counting.
 
    For advanced counting tasks, Check out the :doc:`Zone Counting use case </use_cases/zone_counting>`.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif
+.. image:: /assets/use_cases/object_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -51,7 +51,7 @@ and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding 
 detected. For more information on how adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
+.. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
