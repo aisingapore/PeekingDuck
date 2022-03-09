@@ -9,8 +9,8 @@ PeekingDuck
 [![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/peekingduck/badge/?version=stable)](https://peekingduck.readthedocs.io/en/stable/?badge=stable)
 
-<h3 align="center">
-  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/index.html">Geting started</a>
+<h4 align="center">
+  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/index.html">Getting started</a>
   <span> · </span>
   <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/index.html">Tutorials</a>
   <span> · </span>
@@ -19,7 +19,7 @@ PeekingDuck
   <a href="https://github.com/aimakerspace/PeekingDuck/issues">Report a bug</a>
   <span> · </span>
   <a href="#communities">Communities</a>
-</h3>
+</h4>
 
 **PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. The name "PeekingDuck" is a play on: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
