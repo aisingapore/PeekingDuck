@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="15%" align="right" style="padding: 10px 0px 10px 10px;">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/peekingduck.png" width="15%" align="right" style="padding: 20px 0px 10px 10px;">
 
 PeekingDuck
 ===========
