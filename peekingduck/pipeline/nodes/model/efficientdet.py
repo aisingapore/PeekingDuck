@@ -73,10 +73,7 @@ class Node(AbstractNode):
         """Takes an image as input and returns bboxes of objects specified
         in config.
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
 
-        # Convert BGR to RGB for EfficientDet model
         img_rgb = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
 
         bboxes, labels, scores = self.model.predict(img_rgb)
