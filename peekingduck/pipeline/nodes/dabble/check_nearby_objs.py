@@ -26,23 +26,28 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Checks if any objects are near each other.
 
-    It does so by comparing the 3D locations of all objects to see which ones
-    are near each other. If the distance between two objects is less than the
-    minimum threshold, both would be tagged as near with ``tag_msg``.
+    It does so by comparing the 3D locations of all objects to see which ones are near each other.
+    If the distance between two objects is less than the minimum threshold, both would be flagged
+    as near with ``tag_msg``. These flags can be accessed by the ``flags`` key of ``obj_attrs``.
 
     Inputs:
         |obj_3D_locs|
 
     Outputs:
-        |obj_tags|
+        |obj_attrs|
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
-            Threshold of distance, in metres, between two objects. Objects with
-            distance less than ``near_threshold`` would be considered as
-            'near'.
+            Threshold of distance, in metres, between two objects. Objects with distance less than
+            ``near_threshold`` would be considered as 'near'.
         tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
+
+    .. versionchanged:: 1.2.0 |br|
+        :mod:`draw.check_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
+        data type, which has been deprecated and now subsumed under ``obj_attrs``
+        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``flags`` key of
+        ``obj_attrs``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -54,7 +59,7 @@ class Node(AbstractNode):
 
         If an object is close to another, tag it.
         """
-        obj_tags = [""] * len(inputs["obj_3D_locs"])
+        obj_flags = [""] * len(inputs["obj_3D_locs"])
 
         for idx_1, loc_1 in enumerate(inputs["obj_3D_locs"]):
             for idx_2, loc_2 in enumerate(inputs["obj_3D_locs"]):
@@ -63,7 +68,7 @@ class Node(AbstractNode):
 
                 dist_bet = np.linalg.norm(loc_1 - loc_2)
                 if dist_bet < self.near_threshold:
-                    obj_tags[idx_1] = self.tag_msg
+                    obj_flags[idx_1] = self.tag_msg
                     break
 
-        return {"obj_tags": obj_tags}
+        return {"obj_attrs": {"flags": obj_flags}}

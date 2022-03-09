@@ -136,7 +136,7 @@ def draw_tags(
     Args:
         frame (np.ndarray): Image of current frame.
         bboxes (np.ndarray): Bounding box coordinates.
-        tags (List[string]): Tag associated with bounding box.
+        tags (Union[List[str], List[int]]): Tag associated with bounding box.
         color (Tuple[int, int, int]): Color of text.
     """
     image_size = get_image_size(frame)
@@ -161,6 +161,7 @@ def _draw_tag(
     bbox_width = btm_right[0] - top_left[0]
     offset = int((bbox_width - text_width) / 2)
     position = (top_left[0] + offset, top_left[1] - baseline)
+
     cv2.putText(
         frame, tag, position, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, color, VERY_THICK
     )
@@ -175,3 +176,22 @@ def draw_pts(frame: np.ndarray, pts: List[Tuple[float]]) -> None:
     """
     for point in pts:
         cv2.circle(frame, point, POINT_RADIUS, CHAMPAGNE, -1)
+
+
+def check_bgr_type(colors: List[int]) -> None:
+    """Check the type and range of provided colors.
+
+    Args:
+        colors (List[int]): Color in BGR format.
+    """
+    for color in colors:
+        if not isinstance(color, int):
+            raise TypeError(
+                f"Color values should be integers. The chosen value of: {color} is of type: "
+                f"{type(color)} instead."
+            )
+        if color < 0 or color > 255:
+            raise ValueError(
+                f"Color values should lie between (and include) 0 and 255. The chosen value of: "
+                f"{color} is not within this range."
+            )

@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Draws detected groups and their tags.
+Draws large bounding boxes with tags, over identified groups of bounding boxes.
 """
 
 from typing import Any, Dict, List
@@ -26,12 +26,14 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws large bounding boxes over multiple object bounding boxes which
-    have been identified as belonging to large groups.
+    """Draws large bounding boxes with tags over multiple object bounding boxes which have been
+    identified as belonging to the same group.
 
-    The :mod:``draw.group_bbox_and_tag`` node uses the ``obj_groups`` and
-    ``large_groups`` from the ``dabble`` nodes to draw group bboxes and the
-    large group message tag onto the image. For better understanding, refer to
+    The ``large_groups`` data type from :mod:`dabble.check_large_groups`, and the ``groups`` key
+    of the ``obj_attrs`` data type from :mod:`dabble.group_nearby_objs`, are inputs to this node
+    which identify the different groups, and the group associated with each bounding box.
+
+    For better understanding, refer to
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
 
     Inputs:
@@ -39,7 +41,7 @@ class Node(AbstractNode):
 
         |bboxes|
 
-        |obj_groups|
+        |obj_attrs|
 
         |large_groups|
 
@@ -49,6 +51,12 @@ class Node(AbstractNode):
     Configs:
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
             The string message printed when a large group is detected.
+
+    .. versionchanged:: 1.2.0 |br|
+        :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input
+        data type, which has been deprecated and now subsumed under ``obj_attrs``
+        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of
+        ``obj_attrs``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -59,14 +67,14 @@ class Node(AbstractNode):
         which have been identified as belonging to large groups.
 
         Args:
-            inputs (dict): Dictionary with keys "img", "bboxes", "obj_groups",
+            inputs (dict): Dictionary with keys "img", "bboxes", "obj_attrs",
                 "large_groups".
 
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
         group_bboxes = self._get_group_bbox_coords(
-            inputs["large_groups"], inputs["bboxes"], inputs["obj_groups"]
+            inputs["large_groups"], inputs["bboxes"], inputs["obj_attrs"]["groups"]
         )
         group_tags = self._get_group_tags(inputs["large_groups"], self.tag)
 

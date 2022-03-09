@@ -1,6 +1,10 @@
 ..
    Data type substitutions
 
+.. |all_input| replace:: ``all`` (:obj:`Any`): This data type contains all the outputs from
+   preceding nodes, granting a large degree of flexibility to nodes that receive it. Examples of
+   such nodes include :mod:`draw.legend`, :mod:`dabble.statistics`, and :mod:`output.csv_writer`.
+
 .. |bboxes| replace:: ``bboxes`` (:obj:`numpy.ndarray`): A NumPy array of shape :math:`(N, 4)`
    containing normalized bounding box coordinates of detected objects where :math:`N` is the number
    of detected objects. Each bounding box is represented as :math:`(x_1, y_1, x_2, y_2)` where
@@ -20,14 +24,19 @@
 
 .. |count| replace:: ``count`` (:obj:`int`): An integer representing the number of counted objects.
 
+.. |cum_avg| replace:: ``cum_avg`` (:obj:`float`): Cumulative average of an attribute over time.
+
+.. |cum_max| replace:: ``cum_max`` (:obj:`float | int`): Cumulative maximum of an attribute over time.
+
+.. |cum_min| replace:: ``cum_min`` (:obj:`float | int`): Cumulative minimum of an attribute over time.
+
 .. |density_map| replace:: ``density_map`` (:obj:`numpy.ndarray`): A NumPy array representing the
    number of persons per pixel. The sum of the array returns the total estimated count of people.
 
 .. |filename| replace:: ``filename`` (:obj:`str`): The filename of video/image being read.
 
-.. |fps| replace:: ``fps`` (:obj:`List[float]`): A list of floats representing the frames per
-   second (FPS) per frame. The FPS returned can either be a moving average or an instantaneous
-   value. This setting can be changed in the *configs/dabble/fps.yml* file.
+.. |fps| replace:: ``fps`` (:obj:`float`): A float representing the Frames Per Second (FPS) when
+   processing a live video stream or a recorded video.
 
 .. |img| replace:: ``img`` (:obj:`numpy.ndarray`): A NumPy array of shape
    :math:`(height, width, channels)` containing the image data in BGR format.
@@ -57,11 +66,11 @@
    arrays representing the 3D coordinates :math:`(x, y, z)` of an object associated with a detected
    bounding box.
 
-.. |obj_groups| replace:: ``obj_groups`` (:obj:`List[int]`): A list of integers representing the
-   assigned group number of an object associated with a detected bounding box.
-
-.. |obj_tags| replace:: ``obj_tags`` (:obj:`List[str]`): A list of strings to be added to a
-   bounding box for display. The order corresponds to ``bboxes``.
+.. |obj_attrs| replace:: ``obj_attrs`` (:obj:`Dict[str, Any]`): A dictionary of attributes
+   associated with each bounding box, in the same order as ``bboxes``. Different nodes that 
+   produce this ``obj_attrs`` output type may contribute different attributes. For example, 
+   ``dabble.tracking`` produces the ``ids`` attribute while ``dabble.check_nearby_objs`` produces 
+   the ``flags`` attribute.
 
 .. |pipeline_end| replace:: ``pipeline_end`` (:obj:`bool`): A boolean that evaluates to ``True``
    when the pipeline is completed. Suitable for operations that require the entire inference

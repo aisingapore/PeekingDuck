@@ -7,9 +7,7 @@ Glossary
 The following are built-in data types recognized by PeekingDuck nodes. Users can define custom data
 types when working with custom nodes.
 
-(input) ``all`` (:obj:`Any`): Receives inputs from all preceding outputs. In :mod:`draw.legend`,
-this is used as dynamic input for legend creation. In :mod:`output.csv_writer`, this is used as
-flexible input for statistics to track.
+(input) |all_input|
 
 |bboxes|
 
@@ -20,6 +18,12 @@ flexible input for statistics to track.
 |btm_midpoint|
 
 |count|
+
+|cum_avg|
+
+|cum_max|
+
+|cum_min|
 
 |density_map|
 
@@ -43,9 +47,7 @@ flexible input for statistics to track.
 
 |obj_3D_locs|
 
-|obj_groups|
-
-|obj_tags|
+|obj_attrs|
 
 |pipeline_end|
 
@@ -54,3 +56,14 @@ flexible input for statistics to track.
 |zones|
 
 |zone_count|
+
+.. deprecated:: 1.2.0 |br|
+    ``obj_tags`` (:obj:`List[str]`) is deprecated and now subsumed under
+    ``obj_attrs`` (:obj:`Dict[str, Any]`). :mod:`dabble.check_nearby_objs` now accesses
+    this attribute by the ``flags`` key of ``obj_attrs``. :mod:`draw.tag` has been refactored
+    for more drawing flexibility by accepting ``obj_attrs`` as input. |br|
+
+    ``obj_groups`` (:obj:`List[int]`) is deprecated and now subsumed under 
+    ``obj_attrs`` (:obj:`Dict[str, Any]`). Affected nodes (:mod:`dabble.group_nearby_objs`, 
+    :mod:`dabble.check_large_groups`, :mod:`draw.group_bbox_and_tag`) now access this attribute 
+    by the ``groups`` key of ``obj_attrs``.

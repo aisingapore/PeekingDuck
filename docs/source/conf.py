@@ -20,7 +20,7 @@ sys.path.insert(0, os.path.abspath("../../peekingduck/pipeline/nodes"))
 # -- Project information -----------------------------------------------------
 
 project = "PeekingDuck"
-copyright = "2021, CVHub AI Singapore"
+copyright = "2022, CVHub AI Singapore"
 author = "CVHub AI Singapore"
 
 # The full version, including alpha/beta/rc tags
@@ -77,6 +77,7 @@ html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
+    "dabble.statisticsv1",
     "dabble.trackingv1",
     "dabble.utils",
     "dabble.zoningv1",

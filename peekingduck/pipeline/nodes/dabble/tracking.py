@@ -36,7 +36,7 @@ class Node(AbstractNode):
         |bboxes|
 
     Outputs:
-        |obj_tags|
+        |obj_attrs|
 
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
@@ -63,7 +63,7 @@ class Node(AbstractNode):
 
         Returns:
             outputs (Dict[str, Any]): Tracking IDs of bounding boxes.
-            "obj_tags" key is used for compatibility with draw nodes.
+            "obj_attrs" key is used for compatibility with draw nodes.
         """
         # Potentially use frame_rate here too since IOUTracker has a
         # max_time_lost
@@ -74,7 +74,7 @@ class Node(AbstractNode):
 
         track_ids = self.tracker.track_detections(inputs)
 
-        return {"obj_tags": track_ids}
+        return {"obj_attrs": {"ids": track_ids}}
 
     def _reset_model(self) -> None:
         """Creates a new instance of DetectionTracker."""

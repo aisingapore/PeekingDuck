@@ -80,7 +80,7 @@ class JDEModel:  # pylint: disable=too-few-public-methods
 
     def predict(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float], List[str]]:
+    ) -> Tuple[List[np.ndarray], List[str], List[float], List[int]]:
         """Track objects from image.
 
         Args:

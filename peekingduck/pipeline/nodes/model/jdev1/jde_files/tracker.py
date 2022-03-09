@@ -90,14 +90,14 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
     def track_objects_from_image(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    ) -> Tuple[List[np.ndarray], List[int], List[float]]:
         """Tracks detections from the current video frame.
 
         Args:
             image (np.ndarray): The current video frame.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): A tuple of
+            (Tuple[List[np.ndarray], List[int], List[float]]): A tuple of
             - Numpy array of detected bounding boxes.
             - List of track IDs.
             - List of detection confidence scores.
@@ -115,7 +115,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             vertical = tlwh[2] / tlwh[3] > 1.6
             if not vertical and tlwh[2] * tlwh[3] > self.config["min_box_area"]:
                 online_tlwhs.append(tlwh)
-                online_ids.append(str(target.track_id))
+                online_ids.append(target.track_id)
                 scores.append(target.score.item())
         if not online_tlwhs:
             return online_tlwhs, online_ids, scores
