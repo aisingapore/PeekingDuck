@@ -17,7 +17,6 @@ Draws a tag (from ``obj_attrs``) above each bounding box
 """
 
 import copy
-import re
 from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags, check_bgr_type
@@ -103,7 +102,7 @@ class Node(AbstractNode):
             )
         for attr in self.show:
             attr = attr.replace(" ", "")
-            self.attr_keys.append(re.split(r"->", attr))
+            self.attr_keys.append(attr.split(r"->"))
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws a tag above each bounding box.

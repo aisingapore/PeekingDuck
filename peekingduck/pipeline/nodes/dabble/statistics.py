@@ -186,15 +186,9 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
         self.curr = self.stats.get_curr_result(inputs[self.data_type], self.keys.copy())
 
-        # if no detections in this frame, return stats from previous detections
-        if not self.curr:
-            return {
-                "cum_avg": self.cum_avg,
-                "cum_min": self.cum_min,
-                "cum_max": self.cum_max,
-            }
-
-        self._update_stats(self.curr)
+        # if no detections in this frame, do not update and return stats from previous detections
+        if self.curr:
+            self._update_stats(self.curr)
 
         return {
             "cum_avg": self.cum_avg,
