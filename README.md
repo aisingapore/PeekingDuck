@@ -87,8 +87,33 @@ Terminate the program by clicking on the output screen and pressing `q`.
 Use `peekingduck --help` to display help information for PeekingDuck's command line interface.
 
 
-Showcase/Gallery
-----------------
+Gallery
+-------
+
+<table>
+  <tr>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/social_distancing.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/social_distancing.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/privacy_protection_faces.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/privacy_protection_faces.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/zone_counting.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/zone_counting.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/multiple_object_tracking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/vehicles_tracking.gif">
+      </a>
+    </td>
+  </tr>
+</table>
 
 
 Acknowledgements
