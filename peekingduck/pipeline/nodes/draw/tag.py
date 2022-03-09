@@ -16,11 +16,11 @@
 Draws a tag (from ``obj_attrs``) above each bounding box
 """
 
+import copy
 import re
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
-from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags, check_bgr_type
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -29,9 +29,9 @@ class Node(AbstractNode):
     in ``obj_attrs``. In the general example below, ``obj_attrs`` has 2 attributes (`<attr a>` and
     `<attr b>`). There are `n` detected bounding boxes, and each attribute has `n` corresponding
     tags stored in a list. The ``show`` config described subsequently is used to choose the
-    attribute or attributes to be drawn.
+    attribute or attributes to be drawn. ::
 
-    >>> {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag n>], <attr b>: [<tag 1>, ..., <tag n>]}}
+        {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag n>], <attr b>: [<tag 1>, ..., <tag n>]}}
 
     The following type conventions need to be observed:
 
@@ -42,10 +42,10 @@ class Node(AbstractNode):
 
     In the example below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
     the last 2 attributes are nested within `"details"`. There are 2 detected bounding boxes, and
-    thus each attribute consists of a list with 2 tags.
+    thus each attribute consists of a list with 2 tags. ::
 
-    >>> # Example
-    >>> {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
+        # Example
+        {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
 
     The table below illustrates how ``show`` can be configured to achieve different outcomes for
     this example. Key takeaways are:
@@ -81,16 +81,21 @@ class Node(AbstractNode):
         show (:obj:`List[str]`): **default = []**. |br|
             List the desired attributes to be drawn. For more details on how to use this config,
             see the section above.
+        tag_color (:obj:`List[int]`): **default = [77, 103, 255]**. |br|
+            Define the color of the drawn tag, in BGR format. Defined values have to be integers,
+            and 0 <= value <= 255.
 
     .. versionchanged:: 1.2.0 |br|
         :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input data type,
         which has been deprecated and now subsumed under ``obj_attrs`` (:obj:`Dict[str, Any]`),
-        giving this node more flexibility.
+        giving this node more flexibility. Also, the ``tag_color`` config is added to provide
+        the option of changing the tag's color.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.attr_keys = []
+        check_bgr_type(self.tag_color)
         if not self.show:
             raise KeyError(
                 "The 'show' config is currently empty. Add the desired attributes to be drawn "
@@ -113,14 +118,15 @@ class Node(AbstractNode):
         # if empty list, nothing to draw
         if not tags:
             return {}
-        draw_tags(inputs["img"], inputs["bboxes"], tags, TOMATO)
+        draw_tags(inputs["img"], inputs["bboxes"], tags, self.tag_color)
 
         return {}
 
     def _tags_from_obj_attrs(self, inputs: Dict[str, Any]) -> List[str]:
         """Process inputs from various attributes into tags for drawing."""
         all_attrs: List[List[Any]] = []
-        for attr_key in self.attr_keys.copy():
+        attr_keys = copy.deepcopy(self.attr_keys)
+        for attr_key in attr_keys:
             attr = _deep_get_value(inputs, attr_key)
             if not isinstance(attr, list):
                 raise TypeError(

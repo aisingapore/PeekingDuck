@@ -16,6 +16,7 @@
 Test for draw tag node
 """
 
+from contextlib import contextmanager
 import numpy as np
 import pytest
 
@@ -24,7 +25,12 @@ from peekingduck.pipeline.nodes.draw.tag import Node
 
 @pytest.fixture
 def tag_config():
-    return {"input": ["bboxes", "obj_attrs", "img"], "output": ["none"], "show": []}
+    return {
+        "input": ["bboxes", "obj_attrs", "img"],
+        "output": ["none"],
+        "show": [],
+        "tag_color": [128, 128, 128],
+    }
 
 
 @pytest.fixture(
@@ -136,3 +142,52 @@ class TestTag:
         with pytest.raises(TypeError) as excinfo:
             draw_tag.run(input1)
         assert "A tag has to be of type" in str(excinfo.value)
+
+    def test_incorrect_color_format(self, tag_config):
+        tag_config["tag_color"] = [128, -1, 128]
+        with pytest.raises(ValueError) as excinfo:
+            Node(tag_config)
+        assert "Color values should lie between (and include) 0 and 255" in str(
+            excinfo.value
+        )
+
+        tag_config["tag_color"] = [128, 256, 128]
+        with pytest.raises(ValueError) as excinfo:
+            Node(tag_config)
+        assert "Color values should lie between (and include) 0 and 255" in str(
+            excinfo.value
+        )
+
+        tag_config["tag_color"] = [128, 128.0, 128]
+        with pytest.raises(TypeError) as excinfo:
+            Node(tag_config)
+        assert "Color values should be integers" in str(excinfo.value)
+
+    def test_show_config_unchanged_between_frames(self, tag_config, create_image):
+        # Each attr_key of the "show" config is obtained by recursion, where items in the
+        # list are popped during recursion. deepcopy() is used to prevent "show" config
+        # from being modified between frames and throwing an error that may be hard to trace.
+        # This test is here to prevent the deepcopy() from being removed in future by accident.
+
+        original_img = create_image((400, 400, 3))
+        output_img = original_img.copy()
+        tag_config["show"] = ["flags"]
+        node = Node(tag_config)
+
+        input1 = {
+            "img": output_img,
+            "bboxes": [np.array([0, 0.5, 1, 1])],
+            "obj_attrs": {"flags": ["TOO CLOSE!"]},
+        }
+        node.run(input1)
+        # This second run below should not throw an error if "show" config is unchanged
+        with not_raises(TypeError):
+            node.run(input1)
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

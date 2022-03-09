@@ -21,7 +21,7 @@ from typing import Any, Callable, Dict, List, Tuple, Union
 
 class Stats:
     """
-    Extract the chosen <method>: <expression> config and apply to incoming data.
+    Extract the chosen <unary_expr> or <cond_expr> config and apply to incoming data.
 
     Args:
         ops (Dict[str, Callable]): A dictionary of operator symbols (keys) pointing to
@@ -30,12 +30,12 @@ class Stats:
 
     def __init__(self, ops: Dict[str, Callable]) -> None:
         self.ops = ops
-        self.method: str
+        self.func: str
         self.expr: str
         self.condition = {"op_func": Callable, "operand": str}
         self.data_type: str
         self.keys: List[str] = []
-        self.method_map: Dict[str, Dict[str, Any]] = {
+        self.func_map: Dict[str, Dict[str, Any]] = {
             "identity": {"types": (int, float), "func": _func_identity},
             "length": {"types": (dict, list), "func": _func_length},
             "minimum": {"types": (dict, list), "func": _func_minimum},
@@ -44,13 +44,13 @@ class Stats:
         }
 
     def prepare_data(
-        self, all_methods: Dict[str, Union[str, None]]
+        self, all_funcs: Dict[str, Union[str, None]]
     ) -> Tuple[str, List[str]]:
         """
         Does the necessary data preparation during node initialisation.
 
         Args:
-            - all_methods (Dict[str, Union[str, None]]): Dictionary of <method>: <expression>.
+            - all_funcs (Dict[str, Union[str, None]]): Dictionary of <func>: <user input>.
 
         Returns:
             - self.data_type (str): PeekingDuck in-built data type or custom data type from custom
@@ -58,7 +58,7 @@ class Stats:
             - self.keys (List[str]): List of selected keys if self.data_type is a dictionary.
             If not, returns an empty list.
         """
-        self.method, self.expr = _get_method_expr(all_methods)
+        self.func, self.expr = _get_func_expr(all_funcs)
         self._update_data_type_keys_condition()
 
         return self.data_type, self.keys
@@ -68,8 +68,7 @@ class Stats:
         Extracts the current resulting value from the incoming data.
 
         Args:
-            - inputs (Any): Current value for the
-            self.data_type key.
+            - inputs (Any): Current value for the self.data_type key.
             - keys (List[str]): List of selected keys if self.data_type is a dictionary.
 
         Returns:
@@ -77,23 +76,23 @@ class Stats:
 
         """
         target_attr = _deep_get_value(inputs, keys)
-        curr = self._apply_method(target_attr)
+        curr = self._apply_func(target_attr)
 
         return curr
 
     def _update_data_type_keys_condition(self) -> None:
-        """Uses self.method, self.expr, and self.ops to update self.data_type, self.keys, and
+        """Uses self.func, self.expr, and self.ops to update self.data_type, self.keys, and
         self.condition."""
         ops_expr = "(" + ")|(".join(self.ops.keys()) + ")"
         match = re.search(ops_expr, self.expr)
 
-        if not match and self.method == "cond_count":
+        if not match and self.func == "cond_count":
             raise ValueError(
-                f"The chosen method: {self.method} should have an operator for comparison."
+                f"The chosen function: {self.func} should have an operator for comparison."
             )
-        if match and self.method != "cond_count":
+        if match and self.func != "cond_count":
             raise ValueError(
-                f"The chosen method: {self.method} should not have the {match.group()} "
+                f"The chosen function: {self.func} should not have the {match.group()} "
                 f"operator."
             )
 
@@ -109,34 +108,34 @@ class Stats:
 
         self.data_type, self.keys = _get_data_type_and_keys(target_attr)
 
-    def _apply_method(self, target_attr: Any) -> Union[int, float, None]:
-        """Applies a method and optional condition to a target attribute."""
+    def _apply_func(self, target_attr: Any) -> Union[int, float, None]:
+        """Applies a function and optional condition to a target attribute."""
         if not target_attr:
             return None
 
-        _check_type(target_attr, self.method, self.method_map[self.method]["types"])
+        _check_type(target_attr, self.func, self.func_map[self.func]["types"])
         args = (target_attr, self.condition)
-        return self.method_map[self.method]["func"](*args)
+        return self.func_map[self.func]["func"](*args)
 
 
-def _get_method_expr(all_methods: Dict[str, Union[str, None]]) -> Tuple[str, str]:
+def _get_func_expr(all_funcs: Dict[str, Union[str, None]]) -> Tuple[str, str]:
     """Gets the only non-null key value pair from a dictionary."""
-    num_methods = 0
-    for method, expr in all_methods.items():
+    num_funcs = 0
+    for func, expr in all_funcs.items():
         if expr:
-            num_methods += 1
-            selected_method, selected_expr = method, expr
+            num_funcs += 1
+            selected_func, selected_expr = func, expr
 
-    if num_methods < 1:
+    if num_funcs < 1:
         raise ValueError(
-            "No methods selected in config, but one method needs to be selected to proceed."
+            "No functions selected in config, but one function needs to be selected to proceed."
         )
-    if num_methods > 1:
+    if num_funcs > 1:
         raise ValueError(
-            f"{num_methods} methods selected in config, but only one method should be selected "
+            f"{num_funcs} functions selected in config, but only one function should be selected "
             f"to proceed."
         )
-    return selected_method, selected_expr
+    return selected_func, selected_expr
 
 
 def _get_data_type_and_keys(target_attr: str) -> Tuple[str, List[str]]:
@@ -208,7 +207,7 @@ def _func_minimum(
         return min(target_attr)
     except ValueError as error:
         raise ValueError(
-            "To use the 'minimum' method, all elements within the target attribute has to be"
+            "To use the 'minimum' function, all elements within target_attr has to be"
             " of type 'int' or 'float'."
         ) from error
 
@@ -224,7 +223,7 @@ def _func_maximum(
         return max(target_attr)
     except ValueError as error:
         raise ValueError(
-            "To use the 'maximum' method, all elements within the target attribute has to be"
+            "To use the 'maximum' function, all elements within the target_attr has to be"
             " of type 'int' or 'float'."
         ) from error
 
@@ -240,7 +239,7 @@ def _func_cond_count(target_attr: Any, condition: Dict[str, Any]) -> int:
 
 
 def _check_type(
-    target_attr: Union[int, float, list, dict], method: str, *types: type
+    target_attr: Union[int, float, list, dict], func: str, *types: type
 ) -> None:
     """Checks that a target attribute conforms to the defined type(s)."""
     correct = False
@@ -249,6 +248,6 @@ def _check_type(
             correct = True
     if not correct:
         raise TypeError(
-            f"For the chosen method: '{method}', valid target attribute types are: {types}. "
-            f"However, this target attribute: {target_attr} is of type: {type(target_attr)}."
+            f"For the chosen function: '{func}', valid target_attr types are: {types}. "
+            f"However, this target_attr: {target_attr} is of type: {type(target_attr)}."
         )

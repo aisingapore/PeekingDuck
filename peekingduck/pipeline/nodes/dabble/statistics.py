@@ -36,7 +36,7 @@ OPS = {
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     """Calculates the cumulative average, minimum and maximum of a single variable of interest
     (defined as ``current result`` here) over time. The configurations for this node offer several
-    methods to reduce the incoming data type into a single ``current result`` of type :obj:`int`
+    functions to reduce the incoming data type into a single ``current result`` of type :obj:`int`
     or :obj:`float`, which is valid for the current video frame. ``current result`` is then used to
     recalculate the values of cumulative average, minimum, and maximum for PeekingDuck's running
     duration thus far.
@@ -50,7 +50,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                           e.g. count, large_groups, obj_attrs
         user_data_type  = ? user data types produced by custom nodes ?
                           e.g. my_var, my_attrs
-        dict_key        = ? Python dctionary keys, with optional nesting ?
+        dict_key        = ? Python dictionary keys, with optional nesting ?
                           e.g. ["ids"], ["details"]["age"]
         data_type       = pkd_data_type | user_data_type
         target_attr     = data_type | data_type "[" dict_key "]"
@@ -66,12 +66,22 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         str_operand     = ? Python strings enclosed by single or double quotes ?
         str_comparison  = str_operator str_operand
 
-        cond_expr       = "cond_count" ":" target_attr ( num_comparison | str_comparison )
+        cond_function   = "cond_count"
+        cond_expr       = cond_function ":" target_attr ( num_comparison | str_comparison )
 
         configuration   = unary_expr | cond_expr
 
-    It should be noted that square brackets (``[]``) should only be included in ``<keys>``. The
-    table below illustrates how configuration choices reduce the incoming data type into the
+    Points to note:
+
+    * Square brackets (``[]``) are used to define ``<dict_key>``, and should not be used \
+    elsewhere in the configuration. \
+
+    * Operands are processed differently depending on whether they are enclosed by single/double \
+    quotes, or not. If enclosed, the operand is assumed to be of type :obj:`str` and classified \
+    as ``<str_operand>``. If not, the operand is classified as ``<num_operand>`` and converted \
+    into :obj:`float` for further processing. \
+
+    The table below illustrates how configuration choices reduce the incoming data type into the
     ``<current result>``.
 
     +---------------------------------------+-------------------+-------------------+-------------+
@@ -154,7 +164,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         super().__init__(config, node_path=__name__, **kwargs)
         self.cum_avg, self.cum_min, self.cum_max = 0.0, float("inf"), float("-inf")
         self.num_iter = 0
-        all_methods = {
+        all_funcs = {
             "cond_count": self.cond_count,
             "identity": self.identity,
             "length": self.length,
@@ -162,7 +172,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             "maximum": self.maximum,
         }
         self.stats = utils.Stats(OPS)
-        self.data_type, self.keys = self.stats.prepare_data(all_methods)
+        self.data_type, self.keys = self.stats.prepare_data(all_funcs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Calculates the average, minimum and maximum of a single variable of interest over time.
@@ -196,8 +206,8 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         """Updates the cum_avg, cum_min and cum_max values with the current value."""
         if not isinstance(curr, float) and not isinstance(curr, int):
             raise TypeError(
-                f"The current value has to be of type 'int' or 'float' to calculate statistics."
-                f"However, the current value here is: '{curr}' which is of type: {type(curr)}."
+                f"The current result has to be of type 'int' or 'float' to calculate statistics."
+                f"However, the current result here is: '{curr}' which is of type: {type(curr)}."
             )
 
         if curr < self.cum_min:

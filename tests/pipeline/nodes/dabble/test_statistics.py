@@ -41,7 +41,7 @@ def stats_class():
 
 
 @pytest.fixture
-def all_methods():
+def all_funcs():
     return {
         "identity": None,
         "minimum": None,
@@ -65,7 +65,7 @@ def stats_config():
 
 
 @pytest.fixture(params=["identity", "minimum", "maximum", "length"])
-def non_cond_method(request):
+def non_cond_func(request):
     yield request.param
 
 
@@ -108,47 +108,45 @@ def cond_with_key_expr(request):
 
 class TestDataTypeKeysCond:
     def test_non_cond_without_keys(
-        self, stats_class, all_methods, non_cond_method, non_cond_without_key_expr
+        self, stats_class, all_funcs, non_cond_func, non_cond_without_key_expr
     ):
-        all_methods[non_cond_method] = non_cond_without_key_expr
-        data_type, keys = stats_class.prepare_data(all_methods)
+        all_funcs[non_cond_func] = non_cond_without_key_expr
+        data_type, keys = stats_class.prepare_data(all_funcs)
         assert data_type == "count"
         assert keys == []
 
     def test_non_cond_with_keys(
-        self, stats_class, all_methods, non_cond_method, non_cond_with_key_expr
+        self, stats_class, all_funcs, non_cond_func, non_cond_with_key_expr
     ):
-        all_methods[non_cond_method] = non_cond_with_key_expr
-        data_type, keys = stats_class.prepare_data(all_methods)
+        all_funcs[non_cond_func] = non_cond_with_key_expr
+        data_type, keys = stats_class.prepare_data(all_funcs)
         assert data_type == "obj_attrs"
         assert keys == ["details", "age"]
 
-    def test_cond_without_keys(self, stats_class, all_methods, cond_without_key_expr):
-        all_methods["cond_count"] = cond_without_key_expr
-        data_type, keys = stats_class.prepare_data(all_methods)
+    def test_cond_without_keys(self, stats_class, all_funcs, cond_without_key_expr):
+        all_funcs["cond_count"] = cond_without_key_expr
+        data_type, keys = stats_class.prepare_data(all_funcs)
         assert data_type == "obj_groups"
         assert stats_class.condition["operand"] == 35.0
         assert stats_class.condition["op_func"] == operator.ge
         assert keys == []
 
-    def test_cond_with_keys(self, stats_class, all_methods, cond_with_key_expr):
-        all_methods["cond_count"] = cond_with_key_expr
-        data_type, keys = stats_class.prepare_data(all_methods)
+    def test_cond_with_keys(self, stats_class, all_funcs, cond_with_key_expr):
+        all_funcs["cond_count"] = cond_with_key_expr
+        data_type, keys = stats_class.prepare_data(all_funcs)
         assert data_type == "obj_attrs"
         assert stats_class.condition["operand"] == 35.0
         assert stats_class.condition["op_func"] == operator.ge
         assert keys == ["details", "age"]
 
-    def test_cond_operators(
-        self, stats_class, stats_config, all_methods, non_cond_method
-    ):
+    def test_cond_operators(self, stats_class, stats_config, all_funcs, non_cond_func):
         stats_config["cond_count"] = "obj_groups"
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
         assert "should have an operator for comparison" in str(excinfo.value)
         stats_config["cond_count"] = None
 
-        stats_config[non_cond_method] = "obj_groups >= 35"
+        stats_config[non_cond_func] = "obj_groups >= 35"
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
         assert "should not have" in str(excinfo.value)
@@ -162,20 +160,20 @@ class TestDataTypeKeysCond:
             "obj_groups < 35": operator.lt,
         }
         for expr, ans in test_cases.items():
-            all_methods["cond_count"] = expr
-            stats_class.prepare_data(all_methods)
+            all_funcs["cond_count"] = expr
+            stats_class.prepare_data(all_funcs)
             assert stats_class.condition["op_func"] == ans
 
         # string operand should only work with "==" operator
         stats_config["cond_count"] = "obj_attrs > 'TOO CLOSE!'"
-        stats_config[non_cond_method] = None
+        stats_config[non_cond_func] = None
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
         assert "for string operand, only the '==' operator should be used" in str(
             excinfo.value
         )
 
-    def test_cond_operands(self, stats_class, all_methods):
+    def test_cond_operands(self, stats_class, all_funcs):
         test_cases = {
             "obj_groups >= 35": 35.0,
             "count == '35'": "35",
@@ -184,28 +182,28 @@ class TestDataTypeKeysCond:
             "flags == ' TOO CLOSE! '": " TOO CLOSE! ",
         }
         for expr, ans in test_cases.items():
-            all_methods["cond_count"] = expr
-            stats_class.prepare_data(all_methods)
+            all_funcs["cond_count"] = expr
+            stats_class.prepare_data(all_funcs)
             assert stats_class.condition["operand"] == ans
 
-        all_methods["cond_count"] = "obj_groups >= []"
+        all_funcs["cond_count"] = "obj_groups >= []"
         with pytest.raises(ValueError) as excinfo:
-            stats_class.prepare_data(all_methods)
+            stats_class.prepare_data(all_funcs)
         assert "The detected operand here is" in str(excinfo.value)
 
 
 class TestNodeOperation:
-    def test_no_methods_chosen(self, stats_config):
+    def test_no_funcs_chosen(self, stats_config):
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
-        assert "one method needs to be selected" in str(excinfo.value)
+        assert "one function needs to be selected" in str(excinfo.value)
 
-    def test_multiple_methods_chosen(self, stats_config):
+    def test_multiple_funcs_chosen(self, stats_config):
         stats_config["identity"] = "count"
         stats_config["maximum"] = "ids"
         with pytest.raises(ValueError) as excinfo:
             Node(stats_config)
-        assert "only one method should be selected" in str(excinfo.value)
+        assert "only one function should be selected" in str(excinfo.value)
 
     def test_target_attr_type_identity(self, stats_config):
         stats_config["identity"] = "count"
@@ -221,11 +219,11 @@ class TestNodeOperation:
         input3 = {"count": "9"}
         with pytest.raises(TypeError) as excinfo:
             Node(stats_config).run(input3)
-        assert "However, this target attribute" in str(excinfo.value)
+        assert "However, this target_attr" in str(excinfo.value)
 
     def test_target_attr_type_length_maximum_minimum(self, stats_config):
-        for method in ["length", "maximum", "minimum"]:
-            stats_config[method] = "obj_attrs"
+        for func in ["length", "maximum", "minimum"]:
+            stats_config[func] = "obj_attrs"
 
             input1 = {"obj_attrs": [1, 2, 3, 4]}
             with not_raises(TypeError):
@@ -246,9 +244,9 @@ class TestNodeOperation:
             input5 = {"obj_attrs": "9"}
             with pytest.raises(TypeError) as excinfo:
                 Node(stats_config).run(input5)
-            assert "However, this target attribute" in str(excinfo.value)
+            assert "However, this target_attr" in str(excinfo.value)
 
-            stats_config[method] = None
+            stats_config[func] = None
 
     def test_target_attr_type_cond_count(self, stats_config):
         stats_config["cond_count"] = "obj_attrs == 4"
@@ -268,7 +266,7 @@ class TestNodeOperation:
         input4 = {"obj_attrs": "9"}
         with pytest.raises(TypeError) as excinfo:
             Node(stats_config).run(input4)
-        assert "However, this target attribute" in str(excinfo.value)
+        assert "However, this target_attr" in str(excinfo.value)
 
     def test_curr_result_type(self, stats_config):
         stats_config["maximum"] = "obj_attrs"
@@ -277,9 +275,24 @@ class TestNodeOperation:
         with pytest.raises(TypeError) as excinfo:
             Node(stats_config).run(input1)
         assert (
-            "The current value has to be of type 'int' or 'float' to calculate statistics"
+            "The current result has to be of type 'int' or 'float' to calculate statistics"
             in str(excinfo.value)
         )
+
+    def test_keys_unchanged_between_frames(self, stats_config):
+        # Recursion is used to obtain the final dict value from self.keys, where items in the
+        # list are popped during recursion. copy() is used to prevent self.keys
+        # from being modified between frames and throwing an error that may be hard to trace.
+        # This test is here to prevent the copy() from being removed in future by accident.
+
+        stats_config["cond_count"] = "obj_attrs['details']['age'] >= 4"
+        node = Node(stats_config)
+        input1 = {"obj_attrs": {"details": {"age": [1, 2, 3, 4]}}}
+
+        node.run(input1)
+        # This second run below should not throw an error if self.keys is unchanged
+        with not_raises(TypeError):
+            node.run(input1)
 
 
 class TestStatisticsCalcs:

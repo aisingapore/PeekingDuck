@@ -176,3 +176,22 @@ def draw_pts(frame: np.ndarray, pts: List[Tuple[float]]) -> None:
     """
     for point in pts:
         cv2.circle(frame, point, POINT_RADIUS, CHAMPAGNE, -1)
+
+
+def check_bgr_type(colors: List[int]) -> None:
+    """Check the type and range of provided colors.
+
+    Args:
+        colors (List[int]): Color in BGR format.
+    """
+    for color in colors:
+        if not isinstance(color, int):
+            raise TypeError(
+                f"Color values should be integers. The chosen value of: {color} is of type: "
+                f"{type(color)} instead."
+            )
+        if color < 0 or color > 255:
+            raise ValueError(
+                f"Color values should lie between (and include) 0 and 255. The chosen value of: "
+                f"{color} is not within this range."
+            )
