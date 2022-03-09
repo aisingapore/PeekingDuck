@@ -41,32 +41,32 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     recalculate the values of cumulative average, minimum, and maximum for PeekingDuck's running
     duration thus far.
 
-    The configuration for this node is described below using a combination of the `Extended Brackus
-    -Naur Form (EBNF) <https://en.wikipedia.org/wiki/Extended_Backus–Naur_form>`_ and `Augmented
-    Brackus-Naur Form (ABNF) <https://en.wikipedia.org/wiki/Augmented_Backus–Naur_form>`_
-    metasyntax. Concrete examples are provided later to faciliate understanding. ::
+    The configuration for this node is described below using a combination of the `Extended BNF
+    <https://en.wikipedia.org/wiki/Extended_Backus–Naur_form>`_ and `Augmented BNF
+    <https://en.wikipedia.org/wiki/Augmented_Backus–Naur_form>`_ metasyntax. Concrete examples
+    are provided later for illustration. ::
 
         pkd_data_type   = ? PeekingDuck built-in data types ?
-                        e.g. count, large_groups, obj_attrs
+                          e.g. count, large_groups, obj_attrs
         user_data_type  = ? user data types produced by custom nodes ?
-                        e.g. my_var, my_attrs
-        keys            = ? Keys if pkd_data_type or user_data_type is a dictionary ?
-                        e.g. ["ids"], ["details"]["age"]
-        data_with_keys  = pkd_data_type keys | user_data_type keys
-        data_wo_keys    = pkd_data_type | user_data_type
-        target_attr     = data_with_keys | data_wo_keys
+                          e.g. my_var, my_attrs
+        dict_key        = ? Python dctionary keys, with optional nesting ?
+                          e.g. ["ids"], ["details"]["age"]
+        data_type       = pkd_data_type | user_data_type
+        target_attr     = data_type | data_type "[" dict_key "]"
 
         unary_function  = "identity" | "length" | "maximum" | "minimum"
         unary_expr      = unary_function ":" target_attr
 
-        operator        = "==" | ">=" | "<=" | ">" | "<"
-        numbers         = ? Python integers or floats ?
-        numeric_op      = operator numbers
+        num_operator    = "==" | ">=" | "<=" | ">" | "<"
+        num_operand     = ? Python integers or floats ?
+        num_comparison  = num_operator num_operand
 
-        strings         = ? Python strings enclosed by single or double quotes ?
-        string_op       = "==" strings
+        str_operator    = "=="
+        str_operand     = ? Python strings enclosed by single or double quotes ?
+        str_comparison  = str_operator str_operand
 
-        cond_expr       = "cond_count" ":" target_attr ( numeric_op | string_op )
+        cond_expr       = "cond_count" ":" target_attr ( num_comparison | str_comparison )
 
         configuration   = unary_expr | cond_expr
 
@@ -74,32 +74,43 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     table below illustrates how configuration choices reduce the incoming data type into the
     ``<current result>``.
 
-    # pylint: disable=line-too-long
-    +---------------------------------------+-------------------+--------------------------------+-------------+
-    | ``<pkd_data_type>``: value            | ``<target_attr>`` | ``<unary_expr>``               | ``<current  |
-    |                                       |                   |                                | result>``   |
-    | or                                    |                   | or                             |             |
-    |                                       |                   |                                |             |
-    | ``<user_data_type>``: value           |                   | ``<cond_expr>``                |             |
-    +---------------------------------------+-------------------+--------------------------------+-------------+
-    | count: 8                              | count             | identity: count                | 8           |
-    +---------------------------------------+-------------------+--------------------------------+-------------+
-    | obj_attrs: {                          | obj_attrs["ids"]  | length: obj_attrs["ids"]       | 3           |
-    |                                       +-------------------+--------------------------------+-------------+
-    |                                       | obj_attrs         | maximum:                       | 52          |
-    |   ids: [1,2,4],                       | ["details"]       | obj_attrs["details"]["age"]    |             |
-    |                                       | ["age"]           |                                |             |
-    |   details: {                          +-------------------+--------------------------------+-------------+
-    |                                       | obj_attrs         | cond_count:                    | 2           |
-    |     gender: ["male","male","female"], | ["details"]       | obj_attrs["details"]["gender"] |             |
-    |                                       | ["gender"]        |                                |             |
-    |     age: [52,17,48] }}                |                   | == "male"                      |             |
-    |                                       +-------------------+--------------------------------+-------------+
-    |                                       | obj_attrs         | cond_count:                    | 3           |
-    |                                       | ["details"]       | obj_attrs["details"]["age"]    |             |
-    |                                       | ["age"]           |                                |             |
-    |                                       |                   | < 60                           |             |
-    +---------------------------------------+-------------------+--------------------------------+-------------+
+    +---------------------------------------+-------------------+-------------------+-------------+
+    | ``<pkd_data_type>``: value            | ``<target_attr>`` | ``<unary_expr>``  | ``<current  |
+    |                                       |                   |                   | result>``   |
+    | or                                    |                   | or                |             |
+    |                                       |                   |                   |             |
+    | ``<user_data_type>``: value           |                   | ``<cond_expr>``   |             |
+    +---------------------------------------+-------------------+-------------------+-------------+
+    | count: 8                              | count             | identity:         | 8           |
+    |                                       |                   |                   |             |
+    |                                       |                   | count             |             |
+    +---------------------------------------+-------------------+-------------------+-------------+
+    | obj_attrs: {                          | obj_attrs["ids"]  | length:           | 3           |
+    |                                       |                   |                   |             |
+    |                                       |                   | obj_attrs["ids"]  |             |
+    |   ids: [1,2,4],                       +-------------------+-------------------+-------------+
+    |                                       | obj_attrs         | maximum:          | 52          |
+    |   details: {                          | ["details"]       |                   |             |
+    |                                       | ["age"]           | obj_attrs         |             |
+    |     gender: ["male","male","female"], |                   | ["details"]       |             |
+    |                                       |                   | ["age"]           |             |
+    |     age: [52,17,48] }}                +-------------------+-------------------+-------------+
+    |                                       | obj_attrs         | cond_count:       | 2           |
+    |                                       | ["details"]       |                   |             |
+    |                                       | ["gender"]        | obj_attrs         |             |
+    |                                       |                   | ["details"]       |             |
+    |                                       |                   | ["gender"]        |             |
+    |                                       |                   |                   |             |
+    |                                       |                   | == "male"         |             |
+    |                                       +-------------------+-------------------+-------------+
+    |                                       | obj_attrs         | cond_count:       | 3           |
+    |                                       | ["details"]       |                   |             |
+    |                                       | ["age"]           | obj_attrs         |             |
+    |                                       |                   | ["details"]       |             |
+    |                                       |                   | ["age"]           |             |
+    |                                       |                   |                   |             |
+    |                                       |                   | < 60              |             |
+    +---------------------------------------+-------------------+-------------------+-------------+
 
     Inputs:
         |all_input|
@@ -107,31 +118,36 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     Outputs:
         |cum_avg|
 
+        Note that ``cum_avg`` will not be updated if there are no detections. For example, if
+        ``cum_avg`` = 10 for video frame 1, and there are no detections in the following 500
+        frames, ``cum_avg`` is still 10 for video frame 501.
+
         |cum_max|
 
         |cum_min|
 
     Configs:
         identity (:obj:`str`): **default=null** |br|
-            Accepts ``<target attribute>`` of types :obj:`int` or :obj:`float`, and returns the
+            Accepts ``<target_attr>`` of types :obj:`int` or :obj:`float`, and returns the
             same value.
         length (:obj:`str`): **default=null** |br|
-            Accepts ``<target attribute>`` of types :obj:`List[Any]` or :obj:`Dict[str, Any]`,
+            Accepts ``<target_attr>`` of types :obj:`List[Any]` or :obj:`Dict[str, Any]`,
             and returns its length.
         minimum (:obj:`str`): **default=null** |br|
-            Accepts ``<target attribute>`` of types :obj:`List[float | int]` or
+            Accepts ``<target_attr>`` of types :obj:`List[float | int]` or
             :obj:`Dict[str, float | int]`, and returns the minimum element within for the current
             frame. Not to be confused with the ``cum_min`` output data type, which represents the
             cumulative minimum over time.
         maximum (:obj:`str`): **default=null** |br|
-            Accepts ``<target attribute>`` of types :obj:`List[float | int]` or
+            Accepts ``<target_attr>`` of types :obj:`List[float | int]` or
             :obj:`Dict[str, float | int]`, and returns the maximum element within for the current
             frame. Not to be confused with the ``cum_max`` output data type, which represents the
             cumulative maximum over time.
         cond_count (:obj:`str`): **default=null** |br|
-            Accepts ``<target attribute>`` of types :obj:`List[float | int | str]`, and compares
-            each element with ``<operand>`` using the ``<operator>``. The number of elements that
-            fulfil the condition are counted towards ``<current result>``.
+            Accepts ``<target_attr>`` of types :obj:`List[float | int | str]`, and checks if each
+            element in the list fulfils the condition described by ``<num_comparison>`` or
+            ``<str_comparison>``. The number of elements that fulfil the condition are counted
+            towards ``<current result>``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

@@ -166,11 +166,20 @@ class TestDataTypeKeysCond:
             stats_class.prepare_data(all_methods)
             assert stats_class.condition["op_func"] == ans
 
+        # string operand should only work with "==" operator
+        stats_config["cond_count"] = "obj_attrs > 'TOO CLOSE!'"
+        stats_config[non_cond_method] = None
+        with pytest.raises(ValueError) as excinfo:
+            Node(stats_config)
+        assert "for string operand, only the '==' operator should be used" in str(
+            excinfo.value
+        )
+
     def test_cond_operands(self, stats_class, all_methods):
         test_cases = {
             "obj_groups >= 35": 35.0,
-            "obj_groups >= '35'": "35",
-            'obj_groups >= "35"': "35",
+            "count == '35'": "35",
+            'count == "35"': "35",
             "flags == 'TOO CLOSE!'": "TOO CLOSE!",
             "flags == ' TOO CLOSE! '": " TOO CLOSE! ",
         }

@@ -86,6 +86,7 @@ class Stats:
         self.condition."""
         ops_expr = "(" + ")|(".join(self.ops.keys()) + ")"
         match = re.search(ops_expr, self.expr)
+
         if not match and self.method == "cond_count":
             raise ValueError(
                 f"The chosen method: {self.method} should have an operator for comparison."
@@ -97,12 +98,12 @@ class Stats:
             )
 
         if match:
-            self.condition["op_func"] = self.ops[match.group()]
+            operator = match.group()
+            self.condition["op_func"] = self.ops[operator]
             op_idx_start, op_idx_end = match.span()
             target_attr = self.expr[:op_idx_start]
-            # check int/float/str for operand
             operand_raw = self.expr[op_idx_end:]
-            self.condition["operand"] = _get_operand(operand_raw)  # type: ignore
+            self.condition["operand"] = _get_operand(operand_raw, operator)  # type: ignore
         else:
             target_attr = self.expr
 
@@ -151,11 +152,18 @@ def _get_data_type_and_keys(target_attr: str) -> Tuple[str, List[str]]:
     return data_type, keys
 
 
-def _get_operand(operand_raw: str) -> Union[str, float]:
+def _get_operand(operand_raw: str, operator: str) -> Union[str, float]:
     """Removes leading and trailing spaces, and return as a string or float."""
     operand_raw = operand_raw.strip()
     is_string = re.findall("'|\"", operand_raw)
     if is_string:
+        if operator != "==":
+            raise ValueError(
+                f"The detected operand is: {operand_raw} and detected operator is: {operator}. "
+                f"The operand is assumed to be a string as it is enclosed by single or double "
+                f"quotes, and for string operand, only the '==' operator should be used for "
+                f"comparison."
+            )
         operand = re.sub("'|\"", "", operand_raw)
         return operand
     try:
