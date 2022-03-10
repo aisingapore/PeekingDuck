@@ -115,6 +115,7 @@ class Predictor:
                 D' is the varying pairs of valid keypoint connections per detection
         """
         image_data = cv.resize(frame, (self.resolution))
+        image_data = cv.cvtColor(image_data, cv.COLOR_BGR2RGB)
         image_data = np.asarray([image_data]).astype(np.int32)
         infer = self.movenet_model.signatures["serving_default"]
         outputs = infer(tf.constant(image_data))
