@@ -73,13 +73,13 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     Points to note:
 
-    * Square brackets (``[]``) are used to define ``<dict_key>``, and should not be used \
-    elsewhere in the configuration. \
+    * Square brackets (``[]``) are used to define ``<dict_key>``, and should not be used
+      elsewhere in the configuration.
 
-    * Operands are processed differently depending on whether they are enclosed by single/double \
-    quotes, or not. If enclosed, the operand is assumed to be of type :obj:`str` and classified \
-    as ``<str_operand>``. If not, the operand is classified as ``<num_operand>`` and converted \
-    into :obj:`float` for further processing. \
+    * Operands are processed differently depending on whether they are enclosed by single/double
+      quotes, or not. If enclosed, the operand is assumed to be of type :obj:`str` and classified
+      as ``<str_operand>``. If not, the operand is classified as ``<num_operand>`` and converted
+      into :obj:`float` for further processing.
 
     The table below illustrates how configuration choices reduce the incoming data type into the
     ``<current result>``.
