@@ -13,7 +13,7 @@ that tracks multiple moving objects. This tracking capability is to be used in t
 object detection model. Objects to track can be, for example, pedestrians on the street, vehicles
 in the road, sport players on the court, groups of animals and more.
 
-.. image:: /assets/use_cases/vehicles_tracking.gif
+.. image:: /assets/use_cases/multiple_object_tracking.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -23,8 +23,8 @@ Intersection Over Union (IoU). This is explained in the `How it Works`_ section.
 Demo
 ====
 
-.. |pipeline_config| replace:: object_tracking.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_tracking.yml
+.. |pipeline_config| replace:: multiple_object_tracking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/multiple_object_tracking.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
