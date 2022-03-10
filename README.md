@@ -59,10 +59,8 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 > peekingduck --verify_install
 ```
 
-You should see a video of a person waving his hand with bounding boxes overlaid as shown below.
-
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif" width="50%">
-
+You should see a video of a person waving his hand with
+[bounding boxes overlaid]((https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif)).
 
 The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
 
@@ -82,9 +80,8 @@ Run the demo pipeline.
 > peekingduck run
 ```
 
-If you have a webcam, you should see the demo running live:
-
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif" width="50%">
+If you have a webcam, you should see yourself on the output screen with
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
