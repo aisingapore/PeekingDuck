@@ -114,6 +114,28 @@ Gallery
       </a>
     </td>
   </tr>
+  <tr>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/group_size_checking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/group_size_checking.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/privacy_protection_license_plates.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/crowd_counting.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/crowd_counting.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/human_tracking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/human_tracking.gif">
+      </a>
+    </td>
+  </tr>
 </table>
 
 

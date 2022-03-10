@@ -6,6 +6,10 @@
      div.toctree-wrapper {
        display: none;
      }
+
+     table.docutils col {
+       width: 50% !important;
+     }
    </style>
 
 Use Cases
@@ -44,7 +48,7 @@ Below is a gallery of use cases.
 
 .. |group_size_checking_doc| replace:: :doc:`Group Size Checking </use_cases/group_size_checking>`
 
-.. |group_size_checking_gif| image:: /assets/use_cases/group_size_check_2.gif
+.. |group_size_checking_gif| image:: /assets/use_cases/group_size_checking.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -68,7 +72,7 @@ Below is a gallery of use cases.
 
 .. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
-.. |face_mask_detection_gif| image:: /assets/use_cases/mask_detection.gif
+.. |face_mask_detection_gif| image:: /assets/use_cases/face_mask_detection.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -80,7 +84,7 @@ Below is a gallery of use cases.
 
 .. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking </use_cases/multiple_object_tracking>`
 
-.. |multiple_object_tracking_gif| image:: /assets/use_cases/vehicles_tracking.gif
+.. |multiple_object_tracking_gif| image:: /assets/use_cases/multiple_object_tracking.gif
    :class: no-scaled-link
    :width: 100 %
 

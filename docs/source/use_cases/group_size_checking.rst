@@ -11,7 +11,7 @@ social gatherings. AI Singapore has developed a vision-based
 that checks if the group size limit has been violated. This can be used in many places, such as in
 malls to ensure that visitors adhere to guidelines, or in workplaces to ensure employees' safety.
 
-.. image:: /assets/use_cases/group_size_check_2.gif
+.. image:: /assets/use_cases/group_size_checking.gif
    :class: no-scaled-link
    :width: 70 %
 
