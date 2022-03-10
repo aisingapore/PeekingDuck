@@ -60,7 +60,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 ```
 
 You should see a video of a person waving his hand with
-[bounding boxes overlaid]((https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif)).
+[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif).
 
 The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
 
