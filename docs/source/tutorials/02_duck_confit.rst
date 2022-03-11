@@ -24,20 +24,20 @@ First, create a PeekingDuck project as shown below:
     | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, download this `demo video
-<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ and save it into the
-created ``pkd_project`` folder.
+Then, download this demo `cat and computer 
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ video and
+save it into the created ``pkd_project`` folder.
 
 The folder should contain the following:
 
 .. parsed-literal::
 
    \ :blue:`pkd_project/` \ |Blank|
+   ├── cat_and_computer.mp4
    ├── pipeline_config.yml
-   ├── \ :blue:`src/` \ |Blank|
-   └── cat_and_computer.mp4
+   └── \ :blue:`src/` \ |Blank|
 
-To perform object detection on the ``demo video.mp4`` file.  edit the
+To perform object detection on the ``cat_and_computer.mp4`` file.  edit the
 ``pipeline_config.yml`` file as follows:
 
 .. code-block:: yaml
