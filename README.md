@@ -22,6 +22,8 @@
   <a href="#communities">Communities</a>
 </h4>
 
+---
+
 **PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. The name "PeekingDuck" is a play on: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
 
