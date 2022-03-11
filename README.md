@@ -1,4 +1,4 @@
-![PeekingDuck Logo](docs/source/assets/peekingduck.svg)
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/peekingduck.svg">
 
 ---
 
