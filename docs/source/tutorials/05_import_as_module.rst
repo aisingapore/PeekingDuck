@@ -121,7 +121,7 @@ Line 18: Increment the frame number each time ``run()`` is called.
 Creating the Python Script
 --------------------------
 
-Change the content of ``demo_debug.py`` to:
+Copy over the following code to ``demo_debug.py``:
 
 .. container:: toggle
 
@@ -156,7 +156,7 @@ Change the content of ``demo_debug.py`` to:
           bbox_node = bbox.Node(**bbox_config)
   
           fps_node = fps.Node()
-          legend_node = legend.Node()
+          legend_node = legend.Node(show=["fps"])
           screen_node = screen.Node()
   
           media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
