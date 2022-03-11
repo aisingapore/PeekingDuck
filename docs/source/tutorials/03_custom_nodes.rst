@@ -51,6 +51,10 @@ It is a decimal number that ranges from 0.0 to 1.0 (or 100%).
 This number is internal and not readily viewable.
 
 We will create a custom node to retrieve this score and display it on screen.
+This tutorial will use the `cat_and_computer.mp4  
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ video from
+the earlier :ref:`object detection tutorial <tutorial_configure_nodes>`.
+Copy it into the ``custom_project`` folder.
 
 Use the following command to create a custom node: ``peekingduck create-node`` |br|
 It will prompt you to answer several questions.
@@ -79,11 +83,12 @@ The entire interaction is shown here, the answers you type are in shown in
    | Proceed? [Y/n]: \ :green:`⏎` \
    | Created node!
 
-This will update the ``custom_project`` folder structure to this:
+The ``custom_project`` folder structure should look like this:
 
 .. parsed-literal::
 
    \ :blue:`custom_project/` \ |Blank|
+   ├── cat_and_computer.mp4
    ├── pipeline_config.yml
    └── \ :blue:`src/` \ |Blank|
        └── \ :blue:`custom_nodes/` \ |Blank|
@@ -104,14 +109,20 @@ implement our custom node function.
       :linenos:
 
       # Mandatory configs
-      input: ["in1", "in2"]             # replace values
-      output: ["out1", "out2", "out3"]  # replace values
+      # Receive bounding boxes and their respective labels as input. Replace with
+      # other data types as required. List of built-in data types for PeekingDuck can
+      # be found at https://peekingduck.readthedocs.io/en/stable/glossary.html.
+      input: ["bboxes", "bbox_labels"]
+      # Example:
+      # Output `obj_attrs` for visualization with `draw.tag` node and `custom_key` for
+      # use with other custom nodes. Replace as required.
+      output: ["obj_attrs", "custom_key"]
 
       # Optional configs depending on node
-      threshold: 0.5                    # example
+      threshold: 0.5 # example
 
    The first file ``score.yml`` defines the properties of the custom node. |br|
-   Lines 2 - 3 show the mandatory configs ``input`` and ``output``.
+   Lines 5 and 9 show the mandatory configs ``input`` and ``output``.
 
    ``input`` specifies the data types the node would consume, to be read from the pipeline. |br|
    ``output`` specifies the data types the node would produce, to be put into the pipeline.
@@ -124,7 +135,7 @@ implement our custom node function.
    Our custom node only displays the score on screen and does not produce any
    outputs for the pipeline, so the output is ``none``.
 
-   There are also no optional configs, so lines 5 - 6 can be removed.
+   There are also no optional configs, so lines 11 - 12 can be removed.
 
    ``score.yml`` updated content:
 
@@ -365,7 +376,7 @@ following folder structure:
 To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 ``pipeline_config.yml`` are to be edited as follows:
 
-#. **src/custom_nodes/configs/dabble/wave.yml**:
+1. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -380,7 +391,7 @@ We will implement this tutorial using a ``dabble`` node, which will take the
 inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, and ``keypoint_scores`` 
 from the pipeline. The node has no output.
 
-#. **src/custom_nodes/dabble/wave.py**:
+2. **src/custom_nodes/dabble/wave.py**:
 
    The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure
    in the other custom node tutorial.
@@ -597,7 +608,7 @@ from the pipeline. The node has no output.
    The heuristic also waits until the right wrist has been lifted above the right 
    should before it starts tracking hand direction and counting waves.
 
-#. **pipeline_config.yml**:
+3. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -610,7 +621,8 @@ from the pipeline. The node has no output.
       - dabble.fps
       - custom_nodes.dabble.wave
       - draw.poses
-      - draw.legend
+      - draw.legend:
+          show: ["fps"]
       - output.screen
 
    We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
@@ -623,6 +635,11 @@ Execute ``peekingduck run`` to see your custom node in action.
       :alt: Custom node screenshot - count hand waves
 
       Custom Node Counting Hand Waves
+
+.. note::
+
+   Royalty free video of man waving from:
+   https://www.youtube.com/watch?v=IKj_z2hgYUM
 
 
 .. _tutorial_debugging:
