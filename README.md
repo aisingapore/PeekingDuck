@@ -107,7 +107,7 @@ Gallery
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/multiple_object_tracking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/vehicles_tracking.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/multiple_object_tracking.gif">
       </a>
     </td>
   </tr>
