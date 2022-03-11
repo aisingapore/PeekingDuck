@@ -31,7 +31,7 @@ folder:
       | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
       | Creating new custom node...
       | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
-      | Select node type (input, model, draw, dabble, output): \ :green:`output` \
+      | Select node type (input, augment, model, draw, dabble, output): \ :green:`output` \
       | Enter node name [my_custom_node]: \ :green:`sqlite` \
       |
       | Node directory:	/user/custom_project/src/custom_nodes
@@ -322,6 +322,7 @@ The sample screenshot below shows:
    * the cumulative minimum number of cars was 1
 
    .. figure:: /assets/tutorials/ss_highway_cars.png
+      :width: 394
       :alt: PeekingDuck screenshot - counting cars
 
       Counting Cars on a Highway
@@ -391,6 +392,7 @@ cumulative maximum, minimum and average relating to the number of persons tracke
 Do a ``peekingduck run`` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_1.png
+      :width: 394
       :alt: PeekingDuck screenshot - people walking
 
       People Walking
@@ -416,7 +418,7 @@ Start by creating a custom node ``dabble.filter_bbox``:
       | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck create-node` \
       | Creating new custom node...
       | Enter node directory relative to ~user/people_walking [src/custom_nodes]: \ :green:`⏎` \
-      | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+      | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
       | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
       |
       | Node directory:	/user/people_walking/src/custom_nodes
@@ -566,6 +568,7 @@ The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
 Do a ``peekingduck run`` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_2.png
+      :width: 394
       :alt: PeekingDuck screenshot - count people walking in a zone
 
       Count People Walking in a Zone

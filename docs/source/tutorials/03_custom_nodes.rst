@@ -66,7 +66,7 @@ The entire interaction is shown here, the answers you type are in shown in
    | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`draw` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`draw` \
    | Enter node name [my_custom_node]: \ :green:`score` \
    | 
    | Node directory:	~user/custom_project/src/custom_nodes
@@ -113,8 +113,8 @@ implement our custom node function.
    The first file ``score.yml`` defines the properties of the custom node. |br|
    Lines 2 - 3 show the mandatory configs ``input`` and ``output``.
 
-   ``input`` defines the data the node would consume, to be read from the pipeline. |br|
-   ``output`` defines the data the node would produce, to be put into the pipeline.
+   ``input`` specifies the data types the node would consume, to be read from the pipeline. |br|
+   ``output`` specifies the data types the node would produce, to be put into the pipeline.
 
    To display the bounding box confidence score, our node requires three pieces
    of input data: the bounding box, the score to display, and the image to draw on.
@@ -292,6 +292,7 @@ implement our custom node function.
 Execute ``peekingduck run`` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_1.png
+      :width: 416
       :alt: Custom node screenshot - show object detection scores
 
       Custom Node Showing Object Detection Scores
@@ -331,7 +332,7 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
    | Enter node name [my_custom_node]: \ :green:`wave` \
    | 
    | Node directory:	~user/wave_project/src/custom_nodes
@@ -618,6 +619,7 @@ from the pipeline. The node has no output.
 Execute ``peekingduck run`` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_2.png
+      :width: 389
       :alt: Custom node screenshot - count hand waves
 
       Custom Node Counting Hand Waves
@@ -640,7 +642,7 @@ Continuing from the above tutorial, create a new ``dabble.debug`` custom node:
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
    | Enter node name [my_custom_node]: \ :green:`debug` \
    | 
    | Node directory:	~user/wave_project/src/custom_nodes
@@ -782,3 +784,23 @@ A sample debug output is shown below:
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  bbox 0: 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| label=Person, score=0.91 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| coords=[0.40047657 0.21553655 0.85199741 1.02150181] 
+
+
+Other Recipes to Make Custom Nodes
+----------------------------------
+
+aru oyim de de de dei
+
+CLI Recipe
+==========
+
+aru oyim de de de dei
+
+
+``pipeline_config.yml`` Recipe
+==============================
+
+aru oyim de de de dei
+
+
+
