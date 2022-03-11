@@ -322,6 +322,7 @@ The sample screenshot below shows:
    * the cumulative minimum number of cars was 1
 
    .. figure:: /assets/tutorials/ss_highway_cars.png
+      :width: 394
       :alt: PeekingDuck screenshot - counting cars
 
       Counting Cars on a Highway
@@ -391,6 +392,7 @@ cumulative maximum, minimum and average relating to the number of persons tracke
 Do a ``peekingduck run`` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_1.png
+      :width: 394
       :alt: PeekingDuck screenshot - people walking
 
       People Walking
@@ -566,6 +568,7 @@ The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
 Do a ``peekingduck run`` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_2.png
+      :width: 394
       :alt: PeekingDuck screenshot - count people walking in a zone
 
       Count People Walking in a Zone

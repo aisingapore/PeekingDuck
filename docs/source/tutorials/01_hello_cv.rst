@@ -63,7 +63,8 @@ To perform pose estimation with PeekingDuck, initialize the PeekingDuck project 
 
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, modify the ``pipeline_config.yml`` as follows:
+Then, modify the ``pipeline_config.yml``, created by ``peekingduck init`` in the
+``pkd_project`` folder, as follows:
 
 .. code-block:: yaml
    :linenos:
@@ -85,6 +86,12 @@ Now, run the pipeline using
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
 
 You should see the same video with skeletal poses drawn on it and which track the hand movement.
+
+   .. figure:: /assets/tutorials/ss_pose_estimation.png
+      :width: 389
+      :alt: Pose Estimation Screenshot
+
+      PeekingDuck's Pose Estimation Screenshot
 
 The above **pose estimation pipeline** comprises four nodes that do the following:
 
