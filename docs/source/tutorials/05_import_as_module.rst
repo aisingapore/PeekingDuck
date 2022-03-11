@@ -335,9 +335,9 @@ Importing the Modules
 
 Line 9 - 10: You can also do::
 
-    from peekingduck.pipeline.nodes.input import live as pkd_live
+    from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
 
-    live_node = pkd_live.Node()
+    bbox_node = pkd_bbox.Node()
 
 to avoid potential name conflicts.
 
@@ -493,5 +493,5 @@ inference loop without having to use PeekingDuck's `runner.py <https://github.co
 
 Line 36 - 37: We plot the data for debugging and visualization purposes.
 
-Line 41 - 47: We integrate the inference loop external processes such as the license plate parser
-we have created earlier.
+Line 41 - 47: We integrate the inference loop with external processes such as the license plate
+parser we have created earlier.
