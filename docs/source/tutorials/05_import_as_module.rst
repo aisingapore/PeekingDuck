@@ -185,7 +185,9 @@ Line 9, 13: Import and initialize the ``debug`` custom node. Pass in the
 the custom node to be loaded properly.
 
 Line 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
-:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial.
+:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial. To change the node
+configuration, you can pass the new values to the `Node()` constructor as keyword arguments.
+
 
 Line 31 - 42: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
