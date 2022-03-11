@@ -230,7 +230,7 @@ def nodes(type_name: str = None) -> None:
     config_dir = Path(__file__).resolve().parent / "configs"
 
     if type_name is None:
-        node_types = ["input", "augment", "model", "dabble", "draw", "output"]
+        node_types = PEEKINGDUCK_NODE_TYPES
     else:
         node_types = [type_name]
 
