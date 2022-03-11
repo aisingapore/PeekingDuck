@@ -24,8 +24,8 @@ First, create a PeekingDuck project as shown below:
     | \ :blue:`[~user]` \ > \ :green:`cd object_detection` \
     | \ :blue:`[~user/object_detection]` \ > \ :green:`peekingduck init` \
 
-Then, download this demo `cat and computer 
-<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ video and
+Then, download this demo video `cat and computer 
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ and
 save it into the newly created ``object_detection`` folder.
 
 The folder should contain the following:
@@ -149,4 +149,13 @@ The following figure shows the difference between the original vs the brightened
       :alt: augment.brightness screenshot - original vs brightened image
 
       Augment Brightness: Original vs Brightened Image
+
+
+.. note::
+
+   Royalty free video of cat and computer from:
+   https://www.youtube.com/watch?v=-C1TEGZavko
+
+   Royalty free video of man waving from:
+   https://www.youtube.com/watch?v=IKj_z2hgYUM
 
