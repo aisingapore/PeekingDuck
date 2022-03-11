@@ -672,7 +672,7 @@ Continuing from the above tutorial, create a new ``dabble.debug`` custom node:
    | Proceed? [Y/n]: \ :green:`⏎` \
    | Created node!
 
-Updated folder structure:
+The updated folder structure is:
 
 .. parsed-literal::
 
@@ -687,10 +687,11 @@ Updated folder structure:
    │       └── \ :blue:`dabble` \ |Blank|
    │           ├── debug.py
    │           └── wave.py
-   ├── wave.db
    └── wave.mp4
 
-Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follows:
+Then, make the following **three** changes:
+
+1. Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follows:
 
    .. code-block:: yaml
       :linenos:
@@ -701,7 +702,7 @@ Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follow
 
       # No optional configs
 
-Update ``debug.py`` as shown below:
+2. Update ``debug.py`` as shown below:
 
    .. container:: toggle
 
@@ -757,12 +758,12 @@ Update ``debug.py`` as shown below:
 
                return {}  # no outputs
 
-The custom node code shows how to see what is available in PeekingDuck's pipeline 
-data pool by printing the input dictionary keys.
-It also demonstrates how to debug a specific data object, such as ``bboxes``, by
-printing relevant information for each item within the data.
+   The custom node code shows how to see what is available in PeekingDuck's pipeline 
+   data pool by printing the input dictionary keys.
+   It also demonstrates how to debug a specific data object, such as ``bboxes``, by
+   printing relevant information for each item within the data.
 
-Update **pipeline_config.yml** and call ``peekingduck run``:
+3. Update **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -776,10 +777,11 @@ Update **pipeline_config.yml** and call ``peekingduck run``:
       - custom_nodes.dabble.wave
       - custom_nodes.dabble.debug
       - draw.poses
-      - draw.legend
+      - draw.legend:
+          show: ["fps"]
       - output.screen
 
-A sample debug output is shown below:
+Now, do a ``peekingduck run`` and you should see a sample debug output like the one below:
 
 .. admonition:: Terminal Session
 
