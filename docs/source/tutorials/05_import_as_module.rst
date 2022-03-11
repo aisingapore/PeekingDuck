@@ -294,7 +294,8 @@ Run the following command after installing:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
-You should have the following directory structure at this point:
+Copy ``demo_import_peekingduck.ipynb`` to the ``pkd_project`` folder and you should have the
+following directory structure at this point:
 
 .. parsed-literal::
 
