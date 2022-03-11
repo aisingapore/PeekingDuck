@@ -61,8 +61,6 @@ contains information on how other PeekingDuck nodes may interact with it.
 PeekingDuck has 6 types of nodes:
 
 .. image:: /assets/diagrams/node_types.drawio.svg
-   :class: no-scaled-link
-   :width: 70%
 
 A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used
 in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one

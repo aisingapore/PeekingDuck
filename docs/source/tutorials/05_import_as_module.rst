@@ -121,7 +121,7 @@ Line 18: Increment the frame number each time ``run()`` is called.
 Creating the Python Script
 --------------------------
 
-Change the content of ``demo_debug.py`` to:
+Copy over the following code to ``demo_debug.py``:
 
 .. container:: toggle
 
@@ -156,7 +156,7 @@ Change the content of ``demo_debug.py`` to:
           bbox_node = bbox.Node(**bbox_config)
   
           fps_node = fps.Node()
-          legend_node = legend.Node()
+          legend_node = legend.Node(show=["fps"])
           screen_node = screen.Node()
   
           media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
@@ -185,7 +185,9 @@ Line 9, 13: Import and initialize the ``debug`` custom node. Pass in the
 the custom node to be loaded properly.
 
 Line 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
-:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial.
+:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial. To change the node
+configuration, you can pass the new values to the `Node()` constructor as keyword arguments.
+
 
 Line 31 - 42: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
@@ -292,7 +294,8 @@ Run the following command after installing:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
-You should have the following directory structure at this point:
+Copy ``demo_import_peekingduck.ipynb`` to the ``pkd_project`` folder and you should have the
+following directory structure at this point:
 
 .. parsed-literal::
 
@@ -333,9 +336,9 @@ Importing the Modules
 
 Line 9 - 10: You can also do::
 
-    from peekingduck.pipeline.nodes.input import live as pkd_live
+    from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
 
-    live_node = pkd_live.Node()
+    bbox_node = pkd_bbox.Node()
 
 to avoid potential name conflicts.
 
@@ -491,5 +494,5 @@ inference loop without having to use PeekingDuck's `runner.py <https://github.co
 
 Line 36 - 37: We plot the data for debugging and visualization purposes.
 
-Line 41 - 47: We integrate the inference loop external processes such as the license plate parser
-we have created earlier.
+Line 41 - 47: We integrate the inference loop with external processes such as the license plate
+parser we have created earlier.
