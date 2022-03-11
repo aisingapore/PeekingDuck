@@ -23,24 +23,30 @@ This tutorial demonstrates how to save data to an SQLite database.
 We will extend the tutorial for :ref:`counting hand waves<tutorial_count_hand_wave>`
 with a new custom ``output`` node that writes information into a local sqlite database.
 
+   .. note::
+
+      The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
+      If your system does not have ``sqlite3``, please see the `SQLite Home Page 
+      <http://www.sqlite.org/>`_ for installation instructions.
+
 First, create a new custom ``output.sqlite`` node in the ``custom_project``
 folder:
 
    .. admonition:: Terminal Session
 
-      | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
+      | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \
       | Creating new custom node...
-      | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
+      | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
       | Select node type (input, augment, model, draw, dabble, output): \ :green:`output` \
       | Enter node name [my_custom_node]: \ :green:`sqlite` \
       |
-      | Node directory:	/user/custom_project/src/custom_nodes
+      | Node directory:	/user/wave_project/src/custom_nodes
       | Node type:	output
       | Node name:	sqlite
       |
       | Creating the following files:
-      |    Config file: ~user/custom_project/src/custom_nodes/configs/output/sqlite.yml
-      |    Script file: ~user/custom_project/src/custom_nodes/output/sqlite.py
+      |    Config file: ~user/wave_project/src/custom_nodes/configs/output/sqlite.yml
+      |    Script file: ~user/wave_project/src/custom_nodes/output/sqlite.py
       | Proceed? [Y/n]: \ :green:`⏎` \
       | Created node!
 
@@ -48,7 +54,7 @@ The updated folder structure would be:
 
    .. parsed-literal::
 
-      \ :blue:`custom_project/` \ |Blank|
+      \ :blue:`wave_project/` \ |Blank|
       ├── pipeline_config.yml
       ├── \ :blue:`src/` \ |Blank|
       │   └── \ :blue:`custom_nodes/` \ |Blank|
@@ -64,7 +70,7 @@ The updated folder structure would be:
       └── wave.mp4
 
 
-Edit the following **5 files** as described below:
+Edit the following **five files** as described below:
 
 #. **src/custom_nodes/configs/output/sqlite.yml**:
 
@@ -210,13 +216,13 @@ Edit the following **5 files** as described below:
 #. **pipeline_config.yml**:
 
    .. code-block:: yaml
-      :lineno-start: 10
+      :lineno-start: 11
 
       ... same as previous ...
       - custom_nodes.output.sqlite
 
    Likewise, the pipeline is the same as in the previous tutorial, except for 
-   line 11 that has been added to call the new custom node.
+   line 12 that has been added to call the new custom node.
    
 Run this project with ``peekingduck run`` and when completed, a new ``wave.db`` 
 sqlite database file would be created in the current folder.
@@ -224,7 +230,7 @@ Examine the created database as follows:
 
    .. admonition:: Terminal Session
 
-      | \ :blue:`[~user/custom_project]` \ > \ :green:`sqlite3` \
+      | \ :blue:`[~user/wave_project]` \ > \ :green:`sqlite3` \
       | SQLite version 3.37.0 2021-11-27 14:13:22
       | Enter ".help" for usage hints.
       | Connected to a transient in-memory database.
@@ -251,12 +257,6 @@ Examine the created database as follows:
 
 Type ``CTRL-D`` to exit from ``sqlite3``.
 
-
-   .. note::
-
-      The above tutorial assumes ``sqlite3`` has been installed in your system. |br|
-      If your system does not have ``sqlite3``, please see the `SQLite Home Page 
-      <http://www.sqlite.org/>`_ for installation instructions.
 
 
 
