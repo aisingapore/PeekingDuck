@@ -1,6 +1,6 @@
 <br />
 
-![PeekingDuck Logo](docs/source/assets/peekingduck.drawio.svg)
+![PeekingDuck Logo](docs/source/assets/peekingduck.svg)
 
 ---
 
