@@ -1,3 +1,5 @@
+<br />
+
 ![Logo](docs/source/assets/peekingduck.svg)
 
 ---
