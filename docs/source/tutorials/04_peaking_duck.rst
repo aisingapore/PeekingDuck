@@ -31,7 +31,7 @@ folder:
       | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \
       | Creating new custom node...
       | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
-      | Select node type (input, model, draw, dabble, output): \ :green:`output` \
+      | Select node type (input, augment, model, draw, dabble, output): \ :green:`output` \
       | Enter node name [my_custom_node]: \ :green:`sqlite` \
       |
       | Node directory:	/user/custom_project/src/custom_nodes
@@ -418,7 +418,7 @@ Start by creating a custom node ``dabble.filter_bbox``:
       | \ :blue:`[~user/people_walking]` \ > \ :green:`peekingduck create-node` \
       | Creating new custom node...
       | Enter node directory relative to ~user/people_walking [src/custom_nodes]: \ :green:`⏎` \
-      | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+      | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
       | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
       |
       | Node directory:	/user/people_walking/src/custom_nodes

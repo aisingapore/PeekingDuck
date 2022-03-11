@@ -66,7 +66,7 @@ The entire interaction is shown here, the answers you type are in shown in
    | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/custom_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`draw` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`draw` \
    | Enter node name [my_custom_node]: \ :green:`score` \
    | 
    | Node directory:	~user/custom_project/src/custom_nodes
@@ -332,7 +332,7 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
    | Enter node name [my_custom_node]: \ :green:`wave` \
    | 
    | Node directory:	~user/wave_project/src/custom_nodes
@@ -642,7 +642,7 @@ Continuing from the above tutorial, create a new ``dabble.debug`` custom node:
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node` \ 
    | Creating new custom node...
    | Enter node directory relative to ~user/wave_project [src/custom_nodes]: \ :green:`⏎` \
-   | Select node type (input, model, draw, dabble, output): \ :green:`dabble` \
+   | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
    | Enter node name [my_custom_node]: \ :green:`debug` \
    | 
    | Node directory:	~user/wave_project/src/custom_nodes
