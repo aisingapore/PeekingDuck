@@ -83,20 +83,3 @@ macOS Monterey.
 
 
 
-Development Version
-===================
-
-You can try out the development version of PeekingDuck direct from the
-`PeekingDuck Github repository <https://github.com/aimakerspace/PeekingDuck>`_:
-
-    .. admonition:: Terminal Session
-
-        | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aimakerspace/PeekingDuck.git` \
-
-| This will clone a copy of PeekingDuck development version into the folder ``PeekingDuck``.
-| Test it with the following commands:
-
-    .. admonition:: Terminal Session
-
-        | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
-        | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python __main__.py` \
