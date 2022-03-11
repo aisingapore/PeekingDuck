@@ -1,4 +1,4 @@
-![Logo](docs/source/assets/peekingduck2.svg)
+![Logo](docs/source/assets/peekingduck.svg)
 
 ---
 
