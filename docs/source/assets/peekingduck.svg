@@ -2,12 +2,12 @@
 <svg
    width="1909.1792"
    zoomAndPan="magnify"
-   viewBox="0 0 1431.8844 494.48003"
-   height="659.3067"
+   viewBox="0 0 1431.8844 359.48005"
+   height="479.30673"
    preserveAspectRatio="xMidYMid meet"
    version="1.0"
    id="svg5208"
-   sodipodi:docname="peekingduck2.svg"
+   sodipodi:docname="peekingduck.svg"
    inkscape:version="1.1.2 (1:1.1+202202050950+0a00cf5339)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
@@ -25,11 +25,11 @@
      showgrid="false"
      fit-margin-left="90"
      fit-margin-right="90"
-     fit-margin-top="90"
-     fit-margin-bottom="90"
+     fit-margin-top="0"
+     fit-margin-bottom="0"
      inkscape:zoom="0.7115"
      inkscape:cx="995.08082"
-     inkscape:cy="330.28812"
+     inkscape:cy="240.33732"
      inkscape:window-width="1916"
      inkscape:window-height="1036"
      inkscape:window-x="0"
@@ -56,7 +56,7 @@
   <g
      clip-path="url(#id3)"
      id="g4778"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="matrix(0.684726,0,0,0.684726,70.280832,166.43639)"
        id="g4776">
@@ -77,7 +77,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4786"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(480.1754,356.35424)"
        id="g4784">
@@ -93,7 +93,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4794"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(575.11454,356.35424)"
        id="g4792">
@@ -109,7 +109,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4802"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(650.1403,356.35424)"
        id="g4800">
@@ -125,7 +125,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4810"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(725.16605,356.35424)"
        id="g4808">
@@ -141,7 +141,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4818"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(806.50239,356.35424)"
        id="g4816">
@@ -157,7 +157,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4826"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(845.90844,356.35424)"
        id="g4824">
@@ -173,7 +173,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4834"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(930.75063,356.35424)"
        id="g4832">
@@ -189,7 +189,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4842"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(1018.9585,356.35424)"
        id="g4840">
@@ -205,7 +205,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4850"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(1127.3601,356.35424)"
        id="g4848">
@@ -221,7 +221,7 @@
      fill="#8ac2c8"
      fill-opacity="1"
      id="g4864"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(1211.5012,356.35424)"
        id="g4856">
@@ -247,7 +247,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4872"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(490.28113,441.3411)"
        id="g4870">
@@ -263,7 +263,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4880"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(509.60988,441.3411)"
        id="g4878">
@@ -279,7 +279,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4888"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(529.37379,441.3411)"
        id="g4886">
@@ -295,7 +295,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4896"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(559.69055,441.3411)"
        id="g4894">
@@ -311,7 +311,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4904"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(574.95772,441.3411)"
        id="g4902">
@@ -327,7 +327,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4912"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(592.18315,441.3411)"
        id="g4910">
@@ -343,7 +343,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4920"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(611.94706,441.3411)"
        id="g4918">
@@ -359,7 +359,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4928"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(632.72637,441.3411)"
        id="g4926">
@@ -375,7 +375,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g4934"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(651.80127,441.3411)"
        id="g4932">
@@ -387,7 +387,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5028"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(868.76916,441.3411)"
        id="g5026">
@@ -399,7 +399,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5036"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(877.9077,441.3411)"
        id="g5034">
@@ -415,7 +415,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5042"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(885.88581,441.3411)"
        id="g5040">
@@ -427,7 +427,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5050"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(895.02437,441.3411)"
        id="g5048">
@@ -443,7 +443,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5058"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(915.07839,441.3411)"
        id="g5056">
@@ -459,7 +459,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5066"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(923.129,441.3411)"
        id="g5064">
@@ -475,7 +475,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5074"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(942.20391,441.3411)"
        id="g5072">
@@ -491,7 +491,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5082"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(960.77111,441.3411)"
        id="g5080">
@@ -507,7 +507,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5090"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(968.82172,441.3411)"
        id="g5088">
@@ -523,7 +523,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5098"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(989.60103,441.3411)"
        id="g5096">
@@ -539,7 +539,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5106"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(997.65164,441.3411)"
        id="g5104">
@@ -555,7 +555,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5112"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(1016.7265,441.3411)"
        id="g5110">
@@ -567,7 +567,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5120"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1025.8651,441.3411)"
        id="g5118">
@@ -583,7 +583,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5126"
-     transform="translate(-2.78125,-98.9375)">
+     transform="translate(-2.7812497,-166.4375)">
     <g
        transform="translate(1033.8432,441.3411)"
        id="g5124">
@@ -595,7 +595,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5134"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1042.9818,441.3411)"
        id="g5132">
@@ -611,7 +611,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5142"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1063.9787,441.3411)"
        id="g5140">
@@ -627,7 +627,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5150"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1082.5459,441.3411)"
        id="g5148">
@@ -643,7 +643,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5158"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1094.4042,441.3411)"
        id="g5156">
@@ -659,7 +659,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5166"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1113.4791,441.3411)"
        id="g5164">
@@ -675,7 +675,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5174"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1133.8233,441.3411)"
        id="g5172">
@@ -691,7 +691,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5182"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1151.1575,441.3411)"
        id="g5180">
@@ -707,7 +707,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5190"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1159.2081,441.3411)"
        id="g5188">
@@ -723,7 +723,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5198"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1179.9874,441.3411)"
        id="g5196">
@@ -739,7 +739,7 @@
      fill="#c9957d"
      fill-opacity="1"
      id="g5206"
-     transform="translate(-219.74832,-98.9375)">
+     transform="translate(-219.74832,-166.4375)">
     <g
        transform="translate(1188.038,441.3411)"
        id="g5204">
