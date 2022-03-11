@@ -167,26 +167,17 @@ You will see a comprehensive list of all PeekingDuck's nodes with links to their
 
 PeekingDuck supports 6 types of nodes:
 
-+-----------+-----------------------------------------------------------------+
-| Node Type | Node Description                                                |
-+===========+=================================================================+
-| Input     | Reads a video file from disk or captures images from the webcam |
-+-----------+-----------------------------------------------------------------+
-| Model     | CV model does the "heaving lifting" here, like object detection |
-+-----------+-----------------------------------------------------------------+
-| Dabble    | Does the "smaller" computations, like counting number of bboxes |
-+-----------+-----------------------------------------------------------------+
-| Draw      | Draws things/text onto an image, like bboxes or FPS             |
-+-----------+-----------------------------------------------------------------+
-| Output    | Shows an image on screen or saves to a video file on disk       |
-+-----------+-----------------------------------------------------------------+
-| Augment   | Applies effects onto an image                                   |
-+-----------+-----------------------------------------------------------------+
+.. image:: /assets/diagrams/node_types.drawio.svg
+   :class: no-scaled-link
+   :width: 60%
 
 A PeekingDuck pipeline is created by stringing together a series of nodes that 
 perform a logical sequence of operations.
 Each node has its own set of configurable settings that can be modified to
 change its behavior.
+An example pipeline is shown below:
+
+.. image:: /assets/diagrams/yolo_demo.drawio.svg
 
 
 .. _tutorial_coordinate_systems:
