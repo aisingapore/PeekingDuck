@@ -76,8 +76,13 @@ Then, modify the ``pipeline_config.yml``, created by ``peekingduck init`` in the
    - draw.poses         # draw skeletal poses
    - output.screen
 
-The important changes are to the second node ``model`` and the third node ``draw``
-(Lines 4-5).
+The required changes are:
+
+   1. Lines 2-3 ``input.recorded`` to use the ``wave.mp4`` video from 
+      :ref:`verify your installation <verify_installation>`,
+
+   2. Lines 4-5 change model to ``model.posenet`` and ``draw.poses`` to show the 
+      human skeletal poses.
 
 Now, run the pipeline using
 
