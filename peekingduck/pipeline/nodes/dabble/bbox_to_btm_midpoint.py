@@ -31,12 +31,12 @@ class Node(AbstractNode):
     located.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |btm_midpoint|
+        |btm_midpoint_data|
 
     Configs:
         None.

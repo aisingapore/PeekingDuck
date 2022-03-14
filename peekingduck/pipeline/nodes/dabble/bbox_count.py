@@ -25,10 +25,10 @@ class Node(AbstractNode):
     """Counts total number of detected objects.
 
     Inputs:
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |count|
+        |count_data|
 
     Configs:
         None.

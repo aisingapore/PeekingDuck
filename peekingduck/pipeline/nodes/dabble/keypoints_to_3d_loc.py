@@ -34,10 +34,10 @@ class Node(AbstractNode):
     """Uses pose keypoint information of torso to estimate 3D location.
 
     Inputs:
-        |keypoints|
+        |keypoints_data|
 
     Outputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Configs:
         focal_length (:obj:`float`): **default = 1.14**. |br|

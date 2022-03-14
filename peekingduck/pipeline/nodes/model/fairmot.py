@@ -31,16 +31,16 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     re-identification tasks in an object tracker.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|

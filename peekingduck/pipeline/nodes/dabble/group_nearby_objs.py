@@ -27,27 +27,27 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Groups objects that are near each other.
 
-    It does so by comparing the 3D locations of all objects, and assigning objects near each other
-    to the same group. The group associated with each object is accessed by the ``groups`` key of
-    ``obj_attrs``.
+    It does so by comparing the 3D locations of all objects, and assigning
+    objects near each other to the same group. The group associated with each
+    object is accessed by the ``groups`` key of :term:`obj_attrs`.
 
     Inputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Outputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         obj_dist_threshold (:obj:`float`): **default = 1.5**. |br|
             Threshold of distance, in metres, between two objects. Objects with
-            distance less than ``obj_dist_threshold`` would be assigned to the same
-            group.
+            distance less than ``obj_dist_threshold`` would be assigned to the
+            same group.
 
-    .. versionchanged:: 1.2.0 |br|
-        :mod:`draw.group_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
-        data type, which has been deprecated and now subsumed under ``obj_attrs``
-        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of
-        ``obj_attrs``.
+    .. versionchanged:: 1.2.0
+        :mod:`draw.group_nearby_objs` used to return ``obj_tags``
+        (:obj:`List[str]`) as an output data type, which has been deprecated
+        and now subsumed under :term:`obj_attrs`. The same attribute is
+        accessed by the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

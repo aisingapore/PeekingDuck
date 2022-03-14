@@ -33,12 +33,12 @@ class Node(AbstractNode):
     accurate if the number of people are low (e.g. less than 10)
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |density_map|
+        |density_map_data|
 
-        |count|
+        |count_data|
 
     Configs:
         model_type (:obj:`str`): **{"dense", "sparse"}, default="sparse"**. |br|
