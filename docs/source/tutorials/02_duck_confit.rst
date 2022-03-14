@@ -16,7 +16,10 @@ More Object Detection
 This section will demonstrate how to change the settings of PeekingDuck's nodes 
 to vary their functionalities.
 
-First, create a PeekingDuck project as shown below:
+If you had completed the earlier :ref:`object detection
+tutorial<tutorial_object_detection>`, you will have the necessary folder and can skip to
+the next step.
+Otherwise, create a new PeekingDuck project as shown below:
 
 .. admonition:: Terminal Session
 
@@ -24,9 +27,9 @@ First, create a PeekingDuck project as shown below:
     | \ :blue:`[~user]` \ > \ :green:`cd object_detection` \
     | \ :blue:`[~user/object_detection]` \ > \ :green:`peekingduck init` \
 
-Then, download this demo video `cat and computer 
+Next, download this demo video `cat_and_computer.mp4 
 <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ and
-save it into the newly created ``object_detection`` folder.
+save it into the ``object_detection`` folder.
 
 The folder should contain the following:
 
@@ -60,15 +63,22 @@ Here is a step-by-step explanation of what has been done:
    |        So we have to change the model settings to detect the other object classes.
    | Line 6 ``draw.bbox``: reconfigure this node to display the detected object class label.
 
-.. note::
-
-   The Yolo model can detect 80 different :ref:`object classes
-   <general-object-detection-ids>`.
-
 Run the above with the command :greenbox:`peekingduck run`. |br|
+
+   .. figure:: /assets/tutorials/ss_cat_computer.png
+      :width: 416
+      :alt: Cat and Computer Screenshot
+
+      Cat and Computer Screenshot
+
 You should see a display of the ``cat_and_computer.mp4`` with the various objects being
 highlighted by PeekingDuck in bounding boxes. |br|
 The 30-second video will auto-close at the end, or you can press :greenbox:`q` to end early.
+
+    .. note::
+
+       The Yolo model can detect 80 different :ref:`object classes
+       <general-object-detection-ids>`.
 
 
 .. _tutorial_media_writer:
@@ -113,10 +123,10 @@ You will see the same video being played, but now it has the FPS counter.
 When the video ends, an ``mp4`` video file will be created and saved in the
 specified folder.
 
-.. note::
+    .. note::
 
-   You can view all the available nodes and their respective configurable
-   settings in PeekingDuck's :ref:`API documentation <api_doc>`.
+       You can view all the available nodes and their respective configurable
+       settings in PeekingDuck's :ref:`API documentation <api_doc>`.
 
 
 .. _tutorial_behind_the_scenes:
@@ -171,17 +181,14 @@ within the pipeline:
 
 The following figure shows the difference between the original vs the brightened image:
 
-   .. figure:: /assets/tutorials/augment_brightness.png
-      :alt: augment.brightness screenshot - original vs brightened image
+    .. figure:: /assets/tutorials/augment_brightness.png
+        :alt: augment.brightness screenshot - original vs brightened image
 
-      Augment Brightness: Original vs Brightened Image
+        Augment Brightness: Original vs Brightened Image
 
 
-.. note::
+    .. note::
 
-   Royalty free video of cat and computer from:
-   https://www.youtube.com/watch?v=-C1TEGZavko
-
-   Royalty free video of man waving from:
-   https://www.youtube.com/watch?v=IKj_z2hgYUM
+        | Royalty free video of cat and computer from: https://www.youtube.com/watch?v=-C1TEGZavko
+        | Royalty free video of man waving hand from: https://www.youtube.com/watch?v=IKj_z2hgYUM
 
