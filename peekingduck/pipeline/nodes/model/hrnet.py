@@ -50,8 +50,8 @@ class Node(AbstractNode):
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`):
             **default = { height: 192, width: 256 }**. |br|
             Resolution of input array to HRNet model.

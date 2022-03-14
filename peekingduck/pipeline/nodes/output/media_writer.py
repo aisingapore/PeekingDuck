@@ -48,7 +48,7 @@ class Node(AbstractNode):
         |none_output_data|
 
     Configs:
-        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**. |br|
+        output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
     """
 

@@ -26,9 +26,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Checks if any objects are near each other.
 
-    It does so by comparing the 3D locations of all objects to see which ones are near each other.
-    If the distance between two objects is less than the minimum threshold, both would be flagged
-    as near with ``tag_msg``. These flags can be accessed by the ``flags`` key of ``obj_attrs``.
+    It does so by comparing the 3D locations of all objects to see which ones
+    are near each other. If the distance between two objects is below the
+    minimum threshold, both would be flagged as near with ``tag_msg``. These
+    flags can be accessed by the ``flags`` key of :term:`obj_attrs`.
 
     Inputs:
         |obj_3D_locs_data|
@@ -38,16 +39,16 @@ class Node(AbstractNode):
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
-            Threshold of distance, in metres, between two objects. Objects with distance less than
-            ``near_threshold`` would be considered as 'near'.
+            Threshold of distance, in metres, between two objects. Objects with
+            distance less than ``near_threshold`` would be considered as 'near'.
         tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
 
     .. versionchanged:: 1.2.0 |br|
-        :mod:`draw.check_nearby_objs` used to return ``obj_tags`` (:obj:`List[str]`) as an output
-        data type, which has been deprecated and now subsumed under ``obj_attrs``
-        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``flags`` key of
-        ``obj_attrs``.
+        :mod:`draw.check_nearby_objs` used to return ``obj_tags``
+        (:obj:`List[str]`) as an output data type, which has been deprecated
+        and now subsumed under :term:`obj_attrs`. The same attribute is
+        accessed by the ``flags`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

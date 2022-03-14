@@ -13,52 +13,54 @@
 # limitations under the License.
 
 """
-Draws a tag (from ``obj_attrs``) above each bounding box
+Draws a tag (from :term:`obj_attrs`) above each bounding box
 """
 
 import copy
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags, check_bgr_type
+from peekingduck.pipeline.nodes.draw.utils.bbox import check_bgr_type, draw_tags
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws a tag above each bounding box in the image, using information from selected attributes
-    in ``obj_attrs``. In the general example below, ``obj_attrs`` has 2 attributes (`<attr a>` and
-    `<attr b>`). There are `n` detected bounding boxes, and each attribute has `n` corresponding
-    tags stored in a list. The ``show`` config described subsequently is used to choose the
-    attribute or attributes to be drawn. ::
+    """Draws a tag above each bounding box in the image, using information from
+    selected attributes in :term:`obj_attrs`. In the general example below,
+    :term:`obj_attrs` has 2 attributes (`<attr a>` and `<attr b>`). There are
+    `n` detected bounding boxes, and each attribute has `n` corresponding tags
+    stored in a list. The ``show`` config described subsequently is used to
+    choose the attribute or attributes to be drawn. ::
 
         {"obj_attrs": {<attr a>: [<tag 1>, ..., <tag n>], <attr b>: [<tag 1>, ..., <tag n>]}}
 
     The following type conventions need to be observed:
 
-    * Each attribute must be of type :obj:`List`, e.g. ``<attr a>: [<tag 1>, ..., <tag n>]`` \
+        * Each attribute must be of type :obj:`List`, e.g.,
+          ``<attr a>: [<tag 1>, ..., <tag n>]``
+        * Each tag must be of type :obj:`str`, :obj:`int`, :obj:`float`, or
+          :obj:`bool` to be convertable into :obj:`str` type for drawing
 
-    * Each tag must be of type :obj:`str`, :obj:`int`, :obj:`float` or :obj:`bool` to be \
-    convertable into :obj:`str` type for drawing
-
-    In the example below, ``obj_attrs`` has 3 attributes (`"ids"`, `"gender"` and `"age"`), where
-    the last 2 attributes are nested within `"details"`. There are 2 detected bounding boxes, and
-    thus each attribute consists of a list with 2 tags. ::
+    In the example below, :term:`obj_attrs` has 3 attributes (`"ids"`,
+    `"gender"` and `"age"`), where the last 2 attributes are nested within
+    `"details"`. There are 2 detected bounding boxes, and thus each attribute
+    consists of a list with 2 tags. ::
 
         # Example
         {"obj_attrs": {"ids":[1,2], "details": {"gender": ["female","male"], "age": [52,17]}}
 
-    The table below illustrates how ``show`` can be configured to achieve different outcomes for
-    this example. Key takeaways are:
+    The table below illustrates how ``show`` can be configured to achieve
+    different outcomes for this example. Key takeaways are:
 
-    * To draw nested attributes, include all the keys leading to them (within the ``obj_attrs`` \
-    dictionary), separating each key with a ``->``. \
-
-    * To draw multiple comma-separated attributes above each bounding box, add them to the list \
-    of ``show`` config.
+        * To draw nested attributes, include all the keys leading to them
+          (within the :term:`obj_attrs` dictionary), separating each key with a
+          ``->``.
+        * To draw multiple comma-separated attributes above each bounding box,
+          add them to the list of ``show`` config.
 
     +-----+-----------------------------------------+---------------+---------------+
     | No. | ``show`` config                         | Tag above 1st | Tag above 2nd |
     |     |                                         | bounding box  | bounding box  |
-    +-----+-----------------------------------------+---------------+---------------+
+    +=====+=========================================+===============+===============+
     | 1.  | ["ids"]                                 | "1"           | "2"           |
     +-----+-----------------------------------------+---------------+---------------+
     | 2.  | ["details -> gender"]                   | "female"      | "male"        |
@@ -78,17 +80,18 @@ class Node(AbstractNode):
 
     Configs:
         show (:obj:`List[str]`): **default = []**. |br|
-            List the desired attributes to be drawn. For more details on how to use this config,
-            see the section above.
+            List the desired attributes to be drawn. For more details on how to
+            use this config, see the section above.
         tag_color (:obj:`List[int]`): **default = [77, 103, 255]**. |br|
-            Define the color of the drawn tag, in BGR format. Defined values have to be integers,
-            and 0 <= value <= 255.
+            Define the color of the drawn tag, in BGR format. Defined values
+            have to be integers, and :math:`0 \\leq value \\leq 255`.
 
     .. versionchanged:: 1.2.0 |br|
-        :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input data type,
-        which has been deprecated and now subsumed under ``obj_attrs`` (:obj:`Dict[str, Any]`),
-        giving this node more flexibility. Also, the ``tag_color`` config is added to provide
-        the option of changing the tag's color.
+        :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an
+        input data type, which has been deprecated and now subsumed under
+        :term:`obj_attrs`, giving this node more flexibility. Also, the
+        ``tag_color`` config is added to provide the option of changing the
+        tag's color.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

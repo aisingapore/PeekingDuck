@@ -23,9 +23,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """
-    Checks which groups have exceeded the group size threshold. The group associated with each
-    object is accessed by the ``groups`` key of ``obj_attrs``.
+    """Checks which groups have exceeded the group size threshold. The group
+    associated with each object is accessed by the ``groups`` key of
+    :term:`obj_attrs`.
 
     Inputs:
         |obj_attrs_data|
@@ -38,10 +38,10 @@ class Node(AbstractNode):
             Threshold of group size.
 
     .. versionchanged:: 1.2.0 |br|
-        :mod:`draw.check_large_groups` used to take in ``obj_tags`` (:obj:`List[str]`) as an input
-        data type, which has been deprecated and now subsumed under ``obj_attrs``
-        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of
-        ``obj_attrs``.
+        :mod:`draw.check_large_groups` used to take in ``obj_tags``
+        (:obj:`List[str]`) as an input data type, which has been deprecated and
+        now subsumed under :term:`obj_attrs`. The same attribute is accessed by
+        the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

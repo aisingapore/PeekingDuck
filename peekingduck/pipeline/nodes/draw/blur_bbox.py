@@ -27,8 +27,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Blurs area bounded by bounding boxes on image.
 
-    The ``blur_bbox`` node blurs the areas of the image bounded by the bounding
-    boxes output from an object detection model.
+    The :mod:`draw.blur_bbox` node blurs the areas of the image bounded by the
+    bounding boxes output from an object detection model.
 
     Inputs:
         |img_data|

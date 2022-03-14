@@ -27,9 +27,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Superimposes a heat map over an image.
 
-    The ``draw.heat_map`` node helps to identify areas that are more crowded. Areas
-    that are more crowded are highlighted in red while areas that are less crowded are
-    highlighted in blue.
+    The :mod:`draw.heat_map` node helps to identify areas that are more
+    crowded. Areas that are more crowded are highlighted in red while areas
+    that are less crowded are highlighted in blue.
 
     Inputs:
         |img_data|

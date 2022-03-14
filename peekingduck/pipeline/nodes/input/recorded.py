@@ -53,9 +53,10 @@ class Node(AbstractNode):
             The FPS may increase if this is enabled (system dependent).
         buffer_frames (:obj:`bool`): **default = False**. |br|
             Boolean to indicate if threaded class should buffer image frames.
-            If threading is True, it is highly recommended that buffer_frames is
-            also True to avoid losing frames, as otherwise the input thread would
-            very likely read ahead of the main thread. |br|
+            If ``threading`` is ``True``, it is highly recommended that
+            ``buffer_frames`` is also ``True`` to avoid losing frames, as
+            otherwise the input thread would very likely read ahead of the main
+            thread. |br|
             For more info, please refer to `input.recorded configuration
             <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/configs/input/recorded.yml>`_.
     """

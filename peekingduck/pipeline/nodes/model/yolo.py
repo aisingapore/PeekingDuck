@@ -43,8 +43,8 @@ class Node(AbstractNode):
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|
             Defines the type of YOLO model to be used.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|
@@ -65,7 +65,8 @@ class Node(AbstractNode):
         YOLOv4: Optimal Speed and Accuracy of Object Detection:
         https://arxiv.org/pdf/2004.10934v1.pdf
 
-        Model weights trained by https://github.com/hunglc007/tensorflow-yolov4-tflite
+        Model weights trained by
+        https://github.com/hunglc007/tensorflow-yolov4-tflite
 
         Inference code adapted from https://github.com/zzh8829/yolov3-tf2
     """

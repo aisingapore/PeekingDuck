@@ -85,7 +85,6 @@ types when working with custom nodes.
       |zone_count_def|
 
 .. deprecated:: 1.2.0 |br|
-
     ``obj_tags`` (:obj:`List[str]`) is deprecated and now subsumed under
     :term:`obj_attrs`. :mod:`dabble.check_nearby_objs` now accesses this
     attribute by the ``flags`` key of :term:`obj_attrs`. :mod:`draw.tag` has
