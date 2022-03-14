@@ -41,7 +41,7 @@ as placeholders for contents to be added.
 .. _tutorial_object_detection_score:
 
 Recipe 1: Object Detection Score
---------------------------------
+================================
 
 When the Yolo object detection model detects an object in the image, it assigns 
 a bounding box and a score to it.
@@ -319,7 +319,7 @@ Execute :greenbox:`peekingduck run` to see your custom node in action.
 .. _tutorial_count_hand_wave:
 
 Recipe 2: Keypoints, Count Hand Waves
--------------------------------------
+=====================================
 
 This tutorial will create a custom node to analyze the skeletal keypoints of the
 person from the `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_
@@ -647,7 +647,7 @@ Execute :greenbox:`peekingduck run` to see your custom node in action.
 .. _tutorial_debugging:
 
 Recipe 3: Debugging
--------------------
+===================
 
 When working with PeekingDuck's pipeline, you may sometimes wonder what is available 
 in the data pool, or whether a particular data object has been correctly computed.
@@ -809,14 +809,14 @@ one below:
 
 
 Other Recipes to Create Custom Nodes
-------------------------------------
+====================================
 
 This section describes two faster ways to create custom nodes for users who are familiar
 with PeekingDuck.
 
 
 CLI Recipe
-==========
+----------
 
 You skip the step-by-step prompts from :green:`peekingduck create-node` by specifying all the
 options on the command line, for instance:
@@ -831,7 +831,7 @@ For more information, see :green:`peekingduck create-node --help`.
 
 
 Pipeline Recipe
-===============
+---------------
 
 PeekingDuck can also create custom nodes by parsing your pipeline configuration file.
 Starting with the basic folder structure from :green:`peekingduck init`:
