@@ -27,10 +27,10 @@ class Node(AbstractNode):
     """Uses 2D bounding boxes information to estimate 3D location.
 
     Inputs:
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Configs:
         focal_length (:obj:`float`): **default = 1.14**. |br|

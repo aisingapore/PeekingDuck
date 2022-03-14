@@ -493,7 +493,7 @@ output a list of bboxes within the zone, dropping all bboxes outside it.
 Then, ``dabble.tracking`` is used to track the people walking and 
 ``dabble.statistics`` is used to determine the number of people walking in the zone,
 by getting the maximum of the tracked IDs.
-``draw.legend`` has a new item ``zone_count`` which displays the number of people 
+``draw.legend`` has a new item :term:`zone_count` which displays the number of people 
 walking in the zone currently.
 
 The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:

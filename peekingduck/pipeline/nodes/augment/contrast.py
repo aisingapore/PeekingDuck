@@ -30,10 +30,10 @@ class Node(AbstractNode):
     linear_transform.html>`_.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         alpha (:obj:`float`): **[0, 3], default = 1**. |br|

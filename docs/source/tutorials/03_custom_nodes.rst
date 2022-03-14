@@ -131,11 +131,11 @@ implement our custom node function.
 
    To display the bounding box confidence score, our node requires three pieces
    of input data: the bounding box, the score to display, and the image to draw on.
-   These are defined as ``bboxes``, ``bbox_scores``, and ``img`` respectively in the 
+   These are defined as :term:`bboxes`, :term:`bbox_scores`, and :term:`img` respectively in the 
    :ref:`API docs <api_doc>`.
 
    Our custom node only displays the score on screen and does not produce any
-   outputs for the pipeline, so the output is ``none``.
+   outputs for the pipeline, so the output is ":term:`none <(output) none>`".
 
    There are also no optional configs, so lines 11 - 12 can be removed.
 
@@ -390,7 +390,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       # No optional configs
 
 We will implement this tutorial using a ``dabble`` node, which will take the 
-inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, and ``keypoint_scores`` 
+inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and :term:`keypoint_scores` 
 from the pipeline. The node has no output.
 
 2. **src/custom_nodes/dabble/wave.py**:
@@ -693,7 +693,8 @@ The updated folder structure is:
 
 Then, make the following **three** changes:
 
-1. Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follows:
+1. Specify ``debug.yml`` to receive everything ":term:`all <(input) all>`" from
+   the pipeline, as follows:
 
    .. code-block:: yaml
       :linenos:
@@ -762,7 +763,7 @@ Then, make the following **three** changes:
 
    The custom node code shows how to see what is available in PeekingDuck's pipeline 
    data pool by printing the input dictionary keys.
-   It also demonstrates how to debug a specific data object, such as ``bboxes``, by
+   It also demonstrates how to debug a specific data object, such as :term:`bboxes`, by
    printing relevant information for each item within the data.
 
 3. Update **pipeline_config.yml**:

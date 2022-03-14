@@ -26,18 +26,18 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws the bottom middle point of detected bounding boxes.
 
-    The ``draw.btm_midpoint`` node uses the ``bboxes`` from the model
+    The :mod:`draw.btm_midpoint` node uses :term:`bboxes` from the model
     predictions to draw the bbox predictions onto the image. For better
     understanding of the use case, refer to the :doc:`Zone Counting use case
     </use_cases/zone_counting>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |btm_midpoint|
+        |btm_midpoint_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         None.
