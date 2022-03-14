@@ -40,7 +40,6 @@ from peekingduck.utils.create_node_helper import (
     verify_option,
 )
 from peekingduck.utils.logger import LoggerSetup
-from peekingduck.weights_utils.downloader import save_response_content
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
