@@ -61,7 +61,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 
 def create_pipeline_config_yml(
     default_nodes: List[Union[str, Dict[str, Any]]] = None,
-    default_path: Path = Path.cwd() / "pipeline_config.yml",
+    default_path: Path = Path("pipeline_config.yml"),
 ) -> None:
     """Initializes the declarative *pipeline_config.yml*.
 
