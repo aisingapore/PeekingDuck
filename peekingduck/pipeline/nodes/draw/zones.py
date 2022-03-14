@@ -30,12 +30,12 @@ class Node(AbstractNode):
     boundaries onto the image.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |zones|
+        |zones_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         None.

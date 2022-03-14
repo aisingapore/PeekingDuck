@@ -31,12 +31,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     pixelating the areas bounded by bounding boxes in an image.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         mosaic_level (:obj:`int`): **default = 7**. |br|

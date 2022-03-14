@@ -31,10 +31,10 @@ class Node(AbstractNode):
     as near with ``tag_msg``. These flags can be accessed by the ``flags`` key of ``obj_attrs``.
 
     Inputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Outputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|

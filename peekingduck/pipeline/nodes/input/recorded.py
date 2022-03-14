@@ -29,16 +29,16 @@ class Node(AbstractNode):
     """Receives videos/image as inputs.
 
     Inputs:
-        |no_input|
+        |none_input_data|
 
     Outputs:
-        |img|
+        |img_data|
 
-        |pipeline_end|
+        |pipeline_end_data|
 
-        |filename|
+        |filename_data|
 
-        |saved_video_fps|
+        |saved_video_fps_data|
 
     Configs:
         resize (:obj:`Dict`):

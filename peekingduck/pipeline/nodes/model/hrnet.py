@@ -37,16 +37,16 @@ class Node(AbstractNode):
     :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|

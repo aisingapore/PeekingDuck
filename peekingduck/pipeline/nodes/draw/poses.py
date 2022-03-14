@@ -31,16 +31,16 @@ class Node(AbstractNode):
     as :mod:`HRNet <model.hrnet>` and :mod:`PoseNet <model.posenet>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         None.

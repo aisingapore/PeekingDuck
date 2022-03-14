@@ -32,10 +32,10 @@ class Node(AbstractNode):
     ``obj_attrs``.
 
     Inputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Outputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         obj_dist_threshold (:obj:`float`): **default = 1.5**. |br|

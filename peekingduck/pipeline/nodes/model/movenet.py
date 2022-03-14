@@ -36,17 +36,17 @@ class Node(AbstractNode):
     and the keypoint indices table can be found :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
-        |img|
+        |img_data|
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
     Configs:
         model_type (:obj:`str`):

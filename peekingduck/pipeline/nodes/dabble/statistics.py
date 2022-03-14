@@ -123,18 +123,18 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     +---------------------------------------+-------------------+-------------------+-------------+
 
     Inputs:
-        |all_input|
+        |all_input_data|
 
     Outputs:
-        |cum_avg|
+        |cum_avg_data|
 
         Note that ``cum_avg`` will not be updated if there are no detections. For example, if
         ``cum_avg`` = 10 for video frame 1, and there are no detections in the following 500
         frames, ``cum_avg`` is still 10 for video frame 501.
 
-        |cum_max|
+        |cum_max_data|
 
-        |cum_min|
+        |cum_min_data|
 
     Configs:
         identity (:obj:`str`): **default=null** |br|

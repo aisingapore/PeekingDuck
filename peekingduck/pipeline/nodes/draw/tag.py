@@ -67,14 +67,14 @@ class Node(AbstractNode):
     +-----+-----------------------------------------+---------------+---------------+
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
-        |obj_attrs|
+        |obj_attrs_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         show (:obj:`List[str]`): **default = []**. |br|

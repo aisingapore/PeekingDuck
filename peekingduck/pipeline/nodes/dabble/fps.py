@@ -32,10 +32,10 @@ class Node(AbstractNode):
     FPS. A preferred output setting can be set via the configuration file.
 
     Inputs:
-        |pipeline_end|
+        |pipeline_end_data|
 
     Outputs:
-        |fps|
+        |fps_data|
 
     Configs:
         fps_log_display (:obj:`bool`): **default = False**. |br|

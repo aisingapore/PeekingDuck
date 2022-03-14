@@ -27,10 +27,10 @@ class Node(AbstractNode):
     """Streams the output on your display.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |pipeline_end|
+        |pipeline_end_data|
 
     Configs:
         window_name (:obj:`str`): **default = "PeekingDuck"** |br|

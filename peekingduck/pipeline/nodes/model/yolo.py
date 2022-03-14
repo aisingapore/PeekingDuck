@@ -30,14 +30,14 @@ class Node(AbstractNode):
     categories can be found :ref:`here <general-object-detection-ids>`.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4tiny"**. |br|

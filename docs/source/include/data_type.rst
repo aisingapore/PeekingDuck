@@ -40,6 +40,8 @@
 
 .. |none_input_data| replace:: |none|: |none_input_def|
 
+.. |none_output_data| replace:: |none|: |none_output_def|
+
 .. |obj_3D_locs_data| replace:: |obj_3D_locs|: |obj_3D_locs_def|
 
 .. |obj_attrs_data| replace:: |obj_attrs|: |obj_attrs_def|

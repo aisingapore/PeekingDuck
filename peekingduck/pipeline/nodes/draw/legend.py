@@ -42,10 +42,10 @@ class Node(AbstractNode):
     displayed in 2 decimal places.
 
     Inputs:
-        |all_input|
+        |all_input_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|

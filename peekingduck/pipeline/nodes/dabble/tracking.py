@@ -31,12 +31,12 @@ class Node(AbstractNode):
     :ref:`here <object-tracking-benchmarks>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|

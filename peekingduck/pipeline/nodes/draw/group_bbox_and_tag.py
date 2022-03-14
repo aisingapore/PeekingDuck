@@ -37,16 +37,16 @@ class Node(AbstractNode):
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
-        |obj_attrs|
+        |obj_attrs_data|
 
-        |large_groups|
+        |large_groups_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|

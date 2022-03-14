@@ -31,12 +31,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     boxes output from an object detection model.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         blur_kernel_size (:obj:`int`): **default = 50**. |br|

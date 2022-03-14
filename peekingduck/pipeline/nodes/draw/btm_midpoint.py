@@ -32,12 +32,12 @@ class Node(AbstractNode):
     </use_cases/zone_counting>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |btm_midpoint|
+        |btm_midpoint_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         None.

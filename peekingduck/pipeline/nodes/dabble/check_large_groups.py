@@ -28,10 +28,10 @@ class Node(AbstractNode):
     object is accessed by the ``groups`` key of ``obj_attrs``.
 
     Inputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Outputs:
-        |large_groups|
+        |large_groups_data|
 
     Configs:
         group_size_threshold (:obj:`int`): **default = 5**. |br|

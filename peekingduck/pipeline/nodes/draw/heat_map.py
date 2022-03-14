@@ -32,12 +32,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     highlighted in blue.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |density_map|
+        |density_map_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         None.

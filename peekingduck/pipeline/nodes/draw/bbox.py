@@ -31,14 +31,14 @@ class Node(AbstractNode):
     :doc:`Object Counting use case </use_cases/object_counting>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         show_labels (:obj:`bool`): **default = False**. |br|

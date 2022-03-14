@@ -29,14 +29,14 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     ``("yolox-tiny", "yolox-s", "yolox-m", "yolox-l")``.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
     Configs:
         model_type (:obj:`str`): **{"yolox-tiny", "yolox-s", "yolox-m",
