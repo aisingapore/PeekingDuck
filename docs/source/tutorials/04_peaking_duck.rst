@@ -373,10 +373,10 @@ Create the following ``pipeline_config.yml``:
           maximum: obj_attrs["ids"]
       - dabble.fps
       - draw.bbox
-      - draw.legend:
-          show: ["fps", "cum_max", "cum_min", "cum_avg"]
       - draw.tag:
           show: ["ids"]
+      - draw.legend:
+          show: ["fps", "cum_max", "cum_min", "cum_avg"]
       - output.screen
 
 The above pipeline uses the Yolo model to detect people in the video and uses 
@@ -386,6 +386,7 @@ tracking IDs.
 ``dabble.statistics`` is used to process these tracking IDs: since each person is 
 assigned a monotonically increasing integer ID, the maximum ID within the list 
 tells us the number of persons tracked so far.
+``draw.tag`` shows the ID above the tracked person.
 ``draw.legend`` is used to display the various statistics: the FPS, and the 
 cumulative maximum, minimum and average relating to the number of persons tracked.
 
@@ -473,10 +474,10 @@ Change ``pipeline_config.yml`` to the following:
       - dabble.fps
       - draw.bbox
       - draw.zones
-      - draw.legend:
-          show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
       - draw.tag:
           show: ["ids"]
+      - draw.legend:
+          show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
       - output.screen
 
 We make use of ``dabble.zone_count`` and ``dabble.bbox_to_btm_midpoint`` nodes to 
