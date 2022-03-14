@@ -74,7 +74,16 @@ def create_pipeline_config_yml(
     """
     # Default yml to be discussed
     if default_nodes is None:
-        default_nodes = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+        default_nodes = [
+            {
+                "input.live": {
+                    "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                }
+            },
+            "model.yolo",
+            "draw.bbox",
+            "output.screen",
+        ]
     default_yml = dict(nodes=default_nodes)
 
     with open(default_name, "w") as yml_file:
