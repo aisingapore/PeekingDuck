@@ -65,6 +65,8 @@ Finally, press ``<Enter>`` to answer ``Y`` when asked to proceed.
 The entire interaction is shown here, the answers you type are in shown in 
 :green:`green text`:
 
+.. _tutorial_wave_project_custom_node:
+
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user/custom_project]` \ > \ :green:`peekingduck create-node` \ 
@@ -813,8 +815,17 @@ aru oyim de de de dei
 CLI Recipe
 ==========
 
-aru oyim de de de dei
+If you are familiar with PeekingDuck, you skip the step-by-step prompts from 
+``peekingduck create-node`` and speed up the custom node creation process by specifying
+all the options on the command line, like the following:
 
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name wave` \
+
+The above is the equivalent of the tutorial *Recipe 1: Object Detection Score*
+:ref:`custom node creation <tutorial_wave_project_custom_node>`.
+For more information, see :green:`peekingduck create-node --help`.
 
 ``pipeline_config.yml`` Recipe
 ==============================
