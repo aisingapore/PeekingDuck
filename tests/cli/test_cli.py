@@ -59,8 +59,8 @@ YML = dict(
                 "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
             }
         },
-        "model.yolo",
-        "draw.bbox",
+        "model.posenet",
+        "draw.poses",
         "output.screen",
     ]
 )
