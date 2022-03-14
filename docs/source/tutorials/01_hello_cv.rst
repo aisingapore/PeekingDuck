@@ -53,10 +53,10 @@ The ``pipeline_config.yml`` file looks like this:
 The above forms an **pose estimation pipeline** and comprises four nodes that do the
 following:
 
-   #. ``input.live``: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
-   #. ``model.posenet``: runs the Posenet pose estimation model on it
-   #. ``draw.poses``: draws a human pose skeleton over the person tracking his hand movement
-   #. ``output.screen``: outputs everything onto the screen for display
+   #. :mod:`input.live`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
+   #. :mod:`model.posenet`: runs the Posenet pose estimation model on it
+   #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
+   #. :mod:`output.screen`: outputs everything onto the screen for display
 
 Now, run the pipeline using
 
@@ -109,8 +109,8 @@ Then modify ``pipeline_config.yml`` as follows:
 
 The key differences between this and the earlier pipeline are:
 
-   | Line 4: ``model.yolo`` runs the Yolo object detection model
-   | Line 5: ``draw.bbox`` draws the bounding box to show the detected person
+   | Line 4: :mod:`model.yolo` runs the Yolo object detection model
+   | Line 5: :mod:`draw.bbox` draws the bounding box to show the detected person
 
 Run the new **object detection pipeline** with :greenbox:`peekingduck run`.
 
@@ -159,7 +159,7 @@ To exit, click to select the video window and press :greenbox:`q`.
 
       PeekingDuck assumes the webcam is defaulted to input source 0.
       If your system is configured differently, you would have to specify the 
-      input source by changing the ``input.live`` configuration.
+      input source by changing the :mod:`input.live` configuration.
       See :ref:`changing node configuration <tutorial_more_object_detection>`.
 
 
@@ -251,4 +251,4 @@ Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)
 
 .. note::
    
-   The ``model`` nodes return results in relative coordinates.
+   The :mod:`model` nodes return results in relative coordinates.

@@ -310,10 +310,9 @@ Execute :greenbox:`peekingduck run` to see your custom node in action.
 
       Custom Node Showing Object Detection Scores
 
-.. note::
+   .. note::
 
-   Royalty free video of cat and computer from:
-   https://www.youtube.com/watch?v=-C1TEGZavko
+      Royalty free video of cat and computer from: https://www.youtube.com/watch?v=-C1TEGZavko
 
 
 .. _tutorial_count_hand_wave:
@@ -389,14 +388,14 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 
       # No optional configs
 
-We will implement this tutorial using a ``dabble`` node, which will take the 
-inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and :term:`keypoint_scores` 
-from the pipeline. The node has no output.
+We will implement this tutorial using a custom :mod:`dabble` node, which will take the
+inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
+:term:`keypoint_scores` from the pipeline. The node has no output.
 
 2. **src/custom_nodes/dabble/wave.py**:
 
-   The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure
-   in the other custom node tutorial.
+   The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure in
+   the other custom node tutorial.
 
    .. container:: toggle
 
@@ -596,7 +595,7 @@ from the pipeline. The node has no output.
    
                return {}
 
-   This (long) piece of code implements our custom ``dabble`` node. 
+   This (long) piece of code implements our custom :mod:`dabble` node. 
    It defines three helper functions to convert relative to absolute coordinates 
    and to draw text on-screen.
    The number of hand waves is displayed at the left-top corner of the screen.
@@ -628,7 +627,7 @@ from the pipeline. The node has no output.
       - output.screen
 
    We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
-   models to obtain the required inputs for our custom ``dabble`` node.
+   models to obtain the required inputs for our custom :mod:`dabble` node.
 
 Execute :greenbox:`peekingduck run` to see your custom node in action.
 
@@ -638,10 +637,9 @@ Execute :greenbox:`peekingduck run` to see your custom node in action.
 
       Custom Node Counting Hand Waves
 
-.. note::
+   .. note::
 
-   Royalty free video of man waving from:
-   https://www.youtube.com/watch?v=IKj_z2hgYUM
+      Royalty free video of man waving from: https://www.youtube.com/watch?v=IKj_z2hgYUM
 
 
 .. _tutorial_debugging:

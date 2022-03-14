@@ -47,14 +47,14 @@ You should have the following directory structure at this point:
 Create a Custom Node for Debugging
 ----------------------------------
 
-Run the following to create a ``dabble`` node for debugging:
+Run the following to create a :mod:`dabble` node for debugging:
 
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
-The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
-shown:
+The command should have generated the ``debug.py`` and ``debug.yml`` files in your
+project directory as shown:
 
 .. parsed-literal::
 
@@ -78,8 +78,9 @@ Change the content of ``debug.yml`` to:
    input: ["all"]
    output: ["none"]
 
-Line 1: The data type ``all`` allows the node to receive all outputs from the previous nodes as
-its input. Please see the :doc:`Glossary </glossary>` for a list of available data types.
+Line 1: The data type ``all`` allows the node to receive all outputs from the previous
+nodes as its input. Please see the :doc:`Glossary </glossary>` for a list of available
+data types.
 
 Change the content of ``debug.py`` to:
 

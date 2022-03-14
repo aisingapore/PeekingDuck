@@ -6,11 +6,11 @@ Peaking Duck
 
 PeekingDuck include some "power" nodes that are capable of processing the contents 
 or outputs of the other nodes and to accumulate information over time.
-An example is the ``dabble.statistics`` node which can accumulate statistical 
+An example is the :mod:`dabble.statistics` node which can accumulate statistical 
 information, such as calculating the cumulative average and maximum of particular 
 objects (like people or cars).
 This tutorial presents advanced recipes to showcase the power features of 
-PeekingDuck, such as using ``dabble.statistics`` for object counting and tracking.
+PeekingDuck, such as using :mod:`dabble.statistics` for object counting and tracking.
 
 
 
@@ -21,7 +21,7 @@ Interfacing with SQL
 
 This tutorial demonstrates how to save data to an SQLite database.
 We will extend the tutorial for :ref:`counting hand waves<tutorial_count_hand_wave>`
-with a new custom ``output`` node that writes information into a local sqlite database.
+with a new custom :mod:`output` node that writes information into a local sqlite database.
 
    .. note::
 
@@ -29,8 +29,7 @@ with a new custom ``output`` node that writes information into a local sqlite da
       If your system does not have ``sqlite3``, please see the `SQLite Home Page 
       <http://www.sqlite.org/>`_ for installation instructions.
 
-First, create a new custom ``output.sqlite`` node in the ``custom_project``
-folder:
+First, create a new custom ``output.sqlite`` node in the ``custom_project`` folder:
 
    .. admonition:: Terminal Session
 
@@ -266,9 +265,9 @@ Type :greenbox:`CTRL-D` to exit from ``sqlite3``.
 Counting Cars
 =============
 
-This tutorial demonstrates using the ``dabble.statistics`` node to count the number of 
-cars travelling across a highway over time and the ``draw.legend`` node to display the 
-relevant statistics.
+This tutorial demonstrates using the :mod:`dabble.statistics` node to count the number
+of cars travelling across a highway over time and the :mod:`draw.legend` node to display
+the relevant statistics.
 
 Create a new PeekingDuck project, download the `highway cars video
 <http://orchard.dnsalias.com:8100/highway_cars.mp4>`_ and save it into the project
@@ -329,7 +328,7 @@ The sample screenshot below shows:
 
    .. note::
 
-      Royalty free video of cars on highway from:
+      Royalty free video of cars on highway from: 
       https://www.youtube.com/watch?v=8yP1gjg4b2w
 
 
@@ -345,7 +344,7 @@ These objects can be either living (e.g. person) or non-living (e.g. car).
 Then, as these objects moved around in the video, they are identified based on 
 their assigned identities and tracked according to their movements.
 
-This tutorial demonstrates using ``dabble.statistics`` with a custom node to 
+This tutorial demonstrates using :mod:`dabble.statistics` with a custom node to 
 track the number of people walking down a path.
 
 Create a new PeekingDuck project, download the `people walking video
@@ -380,14 +379,14 @@ Create the following ``pipeline_config.yml``:
       - output.screen
 
 The above pipeline uses the Yolo model to detect people in the video and uses 
-the ``dabble.tracking`` node to track the people as they walk.
-Each person is assigned a tracking ID and ``dabble.tracking`` returns a list of 
+the :mod:`dabble.tracking` node to track the people as they walk.
+Each person is assigned a tracking ID and :mod:`dabble.tracking` returns a list of 
 tracking IDs.
-``dabble.statistics`` is used to process these tracking IDs: since each person is 
+:mod:`dabble.statistics` is used to process these tracking IDs: since each person is 
 assigned a monotonically increasing integer ID, the maximum ID within the list 
 tells us the number of persons tracked so far.
-``draw.tag`` shows the ID above the tracked person.
-``draw.legend`` is used to display the various statistics: the FPS, and the 
+:mod:`draw.tag` shows the ID above the tracked person.
+:mod:`draw.legend` is used to display the various statistics: the FPS, and the 
 cumulative maximum, minimum and average relating to the number of persons tracked.
 
 Do a :greenbox:`peekingduck run` and you will see the following display:
@@ -482,7 +481,7 @@ Change ``pipeline_config.yml`` to the following:
           show: ["fps", "cum_max", "cum_min", "cum_avg", "zone_count"]
       - output.screen
 
-We make use of ``dabble.zone_count`` and ``dabble.bbox_to_btm_midpoint`` nodes to 
+We make use of :mod:`dabble.zone_count` and :mod:`dabble.bbox_to_btm_midpoint` nodes to 
 create a zone in the middle. The zone is defined by a rectangle with the 
 four corners (0.35, 0.0) - (0.65, 0.0) - (0.65, 1.0) - (0.35, 1.0).
 (For more info, see :doc:`Zone Counting </use_cases/zone_counting>`)
@@ -490,10 +489,10 @@ This zone is also passed to our custom node ``dabble.filter_bbox`` for bounding 
 filtering.
 What ``dabble.filter_bbox`` will do is to take the list of bboxes as input and 
 output a list of bboxes within the zone, dropping all bboxes outside it.
-Then, ``dabble.tracking`` is used to track the people walking and 
-``dabble.statistics`` is used to determine the number of people walking in the zone,
+Then, :mod:`dabble.tracking` is used to track the people walking and 
+:mod:`dabble.statistics` is used to determine the number of people walking in the zone,
 by getting the maximum of the tracked IDs.
-``draw.legend`` has a new item :term:`zone_count` which displays the number of people 
+:mod:`draw.legend` has a new item :term:`zone_count` which displays the number of people 
 walking in the zone currently.
 
 The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
