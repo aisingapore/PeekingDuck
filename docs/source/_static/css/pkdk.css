@@ -142,6 +142,12 @@ div.highlight span.pkd-expandable:before {
   color: green;
 }
 
+.greenbox {
+  color: green;
+  padding: 2px;
+  border: 1px solid rgba(161, 236, 143, 0.5);
+}
+
 .yellow {
   color: yellow;
 }

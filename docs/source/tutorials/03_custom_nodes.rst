@@ -56,11 +56,11 @@ This tutorial will use the `cat_and_computer.mp4
 the earlier :ref:`object detection tutorial <tutorial_configure_nodes>`.
 Copy it into the ``custom_project`` folder.
 
-Use the following command to create a custom node: ``peekingduck create-node`` |br|
+Use the following command to create a custom node: :greenbox:`peekingduck create-node` |br|
 It will prompt you to answer several questions.
-Press ``<Enter>`` to accept the default ``custom_nodes`` folder name, then key in 
-``draw`` for node type and ``score`` for node name.
-Finally, press ``<Enter>`` to answer ``Y`` when asked to proceed.
+Press :greenbox:`<Enter>` to accept the default ``custom_nodes`` folder name, then key
+in :greenbox:`draw` for node type and :greenbox:`score` for node name.
+Finally, press :greenbox:`<Enter>` to answer ``Y`` when asked to proceed.
 
 The entire interaction is shown here, the answers you type are in shown in 
 :green:`green text`:
@@ -302,7 +302,7 @@ implement our custom node function.
    Line 8 adds our custom node into the pipeline where it will be ``run`` by 
    PeekingDuck during each pipeline iteration.
 
-Execute ``peekingduck run`` to see your custom node in action.
+Execute :greenbox:`peekingduck run` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_1.png
       :width: 416
@@ -332,8 +332,8 @@ corresponding to the different body parts as documented :ref:`here
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
 real numbers ranging from 0.0 to 1.0 (using relative coordinates).
 
-Starting with a newly initialized PeekingDuck folder, call ``peekingduck
-create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
+Starting with a newly initialized PeekingDuck folder, call :greenbox:`peekingduck
+create-node` to create a new ``dabble.wave`` custom node as shown below:
 
 .. admonition:: Terminal Session
 
@@ -630,7 +630,7 @@ from the pipeline. The node has no output.
    We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
    models to obtain the required inputs for our custom ``dabble`` node.
 
-Execute ``peekingduck run`` to see your custom node in action.
+Execute :greenbox:`peekingduck run` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_2.png
       :width: 389
@@ -783,7 +783,8 @@ Then, make the following **three** changes:
           show: ["fps"]
       - output.screen
 
-Now, do a ``peekingduck run`` and you should see a sample debug output like the one below:
+Now, do a :greenbox:`peekingduck run` and you should see a sample debug output like the
+one below:
 
 .. admonition:: Terminal Session
 
@@ -896,3 +897,4 @@ Your folder structure will now look like this:
       └── wave.mp4
 
 From here, you can proceed to edit the custom node configs and source files.
+

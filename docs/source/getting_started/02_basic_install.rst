@@ -111,4 +111,4 @@ with bounding boxes overlaid as shown below:
    
 
 | The video will auto-close when it is run to the end (about 20 seconds, depending on system speed).
-| To exit earlier, click to select the video window and press ``q``.
+| To exit earlier, click to select the video window and press :greenbox:`q`.

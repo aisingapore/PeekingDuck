@@ -224,7 +224,7 @@ Edit the following **five files** as described below:
    Likewise, the pipeline is the same as in the previous tutorial, except for 
    line 12 that has been added to call the new custom node.
    
-Run this project with ``peekingduck run`` and when completed, a new ``wave.db`` 
+Run this project with :greenbox:`peekingduck run` and when completed, a new ``wave.db`` 
 sqlite database file would be created in the current folder.
 Examine the created database as follows:
 
@@ -255,7 +255,7 @@ Examine the created database as follows:
       | 2022-02-15 19:26:44|right|72
       | 2022-02-15 19:26:43|right|70
 
-Type ``CTRL-D`` to exit from ``sqlite3``.
+Type :greenbox:`CTRL-D` to exit from ``sqlite3``.
 
 
 
@@ -311,10 +311,10 @@ Edit ``pipeline_config.yml`` as follows:
           show: ["fps", "count", "cum_max", "cum_min"]
       - output.screen
 
-Run it with ``peekingduck run`` and you should see a video of cars travelling across a
-highway with a legend box on the bottom left showing the realtime count of the number of
-cars on-screen, the cumulative maximum and minimum number of cars detected since the
-video started.
+Run it with :greenbox:`peekingduck run` and you should see a video of cars travelling
+across a highway with a legend box on the bottom left showing the realtime count of the
+number of cars on-screen, the cumulative maximum and minimum number of cars detected
+since the video started.
 The sample screenshot below shows:
 
    * the count that there are currently 3 cars on-screen
@@ -390,7 +390,7 @@ tells us the number of persons tracked so far.
 ``draw.legend`` is used to display the various statistics: the FPS, and the 
 cumulative maximum, minimum and average relating to the number of persons tracked.
 
-Do a ``peekingduck run`` and you will see the following display:
+Do a :greenbox:`peekingduck run` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_1.png
       :width: 394
@@ -566,7 +566,7 @@ The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
                return {"bboxes": np.asarray(retained_bboxes)}
 
 
-Do a ``peekingduck run`` and you will see the following display:
+Do a :greenbox:`peekingduck run` and you will see the following display:
 
    .. figure:: /assets/tutorials/ss_people_walking_2.png
       :width: 394

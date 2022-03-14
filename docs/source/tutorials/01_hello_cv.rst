@@ -24,7 +24,7 @@ PeekingDuck for object detection and pose estimation.
 Object Detection
 ================
 
-When you ran ``peekingduck --verify_install`` to :ref:`verify your installation
+When you ran :greenbox:`peekingduck -\-verify_install` to :ref:`verify your installation
 <verify_installation>` earlier, you were running the default pipeline in the file
 ``verification_pipeline.yml`` as shown below:
 
@@ -47,7 +47,7 @@ following:
    #. ``output.screen``: outputs everything onto the screen for display.
 
 | The 18-second video will auto-close when it is completed.
-| To exit earlier, click to select the video window and press ``q``.
+| To exit earlier, click to select the video window and press :greenbox:`q`.
 
 You have successfully run an object detection pipeline.
 
@@ -63,7 +63,7 @@ To perform pose estimation with PeekingDuck, initialize the PeekingDuck project 
 
     | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, modify the ``pipeline_config.yml``, created by ``peekingduck init`` in the
+Then, modify the ``pipeline_config.yml``, created by :greenbox:`peekingduck init` in the
 ``pkd_project`` folder, as follows:
 
 .. code-block:: yaml
@@ -106,7 +106,7 @@ The above **pose estimation pipeline** comprises four nodes that do the followin
    #. ``output.screen``: outputs everything onto the screen for display.
 
 | The 18-second video will auto-close when it is completed.
-| To exit earlier, click to select the video window and press ``q``.
+| To exit earlier, click to select the video window and press :greenbox:`q`.
 
 That's it: you have created a pose estimation pipeline by changing only two lines!
 
@@ -133,10 +133,10 @@ If your computer has a webcam attached, you can use it by changing the first
    - draw.poses         # draw skeletal poses
    - output.screen
 
-Now do a ``peekingduck run`` and you will see yourself onscreen. Move your hands
-around and see PeekingDuck tracking your poses.
+Now do a :greenbox:`peekingduck run` and you will see yourself onscreen. 
+Move your hands around and see PeekingDuck tracking your poses.
 
-To exit, click to select the video window and press ``q``.
+To exit, click to select the video window and press :greenbox:`q`.
 
 .. note::
 
