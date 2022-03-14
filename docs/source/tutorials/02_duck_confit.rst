@@ -119,6 +119,32 @@ specified folder.
    settings in PeekingDuck's :ref:`API documentation <api_doc>`.
 
 
+.. _tutorial_behind_the_scenes:
+
+Configuration - Behind the Scenes
+=================================
+
+Here is a little explanation on what goes on behind the scenes when you configure 
+a node, such as specifying ``show_labels: True`` for ``draw.bbox``.
+Every node has a default set of configuration. For instance, ``draw.bbox`` default 
+configuration is:
+
+.. code-block:: yaml
+   :linenos:
+
+   input: ["bboxes", "img", "bbox_labels"]
+   output: ["none"]
+
+   show_labels: False
+
+By default, show_labels is switched off.
+When you switch it on with ``show_labels: True``, what PeekingDuck does is to override
+the default ``show_labels`` configuration with your specified value.
+You will see another instance of this at work in the advanced *Peaking Duck* tutorial on
+:ref:`Tracking People Within a Zone <tutorial_tracking_people_within_zone>`.
+
+
+
 .. _tutorial_augment:
 
 Augmenting Images

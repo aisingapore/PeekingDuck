@@ -404,6 +404,8 @@ Do a :greenbox:`peekingduck run` and you will see the following display:
       https://www.youtube.com/watch?v=du74nvmRUzo
 
 
+.. _tutorial_tracking_people_within_zone:
+
 Tracking People within a Zone
 -----------------------------
 
@@ -508,6 +510,13 @@ The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
       zones: [
          [[0,0], [0,1], [1,1], [1,0]],
       ]
+
+   .. note::
+
+      The ``zones`` default value of ``[[0,0], [0,1], [1,1], [1,0]]`` will be overridden
+      by those specified in ``pipeline_config.yml`` above.
+      See :ref:`Configuration - Behind The Scenes<tutorial_behind_the_scenes>` for more
+      details.
 
 **src/custom_nodes/dabble/filter_bbox.py**:
 
