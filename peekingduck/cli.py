@@ -74,7 +74,7 @@ def create_pipeline_config_yml(
     """
     # Default yml to be discussed
     if default_nodes is None:
-        default_nodes = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+        default_nodes = ["input.live", "model.posenet", "draw.poses", "output.screen"]
     default_yml = dict(nodes=default_nodes)
 
     with open(default_path, "w") as yml_file:
