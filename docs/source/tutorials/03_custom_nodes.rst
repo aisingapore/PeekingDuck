@@ -807,17 +807,18 @@ Now, do a ``peekingduck run`` and you should see a sample debug output like the 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| coords=[0.40047657 0.21553655 0.85199741 1.02150181] 
 
 
-Other Recipes to Make Custom Nodes
-----------------------------------
+Other Recipes to Create Custom Nodes
+------------------------------------
 
-aru oyim de de de dei
+This section describes two faster ways to create custom nodes for users who are familiar
+with PeekingDuck.
+
 
 CLI Recipe
 ==========
 
-If you are familiar with PeekingDuck, you skip the step-by-step prompts from 
-``peekingduck create-node`` and speed up the custom node creation process by specifying
-all the options on the command line, like the following:
+You skip the step-by-step prompts from :green:`peekingduck create-node` by specifying all the
+options on the command line, for instance:
 
 .. admonition:: Terminal Session
 
@@ -827,10 +828,71 @@ The above is the equivalent of the tutorial *Recipe 1: Object Detection Score*
 :ref:`custom node creation <tutorial_wave_project_custom_node>`.
 For more information, see :green:`peekingduck create-node --help`.
 
-``pipeline_config.yml`` Recipe
-==============================
 
-aru oyim de de de dei
+Pipeline Recipe
+===============
 
+PeekingDuck can also create custom nodes by parsing your pipeline configuration file.
+Starting with the basic folder structure from :green:`peekingduck init`:
 
+   .. parsed-literal::
 
+      \ :blue:`wave_project/` \ |Blank|
+      ├── pipeline_config.yml
+      ├── \ :blue:`src` \ |Blank|
+      │   └── \ :blue:`custom_nodes` \ |Blank|
+      │       └── \ :blue:`configs` \ |Blank|
+      └── wave.mp4
+ 
+ and the following modified ``pipeline_config.yml`` file:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.recorded:
+          input_dir: wave.mp4
+      - model.yolo
+      - model.posenet
+      - dabble.fps
+      - custom_nodes.dabble.wave
+      - custom_nodes.dabble.debug
+      - draw.poses
+      - draw.legend:
+          show: ["fps"]
+      - output.screen
+
+You can tell PeekingDuck to parse your pipeline file with :green:`peekingduck create-node --config_path pipeline_config.yml`:
+
+   .. admonition:: Terminal Session
+
+      | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node --config_path pipeline_config.yml` \
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating custom nodes declared in ~user/wave_project/pipeline_config.yml. 
+      | 2022-03-14 11:21:21 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline file. 
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating files for custom_nodes.dabble.wave:
+      |         Config file: ~user/wave_project/src/custom_nodes/configs/dabble/wave.yml
+      |         Script file: ~user/wave_project/src/custom_nodes/dabble/wave.py 
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating files for custom_nodes.dabble.debug:
+      |         Config file: ~user/wave_project/src/custom_nodes/configs/dabble/debug.yml
+      |         Script file: ~user/wave_project/src/custom_nodes/dabble/debug.py 
+
+PeekingDuck will read ``pipeline_config.yml`` and create the two specified custom nodes 
+``custom_nodes.dabble.wave`` and ``custom_nodes.dabble.debug``.
+Your folder structure will now look like this:
+
+   .. parsed-literal::
+
+      \ :blue:`wave_project/` \ |Blank|
+      ├── pipeline_config.yml
+      ├── \ :blue:`src` \ |Blank|
+      │   └── \ :blue:`custom_nodes` \ |Blank|
+      │       ├── \ :blue:`configs` \ |Blank|
+      │       │   └── \ :blue:`dabble` \ |Blank|
+      │       │       ├── debug.yml
+      │       │       └── wave.yml
+      │       └── \ :blue:`dabble` \ |Blank|
+      │           ├── debug.py
+      │           └── wave.py
+      └── wave.mp4
+
+From here, you can proceed to edit the custom node configs and source files.
