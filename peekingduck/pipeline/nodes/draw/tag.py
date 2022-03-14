@@ -86,7 +86,7 @@ class Node(AbstractNode):
             Define the color of the drawn tag, in BGR format. Defined values
             have to be integers, and :math:`0 \\leq value \\leq 255`.
 
-    .. versionchanged:: 1.2.0 |br|
+    .. versionchanged:: 1.2.0
         :mod:`draw.tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an
         input data type, which has been deprecated and now subsumed under
         :term:`obj_attrs`, giving this node more flexibility. Also, the

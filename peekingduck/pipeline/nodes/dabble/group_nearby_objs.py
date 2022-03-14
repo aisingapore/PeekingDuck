@@ -43,7 +43,7 @@ class Node(AbstractNode):
             distance less than ``obj_dist_threshold`` would be assigned to the
             same group.
 
-    .. versionchanged:: 1.2.0 |br|
+    .. versionchanged:: 1.2.0
         :mod:`draw.group_nearby_objs` used to return ``obj_tags``
         (:obj:`List[str]`) as an output data type, which has been deprecated
         and now subsumed under :term:`obj_attrs`. The same attribute is

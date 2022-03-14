@@ -37,7 +37,7 @@ class Node(AbstractNode):
         group_size_threshold (:obj:`int`): **default = 5**. |br|
             Threshold of group size.
 
-    .. versionchanged:: 1.2.0 |br|
+    .. versionchanged:: 1.2.0
         :mod:`draw.check_large_groups` used to take in ``obj_tags``
         (:obj:`List[str]`) as an input data type, which has been deprecated and
         now subsumed under :term:`obj_attrs`. The same attribute is accessed by

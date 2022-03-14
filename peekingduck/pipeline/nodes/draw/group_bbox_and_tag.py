@@ -53,7 +53,7 @@ class Node(AbstractNode):
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
             The string message printed when a large group is detected.
 
-    .. versionchanged:: 1.2.0 |br|
+    .. versionchanged:: 1.2.0
         :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags``
         (:obj:`List[str]`) as an input data type, which has been deprecated and
         now subsumed under :term:`obj_attrs`. The same attribute is accessed by

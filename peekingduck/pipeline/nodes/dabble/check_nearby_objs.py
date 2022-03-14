@@ -44,7 +44,7 @@ class Node(AbstractNode):
         tag_msg (:obj:`str`): **default = "TOO CLOSE!"**. |br|
             Tag to identify objects which are near others.
 
-    .. versionchanged:: 1.2.0 |br|
+    .. versionchanged:: 1.2.0
         :mod:`draw.check_nearby_objs` used to return ``obj_tags``
         (:obj:`List[str]`) as an output data type, which has been deprecated
         and now subsumed under :term:`obj_attrs`. The same attribute is
