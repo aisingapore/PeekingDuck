@@ -53,7 +53,7 @@ This number is internal and not readily viewable.
 We will create a custom node to retrieve this score and display it on screen.
 This tutorial will use the `cat_and_computer.mp4  
 <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ video from
-the earlier :ref:`object detection tutorial <tutorial_configure_nodes>`.
+the earlier :ref:`object detection tutorial <tutorial_more_object_detection>`.
 Copy it into the ``custom_project`` folder.
 
 Use the following command to create a custom node: :greenbox:`peekingduck create-node` |br|
@@ -129,10 +129,10 @@ implement our custom node function.
    ``input`` specifies the data types the node would consume, to be read from the pipeline. |br|
    ``output`` specifies the data types the node would produce, to be put into the pipeline.
 
-   To display the bounding box confidence score, our node requires three pieces
-   of input data: the bounding box, the score to display, and the image to draw on.
-   These are defined as :term:`bboxes`, :term:`bbox_scores`, and :term:`img` respectively in the 
-   :ref:`API docs <api_doc>`.
+   To display the bounding box confidence score, our node requires three pieces of input
+   data: the bounding box, the score to display, and the image to draw on.  These are
+   defined as the data types :term:`bboxes`, :term:`bbox_scores`, and :term:`img`
+   respectively in the :ref:`API docs <api_doc>`.
 
    Our custom node only displays the score on screen and does not produce any
    outputs for the pipeline, so the output is ":term:`none <(output) none>`".
@@ -359,8 +359,8 @@ create-node` to create a new ``dabble.wave`` custom node as shown below:
    | Created node!
 
 
-Also, copy ``wave.mp4`` into the above folder.  You should end up with the
-following folder structure:
+Also, copy `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_ into
+the above folder.  You should end up with the following folder structure:
 
 .. parsed-literal::
 
@@ -649,8 +649,9 @@ Execute :greenbox:`peekingduck run` to see your custom node in action.
 Recipe 3: Debugging
 ===================
 
-When working with PeekingDuck's pipeline, you may sometimes wonder what is available 
-in the data pool, or whether a particular data object has been correctly computed.
+When working with PeekingDuck's pipeline, you may sometimes wonder what is available in
+the :ref:`data pool <tutorial_pipeline_data_pool>`, or whether a particular data object
+has been correctly computed.
 This tutorial will show you how to use a custom node to help with troubleshooting and 
 debugging PeekingDuck's pipeline.
 

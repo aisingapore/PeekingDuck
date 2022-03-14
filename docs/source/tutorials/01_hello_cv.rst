@@ -160,10 +160,10 @@ To exit, click to select the video window and press :greenbox:`q`.
       PeekingDuck assumes the webcam is defaulted to input source 0.
       If your system is configured differently, you would have to specify the 
       input source by changing the ``input.live`` configuration.
-      See tutorial on :ref:`Nodes and Configs <tutorial_nodes_config>`.
+      See :ref:`changing node configuration <tutorial_more_object_detection>`.
 
 
-.. _tutorial_nodes_config:
+.. _tutorial_pipeline_nodes_configs:
 
 Pipelines, Nodes and Configs
 ============================
@@ -192,6 +192,8 @@ PeekingDuck supports 6 types of nodes:
 .. image:: /assets/diagrams/node_types.drawio.svg
    :class: no-scaled-link
    :width: 60%
+
+.. _tutorial_pipeline_data_pool:
 
 A PeekingDuck pipeline is created by stringing together a series of nodes that 
 perform a logical sequence of operations.

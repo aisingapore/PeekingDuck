@@ -8,7 +8,7 @@ This tutorial presents intermediate recipes for cooking up new PeekingDuck
 pipelines by modifying the nodes and their configs.
 
 
-.. _tutorial_configure_nodes:
+.. _tutorial_more_object_detection:
 
 More Object Detection
 =====================
@@ -52,7 +52,7 @@ To perform object detection on the ``cat_and_computer.mp4`` file, edit the
    - model.yolo:
        detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
    - draw.bbox:
-       show_labels: True
+       show_labels: True    # configure draw.bbox to display object labels
    - output.screen
 
 Here is a step-by-step explanation of what has been done:
@@ -134,10 +134,9 @@ specified folder.
 Configuration - Behind the Scenes
 =================================
 
-Here is a little explanation on what goes on behind the scenes when you configure 
-a node, such as specifying ``show_labels: True`` for ``draw.bbox``.
-Every node has a default set of configuration. For instance, ``draw.bbox`` default 
-configuration is:
+Here is an explanation on what goes on behind the scenes when you configure a node.
+Every node has a set of default configuration.
+For instance, ``draw.bbox`` default configuration is:
 
 .. code-block:: yaml
    :linenos:
@@ -147,9 +146,9 @@ configuration is:
 
    show_labels: False
 
-By default, show_labels is switched off.
-When you switch it on with ``show_labels: True``, what PeekingDuck does is to override
-the default ``show_labels`` configuration with your specified value.
+By default, ``show_labels`` is disabled.
+When you enable it on with ``show_labels: True``, what PeekingDuck does is to override
+the default ``show_labels: False`` configuration with your specified ``True`` value.
 You will see another instance of this at work in the advanced *Peaking Duck* tutorial on
 :ref:`Tracking People Within a Zone <tutorial_tracking_people_within_zone>`.
 
