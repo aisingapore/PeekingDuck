@@ -1,0 +1,10 @@
+nodes:
+- input.live
+- model.yolo:
+    detect_ids: [0]
+- dabble.bbox_count
+- dabble.fps
+- draw.bbox
+- draw.legend:
+    show: ["count", "fps"]
+- output.screen

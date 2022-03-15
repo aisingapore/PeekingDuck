@@ -109,8 +109,8 @@ Gallery
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/multiple_object_tracking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/vehicles_tracking.gif">
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/object_counting_over_time.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/object_counting_over_time.gif">
       </a>
     </td>
   </tr>
@@ -131,8 +131,8 @@ Gallery
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/human_tracking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/human_tracking.gif">
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/human_counting_over_time.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/human_counting_over_time.gif">
       </a>
     </td>
   </tr>

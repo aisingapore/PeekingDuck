@@ -4,5 +4,6 @@ nodes:
 - dabble.fps
 - draw.bbox:
     show_labels: True
-- draw.legend
+- draw.legend:
+    show: ["fps"]
 - output.screen

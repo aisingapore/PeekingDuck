@@ -12,24 +12,15 @@
      }
    </style>
 
+*********
 Use Cases
-=========
+*********
 
-Below is a gallery of use cases.
-
-.. toctree::
-   :maxdepth: 1
-
-   /use_cases/crowd_counting
-   /use_cases/face_mask_detection
-   /use_cases/group_size_checking
-   /use_cases/object_counting
-   /use_cases/multiple_object_tracking
-   /use_cases/human_tracking
-   /use_cases/privacy_protection_faces
-   /use_cases/privacy_protection_license_plates
-   /use_cases/social_distancing
-   /use_cases/zone_counting
+Computer Vision (CV) problems come in various forms, and the gallery below shows common CV use
+cases which can be tackled by PeekingDuck right out of the box. Areas include privacy protection,
+smart monitoring, and COVID-19 prevention and control. Users are encouraged to mix and match
+different PeekingDuck nodes and create your own :ref:`custom nodes <tutorial_custom_nodes>` for
+your specific use case - the only limit is your imagination!
 
 ..
     Use case table substitutions
@@ -52,9 +43,9 @@ Below is a gallery of use cases.
    :class: no-scaled-link
    :width: 100 %
 
-.. |object_counting_doc| replace:: :doc:`Object Counting </use_cases/object_counting>`
+.. |object_counting_present_doc| replace:: :doc:`Object Counting (Present) </use_cases/object_counting_present>`
 
-.. |object_counting_gif| image:: /assets/use_cases/object_counting.gif
+.. |object_counting_present_gif| image:: /assets/use_cases/object_counting_present.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -82,20 +73,28 @@ Below is a gallery of use cases.
    :class: no-scaled-link
    :width: 100 %
 
-.. |multiple_object_tracking_doc| replace:: :doc:`Multiple Object Tracking </use_cases/multiple_object_tracking>`
+.. |object_counting_over_time_doc| replace:: :doc:`Object Counting (Over Time) </use_cases/object_counting_over_time>`
 
-.. |multiple_object_tracking_gif| image:: /assets/use_cases/multiple_object_tracking.gif
+.. |object_counting_over_time_gif| image:: /assets/use_cases/object_counting_over_time.gif
    :class: no-scaled-link
    :width: 100 %
 
-.. |human_tracking_doc| replace:: :doc:`Human Detection and Tracking </use_cases/human_tracking>`
+.. |human_counting_over_time_doc| replace:: :doc:`Human Counting (Over Time) </use_cases/human_counting_over_time>`
 
-.. |human_tracking_gif| image:: /assets/use_cases/human_tracking.gif
+.. |human_counting_over_time_gif| image:: /assets/use_cases/human_counting_over_time.gif
    :class: no-scaled-link
    :width: 100 %
 
+.. _privacy_protection_use_cases:
 
-**Privacy Protection**
+Privacy Protection
+==================
+
+.. toctree::
+   :maxdepth: 1
+
+   /use_cases/privacy_protection_faces
+   /use_cases/privacy_protection_license_plates
 
 +--------------------------------+-----------------------------+
 | |privacy_protection_faces_doc| | |privacy_protection_lp_doc| |
@@ -103,23 +102,45 @@ Below is a gallery of use cases.
 | |privacy_protection_faces_gif| | |privacy_protection_lp_gif| |
 +--------------------------------+-----------------------------+
 
-**Smart Counting**
+.. _smart_monitoring_use_cases:
 
-+--------------------------------+-----------------------------+
-| |zone_counting_doc|            | |crowd_counting_doc|        |
-+--------------------------------+-----------------------------+
-| |zone_counting_gif|            | |crowd_counting_gif|        |
-+--------------------------------+-----------------------------+
-| |multiple_object_tracking_doc| | |human_tracking_doc|        |
-+--------------------------------+-----------------------------+
-| |multiple_object_tracking_gif| | |human_tracking_gif|        |
-+--------------------------------+-----------------------------+
-| |object_counting_doc|          |                             |
-+--------------------------------+                             +
-| |object_counting_gif|          |                             |
-+--------------------------------+-----------------------------+
+Smart Monitoring
+================
 
-**COVID-19 Prevention and Control**
+.. toctree::
+   :maxdepth: 1
+
+   /use_cases/crowd_counting
+   /use_cases/object_counting_present
+   /use_cases/object_counting_over_time
+   /use_cases/human_counting_over_time
+   /use_cases/zone_counting
+
++---------------------------------+--------------------------------+
+| |zone_counting_doc|             | |crowd_counting_doc|           |
++---------------------------------+--------------------------------+
+| |zone_counting_gif|             | |crowd_counting_gif|           |
++---------------------------------+--------------------------------+
+| |object_counting_over_time_doc| | |human_counting_over_time_doc| |
++---------------------------------+--------------------------------+
+| |object_counting_over_time_gif| | |human_counting_over_time_gif| |
++---------------------------------+--------------------------------+
+| |object_counting_present_doc|   |                                |
++---------------------------------+                                +
+| |object_counting_present_gif|   |                                |
++---------------------------------+--------------------------------+
+
+.. _covid_19_use_cases:
+
+COVID-19 Prevention and Control
+===============================
+
+.. toctree::
+   :maxdepth: 1
+
+   /use_cases/face_mask_detection
+   /use_cases/group_size_checking
+   /use_cases/social_distancing
 
 +--------------------------------+-----------------------------+
 | |social_distancing_doc|        | |group_size_checking_doc|   |

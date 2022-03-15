@@ -9,6 +9,8 @@ nodes:
     tag_msg: "TOO CLOSE!"
 - dabble.fps
 - draw.poses
-- draw.tag
-- draw.legend
+- draw.tag:
+    show: ["flags"]
+- draw.legend:
+    show: ["fps"]
 - output.screen

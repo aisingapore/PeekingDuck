@@ -1,9 +1,0 @@
-nodes:
-- input.recorded:   
-    input_dir: "images/testing"
-- model.yolo:
-    model_type: "v4tiny"
-- dabble.tracking:
-    tracking_type: "iou"
-- draw.tag
-- draw.bbox

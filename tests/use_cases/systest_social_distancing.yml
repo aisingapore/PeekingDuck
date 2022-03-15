@@ -1,6 +1,6 @@
 nodes:
 - input.recorded:
-    input_dir: "images/testing" 
+    input_dir: "tests/data/images"
 - model.posenet
 - dabble.keypoints_to_3d_loc:
     focal_length: 1.14
@@ -11,5 +11,7 @@ nodes:
 - dabble.fps
 - draw.poses
 - draw.bbox     # not in demo config, but included here
-- draw.tag
-- draw.legend
+- draw.tag:
+    show: ["flags"]
+- draw.legend:
+    show: ["fps"]

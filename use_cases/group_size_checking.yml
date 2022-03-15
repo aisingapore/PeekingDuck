@@ -11,5 +11,6 @@ nodes:
 - dabble.fps
 - draw.poses
 - draw.group_bbox_and_tag
-- draw.legend
+- draw.legend:
+    show: ["fps"]
 - output.screen

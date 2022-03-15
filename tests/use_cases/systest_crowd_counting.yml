@@ -1,0 +1,10 @@
+nodes:
+- input.recorded:
+    input_dir: "tests/data/images"
+- model.csrnet:
+    model_type: dense
+- dabble.fps
+- draw.heat_map
+- draw.legend:
+    show: ["count", "fps"]
+- output.screen
