@@ -90,7 +90,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.visual
    - model.posenet
    - dabble.keypoints_to_3d_loc:
        focal_length: 1.14

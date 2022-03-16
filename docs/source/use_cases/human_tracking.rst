@@ -61,7 +61,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.visual
    - model.jde
    - dabble.fps
    - draw.bbox

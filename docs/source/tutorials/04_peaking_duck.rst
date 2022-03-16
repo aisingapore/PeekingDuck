@@ -297,8 +297,8 @@ Edit ``pipeline_config.yml`` as follows:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: highway_cars.mp4
+      - input.visual:
+          source: highway_cars.mp4
       - model.yolo:
           detect_ids: ["car"]
       - dabble.bbox_count
@@ -363,8 +363,8 @@ Create the following ``pipeline_config.yml``:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: people_walking.mp4
+      - input.visual:
+          source: people_walking.mp4
       - model.yolo:
           detect_ids: ["person"]
       - dabble.tracking
@@ -455,8 +455,8 @@ Change ``pipeline_config.yml`` to the following:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: people_walking.mp4
+      - input.visual:
+          source: people_walking.mp4
       - model.yolo:
           detect_ids: ["person"]
       - dabble.bbox_to_btm_midpoint

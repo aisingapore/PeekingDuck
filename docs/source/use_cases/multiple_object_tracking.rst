@@ -99,8 +99,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.recorded:   
-       input_dir: <path/to/input_video>
+   - input.visual:   
+       source: <path/to/input_video>
    - model.yolo:
        model_type: "v4tiny"
    - dabble.fps

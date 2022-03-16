@@ -277,7 +277,7 @@ implement our custom node function.
       :linenos:
 
       nodes:
-      - input.live
+      - input.visual
       - model.yolo
       - draw.bbox
       - output.screen
@@ -290,8 +290,8 @@ implement our custom node function.
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: cat_and_computer.mp4
+      - input.visual:
+          source: cat_and_computer.mp4
       - model.yolo:
           detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
@@ -615,8 +615,8 @@ inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps
@@ -771,8 +771,8 @@ Then, make the following **three** changes:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps
@@ -790,10 +790,10 @@ one below:
 
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck run` \ 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline_config file. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising input.recorded node.\.\. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.recorded is updated to: 'input_dir': wave.mp4 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 710 by 540 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising input.visual node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'input_dir': wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 710 by 540 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: wave.mp4 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising model.yolo node.\.\. 
    |                     [ .\.\. many lines of output deleted here .\.\. ]
    | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising custom_nodes.dabble.debug node.\.\. 
@@ -851,8 +851,8 @@ Starting with the basic folder structure from :green:`peekingduck init`:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps

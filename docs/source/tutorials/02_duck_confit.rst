@@ -47,8 +47,8 @@ To perform object detection on the ``cat_and_computer.mp4`` file, edit the
    :linenos:
 
    nodes:
-   - input.recorded:
-       input_dir: cat_and_computer.mp4
+   - input.visual:
+       source: cat_and_computer.mp4
    - model.yolo:
        detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
    - draw.bbox:
@@ -57,7 +57,7 @@ To perform object detection on the ``cat_and_computer.mp4`` file, edit the
 
 Here is a step-by-step explanation of what has been done:
 
-   | Line 2 :mod:`input.recorded`: tells PeekingDuck to load the ``cat_and_computer.mp4``.
+   | Line 2 :mod:`input.visual`: tells PeekingDuck to load the ``cat_and_computer.mp4``.
    | Line 4 :mod:`model.yolo`: by default, the Yolo model detects ``person`` only.
    |        The ``cat_and_computer.mp4`` contains other classes of objects like cup, cat, laptop, etc. 
    |        So we have to change the model settings to detect the other object classes.
@@ -96,8 +96,8 @@ Edit ``pipeline_config.yml`` as shown below:
    :linenos:
 
    nodes:
-   - input.recorded:
-       input_dir: cat_and_computer.mp4
+   - input.visual:
+       source: cat_and_computer.mp4
    - model.yolo:
        detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
    - draw.bbox:
@@ -170,8 +170,8 @@ within the pipeline:
    :linenos:
 
    nodes:
-   - input.recorded:
-       input_dir: "data/verification/wave.mp4"
+   - input.visual:
+       source: "data/verification/wave.mp4"
    - model.yolo
    - augment.brightness:
        beta: 50         # ranges from -100 (darken) to +100 (brighten)

@@ -122,7 +122,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.visual
    - model.yolo:
        detect_ids: [0]
    - dabble.bbox_to_btm_midpoint
