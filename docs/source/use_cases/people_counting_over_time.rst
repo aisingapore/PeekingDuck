@@ -2,6 +2,8 @@
 People Counting (Over Time)
 ***************************
 
+.. include:: /include/substitution.rst
+
 Overview
 ========
 
@@ -70,8 +72,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.recorded:
-       input_dir: <path/to/video with people>
+   - input.visual:
+       source: <path/to/video with people>
    - model.jde
    - dabble.statistics:
        maximum: obj_attrs["ids"]
