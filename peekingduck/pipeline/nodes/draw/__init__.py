@@ -15,7 +15,7 @@
 """
 Draws results/outputs to an image.
 
-.. deprecated:: 1.2.0 |br|
-    :mod:`draw.image_processor` is deprecated, and replaced by the nodes :mod:`augment.brightness`
-    and :mod:`augment.contrast`.
+.. deprecated:: 1.2.0
+    :mod:`draw.image_processor` is deprecated, and replaced by the nodes
+    :mod:`augment.brightness` and :mod:`augment.contrast`.
 """

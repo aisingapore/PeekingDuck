@@ -18,12 +18,12 @@ CLI functions for PeekingDuck.
 
 import logging
 import math
+import tempfile
 from pathlib import Path
 from time import perf_counter
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import click
-import requests
 import yaml
 
 from peekingduck import __version__
@@ -40,7 +40,6 @@ from peekingduck.utils.create_node_helper import (
     verify_option,
 )
 from peekingduck.utils.logger import LoggerSetup
-from peekingduck.weights_utils.downloader import save_response_content
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -62,7 +61,7 @@ def create_custom_folder(custom_folder_name: str) -> None:
 
 def create_pipeline_config_yml(
     default_nodes: List[Union[str, Dict[str, Any]]] = None,
-    default_name: str = "pipeline_config.yml",
+    default_path: Path = Path("pipeline_config.yml"),
 ) -> None:
     """Initializes the declarative *pipeline_config.yml*.
 
@@ -70,14 +69,23 @@ def create_pipeline_config_yml(
         default_nodes (List[Union[str, Dict[str, Any]]]): A list of PeekingDuck
             node. For nodes with custom configuration, use a dictionary instead
             of a string.
-        default_name (str): Name of the pipeline config file.
+        default_path (Path): Path of the pipeline config file.
     """
     # Default yml to be discussed
     if default_nodes is None:
-        default_nodes = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+        default_nodes = [
+            {
+                "input.live": {
+                    "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                }
+            },
+            "model.posenet",
+            "draw.poses",
+            "output.screen",
+        ]
     default_yml = dict(nodes=default_nodes)
 
-    with open(default_name, "w") as yml_file:
+    with open(default_path, "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
 
 
@@ -409,50 +417,35 @@ def _num_digits(number: int) -> int:
     return int(math.log10(number))
 
 
-def _setup_verification(pipeline_config_name: str) -> None:
-    """Sets up the directory structure and downloads demo video for verifying
-    PeekingDuck installation.
-
-    Args:
-        pipeline_config_name (str): Name of the config YAML file for verifying
-            PeekingDuck installation.
-    """
-    create_pipeline_config_yml(
-        [
-            {"input.recorded": {"input_dir": "data/verification/wave.mp4"}},
-            "model.yolo",
-            "draw.bbox",
-            "output.screen",
-        ],
-        pipeline_config_name,
-    )
-    input_dir = _get_cwd() / "data" / "verification"
-    input_dir.mkdir(parents=True, exist_ok=True)
-
-    # Download demo video
-    file_name = "wave.mp4"
-    session = requests.Session()
-    response = session.get(
-        f"https://storage.googleapis.com/peekingduck/videos/{file_name}", stream=True
-    )
-    logger.info("Downloading sample video")
-    save_response_content(response, input_dir / file_name)
-    logger.info("Download complete")
-
-
 def _verify_install() -> None:
     """Verifies PeekingDuck installation by running object detection on
     'wave.mp4'.
     """
     LoggerSetup.set_log_level("info")
 
-    pipeline_config_name = "verification_pipeline.yml"
-    _setup_verification(pipeline_config_name)
+    with tempfile.TemporaryDirectory() as tmp_dir:
+        pipeline_config_path = Path(tmp_dir) / "verification_pipeline.yml"
 
-    runner = Runner(
-        pipeline_path=_get_cwd() / pipeline_config_name,
-        config_updates_cli="None",
-        custom_nodes_parent_subdir="src",
-        num_iter=None,
-    )
-    runner.run()
+        create_pipeline_config_yml(
+            [
+                {
+                    "input.live": {
+                        "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                    }
+                },
+                "model.yolo",
+                "draw.bbox",
+                "output.screen",
+            ],
+            pipeline_config_path,
+        )
+
+        print(tmp_dir)
+
+        runner = Runner(
+            pipeline_path=pipeline_config_path,
+            config_updates_cli="None",
+            custom_nodes_parent_subdir="src",
+            num_iter=None,
+        )
+        runner.run()

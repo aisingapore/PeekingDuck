@@ -30,14 +30,14 @@ class Node(AbstractNode):
     faces with face masks (e.g. surgical masks).
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|

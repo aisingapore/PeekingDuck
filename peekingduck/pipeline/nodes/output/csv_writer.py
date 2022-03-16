@@ -35,7 +35,7 @@ class Node(AbstractNode):
         ``stats_to_track``.
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         stats_to_track (:obj:`List`):

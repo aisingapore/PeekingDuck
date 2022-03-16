@@ -36,19 +36,19 @@ class Node(AbstractNode):
     """Outputs the processed image or video to a file.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |filename|
+        |filename_data|
 
-        |saved_video_fps|
+        |saved_video_fps_data|
 
-        |pipeline_end|
+        |pipeline_end_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
-        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**. |br|
+        output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
     """
 

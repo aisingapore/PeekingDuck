@@ -29,16 +29,16 @@ class Node(AbstractNode):
     shared neural network.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -52,10 +52,10 @@ class Node(AbstractNode):
             Object confidence score threshold.
         min_box_area (:obj:`int`): **default = 200**. |br|
             Minimum value for area of detected bounding box. Calculated by
-            width * height.
+            :math:`width \\times height`.
         track_buffer (:obj:`int`): **default = 30**. |br|
-            Threshold to remove track if track is lost for more frames
-            than value.
+            Threshold to remove track if track is lost for more frames than
+            value.
 
     References:
         Towards Real-Time Multi-Object Tracking:

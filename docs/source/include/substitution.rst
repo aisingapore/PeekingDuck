@@ -11,6 +11,8 @@
 
 .. role:: green
 
+.. role:: greenbox
+
 
 ..
    Substitutions for HTML rendering

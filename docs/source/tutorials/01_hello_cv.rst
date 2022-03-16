@@ -16,40 +16,8 @@ and/or videos. This pipeline is made up of nodes: each node can perform certain
 CV-related tasks.
 
 This section presents two basic "hello world" examples to demonstrate how to use
-PeekingDuck for object detection and pose estimation.
+PeekingDuck for pose estimation and object detection.
 
-
-.. _tutorial_object_detection:
-
-Object Detection
-================
-
-When you ran ``peekingduck --verify_install`` to :ref:`verify your installation
-<verify_installation>` earlier, you were running the default pipeline in the file
-``verification_pipeline.yml`` as shown below:
-
-.. code-block:: yaml
-   :linenos:
-
-   nodes:
-   - input.recorded:
-       input_dir: "data/verification/wave.mp4"
-   - model.yolo
-   - draw.bbox
-   - output.screen
-
-The above pipeline forms an **object detection pipeline** and comprises four nodes that do the
-following:
-
-   #. ``input.recorded``: reads the file ``wave.mp4``,
-   #. ``model.yolo``: runs the Yolo object detection model on it,
-   #. ``draw.bbox``: draws the bounding box to show the detected person,
-   #. ``output.screen``: outputs everything onto the screen for display.
-
-| The 18-second video will auto-close when it is completed.
-| To exit earlier, click to select the video window and press ``q``.
-
-You have successfully run an object detection pipeline.
 
 
 .. _tutorial_pose_estimation:
@@ -57,35 +25,47 @@ You have successfully run an object detection pipeline.
 Pose Estimation
 ===============
 
-To perform pose estimation with PeekingDuck, initialize the PeekingDuck project using:
+To perform pose estimation with PeekingDuck, initialize a new PeekingDuck project using
+the following commands:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
+    | \ :blue:`[~user]` \ > \ :green:`mkdir pose_estimation` \
+    | \ :blue:`[~user]` \ > \ :green:`cd pose_estimation` \
+    | \ :blue:`[~user/pose_estimation]` \ > \ :green:`peekingduck init` \
 
-Then, modify the ``pipeline_config.yml``, created by ``peekingduck init`` in the
-``pkd_project`` folder, as follows:
+:greenbox:`peekingduck init` will prepare the ``pose_estimation`` folder for use with
+PeekingDuck.
+It creates a default pipeline file called ``pipeline_config.yml`` and a ``src`` folder
+containing contents that will be covered in the later tutorials.
+The ``pipeline_config.yml`` file looks like this:
 
 .. code-block:: yaml
    :linenos:
 
    nodes:
-   - input.recorded:
-       input_dir: "data/verification/wave.mp4"
-   - model.posenet      # use pose estimation model
-   - draw.poses         # draw skeletal poses
+   - input.live:
+      input_source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+   - model.posenet
+   - draw.poses
    - output.screen
 
-The important changes are to the second node ``model`` and the third node ``draw``
-(Lines 4-5).
+The above forms an **pose estimation pipeline** and comprises four nodes that do the
+following:
+
+   #. :mod:`input.live`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
+   #. :mod:`model.posenet`: runs the Posenet pose estimation model on it
+   #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
+   #. :mod:`output.screen`: outputs everything onto the screen for display
 
 Now, run the pipeline using
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck run` \
+    | \ :blue:`[~user/pose_estimation]` \ > \ :green:`peekingduck run` \
 
-You should see the same video with skeletal poses drawn on it and which track the hand movement.
+| You should see the following video of a person waving his hand.
+| Skeletal poses are drawn on him which track the hand movement.
 
    .. figure:: /assets/tutorials/ss_pose_estimation.png
       :width: 389
@@ -93,22 +73,64 @@ You should see the same video with skeletal poses drawn on it and which track th
 
       PeekingDuck's Pose Estimation Screenshot
 
-The above **pose estimation pipeline** comprises four nodes that do the following:
+You have successfully run a PeekingDuck pose estimation pipeline!
 
-   #. ``input.recorded``: reads the file ``wave.mp4``,
-   #. ``model.posenet``: runs the ``Posenet`` pose estimation model on it,
-   #. ``draw.poses``: draws the human skeletal frame to show the detected poses,
-   #. ``output.screen``: outputs everything onto the screen for display.
+| The video will auto-close when it is completed.
+| To exit earlier, click to select the video window and press :greenbox:`q`.
 
-| The 18-second video will auto-close when it is completed.
-| To exit earlier, click to select the video window and press ``q``.
 
-That's it: you have created a pose estimation pipeline by changing only two lines!
 
-.. note::
 
-   | Try replacing ``wave.mp4`` with your own video file and run both models.
-   | For best effect, your video file should contain people performing some activity.
+.. _tutorial_object_detection:
+
+Object Detection
+================
+
+To perform object detection, initialize a new PeekingDuck project using the following
+commands:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]` \ > \ :green:`mkdir object_detection` \
+    | \ :blue:`[~user]` \ > \ :green:`cd object_detection` \
+    | \ :blue:`[~user/object_detection]` \ > \ :green:`peekingduck init` \
+
+Then modify ``pipeline_config.yml`` as follows:
+
+.. code-block:: yaml
+   :linenos:
+
+   nodes:
+   - input.live:
+      input_source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+   - model.yolo
+   - draw.bbox
+   - output.screen
+
+The key differences between this and the earlier pipeline are:
+
+   | Line 4: :mod:`model.yolo` runs the Yolo object detection model
+   | Line 5: :mod:`draw.bbox` draws the bounding box to show the detected person
+
+Run the new **object detection pipeline** with :greenbox:`peekingduck run`.
+
+You will see the same video with a bounding box surrounding the person.
+
+   .. figure:: /assets/tutorials/ss_object_detection.png
+      :width: 389
+      :alt: Object Detection Screenshot
+
+      PeekingDuck's Object Detection Screenshot
+
+That's it: you have created a new object detection pipeline by changing only two lines!
+
+   .. note::
+
+      | Try replacing ``wave.mp4`` with your own video file and run both models.
+      | For best effect, your video file should contain people performing some activity.
+
+
+
 
 
 .. _tutorial_webcam:
@@ -128,20 +150,20 @@ If your computer has a webcam attached, you can use it by changing the first
    - draw.poses         # draw skeletal poses
    - output.screen
 
-Now do a ``peekingduck run`` and you will see yourself onscreen. Move your hands
-around and see PeekingDuck tracking your poses.
+Now do a :greenbox:`peekingduck run` and you will see yourself onscreen. 
+Move your hands around and see PeekingDuck tracking your poses.
 
-To exit, click to select the video window and press ``q``.
+To exit, click to select the video window and press :greenbox:`q`.
 
-.. note::
+   .. note::
 
-    PeekingDuck assumes the webcam is defaulted to input source 0.
-    If your system is configured differently, you would have to specify the 
-    input source by changing the ``input.live`` configuration.
-    See tutorial on :ref:`Nodes and Configs <tutorial_nodes_config>`.
+      PeekingDuck assumes the webcam is defaulted to input source 0.
+      If your system is configured differently, you would have to specify the 
+      input source by changing the :mod:`input.live` configuration.
+      See :ref:`changing node configuration <tutorial_more_object_detection>`.
 
 
-.. _tutorial_nodes_config:
+.. _tutorial_pipeline_nodes_configs:
 
 Pipelines, Nodes and Configs
 ============================
@@ -170,6 +192,8 @@ PeekingDuck supports 6 types of nodes:
 .. image:: /assets/diagrams/node_types.drawio.svg
    :class: no-scaled-link
    :width: 60%
+
+.. _tutorial_pipeline_data_pool:
 
 A PeekingDuck pipeline is created by stringing together a series of nodes that 
 perform a logical sequence of operations.
@@ -227,4 +251,4 @@ Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)
 
 .. note::
    
-   The ``model`` nodes return results in relative coordinates.
+   The :mod:`model` nodes return results in relative coordinates.

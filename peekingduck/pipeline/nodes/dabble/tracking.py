@@ -26,26 +26,29 @@ class Node(AbstractNode):
     """Uses bounding boxes detected by an object detector model to track
     multiple objects.
 
-    Currently, two types of tracking algorithms can be selected: MOSSE, IOU.
+    Currently, two types of tracking algorithms can be selected: MOSSE and IOU.
     Information on the algorithms' performance can be found
     :ref:`here <object-tracking-benchmarks>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |obj_attrs|
+        |obj_attrs_data|
 
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|
             Type of tracking algorithm to be used. For more information about
             the trackers, please view the :doc:`Object Counting (Over Time)
             </use_cases/object_counting_over_time>`.
-        iou_threshold (float): **[0, 1], default=0.1**. |br|
+        iou_threshold (:obj:`float`): **[0, 1], default=0.1**. |br|
+            the trackers, please view the :doc:`Multiple Object Tracking use
+            case </use_cases/multiple_object_tracking>`.
+        iou_threshold (:obj:`float`): **[0, 1], default=0.1**. |br|
             Minimum IoU value to be used with the matching logic.
-        max_lost (int): **[0, sys.maxsize), default=10**. |br|
+        max_lost (:obj:`int`): **[0, sys.maxsize), default=10**. |br|
             Maximum number of frames to keep "lost" tracks after which they
             will be removed. Only used when ``tracking_type = iou``.
     """

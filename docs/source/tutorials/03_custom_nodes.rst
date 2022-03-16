@@ -41,7 +41,7 @@ as placeholders for contents to be added.
 .. _tutorial_object_detection_score:
 
 Recipe 1: Object Detection Score
---------------------------------
+================================
 
 When the Yolo object detection model detects an object in the image, it assigns 
 a bounding box and a score to it.
@@ -53,17 +53,19 @@ This number is internal and not readily viewable.
 We will create a custom node to retrieve this score and display it on screen.
 This tutorial will use the `cat_and_computer.mp4  
 <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_ video from
-the earlier :ref:`object detection tutorial <tutorial_configure_nodes>`.
+the earlier :ref:`object detection tutorial <tutorial_more_object_detection>`.
 Copy it into the ``custom_project`` folder.
 
-Use the following command to create a custom node: ``peekingduck create-node`` |br|
+Use the following command to create a custom node: :greenbox:`peekingduck create-node` |br|
 It will prompt you to answer several questions.
-Press ``<Enter>`` to accept the default ``custom_nodes`` folder name, then key in 
-``draw`` for node type and ``score`` for node name.
-Finally, press ``<Enter>`` to answer ``Y`` when asked to proceed.
+Press :greenbox:`<Enter>` to accept the default ``custom_nodes`` folder name, then key
+in :greenbox:`draw` for node type and :greenbox:`score` for node name.
+Finally, press :greenbox:`<Enter>` to answer ``Y`` when asked to proceed.
 
 The entire interaction is shown here, the answers you type are in shown in 
 :green:`green text`:
+
+.. _tutorial_wave_project_custom_node:
 
 .. admonition:: Terminal Session
 
@@ -127,13 +129,13 @@ implement our custom node function.
    ``input`` specifies the data types the node would consume, to be read from the pipeline. |br|
    ``output`` specifies the data types the node would produce, to be put into the pipeline.
 
-   To display the bounding box confidence score, our node requires three pieces
-   of input data: the bounding box, the score to display, and the image to draw on.
-   These are defined as ``bboxes``, ``bbox_scores``, and ``img`` respectively in the 
-   :ref:`API docs <api_doc>`.
+   To display the bounding box confidence score, our node requires three pieces of input
+   data: the bounding box, the score to display, and the image to draw on.  These are
+   defined as the data types :term:`bboxes`, :term:`bbox_scores`, and :term:`img`
+   respectively in the :ref:`API docs <api_doc>`.
 
    Our custom node only displays the score on screen and does not produce any
-   outputs for the pipeline, so the output is ``none``.
+   outputs for the pipeline, so the output is ":term:`none <(output) none>`".
 
    There are also no optional configs, so lines 11 - 12 can be removed.
 
@@ -300,7 +302,7 @@ implement our custom node function.
    Line 8 adds our custom node into the pipeline where it will be ``run`` by 
    PeekingDuck during each pipeline iteration.
 
-Execute ``peekingduck run`` to see your custom node in action.
+Execute :greenbox:`peekingduck run` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_1.png
       :width: 416
@@ -308,16 +310,15 @@ Execute ``peekingduck run`` to see your custom node in action.
 
       Custom Node Showing Object Detection Scores
 
-.. note::
+   .. note::
 
-   Royalty free video of cat and computer from:
-   https://www.youtube.com/watch?v=-C1TEGZavko
+      Royalty free video of cat and computer from: https://www.youtube.com/watch?v=-C1TEGZavko
 
 
 .. _tutorial_count_hand_wave:
 
 Recipe 2: Keypoints, Count Hand Waves
--------------------------------------
+=====================================
 
 This tutorial will create a custom node to analyze the skeletal keypoints of the
 person from the `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_
@@ -330,8 +331,8 @@ corresponding to the different body parts as documented :ref:`here
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
 real numbers ranging from 0.0 to 1.0 (using relative coordinates).
 
-Starting with a newly initialized PeekingDuck folder, call ``peekingduck
-create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
+Starting with a newly initialized PeekingDuck folder, call :greenbox:`peekingduck
+create-node` to create a new ``dabble.wave`` custom node as shown below:
 
 .. admonition:: Terminal Session
 
@@ -357,8 +358,8 @@ create-node`` to create a new ``dabble`` custom node ``wave`` as shown below:
    | Created node!
 
 
-Also, copy ``wave.mp4`` into the above folder.  You should end up with the
-following folder structure:
+Also, copy `wave.mp4 <https://storage.googleapis.com/peekingduck/videos/wave.mp4>`_ into
+the above folder.  You should end up with the following folder structure:
 
 .. parsed-literal::
 
@@ -387,14 +388,14 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 
       # No optional configs
 
-We will implement this tutorial using a ``dabble`` node, which will take the 
-inputs ``img``, ``bboxes``, ``bbox_scores``, ``keypoints``, and ``keypoint_scores`` 
-from the pipeline. The node has no output.
+We will implement this tutorial using a custom :mod:`dabble` node, which will take the
+inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
+:term:`keypoint_scores` from the pipeline. The node has no output.
 
 2. **src/custom_nodes/dabble/wave.py**:
 
-   The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure
-   in the other custom node tutorial.
+   The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure in
+   the other custom node tutorial.
 
    .. container:: toggle
 
@@ -594,7 +595,7 @@ from the pipeline. The node has no output.
    
                return {}
 
-   This (long) piece of code implements our custom ``dabble`` node. 
+   This (long) piece of code implements our custom :mod:`dabble` node. 
    It defines three helper functions to convert relative to absolute coordinates 
    and to draw text on-screen.
    The number of hand waves is displayed at the left-top corner of the screen.
@@ -626,9 +627,9 @@ from the pipeline. The node has no output.
       - output.screen
 
    We modify ``pipeline_config.yml`` to run both the object detection and pose estimation
-   models to obtain the required inputs for our custom ``dabble`` node.
+   models to obtain the required inputs for our custom :mod:`dabble` node.
 
-Execute ``peekingduck run`` to see your custom node in action.
+Execute :greenbox:`peekingduck run` to see your custom node in action.
 
    .. figure:: /assets/tutorials/ss_custom_nodes_2.png
       :width: 389
@@ -636,19 +637,19 @@ Execute ``peekingduck run`` to see your custom node in action.
 
       Custom Node Counting Hand Waves
 
-.. note::
+   .. note::
 
-   Royalty free video of man waving from:
-   https://www.youtube.com/watch?v=IKj_z2hgYUM
+      Royalty free video of man waving from: https://www.youtube.com/watch?v=IKj_z2hgYUM
 
 
 .. _tutorial_debugging:
 
 Recipe 3: Debugging
--------------------
+===================
 
-When working with PeekingDuck's pipeline, you may sometimes wonder what is available 
-in the data pool, or whether a particular data object has been correctly computed.
+When working with PeekingDuck's pipeline, you may sometimes wonder what is available in
+the :ref:`data pool <tutorial_pipeline_data_pool>`, or whether a particular data object
+has been correctly computed.
 This tutorial will show you how to use a custom node to help with troubleshooting and 
 debugging PeekingDuck's pipeline.
 
@@ -691,7 +692,8 @@ The updated folder structure is:
 
 Then, make the following **three** changes:
 
-1. Specify ``debug.yml`` to receive everything ``all`` from the pipeline, as follows:
+1. Specify ``debug.yml`` to receive everything ":term:`all <(input) all>`" from
+   the pipeline, as follows:
 
    .. code-block:: yaml
       :linenos:
@@ -760,7 +762,7 @@ Then, make the following **three** changes:
 
    The custom node code shows how to see what is available in PeekingDuck's pipeline 
    data pool by printing the input dictionary keys.
-   It also demonstrates how to debug a specific data object, such as ``bboxes``, by
+   It also demonstrates how to debug a specific data object, such as :term:`bboxes`, by
    printing relevant information for each item within the data.
 
 3. Update **pipeline_config.yml**:
@@ -781,7 +783,8 @@ Then, make the following **three** changes:
           show: ["fps"]
       - output.screen
 
-Now, do a ``peekingduck run`` and you should see a sample debug output like the one below:
+Now, do a :greenbox:`peekingduck run` and you should see a sample debug output like the
+one below:
 
 .. admonition:: Terminal Session
 
@@ -805,21 +808,93 @@ Now, do a ``peekingduck run`` and you should see a sample debug output like the 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  |nbsp| |nbsp| |nbsp| coords=[0.40047657 0.21553655 0.85199741 1.02150181] 
 
 
-Other Recipes to Make Custom Nodes
-----------------------------------
+Other Recipes to Create Custom Nodes
+====================================
 
-aru oyim de de de dei
+This section describes two faster ways to create custom nodes for users who are familiar
+with PeekingDuck.
+
 
 CLI Recipe
-==========
+----------
 
-aru oyim de de de dei
+You skip the step-by-step prompts from :green:`peekingduck create-node` by specifying all the
+options on the command line, for instance:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name wave` \
+
+The above is the equivalent of the tutorial *Recipe 1: Object Detection Score*
+:ref:`custom node creation <tutorial_wave_project_custom_node>`.
+For more information, see :green:`peekingduck create-node --help`.
 
 
-``pipeline_config.yml`` Recipe
-==============================
+Pipeline Recipe
+---------------
 
-aru oyim de de de dei
+PeekingDuck can also create custom nodes by parsing your pipeline configuration file.
+Starting with the basic folder structure from :green:`peekingduck init`:
 
+   .. parsed-literal::
 
+      \ :blue:`wave_project/` \ |Blank|
+      ├── pipeline_config.yml
+      ├── \ :blue:`src` \ |Blank|
+      │   └── \ :blue:`custom_nodes` \ |Blank|
+      │       └── \ :blue:`configs` \ |Blank|
+      └── wave.mp4
+ 
+ and the following modified ``pipeline_config.yml`` file:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.recorded:
+          input_dir: wave.mp4
+      - model.yolo
+      - model.posenet
+      - dabble.fps
+      - custom_nodes.dabble.wave
+      - custom_nodes.dabble.debug
+      - draw.poses
+      - draw.legend:
+          show: ["fps"]
+      - output.screen
+
+You can tell PeekingDuck to parse your pipeline file with :green:`peekingduck create-node --config_path pipeline_config.yml`:
+
+   .. admonition:: Terminal Session
+
+      | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node --config_path pipeline_config.yml` \
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating custom nodes declared in ~user/wave_project/pipeline_config.yml. 
+      | 2022-03-14 11:21:21 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline file. 
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating files for custom_nodes.dabble.wave:
+      |         Config file: ~user/wave_project/src/custom_nodes/configs/dabble/wave.yml
+      |         Script file: ~user/wave_project/src/custom_nodes/dabble/wave.py 
+      | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating files for custom_nodes.dabble.debug:
+      |         Config file: ~user/wave_project/src/custom_nodes/configs/dabble/debug.yml
+      |         Script file: ~user/wave_project/src/custom_nodes/dabble/debug.py 
+
+PeekingDuck will read ``pipeline_config.yml`` and create the two specified custom nodes 
+``custom_nodes.dabble.wave`` and ``custom_nodes.dabble.debug``.
+Your folder structure will now look like this:
+
+   .. parsed-literal::
+
+      \ :blue:`wave_project/` \ |Blank|
+      ├── pipeline_config.yml
+      ├── \ :blue:`src` \ |Blank|
+      │   └── \ :blue:`custom_nodes` \ |Blank|
+      │       ├── \ :blue:`configs` \ |Blank|
+      │       │   └── \ :blue:`dabble` \ |Blank|
+      │       │       ├── debug.yml
+      │       │       └── wave.yml
+      │       └── \ :blue:`dabble` \ |Blank|
+      │           ├── debug.py
+      │           └── wave.py
+      └── wave.mp4
+
+From here, you can proceed to edit the custom node configs and source files.
 
