@@ -18,7 +18,7 @@ Face detection class using mtcnn model to find face bboxes
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import tensorflow as tf
