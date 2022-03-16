@@ -8,8 +8,6 @@ nodes:
     obj_dist_threshold: 1.5
 - dabble.check_large_groups:
     group_size_threshold: 2
-- dabble.fps
 - draw.poses
 - draw.group_bbox_and_tag
-- draw.legend
 - output.screen

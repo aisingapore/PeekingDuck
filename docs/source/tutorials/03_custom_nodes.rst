@@ -827,7 +827,7 @@ options on the command line, for instance:
 
 The above is the equivalent of the tutorial *Recipe 1: Object Detection Score*
 :ref:`custom node creation <tutorial_wave_project_custom_node>`.
-For more information, see :green:`peekingduck create-node --help`.
+For more information, see :green:`peekingduck create-node -\-help`.
 
 
 Pipeline Recipe
@@ -863,11 +863,11 @@ Starting with the basic folder structure from :green:`peekingduck init`:
           show: ["fps"]
       - output.screen
 
-You can tell PeekingDuck to parse your pipeline file with :green:`peekingduck create-node --config_path pipeline_config.yml`:
+You can tell PeekingDuck to parse your pipeline file with :green:`peekingduck create-node -\-config_path pipeline_config.yml`:
 
    .. admonition:: Terminal Session
 
-      | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node --config_path pipeline_config.yml` \
+      | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck create-node -\-config_path pipeline_config.yml` \
       | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating custom nodes declared in ~user/wave_project/pipeline_config.yml. 
       | 2022-03-14 11:21:21 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline file. 
       | 2022-03-14 11:21:21 peekingduck.cli  INFO:  Creating files for custom_nodes.dabble.wave:

@@ -5,37 +5,38 @@ Zone Counting
 Overview
 ========
 
-As part of the COVID-19 preventive measures, the Singapore Government has set restrictions on large
-event gatherings. Guidelines stipulate that large events can be held but attendees should be split
-into different groups that are of some distance apart and cannot interact with the other groups.
-Since AI Singapore developed an :doc:`Object Counting use case </use_cases/object_counting>`, we
-further developed a more complex variation for zone counting. Zone counting allows us to create
-different zones within a single image and count the number of chosen objects detected in each zone.
-This can be used with CCTVs in malls, shops or event floors for crowd control or to monitor the
-above mentioned guidelines.
+Zone counting allows different zones to be created within a single image, and the number of objects
+within each zone can be separately counted. This is useful in many applications, such as counting
+vehicles travelling on one side of a road but not the other, or counting the shoppers entering the
+entrance of a mall.
+
+.. seealso::
+
+   To only count objects within a single zone and ignore all other objects, see the
+   :ref:`Tracking People within a Zone <tutorial_tracking_within_zone>` tutorial.
 
 .. _zone_counting_gif:
 
 .. image:: /assets/use_cases/zone_counting.gif
    :class: no-scaled-link
-   :width: 100 %
+   :width: 50 %
 
 Zone counting is done by looking at the counts of objects detected by the object detection models
 that fall within the zones specified. For example, we can count the number of people in the blue
-and green zones, as shown in the GIF above. This is explained in the `How it Works`_ section.
+and red zones, as shown in the GIF above. This is explained in the `How it Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: zone_counting.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/zone_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -60,7 +61,7 @@ detected. For more information on how adjust the ``yolo`` node, check out its
 
 .. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
-   :width: 70 %
+   :width: 50 %
 
 **2. Bounding Box to Bottom Midpoint**
 
@@ -85,7 +86,7 @@ was created using the following zone::
 
 .. image:: /assets/use_cases/coordinates_explanation.png
    :class: no-scaled-link
-   :width: 100 %
+   :width: 50 %
 
 Given a resolution of 1280 by 720, these correspond to the top left of the image, 60% of the length
 at the top of the image, 60% of the length at the bottom of the image, and the bottom left of the
@@ -124,7 +125,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    nodes:
    - input.visual
    - model.yolo:
-       detect_ids: [0]
+       detect_ids: ["person"]
    - dabble.bbox_to_btm_midpoint
    - dabble.zone_count:
        resolution: [1280, 720] # Adjust this to your camera's input resolution
@@ -132,11 +133,11 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
        [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
        ]
-   - dabble.fps
    - draw.bbox
    - draw.btm_midpoint
    - draw.zones
-   - draw.legend
+   - draw.legend:
+       show: ["zone_count"]
    - output.screen
 
 **1. Object Detection Node**
