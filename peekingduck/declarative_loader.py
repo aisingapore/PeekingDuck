@@ -93,8 +93,42 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         if nodes is None:
             raise ValueError(f"{pipeline_path} does not contain any nodes!")
 
+        # dotw 2022-03-16: Temporary code to convert existing `input.live` and
+        #                  `input.recorded` into new `input.visual`
+        #                  To be removed in subsequent versions
+        upgraded_nodes = []
+        for i, node in enumerate(nodes):
+            if isinstance(node, str):
+                if node in ["input.live", "input.recorded"]:
+                    self.logger.warning(
+                        f"`{node}` is deprecated, please use `input.visual` in future"
+                    )
+                    self.logger.warning(f"converting `{node}` to `input.visual`...")
+                    node.replace("live", "visual")
+                    node.replace("recorded", "visual")
+            else:
+                if "input.live" in node:
+                    self.logger.warning(
+                        f"`input.live` is deprecated, please use `input.visual` in future"
+                    )
+                    node_config = node.pop("input.live")
+                    if "input_source" in node_config:
+                        node_config["source"] = node_config.pop("input_source")
+                    node["input.visual"] = node_config
+                    self.logger.warning(f"converting node to {node}")
+                if "input.recorded" in node:
+                    self.logger.warning(
+                        f"`input.recorded` is deprecated, please use `input.visual` in future"
+                    )
+                    node_config = node.pop("input.recorded")
+                    if "input_dir" in node_config:
+                        node_config["source"] = node_config.pop("input_dir")
+                    node["input.visual"] = node_config
+                    self.logger.warning(f"converting node to {node}")
+            upgraded_nodes.append(node)
+
         self.logger.info("Successfully loaded pipeline file.")
-        return NodeList(nodes)
+        return NodeList(upgraded_nodes)
 
     def _get_custom_name_from_node_list(self) -> Any:
         custom_name = None
