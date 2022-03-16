@@ -26,14 +26,14 @@ Demo
 ====
 
 .. |pipeline_config| replace:: social_distancing.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/social_distancing.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -93,12 +93,9 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - dabble.check_nearby_objs:
        near_threshold: 1.5
        tag_msg: "TOO CLOSE!"
-   - dabble.fps
    - draw.poses
    - draw.tag:
        show: ["flags"]
-   - draw.legend:
-       show: ["fps"]
    - output.screen
 
 **1. Pose Estimation Model**

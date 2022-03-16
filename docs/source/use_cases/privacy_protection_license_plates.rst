@@ -6,35 +6,36 @@ Overview
 ========
 
 Posting images or videos of our vehicles online might lead to others misusing our license plate
-number to reveal our personal information or being vulnerable to license plate cloning. Hence, AI
-Singapore has developed a solution that performs license plate anonymization. This can also be used
-to comply with the General Data Protection Regulation (GDPR) or other data privacy laws.
+number to reveal our personal information. Our solution that performs license plate anonymization,
+and can also be used to comply with the General Data Protection Regulation (GDPR) or other data
+privacy laws.
 
 .. image:: /assets/use_cases/privacy_protection_license_plates.gif
    :class: no-scaled-link
-   :width: 100 %
+   :width: 50 %
 
-Our solution automatically detects and blurs vehicles' license plates. This is explained in the `How it Works`_ section.
+Our solution automatically detects and blurs vehicles' license plates. This is explained in the
+`How it Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_license_plates.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plates.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/privacy_protection_license_plates.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
 
 There are two main components to license plate anonymization:
 
-#. License plate detection using AI and
+#. License plate detection, and
 #. License plate de-identification.
 
 **1. License Plate Detection**
@@ -64,21 +65,13 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - input.recorded:
        input_dir: <path/to/video with cars>
    - model.yolo_license_plate
-   - dabble.fps
    - draw.blur_bbox
-   - draw.legend
    - output.screen
    
 **1. License Plate Detection Node**
 
-By default, the license plate detection node uses the YOLOv4 model to detect license plates. When
-faster inference speed is required, you can change the parameter in the run config declaration to
-use the YOLOv4-tiny model:
-
-.. code-block:: yaml
-
-   - model.yolo_license_plate:
-       model_type: v4tiny
+By default, :mod:`model.yolo_license_plate` uses the ``v4`` model variant to detect license plates.
+If faster inference speed is required, the ``v4tiny`` model type can be used instead. 
 
 **2. License Plate De-Identification Nodes**
 

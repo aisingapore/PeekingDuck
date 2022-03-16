@@ -6,13 +6,12 @@ Overview
 ========
 
 As organizations collect more data, there is a need to better protect the identities of individuals
-in public and private places. AI Singapore has developed a solution that performs face
-anonymization. This can be used to comply with the General Data Protection Regulation (GDPR) or
-other data privacy laws.
+in public and private places. Our solution performs face anonymization, and can be used to comply
+with the General Data Protection Regulation (GDPR) or other data privacy laws.
 
 .. image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
-   :width: 100 %
+   :width: 50 %
 
 Our solution automatically detects and mosaics (or blurs) human faces. This is explained in the
 `How it Works`_ section.
@@ -21,21 +20,21 @@ Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_faces.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_faces.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/privacy_protection_faces.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
 
 There are two main components to face anonymization:
 
-#. Face detection using AI and
+#. Face detection, and
 #. Face de-identification. 
 
 **1. Face Detection**
@@ -63,9 +62,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    nodes:
    - input.live
    - model.mtcnn
-   - dabble.fps
    - draw.mosaic_bbox
-   - draw.legend
    - output.screen
 
 

@@ -2,6 +2,8 @@
 Crowd Counting
 **************
 
+.. include:: /include/substitution.rst
+
 Overview
 ========
 
@@ -26,9 +28,9 @@ Demo
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============

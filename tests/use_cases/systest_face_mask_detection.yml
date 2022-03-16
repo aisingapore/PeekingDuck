@@ -2,8 +2,5 @@ nodes:
 - input.recorded:
     input_dir: "tests/data/images"
 - model.yolo_face
-- dabble.fps
 - draw.bbox:
     show_labels: True
-- draw.legend:
-    show: ["fps"]

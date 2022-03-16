@@ -27,14 +27,14 @@ Demo
 ====
 
 .. |pipeline_config| replace:: group_size_checking.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/group_size_checking.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -100,11 +100,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        obj_dist_threshold: 1.5
    - dabble.check_large_groups:
        group_size_threshold: 2
-   - dabble.fps
    - draw.poses
    - draw.group_bbox_and_tag
-   - draw.legend:
-       show: ["fps"]
    - output.screen
 
 
