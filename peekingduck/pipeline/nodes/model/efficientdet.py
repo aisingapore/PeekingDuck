@@ -73,9 +73,6 @@ class Node(AbstractNode):
         """Takes an image as input and returns bboxes of objects specified
         in config.
         """
-
-        img_rgb = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
-
-        bboxes, labels, scores = self.model.predict(img_rgb)
+        bboxes, labels, scores = self.model.predict(inputs["img"])
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs

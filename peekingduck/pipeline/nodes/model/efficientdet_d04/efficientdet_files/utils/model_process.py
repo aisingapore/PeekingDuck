@@ -41,6 +41,7 @@ def preprocess_image(
         scale (float): the scale in which the original image was resized to
     """
     # image, RGB
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     image_height, image_width = image.shape[:2]
     if image_height > image_width:
         scale = image_size / image_height
