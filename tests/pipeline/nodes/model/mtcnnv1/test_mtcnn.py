@@ -123,7 +123,7 @@ class TestMtcnn:
     def test_invalid_config_value(self, mtcnn_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=mtcnn_bad_config_value)
-        assert "must be between 0 and 1" in str(excinfo.value)
+        assert "must be in [0, 1]" in str(excinfo.value)
 
     def test_negative_config_value(self, mtcnn_negative_config_value):
         with pytest.raises(ValueError) as excinfo:
