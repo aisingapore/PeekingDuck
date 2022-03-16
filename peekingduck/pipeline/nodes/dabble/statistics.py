@@ -34,17 +34,20 @@ OPS = {
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
-    """Calculates the cumulative average, minimum and maximum of a single variable of interest
-    (defined as ``current result`` here) over time. The configurations for this node offer several
-    functions to reduce the incoming data type into a single ``current result`` of type :obj:`int`
-    or :obj:`float`, which is valid for the current video frame. ``current result`` is then used to
-    recalculate the values of cumulative average, minimum, and maximum for PeekingDuck's running
-    duration thus far.
+    """Calculates the cumulative average, minimum and maximum of a single
+    variable of interest (defined as ``current result`` here) over time. The
+    configurations for this node offer several functions to reduce the incoming
+    data type into a single ``current result`` of type :obj:`int` or
+    :obj:`float`, which is valid for the current video frame.
+    ``current result`` is then used to recalculate the values of cumulative
+    average, minimum, and maximum for PeekingDuck's running duration thus far.
 
-    The configuration for this node is described below using a combination of the `Extended BNF
-    <https://en.wikipedia.org/wiki/Extended_Backus–Naur_form>`_ and `Augmented BNF
-    <https://en.wikipedia.org/wiki/Augmented_Backus–Naur_form>`_ metasyntax. Concrete examples
-    are provided later for illustration. ::
+    The configuration for this node is described below using a combination of
+    the `Extended BNF
+    <https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form>`_ and
+    `Augmented BNF
+    <https://en.wikipedia.org/wiki/Augmented_Backus%E2%80%93Naur_form>`_
+    metasyntax. Concrete examples are provided later for illustration. ::
 
         pkd_data_type   = ? PeekingDuck built-in data types ?
                           e.g. count, large_groups, obj_attrs
@@ -73,16 +76,16 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     Points to note:
 
-    * Square brackets (``[]``) are used to define ``<dict_key>``, and should not be used \
-    elsewhere in the configuration. \
+        * Square brackets (``[]``) are used to define ``<dict_key>``, and
+          should not be used elsewhere in the configuration.
+        * Operands are processed differently depending on whether they are
+          enclosed by single/double quotes, or not. If enclosed, the operand is
+          assumed to be of type :obj:`str` and classified as ``<str_operand>``.
+          If not, the operand is classified as ``<num_operand>`` and converted
+          into :obj:`float` for further processing.
 
-    * Operands are processed differently depending on whether they are enclosed by single/double \
-    quotes, or not. If enclosed, the operand is assumed to be of type :obj:`str` and classified \
-    as ``<str_operand>``. If not, the operand is classified as ``<num_operand>`` and converted \
-    into :obj:`float` for further processing. \
-
-    The table below illustrates how configuration choices reduce the incoming data type into the
-    ``<current result>``.
+    The table below illustrates how configuration choices reduce the incoming
+    data type into the ``<current result>``.
 
     +---------------------------------------+-------------------+-------------------+-------------+
     | ``<pkd_data_type>``: value            | ``<target_attr>`` | ``<unary_expr>``  | ``<current  |
@@ -123,41 +126,45 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     +---------------------------------------+-------------------+-------------------+-------------+
 
     Inputs:
-        |all_input|
+        |all_input_data|
 
     Outputs:
-        |cum_avg|
+        |cum_avg_data|
 
-        Note that ``cum_avg`` will not be updated if there are no detections. For example, if
-        ``cum_avg`` = 10 for video frame 1, and there are no detections in the following 500
-        frames, ``cum_avg`` is still 10 for video frame 501.
+        Note that :term:`cum_avg` will not be updated if there are no
+        detections. For example, if :term:`cum_avg` = 10 for video frame 1, and
+        there are no detections in the following 500 frames, :term:`cum_avg` is
+        still 10 for video frame 501.
 
-        |cum_max|
+        |cum_max_data|
 
-        |cum_min|
+        |cum_min_data|
 
     Configs:
         identity (:obj:`str`): **default=null** |br|
-            Accepts ``<target_attr>`` of types :obj:`int` or :obj:`float`, and returns the
-            same value.
+            Accepts ``<target_attr>`` of types :obj:`int` or :obj:`float`, and
+            returns the same value.
         length (:obj:`str`): **default=null** |br|
-            Accepts ``<target_attr>`` of types :obj:`List[Any]` or :obj:`Dict[str, Any]`,
-            and returns its length.
+            Accepts ``<target_attr>`` of types :obj:`List[Any]` or
+            :obj:`Dict[str, Any]`, and returns its length.
         minimum (:obj:`str`): **default=null** |br|
             Accepts ``<target_attr>`` of types :obj:`List[float | int]` or
-            :obj:`Dict[str, float | int]`, and returns the minimum element within for the current
-            frame. Not to be confused with the ``cum_min`` output data type, which represents the
-            cumulative minimum over time.
+            :obj:`Dict[str, float | int]`, and returns the minimum element
+            within for the current frame. Not to be confused with the
+            :term:`cum_min` output data type, which represents the cumulative
+            minimum over time.
         maximum (:obj:`str`): **default=null** |br|
             Accepts ``<target_attr>`` of types :obj:`List[float | int]` or
-            :obj:`Dict[str, float | int]`, and returns the maximum element within for the current
-            frame. Not to be confused with the ``cum_max`` output data type, which represents the
-            cumulative maximum over time.
+            :obj:`Dict[str, float | int]`, and returns the maximum element
+            within for the current frame. Not to be confused with the
+            :term:`cum_max` output data type, which represents the cumulative
+            maximum over time.
         cond_count (:obj:`str`): **default=null** |br|
-            Accepts ``<target_attr>`` of types :obj:`List[float | int | str]`, and checks if each
-            element in the list fulfils the condition described by ``<num_comparison>`` or
-            ``<str_comparison>``. The number of elements that fulfil the condition are counted
-            towards ``<current result>``.
+            Accepts ``<target_attr>`` of types :obj:`List[float | int | str]`,
+            and checks if each element in the list fulfils the condition
+            described by ``<num_comparison>`` or ``<str_comparison>``. The
+            number of elements that fulfil the condition are counted towards
+            ``<current result>``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

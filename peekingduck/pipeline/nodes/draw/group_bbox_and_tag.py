@@ -26,37 +26,38 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws large bounding boxes with tags over multiple object bounding boxes which have been
-    identified as belonging to the same group.
+    """Draws large bounding boxes with tags over multiple object bounding boxes
+    which have been identified as belonging to the same group.
 
-    The ``large_groups`` data type from :mod:`dabble.check_large_groups`, and the ``groups`` key
-    of the ``obj_attrs`` data type from :mod:`dabble.group_nearby_objs`, are inputs to this node
-    which identify the different groups, and the group associated with each bounding box.
+    The :term:`large_groups` data type from :mod:`dabble.check_large_groups`,
+    and the ``groups`` key of the :term:`obj_attrs` data type from
+    :mod:`dabble.group_nearby_objs`, are inputs to this node which identify the
+    different groups, and the group associated with each bounding box.
 
     For better understanding, refer to
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
-        |obj_attrs|
+        |obj_attrs_data|
 
-        |large_groups|
+        |large_groups_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         tag (:obj:`str`): **default = "LARGE GROUP!"**. |br|
             The string message printed when a large group is detected.
 
-    .. versionchanged:: 1.2.0 |br|
-        :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags`` (:obj:`List[str]`) as an input
-        data type, which has been deprecated and now subsumed under ``obj_attrs``
-        (:obj:`Dict[str, Any]`). The same attribute is accessed by the ``groups`` key of
-        ``obj_attrs``.
+    .. versionchanged:: 1.2.0
+        :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags``
+        (:obj:`List[str]`) as an input data type, which has been deprecated and
+        now subsumed under :term:`obj_attrs`. The same attribute is accessed by
+        the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

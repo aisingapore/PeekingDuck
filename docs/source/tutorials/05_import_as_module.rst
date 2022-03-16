@@ -10,10 +10,10 @@ Import PeekingDuck as a Python Module
 Running in a Script
 ===================
 
-As an alternative to running PeekingDuck using the command-line interface (CLI), users can also
-import PeekingDuck as a Python module and run it in a Python script. This demo corresponds to the
-:ref:`Record Video File with FPS <tutorial_media_writer>` Section of the "Duck
-Confit" tutorial.
+As an alternative to running PeekingDuck using the command-line interface (CLI), users
+can also import PeekingDuck as a Python module and run it in a Python script. This demo
+corresponds to the :ref:`Record Video File with FPS <tutorial_media_writer>` Section of
+the *Duck Confit* tutorial.
 
 In addition, we will demonstrate basic debugging techniques which users can employ when
 troubleshooting PeekingDuck projects.
@@ -47,14 +47,14 @@ You should have the following directory structure at this point:
 Create a Custom Node for Debugging
 ----------------------------------
 
-Run the following to create a ``dabble`` node for debugging:
+Run the following to create a :mod:`dabble` node for debugging:
 
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
-The command should have generated the ``debug.py`` and ``debug.yml`` files in your project directory as
-shown:
+The command should have generated the ``debug.py`` and ``debug.yml`` files in your
+project directory as shown:
 
 .. parsed-literal::
 
@@ -78,8 +78,9 @@ Change the content of ``debug.yml`` to:
    input: ["all"]
    output: ["none"]
 
-Line 1: The data type ``all`` allows the node to receive all outputs from the previous nodes as
-its input. Please see the :doc:`Glossary </glossary>` for a list of available data types.
+Line 1: The data type ``all`` allows the node to receive all outputs from the previous
+nodes as its input. Please see the :doc:`Glossary </glossary>` for a list of available
+data types.
 
 Change the content of ``debug.py`` to:
 
@@ -112,7 +113,7 @@ Change the content of ``debug.py`` to:
               self.frame += 1
               return {}
 
-Line 14 - 17: Print out the frame number and the confidence scores of bounding boxes which are
+Lines 14 - 17: Print out the frame number and the confidence scores of bounding boxes which are
 detected as "cat".
 
 Line 18: Increment the frame number each time ``run()`` is called.
@@ -121,7 +122,7 @@ Line 18: Increment the frame number each time ``run()`` is called.
 Creating the Python Script
 --------------------------
 
-Change the content of ``demo_debug.py`` to:
+Copy over the following code to ``demo_debug.py``:
 
 .. container:: toggle
 
@@ -156,7 +157,7 @@ Change the content of ``demo_debug.py`` to:
           bbox_node = bbox.Node(**bbox_config)
   
           fps_node = fps.Node()
-          legend_node = legend.Node()
+          legend_node = legend.Node(show=["fps"])
           screen_node = screen.Node()
   
           media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
@@ -180,14 +181,16 @@ Change the content of ``demo_debug.py`` to:
       if __name__ == "__main__":
           main()
 
-Line 9, 13: Import and initialize the ``debug`` custom node. Pass in the 
+Lines 9, 13: Import and initialize the ``debug`` custom node. Pass in the 
 ``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
 the custom node to be loaded properly.
 
-Line 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
-:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial.
+Lines 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
+:ref:`Record Video File with FPS <tutorial_media_writer>` tutorial. To change the node
+configuration, you can pass the new values to the `Node()` constructor as keyword arguments.
 
-Line 31 - 42: Initialize the PeekingDuck ``Runner`` from
+
+Lines 31 - 42: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
@@ -232,8 +235,8 @@ You should the following output in your terminal:
 
    [Truncated]
 
-Line 17 - 23: The debugging output showing the frame number and the confidence score of bounding boxes
-predicted as "cat".
+Lines 17 - 23: The debugging output showing the frame number and the confidence score of
+bounding boxes predicted as "cat".
 
 
 Running in a Notebook
@@ -292,7 +295,8 @@ Run the following command after installing:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
-You should have the following directory structure at this point:
+Copy ``demo_import_peekingduck.ipynb`` to the ``pkd_project`` folder and you should have the
+following directory structure at this point:
 
 .. parsed-literal::
 
@@ -331,11 +335,11 @@ Importing the Modules
   
       %matplotlib inline
 
-Line 9 - 10: You can also do::
+Lines 9 - 10: You can also do::
 
-    from peekingduck.pipeline.nodes.input import live as pkd_live
+    from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
 
-    live_node = pkd_live.Node()
+    bbox_node = pkd_bbox.Node()
 
 to avoid potential name conflicts.
 
@@ -357,7 +361,7 @@ Initialize PeekingDuck nodes
       bbox_config = {"show_labels": True}
       bbox_node = bbox.Node(**bbox_config)
 
-Line 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
+Lines 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
 constructor as keyword arguments.
 
 Refer to the :ref:`API Documentation <api_doc>` for the configurable settings for each node.
@@ -380,7 +384,7 @@ Create a Dataset Loader
           data_dir, batch_size=1, shuffle=False
       )
 
-Line 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
+Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
 also create your own data loader class.
 
 
@@ -480,16 +484,16 @@ The Inference Loop
               ax[i][2].imshow(lp_image)
               ax[i][2].title.set_text(f"Pred: {lp_pred}")
 
-Line 1 - 11: We define a utility function for retrieving the image region of the license
+Lines 1 - 11: We define a utility function for retrieving the image region of the license
 plate with a highest confidence score to improve code clarity. For more information on
 how to convert between bounding box and image coordinates, please refer to the
 :ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` section in our
 tutorials.
 
-Line 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
+Lines 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
 inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.
 
-Line 36 - 37: We plot the data for debugging and visualization purposes.
+Lines 36 - 37: We plot the data for debugging and visualization purposes.
 
-Line 41 - 47: We integrate the inference loop external processes such as the license plate parser
-we have created earlier.
+Lines 41 - 47: We integrate the inference loop with external processes such as the license plate
+parser we have created earlier.

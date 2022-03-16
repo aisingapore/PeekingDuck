@@ -104,7 +104,8 @@ class Detector:
                 scores: (Numpy Array) an array of confidence scores
         """
         # Use TF2 .pb saved model format for inference
-        image_data = cv.resize(image, (self.config["size"], self.config["size"]))
+        image_data = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+        image_data = cv.resize(image_data, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
 
         image_data = np.asarray([image_data]).astype(np.float32)

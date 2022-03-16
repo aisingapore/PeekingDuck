@@ -27,16 +27,16 @@ class Node(AbstractNode):
     """Receives livestream as inputs.
 
     Inputs:
-        |no_input|
+        |none_input_data|
 
     Outputs:
-        |img|
+        |img_data|
 
-        |filename|
+        |filename_data|
 
-        |pipeline_end|
+        |pipeline_end_data|
 
-        |saved_video_fps|
+        |saved_video_fps_data|
 
     Configs:
         fps_saved_output_video (:obj:`int`): **default = 10**. |br|

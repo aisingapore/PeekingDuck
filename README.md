@@ -1,7 +1,8 @@
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/peekingduck.png" width="16%" align="right">
+<br />
 
-PeekingDuck
-===========
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/peekingduck.svg">
+
+---
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
@@ -21,11 +22,9 @@ PeekingDuck
   <a href="#communities">Communities</a>
 </h4>
 
-**PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. The name "PeekingDuck" is a play on: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
+---
 
-<p align="center">
-  <strong>Low-code development</strong> · <strong>Flexible</strong> · <strong>Extensible</strong>
-</p>
+**PeekingDuck** is an open-source, modular framework in Python, built for Computer Vision (CV) inference. The name "PeekingDuck" is a play on: "Peeking" in a nod to CV; and "Duck" in [duck typing](https://en.wikipedia.org/wiki/Duck_typing).
 
 
 Features
@@ -59,10 +58,8 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 > peekingduck --verify_install
 ```
 
-You should see a video of a person waving his hand with bounding boxes overlaid as shown below.
-
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif" width="50%">
-
+You should see a video of a person waving his hand with
+[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif).
 
 The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
 
@@ -82,9 +79,8 @@ Run the demo pipeline.
 > peekingduck run
 ```
 
-If you have a webcam, you should see the demo running live:
-
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif" width="50%">
+If you have a webcam, you should see yourself on the output screen with
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
@@ -113,7 +109,29 @@ Gallery
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/multiple_object_tracking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/vehicles_tracking.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/multiple_object_tracking.gif">
+      </a>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/group_size_checking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/group_size_checking.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/privacy_protection_license_plates.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/crowd_counting.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/crowd_counting.gif">
+      </a>
+    </td>
+    <td>
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/human_tracking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/human_tracking.gif">
       </a>
     </td>
   </tr>

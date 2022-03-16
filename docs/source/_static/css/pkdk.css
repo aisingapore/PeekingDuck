@@ -20,7 +20,7 @@ dt.sig {
 .wy-nav-content {
   padding: 1.618em 3.236em;
   height: 100%;
-  max-width: 1000px;
+  max-width: 90%;
   margin: auto;
 }
 
@@ -140,6 +140,12 @@ div.highlight span.pkd-expandable:before {
 
 .green {
   color: green;
+}
+
+.greenbox {
+  color: green;
+  padding: 2px;
+  border: 1px solid rgba(161, 236, 143, 0.5);
 }
 
 .yellow {

@@ -31,10 +31,10 @@ class Node(AbstractNode):
     linear_transform.html>`_.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
         beta (:obj:`int`): **[-100,100], default = 0**. |br|

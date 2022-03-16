@@ -29,14 +29,14 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     Plate). It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
     Configs:
         model_type (:obj:`str`): **{"v4", "v4tiny"}, default="v4"**. |br|

@@ -37,14 +37,14 @@ class Node(AbstractNode):
     changed to other values.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
     Configs:
         model_type (:obj:`int`): **{0, 1, 2, 3, 4}, default = 0**. |br|

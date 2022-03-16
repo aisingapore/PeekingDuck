@@ -76,9 +76,10 @@ Then run:
          ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
        ></pre></div>
 
-It is recommended to install PeekingDuck in a Python virtual environment, as it creates an isolated
-environment for a Python project to install its own dependencies and avoid package version
-conflicts with other projects.
+It is recommended to install PeekingDuck in a Python virtual environment (such as
+``pkd`` in the above commands), as it creates an isolated environment for a Python
+project to install its own dependencies and avoid package version conflicts with other
+projects.
 
 .. note::
 
@@ -109,5 +110,5 @@ with bounding boxes overlaid as shown below:
    :class: no-scaled-link
    
 
-| The video will auto-close when it is run to the end (about 18 seconds).
-| To exit earlier, click to select the video window and press ``q``.
+| The video will auto-close when it is run to the end (about 20 seconds, depending on system speed).
+| To exit earlier, click to select the video window and press :greenbox:`q`.
