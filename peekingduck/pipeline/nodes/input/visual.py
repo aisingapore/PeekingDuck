@@ -223,7 +223,8 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def release_resources(self) -> None:
         """Override base class method to free video resource"""
-        self.videocap.shutdown()
+        if self.videocap:
+            self.videocap.shutdown()
 
     def show_progress(self) -> None:
         """Show progress information during pipeline iteration"""
