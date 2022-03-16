@@ -6,4 +6,3 @@ nodes:
 - draw.heat_map
 - draw.legend:
     show: ["count"]
-- output.screen
