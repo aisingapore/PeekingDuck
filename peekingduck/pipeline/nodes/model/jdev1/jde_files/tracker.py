@@ -56,8 +56,8 @@ from peekingduck.pipeline.nodes.model.jdev1.jde_files.utils import (
     letterbox,
     non_max_suppression,
     scale_coords,
-    tlwh2xyxyn,
 )
+from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyxyn
 
 
 class Tracker:  # pylint: disable=too-many-instance-attributes
