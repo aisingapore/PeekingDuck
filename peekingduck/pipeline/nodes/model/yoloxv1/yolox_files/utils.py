@@ -36,7 +36,6 @@ Modifications include:
 from pathlib import Path
 from typing import no_type_check
 
-import numpy as np
 import torch
 import torch.nn as nn
 
