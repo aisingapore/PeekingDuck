@@ -101,9 +101,8 @@ class Detector:
 
         classes = classes.numpy()[0]
         classes = classes[:len0]
-        mask1 = np.isin(
-            classes, tuple(object_ids)
-        )  # only identify objects we are interested in
+        # only identify objects we are interested in
+        mask1 = np.isin(classes, tuple(object_ids))
         classes = tf.boolean_mask(classes, mask1)
 
         scores = scores.numpy()[0]
