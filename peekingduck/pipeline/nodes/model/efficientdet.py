@@ -18,7 +18,6 @@ Slower but more accurate object detection model.
 
 from typing import Any, Dict
 
-import cv2
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
