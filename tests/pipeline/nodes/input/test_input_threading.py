@@ -91,8 +91,8 @@ def test_input_threading():
         nodes = {
             "nodes": [
                 {
-                    "input.live": {
-                        "input_source": url,
+                    "input.visual": {
+                        "source": url,
                         "threading": threading,
                     }
                 },

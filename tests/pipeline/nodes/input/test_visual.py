@@ -12,10 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from contextlib import contextmanager
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.input.recorded import Node
+from peekingduck.pipeline.nodes.input.visual import Node
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
 
 
 def create_reader():
@@ -24,9 +33,12 @@ def create_reader():
             "input": "source",
             "output": "img",
             "resize": {"do_resizing": False, "width": 1280, "height": 720},
+            "frames_log_freq": 100,
             "mirror_image": False,
+            "pipeline_end": False,
+            "saved_video_fps": 0,
             "threading": False,
-            "input_dir": ".",
+            "source": ".",
         }
     )
     return media_reader
@@ -52,12 +64,12 @@ class TestMediaReader:
                     "output": "img",
                     "resize": {"do_resizing": False, "width": 1280, "height": 720},
                     "mirror_image": False,
-                    "input_dir": file_path,
+                    "source": file_path,
                 }
             )
 
-    def test_reader_run_throws_error_on_empty_folder(self):
-        with pytest.raises(FileNotFoundError):
+    def test_reader_run_fine_on_empty_folder(self):
+        with not_raises(FileNotFoundError) as excinfo:
             reader = create_reader()
             reader.run({})
 
