@@ -3,8 +3,7 @@ nodes:
     input_dir: <path/to/video with crowd>
 - model.csrnet:
     model_type: dense
-- dabble.fps
 - draw.heat_map
 - draw.legend:
-    show: ["count", "fps"]
+    show: ["count"]
 - output.screen

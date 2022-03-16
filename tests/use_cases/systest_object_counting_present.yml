@@ -2,9 +2,10 @@ nodes:
 - input.recorded:
     input_dir: "images/testing" 
 - model.yolo:
-    detect_ids: [0]
+    detect_ids: ["person"]
 - dabble.bbox_count
-- dabble.fps
+- dabble.statistics:
+    identity: count
 - draw.bbox
 - draw.legend:
-    show: ["count", "fps"]
+    show: ["count", "cum_avg", "cum_max", "cum_min"]

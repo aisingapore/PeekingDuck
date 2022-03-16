@@ -1,10 +1,7 @@
 nodes:
 - input.recorded:
     input_dir: tests/data/videos/humans_mot.mp4
-- model.efficientdet:
-    detect_ids: ["car"]
-- dabble.tracking:
-    tracking_type: iou
+- model.jde
 - dabble.statistics:
     maximum: obj_attrs["ids"]
 - draw.bbox

@@ -1,8 +1,0 @@
-nodes:
-- input.live
-- model.jde
-- dabble.fps
-- draw.bbox
-- draw.tag
-- draw.legend
-- output.screen

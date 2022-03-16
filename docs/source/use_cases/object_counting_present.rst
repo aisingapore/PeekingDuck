@@ -5,9 +5,10 @@ Object Counting (Present)
 Overview
 ========
 
-Object counting is the no-frills solution within PeekingDuck's suite of 
+Object counting (present) is a no-frills solution within PeekingDuck's suite of 
 :ref:`smart monitoring <smart_monitoring_use_cases>` use cases. It counts the number of objects
-detected by PeekingDuck's object detection models at the current point in time. Up to
+detected by PeekingDuck's object detection models at the present point in time, and calculates 
+statistics such as the cumulative average, maximum, and minimum for further analytics. Up to
 :ref:`80 types <general-object-detection-ids>` of objects can be counted, including humans,
 vehicles, animals and even household objects. Thus, this can be applied to a wide variety of
 scenarios, from traffic control to counting livestock.
@@ -22,14 +23,14 @@ scenarios, from traffic control to counting livestock.
    :class: no-scaled-link
    :width: 50 %
 
-In the GIF above, the count changes as the number of detected persons change. This is explained in
-the `How it Works`_ section.
+In the GIF above, the count and statistics change as the number of detected persons change. 
+This is explained in the `How it Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: object_counting_present.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting_present.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/object_counting_present.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -41,10 +42,11 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 How it Works
 ============
 
-There are 2 main components to our solution:
+There are 3 main components to this solution:
 
 #. Object detection,
-#. Count detections.
+#. Count detections, and
+#. Calculate statistics.
 
 **1. Object Detection**
 
@@ -66,6 +68,10 @@ detected. For more information on how adjust the ``yolo`` node, check out its
 To count the number of objects detected, we simply take the sum of the number of bounding boxes
 detected for the object category.
 
+**3. Calculate Statistics**
+
+The cumulative average, minimum, and maximum over time is calculated from the count from each frame.
+
 Nodes Used
 ==========
 
@@ -76,13 +82,15 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    nodes:
    - input.live
    - model.yolo:
-       detect_ids: [0]
+       detect_ids: ["person"]
    - dabble.bbox_count
-   - dabble.fps
+   - dabble.statistics:
+       identity: count
    - draw.bbox
    - draw.legend:
-       show: ["count", "fps"]
+       show: ["count", "cum_avg", "cum_max", "cum_min"]
    - output.screen
+
 
 **1. Object Detection Node**
 
@@ -93,15 +101,17 @@ alternative model better suited to your use case.
 
 **2. Object Counting Node**
 
-The object counting node is called by including :mod:`dabble.bbox_count` in the run config
-declaration. This takes the detected bounding boxes and outputs the total count of bounding boxes.
-The node has no configurable parameters.
+:mod:`dabble.bbox_count` takes the detected bounding boxes and outputs the total count of bounding boxes.
+This node has no configurable parameters.
 
-**3. Adjusting Nodes**
+**3. Statistics Node**
 
-The object counting node does not have adjustable configurations. However, it depends on the
-configuration set in the object detection models, such as the type of object to detect, etc. For
-the object detection model used in this demo, please see the :doc:`documentation </nodes/model.yolo>`
+The :mod:`dabble.statistics` node calculates the :term:`cum_avg`, :term:`cum_max`, and :term:`cum_min`
+from the output of the object counting node.
+
+**4. Adjusting Nodes**
+
+For the object detection model used in this demo, please see the :doc:`documentation </nodes/model.yolo>`
 for adjustable behaviors that can influence the result of the object counting node.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.

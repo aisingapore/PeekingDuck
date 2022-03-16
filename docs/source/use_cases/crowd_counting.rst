@@ -5,17 +5,17 @@ Crowd Counting
 Overview
 ========
 
-In Computer Vision (CV), crowd counting refers to the technique of counting or estimating the number of
-people in a crowd. AI Singapore has developed a solution that predicts the number of people in a
-crowd. This can be used to estimate the number of people attending an event, monitor crowd levels
-and prevent human stampedes.
+In Computer Vision (CV), crowd counting refers to the technique of counting or estimating the 
+number of people in a crowd. This can be used to estimate the number of people attending an
+event, monitor crowd levels and prevent human stampedes.
 
 .. image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
    :width: 50 %
 
 Our solution utilizes CSRNet to estimate the size of a crowd. In addition, it generates a heat map
-that can be used to pinpoint possible bottlenecks at a venue. This is explained in the `How it Works`_ section.
+that can be used to pinpoint possible bottlenecks at a venue. This is explained in the 
+`How it Works`_ section.
 
 Demo
 ====
@@ -64,10 +64,9 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        input_dir: <path/to/video with crowd>
    - model.csrnet:
        model_type: dense
-   - dabble.fps
    - draw.heat_map
    - draw.legend:
-       show: ["count", "fps"]
+       show: ["count"]
    - output.screen
 
 **1. Crowd Counting Node**

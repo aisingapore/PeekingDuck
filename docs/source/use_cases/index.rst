@@ -79,9 +79,9 @@ your specific use case - the only limit is your imagination!
    :class: no-scaled-link
    :width: 100 %
 
-.. |human_counting_over_time_doc| replace:: :doc:`Human Counting (Over Time) </use_cases/human_counting_over_time>`
+.. |people_counting_over_time_doc| replace:: :doc:`People Counting (Over Time) </use_cases/people_counting_over_time>`
 
-.. |human_counting_over_time_gif| image:: /assets/use_cases/human_counting_over_time.gif
+.. |people_counting_over_time_gif| image:: /assets/use_cases/people_counting_over_time.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -113,22 +113,22 @@ Smart Monitoring
    /use_cases/crowd_counting
    /use_cases/object_counting_present
    /use_cases/object_counting_over_time
-   /use_cases/human_counting_over_time
+   /use_cases/people_counting_over_time
    /use_cases/zone_counting
 
-+---------------------------------+--------------------------------+
-| |zone_counting_doc|             | |crowd_counting_doc|           |
-+---------------------------------+--------------------------------+
-| |zone_counting_gif|             | |crowd_counting_gif|           |
-+---------------------------------+--------------------------------+
-| |object_counting_over_time_doc| | |human_counting_over_time_doc| |
-+---------------------------------+--------------------------------+
-| |object_counting_over_time_gif| | |human_counting_over_time_gif| |
-+---------------------------------+--------------------------------+
-| |object_counting_present_doc|   |                                |
-+---------------------------------+                                +
-| |object_counting_present_gif|   |                                |
-+---------------------------------+--------------------------------+
++---------------------------------+---------------------------------+
+| |zone_counting_doc|             | |crowd_counting_doc|            |
++---------------------------------+---------------------------------+
+| |zone_counting_gif|             | |crowd_counting_gif|            |
++---------------------------------+---------------------------------+
+| |object_counting_over_time_doc| | |people_counting_over_time_doc| |
++---------------------------------+---------------------------------+
+| |object_counting_over_time_gif| | |people_counting_over_time_gif| |
++---------------------------------+---------------------------------+
+| |object_counting_present_doc|   |                                 |
++---------------------------------+                                 +
+| |object_counting_present_gif|   |                                 |
++---------------------------------+---------------------------------+
 
 .. _covid_19_use_cases:
 

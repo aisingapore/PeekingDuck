@@ -12,21 +12,21 @@ identifying periods of peak traffic. This use case is not limited to just vehicl
 :ref:`80 types <general-object-detection-ids>` of objects can be monitored (including animals),
 giving rise to a wide breadth of potential applications.
 
+.. image:: /assets/use_cases/object_counting_over_time.gif
+   :class: no-scaled-link
+   :width: 50 %
+
 .. seealso::
 
-   While it is also possible to count humans over time with this use case, more accurate results
+   While it is also possible to count people over time with this use case, more accurate results
    can be obtained by using the 
-   :doc:`Human Counting (Over Time) </use_cases/human_counting_over_time>` use case.
+   :doc:`People Counting (Over Time) </use_cases/people_counting_over_time>` use case.
 
 .. seealso::
 
    If it is only required to count the objects at the present moment, the simplier
    :doc:`Object Counting (Present) </use_cases/object_counting_present>` use case without requiring
    object tracking would be more suitable.
-
-.. image:: /assets/use_cases/object_counting_over_time.gif
-   :class: no-scaled-link
-   :width: 50 %
 
 Object counting over time is achieved by detecting the objects using an object detection model,
 then tracking each unique object. As a new object appears, the number of counted objects is
@@ -78,11 +78,18 @@ close proxmity (high IoU) of each other. This assumes that the object detector c
 bounding box per frame for each object to be tracked, and also assumes that frame rate of the video
 is high enough to allow unambigious IoU overlaps between consecutive frames.
 
+Another available option is the Minimum Output Sum of Squared Error (MOSSE) tracker which we have
+adapted from the OpenCV package. It is a correlation filter based tracker which uses Fast Fourier
+Transform (FFT) to perform operations in the frequency domain, reducing computational complexity.
+More details can be found from this
+`paper <https://www.cs.colostate.edu/~draper/papers/bolme_cvpr10.pdf>`_.
+
 **3. Incrementing the Count**
 
-The first tracked object is assigned an ID of "0", the second tracked object is assigned an ID of 
-"1" and so on, thus the total number of unique objects that have appeared in the entire duration 
-is simply the cumulative maximum.
+Monotonically increasing integer IDs beginning from "0" are assigned to new unique objects. For
+example, the first tracked object is assigned an ID of "0", the second tracked object is assigned
+an ID of "1", and so on. Thus the total number of unique objects that have appeared in the entire
+duration is simply the cumulative maximum.
 
 
 Nodes Used
@@ -123,7 +130,7 @@ The :mod:`dabble.tracking` node used here is not an AI model but uses heuristics
 under the category of ``dabble`` nodes instead of ``model`` nodes. It needs to be paired with an
 upstream object detector node, but this also gives it a key advantage - it can track any of the 
 :ref:`80 types <general-object-detection-ids>` of detectable objects. In contrast,
-the :doc:`Human Counting (Over Time) </use_cases/human_counting_over_time>` use case uses a single
+the :doc:`People Counting (Over Time) </use_cases/people_counting_over_time>` use case uses a single
 model node purpose-built for both human detection and tracking, giving it more accuracy but limiting
 its usage to only humans.
 
@@ -138,21 +145,27 @@ equal to the total number of unique objects over time.
 
 Some common node behaviors that you might need to adjust are:
 
-* ``model_type``: ``0``, ``1``, ``2``, ``3``, or ``4`` for :mod:`model.efficientdet`. 
-* ``detect_ids``: Object class IDs to be detected for :mod:`model.efficientdet`. 
+For :mod:`model.efficientdet`:
+
+* ``model_type``: ``0``, ``1``, ``2``, ``3``, or ``4``. The larger the number, the higher the
+  accuracy, at the cost of inference speed.
+* ``detect_ids``: Object class IDs to be detected. 
   Refer to :ref:`Object Detection IDs table <general-object-detection-ids>` for the class IDs for
   each model.
-* ``tracking_type``: The type of tracking to be used for :mod:`dabble.tracking`, choose one of:
-  ``["iou", "mosse"]``.
+
+For :mod:`dabble.tracking`:
+
+* ``tracking_type``: Choose either ``["iou", "mosse"]``, described earlier in the `How it Works`_ 
+  section.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.
 
 
-Counting Objects Over Time Within Zones
-=======================================
+Counting Objects Within Zones
+=============================
 
 It is possible to extend this use case with the :doc:`Zone Counting </use_cases/zone_counting>`
 use case. For example, if the road were a dual carriageway and we are only interested counting the
 vehicles on one side of the road, we could split the video into 2 different zones and only count
 the vehicles within the chosen zone. An example of how this can be done is given in the 
-:ref:`Tracking People within a Zone <tutorial_object_tracking>` tutorial.
+:ref:`Tracking People within a Zone <tutorial_tracking_within_zone>` tutorial.
