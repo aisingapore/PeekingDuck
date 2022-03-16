@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThre
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):
+class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     """Receives visual sources as inputs.
 
     Inputs:
@@ -52,7 +52,8 @@ class Node(AbstractNode):
         saved_video_fps (:obj:`int`): **default = 10**. |br|
             FPS to be used to output the MP4 file after livestream is processed and
             exported.  FPS is dependent on running machine performance.
-        source (:obj:`int`): **default = https://storage.googleapis.com/peekingduck/videos/wave.mp4**. |br|
+        source (:obj:`int`):
+            **default = https://storage.googleapis.com/peekingduck/videos/wave.mp4**. |br|
             Input source can be: |br|
             - filename : local image or video file
             - directory name : all media files will be processed
@@ -199,10 +200,7 @@ class Node(AbstractNode):
         Returns:
             bool: True if supported file type else False
         """
-        if filepath.suffix[1:] in self._allowed_extensions:
-            return True
-        else:
-            return False
+        return bool(filepath.suffix[1:] in self._allowed_extensions)
 
     def open_input(self, input_source: Any) -> None:
         """Open given input source for consumption.
@@ -245,13 +243,12 @@ class Node(AbstractNode):
         If not, then opencv can deal with all non-directory sources.
         """
         source = str(self.source)
-        if isinstance(self.source, int):
-            return False
-        elif (
+        is_url = (
             source.startswith("http://")
             or source.startswith("https://")
             or source.startswith("rtsp://")
-        ):
+        )
+        if isinstance(self.source, int) or is_url:
             return False
         else:
             path = Path(self.source)
