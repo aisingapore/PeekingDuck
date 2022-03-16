@@ -128,7 +128,7 @@ class Detector:
             - nums: number of valid bboxes. Only nums[0] should be used. The rest
                     are paddings.
         """
-        # image = image[..., ::-1]  # swap from bgr to rgb
+        image = image[..., ::-1]  # swap from bgr to rgb
         pred = self.yolo(image)[-1]
         bboxes = pred[:, :, :4].numpy()
         bboxes[:, :, [0, 1]] = bboxes[:, :, [1, 0]]  # swapping x and y axes
