@@ -23,6 +23,7 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
+import cv2
 
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.dataset import transform_images
 from peekingduck.utils.graph_functions import load_graph
@@ -128,7 +129,6 @@ class Detector:
             - nums: number of valid bboxes. Only nums[0] should be used. The rest
                     are paddings.
         """
-        image = image[..., ::-1]  # swap from bgr to rgb
         pred = self.yolo(image)[-1]
         bboxes = pred[:, :, :4].numpy()
         bboxes[:, :, [0, 1]] = bboxes[:, :, [1, 0]]  # swapping x and y axes
@@ -150,12 +150,14 @@ class Detector:
 
     @staticmethod
     def _prepare_image_from_camera(image: np.ndarray) -> tf.Tensor:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)
         return image
 
     @staticmethod
     def _prepare_image_from_file(image: np.ndarray) -> tf.Tensor:
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = tf.image.decode_image(image, channels=3)
         return image
 
