@@ -17,12 +17,12 @@ Main class for MTCNN Model
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class MtcnnModel:  # pylint: disable=too-few-public-methods
@@ -32,6 +32,9 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
         super().__init__()
 
         self.logger = logging.getLogger(__name__)
+
+        if config["mtcnn_min_size"] <= 0:
+            raise ValueError("mtcnn_min_size must be more than 0")
 
         # check factor value
         if not 0 <= config["mtcnn_factor"] <= 1:
@@ -74,5 +77,5 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
         """
         assert isinstance(frame, np.ndarray)
 
-        # return bboxes, scores, landmarks amd class labels
+        # return bboxes, scores, landmarks and class labels
         return self.detector.predict_bbox_landmarks(frame)
