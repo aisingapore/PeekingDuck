@@ -250,8 +250,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         )
         if isinstance(self.source, int) or is_url:
             return False
-        else:
-            path = Path(self.source)
-            if not path.exists():
-                raise FileNotFoundError(f"Path '{path}' does not exist")
-            return path.is_dir()
+        path = Path(self.source)
+        if not path.exists():
+            raise FileNotFoundError(f"Path '{path}' does not exist")
+        return path.is_dir()
