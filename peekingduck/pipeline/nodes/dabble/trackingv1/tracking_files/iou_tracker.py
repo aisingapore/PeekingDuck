@@ -71,14 +71,14 @@ class IOUTracker:
 
         self.tracks: "OrderedDict[int, Track]" = OrderedDict()
 
-    def track_detections(self, inputs: Dict[str, Any]) -> List[str]:
+    def track_detections(self, inputs: Dict[str, Any]) -> List[int]:
         """Initializes and updates tracker on each frame.
 
         Args:
             inputs (Dict[str, Any]): Dictionary with keys "img" and "bboxes".
 
         Returns:
-            (List[str]): List of track IDs.
+            (List[int]]): List of track IDs.
         """
         frame = inputs["img"]
         frame_size = frame.shape[:2]
@@ -190,7 +190,7 @@ class IOUTracker:
         return idx, best_match, best_iou
 
     @staticmethod
-    def _order_track_ids_by_bbox(bboxes: np.ndarray, tracks: List[Track]) -> List[str]:
+    def _order_track_ids_by_bbox(bboxes: np.ndarray, tracks: List[Track]) -> List[int]:
         """Extracts the track IDs and orders them by their respective bounding
         boxes.
 
@@ -201,8 +201,8 @@ class IOUTracker:
             tracks (List[Track]): List of tracked detections.
 
         Returns:
-            (List[str]): Track IDs of the detections in the current frame.
+            (List[int]): Track IDs of the detections in the current frame.
         """
         bbox_to_track_id = {tuple(track.bbox): track.track_id for track in tracks}
-        track_ids = [str(bbox_to_track_id[bbox]) for bbox in map(tuple, bboxes)]
+        track_ids = [bbox_to_track_id[bbox] for bbox in map(tuple, bboxes)]
         return track_ids

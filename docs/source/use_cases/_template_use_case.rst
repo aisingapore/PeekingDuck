@@ -15,7 +15,7 @@ Overview
 ..
     Use case demo gif
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/crowd_counting.gif
+.. image:: /assets/use_cases/demo_use_case.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -27,15 +27,15 @@ Demo
 ..
     Replace <use_case_config> with the actual name
 
-.. |run_config| replace:: <use_case_config>.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/<use_case_config>.yml
+.. |pipeline_config| replace:: <use_case_config>.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/<use_case_config>.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/01_installation>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -61,7 +61,7 @@ There are <number> main components to our solution:
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

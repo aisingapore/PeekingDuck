@@ -2,15 +2,8 @@
 Advanced Install
 ****************
 
-.. |br| raw:: html
+.. include:: /include/substitution.rst
 
-   <br />
-
-.. role:: red
-
-.. role:: blue
-
-.. role:: green
 
 This section covers advanced PeekingDuck installation steps for users with ARM64
 devices or M1 Macs.
@@ -38,12 +31,12 @@ M1 Mac
 
 Apple released Macs with their advanced `M1 <https://en.wikipedia.org/wiki/Apple_M1>`_
 ARM-based chip in late 2020, a significant change from the previous Intel processors.
-We've successfully installed PeekingDuck on M1 Macs running MacOS Big Sur and
-MacOS Monterey.
+We've successfully installed PeekingDuck on M1 Macs running macOS Big Sur and
+macOS Monterey.
 
     1. Prerequisites:
 
-        - Install [homebrew](https://brew.sh/)
+        - Install `homebrew <https://brew.sh/>`_
         - Install miniforge using homebrew: |br| |br|
 
         .. admonition:: Terminal Session
@@ -58,17 +51,16 @@ MacOS Monterey.
             | \ :blue:`[~user]` \ > \ :green:`conda activate pkd` \
             | \ :blue:`[~user]` \ > \ :green:`conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm` \
 
-    3. Install Apple's Tensorflow build that is optimised for M1 Macs:
+    3. Install Apple's Tensorflow build that is optimized for M1 Macs:
 
-        * For MacOS Monterey: |br| |br|
+        * For macOS Monterey: |br| |br|
 
         .. admonition:: Terminal Session
 
             | \ :blue:`[~user]` \ > \ :green:`conda install -c apple tensorflow-deps` \
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-macos tensorflow-metal` \
-            | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck —no-dependencies` \
 
-        * For MacOS Big Sur: |br| |br|
+        * For macOS Big Sur: |br| |br|
 
         .. admonition:: Terminal Session
 
@@ -76,40 +68,18 @@ MacOS Monterey.
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0` \
             | \ :blue:`[~user]` \ > \ :green:`pip install tensorflow-metal==0.2.0` \
 
-    4. Install PeekingDuck:
+    4. Install PyTorch (currently CPU-only):
+
+        .. admonition:: Terminal Session
+
+            | \ :blue:`[~user]` \ > \ :green:`pip install torch torchvision` \
+
+    5. Install PeekingDuck and verify installation:
 
         .. admonition:: Terminal Session
 
             | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
-
-    5. Create a new PeekingDuck project and run it:
-
-        .. admonition:: Terminal Session
-
-            | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-            | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-            | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck init` \
-            | \ :blue:`[~user]/pkd_project` \ > \ :green:`peekingduck run` \
-
-    6. **``Todo`` Install PyTorch and TorchVision for torch models**:
-
-        **requires compilation from github source, editing of source files**
+            | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
 
 
-Development Version
-===================
 
-You can try out the development version of PeekingDuck direct from the
-`PeekingDuck Github repository <https://github.com/aimakerspace/PeekingDuck>`_:
-
-    .. admonition:: Terminal Session
-
-        | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aimakerspace/PeekingDuck.git` \
-
-| This will clone a copy of PeekingDuck development version into the folder ``PeekingDuck``.
-| Test it with the following commands:
-
-    .. admonition:: Terminal Session
-
-        | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
-        | \ :blue:`[~user]/PeekingDuck` \ > \ :green:`python __main__.py` \

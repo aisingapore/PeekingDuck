@@ -10,7 +10,7 @@ in public and private places. AI Singapore has developed a solution that perform
 anonymization. This can be used to comply with the General Data Protection Regulation (GDPR) or
 other data privacy laws.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/privacy_protection_faces.gif
+.. image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -20,15 +20,15 @@ Our solution automatically detects and mosaics (or blurs) human faces. This is e
 Demo
 ====
 
-.. |run_config| replace:: privacy_protection_faces.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_faces.yml
+.. |pipeline_config| replace:: privacy_protection_faces.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_faces.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -56,7 +56,7 @@ boxes.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

@@ -1,5 +1,0 @@
-nodes:
-- input.live
-- model.yolo
-- draw.bbox
-- output.screen

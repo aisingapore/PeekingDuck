@@ -31,16 +31,16 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     re-identification tasks in an object tracker.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
-        |obj_tags|
+        |obj_attrs_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -93,7 +93,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             - bbox_labels (List[str]): Tracking IDs, for compatibility with
                 draw nodes.
             - bbox_scores (List[float]): Detection confidence scores.
-            - obj_tags (List[str]): Tracking IDs, specifically for use
+            - obj_attrs (Dict[str, List[int]]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
         """
         metadata = inputs.get(
@@ -111,7 +111,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,
             "bbox_scores": bbox_scores,
-            "obj_tags": track_ids,
+            "obj_attrs": {"ids": track_ids},
         }
         return outputs
 

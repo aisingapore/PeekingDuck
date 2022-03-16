@@ -13,7 +13,7 @@ that tracks multiple moving objects. This tracking capability is to be used in t
 object detection model. Objects to track can be, for example, pedestrians on the street, vehicles
 in the road, sport players on the court, groups of animals and more.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/vehicles_tracking.gif
+.. image:: /assets/use_cases/multiple_object_tracking.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -23,15 +23,15 @@ Intersection Over Union (IoU). This is explained in the `How it Works`_ section.
 Demo
 ====
 
-.. |run_config| replace:: object_tracking.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_tracking.yml
+.. |pipeline_config| replace:: multiple_object_tracking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/multiple_object_tracking.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -53,7 +53,7 @@ coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` i
 corner of the bounding box, and :math:`(x_2, y_2)` is the bottom right. These are used to form the
 bounding box of each object detected which will then be used to determine a track for each object.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
+.. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -94,7 +94,7 @@ threshold is met. All detections not assigned to an existing track will start a 
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

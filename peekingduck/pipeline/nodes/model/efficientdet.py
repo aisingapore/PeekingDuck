@@ -18,6 +18,7 @@ Slower but more accurate object detection model.
 
 from typing import Any, Dict
 
+import cv2
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -36,14 +37,14 @@ class Node(AbstractNode):
     changed to other values.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
-        |bbox_scores|
+        |bbox_scores_data|
 
     Configs:
         model_type (:obj:`int`): **{0, 1, 2, 3, 4}, default = 0**. |br|
@@ -72,8 +73,9 @@ class Node(AbstractNode):
         """Takes an image as input and returns bboxes of objects specified
         in config.
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
-        bboxes, labels, scores = self.model.predict(inputs["img"])
+
+        img_rgb = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+
+        bboxes, labels, scores = self.model.predict(img_rgb)
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs

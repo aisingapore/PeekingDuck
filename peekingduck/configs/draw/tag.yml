@@ -1,4 +1,5 @@
-input: ["bboxes", "obj_tags", "img"]
+input: ["bboxes", "obj_attrs", "img"]
 output: ["none"]
 
-tag_color: [100, 0, 255]
+show: []
+tag_color: [77, 103, 255]

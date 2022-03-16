@@ -1,6 +1,5 @@
 input: ["all"]
 output: ["img"]
 
-all_legend_items: ["fps", "count", "zone_count"]
 position: "bottom"
-include: ["all_legend_items"]
+show: []

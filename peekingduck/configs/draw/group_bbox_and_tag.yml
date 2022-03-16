@@ -1,4 +1,4 @@
-input: ["img", "bboxes", "obj_groups", "large_groups"]
+input: ["img", "bboxes", "obj_attrs", "large_groups"]
 output: ["none"]
 
 bbox_color: [0, 140, 255]

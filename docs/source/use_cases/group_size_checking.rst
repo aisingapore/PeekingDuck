@@ -11,7 +11,7 @@ social gatherings. AI Singapore has developed a vision-based
 that checks if the group size limit has been violated. This can be used in many places, such as in
 malls to ensure that visitors adhere to guidelines, or in workplaces to ensure employees' safety.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/group_size_check_2.gif
+.. image:: /assets/use_cases/group_size_checking.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -25,15 +25,15 @@ from 2D videos, circumventing this limitation. This is further elaborated in the
 Demo
 ====
 
-.. |run_config| replace:: group_size_checking.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
+.. |pipeline_config| replace:: group_size_checking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -48,7 +48,7 @@ to identify key human skeletal points. This allows the application to identify w
 are located within the video feed. The coordinates of the various skeletal points will then be used
 to determine the distance between individuals.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/posenet_demo.gif
+.. image:: /assets/use_cases/posenet_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -58,7 +58,7 @@ To measure the distance between individuals, we have to estimate the 3D world co
 keypoints in 2D coordinates. To achieve this, we compute the depth :math:`Z` from the `x, y` coordinates
 using the relationship below:
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/distance_estimation.png
+.. image:: /assets/use_cases/distance_estimation.png
    :class: no-scaled-link
    :width: 70 %
 
@@ -85,7 +85,7 @@ to solve it.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

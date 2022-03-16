@@ -13,43 +13,41 @@
 # limitations under the License.
 
 """
-Adjusts the brightness of an image.
+Adjusts the contrast of an image.
 """
 
 
 from typing import Any, Dict
 
 import cv2
-import numpy as np
 
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Adjusts the brightness of an image, by adding a bias/
-    `beta parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
+    """Adjusts the contrast of an image, by multiplying with a gain/
+    `alpha parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
     linear_transform.html>`_.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |img|
+        |img_data|
 
     Configs:
-        beta (:obj:`int`): **[-100,100], default = 0**. |br|
-            Increasing the value of beta increases image brightness, and vice
-            versa.
+        alpha (:obj:`float`): **[0, 3], default = 1**. |br|
+            Increasing the value of alpha increases the contrast.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if not -100 <= self.beta <= 100:
-            raise ValueError("beta for brightness must be between [-100, 100]")
+        if not 0 <= self.alpha <= 3.0:
+            raise ValueError("alpha for contrast must be between [0, 3]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Adjusts the brightness of an image frame.
+        """Adjusts the contrast of an image frame.
 
         Args:
             inputs (Dict): Inputs dictionary with the key `img`.
@@ -57,9 +55,6 @@ class Node(AbstractNode):
         Returns:
             (Dict): Outputs dictionary with the key `img`.
         """
-        orig_shape = inputs["img"].shape
-        img_vector = np.reshape(inputs["img"], (1, -1))
-        cv2.add(img_vector, self.beta, img_vector)
-        img = np.reshape(img_vector, orig_shape)
+        img = cv2.convertScaleAbs(inputs["img"], alpha=self.alpha, beta=0)
 
         return {"img": img}

@@ -77,14 +77,14 @@ class FairMOTModel:  # pylint: disable=too-few-public-methods
 
     def predict(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float], List[str]]:
+    ) -> Tuple[List[np.ndarray], List[str], List[float], List[int]]:
         """Track objects from image.
 
         Args:
             image (np.ndarray): Image in numpy array.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): A tuple of
+            (Tuple[List[np.ndarray], List[str], List[float], List[int]]): A tuple of
             - Numpy array of detected bounding boxes.
             - List of detection class labels (person).
             - List of detection confidence scores.

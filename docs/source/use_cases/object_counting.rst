@@ -13,7 +13,7 @@ malls, shops or factories for crowd control, or other general object counting.
 
    For advanced counting tasks, Check out the :doc:`Zone Counting use case </use_cases/zone_counting>`.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/object_counting.gif
+.. image:: /assets/use_cases/object_counting.gif
    :class: no-scaled-link
    :width: 100 %
 
@@ -24,15 +24,15 @@ is explained in the `How it Works`_ section.
 Demo
 ====
 
-.. |run_config| replace:: object_counting.yml
-.. _run_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml
+.. |pipeline_config| replace:: object_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
-PeekingDuck with the configuration file |run_config|_ as shown:
+PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. parsed-literal::
 
-    > peekingduck run --config_path <path/to/\ |run_config|\ >
+    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
 
 How it Works
 ============
@@ -51,7 +51,7 @@ and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding 
 detected. For more information on how adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
-.. image:: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/readme/yolo_demo.gif
+.. image:: /assets/use_cases/yolo_demo.gif
    :class: no-scaled-link
    :width: 70 %
 
@@ -63,7 +63,7 @@ detected for the object.
 Nodes Used
 ==========
 
-These are the nodes used in the earlier demo (also in |run_config|_):
+These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 .. code-block:: yaml
 

@@ -25,22 +25,23 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws poses onto image.
 
-    The :mod:`draw.poses` node uses the ``keypoints``, ``keypoint_scores``, and
-    ``keypoint_conns`` predictions from pose models to draw the human poses
-    onto the image. For better understanding, check out the pose models such
-    as :mod:`HRNet <model.hrnet>` and :mod:`PoseNet <model.posenet>`.
+    The :mod:`draw.poses` node uses the :term:`keypoints`,
+    :term:`keypoint_scores`, and :term:`keypoint_conns` predictions from pose
+    models to draw the human poses onto the image. For better understanding,
+    check out the pose models such as :mod:`HRNet <model.hrnet>` and
+    :mod:`PoseNet <model.posenet>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
     Outputs:
-        |no_output|
+        |none_output_data|
 
     Configs:
         None.
