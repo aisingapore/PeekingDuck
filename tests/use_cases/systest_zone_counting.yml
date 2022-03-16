@@ -1,6 +1,6 @@
 nodes:
 - input.recorded:
-    input_dir: "tests/data/images"
+    input_dir: tests/data/images
 - model.yolo:
     detect_ids: ["person"]
 - dabble.bbox_to_btm_midpoint
