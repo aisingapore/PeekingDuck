@@ -87,13 +87,13 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             "mov",
             "mp4",
         ]
-        self._file_name: str = None
-        self._fps: int = 0  # self._fps > 0 if file playback
+        self._file_name: str = ""
+        self._fps: float = 0  # self._fps > 0 if file playback
         self.frame_counter: int = 0
         self.tens_counter: int = 10
         self.total_frame_count: int = 0
         self.progress: int = 0
-        self.videocap: Union[VideoNoThread, VideoThread] = None
+        self.videocap: Union[None, VideoNoThread, VideoThread] = None
         self.do_resize = self.resize["do_resizing"]
         self.has_multiple_inputs = self.source_is_directory()
 
