@@ -97,7 +97,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         #                  `input.recorded` into new `input.visual`
         #                  To be removed in subsequent versions
         upgraded_nodes = []
-        for i, node in enumerate(nodes):
+        for node in nodes:
             if isinstance(node, str):
                 if node in ["input.live", "input.recorded"]:
                     self.logger.warning(
@@ -109,7 +109,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             else:
                 if "input.live" in node:
                     self.logger.warning(
-                        f"`input.live` is deprecated, please use `input.visual` in future"
+                        "`input.live` is deprecated, please use `input.visual` in future"
                     )
                     node_config = node.pop("input.live")
                     if "input_source" in node_config:
@@ -118,7 +118,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     self.logger.warning(f"converting node to {node}")
                 if "input.recorded" in node:
                     self.logger.warning(
-                        f"`input.recorded` is deprecated, please use `input.visual` in future"
+                        "`input.recorded` is deprecated, please use `input.visual` in future"
                     )
                     node_config = node.pop("input.recorded")
                     if "input_dir" in node_config:
