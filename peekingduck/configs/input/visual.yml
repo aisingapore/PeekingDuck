@@ -1,0 +1,35 @@
+input: ["none"]
+output: ["img", "pipeline_end", "saved_video_fps"]
+
+frames_log_freq: 100    # Logs frequency of frames passed in cli
+mirror_image: False
+resize: {
+            do_resizing: False,
+            width: 1280,
+            height: 720
+        }
+# May need to change saved_video_fps depending on user machine
+# performance and if threading and buffer_frames are both True.
+# (see Threading Technotes below)
+saved_video_fps: 10
+# Options for source:
+# - filename/directory for local file(s)
+# - http URL for cloud sources
+# - rtsp URL for CCTV
+# - 0 for webcam live feed
+source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+#
+# Threading Technotes:
+#
+# 1. Enabling threading can speed up webcam FPS by 20-30%.
+# 2. If threading is True, it is recommended that buffer_frames is False if only
+#    output.screen is used.
+#    Otherwise the onscreen video display could be laggy due to the buffering.
+# 3. Threading = True, buffer_frames = True is recommended when input.visual is
+#    paired with output.media_writer so as to ensure that all frames are output
+#    and saved into the file (i.e. no lost frames).
+#    In addition, saved_video_fps should be set to the framerate of the
+#    input source, typically 25 or 30 fps for webcam, to ensure the saved video
+#    is able to play back smoothly (e.g. no "teleporting" person).
+threading: False
+buffer_frames: False
