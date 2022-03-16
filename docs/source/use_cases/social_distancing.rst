@@ -14,25 +14,26 @@ Singapore.
 
 .. image:: /assets/use_cases/social_distancing.gif
    :class: no-scaled-link
-   :width: 70 %
+   :width: 50 %
 
 The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a
-RGB-D camera or a LiDAR. However, most cameras such as CCTVs and IP cameras usually only produce 2D
-videos. We developed heuristics that are able to give an approximate measure of physical distance
-from 2D videos, circumventing this limitation. This is explained in the `How it Works`_ section.
+RGB-D camera or a `LiDAR <https://en.wikipedia.org/wiki/Lidar>`_. However, most cameras such as
+CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give
+an approximate measure of physical distance from 2D videos, circumventing this limitation. This is
+explained in the `How it Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: social_distancing.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/social_distancing.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -49,7 +50,7 @@ to determine the distance between individuals.
 
 .. image:: /assets/use_cases/posenet_demo.gif
    :class: no-scaled-link
-   :width: 70 %
+   :width: 50 %
 
 **2. Depth and Distance Approximation**
 
@@ -59,7 +60,7 @@ using the relationship below:
 
 .. image:: /assets/use_cases/distance_estimation.png
    :class: no-scaled-link
-   :width: 70 %
+   :width: 50 %
 
 where:
 
@@ -92,10 +93,9 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - dabble.check_nearby_objs:
        near_threshold: 1.5
        tag_msg: "TOO CLOSE!"
-   - dabble.fps
    - draw.poses
-   - draw.tag
-   - draw.legend
+   - draw.tag:
+       show: ["flags"]
    - output.screen
 
 **1. Pose Estimation Model**
@@ -122,7 +122,7 @@ For more adjustable node behaviors not listed here, check out the :ref:`API Docu
 
 **3. Using Object Detection (Optional)**
 
-It is possible to use :doc:`object detection nodes </resources/01a_object_detection>` instead
+It is possible to use :doc:`object detection models </resources/01a_object_detection>` instead
 of pose estimation. To do so, replace the model node accordingly, and replace the
 :mod:`dabble.keypoints_to_3d_loc` node with :mod:`dabble.bbox_to_3d_loc`. The reference or "ground
 truth length" in this case would be the average height of a human, multiplied by a small factor.

@@ -27,8 +27,7 @@ class Node(AbstractNode):
 
     The :mod:`draw.bbox` node uses :term:`bboxes` and, optionally,
     :term:`bbox_labels` from the model predictions to draw the bbox predictions
-    onto the image. For better understanding of the use case, refer to the
-    :doc:`Object Counting use case </use_cases/object_counting>`.
+    onto the image.
 
     Inputs:
         |img_data|

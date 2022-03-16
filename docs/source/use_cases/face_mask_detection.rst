@@ -5,14 +5,14 @@ Face Mask Detection
 Overview
 ========
 
-As part of COVID-19 measures, the Singapore Government has mandated the wearing of face masks in
-public places. AI Singapore has developed a solution that checks whether or not a person is wearing
-a face mask. This can be used in places such as in malls or shops to ensure that visitors adhere to
-the guidelines.
+Wearing of face masks in public places can help prevent the spread of COVID-19 and other infectious
+diseases, and is presently mandatory in many countries such as Singapore. AI Singapore has developed
+a solution that checks whether or not a person is wearing a face mask. This can be used in places
+such as in malls or shops to ensure that visitors adhere to the guidelines.
 
 .. image:: /assets/use_cases/face_mask_detection.gif
    :class: no-scaled-link
-   :width: 70 %
+   :width: 50 %
 
 We have trained a custom YOLOv4 model to detect whether or not a person is wearing a face mask.
 This is explained in the `How it Works`_ section.
@@ -21,14 +21,14 @@ Demo
 ====
 
 .. |pipeline_config| replace:: face_mask_detection.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/face_mask_detection.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/face_mask_detection.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -60,23 +60,24 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    nodes:
    - input.live
    - model.yolo_face
-   - dabble.fps
    - draw.bbox:
        show_labels: true
-   - draw.legend
    - output.screen
 
 **1. Face Mask Detection Node**
 
-By default, the node uses the YOLOv4-tiny model for face detection. For better accuracy, you can
-try the :mod:`YOLOv4 model <model.yolo_face>` that is included in our repo.
+The :mod:`model.yolo_face` node is used for face detection and to classify if the face is masked or
+unmasked. To simply detect faces without needing to classify if the face is masked, you can also
+consider the :mod:`model.mtcnn` node.
 
 **2. Adjusting Nodes**
 
 Some common node behaviors that you might want to adjust are:
 
-* `detect_ids`: This specifies the class to be detected where no_mask = 0 and mask = 1. By default,
+* ``model_type``: This specifies the variant of YOLOv4 to be used. By default, the `v4tiny` model
+  is used, but for better accuracy, you may want to try the `v4` model.
+* ``detect_ids``: This specifies the class to be detected where no_mask = 0 and mask = 1. By default,
   the model detects faces with and without face masks (default = [0, 1]).
-* `yolo_score_threshold`: This specifies the threshold value. Bounding boxes with confidence score
+* ``yolo_score_threshold``: This specifies the threshold value. Bounding boxes with confidence score
   lower than the threshold are discarded. You may want to lower the threshold value to increase the
   number of detections.

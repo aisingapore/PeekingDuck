@@ -2,33 +2,35 @@
 Crowd Counting
 **************
 
+.. include:: /include/substitution.rst
+
 Overview
 ========
 
-In computer vision, crowd counting refers to the technique of counting or estimating the number of
-people in a crowd. AI Singapore has developed a solution that predicts the number of people in a
-crowd. This can be used to estimate the number of people attending an event, monitor crowd levels
-and prevent human stampedes.
+In Computer Vision (CV), crowd counting refers to the technique of counting or estimating the 
+number of people in a crowd. This can be used to estimate the number of people attending an
+event, monitor crowd levels and prevent human stampedes.
 
 .. image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
-   :width: 100 %
+   :width: 50 %
 
 Our solution utilizes CSRNet to estimate the size of a crowd. In addition, it generates a heat map
-that can be used to pinpoint possible bottlenecks at a venue. This is explained in the `How it Works`_ section.
+that can be used to pinpoint possible bottlenecks at a venue. This is explained in the 
+`How it Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: crowd_counting.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/crowd_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/crowd_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
-.. parsed-literal::
+.. admonition:: Terminal Session
 
-    > peekingduck run --config_path <path/to/\ |pipeline_config|\ >
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
 How it Works
 ============
@@ -60,20 +62,21 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.recorded:
+       input_dir: <path/to/video with crowd>
    - model.csrnet:
        model_type: dense
-   - dabble.fps
    - draw.heat_map
-   - draw.legend
+   - draw.legend:
+       show: ["count"]
    - output.screen
 
 **1. Crowd Counting Node**
 
 As mentioned, we use CSRNet to estimate the size of a crowd. As the models were trained to
 recognize congested scenes, the estimates are less accurate if the number of people is low, i.e.,
-below ten. In such scenarios, you should consider using an object detection model such as the
-:mod:`YOLOX model <model.yolox>` that is included in our repo.
+below ten. In such scenarios, you should consider using the
+:doc:`object detection models </resources/01a_object_detection>` included in our repo.
 
 **2. Heat Map Generation Node (Optional)**
 
@@ -87,7 +90,7 @@ Some common node behaviors that you might want to adjust are:
   our solution uses the sparse crowd model. As a rule of thumb, you might want to use the dense
   crowd model if the people in a given image or video frame are packed shoulder to shoulder, e.g.,
   stadiums.
-* ``width```: This specifies the input width. By default, the width of an image will be resized
+* ``width``: This specifies the input width. By default, the width of an image will be resized
   to 640 for inference. The height of the image will be resized proportionally to preserve its
   aspect ratio. In general, decreasing the width of an image will improve inference speed. However,
   this might impact the accuracy of the model.

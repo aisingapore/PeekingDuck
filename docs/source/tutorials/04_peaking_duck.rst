@@ -402,6 +402,7 @@ Do a :greenbox:`peekingduck run` and you will see the following display:
       Royalty free video of people walking from:
       https://www.youtube.com/watch?v=du74nvmRUzo
 
+.. _tutorial_tracking_within_zone:
 
 .. _tutorial_tracking_people_within_zone:
 
