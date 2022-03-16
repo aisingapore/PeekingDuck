@@ -60,7 +60,7 @@ The following test conditions were followed:
  | - The video sequence has 1050 frames and is encoded at 30 FPS, which translates to about 35 seconds
  | - 1280×720 (HD ready) resolution was used, as a bridge between 640×480 (VGA) of poorer quality
      webcams, and 1920×1080 (Full HD) of CCTVs
- | - All unnecessary processes, such as browsers, were closed to prevent IO/resource contention
+ | - All tests were performed in a containerised environment running on Google Cloud VMs
 
 Model Accuracy
 --------------
