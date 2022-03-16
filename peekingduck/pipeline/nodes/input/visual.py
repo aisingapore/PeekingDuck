@@ -55,11 +55,11 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         source (:obj:`int`):
             **default = https://storage.googleapis.com/peekingduck/videos/wave.mp4**. |br|
             Input source can be: |br|
-            - filename : local image or video file
-            - directory name : all media files will be processed
-            - http URL for online cloud source : http[s]://...
-            - rtsp URL for CCTV : rtsp://...
-            - 0 for webcam live feed
+            - filename : local image or video file |br|
+            - directory name : all media files will be processed |br|
+            - http URL for online cloud source : http[s]://... |br|
+            - rtsp URL for CCTV : rtsp://... |br|
+            - 0 for webcam live feed |br|
             Refer to `OpenCV documentation
             <https://docs.opencv.org/4.5.5/d8/dfe/classcv_1_1VideoCapture.html>`_
             for more technical information.
