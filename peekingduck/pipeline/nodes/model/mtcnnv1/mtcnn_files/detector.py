@@ -26,6 +26,7 @@ import tensorflow as tf
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
     load_graph,
 )
+from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
 class Detector:  # pylint: disable=too-many-instance-attributes
@@ -64,7 +65,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             return load_graph(str(model_path))
 
         raise ValueError(
-            "Graph file does not exist. Please check that " "%s exists" % model_path
+            f"Graph file does not exist. Please check that {model_path} exists"
         )
 
     def predict_bbox_landmarks(
@@ -170,8 +171,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
         bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
 
-        # Express image coordinates as a percentage of image height and width
-        bboxes[:, [0, 2]] = bboxes[:, [0, 2]] / image.shape[1]
-        bboxes[:, [1, 3]] = bboxes[:, [1, 3]] / image.shape[0]
+        bboxes = xyxy2xyxyn(bboxes, image.shape[0], image.shape[1])
 
         return bboxes, scores, landmarks
