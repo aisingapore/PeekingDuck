@@ -111,8 +111,8 @@ The following test conditions were followed:
      MS COCO dataset
  | - The score threshold is based on PeekingDuck's default settings of ``0.4``, ``0.1``, and ``0.3``
      for PoseNet, HRNet, and MoveNet respectively
- | - The evaluation metrics have been compared with the original repository of the respective object
-     detection models
+ | - The evaluation metrics have been compared with the original repository of the respective pose
+     estimation models for consistency
 
 Keypoint IDs
 ============
