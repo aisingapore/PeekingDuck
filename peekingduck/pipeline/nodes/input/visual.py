@@ -21,7 +21,7 @@ Reads inputs from multiple visual sources
 """
 
 from pathlib import Path
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
@@ -93,7 +93,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.tens_counter: int = 10
         self.total_frame_count: int = 0
         self.progress: int = 0
-        self.videocap: Union[None, VideoNoThread, VideoThread] = None
+        self.videocap: Optional[Union[VideoNoThread, VideoThread]] = None
         self.do_resize = self.resize["do_resizing"]
         self.has_multiple_inputs = self._source_is_directory()
 
@@ -200,7 +200,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         Returns:
             bool: True if supported file type else False
         """
-        return bool(filepath.suffix[1:] in self._allowed_extensions)
+        return filepath.suffix[1:] in self._allowed_extensions
 
     def _open_input(self, input_source: Any) -> None:
         """Open given input source for consumption.
@@ -238,12 +238,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         If yes, then node will have specific methods to handle it.
         If not, then opencv can deal with all non-directory sources.
         """
-        source = str(self.source)
-        is_url = (
-            source.startswith("http://")
-            or source.startswith("https://")
-            or source.startswith("rtsp://")
-        )
+        is_url = self.source.startswith(("http://", "https://", "rtsp://"))
         if isinstance(self.source, int) or is_url:
             return False
         path = Path(self.source)
