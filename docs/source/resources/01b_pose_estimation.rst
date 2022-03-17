@@ -66,7 +66,7 @@ The following test conditions were followed:
      frames to process per video
  | - 1280×720 (HD ready) resolution was used, as a bridge between 640×480 (VGA) of poorer quality
      webcams, and 1920×1080 (Full HD) of CCTVs
- | - All tests were performed in a containerised environment running on Google Cloud VMs
+ | - All tests were performed in a containerized environment running on Google Cloud VMs
 
 Model Accuracy
 --------------
@@ -102,6 +102,17 @@ COCO API into the PeekingDuck pipeline for loading the annotations and evaluatin
 the models. All values are reported in percentage.
 
 All images from the "person" category in the MS COCO (val 2017) dataset were processed.
+
+Test Conditions
+^^^^^^^^^^^^^^^
+
+The following test conditions were followed:
+ | - The tests were performed using `pycocotools <https://pypi.org/project/pycocotools/>`__ on the
+     MS COCO dataset
+ | - The score threshold is based on PeekingDuck's default settings of ``0.4``, ``0.1``, and ``0.3``
+     for PoseNet, HRNet, and MoveNet respectively
+ | - The evaluation metrics have been compared with the original repository of the respective object
+     detection models
 
 Keypoint IDs
 ============
