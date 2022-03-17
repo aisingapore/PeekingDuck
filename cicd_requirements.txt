@@ -1,3 +1,17 @@
+# For peekingduck build
+click == 7.1.2
+colorama == 0.4.4
+numpy == 1.17.3 # fixed to prevent linting errors
+opencv-contrib-python >= 4.5.2.54
+pyyaml >= 5.3.1
+requests == 2.24.0
+tensorflow == 2.2.0  # fixed to prevent linting errors
+torch == 1.10.0
+torchvision == 0.11.1
+tqdm == 4.45.0
+scipy >= 1.4.1
+
+# For cicd
 bandit == 1.7.0
 black == 21.9b0
 coverage == 5.5
@@ -13,6 +27,7 @@ myst-parser
 sphinx-autodoc-typehints
 sphinx-rtd-theme
 texttable # for pretty print scripts/check_links.py output
+
 # optional requirements
 shapely == 1.7.1
 lap == 0.4.0
