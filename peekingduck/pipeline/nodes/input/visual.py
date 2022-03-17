@@ -37,11 +37,17 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     Outputs:
         |img_data|
 
+        |filename_data|
+
         |pipeline_end_data|
 
         |saved_video_fps_data|
 
     Configs:
+        filename (:obj:`str`): **default = "video.mp4"**. |br|
+            Filename of the MP4 file if media is exported. |br|
+            If source is a directory of files, then filename is the current file being
+            processed.
         frames_log_freq (:obj:`int`): **default = 100**. |br|
             Logs frequency of frames passed in CLI
         mirror_image (:obj:`bool`): **default = False**. |br|
@@ -97,6 +103,12 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.do_resize = self.resize["do_resizing"]
         self.has_multiple_inputs = self._source_is_directory()
 
+        print("*****", self.filename)
+        if not self._is_valid_file_type(Path(self.filename)):
+            raise ValueError(
+                f"filename extension must be one of: {self._allowed_extensions}"
+            )
+
         if self.has_multiple_inputs:
             self._get_files(Path(self.source))
             self._get_next_file()
@@ -139,6 +151,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.file_end = True
         outputs = {
             "img": None,
+            "filename": self._file_name if self._file_name else self.filename,
             "pipeline_end": True,
             "saved_video_fps": self._fps if self._fps > 0 else self.saved_video_fps,
         }
@@ -148,13 +161,8 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                 self.file_end = False
                 if self.do_resize:
                     img = resize_image(img, self.resize["width"], self.resize["height"])
-                outputs = {
-                    "img": img,
-                    "pipeline_end": False,
-                    "saved_video_fps": self._fps
-                    if self._fps > 0
-                    else self.saved_video_fps,
-                }
+                outputs["img"] = img
+                outputs["pipeline_end"] = False
             else:
                 self.logger.debug("No video frames available for processing.")
         return outputs
@@ -238,7 +246,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         If yes, then node will have specific methods to handle it.
         If not, then opencv can deal with all non-directory sources.
         """
-        is_url = self.source.startswith(("http://", "https://", "rtsp://"))
+        is_url = str(self.source).startswith(("http://", "https://", "rtsp://"))
         if isinstance(self.source, int) or is_url:
             return False
         path = Path(self.source)

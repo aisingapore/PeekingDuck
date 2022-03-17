@@ -1,6 +1,7 @@
 input: ["none"]
-output: ["img", "pipeline_end", "saved_video_fps"]
+output: ["img", "filename", "pipeline_end", "saved_video_fps"]
 
+filename: video.mp4
 frames_log_freq: 100    # Logs frequency of frames passed in cli
 mirror_image: False
 resize: {
