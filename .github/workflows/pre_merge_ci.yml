@@ -20,7 +20,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install wheel
           pip install -r cicd_requirements.txt
-          pip install lap == 0.4.0
+          pip install lap==0.4.0
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
