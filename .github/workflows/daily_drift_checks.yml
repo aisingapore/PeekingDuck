@@ -30,6 +30,7 @@ jobs:
           fi
           echo "test_module_import.py TEST_VER=${TEST_VER}"
           python -m pip install --upgrade pip
+          pip install -r requirements.txt
           pip install -r cicd_requirements.txt
           bash ./scripts/update_version.sh ${TEST_VER}
           pip install . --no-dependencies
