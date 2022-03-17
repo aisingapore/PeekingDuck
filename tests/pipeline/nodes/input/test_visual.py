@@ -33,6 +33,7 @@ def create_reader():
             "input": "source",
             "output": "img",
             "resize": {"do_resizing": False, "width": 1280, "height": 720},
+            "filename": "video.mp4",
             "frames_log_freq": 100,
             "mirror_image": False,
             "pipeline_end": False,

@@ -81,6 +81,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
     def _load_node_list(self, pipeline_path: Path) -> "NodeList":
         """Loads a list of nodes from pipeline_path.yml"""
+
+        # dotw 2022-03-17: Temporary helper methods
+        def show_deprecate_warning(name: str, config: Union[str, Dict[str, Any]]):
+            self.logger.warning(f"`{name}` deprecated, replaced by `input.visual`")
+            self.logger.warning(f"convert `{name}` to `input.visual`:{config}")
+
         with open(pipeline_path) as node_yml:
             data = yaml.safe_load(node_yml)
         if not isinstance(data, dict) or "nodes" not in data:
@@ -100,31 +106,22 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         for node in nodes:
             if isinstance(node, str):
                 if node in ["input.live", "input.recorded"]:
-                    self.logger.warning(
-                        f"`{node}` is deprecated, please use `input.visual` in future"
-                    )
-                    self.logger.warning(f"converting `{node}` to `input.visual`...")
+                    show_deprecate_warning(node, "input.visual")
                     node.replace("live", "visual")
                     node.replace("recorded", "visual")
             else:
                 if "input.live" in node:
-                    self.logger.warning(
-                        "`input.live` is deprecated, please use `input.visual` in future"
-                    )
                     node_config = node.pop("input.live")
                     if "input_source" in node_config:
                         node_config["source"] = node_config.pop("input_source")
                     node["input.visual"] = node_config
-                    self.logger.warning(f"converting node to {node}")
+                    show_deprecate_warning("input.live", node_config)
                 if "input.recorded" in node:
-                    self.logger.warning(
-                        "`input.recorded` is deprecated, please use `input.visual` in future"
-                    )
                     node_config = node.pop("input.recorded")
                     if "input_dir" in node_config:
                         node_config["source"] = node_config.pop("input_dir")
                     node["input.visual"] = node_config
-                    self.logger.warning(f"converting node to {node}")
+                    show_deprecate_warning("input.recorded", node_config)
             upgraded_nodes.append(node)
 
         self.logger.info("Successfully loaded pipeline file.")

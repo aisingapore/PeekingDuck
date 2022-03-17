@@ -103,7 +103,6 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.do_resize = self.resize["do_resizing"]
         self.has_multiple_inputs = self._source_is_directory()
 
-        print("*****", self.filename)
         if not self._is_valid_file_type(Path(self.filename)):
             raise ValueError(
                 f"filename extension must be one of: {self._allowed_extensions}"
