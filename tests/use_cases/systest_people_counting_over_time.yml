@@ -1,6 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: tests/data/videos/humans_mot.mp4
+- input.visual:
+    source: tests/data/videos/humans_mot.mp4
 - model.jde
 - dabble.statistics:
     maximum: obj_attrs["ids"]

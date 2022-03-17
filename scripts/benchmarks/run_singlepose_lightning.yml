@@ -1,6 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: data/benchmark/single
+- input.visual:
+    source: data/benchmark/single
 - model.movenet:
     model_type: singlepose_lightning
 - dabble.fps
