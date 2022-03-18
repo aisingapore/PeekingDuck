@@ -58,7 +58,7 @@ To perform object detection on the ``cat_and_computer.mp4`` file, edit the
 Here is a step-by-step explanation of what has been done:
 
    | Line 2 :mod:`input.recorded`: tells PeekingDuck to load the ``cat_and_computer.mp4``.
-   | Line 4 :mod:`model.yolo`: by default, the Yolo model detects ``person`` only.
+   | Line 4 :mod:`model.yolo`: by default, the YOLO model detects ``person`` only.
    |        The ``cat_and_computer.mp4`` contains other classes of objects like cup, cat, laptop, etc. 
    |        So we have to change the model settings to detect the other object classes.
    | Line 6 :mod:`draw.bbox`: reconfigure this node to display the detected object class label.
@@ -77,7 +77,7 @@ The 30-second video will auto-close at the end, or you can press :greenbox:`q` t
 
     .. note::
 
-       The Yolo model can detect 80 different :ref:`object classes
+       The YOLO model can detect 80 different :ref:`object classes
        <general-object-detection-ids>`.
 
 
@@ -151,7 +151,6 @@ When you enable it on with ``show_labels: True``, what PeekingDuck does is to ov
 the default ``show_labels: False`` configuration with your specified ``True`` value.
 You will see another instance of this at work in the advanced *Peaking Duck* tutorial on
 :ref:`Tracking People Within a Zone <tutorial_tracking_people_within_zone>`.
-
 
 
 .. _tutorial_augment:

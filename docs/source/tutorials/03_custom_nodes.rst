@@ -43,7 +43,7 @@ as placeholders for contents to be added.
 Recipe 1: Object Detection Score
 ================================
 
-When the Yolo object detection model detects an object in the image, it assigns 
+When the YOLO object detection model detects an object in the image, it assigns 
 a bounding box and a score to it.
 This score is the "confidence score" which reflects how likely the box contains 
 an object and how accurate is the bounding box.
@@ -268,7 +268,6 @@ implement our custom node function.
    compute its on-screen coordinates and to draw the bounding box confidence score at 
    its left-bottom position.
 
-
 #. **pipeline_config.yml**:
 
    ``pipeline_config.yml`` initial content:
@@ -329,7 +328,8 @@ The PoseNet pose estimation model outputs seventeen keypoints for the person
 corresponding to the different body parts as documented :ref:`here
 <whole-body-keypoint-ids>`.
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
-real numbers ranging from 0.0 to 1.0 (using relative coordinates).
+real numbers ranging from 0.0 to 1.0 (using
+:ref:`relative coordinates <tutorial_coordinate_systems>`).
 
 Starting with a newly initialized PeekingDuck folder, call :greenbox:`peekingduck
 create-node` to create a new ``dabble.wave`` custom node as shown below:
@@ -377,7 +377,7 @@ the above folder.  You should end up with the following folder structure:
 To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 ``pipeline_config.yml`` are to be edited as follows:
 
-1. **src/custom_nodes/configs/dabble/wave.yml**:
+#. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -388,11 +388,11 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 
       # No optional configs
 
-We will implement this tutorial using a custom :mod:`dabble` node, which will take the
-inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
-:term:`keypoint_scores` from the pipeline. The node has no output.
+   We will implement this tutorial using a custom :mod:`dabble` node, which will take the
+   inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
+   :term:`keypoint_scores` from the pipeline. The node has no output.
 
-2. **src/custom_nodes/dabble/wave.py**:
+#. **src/custom_nodes/dabble/wave.py**:
 
    The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure in
    the other custom node tutorial.
@@ -607,9 +607,9 @@ inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
    counted.
 
    The heuristic also waits until the right wrist has been lifted above the right 
-   should before it starts tracking hand direction and counting waves.
+   shoulder before it starts tracking hand direction and counting waves.
 
-3. **pipeline_config.yml**:
+#. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:

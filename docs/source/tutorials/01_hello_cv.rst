@@ -19,7 +19,6 @@ This section presents two basic "hello world" examples to demonstrate how to use
 PeekingDuck for pose estimation and object detection.
 
 
-
 .. _tutorial_pose_estimation:
 
 Pose Estimation
@@ -50,11 +49,11 @@ The ``pipeline_config.yml`` file looks like this:
    - draw.poses
    - output.screen
 
-The above forms an **pose estimation pipeline** and comprises four nodes that do the
+The above forms a **pose estimation pipeline** and it comprises four nodes that do the
 following:
 
    #. :mod:`input.live`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
-   #. :mod:`model.posenet`: runs the Posenet pose estimation model on it
+   #. :mod:`model.posenet`: runs the PoseNet pose estimation model on it
    #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
    #. :mod:`output.screen`: outputs everything onto the screen for display
 
@@ -77,8 +76,6 @@ You have successfully run a PeekingDuck pose estimation pipeline!
 
 | The video will auto-close when it is completed.
 | To exit earlier, click to select the video window and press :greenbox:`q`.
-
-
 
 
 .. _tutorial_object_detection:
@@ -109,7 +106,7 @@ Then modify ``pipeline_config.yml`` as follows:
 
 The key differences between this and the earlier pipeline are:
 
-   | Line 4: :mod:`model.yolo` runs the Yolo object detection model
+   | Line 4: :mod:`model.yolo` runs the YOLO object detection model
    | Line 5: :mod:`draw.bbox` draws the bounding box to show the detected person
 
 Run the new **object detection pipeline** with :greenbox:`peekingduck run`.
@@ -127,10 +124,7 @@ That's it: you have created a new object detection pipeline by changing only two
    .. note::
 
       | Try replacing ``wave.mp4`` with your own video file and run both models.
-      | For best effect, your video file should contain people performing some activity.
-
-
-
+      | For best effect, your video file should contain people performing some activities.
 
 
 .. _tutorial_webcam:

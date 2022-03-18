@@ -4,14 +4,13 @@ Peaking Duck
 
 .. include:: /include/substitution.rst
 
-PeekingDuck include some "power" nodes that are capable of processing the contents 
+PeekingDuck includes some "power" nodes that are capable of processing the contents 
 or outputs of the other nodes and to accumulate information over time.
 An example is the :mod:`dabble.statistics` node which can accumulate statistical 
 information, such as calculating the cumulative average and maximum of particular 
 objects (like people or cars).
 This tutorial presents advanced recipes to showcase the power features of 
 PeekingDuck, such as using :mod:`dabble.statistics` for object counting and tracking.
-
 
 
 .. _tutorial_sql:
@@ -21,7 +20,7 @@ Interfacing with SQL
 
 This tutorial demonstrates how to save data to an SQLite database.
 We will extend the tutorial for :ref:`counting hand waves<tutorial_count_hand_wave>`
-with a new custom :mod:`output` node that writes information into a local sqlite database.
+with a new custom :mod:`output` node that writes information into a local SQLite database.
 
    .. note::
 
@@ -254,10 +253,7 @@ Examine the created database as follows:
       | 2022-02-15 19:26:44|right|72
       | 2022-02-15 19:26:43|right|70
 
-Type :greenbox:`CTRL-D` to exit from ``sqlite3``.
-
-
-
+Press :greenbox:`CTRL-D` to exit from ``sqlite3``.
 
 
 .. _tutorial_counting_cars:
@@ -330,7 +326,6 @@ The sample screenshot below shows:
 
       Royalty free video of cars on highway from: 
       https://www.youtube.com/watch?v=8yP1gjg4b2w
-
 
 
 .. _tutorial_object_tracking:
