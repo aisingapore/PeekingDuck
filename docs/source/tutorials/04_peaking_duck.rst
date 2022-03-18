@@ -4,7 +4,7 @@ Peaking Duck
 
 .. include:: /include/substitution.rst
 
-PeekingDuck include some "power" nodes that are capable of processing the contents 
+PeekingDuck includes some "power" nodes that are capable of processing the contents 
 or outputs of the other nodes and to accumulate information over time.
 An example is the :mod:`dabble.statistics` node which can accumulate statistical 
 information, such as calculating the cumulative average and maximum of particular 

@@ -607,7 +607,7 @@ inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
    counted.
 
    The heuristic also waits until the right wrist has been lifted above the right 
-   should before it starts tracking hand direction and counting waves.
+   shoulder before it starts tracking hand direction and counting waves.
 
 3. **pipeline_config.yml**:
 
