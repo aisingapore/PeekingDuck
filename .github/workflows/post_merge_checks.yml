@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - node-v1.2
+      - docs-v1.2
 
 jobs:
   all_tests:
@@ -32,8 +32,8 @@ jobs:
           echo "test_module_import.py TEST_VER=${TEST_VER}"
           python -m pip install --upgrade pip
           pip install wheel
+          pip install -r requirements.txt
           pip install -r cicd_requirements.txt
-          pip install lap==0.4.0
           bash ./scripts/update_version.sh ${TEST_VER}
           pip install . --no-dependencies
         shell: bash
