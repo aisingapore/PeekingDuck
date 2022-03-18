@@ -109,8 +109,6 @@ Test Conditions
 The following test conditions were followed:
  | - The tests were performed using `pycocotools <https://pypi.org/project/pycocotools/>`__ on the
      MS COCO dataset
- | - The score threshold is based on PeekingDuck's default settings of ``0.4``, ``0.1``, and ``0.3``
-     for PoseNet, HRNet, and MoveNet respectively
  | - The evaluation metrics have been compared with the original repository of the respective pose
      estimation models for consistency
 
