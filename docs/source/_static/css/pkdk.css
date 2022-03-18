@@ -41,28 +41,28 @@ dt.sig {
   white-space: normal;
 }
 
-div.deprecated, div.versionchanged {
+div.deprecated,
+div.versionchanged {
   margin-top: 0.5rem;
   padding: 0.5rem;
   border-radius: 0.5rem;
   margin-bottom: 0.5rem;
   border: 1px solid #ddd;
-
 }
 
 div.deprecated {
   color: #b94a48;
-  background-color: #F3E5E5;
+  background-color: #f3e5e5;
   border-color: #eed3d7;
 }
 
 div.versionchanged {
-  background-color: #FFFBE8;
+  background-color: #fffbe8;
   border-color: #fbeed5;
 }
 
 /*****************************************************************************
-/* Installation quickstart
+ * Installation quickstart
  * This quickstart installation is a hack of the awesome
  * https://spacy.io/usage/#quickstart page.
  * See the original javascript implementation
