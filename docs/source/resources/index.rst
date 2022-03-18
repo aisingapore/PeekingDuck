@@ -2,10 +2,9 @@
 
 .. _resources:
 
+*****************************
 Model Resources & Information
-=============================
-
-Below are the various articles on Model Resources & Information.
+*****************************
 
 .. toctree::
    :maxdepth: 1

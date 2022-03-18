@@ -2,10 +2,9 @@
 
 .. _tutorials:
 
+*********
 Tutorials
-=========
-
-Below are the list of Tutorial articles:
+*********
 
 .. toctree::
    :maxdepth: 2

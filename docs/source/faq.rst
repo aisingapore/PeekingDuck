@@ -1,5 +1,6 @@
+***********************
 FAQ and Troubleshooting
-=======================
+***********************
 
 How can I post-process and visualize model outputs?
 ---------------------------------------------------

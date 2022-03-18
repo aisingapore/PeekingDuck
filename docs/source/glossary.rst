@@ -1,8 +1,9 @@
 .. include:: /include/data_type.rst
 .. include:: /include/substitution.rst
 
+********
 Glossary
-========
+********
 
 The following are built-in data types recognized by PeekingDuck nodes. Users can define custom data
 types when working with custom nodes.

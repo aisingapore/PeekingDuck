@@ -2,10 +2,9 @@
 
 .. _getting_started:
 
+***************
 Getting Started
-===============
-
-Below are the list of Getting Started articles.
+***************
 
 .. toctree::
    :maxdepth: 2
