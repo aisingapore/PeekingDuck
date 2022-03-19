@@ -13,10 +13,10 @@
 # limitations under the License.
 
 """
-Reads inputs from multiple visual sources
-- image or video file on local storage
-- folder of images or videos
-- online cloud source
+Reads inputs from multiple visual sources |br|
+- image or video file on local storage |br|
+- folder of images or videos |br|
+- online cloud source |br|
 - CCTV or webcam live feed
 """
 
@@ -26,6 +26,13 @@ from typing import Any, Dict, Optional, Union
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
 from peekingduck.pipeline.nodes.node import AbstractNode
+
+
+class SourceType(object):
+    DIRECTORY = 0
+    FILE = 1
+    URL = 2
+    WEBCAM = 3
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
@@ -101,7 +108,8 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.progress: int = 0
         self.videocap: Optional[Union[VideoNoThread, VideoThread]] = None
         self.do_resize = self.resize["do_resizing"]
-        self.has_multiple_inputs = self._source_is_directory()
+        self._determine_source_type()
+        self.has_multiple_inputs = SourceType.DIRECTORY == self._source_type
 
         if not self._is_valid_file_type(Path(self.filename)):
             raise ValueError(
@@ -145,26 +153,30 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             self.tens_counter = 10
         return outputs
 
-    def _get_next_frame(self) -> Dict[str, Any]:
-        """Read next frame from current input file/source"""
-        self.file_end = True
-        outputs = {
-            "img": None,
-            "filename": self._file_name if self._file_name else self.filename,
-            "pipeline_end": True,
-            "saved_video_fps": self._fps if self._fps > 0 else self.saved_video_fps,
-        }
-        if self.videocap:
-            success, img = self.videocap.read_frame()
-            if success:
-                self.file_end = False
-                if self.do_resize:
-                    img = resize_image(img, self.resize["width"], self.resize["height"])
-                outputs["img"] = img
-                outputs["pipeline_end"] = False
+    def _determine_source_type(self) -> None:
+        """
+        Determine which one of the following types is self.source:
+            - directory of files
+            - file
+            - url : http / rtsp
+            - webcam
+        If input source is a directory of files,
+        then node will have specific methods to handle it.
+        Otherwise opencv can deal with all non-directory sources.
+        """
+        if isinstance(self.source, int):
+            self._source_type = SourceType.WEBCAM
+        elif str(self.source).startswith(("http://", "https://", "rtsp://")):
+            self._source_type = SourceType.URL
+        else:
+            # either directory or file
+            path = Path(self.source)
+            if not path.exists():
+                raise FileNotFoundError(f"Path '{path}' does not exist")
+            if path.is_dir():
+                self._source_type = SourceType.DIRECTORY
             else:
-                self.logger.debug("No video frames available for processing.")
-        return outputs
+                self._source_type = SourceType.FILE
 
     def _get_files(self, path: Path) -> None:
         """Read all files in given directory
@@ -197,6 +209,27 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                     f"file format {str(self._allowed_extensions)}"
                 )
                 self._get_next_file()
+
+    def _get_next_frame(self) -> Dict[str, Any]:
+        """Read next frame from current input file/source"""
+        self.file_end = True
+        outputs = {
+            "img": None,
+            "filename": self._file_name if self._file_name else self.filename,
+            "pipeline_end": True,
+            "saved_video_fps": self._fps if self._fps > 0 else self.saved_video_fps,
+        }
+        if self.videocap:
+            success, img = self.videocap.read_frame()
+            if success:
+                self.file_end = False
+                if self.do_resize:
+                    img = resize_image(img, self.resize["width"], self.resize["height"])
+                outputs["img"] = img
+                outputs["pipeline_end"] = False
+            else:
+                self.logger.debug("No video frames available for processing.")
+        return outputs
 
     def _is_valid_file_type(self, filepath: Path) -> bool:
         """Check if given file has a supported file extension.
@@ -232,26 +265,17 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         """Show progress information during pipeline iteration"""
         self.frame_counter += 1
         if self.frame_counter % self.frames_log_freq == 0:
-            self.logger.info(f"Frames Processed: {self.frame_counter} ...")
+            buffer_info = (
+                f", buffer: {self.videocap.queue_size}"
+                if self.threading and self.buffer_frames
+                else ""
+            )
+            self.logger.info(f"Frames Processed: {self.frame_counter}{buffer_info}")
         if self.total_frame_count > 0:
             self.progress = round((self.frame_counter / self.total_frame_count) * 100)
             if self.progress >= self.tens_counter:
-                self.logger.info(f"Progress: {self.tens_counter}% ...")
+                self.logger.info(f"Progress: {self.tens_counter}%")
                 self.tens_counter += 10
-
-    def _source_is_directory(self) -> bool:
-        """
-        Check if input source is a directory of files or not.
-        If yes, then node will have specific methods to handle it.
-        If not, then opencv can deal with all non-directory sources.
-        """
-        is_url = str(self.source).startswith(("http://", "https://", "rtsp://"))
-        if isinstance(self.source, int) or is_url:
-            return False
-        path = Path(self.source)
-        if not path.exists():
-            raise FileNotFoundError(f"Path '{path}' does not exist")
-        return path.is_dir()
 
     def release_resources(self) -> None:
         """Override base class method to free video resource"""

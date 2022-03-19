@@ -148,6 +148,10 @@ class VideoThread:
         return int(num_frames)
 
     @property
+    def queue_size(self) -> int:
+        return self.queue.qsize()
+
+    @property
     def resolution(self) -> Tuple[int, int]:
         """Get resolution of the camera device used.
 
@@ -230,6 +234,10 @@ class VideoNoThread:
         """
         num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
         return int(num_frames)
+
+    @property
+    def queue_size(self) -> int:
+        return 0
 
     @property
     def resolution(self) -> Tuple[int, int]:
