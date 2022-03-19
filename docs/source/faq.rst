@@ -22,12 +22,14 @@ How do I debug custom nodes?
 You can add code in custom nodes to print the contents of their inputs.
 For more info, please see the tutorial on :ref:`debugging <tutorial_debugging>`.
 
-Why does :mod:`input.visual` progress update not reach 100%?
-------------------------------------------------------------
+Why does :mod:`input.visual` progress stop before 100%?
+-------------------------------------------------------
 
-:mod:`input.visual` provides progress update information for inputs if it is able to get
-a total frame count.
-This number is obtained through ``opencv``'s API which attempts to estimate the total 
-frame count using the media's metadata duration and FPS.
-It is not an accurate number but an estimate, as it is affected by potential errors such
-as frame corruption, inaccurate FPS, rounding errors, and others.
+:mod:`input.visual` provides progress information if it is able to get a total frame
+count for the input.
+This number is obtained using ``opencv``'s ``CV_CAP_PROP_FRAME_COUNT`` API, which
+attempts to estimate the total frame count using the input media's metadata duration and
+FPS.
+However, the total frame count is only an estimate.
+It is not guaranteed to be accurate because it is affected by potential errors, such as
+frame corruption, video decoder failure, inaccurate FPS and rounding errors.
