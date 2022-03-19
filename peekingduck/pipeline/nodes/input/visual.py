@@ -53,21 +53,18 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         |saved_video_fps_data|
 
     Configs:
+        Commonly used configurations •
+
         filename (:obj:`str`): **default = "video.mp4"**. |br|
             If source is a live stream/webcam, filename defines the name of the MP4 file
             if the media is exported. |br|
             If source is a local file or directory of files, then filename is the
             current file being processed, and the value specified here is overridden.
-        frames_log_freq (:obj:`int`): **default = 100**. |br|
-            Logs frequency of frames passed in CLI
         mirror_image (:obj:`bool`): **default = False**. |br|
             Flag to set extracted image frame as mirror image of input stream.
         resize (:obj:`Dict`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Dimension of extracted image frame.
-        saved_video_fps (:obj:`int`): **default = 10**. |br|
-            FPS to be used to output the MP4 file after livestream is processed and
-            exported.  FPS is dependent on running machine performance.
         source (:obj:`int`):
             **default = https://storage.googleapis.com/peekingduck/videos/wave.mp4**. |br|
             Input source can be: |br|
@@ -79,15 +76,25 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             Refer to `OpenCV documentation
             <https://docs.opencv.org/4.5.5/d8/dfe/classcv_1_1VideoCapture.html>`_
             for more technical information.
+
+        Advanced configurations •
+
+        frames_log_freq (:obj:`int`): **default = 100**. |br|
+            Logs frequency of frames passed in CLI
+        saved_video_fps (:obj:`int`): **default = 10**. |br|
+            FPS to be used to output the MP4 file after livestream is processed and
+            exported.  FPS is dependent on running machine performance.
         threading (:obj:`bool`): **default = False**. |br|
-            Flag to enable threading when reading frames from camera.
-            The FPS can increase up to 30%.
+            Flag to enable threading when reading frames from camera / live stream.
+            The FPS can increase up to 30%. |br|
+            There is no need to enable threading if reading from a video file.
         buffer_frames (:obj:`bool`): **default = False**. |br|
             Boolean to indicate if threaded class should buffer image frames.
-            If threading is True and output.media_writer is enabled, then
-            buffer_frames should be True to ensure output video is correctly
-            saved. One side effect of threading=True, buffer_frames=True is the
-            onscreen video display could appear laggy due to the buffering.
+            If reading from a video file and treadhing is True, then buffer_frames
+            should also be True to avoid "lost frames": which happens when the video
+            file is read faster than it is processed.
+            One side effect of threading=True, buffer_frames=True is the
+            onscreen video display could appear laggy.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
