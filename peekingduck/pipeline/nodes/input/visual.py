@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThre
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class SourceType(object):  # pylint: disable-too-few-public-methods
+class SourceType:  # pylint: disable=too-few-public-methods
     """Enumerated object to store input type"""
 
     DIRECTORY = 0
@@ -54,9 +54,10 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     Configs:
         filename (:obj:`str`): **default = "video.mp4"**. |br|
-            Filename of the MP4 file if media is exported. |br|
-            If source is a directory of files, then filename is the current file being
-            processed.
+            If source is a live stream/webcam, filename defines the name of the MP4 file
+            if the media is exported. |br|
+            If source is a local file or directory of files, then filename is the
+            current file being processed, and the value specified here is overridden.
         frames_log_freq (:obj:`int`): **default = 100**. |br|
             Logs frequency of frames passed in CLI
         mirror_image (:obj:`bool`): **default = False**. |br|

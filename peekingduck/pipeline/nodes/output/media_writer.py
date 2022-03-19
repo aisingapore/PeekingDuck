@@ -33,7 +33,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Outputs the processed image or video to a file.
+    """Outputs the processed image or video to a file. A timestamp is appended to the
+    end of the file name.
 
     Inputs:
         |img_data|
@@ -114,7 +115,7 @@ class Node(AbstractNode):
         self._file_name = filename
         current_time = datetime.datetime.now()
         # output as '240621-15-09-13'
-        time_str = current_time.strftime("%d%m%y-%H-%M-%S")
+        time_str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension
         filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
