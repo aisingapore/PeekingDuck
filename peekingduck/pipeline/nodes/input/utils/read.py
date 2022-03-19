@@ -149,6 +149,11 @@ class VideoThread:
 
     @property
     def queue_size(self) -> int:
+        """Get buffer queue size
+
+        Returns:
+            int: number of frames in buffer
+        """
         return self.queue.qsize()
 
     @property
@@ -237,6 +242,11 @@ class VideoNoThread:
 
     @property
     def queue_size(self) -> int:
+        """Get buffer queue size
+
+        Returns:
+            int: number of frames in buffer
+        """
         return 0
 
     @property

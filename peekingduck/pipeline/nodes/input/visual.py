@@ -28,7 +28,9 @@ from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThre
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class SourceType(object):
+class SourceType(object):  # pylint: disable-too-few-public-methods
+    """Enumerated object to store input type"""
+
     DIRECTORY = 0
     FILE = 1
     URL = 2
