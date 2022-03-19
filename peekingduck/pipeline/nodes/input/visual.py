@@ -267,7 +267,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     def _show_progress(self) -> None:
         """Show progress information during pipeline iteration"""
         self.frame_counter += 1
-        if self.frame_counter % self.frames_log_freq == 0:
+        if self.frame_counter % self.frames_log_freq == 0 and self.videocap:
             buffer_info = (
                 f", buffer: {self.videocap.queue_size}"
                 if self.threading and self.buffer_frames
