@@ -274,7 +274,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         if self.total_frame_count > 0:
             self.progress = round((self.frame_counter / self.total_frame_count) * 100)
             if self.progress >= self.tens_counter:
-                self.logger.info(f"Progress: {self.tens_counter}%")
+                self.logger.info(f"Approximate Progress: {self.tens_counter}%")
                 self.tens_counter += 10
 
     def release_resources(self) -> None:
