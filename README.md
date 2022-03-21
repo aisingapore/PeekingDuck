@@ -130,8 +130,8 @@ Gallery
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/human_counting_over_time.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/human_counting_over_time.gif">
+      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/people_counting_over_time.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/people_counting_over_time.gif">
       </a>
     </td>
   </tr>

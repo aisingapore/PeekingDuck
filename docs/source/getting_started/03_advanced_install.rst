@@ -6,7 +6,7 @@ Advanced Install
 
 
 This section covers advanced PeekingDuck installation steps for users with ARM64
-devices or M1 Macs.
+devices or Apple Silicon Macs.
 
 
 Arm64
@@ -24,14 +24,15 @@ listed in PeekingDuck's `[requirements.txt]
 
 
 
-.. _m1_mac_installation:
+.. _apple_silicon_mac_installation:
 
-M1 Mac
-======
+Apple Silicon Mac
+=================
 
-Apple released Macs with their advanced `M1 <https://en.wikipedia.org/wiki/Apple_M1>`_
-ARM-based chip in late 2020, a significant change from the previous Intel processors.
-We've successfully installed PeekingDuck on M1 Macs running macOS Big Sur and
+Apple released their advanced ARM-based `Apple Silicon M1
+<https://en.wikipedia.org/wiki/Apple_M1>`_ chip in late 2020, a significant change from
+the previous Intel processors.
+We've successfully installed PeekingDuck on Apple Silicon Macs running macOS Big Sur and
 macOS Monterey.
 
     1. Prerequisites:
@@ -51,7 +52,7 @@ macOS Monterey.
             | \ :blue:`[~user]` \ > \ :green:`conda activate pkd` \
             | \ :blue:`[~user]` \ > \ :green:`conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm` \
 
-    3. Install Apple's Tensorflow build that is optimized for M1 Macs:
+    3. Install Apple's Tensorflow build that is optimized for Apple Silicon Macs:
 
         * For macOS Monterey: |br| |br|
 
