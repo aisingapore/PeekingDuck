@@ -1,5 +1,6 @@
 nodes:
-- input.visual
+- input.visual:
+    source: 0
 - model.posenet
 - dabble.keypoints_to_3d_loc:
     focal_length: 1.14

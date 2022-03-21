@@ -1,5 +1,6 @@
 nodes:
-- input.visual
+- input.visual:
+    source: 0
 - model.yolo:
     detect_ids: ["person"]
 - dabble.bbox_to_btm_midpoint
