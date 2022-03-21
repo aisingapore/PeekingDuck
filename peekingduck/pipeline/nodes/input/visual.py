@@ -53,8 +53,6 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         |saved_video_fps_data|
 
     Configs:
-        Commonly used configurations •
-
         filename (:obj:`str`): **default = "video.mp4"**. |br|
             If source is a live stream/webcam, filename defines the name of the MP4 file
             if the media is exported. |br|
@@ -77,24 +75,24 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             <https://docs.opencv.org/4.5.5/d8/dfe/classcv_1_1VideoCapture.html>`_
             for more technical information.
 
-        Advanced configurations •
-
-        frames_log_freq (:obj:`int`): **default = 100**. |br|
+        frames_log_freq (:obj:`int`): **default = 100**. [#]_ |br|
             Logs frequency of frames passed in CLI
-        saved_video_fps (:obj:`int`): **default = 10**. |br|
+        saved_video_fps (:obj:`int`): **default = 10**. [1]_ |br|
             FPS to be used to output the MP4 file after livestream is processed and
             exported.  FPS is dependent on running machine performance.
-        threading (:obj:`bool`): **default = False**. |br|
+        threading (:obj:`bool`): **default = False**. [1]_ |br|
             Flag to enable threading when reading frames from camera / live stream.
             The FPS can increase up to 30%. |br|
             There is no need to enable threading if reading from a video file.
-        buffer_frames (:obj:`bool`): **default = False**. |br|
+        buffering (:obj:`bool`): **default = False**. [1]_ |br|
             Boolean to indicate if threaded class should buffer image frames.
-            If reading from a video file and treadhing is True, then buffer_frames
+            If reading from a video file and treadhing is True, then buffering
             should also be True to avoid "lost frames": which happens when the video
             file is read faster than it is processed.
-            One side effect of threading=True, buffer_frames=True is the
+            One side effect of threading=True, buffering=True is the
             onscreen video display could appear laggy.
+
+    .. [#] advanced configuration
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -263,9 +261,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                                 - CCTV or webcam live feed
         """
         if self.threading:
-            self.videocap = VideoThread(
-                self.source, self.mirror_image, self.buffer_frames
-            )
+            self.videocap = VideoThread(self.source, self.mirror_image, self.buffering)
         else:
             self.videocap = VideoNoThread(input_source, self.mirror_image)
         self._fps = self.videocap.fps
@@ -277,7 +273,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         if self.frame_counter % self.frames_log_freq == 0 and self.videocap:
             buffer_info = (
                 f", buffer: {self.videocap.queue_size}"
-                if self.threading and self.buffer_frames
+                if self.threading and self.buffering
                 else ""
             )
             self.logger.info(f"Frames Processed: {self.frame_counter}{buffer_info}")

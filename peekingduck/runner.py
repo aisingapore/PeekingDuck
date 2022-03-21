@@ -138,7 +138,7 @@ class Runner:
 
         # clean up nodes with threads
         for node in self.pipeline.nodes:
-            if node.name.endswith(".live") or node.name.endswith(".recorded"):
+            if node.name.endswith(".visual"):
                 node.release_resources()
 
     def get_pipeline(self) -> NodeList:
