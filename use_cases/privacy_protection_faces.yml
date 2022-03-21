@@ -1,5 +1,5 @@
 nodes:
-- input.live
+- input.visual
 - model.mtcnn
 - draw.mosaic_bbox
 - output.screen

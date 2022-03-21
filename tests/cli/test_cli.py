@@ -55,7 +55,7 @@ CUSTOM_PIPELINE_PATH = Path("custom_dir") / "pipeline_config.yml"
 YML = dict(
     nodes=[
         {
-            "input.live": {
+            "input.visual": {
                 "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
             }
         },
@@ -289,9 +289,7 @@ class TestCli:
         print(f"\ntmp_dir={tmp_dir}")
         test_config_path = tmp_dir / "test_config.yml"
         nodes = {
-            "nodes": [
-                {"input.recorded": {"input_dir": "PeekingDuck/tests/data/images"}}
-            ]
+            "nodes": [{"input.visual": {"source": "PeekingDuck/tests/data/images"}}]
         }
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)

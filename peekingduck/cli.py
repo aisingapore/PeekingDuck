@@ -75,8 +75,8 @@ def create_pipeline_config_yml(
     if default_nodes is None:
         default_nodes = [
             {
-                "input.live": {
-                    "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                "input.visual": {
+                    "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
                 }
             },
             "model.posenet",
@@ -429,8 +429,8 @@ def _verify_install() -> None:
         create_pipeline_config_yml(
             [
                 {
-                    "input.live": {
-                        "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                    "input.visual": {
+                        "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
                     }
                 },
                 "model.yolo",

@@ -21,7 +21,7 @@ OUTPUT_PATH = Path("output")
 SIZE = (400, 600, 3)
 # pattern to check for time stamp filename_YYMMDD_hhmmss.extension
 # approved extension = ["gif", "jpg", "jpeg", "png", "avi", "m4v", "mkv", "mov", "mp4"]
-# listed in input.recorded.py
+# listed in input.visual.py
 FILENAME_PATTERN = r".*_\d{6}_\d{6}\.[a-z0-9]{3,4}$"
 
 

@@ -1,5 +1,5 @@
 nodes:
-- input.live
+- input.visual
 - model.yolo_face
 - draw.bbox:
     show_labels: True
