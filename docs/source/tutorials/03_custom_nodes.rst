@@ -277,9 +277,10 @@ implement our custom node function.
       :linenos:
 
       nodes:
-      - input.visual
-      - model.yolo
-      - draw.bbox
+      - input.visual:
+          source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+      - model.posenet
+      - draw.poses
       - output.screen
 
    This file implements the pipeline.  Modify the default pipeline to the one shown below:
