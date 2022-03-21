@@ -7,7 +7,7 @@ Documentation Convention
 
 .. _documentation_convention:
 
-Parts of this documentation and the tutorials are run from the command line
+Parts of this documentation and the tutorials are run from the command-line
 interface (CLI) environment, e.g., via `Terminal` in Linux/macOS, or via
 `Anaconda` in Windows.
 There will be examples of commands you need to type as inputs and text that

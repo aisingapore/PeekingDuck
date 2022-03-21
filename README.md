@@ -84,7 +84,7 @@ If you have a webcam, you should see yourself on the output screen with
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
-Use `peekingduck --help` to display help information for PeekingDuck's command line interface.
+Use `peekingduck --help` to display help information for PeekingDuck's command-line interface.
 
 
 Gallery
