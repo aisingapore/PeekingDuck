@@ -49,9 +49,9 @@ Install from [PyPI](https://pypi.org/project/peekingduck/) using `pip`
 > pip install peekingduck
 ```
 
-*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_advanced_install.html).*
+*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_custom_install.html).*
 
-PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_basic_install.html).
+PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_standard_install.html).
 
 
 ```
