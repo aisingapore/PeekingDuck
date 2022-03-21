@@ -38,7 +38,7 @@ class SourceType:  # pylint: disable=too-few-public-methods
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
-    """Receives visual sources as inputs.
+    r"""Receives visual sources as inputs.
 
     Inputs:
         |none_input_data|
@@ -119,12 +119,14 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     Table Legend:
 
-    | Ok : normal behavior
-    | \+ : potentially faster FPS by 30%
-    | ! : lost frames if source is faster than PeekingDuck
-    | !! : laggy video, potential out-of-memory error due to buffer overflow if source is faster than PeekingDuck
+    Ok : normal behavior |br|
+    \+ : potentially faster FPS by 30% |br|
+    ! : lost frames if source is faster than PeekingDuck |br|
+    !! : laggy video, potential out-of-memory error due to buffer overflow if source
+    is faster than PeekingDuck
 
-    Note: If threading=False, then the secondary parameter buffering is ignored regardless if it is set to True/False.
+    Note: If threading=False, then the secondary parameter buffering is ignored
+    regardless if it is set to True/False.
 
     Here is a video to illustrate the differences between
     `a normal video vs a laggy video
