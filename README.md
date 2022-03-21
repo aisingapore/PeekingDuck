@@ -61,7 +61,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 You should see a video of a person waving his hand with
 [bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif).
 
-The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
+The video will close automatically when it is run to the end, select the video window and press `q` to exit earlier.
 
 
 Usage
@@ -79,8 +79,8 @@ Run the demo pipeline.
 > peekingduck run
 ```
 
-If you have a webcam, you should see yourself on the output screen with
-[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif).
+If you have a webcam, you should see a man waving on the output screen with
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/default_pipeline.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 

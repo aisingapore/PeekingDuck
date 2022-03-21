@@ -88,14 +88,14 @@ was created using the following zone::
    :class: no-scaled-link
    :width: 50 %
 
-Given a resolution of 1280 by 720, these correspond to the top left of the image, 60% of the length
-at the top of the image, 60% of the length at the bottom of the image, and the bottom left of the
-image. These points in a clockwise direction that form the rectangular blue zone. Zones do not have
-to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of
+Given a resolution of 1280 by 720, these correspond to the top-left of the image, 60% of the length
+at the top of the image, 60% of the length at the bottom of the image, and the bottom-left of the
+image. These points form the rectangular blue zone in a clockwise direction. Zones do not have to
+be rectangular in shape. They can be of any polygonal shape, dictated by the number and position of
 the `x, y` coordinates set in a zone.
 
-Note that resolution parameter needs to be configured the resolution parameter to that of the image
-input before using fractions for the `x, y` coordinates.
+Note that because the `x, y` coordinates are fractions of the image resolution, the resolution
+config for :mod:`dabble.zone_count` needs to be set correctly.
 
 For finer control over the exact coordinates, the pixel coordinates can be used instead. Using the
 same example, the blue zone can be created using the following zone configuration::
