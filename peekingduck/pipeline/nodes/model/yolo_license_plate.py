@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-License Plate Detection model
-"""
+"""🔲 License Plate Detection model."""
 
 from typing import Any, Dict
 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Performs multiple object tracking for detected bboxes."""
+"""🎯 Performs multiple object tracking for detected bboxes."""
 
 from typing import Any, Dict
 
@@ -24,7 +24,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 class Node(AbstractNode):
     """Uses bounding boxes detected by an object detector model to track
-    multiple objects.
+    multiple objects. :mod:`dabble.tracking` is a useful alternative to
+    :mod:`model.fairmot` and :mod:`model.jde` as it can track bounding boxes
+    detected by the upstream object detector and is not limited to only
+    ``"person"`` detections.
 
     Currently, two types of tracking algorithms can be selected: MOSSE and IOU.
     Information on the algorithms' performance can be found

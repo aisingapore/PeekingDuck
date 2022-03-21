@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast Pose Estimation model
-"""
+"""🕺 Fast Pose Estimation model."""
 
 from typing import Any, Dict
 

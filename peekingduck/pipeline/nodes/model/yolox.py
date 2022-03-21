@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""High performance anchor-free YOLO object detection model"""
+"""🔲 High performance anchor-free YOLO object detection model."""
 
 from typing import Any, Dict
 

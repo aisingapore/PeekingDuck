@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Slower but more accurate object detection model.
-"""
+"""🔲 Slower but more accurate object detection model."""
 
 from typing import Any, Dict
 

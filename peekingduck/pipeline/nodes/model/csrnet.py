@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Crowd Counting model
-"""
+"""👨‍👩‍👧‍👦 Crowd Counting model."""
 
 from typing import Any, Dict
 

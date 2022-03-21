@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast face detection model that works best with unmasked faces.
-"""
+"""🔲 Fast face detection model that works best with unmasked faces."""
 
 from typing import Any, Dict
 

@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Human detection and tracking model."""
+"""🎯 Human detection and tracking model."""
 
 from typing import Any, Dict
 

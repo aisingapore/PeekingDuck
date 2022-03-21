@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast face detection model that can distinguish between masked and unmasked
-faces.
+"""🔲 Fast face detection model that can distinguish between masked and
+unmasked faces.
 """
 
 from typing import Any, Dict
