@@ -78,8 +78,15 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         frames_log_freq (:obj:`int`): **default = 100**. [#]_ |br|
             Logs frequency of frames passed in CLI
         saved_video_fps (:obj:`int`): **default = 10**. [1]_ |br|
-            FPS to be used to output the MP4 file after livestream is processed and
-            exported.  FPS is dependent on running machine performance.
+            This is used by :mod:`output.media_writer` to set the FPS of the output file
+            and its behavior is determined by the type of input source. |br|
+            If source is an image file, this value is ignored as it is not applicable.
+            |br|
+            If source is a video file, this value will be overridden by the actual FPS
+            of the video. |br|
+            If source is a live stream/webcam, this value is used as the FPS of the
+            output file.  It is recommended to set this to the actual FPS obtained on
+            the machine running PeekingDuck (using :mod:`dabble.fps`).
         threading (:obj:`bool`): **default = False**. [1]_ |br|
             Flag to enable threading when reading frames from camera / live stream.
             The FPS can increase up to 30%. |br|
@@ -89,10 +96,44 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             If reading from a video file and treadhing is True, then buffering
             should also be True to avoid "lost frames": which happens when the video
             file is read faster than it is processed.
-            One side effect of threading=True, buffering=True is the
-            onscreen video display could appear laggy.
+            One side effect of setting threading=True, buffering=True for a live
+            stream/webcam is the onscreen video could appear laggy.
 
     .. [#] advanced configuration
+
+    **Technotes:**
+
+    The following table summarizes the combinations of threading and buffering:
+
+    +---------------------------------------+------------+--------------+
+    | **Threading**                         |   False    |     True     |
+    +---------------------------------------+------------+-------+------+
+    | **Buffering**                         | False/True | False | True |
+    +-----------+---------------------------+------------+-------+------+
+    |           | Image file                |     Ok     |   Ok  |  Ok  |
+    |           +---------------------------+------------+-------+------+
+    |**Sources**| Video file                |     Ok     |   !   |  Ok  |
+    |           +---------------------------+------------+-------+------+
+    |           | Webcam, http/rtsp stream  |     Ok     |  \+   |  !!  |
+    +-----------+---------------------------+------------+-------+------+
+
+    Table Legend:
+
+    | Ok : normal behavior
+    | \+ : potentially faster FPS by 30%
+    | ! : lost frames if source is faster than PeekingDuck
+    | !! : laggy video, potential out-of-memory error due to buffer overflow if source is faster than PeekingDuck
+
+    Note: If threading=False, then the secondary parameter buffering is ignored regardless if it is set to True/False.
+
+    Here is a video to illustrate the differences between
+    `a normal video vs a laggy video
+    <https://storage.googleapis.com/peekingduck/videos/wave_normal_vs_laggy.mp4>`_
+    using a 30 FPS webcam: the video on the right lags the normal video on the left.
+    This happens as both threading and buffering are set to True, and the threaded
+    ``input.visual`` reads the webcam at almost 60 FPS.
+    Since the hardware is physically limited at 30 FPS, this means every frame gets duplicated,
+    resulting in each frame being processed and shown twice, thus "stretching out" the video.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
