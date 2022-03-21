@@ -152,14 +152,15 @@
    containing the image data in BGR format.
 
 .. |keypoints_def| replace:: A NumPy array of shape :math:`(N, K, 2)` containing
-   the :math:`(x, y)` coordinates of detected poses where :math:`N` is the number of
-   detected poses, and :math:`K` is the number of individual keypoints.
-   Keypoints with low confidence scores (below threshold) will be replaced by
-   ``-1``.
+   the :math:`(x, y)` coordinates of detected poses where :math:`N` is the
+   number of detected poses, and :math:`K` is the number of individual
+   keypoints. Keypoints with low confidence scores (below threshold) will be
+   replaced by ``-1``.
 
 .. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D', 2)`
-   containing the `x, y` coordinates of adjacent keypoint pairs. :math:`D'` is
-   the number of valid keypoint pairs where both keypoints are detected.
+   containing the :math:`(x, y)` coordinates of adjacent keypoint pairs.
+   :math:`D'` is the number of valid keypoint pairs where both keypoints are
+   detected.
 
 .. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K, 1)`
    containing the confidence scores of detected poses where :math:`N` is the
@@ -179,9 +180,10 @@
 
 .. |obj_attrs_def| replace:: A dictionary of attributes associated with each
    bounding box, in the same order as :term:`bboxes`. Different nodes that
-   produce this :term:`obj_attrs` output type may contribute different attributes.
-   For example, :mod:`dabble.tracking` produces the ``ids`` attribute while
-   :mod:`dabble.check_nearby_objs` produces the ``flags`` attribute.
+   produce this :term:`obj_attrs` output type may contribute different
+   attributes. For example, :mod:`dabble.tracking` produces the ``ids``
+   attribute while :mod:`dabble.check_nearby_objs` produces the ``flags``
+   attribute.
 
 .. |pipeline_end_def| replace:: A boolean that evaluates to ``True`` when the
    pipeline is completed. Suitable for operations that require the entire
