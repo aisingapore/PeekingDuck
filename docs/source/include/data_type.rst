@@ -140,8 +140,10 @@
 
 .. |cum_min_def| replace:: Cumulative minimum of an attribute over time.
 
-.. |density_map_def| replace:: A NumPy array representing the number of persons
-   per pixel. The sum of the array returns the total estimated count of people.
+.. |density_map_def| replace:: A NumPy array of shape :math:`(H, W)`
+   representing the number of persons per pixel. :math:`H` and :math:`W` are the
+   height and width of the input image, respectively. The sum of the array
+   returns the total estimated count of people.
 
 .. |filename_def| replace:: The filename of video/image being read.
 
@@ -158,9 +160,9 @@
    replaced by ``-1``.
 
 .. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D', 2)`
-   containing the :math:`(x, y)` coordinates of adjacent keypoint pairs.
-   :math:`D'` is the number of valid keypoint pairs where both keypoints are
-   detected.
+   containing the :math:`(x, y)` coordinates of adjacent keypoint pairs where
+   :math:`N` is the number of detected poses, and :math:`D'` is the number of
+   valid keypoint pairs where both keypoints are detected.
 
 .. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K, 1)`
    containing the confidence scores of detected poses where :math:`N` is the
@@ -191,9 +193,10 @@
 
 .. |saved_video_fps_def| replace:: FPS of the recorded video, upon filming.
 
-.. |zones_def| replace:: A nested list of coordinates, with each sub-list
-   containing the :math:`(x, y)` coordinates representing the points that form
-   the boundaries of a zone. The order corresponds to :term:`zone_count`.
+.. |zones_def| replace:: A nested list of :math:`Z` zones. Each zone is
+   described by :math:`3` **or more** points which contains the :math:`(x, y)`
+   coordinates forming the boundary of a zone. The order corresponds to
+   :term:`zone_count`.
 
 .. |zone_count_def| replace:: A list of integers representing the count of a
    pre-selected object class (for example, "person") detected in each specified
