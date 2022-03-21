@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""🕺 Slower but more accurate Pose Estimation model. Requires an object
-detector."""
+"""🕺 High-Resolution Network: Deep high-resolution representation learning for
+human pose estimation. Requires an object detector.
+"""
 
 
 from typing import Any, Dict

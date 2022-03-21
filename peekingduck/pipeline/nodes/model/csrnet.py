@@ -12,7 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""👨‍👩‍👧‍👦 Crowd Counting model."""
+"""👨‍👩‍👧‍👦 Congested Scene Recognition network: Dilated convolutional neural
+networks for understanding the highly congested scenes.
+"""
 
 from typing import Any, Dict
 
