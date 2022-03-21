@@ -36,7 +36,7 @@ the following commands:
 :greenbox:`peekingduck init` will prepare the ``pose_estimation`` folder for use with
 PeekingDuck.
 It creates a default pipeline file called ``pipeline_config.yml`` and a ``src`` folder
-containing contents that will be covered in the later tutorials.
+that will be covered in the later tutorials.
 The ``pipeline_config.yml`` file looks like this:
 
 .. code-block:: yaml
