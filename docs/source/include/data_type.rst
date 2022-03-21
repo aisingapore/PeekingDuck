@@ -130,7 +130,7 @@
 
 .. |btm_midpoint_def| replace:: A list of tuples each representing the
    :math:`(x, y)` coordinate of the bottom middle of a bounding box for use in
-   zone analytics. The order of corresponds to :term:`bboxes`.
+   zone analytics. The order corresponds to :term:`bboxes`.
 
 .. |count_def| replace:: An integer representing the number of counted objects.
 
@@ -151,8 +151,8 @@
 .. |img_def| replace:: A NumPy array of shape :math:`(height, width, channels)`
    containing the image data in BGR format.
 
-.. |keypoints_def| replace:: A NumPy array of shape:math:`(N, K, 2)` containing
-   the `x, y` coordinates of detected poses where :math:`N` is the number of
+.. |keypoints_def| replace:: A NumPy array of shape :math:`(N, K, 2)` containing
+   the :math:`(x, y)` coordinates of detected poses where :math:`N` is the number of
    detected poses, and :math:`K` is the number of individual keypoints.
    Keypoints with low confidence scores (below threshold) will be replaced by
    ``-1``.
