@@ -266,7 +266,7 @@ of cars travelling across a highway over time and the :mod:`draw.legend` node to
 the relevant statistics.
 
 Create a new PeekingDuck project, download the `highway cars video
-<http://orchard.dnsalias.com:8100/highway_cars.mp4>`_ and save it into the project
+<https://storage.googleapis.com/peekingduck/videos/highway_cars.mp4>`_ and save it into the project
 folder.
 
    .. admonition:: Terminal Session
@@ -343,7 +343,7 @@ This tutorial demonstrates using :mod:`dabble.statistics` with a custom node to
 track the number of people walking down a path.
 
 Create a new PeekingDuck project, download the `people walking video
-<http://orchard.dnsalias.com:8100/people_walking.mp4>`_ and save it into the project
+<https://storage.googleapis.com/peekingduck/videos/people_walking.mp4>`_ and save it into the project
 folder.
 
    .. admonition:: Terminal Session
