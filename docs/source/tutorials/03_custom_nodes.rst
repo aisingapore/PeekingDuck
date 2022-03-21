@@ -62,7 +62,7 @@ Press :greenbox:`<Enter>` to accept the default ``custom_nodes`` folder name, th
 in :greenbox:`draw` for node type and :greenbox:`score` for node name.
 Finally, press :greenbox:`<Enter>` to answer ``Y`` when asked to proceed.
 
-The entire interaction is shown here, the answers you type are in shown in 
+The entire interaction is shown here, the answers you type in are shown in 
 :green:`green text`:
 
 .. _tutorial_wave_project_custom_node:
@@ -241,7 +241,7 @@ implement our custom node function.
    
                for i, bbox in enumerate(bboxes):
                   # for each bounding box:
-                  #   - compute (x1, y1) left-top, (x2, y2) right-bottom coordinates
+                  #   - compute (x1, y1) top-left, (x2, y2) bottom-right coordinates
                   #   - convert score into a two decimal place numeric string
                   #   - draw score string onto image using opencv's putText()
                   #     (see opencv's API docs for more info)
@@ -598,7 +598,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
    This (long) piece of code implements our custom :mod:`dabble` node. 
    It defines three helper functions to convert relative to absolute coordinates 
    and to draw text on-screen.
-   The number of hand waves is displayed at the left-top corner of the screen.
+   The number of hand waves is displayed at the top-left corner of the screen.
 
    A simple heuristic is used to count the number of times the person waves his hand. 
    It tracks the direction the right wrist is moving in and notes when the wrist changes

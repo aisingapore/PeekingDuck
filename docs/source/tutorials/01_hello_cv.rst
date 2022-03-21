@@ -203,7 +203,8 @@ An example pipeline is shown below:
 Bounding Box vs Image Coordinates
 =================================
 
-PeekingDuck has two coordinate systems, with top-left corner as origin :math:`(0, 0)`:
+PeekingDuck has two :math:`(x, y)` coordinate systems, with top-left corner as origin
+:math:`(0, 0)`:
 
    .. figure:: /assets/tutorials/bbox_image_coords.png
       :alt: Image vs Bounding Box Coordinates
@@ -226,7 +227,7 @@ This means that in order to draw a bounding box onto an image, the bounding box
 relative coordinates would have to be converted to the image absolute coordinates.
 
 Using the above figure as an illustration, the bounding box coordinates are
-given as :math:`(0.18, 0.10)` left-top and :math:`(0.52, 0.88)` right-bottom.
+given as :math:`(0.18, 0.10)` top-left and :math:`(0.52, 0.88)` bottom-right.
 To convert them to image coordinates, multiply the x-coordinates by the image 
 width and the y-coordinates by the image height, and round the results into 
 integers.
@@ -241,7 +242,7 @@ integers.
       0.88 \rightarrow 0.88 \times 720 = 633.6 = 634 & (int)
    \end{array}
 
-Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)` right-bottom.
+Thus, the image coordinates are :math:`(130, 72)` top-left and :math:`(374, 634)` bottom-right.
 
 .. note::
    

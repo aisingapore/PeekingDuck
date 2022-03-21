@@ -59,7 +59,7 @@ Object counting over time comprises three main components:
 The EfficientDet model is used here to predict the bounding boxes of objects of interest. This
 allows the application to identify where each object is located within the video feed. The location
 is returned as two `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
-:math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
+:math:`(x_1, y_1)` is the top-left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
 right.
 
 .. image:: /assets/use_cases/yolo_demo.gif

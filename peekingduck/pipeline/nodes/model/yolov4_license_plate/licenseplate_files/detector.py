@@ -99,7 +99,7 @@ class Detector:
                 boxes: (Numpy Array) an array of bounding box with
                     definition like (x1, y1, x2, y2), in a
                     coordinate system with origin point in
-                    the left top corner
+                    the top-left corner
                 labels: (Numpy Array) an array of class labels
                 scores: (Numpy Array) an array of confidence scores
         """

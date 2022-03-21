@@ -116,7 +116,7 @@
 .. |bboxes_def| replace:: A NumPy array of shape :math:`(N, 4)` containing
    normalized bounding box coordinates of detected objects where :math:`N` is
    the number of detected objects. Each bounding box is represented as
-   :math:`(x_1, y_1, x_2, y_2)` where :math:`(x_1, y_1)` is the top left corner
+   :math:`(x_1, y_1, x_2, y_2)` where :math:`(x_1, y_1)` is the top-left corner
    and :math:`(x_2, y_2)` is the bottom right corner. The order corresponds to
    :term:`bbox_labels` and :term:`bbox_scores`.
 

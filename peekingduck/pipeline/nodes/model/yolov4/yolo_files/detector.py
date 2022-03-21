@@ -174,7 +174,7 @@ class Detector:
         Return:
             boxes (np.array): an array of bounding box with definition like
                 (x1, y1, x2, y2), in a coordinate system with original point in
-                the left top corner
+                the top-left corner
         """
         # 1. prepare image
         image = self._prepare_image_from_camera(image)

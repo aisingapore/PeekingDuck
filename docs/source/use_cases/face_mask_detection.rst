@@ -42,7 +42,7 @@ and its smaller and faster variant known as YOLOv4-tiny to identify the bounding
 faces with and without face masks. This allows the application to identify the locations of faces
 and their corresponding classes (no_mask = 0 or mask = 1) in a video feed. Each of these locations
 are represented as a pair of `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
-:math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
+:math:`(x_1, y_1)` is the top-left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
 right. These are used to form the bounding box of each human face detected.
 
 The :mod:`model.yolo_face` node detects human faces with and without face masks using the
