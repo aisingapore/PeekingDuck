@@ -78,7 +78,9 @@ The 30-second video will auto-close at the end, or you can press :greenbox:`q` t
     .. note::
 
        The YOLO model can detect 80 different :ref:`object classes
-       <general-object-detection-ids>`.
+       <general-object-detection-ids>`. By default, it only detects the ``"person"`` class. Use
+       ``detect_ids: ["*"]`` in the ``pipeline_config.yml`` to configure the model to detect all 80
+       classes.
 
 
 .. _tutorial_media_writer:
