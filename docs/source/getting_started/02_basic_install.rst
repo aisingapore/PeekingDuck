@@ -1,6 +1,6 @@
-*************
-Basic Install
-*************
+****************
+Standard Install
+****************
 
 .. include:: /include/substitution.rst
 
@@ -83,25 +83,18 @@ projects.
 
 .. note::
 
-    For M1 Mac users, please see :ref:`Advanced Install - M1 Mac <m1_mac_installation>`.
+    For M1 Mac users, please see :ref:`Custom Install - M1 Mac <m1_mac_installation>`.
 
 .. _verify_installation:
 
 Verify PeekingDuck Installation
 ===============================
 
-To check that PeekingDuck is installed successfully, create a project folder at a convenient location:
+To check that PeekingDuck is installed successfully, run the following command:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-
-Then, initialize the PeekingDuck project and verify the PeekingDuck installation:
-
-.. admonition:: Terminal Session
-
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck -\-verify_install` \
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
 
 You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
 with bounding boxes overlaid as shown below:
