@@ -171,7 +171,7 @@ within the pipeline:
 
    nodes:
    - input.visual:
-       source: "data/verification/wave.mp4"
+       source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
    - model.yolo
    - augment.brightness:
        beta: 50         # ranges from -100 (darken) to +100 (brighten)

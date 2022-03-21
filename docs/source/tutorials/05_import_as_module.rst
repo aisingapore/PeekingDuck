@@ -137,7 +137,7 @@ Copy over the following code to ``demo_debug.py``:
   
       from peekingduck.pipeline.nodes.dabble import fps
       from peekingduck.pipeline.nodes.draw import bbox, legend
-      from peekingduck.pipeline.nodes.input import recorded
+      from peekingduck.pipeline.nodes.input import visual
       from peekingduck.pipeline.nodes.model import yolo
       from peekingduck.pipeline.nodes.output import media_writer, screen
       from peekingduck.runner import Runner
@@ -147,8 +147,8 @@ Copy over the following code to ``demo_debug.py``:
       def main():
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
   
-          recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
-          recorded_node = recorded.Node(**recorded_config)
+          visual_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
+          visual_node = visual.Node(**visual_config)
   
           yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
           yolo_node = yolo.Node(**yolo_config)
@@ -165,7 +165,7 @@ Copy over the following code to ``demo_debug.py``:
   
           runner = Runner(
               nodes=[
-                  recorded_node,
+                  visual_node,
                   yolo_node,
                   debug_node,
                   bbox_node,
