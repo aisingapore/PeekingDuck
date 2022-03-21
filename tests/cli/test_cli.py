@@ -56,7 +56,7 @@ YML = dict(
     nodes=[
         {
             "input.visual": {
-                "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+                "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
             }
         },
         "model.posenet",
@@ -206,7 +206,8 @@ class TestCli:
             assert (parent_dir / DEFAULT_NODE_CONFIG_DIR).exists()
             assert (cwd / PIPELINE_PATH).exists()
             with open(cwd / PIPELINE_PATH) as infile:
-                TestCase().assertDictEqual(YML, yaml.safe_load(infile))
+                config_file = yaml.safe_load(infile)
+                TestCase().assertDictEqual(YML, config_file)
 
     def test_init_custom(self, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
