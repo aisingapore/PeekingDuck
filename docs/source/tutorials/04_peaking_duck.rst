@@ -262,7 +262,7 @@ Counting Cars
 =============
 
 This tutorial demonstrates using the :mod:`dabble.statistics` node to count the number
-of cars travelling across a highway over time and the :mod:`draw.legend` node to display
+of cars traveling across a highway over time and the :mod:`draw.legend` node to display
 the relevant statistics.
 
 Create a new PeekingDuck project, download the `highway cars video
@@ -373,7 +373,7 @@ Create the following ``pipeline_config.yml``:
           show: ["fps", "cum_max", "cum_min", "cum_avg"]
       - output.screen
 
-The above pipeline uses the Yolo model to detect people in the video and uses 
+The above pipeline uses the YOLO model to detect people in the video and uses 
 the :mod:`dabble.tracking` node to track the people as they walk.
 Each person is assigned a tracking ID and :mod:`dabble.tracking` returns a list of 
 tracking IDs.

@@ -19,7 +19,7 @@ In addition, we will demonstrate basic debugging techniques which users can empl
 troubleshooting PeekingDuck projects.
 
 
-Setting up
+Setting Up
 ----------
 
 Create a PeekingDuck project using:
@@ -204,7 +204,7 @@ Run the ``demo_debug.py`` script using:
 
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`python demo_debug.py` \
 
-You should the following output in your terminal:
+You should see the following output in your terminal:
 
 .. code-block:: text
    :linenos:
@@ -250,11 +250,11 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
     * Data loaders such as `tf.keras.utils.image_dataset_from_directory
       <https://www.tensorflow.org/api_docs/python/tf/keras/utils/image_dataset_from_directory>`_
       (available in ``tensorflow>=2.3.0``),
-    * External models (not implemented as PeekingDuck nodes) such `easyocr
+    * External models (not implemented as PeekingDuck nodes) such as `easyocr
       <https://pypi.org/project/easyocr/>`_, and
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
-The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
+The notebook corresponding to this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available at a `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
 
 
@@ -265,17 +265,23 @@ PeekingDuck repository and is also available at a `Colab notebook <https://colab
 
 .. raw:: html
 
-    <h4>Prerequisites</h4>
+    <h4>Install Prerequisites</h4>
 
 .. code-block:: text
 
     > pip install easyocr
     > pip uninstall -y opencv-python-headless opencv-contrib-python
-    > pip install "tensorflow<2.7.0,>=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0
+    > pip install "tensorflow<2.8.0,>=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0
+    > pip install colorama==0.4.4
 
 .. note::
     
     The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+
+    You may receive an error message about the incompatibility between ``awscli`` and
+    ``colorama==0.4.4``. ``awscli`` is conservative about pinning versions to maintain backward
+    compatibility. The code presented in this tutorial has been tested to work and we have chosen
+    to prioritize PeekingDuck's dependency requirements.
 
 
 .. raw:: html
@@ -283,11 +289,11 @@ PeekingDuck repository and is also available at a `Colab notebook <https://colab
     <h3>Download Demo Data</h3>
 
 We are using `Open Images Dataset V6 <https://storage.googleapis.com/openimages/web/index.html>`_
-as the dataset for this demo. We recommend using the third party
+as the dataset for this demo. We recommend using the third-party
 `oidv6 PyPI package <https://pypi.org/project/oidv6/>`_ to download the images necessary for this
 demo.
 
-Run the following command after installing:
+Run the following command after installing the prerequisites:
 
 .. admonition:: Terminal Session
 
@@ -344,7 +350,7 @@ Lines 9 - 10: You can also do::
 to avoid potential name conflicts.
 
 
-Initialize PeekingDuck nodes
+Initialize PeekingDuck Nodes
 ----------------------------
 
 .. container:: toggle
@@ -384,7 +390,7 @@ Create a Dataset Loader
           data_dir, batch_size=1, shuffle=False
       )
 
-Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
+Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``; you can
 also create your own data loader class.
 
 
@@ -405,7 +411,7 @@ Create a License Plate Parser Class
               self.reader = easyocr.Reader(["en"], gpu=use_gpu)
   
           def read(self, image):
-              """Reads text from the image and joins multiple multiple strings to a
+              """Reads text from the image and joins multiple strings to a
               single string.
               """
               return " ".join(self.reader.readtext(image, detail=0))
@@ -452,7 +458,6 @@ The Inference Loop
           len(dataset), num_col, figsize=(num_col * 3, len(dataset) * 3)
       )
       for i, (element, path) in enumerate(zip(dataset, dataset.file_paths)):
-          # TODO: Ensure model takes in BGR image after it's fixed
           image_orig = cv2.imread(path)
           image_orig = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
           height, width = image_orig.shape[:2]
@@ -490,10 +495,10 @@ how to convert between bounding box and image coordinates, please refer to the
 :ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` section in our
 tutorials.
 
-Lines 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
+Lines 27 - 35: By carefully constructing the input for each of the nodes, we can perform the
 inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.
 
-Lines 36 - 37: We plot the data for debugging and visualization purposes.
+Lines 37 - 38: We plot the data for debugging and visualization purposes.
 
-Lines 41 - 47: We integrate the inference loop with external processes such as the license plate
+Lines 41 - 48: We integrate the inference loop with external processes such as the license plate
 parser we have created earlier.
