@@ -434,7 +434,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.visual",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                 ]
@@ -483,7 +483,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.visual",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                     node_string,
@@ -511,7 +511,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.visual",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                     node_string,

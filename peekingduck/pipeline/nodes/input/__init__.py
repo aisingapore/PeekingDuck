@@ -14,4 +14,8 @@
 
 """
 Reads data from a given input.
+
+.. deprecated:: 1.2.0
+    :mod:`input.live` and :mod:`input.recorded` are deprecated.
+    They have been replaced by the :mod:`input.visual` node.
 """

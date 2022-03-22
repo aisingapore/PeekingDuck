@@ -62,7 +62,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.visual
+   - input.visual:
        source: <path/to/video with crowd>
    - model.csrnet:
        model_type: dense

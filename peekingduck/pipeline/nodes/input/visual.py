@@ -93,7 +93,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             There is no need to enable threading if reading from a video file.
         buffering (:obj:`bool`): **default = False**. [1]_ |br|
             Boolean to indicate if threaded class should buffer image frames.
-            If reading from a video file and treadhing is True, then buffering
+            If reading from a video file and threading is True, then buffering
             should also be True to avoid "lost frames": which happens when the video
             file is read faster than it is processed.
             One side effect of setting threading=True, buffering=True for a live
