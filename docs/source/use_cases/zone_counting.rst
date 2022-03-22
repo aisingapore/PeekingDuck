@@ -53,10 +53,11 @@ There are three main components to obtain the zone counts:
 We use an open source object detection estimation model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
 and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of chosen
 types of objects we want to detect. This allows the application to identify where objects are
-located within the video feed. The location is returned as two `x, y` coordinates in the form
-:math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left corner of the bounding box,
-and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding box of each object
-detected. For more information on how to adjust the ``yolo`` node, check out its
+located within the video feed. The location is returned as two
+:ref:`x, y coordinates <tutorial_coordinate_systems>` in the form :math:`[x_1, y_1, x_2, y_2]`,
+where :math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the
+bottom right. These are used to form the bounding box of each object detected. For more information
+on how to adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
 .. image:: /assets/use_cases/yolo_demo.gif
