@@ -5,7 +5,7 @@ on:
     branches:
       - main
       - dev
-      - node-v1.2
+      - docs-v1.2
 
 jobs:
   all_tests:

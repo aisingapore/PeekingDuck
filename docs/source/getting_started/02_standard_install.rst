@@ -84,7 +84,8 @@ projects.
 
 .. note::
 
-    For M1 Mac users, please see :ref:`Custom Install - M1 Mac <m1_mac_installation>`.
+   For Apple Silicon Mac users, please see :ref:`Custom Install - Apple Silicon Mac
+   <apple_silicon_mac_installation>`.
 
 .. _verify_installation:
 
