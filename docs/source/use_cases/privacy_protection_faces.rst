@@ -44,7 +44,7 @@ identify human faces. This allows the application to identify the locations of h
 video feed. Each of these locations is represented as a pair of `x, y` coordinates in the form
 :math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left corner of the bounding box,
 and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding box of each human
-face detected. For more information on how adjust the MTCNN node, check out the
+face detected. For more information on how to adjust the MTCNN node, check out the
 :doc:`MTCNN configurable parameters </nodes/model.mtcnn>`.
 
 **2. Face De-Identification**
@@ -101,4 +101,4 @@ In addition, some common node behaviors that you might want to adjust for the
   example, the default value creates a :math:`7 \times 7` mosaic filter. Increasing the number
   increases the intensity of pixelation over an area.
 * ``blur_level``:  Defines the standard deviation of the Gaussian kernel used in the Gaussian
-  filter. (default = 50) The higher the blur level, the more intense is the blurring.
+  filter. (default = 50) The higher the blur level, the greater the blur intensity.

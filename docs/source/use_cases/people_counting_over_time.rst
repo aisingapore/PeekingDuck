@@ -40,18 +40,18 @@ People counting over time comprises three main components:
 
 **1. Human Detection**
 
-We use an open source detection model trained on pedestrian detection and person search datasets
-known as `JDE <https://arxiv.org/abs/1909.12605>`_ to identify human persons. This allows the
-application to identify the locations of human persons in a video feed. Each of these locations is
+We use an open source detection model known as `JDE <https://arxiv.org/abs/1909.12605>`_ to
+persons. JDE has been trained on pedestrian detection and person search datasets. This allows the
+application to identify the locations of persons in a video feed. Each of these locations is
 represented as a pair of `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
 :math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
-right. These are used to form the bounding box of each human person detected. For more information
-on how adjust the JDE node, check out the :doc:`JDE configurable parameters </nodes/model.jde>`.
+right. These are used to form the bounding box of each person detected. For more information on how
+to adjust the JDE node, check out the :doc:`JDE configurable parameters </nodes/model.jde>`.
 
 **2. Appearance Embedding Tracking**
 
-To learn appearance embeddings for tracking, a metric learning algorithm with triplet loss
-together is used. Observations are assigned to tracklets using the Hungarian algorithm. The Kalman
+To learn appearance embeddings for tracking, a metric learning algorithm with triplet loss is used.
+Observations are assigned to tracklets using the Hungarian algorithm. The Kalman
 filter is used to smooth the trajectories and predict the locations of previous tracklets in the
 current frame. The model outputs an ID for each detection based on the appearance embedding learned.
 
@@ -108,9 +108,10 @@ With regard to the :mod:`model.jde` node, some common behaviors that you might w
   You may want to lower this value to increase the number of detections.
 * ``nms_threshold``: Specifies the threshold value for non-maximal suppression (default = 0.4).
   You may want to lower this value to increase the number of detections.
-* ``min_box_area``: Minimum value for area of detected bounding box. Calculated by :math:`width \times height`.
+* ``min_box_area``: Minimum value for area of detected bounding box. Calculated by
+  :math:`width \times height` (default = 200).
 * ``track_buffer``: Specifies the threshold to remove track if track is lost for more
-  frames than this value.
+  frames than this value (default = 30).
 
 Counting People Within Zones
 ============================

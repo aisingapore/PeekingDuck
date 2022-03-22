@@ -46,7 +46,7 @@ dense and sparse crowd models were trained using data from ShanghaiTech Part A a
 respectively.
 
 As a rule of thumb, you might want to use the dense crowd model if the people in a given image or
-video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how adjust the
+video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how to adjust the
 CSRNet node, check out its :doc:`configurable parameters </nodes/model.csrnet>`.
 
 **2. Heat Map Generation (Optional)**

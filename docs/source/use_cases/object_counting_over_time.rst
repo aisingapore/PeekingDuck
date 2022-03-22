@@ -24,9 +24,9 @@ giving rise to a wide breadth of potential applications.
 
 .. seealso::
 
-   If it is only required to count the objects at the present moment, the simplier
-   :doc:`Object Counting (Present) </use_cases/object_counting_present>` use case without requiring
-   object tracking would be more suitable.
+   If you wish to only count the number objects at an instance rather than a cumulative total over
+   a period of time, the simpler :doc:`Object Counting (Present) </use_cases/object_counting_present>`
+   use case without requiring object tracking would be more suitable.
 
 Object counting over time is achieved by detecting the objects using an object detection model,
 then tracking each unique object. As a new object appears, the number of counted objects is
@@ -68,15 +68,15 @@ right.
 
 **2. Tracking the Outputs of Object Detection**
 
-A Intersection over Union (IoU) tracker adapted from 
+An Intersection over Union (IoU) tracker adapted from 
 `this paper <http://elvera.nue.tu-berlin.de/files/1517Bochinski2017.pdf>`_ is used on the bounding
 boxes from the object detection model to produce tracked identities (IDs) for each bounding box. 
 The IoU tracker continues a track by associating the
 detection with the highest IoU to the last detection in the previous frame. For example, Car 8 in
 frame **n** continues to be tracked as Car 8 in frame **n+1** as both instances of Car 8 are within
-close proxmity (high IoU) of each other. This assumes that the object detector correctly predicts a
-bounding box per frame for each object to be tracked, and also assumes that frame rate of the video
-is high enough to allow unambigious IoU overlaps between consecutive frames.
+close proximity (high IoU) of each other. This assumes that the object detector correctly predicts a
+bounding box per frame for each object to be tracked, and also assumes that the frame rate of the
+video is high enough to allow unambigious IoU overlaps between consecutive frames.
 
 Another available option is the Minimum Output Sum of Squared Error (MOSSE) tracker which we have
 adapted from the OpenCV package. It is a correlation filter based tracker which uses Fast Fourier
