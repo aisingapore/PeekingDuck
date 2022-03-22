@@ -120,7 +120,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     Table Legend:
 
     Ok : normal behavior |br|
-    \+ : potentially faster FPS by 30% |br|
+    \+ : potentially faster FPS |br|
     ! : lost frames if source is faster than PeekingDuck |br|
     !! : laggy video, potential out-of-memory error due to buffer overflow if source
     is faster than PeekingDuck
