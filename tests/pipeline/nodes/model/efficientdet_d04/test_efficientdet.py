@@ -24,7 +24,6 @@ import yaml
 from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
     detector,
-    model,
 )
 
 
@@ -139,13 +138,3 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(["person"]), labels)
-
-    def test_efficientdet_model_initializations(self):
-        test_models = {}
-        test_models["normal"] = model.efficientdet(1)
-        test_models["weighted"] = model.efficientdet(1, weighted_bifpn=False)
-        test_models["detect_quadrangle"] = model.efficientdet(1, detect_quadrangle=True)
-        test_models["no_separable_conv"] = model.efficientdet(1, separable_conv=False)
-
-        for key in test_models:
-            assert test_models[key] is not None
