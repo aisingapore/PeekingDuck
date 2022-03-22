@@ -106,6 +106,10 @@ div.highlight span.pkd-expandable:before {
   content: "> ";
 }
 
+div.highlight span.pkd-raw-terminal:before {
+  content: "> ";
+}
+
 /* Show hidden content when the checkbox is checked */
 #quickstart-cond:checked ~ * [data-venv="conda"] {
   display: block;

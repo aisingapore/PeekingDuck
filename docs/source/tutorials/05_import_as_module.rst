@@ -260,32 +260,81 @@ PeekingDuck repository and is also available at a `Colab notebook <https://colab
 
 .. raw:: html
 
-    <h3>Running locally</h3>
+    <h3>Running Locally</h3>
 
 
 .. raw:: html
 
     <h4>Install Prerequisites</h4>
 
-.. code-block:: text
+.. container:: toggle
 
-    > pip install easyocr
-    > pip uninstall -y opencv-python-headless opencv-contrib-python
-    > pip install "tensorflow<2.8.0,>=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0
-    > pip install colorama==0.4.4
+   .. container:: header
 
-.. note::
-    
-    The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+      **Show/Hide Instructions for Linux/Mac (Intel)/Windows**
 
-    You may receive an error message about the incompatibility between ``awscli`` and
-    ``colorama==0.4.4``. ``awscli`` is conservative about pinning versions to maintain backward
-    compatibility. The code presented in this tutorial has been tested to work and we have chosen
-    to prioritize PeekingDuck's dependency requirements.
+   .. raw:: html
+
+      <p>
+        <div class="highlight"><pre
+          ><span class="pkd-raw-terminal">pip install easyocr</span
+          ><br /><span class="pkd-raw-terminal">pip uninstall -y opencv-python-headless opencv-contrib-python</span
+          ><br /><span class="pkd-raw-terminal">pip install "tensorflow&lt;2.8.0,&gt;=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0</span
+          ><br /><span class="pkd-raw-terminal">pip install colorama==0.4.4</span
+        ></pre></div>
+
+   .. note::
+       
+      The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+  
+      You may receive an error message about the incompatibility between ``awscli`` and
+      ``colorama==0.4.4``. ``awscli`` is conservative about pinning versions to maintain backward
+      compatibility. The code presented in this tutorial has been tested to work and we have chosen
+      to prioritize PeekingDuck's dependency requirements.
+
+.. container:: toggle
+
+   .. container:: header
+
+      **Show/Hide Instructions for Mac (Apple Silicon)**
+
+   .. raw:: html
+
+        <div class="highlight"><pre
+          ><span class="pkd-raw-terminal">conda create -n pkd_notebook python=3.8</span
+          ><br /><span class="pkd-raw-terminal">conda activate pkd_notebook</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal">conda install jupyterlab matplotlib click colorama opencv openblas pyyaml \</span
+          ><br /><span>    requests scipy shapely tqdm pillow scikit-image python-bidi pandas awscli progressbar2</span
+          ><br /><span class="pkd-raw-terminal">pip install easyocr oidv6 lap</span
+          ><br /><span class="pkd-raw-terminal">pip uninstall opencv-contrib-python opencv-python-headless</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal"># Pick one:</span
+          ><br /><span class="pkd-raw-terminal"># for macOS Big Sur</span
+          ><br /><span class="pkd-raw-terminal">conda install -c apple tensorflow-deps=2.6.0</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-metal==0.2.0</span
+          ><br /><span class="pkd-raw-terminal"># for macOS Monterey</span
+          ><br /><span class="pkd-raw-terminal">conda install -c apple tensorflow-deps</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-macos tensorflow-metal</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal">pip install torch torchvision</span
+          ><br /><span class="pkd-raw-terminal">pip install 'peekingduck==1.2.0rc2' --no-dependencies</span
+        ></pre></div>
+      </p>
+
+   .. note::
+
+      We install the problematic packages ``easyocr`` and ``oidv6`` first and then uninstall the
+      ``pip``-related OpenCV packages which were installed as dependencies. Mac (Apple silicon)
+      needs ``conda``'s OpenCV.
+
+      There will be a warning that ``easyocr`` needs some version of Pillow which can be ignored.
 
 
 .. raw:: html
 
+    <br />
     <h3>Download Demo Data</h3>
 
 We are using `Open Images Dataset V6 <https://storage.googleapis.com/openimages/web/index.html>`_

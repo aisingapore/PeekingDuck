@@ -62,19 +62,20 @@ Then run:
 
 .. raw:: html
 
-       <div class="highlight"><pre
-         ><span class="pkd-expandable" data-venv="conda">conda create -n pkd python=3.8</span
-         ><span class="pkd-expandable" data-venv="conda">conda activate pkd</span
-         ><span class="pkd-expandable" data-venv="conda">pip install -U peekingduck</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="linux">python3 -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="mac">python3 -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="windows">python -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="mac">source pkd/bin/activate</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="windows">pkd\Scripts\activate</span
-         ><span class="pkd-expandable" data-venv="venv">pip install -U peekingduck</span
-         ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
-       ></pre></div>
+     <div class="highlight"><pre
+       ><span class="pkd-expandable" data-venv="conda">conda create -n pkd python=3.8</span
+       ><span class="pkd-expandable" data-venv="conda">conda activate pkd</span
+       ><span class="pkd-expandable" data-venv="conda">pip install -U peekingduck</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="linux">python3 -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="mac">python3 -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="windows">python -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="mac">source pkd/bin/activate</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="windows">pkd\Scripts\activate</span
+       ><span class="pkd-expandable" data-venv="venv">pip install -U peekingduck</span
+       ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
+     ></pre></div>
+   </div>
 
 It is recommended to install PeekingDuck in a Python virtual environment (such as
 ``pkd`` in the above commands), as it creates an isolated environment for a Python
