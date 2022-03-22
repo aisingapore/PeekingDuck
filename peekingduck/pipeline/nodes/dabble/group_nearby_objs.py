@@ -36,6 +36,7 @@ class Node(AbstractNode):
 
     Outputs:
         |obj_attrs_data|
+        :mod:`dabble.group_nearby_objs` produces the ``groups`` attribute.
 
     Configs:
         obj_dist_threshold (:obj:`float`): **default = 1.5**. |br|

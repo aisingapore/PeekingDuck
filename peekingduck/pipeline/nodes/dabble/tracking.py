@@ -40,6 +40,9 @@ class Node(AbstractNode):
 
     Outputs:
         |obj_attrs_data|
+        :mod:`dabble.tracking` produces the ``ids`` attribute which contains
+        the tracking IDs of the detections.
+
 
     Configs:
         tracking_type (:obj:`str`): **{"iou", "mosse"}, default="iou"**. |br|

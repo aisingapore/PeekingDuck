@@ -114,11 +114,11 @@
    :mod:`dabble.statistics`, and :mod:`output.csv_writer`.
 
 .. |bboxes_def| replace:: A NumPy array of shape :math:`(N, 4)` containing
-   normalized bounding box coordinates of detected objects where :math:`N` is
-   the number of detected objects. Each bounding box is represented as
-   :math:`(x_1, y_1, x_2, y_2)` where :math:`(x_1, y_1)` is the top-left corner
-   and :math:`(x_2, y_2)` is the bottom right corner. The order corresponds to
-   :term:`bbox_labels` and :term:`bbox_scores`.
+   normalized bounding box coordinates of :math:`N` detected objects. Each
+   bounding box is represented as :math:`(x_1, y_1, x_2, y_2)` where
+   :math:`(x_1, y_1)` is the top-left corner and :math:`(x_2, y_2)` is the
+   bottom right corner. The order corresponds to :term:`bbox_labels` and
+   :term:`bbox_scores`.
 
 .. |bbox_labels_def| replace:: A NumPy array of shape :math:`(N)` containing
    strings representing the labels of detected objects. The order corresponds to
@@ -183,9 +183,7 @@
 .. |obj_attrs_def| replace:: A dictionary of attributes associated with each
    bounding box, in the same order as :term:`bboxes`. Different nodes that
    produce this :term:`obj_attrs` output type may contribute different
-   attributes. For example, :mod:`dabble.tracking` produces the ``ids``
-   attribute while :mod:`dabble.check_nearby_objs` produces the ``flags``
-   attribute.
+   attributes.
 
 .. |pipeline_end_def| replace:: A boolean that evaluates to ``True`` when the
    pipeline is completed. Suitable for operations that require the entire

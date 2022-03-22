@@ -30,7 +30,7 @@ class Node(AbstractNode):
     sparse crowds. The dense and sparse crowd models were trained using data
     from ShanghaiTech Part A and ShanghaiTech Part B respectively. As the
     models were trained to recognize congested scenes, the estimates are less
-    accurate if the number of people are low (e.g. less than 10)
+    accurate if the number of people are low (e.g. less than 10).
 
     Inputs:
         |img_data|

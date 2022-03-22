@@ -39,6 +39,8 @@ class Node(AbstractNode):
         |bbox_scores_data|
 
         |obj_attrs_data|
+        :mod:`model.fairmot` produces the ``ids`` attribute which contains the
+        tracking IDs of the detections.
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
