@@ -29,60 +29,70 @@ your specific use case - the only limit is your imagination!
 
 .. |social_distancing_gif| image:: /assets/use_cases/social_distancing.gif
    :class: no-scaled-link
+   :target: social_distancing.html
    :width: 100 %
 
 .. |zone_counting_doc| replace:: :doc:`Zone Counting </use_cases/zone_counting>`
 
 .. |zone_counting_gif| image:: /assets/use_cases/zone_counting.gif
    :class: no-scaled-link
+   :target: zone_counting.html
    :width: 100 %
 
 .. |group_size_checking_doc| replace:: :doc:`Group Size Checking </use_cases/group_size_checking>`
 
 .. |group_size_checking_gif| image:: /assets/use_cases/group_size_checking.gif
    :class: no-scaled-link
+   :target: group_size_checking.html
    :width: 100 %
 
 .. |object_counting_present_doc| replace:: :doc:`Object Counting (Present) </use_cases/object_counting_present>`
 
 .. |object_counting_present_gif| image:: /assets/use_cases/object_counting_present.gif
    :class: no-scaled-link
+   :target: object_counting_present.html
    :width: 100 %
 
 .. |privacy_protection_faces_doc| replace:: :doc:`Privacy Protection (Faces) </use_cases/privacy_protection_faces>`
 
 .. |privacy_protection_faces_gif| image:: /assets/use_cases/privacy_protection_faces.gif
    :class: no-scaled-link
+   :target: privacy_protection_faces.html
    :width: 100 %
 
 .. |privacy_protection_lp_doc| replace:: :doc:`Privacy Protection (License Plates) </use_cases/privacy_protection_license_plates>`
 
 .. |privacy_protection_lp_gif| image:: /assets/use_cases/privacy_protection_license_plates.gif
    :class: no-scaled-link
+   :target: privacy_protection_license_plates.html
    :width: 100 %
 
 .. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
 .. |face_mask_detection_gif| image:: /assets/use_cases/face_mask_detection.gif
    :class: no-scaled-link
+   :target: face_mask_detection.html
    :width: 100 %
 
 .. |crowd_counting_doc| replace:: :doc:`Crowd Counting </use_cases/crowd_counting>`
 
 .. |crowd_counting_gif| image:: /assets/use_cases/crowd_counting.gif
    :class: no-scaled-link
+   :target: crowd_counting.html
    :width: 100 %
 
 .. |object_counting_over_time_doc| replace:: :doc:`Object Counting (Over Time) </use_cases/object_counting_over_time>`
 
 .. |object_counting_over_time_gif| image:: /assets/use_cases/object_counting_over_time.gif
    :class: no-scaled-link
+   :target: object_counting_over_time.html
    :width: 100 %
 
 .. |people_counting_over_time_doc| replace:: :doc:`People Counting (Over Time) </use_cases/people_counting_over_time>`
 
 .. |people_counting_over_time_gif| image:: /assets/use_cases/people_counting_over_time.gif
    :class: no-scaled-link
+   :target: people_counting_over_time.html
    :width: 100 %
 
 .. _privacy_protection_use_cases:
