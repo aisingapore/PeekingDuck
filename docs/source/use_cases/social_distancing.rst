@@ -121,6 +121,8 @@ Some common node behaviors that you might need to adjust are:
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.
 
+.. _use_case_social_distancing_using_object_detection:
+
 **3. Using Object Detection (Optional)**
 
 It is possible to use :doc:`object detection models </resources/01a_object_detection>` instead

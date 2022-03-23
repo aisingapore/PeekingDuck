@@ -36,7 +36,9 @@ class Node(AbstractNode):
 
     Outputs:
         |obj_attrs_data|
-        :mod:`dabble.check_nearby_objs` produces the ``flags`` attribute.
+        :mod:`dabble.check_nearby_objs` produces the ``flags`` attribute which
+        contains either the ``tag_msg`` for objects that are near each other or
+        an empty string for objects with no other objects nearby.
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
