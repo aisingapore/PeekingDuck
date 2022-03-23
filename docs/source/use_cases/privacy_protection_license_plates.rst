@@ -62,8 +62,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.recorded:
-       input_dir: <path/to/video with cars>
+   - input.visual:
+       source: <path/to/video with cars>
    - model.yolo_license_plate
    - draw.blur_bbox
    - output.screen

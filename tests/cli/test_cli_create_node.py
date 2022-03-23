@@ -23,7 +23,7 @@ from click.testing import CliRunner
 
 from peekingduck.cli import cli
 
-DEFAULT_NODES = ["input.live", "model.yolo", "draw.bbox", "output.screen"]
+DEFAULT_NODES = ["input.visual", "model.yolo", "draw.bbox", "output.screen"]
 GOOD_SUBDIR = "custom_nodes"
 GOOD_TYPE = "dabble"
 GOOD_NAME = "name"
@@ -434,7 +434,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.live",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                 ]
@@ -483,7 +483,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.live",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                     node_string,
@@ -511,7 +511,7 @@ class TestCliCreateNode:
             # Create a "challenging" file, with some config overrides
             data = {
                 "nodes": [
-                    "input.live",
+                    {"input.visual": {"source": 0}},
                     {"model.yolo": {"model_type": "v4"}},
                     "draw.bbox",
                     node_string,

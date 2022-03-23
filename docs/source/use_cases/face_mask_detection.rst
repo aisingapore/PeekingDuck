@@ -58,7 +58,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.visual:
+       source: 0
    - model.yolo_face
    - draw.bbox:
        show_labels: true

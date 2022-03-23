@@ -60,7 +60,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 .. code-block:: yaml
 
    nodes:
-   - input.live
+   - input.visual:
+       source: 0
    - model.mtcnn
    - draw.mosaic_bbox
    - output.screen

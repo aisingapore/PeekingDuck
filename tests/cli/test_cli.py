@@ -55,8 +55,8 @@ CUSTOM_PIPELINE_PATH = Path("custom_dir") / "pipeline_config.yml"
 YML = dict(
     nodes=[
         {
-            "input.live": {
-                "input_source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
+            "input.visual": {
+                "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
             }
         },
         "model.posenet",
@@ -206,7 +206,8 @@ class TestCli:
             assert (parent_dir / DEFAULT_NODE_CONFIG_DIR).exists()
             assert (cwd / PIPELINE_PATH).exists()
             with open(cwd / PIPELINE_PATH) as infile:
-                TestCase().assertDictEqual(YML, yaml.safe_load(infile))
+                config_file = yaml.safe_load(infile)
+                TestCase().assertDictEqual(YML, config_file)
 
     def test_init_custom(self, parent_dir, cwd):
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
@@ -289,9 +290,7 @@ class TestCli:
         print(f"\ntmp_dir={tmp_dir}")
         test_config_path = tmp_dir / "test_config.yml"
         nodes = {
-            "nodes": [
-                {"input.recorded": {"input_dir": "PeekingDuck/tests/data/images"}}
-            ]
+            "nodes": [{"input.visual": {"source": "PeekingDuck/tests/data/images"}}]
         }
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)

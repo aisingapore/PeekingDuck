@@ -69,9 +69,9 @@ def test_input_threading():
     This test will do the following:
     1. Backup original pipeline_config.yml in Peeking Duck directory
     2. Run input live test 1 without threading with custom pipeline_config.yml file
-       The test comprises input.live, model.yolo and dabble.fps
+       The test comprises input.visual, model.yolo and dabble.fps
     3. Run input live test 2 with threading with custom pipeline_config.yml file
-       The test comprises input.live, model.yolo and dabble.fps
+       The test comprises input.visual, model.yolo and dabble.fps
     4. Restore original pipeline_config.yml
     5. Check average FPS from 2 is higher than 1
     """
@@ -91,8 +91,8 @@ def test_input_threading():
         nodes = {
             "nodes": [
                 {
-                    "input.live": {
-                        "input_source": url,
+                    "input.visual": {
+                        "source": url,
                         "threading": threading,
                     }
                 },

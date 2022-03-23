@@ -1,5 +1,5 @@
 nodes:
-- input.recorded:
-    input_dir: tests/data/images
+- input.visual:
+    source: "tests/data/images"
 - model.mtcnn
 - draw.mosaic_bbox

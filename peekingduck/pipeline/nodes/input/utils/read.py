@@ -35,9 +35,7 @@ class VideoThread:
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(
-        self, input_source: str, mirror_image: bool, buffer_frames: bool
-    ) -> None:
+    def __init__(self, input_source: str, mirror_image: bool, buffering: bool) -> None:
         if platform.system().startswith("Windows"):
             if str(input_source).isdigit():
                 # to eliminate opencv's "[WARN] terminating async callback"
@@ -60,7 +58,7 @@ class VideoThread:
         self.frame_counter = 0
         self.frame = None
         self.prev_frame = None
-        self.buffer = buffer_frames
+        self.buffer = buffering
         self.queue: queue.Queue = queue.Queue()
         # start threading
         self.thread = Thread(target=self._reading_thread, args=(), daemon=True)
@@ -148,6 +146,15 @@ class VideoThread:
         return int(num_frames)
 
     @property
+    def queue_size(self) -> int:
+        """Get buffer queue size
+
+        Returns:
+            int: number of frames in buffer
+        """
+        return self.queue.qsize()
+
+    @property
     def resolution(self) -> Tuple[int, int]:
         """Get resolution of the camera device used.
 
@@ -230,6 +237,15 @@ class VideoNoThread:
         """
         num_frames = self.stream.get(cv2.CAP_PROP_FRAME_COUNT)
         return int(num_frames)
+
+    @property
+    def queue_size(self) -> int:
+        """Get buffer queue size
+
+        Returns:
+            int: number of frames in buffer
+        """
+        return 0
 
     @property
     def resolution(self) -> Tuple[int, int]:

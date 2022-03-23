@@ -43,12 +43,12 @@ def config_node_end():
 
 @pytest.fixture
 def test_input_node(config_node_input):
-    return MockedNode(node_name="input.recorded", config=config_node_input)
+    return MockedNode(node_name="input.visual", config=config_node_input)
 
 
 @pytest.fixture
 def test_node_end(config_node_end):
-    return MockedNode(node_name="input.recorded", config=config_node_end)
+    return MockedNode(node_name="input.visual", config=config_node_end)
 
 
 @pytest.fixture

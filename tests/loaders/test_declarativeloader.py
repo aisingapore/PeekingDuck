@@ -49,7 +49,7 @@ PKD_NODE_DIR = MODULE_DIR / PKD_NODE_TYPE
 CUSTOM_NODE_DIR = CUSTOM_NODES_DIR / CUSTOM_NODE_TYPE
 PKD_NODE_CONFIG_DIR = MODULE_DIR / "configs" / PKD_NODE_TYPE
 CUSTOM_NODE_CONFIG_DIR = CUSTOM_NODES_DIR / "configs" / CUSTOM_NODE_TYPE
-CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
+CONFIG_UPDATES_CLI = "{'input.visual': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
 def create_pipeline_yaml(nodes):
@@ -231,7 +231,7 @@ class TestDeclarativeLoader:
         assert init_node.outputs == ["end"]
 
     def test_edit_config(self, declarativeloader):
-        node_name = "input.live"
+        node_name = "input.visual"
         orig_config = {
             "mirror_image": True,
             "resize": {"do_resizing": False, "width": 1280, "height": 720},

@@ -1,6 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: <path/to/video with people>
+- input.visual:
+    source: <path/to/video with people>
 - model.jde
 - dabble.statistics:
     maximum: obj_attrs["ids"]

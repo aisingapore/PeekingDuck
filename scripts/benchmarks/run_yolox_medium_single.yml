@@ -1,6 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: data/benchmark/single
+- input.visual:
+    source: data/benchmark/single
 - model.yolox:
     model_type: yolox-m
 - dabble.fps

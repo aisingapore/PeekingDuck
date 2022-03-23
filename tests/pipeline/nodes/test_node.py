@@ -22,7 +22,7 @@ from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
 class ConcreteNode(AbstractNode):
     def __init__(self, config={}, **kwargs):
-        super().__init__(config=config, node_path="input.recorded", **kwargs)
+        super().__init__(config=config, node_path="input.visual", **kwargs)
 
     def run(self, inputs: Dict):
         return {"data1": 1, "data2": 42}
@@ -66,12 +66,12 @@ class TestNode:
         assert True
 
     def test_node_init_able_to_override_using_kwargs(self):
-        tmp_node = ConcreteNode(input_dir="path_to_input")
-        assert tmp_node.config["input_dir"] == "path_to_input"
+        tmp_node = ConcreteNode(source="path_to_input")
+        assert tmp_node.config["source"] == "path_to_input"
 
     def test_node_init_able_to_override_using_dict(self):
-        tmp_node = ConcreteNode(config={"input_dir": "path_to_input"})
-        assert tmp_node.config["input_dir"] == "path_to_input"
+        tmp_node = ConcreteNode(config={"source": "path_to_input"})
+        assert tmp_node.config["source"] == "path_to_input"
 
     def test_node_gives_correct_inputs(self, c_node):
         results = c_node.inputs
