@@ -16,6 +16,8 @@
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -73,5 +75,7 @@ class Node(AbstractNode):
         in config.
         """
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs

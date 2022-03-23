@@ -16,6 +16,8 @@
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import lp_detector_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -73,6 +75,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             "bboxes", "bbox_labels", and "bbox_scores".
         """
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "bbox_labels": labels,

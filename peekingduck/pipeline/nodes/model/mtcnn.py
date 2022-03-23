@@ -18,6 +18,8 @@ with unmasked faces.
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.mtcnnv1 import mtcnn_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -85,5 +87,7 @@ class Node(AbstractNode):
             "bbox_scores", and "bbox_labels".
         """
         bboxes, scores, _, classes = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {"bboxes": bboxes, "bbox_scores": scores, "bbox_labels": classes}
         return outputs

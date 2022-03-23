@@ -16,6 +16,8 @@
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.jdev1 import jde_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -104,6 +106,8 @@ class Node(AbstractNode):
             self._reset_model()
 
         bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         return {
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,

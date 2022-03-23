@@ -16,6 +16,8 @@
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -77,7 +79,9 @@ class Node(AbstractNode):
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"]
         )
-        bbox_labels = ["Person"] * len(bboxes)
+        bbox_labels = np.array(["Person"] * len(bboxes))
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "keypoints": keypoints,

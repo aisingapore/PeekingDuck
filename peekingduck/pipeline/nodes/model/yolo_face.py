@@ -18,6 +18,8 @@ unmasked faces.
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -73,6 +75,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "bbox_labels": labels,

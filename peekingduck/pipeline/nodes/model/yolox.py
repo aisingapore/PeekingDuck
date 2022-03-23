@@ -16,6 +16,8 @@
 
 from typing import Any, Dict
 
+import numpy as np
+
 from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
@@ -95,6 +97,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
                 and `bbox_scores`.
         """
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
 
         return outputs
