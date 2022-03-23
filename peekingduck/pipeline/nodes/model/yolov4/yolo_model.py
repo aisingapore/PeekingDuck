@@ -17,7 +17,7 @@ Yolo model with model types: v3 and v3tiny
 """
 
 import logging
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
@@ -33,8 +33,10 @@ class YoloModel:
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config["yolo_score_threshold"] <= 1:
-            raise ValueError("yolo_score_threshold must be in [0, 1]")
+        if not 0 <= config["score_threshold"] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
+        if not 0 <= config["iou_threshold"] <= 1:
+            raise ValueError("iou_threshold must be in [0, 1]")
 
         # check for yolo weights, if none then download into weights folder
         weights_dir, model_dir = finder.find_paths(

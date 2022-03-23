@@ -69,6 +69,18 @@ class Node(AbstractNode):
         https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf
 
         Model weights trained by https://github.com/blaueck/tf-mtcnn
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_min_size`` is renamed to ``min_size``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_factor`` is renamed to ``scale_factor``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_thresholds`` is renamed to ``network_thresholds``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_score`` is renamed to ``score_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

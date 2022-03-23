@@ -17,12 +17,14 @@ Face detection model with model types: yolov4 and yolov4tiny
 """
 
 import logging
-from typing import List, Dict, Any, Tuple
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
-from peekingduck.weights_utils import checker, downloader, finder
+
 from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import (
     Detector,
 )
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class Yolov4:  # pylint: disable=too-few-public-methods
@@ -34,11 +36,11 @@ class Yolov4:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger(__name__)
 
         # check threshold values
-        if not 0 <= config["yolo_score_threshold"] <= 1:
-            raise ValueError("yolo_score_threshold must be in [0, 1]")
+        if not 0 <= config["score_threshold"] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
 
-        if not 0 <= config["yolo_iou_threshold"] <= 1:
-            raise ValueError("yolo_iou_threshold must be in [0, 1]")
+        if not 0 <= config["iou_threshold"] <= 1:
+            raise ValueError("iou_threshold must be in [0, 1]")
 
         weights_dir, model_dir = finder.find_paths(
             config["root"], config["weights"], config["weights_parent_dir"]

@@ -89,9 +89,9 @@ You can choose to mosaic or blur the detected license plate using the :mod:`draw
 
 With regard to the YOLOv4 model, some common node configurations that you might want to adjust are:
 
-* ``yolo_score_threshold``: The bounding boxes with confidence score less than the specified score
+* ``score_threshold``: The bounding boxes with confidence score less than the specified score
   threshold are discarded. (default = 0.1)
-* ``yolo_iou_threshold``: The overlapping bounding boxes above the specified Intersection over
+* ``iou_threshold``: The overlapping bounding boxes above the specified Intersection over
   Union (IoU) threshold are discarded. (default = 0.3)
 
 In addition, some common node behaviors that you might want to adjust for the

@@ -60,8 +60,8 @@ class Detector:
             "Yolo model loaded with following configs: \n\t"
             f"Model type: {self.config['model_type']}, \n\t"
             f"Input resolution: {self.config['size']}, \n\t"
-            f"NMS threshold: {self.config['yolo_iou_threshold']}, \n\t"
-            f"Score threshold: {self.config['yolo_score_threshold']}"
+            f"IOU threshold: {self.config['iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['score_threshold']}"
         )
 
         return model
@@ -123,8 +123,8 @@ class Detector:
             ),
             self.config["max_output_size_per_class"],
             self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]

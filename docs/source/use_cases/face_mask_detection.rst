@@ -79,6 +79,6 @@ Some common node behaviors that you might want to adjust are:
   is used, but for better accuracy, you may want to try the `v4` model.
 * ``detect_ids``: This specifies the class to be detected where no_mask = 0 and mask = 1. By default,
   the model detects faces with and without face masks (default = [0, 1]).
-* ``yolo_score_threshold``: This specifies the threshold value. Bounding boxes with confidence score
+* ``score_threshold``: This specifies the threshold value. Bounding boxes with confidence score
   lower than the threshold are discarded. You may want to lower the threshold value to increase the
   number of detections.

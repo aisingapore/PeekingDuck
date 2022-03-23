@@ -21,9 +21,9 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
+import cv2
 import numpy as np
 import tensorflow as tf
-import cv2
 
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.dataset import transform_images
 from peekingduck.utils.graph_functions import load_graph
@@ -55,8 +55,8 @@ class Detector:
             f"IDs being detected: {self.config['detect_ids']} \n\t"
             f"Max Detections per class: {self.config['max_output_size_per_class']}, \n\t"
             f"Max Total Detections: {self.config['max_total_size']}, \n\t"
-            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
-            f"Score threshold: {self.config['yolo_score_threshold']}"
+            f"IOU threshold: {self.config['iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['score_threshold']}"
         )
 
         return self._load_yolo_graph(model_path)
@@ -143,8 +143,8 @@ class Detector:
             ),
             max_output_size_per_class=self.config["max_output_size_per_class"],
             max_total_size=self.config["max_total_size"],
-            iou_threshold=self.config["yolo_iou_threshold"],
-            score_threshold=self.config["yolo_score_threshold"],
+            iou_threshold=self.config["iou_threshold"],
+            score_threshold=self.config["score_threshold"],
         )
         return boxes, scores, classes, nums
 
