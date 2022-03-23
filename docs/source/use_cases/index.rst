@@ -1,5 +1,7 @@
 :orphan:
 
+.. include:: /include/substitution.rst
+
 .. raw:: html
 
    <style type="text/css">
@@ -106,11 +108,11 @@ Privacy Protection
    /use_cases/privacy_protection_faces
    /use_cases/privacy_protection_license_plates
 
-+--------------------------------+-----------------------------+
-| |privacy_protection_faces_doc| | |privacy_protection_lp_doc| |
-+--------------------------------+-----------------------------+
-| |privacy_protection_faces_gif| | |privacy_protection_lp_gif| |
-+--------------------------------+-----------------------------+
++--------------------------------------------------------+-----------------------------+
+| |privacy_protection_faces_doc| |tab| |tab| |tab| |tab| | |privacy_protection_lp_doc| |
++--------------------------------------------------------+-----------------------------+
+| |privacy_protection_faces_gif|                         | |privacy_protection_lp_gif| |
++--------------------------------------------------------+-----------------------------+
 
 .. _smart_monitoring_use_cases:
 
