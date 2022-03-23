@@ -169,7 +169,7 @@ def xyxy2xyxyn(inputs: np.ndarray, height: float, width: float) -> np.ndarray:
     Example:
         >>> a = xyxy2xyxyn(inputs=np.array([[1.0, 2.0, 30.0, 40.0]]), height=100, width=200)
         >>> a
-        array([0.005, 0.02, 0.15, 0.4])
+        array([[0.005, 0.02, 0.15, 0.4]])
 
     Args:
         inputs (np.ndarray): Input bounding boxes (2-d array) each with the
