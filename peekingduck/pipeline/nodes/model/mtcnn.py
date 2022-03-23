@@ -23,7 +23,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initializes and uses the MTCNN model to infer bboxes from image frame.
+    """Initializes and uses the MTCNN model to infer bboxes from an image
+    frame.
 
     The MTCNN node is a single-class model capable of detecting human faces. To
     a certain extent, it is also capable of detecting bounding boxes around

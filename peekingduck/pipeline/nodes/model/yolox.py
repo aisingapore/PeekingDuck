@@ -58,8 +58,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             Bounding boxes with confidence score (product of objectness score
             and classification score) below the threshold will be discarded.
         agnostic_nms (:obj:`bool`): **default = True**. |br|
-            Flag to determine if class agnostic NMS (``torchvision.ops.nms``)
-            or class aware NMS (``torchvision.ops.batched_nms``) should be
+            Flag to determine if class-agnostic NMS (``torchvision.ops.nms``)
+            or class-aware NMS (``torchvision.ops.batched_nms``) should be
             used.
         half (:obj:`bool`): **default = False**. |br|
             Flag to determine if half-precision floating-point should be used

@@ -69,7 +69,7 @@ class Node(AbstractNode):
             threshold will be kept in the output.
         keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.3** |br|
             Detected keypoints confidence score threshold, only keypoints above
-            threshold will be output.
+            threshold will be kept in output.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

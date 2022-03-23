@@ -23,8 +23,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Initializes and uses YOLO model to infer bboxes from image frame.
 
-    The YOLO node is capable of detecting objects from a single class (License
-    Plate). It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
+    This customized YOLO node is capable of detecting objects from a single
+    class (License Plate). It uses YOLOv4-tiny by default and can be changed to
+    use YOLOv4.
 
     Inputs:
         |img_data|

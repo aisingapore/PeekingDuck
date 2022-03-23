@@ -55,7 +55,8 @@ class Node(AbstractNode):
         max_pose_detection (:obj:`int`): **default = 10**. |br|
             Maximum number of poses to be detected.
         score_threshold (:obj:`float`): **[0, 1], default = 0.4**. |br|
-            Threshold to determine if detection should be returned
+            Detected keypoints confidence score threshold, only keypoints above
+            threshold will be kept in output.
 
     References:
         PersonLab: Person Pose Estimation and Instance Segmentation with a

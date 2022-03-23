@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Converts bounding boxes to a single point of reference
-"""
+"""Converts bounding boxes to a single point of reference."""
 
 from typing import Any, Dict, Tuple
 
