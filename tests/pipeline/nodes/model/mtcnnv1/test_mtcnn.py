@@ -24,6 +24,9 @@ import yaml
 from peekingduck.pipeline.nodes.model.mtcnn import Node
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
+with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
+    GT_RESULTS = yaml.safe_load(infile.read())
+
 
 @pytest.fixture
 def mtcnn_config():
@@ -32,6 +35,31 @@ def mtcnn_config():
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "mtcnn_factor", "value": -0.5},
+        {"key": "mtcnn_factor", "value": 1.5},
+        {"key": "mtcnn_thresholds", "value": [-0.5, -0.5, -0.5]},
+        {"key": "mtcnn_thresholds", "value": [1.5, 1.5, 1.5]},
+        {"key": "mtcnn_score", "value": -0.5},
+        {"key": "mtcnn_score", "value": 1.5},
+    ],
+)
+def mtcnn_bad_config_value(request, mtcnn_config):
+    mtcnn_config[request.param["key"]] = request.param["value"]
+    return mtcnn_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "mtcnn_min_size", "value": -0.5},
+    ],
+)
+def mtcnn_negative_config_value(request, mtcnn_config):
+    mtcnn_config[request.param["key"]] = request.param["value"]
+    return mtcnn_config
 
 
 @pytest.fixture
@@ -59,14 +87,20 @@ class TestMtcnn:
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
 
-    def test_return_at_least_one_face_and_one_bbox(
-        self, test_human_images, mtcnn_config
-    ):
+    def test_detect_face_bboxes(self, test_human_images, mtcnn_config):
         test_img = cv2.imread(test_human_images)
         mtcnn = Node(mtcnn_config)
         output = mtcnn.run({"img": test_img})
+
         assert "bboxes" in output
         assert output["bboxes"].size != 0
+
+        image_name = Path(test_human_images).stem
+        expected = GT_RESULTS[image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     def test_no_weights(self, mtcnn_config, replace_download_weights):
         with mock.patch(
@@ -85,6 +119,24 @@ class TestMtcnn:
             )
             assert "weights downloaded" in captured.records[1].getMessage()
             assert mtcnn is not None
+
+    def test_invalid_config_value(self, mtcnn_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=mtcnn_bad_config_value)
+        assert "must be in [0, 1]" in str(excinfo.value)
+
+    def test_negative_config_value(self, mtcnn_negative_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=mtcnn_negative_config_value)
+        assert "must be more than 0" in str(excinfo.value)
+
+    def test_invalid_config_model_files(self, mtcnn_config):
+        with mock.patch(
+            "peekingduck.weights_utils.checker.has_weights", return_value=True
+        ), pytest.raises(ValueError) as excinfo:
+            mtcnn_config["weights"]["model_file"] = "some/invalid/path"
+            _ = Node(config=mtcnn_config)
+        assert "Graph file does not exist. Please check that" in str(excinfo.value)
 
     def test_model_initialization(self, mtcnn_config, model_dir):
         detector = Detector(mtcnn_config, model_dir)

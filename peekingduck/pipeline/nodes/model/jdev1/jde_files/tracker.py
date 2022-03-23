@@ -56,8 +56,8 @@ from peekingduck.pipeline.nodes.model.jdev1.jde_files.utils import (
     letterbox,
     non_max_suppression,
     scale_coords,
-    tlwh2xyxyn,
 )
+from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyxyn, xyxy2tlwh
 
 
 class Tracker:  # pylint: disable=too-many-instance-attributes
@@ -172,7 +172,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             # Detections is list of (x1, y1, x2, y2, object_conf, class_score,
             # class_pred) class_pred is the embeddings.
             detections = [
-                STrack(STrack.xyxy2tlwh(xyxys[:4]), xyxys[4], f.numpy())
+                STrack(xyxy2tlwh(xyxys[:4]), xyxys[4], f.numpy())
                 for (xyxys, f) in zip(dets[:, :5], dets[:, 6:])
             ]
         else:

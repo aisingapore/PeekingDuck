@@ -24,11 +24,8 @@ import torch
 import torchvision
 
 from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.model import YOLOX
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.utils import (
-    fuse_model,
-    xywh2xyxy,
-    xyxy2xyxyn,
-)
+from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.utils import fuse_model
+from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy, xyxy2xyxyn
 
 NUM_CHANNELS = 3
 
