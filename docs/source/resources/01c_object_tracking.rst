@@ -54,7 +54,7 @@ Test Conditions
 ^^^^^^^^^^^^^^^
 
 The following test conditions were followed:
- | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
+ | - :mod:`input.visual`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
      inference on videos
  | - A video sequence from the MOT Challenge dataset (MOT16-04) was used
  | - The video sequence has 1050 frames and is encoded at 30 FPS, which translates to about 35 seconds

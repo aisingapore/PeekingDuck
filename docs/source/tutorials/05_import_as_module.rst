@@ -137,7 +137,7 @@ Copy over the following code to ``demo_debug.py``:
   
       from peekingduck.pipeline.nodes.dabble import fps
       from peekingduck.pipeline.nodes.draw import bbox, legend
-      from peekingduck.pipeline.nodes.input import recorded
+      from peekingduck.pipeline.nodes.input import visual
       from peekingduck.pipeline.nodes.model import yolo
       from peekingduck.pipeline.nodes.output import media_writer, screen
       from peekingduck.runner import Runner
@@ -147,8 +147,8 @@ Copy over the following code to ``demo_debug.py``:
       def main():
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
   
-          recorded_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
-          recorded_node = recorded.Node(**recorded_config)
+          visual_config = {"source": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
+          visual_node = visual.Node(**visual_config)
   
           yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
           yolo_node = yolo.Node(**yolo_config)
@@ -165,7 +165,7 @@ Copy over the following code to ``demo_debug.py``:
   
           runner = Runner(
               nodes=[
-                  recorded_node,
+                  visual_node,
                   yolo_node,
                   debug_node,
                   bbox_node,
@@ -209,9 +209,9 @@ You should see the following output in your terminal:
 .. code-block:: text
    :linenos:
 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Config for node input.recorded is updated to: 'input_dir': ~user/pkd_project/cat_and_computer.mp4 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 720 by 480 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Config for node input.visual is updated to: 'source': ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 720 by 480 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
        Model type: v4tiny, 

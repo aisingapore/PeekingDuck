@@ -72,7 +72,7 @@ Test Conditions
 ^^^^^^^^^^^^^^^
 
 The following test conditions were followed:
- | - :mod:`input.recorded`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
+ | - :mod:`input.visual`, the model of interest, and :mod:`dabble.fps` nodes were used to perform
      inference on videos
  | - 2 videos were used to benchmark each model, one with only 1 human (``single``), and the other
      with multiple humans (``multiple``)

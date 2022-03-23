@@ -276,9 +276,10 @@ implement our custom node function.
       :linenos:
 
       nodes:
-      - input.live
-      - model.yolo
-      - draw.bbox
+      - input.visual:
+          source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+      - model.posenet
+      - draw.poses
       - output.screen
 
    This file implements the pipeline.  Modify the default pipeline to the one shown below:
@@ -289,8 +290,8 @@ implement our custom node function.
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: cat_and_computer.mp4
+      - input.visual:
+          source: cat_and_computer.mp4
       - model.yolo:
           detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
@@ -615,8 +616,8 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps
@@ -771,8 +772,8 @@ Then, make the following **three** changes:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps
@@ -790,16 +791,16 @@ one below:
 
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck run` \ 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline_config file. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising input.recorded node.\.\. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.recorded is updated to: 'input_dir': wave.mp4 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Video/Image size: 710 by 540 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.recorded  INFO:  Filepath used: wave.mp4 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising model.yolo node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing input.visual node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'source': wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 710 by 540 
+   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing model.yolo node.\.\. 
    |                     [ .\.\. many lines of output deleted here .\.\. ]
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising custom_nodes.dabble.debug node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.poses node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.legend node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising output.screen node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing custom_nodes.dabble.debug node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.poses node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.legend node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing output.screen node.\.\. 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  -- debug -- 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  input.keys=['img', 'pipeline_end', 'filename', 'saved_video_fps', 'bboxes', 'bbox_labels', 'bbox_scores', 'keypoints', 'keypoint_scores', 'keypoint_conns', 'hand_direction', 'num_waves', 'fps'] 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  num bboxes=1 
@@ -851,8 +852,8 @@ Starting with the basic folder structure from :green:`peekingduck init`:
       :linenos:
 
       nodes:
-      - input.recorded:
-          input_dir: wave.mp4
+      - input.visual:
+          source: wave.mp4
       - model.yolo
       - model.posenet
       - dabble.fps

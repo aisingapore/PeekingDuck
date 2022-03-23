@@ -43,8 +43,8 @@ The ``pipeline_config.yml`` file looks like this:
    :linenos:
 
    nodes:
-   - input.live:
-      input_source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+   - input.visual:
+       source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
    - model.posenet
    - draw.poses
    - output.screen
@@ -52,7 +52,7 @@ The ``pipeline_config.yml`` file looks like this:
 The above forms a **pose estimation pipeline** and it comprises four nodes that do the
 following:
 
-   #. :mod:`input.live`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
+   #. :mod:`input.visual`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
    #. :mod:`model.posenet`: runs the PoseNet pose estimation model on it
    #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
    #. :mod:`output.screen`: outputs everything onto the screen for display
@@ -98,8 +98,8 @@ Then modify ``pipeline_config.yml`` as follows:
    :linenos:
 
    nodes:
-   - input.live:
-      input_source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+   - input.visual:
+       source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
    - model.yolo
    - draw.bbox
    - output.screen
@@ -139,7 +139,8 @@ If your computer has a webcam attached, you can use it by changing the first
    :linenos:
 
    nodes:
-   - input.live         # use webcam for live video
+   - input.visual:
+       source: 0        # use webcam for live video
    - model.posenet      # use pose estimation model
    - draw.poses         # draw skeletal poses
    - output.screen
@@ -153,7 +154,7 @@ To exit, click to select the video window and press :greenbox:`q`.
 
       PeekingDuck assumes the webcam is defaulted to input source 0.
       If your system is configured differently, you would have to specify the 
-      input source by changing the :mod:`input.live` configuration.
+      input source by changing the :mod:`input.visual` configuration.
       See :ref:`changing node configuration <tutorial_more_object_detection>`.
 
 
