@@ -237,13 +237,13 @@ integers.
 
    \begin{array}{ll}
       0.18 \rightarrow 0.18 \times 720 = 129.6 = 130 & (int)\\
-      0.10 \rightarrow 0.10 \times 720 = 72.0 = 72 & (int)\\
+      0.10 \rightarrow 0.10 \times 480 = 48.0 = 48 & (int)\\
       &\\
       0.52 \rightarrow 0.52 \times 720 = 374.4 = 374 & (int)\\
-      0.88 \rightarrow 0.88 \times 720 = 633.6 = 634 & (int)
+      0.88 \rightarrow 0.88 \times 480 = 422.4 = 422 & (int)
    \end{array}
 
-Thus, the image coordinates are :math:`(130, 72)` top-left and :math:`(374, 634)` bottom-right.
+Thus, the image coordinates are :math:`(130, 48)` top-left and :math:`(374, 422)` bottom-right.
 
 .. note::
    
