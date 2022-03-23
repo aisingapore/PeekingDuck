@@ -78,6 +78,13 @@ If faster inference speed is required, the ``v4tiny`` model type can be used ins
 You can choose to mosaic or blur the detected license plate using the :mod:`draw.mosaic_bbox` or
 :mod:`draw.blur_bbox` node in the run config declaration.
 
+.. figure:: /assets/use_cases/privacy_protection_license_plates_comparison.jpg
+   :alt: De-identification effect comparison
+   :class: no-scaled-link
+   :width: 50 %
+
+   De-identification with mosaic (left) and blur (right).
+
 **3. Adjusting Nodes**
 
 With regard to the YOLOv4 model, some common node configurations that you might want to adjust are:
@@ -93,6 +100,6 @@ In addition, some common node behaviors that you might want to adjust for the
 * ``mosaic_level``: Defines the resolution of a mosaic filter (:math:`width \times height`); the
   value corresponds to the number of rows and columns used to create a mosaic. (default = 7) For
   example, the default value creates a :math:`7 \times 7` mosaic filter. Increasing the number
-  increases the intensity of pixelation over an area.
+  increases the intensity of pixelization over an area.
 * ``blur_level``:  Defines the standard deviation of the Gaussian kernel used in the Gaussian
-  filter. (default = 50) The higher the blur level, the more intense is the blurring.
+  filter. (default = 50) The higher the blur level, the greater the blur intensity.
