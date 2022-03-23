@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Records the nodes outputs to a CSV file.
-"""
+"""Records the nodes' outputs to a CSV file."""
 
 import logging
 import textwrap
