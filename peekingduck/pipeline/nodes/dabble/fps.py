@@ -38,11 +38,11 @@ class Node(AbstractNode):
         |fps_data|
 
     Configs:
-        fps_log_display (:obj:`bool`): **default = False**. |br|
+        fps_log_display (:obj:`bool`): **default = True**. |br|
             Enables logging of 10 frame moving average FPS during execution of
             PeekingDuck.
         fps_log_freq (:obj:`int`): **default = 100**. |br|
-            Frequency of logging moving average FPS every n frames
+            Frequency of logging moving average FPS for every n frames.
         dampen_fps (:obj:`bool`): **default = True**. |br|
             If ``True``, returns moving average FPS. If ``False``, returns
             instantaneous FPS .
@@ -63,7 +63,8 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Calculates FPS using the time difference between the current
-        frame and the previous frame."""
+        frame and the previous frame.
+        """
 
         curr_frame_timestamp = perf_counter()
 

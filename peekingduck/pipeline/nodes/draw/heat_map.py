@@ -33,6 +33,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img_data|
 
         |density_map_data|
+        This is produced by nodes such as :mod:`model.csrnet`.
 
     Outputs:
         |img_data|

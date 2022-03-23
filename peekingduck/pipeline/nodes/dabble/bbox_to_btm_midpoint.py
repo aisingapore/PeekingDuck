@@ -25,7 +25,7 @@ class Node(AbstractNode):
 
     This node is primarily used for zone counting. The bottom midpoint is an
     unambiguous way of telling whether an object is in the zone specified, as
-    the bottom midpoint usually corresponds to the point at which the object is
+    the bottom midpoint usually corresponds to the point where the object is
     located.
 
     Inputs:
