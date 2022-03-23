@@ -36,10 +36,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.config = config
         self.model_dir = model_dir
-        self.min_size = self.config["mtcnn_min_size"]
-        self.factor = self.config["mtcnn_factor"]
-        self.thresholds = self.config["mtcnn_thresholds"]
-        self.score = self.config["mtcnn_score"]
+        self.min_size = self.config["min_size"]
+        self.factor = self.config["scale_factor"]
+        self.thresholds = self.config["network_thresholds"]
+        self.score = self.config["score_threshold"]
         self.mtcnn = self._create_mtcnn_model()
 
     def _create_mtcnn_model(self) -> tf.keras.Model:
@@ -50,10 +50,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.logger.info(
             "MTCNN model loaded with following configs: \n\t"
-            f"Min size: {self.config['mtcnn_min_size']}, \n\t"
-            f"Scale Factor: {self.config['mtcnn_factor']}, \n\t"
-            f"Steps Thresholds: {self.config['mtcnn_thresholds']}, \n\t"
-            f"Score Threshold: {self.config['mtcnn_score']}"
+            f"Min size: {self.config['min_size']}, \n\t"
+            f"Scale Factor: {self.config['scale_factor']}, \n\t"
+            f"Network Thresholds: {self.config['network_thresholds']}, \n\t"
+            f"Score Threshold: {self.config['score_threshold']}"
         )
 
         return self._load_mtcnn_graph(model_path)
@@ -64,7 +64,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             return load_graph(str(model_path))
 
         raise ValueError(
-            "Graph file does not exist. Please check that " "%s exists" % model_path
+            f"Graph file does not exist. Please check that {model_path} exists"
         )
 
     def predict_bbox_landmarks(

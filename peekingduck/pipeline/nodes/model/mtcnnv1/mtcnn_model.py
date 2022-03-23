@@ -17,12 +17,12 @@ Main class for MTCNN Model
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from peekingduck.weights_utils import checker, downloader, finder
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class MtcnnModel:  # pylint: disable=too-few-public-methods
@@ -34,17 +34,17 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
         self.logger = logging.getLogger(__name__)
 
         # check factor value
-        if not 0 <= config["mtcnn_factor"] <= 1:
-            raise ValueError("mtcnn_factor must be between 0 and 1")
+        if not 0 <= config["scale_factor"] <= 1:
+            raise ValueError("scale_factor must be between 0 and 1")
 
         # check threshold values
-        for threshold in config["mtcnn_thresholds"]:
+        for threshold in config["network_thresholds"]:
             if not 0 <= threshold <= 1:
-                raise ValueError("mtcnn_thresholds must be between 0 and 1")
+                raise ValueError("network_thresholds must be between 0 and 1")
 
         # check score value
-        if not 0 <= config["mtcnn_score"] <= 1:
-            raise ValueError("mtcnn_score must be between 0 and 1")
+        if not 0 <= config["score_threshold"] <= 1:
+            raise ValueError("score_threshold must be between 0 and 1")
 
         weights_dir, model_dir = finder.find_paths(
             config["root"], config["weights"], config["weights_parent_dir"]

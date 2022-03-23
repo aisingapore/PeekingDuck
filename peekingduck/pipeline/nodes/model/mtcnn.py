@@ -46,20 +46,20 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        mtcnn_min_size (:obj:`int`): **default = 40**. |br|
+        min_size (:obj:`int`): **default = 40**. |br|
             Minimum height and width of face in pixels to be detected.
-        mtcnn_factor (:obj:`float`): **[0, 1], default = 0.709**. |br|
+        scale_factor (:obj:`float`): **[0, 1], default = 0.709**. |br|
             Scale factor to create the image pyramid. A larger scale factor
             produces more accurate detections at the expense of inference
             speed.
-        mtcnn_thresholds (:obj:`List`):
+        network_thresholds (:obj:`List`):
             **[0, 1], default = [0.6, 0.7, 0.7]**. |br|
             Threshold values for the Proposal Network (P-Net), Refine Network
             (R-Net) and Output Network (O-Net) in the MTCNN model.
 
             Calibration is performed at each stage in which bounding boxes with
             confidence scores less than the specified threshold are discarded.
-        mtcnn_score (:obj:`float`): **[0, 1], default = 0.7**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default = 0.7**. |br|
             Bounding boxes with confidence scores less than the specified
             threshold in the final output are discarded.
 
