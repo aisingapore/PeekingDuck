@@ -159,12 +159,13 @@
    keypoints. Keypoints with low confidence scores (below threshold) will be
    replaced by ``-1``.
 
-.. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D', 2)`
+.. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D_n', 2, 2)`
    containing the :math:`(x, y)` coordinates of adjacent keypoint pairs where
-   :math:`N` is the number of detected poses, and :math:`D'` is the number of
-   valid keypoint pairs where both keypoints are detected.
+   :math:`N` is the number of detected poses, and :math:`D_n'` is the number of
+   valid keypoint pairs for the the :math:`n`-th pose where both keypoints are
+   detected.
 
-.. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K, 1)`
+.. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K)`
    containing the confidence scores of detected poses where :math:`N` is the
    number of detected poses and :math:`K` is the number of individual keypoints.
    The confidence score has a range of :math:`[0, 1]`.
