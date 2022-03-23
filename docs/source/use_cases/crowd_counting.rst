@@ -32,6 +32,8 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
+You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/large_crowd.mp4>`_.
+
 How it Works
 ============
 
