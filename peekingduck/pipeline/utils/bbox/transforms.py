@@ -21,14 +21,30 @@ import torch
 
 
 def tlwh2xyah(inputs: np.ndarray) -> np.ndarray:
-    """Converts bounding box to format `(center x, center y, aspect ratio,
-    height)`, where the aspect ratio is `width / height`.
+    """Converts from [t, l, w, h] to [x, y, a, h] format.
+
+    (t, l) is the coordinates of the top left corner, w is the width, and h is
+    the height. (x, y) is the coordinates of the object center, `a` is the
+    aspect ratio, and `h` is the height. Aspect ratio is `width / height`.
+
+    [x, y, a, h] is calculated as:
+    x = (t + w) / 2
+    y = (l + h) / 2
+    a = w / h
+    h = h
+
+    Example:
+        >>> a = tlwh2xyah(inputs=np.array([1.0, 2.0, 30.0, 40.0]))
+        >>> a
+        array([16.0, 22.0, 0.75, 40.0])
 
     Args:
-        tlwh (np.ndarray): Input bounding box with format `(top left x,
-            top left y, width, height)`.
+        inputs (np.ndarray): Input bounding box (1-d array) with the format
+            `(top left x, top left y, width, height)`.
+
     Returns:
-        (np.ndarray): Bounding box with (x, y, a, h) format.
+        (np.ndarray): Bounding box with the format `(center x, center y, aspect
+        ratio,height)`.
     """
     outputs = np.asarray(inputs).copy()
     outputs[:2] += outputs[2:] / 2
@@ -37,11 +53,33 @@ def tlwh2xyah(inputs: np.ndarray) -> np.ndarray:
 
 
 def tlwh2xyxyn(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
-    """Converts from [t, l, w, h] to [x1, y1, x2, y2] format.
+    """Converts from [t, l, w, h] to normalized [x1, y1, x2, y2] format.
+    Normalized coordinates are w.r.t. original image size.
 
-    (x1, y1) and (x2, y2) are coordinates of top left and bottom right
-    respectively. (t, l) is the coordinates of the top left corner, w is the
-    width, and h is the height.
+    (t, l) is the coordinates of the top left corner, w is the width, and h is
+    the height. (x1, y1) and (x2, y2) are the normalized coordinates of top
+    left and bottom right, respectively.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = t / width
+    y1 = l / height
+    x2 = (t + w) / width
+    y2 = (l + h) / height
+
+    Example:
+        >>> a = tlwh2xyxyn(inputs=np.array([[1.0, 2.0, 30.0, 40.0]]), height=100, width=200)
+        >>> a
+        array([[0.005, 0.02, 0.155, 0.42]])
+
+    Args:
+        inputs (np.ndarray): Input bounding boxes (2-d array) each with the
+            format `(top left x, top left y, width, height)`.
+        height (int): Height of the image frame.
+        height (int): Width of the image frame.
+
+    Returns:
+        (np.ndarray): Bounding boxes with the format `normalized (top left x,
+        top left y, bottom right x, bottom right y)`.
     """
     outputs = np.empty_like(inputs)
     outputs[:, 0] = inputs[:, 0] / width
@@ -54,8 +92,27 @@ def tlwh2xyxyn(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
 def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
     """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
 
-    (x, y) is the object center. (x1, y1) is the top left corner and (x2, y2)
-    is the bottom right corner.
+    (x, y) is the object center, w is the width, and h is the height. (x1, y1)
+    is the top left corner and (x2, y2) is the bottom right corner.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = x - w / 2
+    y1 = y - h / 2
+    x2 = x + w / 2
+    y2 = y + w / 2
+
+    Example:
+        >>> a = xywh2xyxy(inputs=torch.Tensor([[100, 200, 30, 40]]))
+        >>> a
+        tensor([[ 85.0, 180.0, 115.0, 220.0]])
+
+    Args:
+        inputs (torch.Tensor): Input bounding boxes (2-d array) each with the
+            format `(center x, center y, width, height)`.
+
+    Returns:
+        (torch.Tensor): Bounding boxes with the format `(top left x, top left y,
+        bottom right x, bottom right y)`.
     """
     outputs = torch.empty_like(inputs)
     outputs[:, 0] = inputs[:, 0] - inputs[:, 2] / 2
@@ -67,16 +124,30 @@ def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
 
 
 def xyxy2tlwh(inputs: np.ndarray) -> np.ndarray:
-    """Converts bounding box to format `(top left x, top left y, width,
-    height)`.
+    """Converts from [x1, y1, x2, y2] to [t, l, w, h].
+
+    (x1, y1) and (x2, y2) are the coordinates of top left and bottom right,
+    respectively. (t, l) is the coordinates of the top left corner, w is the
+    width, and h is the height.
+
+    [t, l, w, h] is calculated as:
+    t = x1
+    l = y1
+    w = x2 - x1
+    h = y2 - y1
+
+    Example:
+        >>> a = xyxy2tlwh(inputs=np.array([1.0, 2.0, 30.0, 40.0]))
+        >>> a
+        array([1, 2, 29, 38])
 
     Args:
-        inputs (np.ndarray): Input bounding box with format (x1, y1, x2, y2)
-            where (x1, y1) is top left, (x2, y2) is bottom right.
+        inputs (np.ndarray): Input bounding box (1-d array) each with the
+            format `(top left x, top left y, bottom right x, bottom right y)`.
 
     Returns:
-        (np.ndarray): Bounding box with `(top left x, top left y, width,
-            height)` format.
+        (np.ndarray): Bounding box with the format `(top left x, top left y,
+        width, height)`.
     """
     outputs = np.asarray(inputs).copy()
     outputs[2:] -= outputs[:2]
@@ -85,9 +156,28 @@ def xyxy2tlwh(inputs: np.ndarray) -> np.ndarray:
 
 def xyxy2xyxyn(inputs: np.ndarray, height: float, width: float) -> np.ndarray:
     """Converts from [x1, y1, x2, y2] to normalized [x1, y1, x2, y2].
+    Normalized coordinates are w.r.t. original image size.
 
     (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
-    Normalized coordinates are w.r.t. original image size.
+
+    Normalized [x1, y1, x2, y2] is calculated as:
+    Normalized x1 = x1 / width
+    Normalized y1 = y1 / height
+    Normalized x2 = x2 / width
+    Normalized y2 = y2 / height
+
+    Example:
+        >>> a = xyxy2xyxyn(inputs=np.array([[1.0, 2.0, 30.0, 40.0]]), height=100, width=200)
+        >>> a
+        array([0.005, 0.02, 0.15, 0.4])
+
+    Args:
+        inputs (np.ndarray): Input bounding boxes (2-d array) each with the
+            format `(top left x, top left y, bottom right x, bottom right y)`.
+
+    Returns:
+        (np.ndarray): Bounding boxes with the format `normalized (top left x,
+        top left y, bottom right x, bottom right y)`.
     """
     outputs = np.empty_like(inputs)
     outputs[:, [0, 2]] = inputs[:, [0, 2]] / width
