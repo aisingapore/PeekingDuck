@@ -50,6 +50,7 @@ import numpy as np
 import torch
 
 from peekingduck.pipeline.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
+from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyah
 
 
 class TrackState:  # pylint: disable=too-few-public-methods
@@ -179,7 +180,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         """The current position in bounding box to format `(center x, center y,
         aspect ratio, height)`, where the aspect ratio is `width / height`.
         """
-        return self.tlwh2xyah(self.tlwh)
+        return tlwh2xyah(self.tlwh)
 
     @property
     def xyxy(self) -> np.ndarray:
@@ -199,9 +200,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         """
         self.kalman_filter = kalman_filter
         self.track_id = self.next_id()
-        self.mean, self.covariance = self.kalman_filter.initiate(
-            self.tlwh2xyah(self._tlwh)
-        )
+        self.mean, self.covariance = self.kalman_filter.initiate(tlwh2xyah(self._tlwh))
 
         self.tracklet_len = 0
         self.state = TrackState.TRACKED
@@ -223,7 +222,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
 
         new_tlwh = new_track.tlwh
         self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, self.tlwh2xyah(new_tlwh)
+            self.mean, self.covariance, tlwh2xyah(new_tlwh)
         )
         self.state = TrackState.TRACKED
         self.is_activated = True
@@ -240,7 +239,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
             frame_id (int): Current frame ID.
         """
         self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, self.tlwh2xyah(new_track.tlwh)
+            self.mean, self.covariance, tlwh2xyah(new_track.tlwh)
         )
 
         self.update_features(new_track.curr_feat)
@@ -285,37 +284,3 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         for i, (mean, cov) in enumerate(zip(multi_mean, multi_covariance)):
             stracks[i].mean = mean
             stracks[i].covariance = cov
-
-    @staticmethod
-    def tlwh2xyah(tlwh: np.ndarray) -> np.ndarray:
-        """Converts bounding box to format `(center x, center y, aspect ratio,
-        height)`, where the aspect ratio is `width / height`.
-
-        Args:
-            tlwh (np.ndarray): Input bounding box with format `(top left x,
-                top left y, width, height)`.
-
-        Returns:
-            (np.ndarray): Bounding box with (x, y, a, h) format.
-        """
-        ret = np.asarray(tlwh).copy()
-        ret[:2] += ret[2:] / 2
-        ret[2] /= ret[3]
-        return ret
-
-    @staticmethod
-    def xyxy2tlwh(xyxy: np.ndarray) -> np.ndarray:
-        """Converts bounding box to format `(top left x, top left y, width,
-        height)`.
-
-        Args:
-            xyxy (np.ndarray): Input bounding box with format (x1, y1, x2, y2)
-                where (x1, y1) is top left, (x2, y2) is bottom right.
-
-        Returns:
-            (np.ndarray): Bounding box with `(top left x, top left y, width,
-                height)` format.
-        """
-        ret = np.asarray(xyxy).copy()
-        ret[2:] -= ret[:2]
-        return ret

@@ -33,18 +33,21 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
 
         self.logger = logging.getLogger(__name__)
 
+        if config["min_size"] <= 0:
+            raise ValueError("min_size must be more than 0")
+
         # check factor value
         if not 0 <= config["scale_factor"] <= 1:
-            raise ValueError("scale_factor must be between 0 and 1")
+            raise ValueError("scale_factor must be in [0, 1]")
 
         # check threshold values
         for threshold in config["network_thresholds"]:
             if not 0 <= threshold <= 1:
-                raise ValueError("network_thresholds must be between 0 and 1")
+                raise ValueError("network_thresholds must be in [0, 1]")
 
         # check score value
         if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be between 0 and 1")
+            raise ValueError("score_threshold must be in [0, 1]")
 
         weights_dir, model_dir = finder.find_paths(
             config["root"], config["weights"], config["weights_parent_dir"]
@@ -74,5 +77,5 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
         """
         assert isinstance(frame, np.ndarray)
 
-        # return bboxes, scores, landmarks amd class labels
+        # return bboxes, scores, landmarks and class labels
         return self.detector.predict_bbox_landmarks(frame)

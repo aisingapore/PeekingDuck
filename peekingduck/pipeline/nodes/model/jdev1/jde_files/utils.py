@@ -47,6 +47,8 @@ import numpy as np
 import torch
 from torchvision.ops import nms
 
+from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy
+
 
 def decode_delta(delta: torch.Tensor, anchor_mesh: torch.Tensor) -> torch.Tensor:
     """Converts raw output to (x, y, w, h) format where (x, y) is the center,
@@ -223,32 +225,3 @@ def scale_coords(
     coords[:, :4] /= gain
     coords[:, :4] = torch.clamp(coords[:, :4], min=0)
     return coords
-
-
-def xywh2xyxy(inputs: torch.Tensor) -> torch.Tensor:
-    """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
-
-    (x, y) are coordinates of center. (x1, y1) and (x2, y2) are coordinates of
-    top left and bottom right respectively.
-    """
-    outputs = torch.empty_like(inputs)
-    outputs[:, 0] = inputs[:, 0] - inputs[:, 2] / 2
-    outputs[:, 1] = inputs[:, 1] - inputs[:, 3] / 2
-    outputs[:, 2] = inputs[:, 0] + inputs[:, 2] / 2
-    outputs[:, 3] = inputs[:, 1] + inputs[:, 3] / 2
-    return outputs
-
-
-def tlwh2xyxyn(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
-    """Converts from [t, l, w, h] to [x1, y1, x2, y2] format.
-
-    (x1, y1) and (x2, y2) are coordinates of top left and bottom right
-    respectively. (t, l) is the coordinates of the top left corner, w is the
-    width, and h is the height.
-    """
-    outputs = np.empty_like(inputs)
-    outputs[:, 0] = inputs[:, 0] / width
-    outputs[:, 1] = inputs[:, 1] / height
-    outputs[:, 2] = (inputs[:, 0] + inputs[:, 2]) / width
-    outputs[:, 3] = (inputs[:, 1] + inputs[:, 3]) / height
-    return outputs
