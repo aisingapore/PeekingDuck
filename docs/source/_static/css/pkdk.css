@@ -147,9 +147,10 @@ div.highlight span.pkd-raw-terminal:before {
 }
 
 .greenbox {
-  color: green;
-  padding: 2px;
   border: 1px solid rgba(161, 236, 143, 0.5);
+  color: green;
+  font-family: "Courier New", Courier, monospace;
+  padding: 2px;
 }
 
 .yellow {
