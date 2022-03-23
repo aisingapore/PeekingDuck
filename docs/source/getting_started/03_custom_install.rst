@@ -22,6 +22,15 @@ listed in PeekingDuck's `[requirements.txt]
    | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
    | \ :blue:`[~user]` \ > [ install additional dependencies as specified within requirements.txt ]
 
+Verify the installation using:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
+
+You should see a video of :ref:`a person waving his hand with bounding boxes overlaid
+<custom_install_verify_gif>`.
+
 
 .. _apple_silicon_mac_installation:
 
@@ -80,6 +89,8 @@ macOS Monterey.
 
       | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
       | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
+
+.. _custom_install_verify_gif:
 
    You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
    with bounding boxes overlaid as shown below:
