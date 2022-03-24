@@ -32,7 +32,7 @@ class Node(AbstractNode):
     called HRNetV1.
 
     The HRNet node is capable of detecting single human figures simultaneously
-    per inference, with 17 kepoits estimated for each detected human figure.
+    per inference, with 17 keypoints estimated for each detected human figure.
     The keypoint indices table can be found
     :ref:`here <whole-body-keypoint-ids>`.
 
