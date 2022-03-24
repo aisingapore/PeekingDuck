@@ -25,12 +25,14 @@ Demo
 .. |pipeline_config| replace:: crowd_counting.yml
 .. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/crowd_counting.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. admonition:: Terminal Session
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
+
+You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/large_crowd.mp4>`_.
 
 How it Works
 ============
@@ -46,7 +48,7 @@ dense and sparse crowd models were trained using data from ShanghaiTech Part A a
 respectively.
 
 As a rule of thumb, you might want to use the dense crowd model if the people in a given image or
-video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how adjust the
+video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how to adjust the
 CSRNet node, check out its :doc:`configurable parameters </nodes/model.csrnet>`.
 
 **2. Heat Map Generation (Optional)**

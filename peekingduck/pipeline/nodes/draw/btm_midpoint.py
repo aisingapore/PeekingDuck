@@ -13,9 +13,7 @@
 # limitations under the License.
 
 
-"""
-Draws the lowest middle point of a bounding box.
-"""
+"""Draws the bottom middle point of a bounding box."""
 
 from typing import Any, Dict
 
@@ -24,12 +22,10 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws the bottom middle point of detected bounding boxes.
-
-    The :mod:`draw.btm_midpoint` node uses :term:`bboxes` from the model
-    predictions to draw the bbox predictions onto the image. For better
-    understanding of the use case, refer to the :doc:`Zone Counting use case
-    </use_cases/zone_counting>`.
+    """The :mod:`draw.btm_midpoint` node uses :term:`bboxes` from the model
+    predictions to draw the bottom midpoint of each bbox as a dot onto the
+    image. For better understanding of the use case, refer to the
+    :doc:`Zone Counting use case </use_cases/zone_counting>`.
 
     Inputs:
         |img_data|

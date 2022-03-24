@@ -60,8 +60,8 @@ class Detector:
             "Yolo model loaded with following configs: \n\t"
             f"Model type: {self.config['model_type']}, \n\t"
             f"Input resolution: {self.config['size']}, \n\t"
-            f"NMS threshold: {self.config['yolo_iou_threshold']}, \n\t"
-            f"Score threshold: {self.config['yolo_score_threshold']}"
+            f"IOU threshold: {self.config['iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['score_threshold']}"
         )
 
         return model
@@ -99,7 +99,7 @@ class Detector:
                 boxes: (Numpy Array) an array of bounding box with
                     definition like (x1, y1, x2, y2), in a
                     coordinate system with origin point in
-                    the left top corner
+                    the top-left corner
                 labels: (Numpy Array) an array of class labels
                 scores: (Numpy Array) an array of confidence scores
         """
@@ -123,8 +123,8 @@ class Detector:
             ),
             self.config["max_output_size_per_class"],
             self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]

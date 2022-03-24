@@ -33,21 +33,21 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
 
         self.logger = logging.getLogger(__name__)
 
-        if config["mtcnn_min_size"] <= 0:
-            raise ValueError("mtcnn_min_size must be more than 0")
+        if config["min_size"] <= 0:
+            raise ValueError("min_size must be more than 0")
 
         # check factor value
-        if not 0 <= config["mtcnn_factor"] <= 1:
-            raise ValueError("mtcnn_factor must be in [0, 1]")
+        if not 0 <= config["scale_factor"] <= 1:
+            raise ValueError("scale_factor must be in [0, 1]")
 
         # check threshold values
-        for threshold in config["mtcnn_thresholds"]:
+        for threshold in config["network_thresholds"]:
             if not 0 <= threshold <= 1:
-                raise ValueError("mtcnn_thresholds must be in [0, 1]")
+                raise ValueError("network_thresholds must be in [0, 1]")
 
         # check score value
-        if not 0 <= config["mtcnn_score"] <= 1:
-            raise ValueError("mtcnn_score must be in [0, 1]")
+        if not 0 <= config["score_threshold"] <= 1:
+            raise ValueError("score_threshold must be in [0, 1]")
 
         weights_dir, model_dir = finder.find_paths(
             config["root"], config["weights"], config["weights_parent_dir"]

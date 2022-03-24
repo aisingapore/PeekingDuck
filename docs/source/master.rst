@@ -3,7 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to PeekingDuck's documentation!
+.. include:: /include/collapsible_toc.rst
+
+Welcome to PeekingDuck's Documentation!
 =======================================
 
 .. toctree::

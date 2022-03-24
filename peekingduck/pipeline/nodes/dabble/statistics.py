@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Calculates the cumulative average, minimum and maximum of a single variable of interest over time.
+"""Calculates the cumulative average, minimum, and maximum of a single variable
+of interest over time.
 """
 
 import operator
@@ -34,12 +34,12 @@ OPS = {
 
 
 class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
-    """Calculates the cumulative average, minimum and maximum of a single
+    """Calculates the cumulative average, minimum, and maximum of a single
     variable of interest (defined as ``current result`` here) over time. The
     configurations for this node offer several functions to reduce the incoming
     data type into a single ``current result`` of type :obj:`int` or
     :obj:`float`, which is valid for the current video frame.
-    ``current result`` is then used to recalculate the values of cumulative
+    ``current result`` is then used to recalculate the values of the cumulative
     average, minimum, and maximum for PeekingDuck's running duration thus far.
 
     The configuration for this node is described below using a combination of

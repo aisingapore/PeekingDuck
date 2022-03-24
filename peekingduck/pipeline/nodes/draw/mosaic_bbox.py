@@ -44,8 +44,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             The number corresponds to the number of rows and columns used to
             create a mosaic. For example, the default setting
             (``mosaic_level = 7``) creates a :math:`7 \\times 7` mosaic filter.
-            Increasing the number increases the intensity of pixelation over an
-            area.
+            Increasing the number increases the intensity of pixelization over
+            an area.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

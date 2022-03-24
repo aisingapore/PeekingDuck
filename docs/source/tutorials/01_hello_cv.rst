@@ -19,7 +19,6 @@ This section presents two basic "hello world" examples to demonstrate how to use
 PeekingDuck for pose estimation and object detection.
 
 
-
 .. _tutorial_pose_estimation:
 
 Pose Estimation
@@ -37,7 +36,7 @@ the following commands:
 :greenbox:`peekingduck init` will prepare the ``pose_estimation`` folder for use with
 PeekingDuck.
 It creates a default pipeline file called ``pipeline_config.yml`` and a ``src`` folder
-containing contents that will be covered in the later tutorials.
+that will be covered in the later tutorials.
 The ``pipeline_config.yml`` file looks like this:
 
 .. code-block:: yaml
@@ -50,11 +49,11 @@ The ``pipeline_config.yml`` file looks like this:
    - draw.poses
    - output.screen
 
-The above forms an **pose estimation pipeline** and comprises four nodes that do the
+The above forms a **pose estimation pipeline** and it comprises four nodes that do the
 following:
 
    #. :mod:`input.visual`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
-   #. :mod:`model.posenet`: runs the Posenet pose estimation model on it
+   #. :mod:`model.posenet`: runs the PoseNet pose estimation model on it
    #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
    #. :mod:`output.screen`: outputs everything onto the screen for display
 
@@ -77,8 +76,6 @@ You have successfully run a PeekingDuck pose estimation pipeline!
 
 | The video will auto-close when it is completed.
 | To exit earlier, click to select the video window and press :greenbox:`q`.
-
-
 
 
 .. _tutorial_object_detection:
@@ -109,7 +106,7 @@ Then modify ``pipeline_config.yml`` as follows:
 
 The key differences between this and the earlier pipeline are:
 
-   | Line 4: :mod:`model.yolo` runs the Yolo object detection model
+   | Line 4: :mod:`model.yolo` runs the YOLO object detection model
    | Line 5: :mod:`draw.bbox` draws the bounding box to show the detected person
 
 Run the new **object detection pipeline** with :greenbox:`peekingduck run`.
@@ -127,10 +124,7 @@ That's it: you have created a new object detection pipeline by changing only two
    .. note::
 
       | Try replacing ``wave.mp4`` with your own video file and run both models.
-      | For best effect, your video file should contain people performing some activity.
-
-
-
+      | For best effect, your video file should contain people performing some activities.
 
 
 .. _tutorial_webcam:
@@ -145,7 +139,7 @@ If your computer has a webcam attached, you can use it by changing the first
    :linenos:
 
    nodes:
-   - input.visual
+   - input.visual:
        source: 0        # use webcam for live video
    - model.posenet      # use pose estimation model
    - draw.poses         # draw skeletal poses
@@ -210,7 +204,8 @@ An example pipeline is shown below:
 Bounding Box vs Image Coordinates
 =================================
 
-PeekingDuck has two coordinate systems, with top-left corner as origin :math:`(0, 0)`:
+PeekingDuck has two :math:`(x, y)` coordinate systems, with top-left corner as origin
+:math:`(0, 0)`:
 
    .. figure:: /assets/tutorials/bbox_image_coords.png
       :alt: Image vs Bounding Box Coordinates
@@ -233,7 +228,7 @@ This means that in order to draw a bounding box onto an image, the bounding box
 relative coordinates would have to be converted to the image absolute coordinates.
 
 Using the above figure as an illustration, the bounding box coordinates are
-given as :math:`(0.18, 0.10)` left-top and :math:`(0.52, 0.88)` right-bottom.
+given as :math:`(0.18, 0.10)` top-left and :math:`(0.52, 0.88)` bottom-right.
 To convert them to image coordinates, multiply the x-coordinates by the image 
 width and the y-coordinates by the image height, and round the results into 
 integers.
@@ -241,14 +236,14 @@ integers.
 .. math::
 
    \begin{array}{ll}
-      0.18 \rightarrow 0.18 * 720 = 129.6 = 130 & (int)\\
-      0.10 \rightarrow 0.10 * 720 = 72.0 = 72 & (int)\\
+      0.18 \rightarrow 0.18 \times 720 = 129.6 = 130 & (int)\\
+      0.10 \rightarrow 0.10 \times 480 = 48.0 = 48 & (int)\\
       &\\
-      0.52 \rightarrow 0.52 * 720 = 374.4 = 374 & (int)\\
-      0.88 \rightarrow 0.88 * 720 = 633.6 = 634 & (int)
+      0.52 \rightarrow 0.52 \times 720 = 374.4 = 374 & (int)\\
+      0.88 \rightarrow 0.88 \times 480 = 422.4 = 422 & (int)
    \end{array}
 
-Thus, the image coordinates are :math:`(130, 72)` left-top and :math:`(374, 634)` right-bottom.
+Thus, the image coordinates are :math:`(130, 48)` top-left and :math:`(374, 422)` bottom-right.
 
 .. note::
    

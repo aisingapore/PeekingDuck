@@ -31,8 +31,8 @@ class Node(AbstractNode):
 
     The :term:`large_groups` data type from :mod:`dabble.check_large_groups`,
     and the ``groups`` key of the :term:`obj_attrs` data type from
-    :mod:`dabble.group_nearby_objs`, are inputs to this node which identify the
-    different groups, and the group associated with each bounding box.
+    :mod:`dabble.group_nearby_objs`, are inputs for this node which identifies
+    the different groups, and the group associated with each bounding box.
 
     For better understanding, refer to
     the :doc:`Group Size Checking use case </use_cases/group_size_checking>`.
@@ -43,6 +43,8 @@ class Node(AbstractNode):
         |bboxes_data|
 
         |obj_attrs_data|
+        :mod:`draw.group_bbox_and_tag` requires the ``groups`` attribute from
+        :mod:`dabble.group_nearby_objs`.
 
         |large_groups_data|
 
@@ -57,7 +59,7 @@ class Node(AbstractNode):
         :mod:`draw.group_bbox_and_tag` used to take in ``obj_tags``
         (:obj:`List[str]`) as an input data type, which has been deprecated and
         now subsumed under :term:`obj_attrs`. The same attribute is accessed by
-        the ``groups`` key of :term:`obj_attrs`.
+        using the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

@@ -39,12 +39,12 @@ def mtcnn_config():
 
 @pytest.fixture(
     params=[
-        {"key": "mtcnn_factor", "value": -0.5},
-        {"key": "mtcnn_factor", "value": 1.5},
-        {"key": "mtcnn_thresholds", "value": [-0.5, -0.5, -0.5]},
-        {"key": "mtcnn_thresholds", "value": [1.5, 1.5, 1.5]},
-        {"key": "mtcnn_score", "value": -0.5},
-        {"key": "mtcnn_score", "value": 1.5},
+        {"key": "scale_factor", "value": -0.5},
+        {"key": "scale_factor", "value": 1.5},
+        {"key": "network_thresholds", "value": [-0.5, -0.5, -0.5]},
+        {"key": "network_thresholds", "value": [1.5, 1.5, 1.5]},
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
     ],
 )
 def mtcnn_bad_config_value(request, mtcnn_config):
@@ -53,9 +53,7 @@ def mtcnn_bad_config_value(request, mtcnn_config):
 
 
 @pytest.fixture(
-    params=[
-        {"key": "mtcnn_min_size", "value": -0.5},
-    ],
+    params=[{"key": "min_size", "value": -0.5}],
 )
 def mtcnn_negative_config_value(request, mtcnn_config):
     mtcnn_config[request.param["key"]] = request.param["value"]

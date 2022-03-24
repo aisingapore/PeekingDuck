@@ -114,7 +114,7 @@ class Node(AbstractNode):
     def _append_datetime_filename(self, filename: str) -> str:
         self._file_name = filename
         current_time = datetime.datetime.now()
-        # output as '240621-15-09-13'
+        # output as 'YYYYMMDD_hhmmss'
         time_str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension

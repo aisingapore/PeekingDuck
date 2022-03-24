@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Superimposes a heat map over an image
-"""
+"""Superimposes a heat map over an image."""
 
 from typing import Any, Dict
 
@@ -35,6 +33,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |img_data|
 
         |density_map_data|
+        This is produced by nodes such as :mod:`model.csrnet`.
 
     Outputs:
         |img_data|

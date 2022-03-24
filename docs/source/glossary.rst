@@ -1,8 +1,9 @@
 .. include:: /include/data_type.rst
 .. include:: /include/substitution.rst
 
+********
 Glossary
-========
+********
 
 The following are built-in data types recognized by PeekingDuck nodes. Users can define custom data
 types when working with custom nodes.
@@ -87,12 +88,12 @@ types when working with custom nodes.
 .. deprecated:: 1.2.0
     ``obj_tags`` (:obj:`List[str]`) is deprecated and now subsumed under
     :term:`obj_attrs`. :mod:`dabble.check_nearby_objs` now accesses this
-    attribute by the ``flags`` key of :term:`obj_attrs`. :mod:`draw.tag` has
-    been refactored for more drawing flexibility by accepting :term:`obj_attrs`
-    as input. |br|
+    attribute by using the ``flags`` key of :term:`obj_attrs`. :mod:`draw.tag`
+    has been refactored for more drawing flexibility by accepting
+    :term:`obj_attrs` as input.
 
 .. deprecated:: 1.2.0
     ``obj_groups`` (:obj:`List[int]`) is deprecated and now subsumed under 
     :term:`obj_attrs`. Affected nodes (:mod:`dabble.group_nearby_objs`, 
     :mod:`dabble.check_large_groups`, and :mod:`draw.group_bbox_and_tag`) now
-    access this attribute by the ``groups`` key of :term:`obj_attrs`.
+    access this attribute by using the ``groups`` key of :term:`obj_attrs`.

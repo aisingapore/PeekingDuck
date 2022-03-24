@@ -43,7 +43,7 @@ as placeholders for contents to be added.
 Recipe 1: Object Detection Score
 ================================
 
-When the Yolo object detection model detects an object in the image, it assigns 
+When the YOLO object detection model detects an object in the image, it assigns 
 a bounding box and a score to it.
 This score is the "confidence score" which reflects how likely the box contains 
 an object and how accurate is the bounding box.
@@ -62,7 +62,7 @@ Press :greenbox:`<Enter>` to accept the default ``custom_nodes`` folder name, th
 in :greenbox:`draw` for node type and :greenbox:`score` for node name.
 Finally, press :greenbox:`<Enter>` to answer ``Y`` when asked to proceed.
 
-The entire interaction is shown here, the answers you type are in shown in 
+The entire interaction is shown here, the answers you type in are shown in 
 :green:`green text`:
 
 .. _tutorial_wave_project_custom_node:
@@ -241,7 +241,7 @@ implement our custom node function.
    
                for i, bbox in enumerate(bboxes):
                   # for each bounding box:
-                  #   - compute (x1, y1) left-top, (x2, y2) right-bottom coordinates
+                  #   - compute (x1, y1) top-left, (x2, y2) bottom-right coordinates
                   #   - convert score into a two decimal place numeric string
                   #   - draw score string onto image using opencv's putText()
                   #     (see opencv's API docs for more info)
@@ -267,7 +267,6 @@ implement our custom node function.
    The ``run`` method implements the main logic which processes every bounding box to 
    compute its on-screen coordinates and to draw the bounding box confidence score at 
    its left-bottom position.
-
 
 #. **pipeline_config.yml**:
 
@@ -330,7 +329,8 @@ The PoseNet pose estimation model outputs seventeen keypoints for the person
 corresponding to the different body parts as documented :ref:`here
 <whole-body-keypoint-ids>`.
 Each keypoint is a pair of ``(x, y)`` coordinates, where ``x`` and ``y`` are
-real numbers ranging from 0.0 to 1.0 (using relative coordinates).
+real numbers ranging from 0.0 to 1.0 (using
+:ref:`relative coordinates <tutorial_coordinate_systems>`).
 
 Starting with a newly initialized PeekingDuck folder, call :greenbox:`peekingduck
 create-node` to create a new ``dabble.wave`` custom node as shown below:
@@ -378,7 +378,7 @@ the above folder.  You should end up with the following folder structure:
 To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 ``pipeline_config.yml`` are to be edited as follows:
 
-1. **src/custom_nodes/configs/dabble/wave.yml**:
+#. **src/custom_nodes/configs/dabble/wave.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -389,11 +389,11 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
 
       # No optional configs
 
-We will implement this tutorial using a custom :mod:`dabble` node, which will take the
-inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
-:term:`keypoint_scores` from the pipeline. The node has no output.
+   We will implement this tutorial using a custom :mod:`dabble` node, which will take the
+   inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
+   :term:`keypoint_scores` from the pipeline. The node has no output.
 
-2. **src/custom_nodes/dabble/wave.py**:
+#. **src/custom_nodes/dabble/wave.py**:
 
    The ``dabble.wave`` code structure is similar to the ``draw.score`` code structure in
    the other custom node tutorial.
@@ -599,7 +599,7 @@ inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
    This (long) piece of code implements our custom :mod:`dabble` node. 
    It defines three helper functions to convert relative to absolute coordinates 
    and to draw text on-screen.
-   The number of hand waves is displayed at the left-top corner of the screen.
+   The number of hand waves is displayed at the top-left corner of the screen.
 
    A simple heuristic is used to count the number of times the person waves his hand. 
    It tracks the direction the right wrist is moving in and notes when the wrist changes
@@ -610,7 +610,7 @@ inputs :term:`img`, :term:`bboxes`, :term:`bbox_scores`, :term:`keypoints`, and
    The heuristic also waits until the right wrist has been lifted above the right 
    shoulder before it starts tracking hand direction and counting waves.
 
-3. **pipeline_config.yml**:
+#. **pipeline_config.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -791,16 +791,16 @@ one below:
 
    | \ :blue:`[~user/wave_project]` \ > \ :green:`peekingduck run` \ 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline_config file. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising input.visual node.\.\. 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'input_dir': wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing input.visual node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'source': wave.mp4 
    | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 710 by 540 
    | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: wave.mp4 
-   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initialising model.yolo node.\.\. 
+   | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing model.yolo node.\.\. 
    |                     [ .\.\. many lines of output deleted here .\.\. ]
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising custom_nodes.dabble.debug node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.poses node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising draw.legend node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initialising output.screen node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing custom_nodes.dabble.debug node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.poses node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.legend node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing output.screen node.\.\. 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  -- debug -- 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  input.keys=['img', 'pipeline_end', 'filename', 'saved_video_fps', 'bboxes', 'bbox_labels', 'bbox_scores', 'keypoints', 'keypoint_scores', 'keypoint_conns', 'hand_direction', 'num_waves', 'fps'] 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  num bboxes=1 

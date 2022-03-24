@@ -13,7 +13,6 @@ This tutorial presents advanced recipes to showcase the power features of
 PeekingDuck, such as using :mod:`dabble.statistics` for object counting and tracking.
 
 
-
 .. _tutorial_sql:
 
 Interfacing with SQL
@@ -21,7 +20,7 @@ Interfacing with SQL
 
 This tutorial demonstrates how to save data to an SQLite database.
 We will extend the tutorial for :ref:`counting hand waves<tutorial_count_hand_wave>`
-with a new custom :mod:`output` node that writes information into a local sqlite database.
+with a new custom :mod:`output` node that writes information into a local SQLite database.
 
    .. note::
 
@@ -254,10 +253,7 @@ Examine the created database as follows:
       | 2022-02-15 19:26:44|right|72
       | 2022-02-15 19:26:43|right|70
 
-Type :greenbox:`CTRL-D` to exit from ``sqlite3``.
-
-
-
+Press :greenbox:`CTRL-D` to exit from ``sqlite3``.
 
 
 .. _tutorial_counting_cars:
@@ -266,11 +262,11 @@ Counting Cars
 =============
 
 This tutorial demonstrates using the :mod:`dabble.statistics` node to count the number
-of cars travelling across a highway over time and the :mod:`draw.legend` node to display
+of cars traveling across a highway over time and the :mod:`draw.legend` node to display
 the relevant statistics.
 
 Create a new PeekingDuck project, download the `highway cars video
-<http://orchard.dnsalias.com:8100/highway_cars.mp4>`_ and save it into the project
+<https://storage.googleapis.com/peekingduck/videos/highway_cars.mp4>`_ and save it into the project
 folder.
 
    .. admonition:: Terminal Session
@@ -332,7 +328,6 @@ The sample screenshot below shows:
       https://www.youtube.com/watch?v=8yP1gjg4b2w
 
 
-
 .. _tutorial_object_tracking:
 
 Object Tracking
@@ -348,7 +343,7 @@ This tutorial demonstrates using :mod:`dabble.statistics` with a custom node to
 track the number of people walking down a path.
 
 Create a new PeekingDuck project, download the `people walking video
-<http://orchard.dnsalias.com:8100/people_walking.mp4>`_ and save it into the project
+<https://storage.googleapis.com/peekingduck/videos/people_walking.mp4>`_ and save it into the project
 folder.
 
    .. admonition:: Terminal Session
@@ -378,7 +373,7 @@ Create the following ``pipeline_config.yml``:
           show: ["fps", "cum_max", "cum_min", "cum_avg"]
       - output.screen
 
-The above pipeline uses the Yolo model to detect people in the video and uses 
+The above pipeline uses the YOLO model to detect people in the video and uses 
 the :mod:`dabble.tracking` node to track the people as they walk.
 Each person is assigned a tracking ID and :mod:`dabble.tracking` returns a list of 
 tracking IDs.

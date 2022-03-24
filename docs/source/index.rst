@@ -33,13 +33,15 @@ Build realtime CV pipelines
 PeekingDuck enables you to build powerful CV pipelines with minimal lines of code.
 
 
-Leverage on various SOTA models
--------------------------------
+Leverage on SOTA models
+-----------------------
 
-PeekingDuck comes with various :doc:`object detection </resources/01a_object_detection>`,
-:doc:`pose estimation </resources/01b_pose_estimation>`, :doc:`object tracking <resources/01c_object_tracking>`,
-and :doc:`crowd counting </resources/01d_crowd_counting>` models. Mix and match different nodes
-to construct solutions for various :doc:`use cases </use_cases/index>`.
+PeekingDuck comes with various state of the art (SOTA)
+:doc:`object detection </resources/01a_object_detection>`,
+:doc:`pose estimation </resources/01b_pose_estimation>`,
+:doc:`object tracking <resources/01c_object_tracking>`, and
+:doc:`crowd counting </resources/01d_crowd_counting>` models. Mix and match different nodes to
+construct solutions for various :doc:`use cases </use_cases/index>`.
 
 
 Create custom nodes
@@ -62,10 +64,10 @@ PeekingDuck has 6 types of nodes:
 
 .. image:: /assets/diagrams/node_types.drawio.svg
 
-A **pipeline** governs the behavior of a chain of nodes. The diagram below shows the pipeline used
-in the previous demo. Nodes in a pipeline are called in sequential order, and the output of one
+A **pipeline** governs the behavior of a chain of nodes. The diagram below shows a sample pipeline.
+Nodes in a pipeline are called in sequential order, and the output of one
 node will be the input to another. For example, :mod:`input.visual` produces :term:`img`, which is taken
-in by :mod:`model.yolo`, and :mod:`model.yolo` produces ``bboxes``, which is taken in by
+in by :mod:`model.yolo`, and :mod:`model.yolo` produces :term:`bboxes`, which is taken in by
 :mod:`draw.bbox`. For ease of visualization, not all the inputs and outputs of these nodes are
 included in this diagram.
 

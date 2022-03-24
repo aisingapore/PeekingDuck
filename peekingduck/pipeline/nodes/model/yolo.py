@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast Object Detection model
-"""
+"""🔲 One-stage Object Detection model."""
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -49,15 +49,15 @@ class Node(AbstractNode):
             Maximum number of objects to be detected.
         detect_ids (:obj:`List`): **default = [0]**. |br|
             List of object class IDs to be detected. To detect all classes,
-            refer to the :ref:tech note <general-object-detection-ids>`.
+            refer to the :ref:`tech note <general-object-detection-ids>`.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|
             Maximum number of detected instances for each class in an image.
         max_total_size (:obj:`int`): **default = 50**. |br|
             Maximum total number of detected instances in an image.
-        yolo_iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
-        yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.2**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default = 0.2**. |br|
             Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
 
@@ -69,6 +69,12 @@ class Node(AbstractNode):
         https://github.com/hunglc007/tensorflow-yolov4-tflite
 
         Inference code adapted from https://github.com/zzh8829/yolov3-tf2
+
+    .. versionchanged:: 1.2.0
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
+
+    .. versionchanged:: 1.2.0
+        ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -89,5 +95,7 @@ class Node(AbstractNode):
         # Currently prototyped to return just the bounding boxes
         # without the scores
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs

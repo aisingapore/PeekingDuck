@@ -1,6 +1,6 @@
-*************
-Basic Install
-*************
+****************
+Standard Install
+****************
 
 .. include:: /include/substitution.rst
 
@@ -62,19 +62,20 @@ Then run:
 
 .. raw:: html
 
-       <div class="highlight"><pre
-         ><span class="pkd-expandable" data-venv="conda">conda create -n pkd python=3.8</span
-         ><span class="pkd-expandable" data-venv="conda">conda activate pkd</span
-         ><span class="pkd-expandable" data-venv="conda">pip install -U peekingduck</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="linux">python3 -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="mac">python3 -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="windows">python -m venv pkd</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="mac">source pkd/bin/activate</span
-         ><span class="pkd-expandable" data-venv="venv" data-os="windows">pkd\Scripts\activate</span
-         ><span class="pkd-expandable" data-venv="venv">pip install -U peekingduck</span
-         ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
-       ></pre></div>
+     <div class="highlight"><pre
+       ><span class="pkd-expandable" data-venv="conda">conda create -n pkd python=3.8</span
+       ><span class="pkd-expandable" data-venv="conda">conda activate pkd</span
+       ><span class="pkd-expandable" data-venv="conda">pip install -U peekingduck</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="linux">python3 -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="mac">python3 -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="windows">python -m venv pkd</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="linux">source pkd/bin/activate</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="mac">source pkd/bin/activate</span
+       ><span class="pkd-expandable" data-venv="venv" data-os="windows">pkd\Scripts\activate</span
+       ><span class="pkd-expandable" data-venv="venv">pip install -U peekingduck</span
+       ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
+     ></pre></div>
+   </div>
 
 It is recommended to install PeekingDuck in a Python virtual environment (such as
 ``pkd`` in the above commands), as it creates an isolated environment for a Python
@@ -83,26 +84,19 @@ projects.
 
 .. note::
 
-    For Apple Silicon Mac users, please see :ref:`Advanced Install - Apple Silicon Mac
-    <apple_silicon_mac_installation>`.
+   For Apple Silicon Mac users, please see :ref:`Custom Install - Apple Silicon Mac
+   <apple_silicon_mac_installation>`.
 
 .. _verify_installation:
 
 Verify PeekingDuck Installation
 ===============================
 
-To check that PeekingDuck is installed successfully, create a project folder at a convenient location:
+To check that PeekingDuck is installed successfully, run the following command:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`mkdir pkd_project` \
-    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
-
-Then, initialize the PeekingDuck project and verify the PeekingDuck installation:
-
-.. admonition:: Terminal Session
-
-    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck -\-verify_install` \
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
 
 You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
 with bounding boxes overlaid as shown below:

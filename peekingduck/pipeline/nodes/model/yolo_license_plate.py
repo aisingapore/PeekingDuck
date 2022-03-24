@@ -12,11 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-License Plate Detection model
-"""
+"""🔲 License Plate Detection model."""
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import lp_detector_model
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -25,8 +25,9 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     """Initializes and uses YOLO model to infer bboxes from image frame.
 
-    The YOLO node is capable of detecting objects from a single class (License
-    Plate). It uses YOLOv4-tiny by default and can be changed to using YOLOv4.
+    This customized YOLO node is capable of detecting objects from a single
+    class (License Plate). It uses YOLOv4 by default and can be changed to
+    use YOLOv4-tiny if FPS is critical over accuracy.
 
     Inputs:
         |img_data|
@@ -44,12 +45,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
-            Bounding box with confidence score less than the specified
-            confidence score threshold is discarded.
-        yolo_iou_threshold (:obj:`float`): **[0, 1], default = 0.3**. |br|
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.3**. |br|
             Overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
+            Bounding box with confidence score less than the specified
+            confidence score threshold is discarded.
 
     References:
         YOLOv4: Optimal Speed and Accuracy of Object Detection:
@@ -57,6 +58,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
+
+    .. versionchanged:: 1.2.0
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
+
+    .. versionchanged:: 1.2.0
+        ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -74,6 +81,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             "bboxes", "bbox_labels", and "bbox_scores".
         """
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "bbox_labels": labels,

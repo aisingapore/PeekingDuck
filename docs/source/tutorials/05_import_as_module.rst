@@ -19,7 +19,7 @@ In addition, we will demonstrate basic debugging techniques which users can empl
 troubleshooting PeekingDuck projects.
 
 
-Setting up
+Setting Up
 ----------
 
 Create a PeekingDuck project using:
@@ -147,7 +147,7 @@ Copy over the following code to ``demo_debug.py``:
       def main():
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
   
-          visual_config = {"input_dir": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
+          visual_config = {"source": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
           visual_node = visual.Node(**visual_config)
   
           yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
@@ -204,12 +204,12 @@ Run the ``demo_debug.py`` script using:
 
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`python demo_debug.py` \
 
-You should the following output in your terminal:
+You should see the following output in your terminal:
 
 .. code-block:: text
    :linenos:
 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Config for node input.visual is updated to: 'input_dir': ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Config for node input.visual is updated to: 'source': ~user/pkd_project/cat_and_computer.mp4 
    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 720 by 480 
    2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
    2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect_ids': [41, 15, 63, 66, 64] 
@@ -250,44 +250,99 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
     * Data loaders such as `tf.keras.utils.image_dataset_from_directory
       <https://www.tensorflow.org/api_docs/python/tf/keras/utils/image_dataset_from_directory>`_
       (available in ``tensorflow>=2.3.0``),
-    * External models (not implemented as PeekingDuck nodes) such `easyocr
+    * External models (not implemented as PeekingDuck nodes) such as `easyocr
       <https://pypi.org/project/easyocr/>`_, and
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
-The notebook corresponding in this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
+The notebook corresponding to this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available at a `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
 
 
 .. raw:: html
 
-    <h3>Running locally</h3>
+    <h3>Running Locally</h3>
 
 
 .. raw:: html
 
-    <h4>Prerequisites</h4>
+    <h4>Install Prerequisites</h4>
 
-.. code-block:: text
+.. container:: toggle
 
-    > pip install easyocr
-    > pip uninstall -y opencv-python-headless opencv-contrib-python
-    > pip install "tensorflow<2.7.0,>=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0
+   .. container:: header
 
-.. note::
-    
-    The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+      **Show/Hide Instructions for Linux/Mac (Intel)/Windows**
+
+   .. raw:: html
+
+      <p>
+        <div class="highlight"><pre
+          ><span class="pkd-raw-terminal">pip install easyocr</span
+          ><br /><span class="pkd-raw-terminal">pip uninstall -y opencv-python-headless opencv-contrib-python</span
+          ><br /><span class="pkd-raw-terminal">pip install "tensorflow&lt;2.8.0,&gt;=2.3.0" opencv-contrib-python==4.5.4.60 matplotlib oidv6 lap==0.4.0</span
+          ><br /><span class="pkd-raw-terminal">pip install colorama==0.4.4</span
+        ></pre></div>
+
+   .. note::
+       
+      The uninstallation step is necessary to ensure that the proper version of OpenCV is installed.
+  
+      You may receive an error message about the incompatibility between ``awscli`` and
+      ``colorama==0.4.4``. ``awscli`` is conservative about pinning versions to maintain backward
+      compatibility. The code presented in this tutorial has been tested to work and we have chosen
+      to prioritize PeekingDuck's dependency requirements.
+
+.. container:: toggle
+
+   .. container:: header
+
+      **Show/Hide Instructions for Mac (Apple Silicon)**
+
+   .. raw:: html
+
+        <div class="highlight"><pre
+          ><span class="pkd-raw-terminal">conda create -n pkd_notebook python=3.8</span
+          ><br /><span class="pkd-raw-terminal">conda activate pkd_notebook</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal">conda install jupyterlab matplotlib click colorama opencv openblas pyyaml \</span
+          ><br /><span>    requests scipy shapely tqdm pillow scikit-image python-bidi pandas awscli progressbar2</span
+          ><br /><span class="pkd-raw-terminal">pip install easyocr oidv6 lap</span
+          ><br /><span class="pkd-raw-terminal">pip uninstall opencv-contrib-python opencv-python-headless</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal"># Pick one:</span
+          ><br /><span class="pkd-raw-terminal"># for macOS Big Sur</span
+          ><br /><span class="pkd-raw-terminal">conda install -c apple tensorflow-deps=2.6.0</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-metal==0.2.0</span
+          ><br /><span class="pkd-raw-terminal"># for macOS Monterey</span
+          ><br /><span class="pkd-raw-terminal">conda install -c apple tensorflow-deps</span
+          ><br /><span class="pkd-raw-terminal">pip install tensorflow-macos tensorflow-metal</span
+          ><br /><span></span
+          ><br /><span class="pkd-raw-terminal">pip install torch torchvision</span
+          ><br /><span class="pkd-raw-terminal">pip install 'peekingduck==1.2.0rc2' --no-dependencies</span
+        ></pre></div>
+      </p>
+
+   .. note::
+
+      We install the problematic packages ``easyocr`` and ``oidv6`` first and then uninstall the
+      ``pip``-related OpenCV packages which were installed as dependencies. Mac (Apple silicon)
+      needs ``conda``'s OpenCV.
+
+      There will be a warning that ``easyocr`` needs some version of Pillow which can be ignored.
 
 
 .. raw:: html
 
+    <br />
     <h3>Download Demo Data</h3>
 
 We are using `Open Images Dataset V6 <https://storage.googleapis.com/openimages/web/index.html>`_
-as the dataset for this demo. We recommend using the third party
+as the dataset for this demo. We recommend using the third-party
 `oidv6 PyPI package <https://pypi.org/project/oidv6/>`_ to download the images necessary for this
 demo.
 
-Run the following command after installing:
+Run the following command after installing the prerequisites:
 
 .. admonition:: Terminal Session
 
@@ -344,7 +399,7 @@ Lines 9 - 10: You can also do::
 to avoid potential name conflicts.
 
 
-Initialize PeekingDuck nodes
+Initialize PeekingDuck Nodes
 ----------------------------
 
 .. container:: toggle
@@ -384,7 +439,7 @@ Create a Dataset Loader
           data_dir, batch_size=1, shuffle=False
       )
 
-Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``, you can
+Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``; you can
 also create your own data loader class.
 
 
@@ -405,7 +460,7 @@ Create a License Plate Parser Class
               self.reader = easyocr.Reader(["en"], gpu=use_gpu)
   
           def read(self, image):
-              """Reads text from the image and joins multiple multiple strings to a
+              """Reads text from the image and joins multiple strings to a
               single string.
               """
               return " ".join(self.reader.readtext(image, detail=0))
@@ -452,7 +507,6 @@ The Inference Loop
           len(dataset), num_col, figsize=(num_col * 3, len(dataset) * 3)
       )
       for i, (element, path) in enumerate(zip(dataset, dataset.file_paths)):
-          # TODO: Ensure model takes in BGR image after it's fixed
           image_orig = cv2.imread(path)
           image_orig = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
           height, width = image_orig.shape[:2]
@@ -490,10 +544,10 @@ how to convert between bounding box and image coordinates, please refer to the
 :ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` section in our
 tutorials.
 
-Lines 26 - 34: By carefully constructing the input for each of the nodes, we can perform the
+Lines 27 - 35: By carefully constructing the input for each of the nodes, we can perform the
 inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.
 
-Lines 36 - 37: We plot the data for debugging and visualization purposes.
+Lines 37 - 38: We plot the data for debugging and visualization purposes.
 
-Lines 41 - 47: We integrate the inference loop with external processes such as the license plate
+Lines 41 - 48: We integrate the inference loop with external processes such as the license plate
 parser we have created earlier.

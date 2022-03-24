@@ -29,6 +29,7 @@ class Node(AbstractNode):
 
     Inputs:
         |obj_attrs_data|
+        :mod:`dabble.check_large_groups` requires the ``groups`` attribute.
 
     Outputs:
         |large_groups_data|
@@ -41,7 +42,7 @@ class Node(AbstractNode):
         :mod:`draw.check_large_groups` used to take in ``obj_tags``
         (:obj:`List[str]`) as an input data type, which has been deprecated and
         now subsumed under :term:`obj_attrs`. The same attribute is accessed by
-        the ``groups`` key of :term:`obj_attrs`.
+        using the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

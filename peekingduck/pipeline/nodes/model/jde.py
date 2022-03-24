@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Human detection and tracking model."""
+"""🎯 Joint Detection and Embedding model for human detection and tracking."""
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.jdev1 import jde_model
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -39,6 +41,8 @@ class Node(AbstractNode):
         |bbox_scores_data|
 
         |obj_attrs_data|
+        :mod:`model.fairmot` produces the ``ids`` attribute which contains the
+        tracking IDs of the detections.
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -102,6 +106,8 @@ class Node(AbstractNode):
             self._reset_model()
 
         bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         return {
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,

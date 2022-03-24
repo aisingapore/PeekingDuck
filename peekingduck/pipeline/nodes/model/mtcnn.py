@@ -12,18 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast face detection model that works best with unmasked faces.
+"""🔲 Multi-task Cascaded Convolutional Networks for face detection. Works best
+with unmasked faces.
 """
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.mtcnnv1 import mtcnn_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initializes and uses the MTCNN model to infer bboxes from image frame.
+    """Initializes and uses the MTCNN model to infer bboxes from an image
+    frame.
 
     The MTCNN node is a single-class model capable of detecting human faces. To
     a certain extent, it is also capable of detecting bounding boxes around
@@ -43,20 +46,20 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        mtcnn_min_size (:obj:`int`): **default = 40**. |br|
+        min_size (:obj:`int`): **default = 40**. |br|
             Minimum height and width of face in pixels to be detected.
-        mtcnn_factor (:obj:`float`): **[0, 1], default = 0.709**. |br|
+        scale_factor (:obj:`float`): **[0, 1], default = 0.709**. |br|
             Scale factor to create the image pyramid. A larger scale factor
             produces more accurate detections at the expense of inference
             speed.
-        mtcnn_thresholds (:obj:`List`):
+        network_thresholds (:obj:`List`):
             **[0, 1], default = [0.6, 0.7, 0.7]**. |br|
             Threshold values for the Proposal Network (P-Net), Refine Network
             (R-Net) and Output Network (O-Net) in the MTCNN model.
 
             Calibration is performed at each stage in which bounding boxes with
             confidence scores less than the specified threshold are discarded.
-        mtcnn_score (:obj:`float`): **[0, 1], default = 0.7**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default = 0.7**. |br|
             Bounding boxes with confidence scores less than the specified
             threshold in the final output are discarded.
 
@@ -66,6 +69,18 @@ class Node(AbstractNode):
         https://arxiv.org/ftp/arxiv/papers/1604/1604.02878.pdf
 
         Model weights trained by https://github.com/blaueck/tf-mtcnn
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_min_size`` is renamed to ``min_size``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_factor`` is renamed to ``scale_factor``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_thresholds`` is renamed to ``network_thresholds``.
+
+    .. versionchanged:: 1.2.0
+        ``mtcnn_score`` is renamed to ``score_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -84,5 +99,7 @@ class Node(AbstractNode):
             "bbox_scores", and "bbox_labels".
         """
         bboxes, scores, _, classes = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {"bboxes": bboxes, "bbox_scores": scores, "bbox_labels": classes}
         return outputs

@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast Pose Estimation model
-"""
+"""🕺 Fast Pose Estimation model."""
 
 from typing import Any, Dict
 
@@ -71,7 +69,7 @@ class Node(AbstractNode):
             threshold will be kept in the output.
         keypoint_score_threshold (:obj:`float`): **[0,1], default = 0.3** |br|
             Detected keypoints confidence score threshold, only keypoints above
-            threshold will be output.
+            threshold will be kept in output.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -95,8 +93,8 @@ class Node(AbstractNode):
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"]
         )
-
-        bbox_labels = np.array(["Person"] * len(bboxes))
+        bbox_labels = np.array(["person"] * len(bboxes))
+        bboxes = np.clip(bboxes, 0, 1)
 
         return {
             "bboxes": bboxes,

@@ -58,8 +58,8 @@ class Detector:  # pylint: disable=too-few-public-methods
             f"IDs being detected: {self.config['detect_ids']}, \n\t"
             f"Max detections per class: {self.config['max_output_size_per_class']}, \n\t"
             f"Max total detections: {self.config['max_total_size']}, \n\t"
-            f"IOU threshold: {self.config['yolo_iou_threshold']}, \n\t"
-            f"Score threshold: {self.config['yolo_score_threshold']}"
+            f"IOU threshold: {self.config['iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['score_threshold']}"
         )
 
         return model
@@ -128,9 +128,9 @@ class Detector:  # pylint: disable=too-few-public-methods
             scores=tf.reshape(
                 pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
             ),
-            score_threshold=self.config["yolo_score_threshold"],
+            score_threshold=self.config["score_threshold"],
             max_total_size=self.config["max_total_size"],
-            iou_threshold=self.config["yolo_iou_threshold"],
+            iou_threshold=self.config["iou_threshold"],
         )
 
         return bboxes, scores, classes, nums

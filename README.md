@@ -37,7 +37,7 @@ Features
 * PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
 
 ### Create custom nodes
-* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/04_import_as_module.html) to fit into your existing workflows.
+* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/05_import_as_module.html) to fit into your existing workflows.
 
 
 Installation
@@ -49,9 +49,9 @@ Install from [PyPI](https://pypi.org/project/peekingduck/) using `pip`
 > pip install peekingduck
 ```
 
-*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_advanced_install.html).*
+*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_custom_install.html).*
 
-PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_basic_install.html).
+PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_standard_install.html).
 
 
 ```
@@ -61,7 +61,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 You should see a video of a person waving his hand with
 [bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif).
 
-The video will auto-close when it is run to the end, select the video window and press `q` to exit earlier.
+The video will close automatically when it is run to the end, select the video window and press `q` to exit earlier.
 
 
 Usage
@@ -79,12 +79,12 @@ Run the demo pipeline.
 > peekingduck run
 ```
 
-If you have a webcam, you should see yourself on the output screen with
-[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/posenet_demo.gif).
+If you have a webcam, you should see a man waving on the output screen with
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/default_pipeline.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
-Use `peekingduck --help` to display help information for PeekingDuck's command line interface.
+Use `peekingduck --help` to display help information for PeekingDuck's command-line interface.
 
 
 Gallery

@@ -40,7 +40,10 @@ class Node(AbstractNode):
         height_factor (:obj:`float`): **default = 2.5**. |br|
             A factor used to estimate real-world distance from pixels, based on
             average human height in metres. The value varies across different
-            camera set-ups, and calibration may be required.
+            camera set-ups, and calibration may be required. Please refer to
+            the :ref:`Social Distancing use case
+            <use_case_social_distancing_using_object_detection>` for more
+            information.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

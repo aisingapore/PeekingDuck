@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Slower but more accurate Pose Estimation model. Requires an object detector.
+"""🕺 High-Resolution Network: Deep high-resolution representation learning for
+human pose estimation. Requires an object detector.
 """
 
 
@@ -32,8 +32,8 @@ class Node(AbstractNode):
     called HRNetV1.
 
     The HRNet node is capable of detecting single human figures simultaneously
-    per inference and for each detected human figure, 17 keypoints are
-    estimated. The keypoint indices table can be found
+    per inference, with 17 keypoints estimated for each detected human figure.
+    The keypoint indices table can be found
     :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:

@@ -23,7 +23,7 @@ Demo
 .. |pipeline_config| replace:: privacy_protection_license_plates.yml
 .. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/privacy_protection_license_plates.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. admonition:: Terminal Session
@@ -78,13 +78,20 @@ If faster inference speed is required, the ``v4tiny`` model type can be used ins
 You can choose to mosaic or blur the detected license plate using the :mod:`draw.mosaic_bbox` or
 :mod:`draw.blur_bbox` node in the run config declaration.
 
+.. figure:: /assets/use_cases/privacy_protection_license_plates_comparison.jpg
+   :alt: De-identification effect comparison
+   :class: no-scaled-link
+   :width: 50 %
+
+   De-identification with mosaic (left) and blur (right).
+
 **3. Adjusting Nodes**
 
 With regard to the YOLOv4 model, some common node configurations that you might want to adjust are:
 
-* ``yolo_score_threshold``: The bounding boxes with confidence score less than the specified score
+* ``score_threshold``: The bounding boxes with confidence score less than the specified score
   threshold are discarded. (default = 0.1)
-* ``yolo_iou_threshold``: The overlapping bounding boxes above the specified Intersection over
+* ``iou_threshold``: The overlapping bounding boxes above the specified Intersection over
   Union (IoU) threshold are discarded. (default = 0.3)
 
 In addition, some common node behaviors that you might want to adjust for the
@@ -93,6 +100,6 @@ In addition, some common node behaviors that you might want to adjust for the
 * ``mosaic_level``: Defines the resolution of a mosaic filter (:math:`width \times height`); the
   value corresponds to the number of rows and columns used to create a mosaic. (default = 7) For
   example, the default value creates a :math:`7 \times 7` mosaic filter. Increasing the number
-  increases the intensity of pixelation over an area.
+  increases the intensity of pixelization over an area.
 * ``blur_level``:  Defines the standard deviation of the Gaussian kernel used in the Gaussian
-  filter. (default = 50) The higher the blur level, the more intense is the blurring.
+  filter. (default = 50) The higher the blur level, the greater the blur intensity.

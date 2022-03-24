@@ -114,11 +114,11 @@
    :mod:`dabble.statistics`, and :mod:`output.csv_writer`.
 
 .. |bboxes_def| replace:: A NumPy array of shape :math:`(N, 4)` containing
-   normalized bounding box coordinates of detected objects where :math:`N` is
-   the number of detected objects. Each bounding box is represented as
-   :math:`(x_1, y_1, x_2, y_2)` where :math:`(x_1, y_1)` is the top left corner
-   and :math:`(x_2, y_2)` is the bottom right corner. The order corresponds to
-   :term:`bbox_labels` and :term:`bbox_scores`.
+   normalized bounding box coordinates of :math:`N` detected objects. Each
+   bounding box is represented as :math:`(x_1, y_1, x_2, y_2)` where
+   :math:`(x_1, y_1)` is the top-left corner and :math:`(x_2, y_2)` is the
+   bottom right corner. The order corresponds to :term:`bbox_labels` and
+   :term:`bbox_scores`.
 
 .. |bbox_labels_def| replace:: A NumPy array of shape :math:`(N)` containing
    strings representing the labels of detected objects. The order corresponds to
@@ -130,7 +130,7 @@
 
 .. |btm_midpoint_def| replace:: A list of tuples each representing the
    :math:`(x, y)` coordinate of the bottom middle of a bounding box for use in
-   zone analytics. The order of corresponds to :term:`bboxes`.
+   zone analytics. The order corresponds to :term:`bboxes`.
 
 .. |count_def| replace:: An integer representing the number of counted objects.
 
@@ -140,8 +140,10 @@
 
 .. |cum_min_def| replace:: Cumulative minimum of an attribute over time.
 
-.. |density_map_def| replace:: A NumPy array representing the number of persons
-   per pixel. The sum of the array returns the total estimated count of people.
+.. |density_map_def| replace:: A NumPy array of shape :math:`(H, W)`
+   representing the number of persons per pixel. :math:`H` and :math:`W` are the
+   height and width of the input image, respectively. The sum of the array
+   returns the total estimated count of people.
 
 .. |filename_def| replace:: The filename of video/image being read.
 
@@ -151,17 +153,19 @@
 .. |img_def| replace:: A NumPy array of shape :math:`(height, width, channels)`
    containing the image data in BGR format.
 
-.. |keypoints_def| replace:: A NumPy array of shape:math:`(N, K, 2)` containing
-   the `x, y` coordinates of detected poses where :math:`N` is the number of
-   detected poses, and :math:`K` is the number of individual keypoints.
-   Keypoints with low confidence scores (below threshold) will be replaced by
-   ``-1``.
+.. |keypoints_def| replace:: A NumPy array of shape :math:`(N, K, 2)` containing
+   the :math:`(x, y)` coordinates of detected poses where :math:`N` is the
+   number of detected poses, and :math:`K` is the number of individual
+   keypoints. Keypoints with low confidence scores (below threshold) will be
+   replaced by ``-1``.
 
-.. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D', 2)`
-   containing the `x, y` coordinates of adjacent keypoint pairs. :math:`D'` is
-   the number of valid keypoint pairs where both keypoints are detected.
+.. |keypoint_conns_def| replace:: A NumPy array of shape :math:`(N, D_n', 2, 2)`
+   containing the :math:`(x, y)` coordinates of adjacent keypoint pairs where
+   :math:`N` is the number of detected poses, and :math:`D_n'` is the number of
+   valid keypoint pairs for the the :math:`n`-th pose where both keypoints are
+   detected.
 
-.. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K, 1)`
+.. |keypoint_scores_def| replace:: A NumPy array of shape :math:`(N, K)`
    containing the confidence scores of detected poses where :math:`N` is the
    number of detected poses and :math:`K` is the number of individual keypoints.
    The confidence score has a range of :math:`[0, 1]`.
@@ -179,9 +183,8 @@
 
 .. |obj_attrs_def| replace:: A dictionary of attributes associated with each
    bounding box, in the same order as :term:`bboxes`. Different nodes that
-   produce this :term:`obj_attrs` output type may contribute different attributes.
-   For example, :mod:`dabble.tracking` produces the ``ids`` attribute while
-   :mod:`dabble.check_nearby_objs` produces the ``flags`` attribute.
+   produce this :term:`obj_attrs` output type may contribute different
+   attributes.
 
 .. |pipeline_end_def| replace:: A boolean that evaluates to ``True`` when the
    pipeline is completed. Suitable for operations that require the entire
@@ -189,9 +192,10 @@
 
 .. |saved_video_fps_def| replace:: FPS of the recorded video, upon filming.
 
-.. |zones_def| replace:: A nested list of coordinates, with each sub-list
-   containing the :math:`(x, y)` coordinates representing the points that form
-   the boundaries of a zone. The order corresponds to :term:`zone_count`.
+.. |zones_def| replace:: A nested list of :math:`Z` zones. Each zone is
+   described by :math:`3` **or more** points which contains the :math:`(x, y)`
+   coordinates forming the boundary of a zone. The order corresponds to
+   :term:`zone_count`.
 
 .. |zone_count_def| replace:: A list of integers representing the count of a
    pre-selected object class (for example, "person") detected in each specified

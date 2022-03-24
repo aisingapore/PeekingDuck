@@ -12,12 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast face detection model that can distinguish between masked and unmasked
-faces.
+"""🔲 Fast face detection model that can distinguish between masked and
+unmasked faces.
 """
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
 from peekingduck.pipeline.nodes.node import AbstractNode
@@ -53,10 +54,10 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             Maximum number of detected instances for each class in an image.
         max_total_size (:obj:`int`): **default = 50**. |br|
             Maximum total number of detected instances in an image.
-        yolo_iou_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
             Overlapping bounding boxes above the specified IoU (Intersection
             over Union) threshold are discarded.
-        yolo_score_threshold (:obj:`float`): **[0, 1], default = 0.7**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default = 0.7**. |br|
             Bounding box with confidence score less than the specified
             confidence score threshold is discarded.
 
@@ -66,6 +67,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
+
+    .. versionchanged:: 1.2.0
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
+
+    .. versionchanged:: 1.2.0
+        ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -74,6 +81,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         bboxes, labels, scores = self.model.predict(inputs["img"])
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "bbox_labels": labels,

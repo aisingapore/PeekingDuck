@@ -36,6 +36,9 @@ class Node(AbstractNode):
 
     Outputs:
         |obj_attrs_data|
+        :mod:`dabble.check_nearby_objs` produces the ``flags`` attribute which
+        contains either the ``tag_msg`` for objects that are near each other or
+        an empty string for objects with no other objects nearby.
 
     Configs:
         near_threshold (:obj:`float`): **default = 2.0**. |br|
@@ -48,7 +51,7 @@ class Node(AbstractNode):
         :mod:`draw.check_nearby_objs` used to return ``obj_tags``
         (:obj:`List[str]`) as an output data type, which has been deprecated
         and now subsumed under :term:`obj_attrs`. The same attribute is
-        accessed by the ``flags`` key of :term:`obj_attrs`.
+        accessed by using the ``flags`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

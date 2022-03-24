@@ -28,7 +28,7 @@ Demo
 .. |pipeline_config| replace:: social_distancing.yml
 .. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/social_distancing.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. admonition:: Terminal Session
@@ -120,6 +120,8 @@ Some common node behaviors that you might need to adjust are:
   stricter the social distancing.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.
+
+.. _use_case_social_distancing_using_object_detection:
 
 **3. Using Object Detection (Optional)**
 

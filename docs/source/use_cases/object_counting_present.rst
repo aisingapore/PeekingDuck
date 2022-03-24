@@ -34,7 +34,7 @@ Demo
 .. |pipeline_config| replace:: object_counting_present.yml
 .. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/object_counting_present.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. admonition:: Terminal Session
@@ -58,7 +58,7 @@ objects we want to detect. This allows the application to identify where objects
 the video feed. The location is returned as two `x, y` coordinates in the form
 :math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left corner of the bounding box,
 and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding box of each object
-detected. For more information on how adjust the ``yolo`` node, check out its
+detected. For more information on how to adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
 .. image:: /assets/use_cases/yolo_demo.gif

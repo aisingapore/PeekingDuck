@@ -21,8 +21,8 @@ entrance of a mall.
    :class: no-scaled-link
    :width: 50 %
 
-Zone counting is done by looking at the counts of objects detected by the object detection models
-that fall within the zones specified. For example, we can count the number of people in the blue
+Zone counting is done by counting the number of objects detected by the object detection models
+that fall within the specified zones. For example, we can count the number of people in the blue
 and red zones, as shown in the GIF above. This is explained in the `How it Works`_ section.
 
 Demo
@@ -31,7 +31,7 @@ Demo
 .. |pipeline_config| replace:: zone_counting.yml
 .. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/zone_counting.yml
 
-To try our solution on your own computer, :doc:`install </getting_started/02_basic_install>` and run
+To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 .. admonition:: Terminal Session
@@ -43,7 +43,7 @@ How it Works
 
 There are three main components to obtain the zone counts:
 
-#. The detection from the object detection model, which is the bounding boxes,
+#. The detections from the object detection model, which are the bounding boxes,
 #. The bottom midpoint of the bounding boxes, derived from the bounding boxes, and
 #. The zones, which can be set in the :mod:`dabble.zone_count` configurable parameters.
 
@@ -52,11 +52,12 @@ There are three main components to obtain the zone counts:
 
 We use an open source object detection estimation model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
 and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of chosen
-objects we want to detect. This allows the application to identify where objects are located within
-the video feed. The location is returned as two `x, y` coordinates in the form
-:math:`[x_1, y_1, x_2, y_2]`, where :math:`(x_1, y_1)` is the top left corner of the bounding box,
-and :math:`(x_2, y_2)` is the bottom right. These are used to form the bounding box of each object
-detected. For more information on how adjust the ``yolo`` node, check out its
+types of objects we want to detect. This allows the application to identify where objects are
+located within the video feed. The location is returned as two
+:ref:`x, y coordinates <tutorial_coordinate_systems>` in the form :math:`[x_1, y_1, x_2, y_2]`,
+where :math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the
+bottom right. These are used to form the bounding box of each object detected. For more information
+on how to adjust the ``yolo`` node, check out its
 :doc:`configurable parameters </nodes/model.yolo>`.
 
 .. image:: /assets/use_cases/yolo_demo.gif
@@ -88,14 +89,14 @@ was created using the following zone::
    :class: no-scaled-link
    :width: 50 %
 
-Given a resolution of 1280 by 720, these correspond to the top left of the image, 60% of the length
-at the top of the image, 60% of the length at the bottom of the image, and the bottom left of the
-image. These points in a clockwise direction that form the rectangular blue zone. Zones do not have
-to be rectangular in shape. It can be any polygonal shape, dictated by the number and position of
+Given a resolution of 1280 by 720, these correspond to the top-left of the image, 60% of the length
+at the top of the image, 60% of the length at the bottom of the image, and the bottom-left of the
+image. These points form the rectangular blue zone in a clockwise direction. Zones do not have to
+be rectangular in shape. They can be of any polygonal shape, dictated by the number and position of
 the `x, y` coordinates set in a zone.
 
-Note that resolution parameter needs to be configured the resolution parameter to that of the image
-input before using fractions for the `x, y` coordinates.
+Note that because the `x, y` coordinates are fractions of the image resolution, the resolution
+config for :mod:`dabble.zone_count` needs to be set correctly.
 
 For finer control over the exact coordinates, the pixel coordinates can be used instead. Using the
 same example, the blue zone can be created using the following zone configuration::
@@ -150,15 +151,15 @@ alternative model better suited to your use case.
 
 **2. Bottom Midpoint Node**
 
-The bottom midpoint node is called by including :mod:`dabble.bbox_to_btm_midpoint` in the run
+The bottom midpoint node is called by including :mod:`dabble.bbox_to_btm_midpoint` in the pipeline
 config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node
 has no configurable parameters.
 
 **3. Zone Counting Node**
 
 The zone counting node is called by including :mod:`dabble.zone_count` in the run config
-declaration. This uses the bottom midpoints of all detected bounding boxes an outputs the number of
-object counts in each specified zone. The node configurable parameters can be found below.
+declaration. This uses the bottom midpoints of all detected bounding boxes and outputs the number
+of object counts in each specified zone. The node configurable parameters can be found below.
 
 .. _adjusting_nodes:
 
@@ -169,8 +170,8 @@ as the type of object to detect, etc. For the object detection model used in thi
 the ``yolo`` node :doc:`documentation </nodes/model.yolo>` for adjustable behaviors that can
 influence the result of the zone counting node.
 
-With regards to the zone counting node, some common node behaviors for the zone counting node that
-you might need to adjust are:
+With regards to the zone counting node, some common node behaviors that you might need to adjust
+are:
 
 * ``resolution``: If you are planning to use fractions to set the coordinates for the area of the
   zone, the resolution should be set to the image/video/livestream resolution used.
