@@ -107,8 +107,11 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
             if isinstance(node, str):
                 if node in ["input.live", "input.recorded"]:
                     deprecation_warning(node, "input.visual")
-                    node = node.replace("live", "visual")
-                    node = node.replace("recorded", "visual")
+                    if node == "input.live":
+                        node = {"input.visual": {"source": 0}}
+                    else:
+                        self.logger.error("input.recorded with no parameters error!")
+                        node = "input.visual"
             else:
                 if "input.live" in node:
                     node_config = node.pop("input.live")
