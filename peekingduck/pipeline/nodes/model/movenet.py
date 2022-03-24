@@ -93,7 +93,7 @@ class Node(AbstractNode):
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"]
         )
-        bbox_labels = np.array(["Person"] * len(bboxes))
+        bbox_labels = np.array(["person"] * len(bboxes))
         bboxes = np.clip(bboxes, 0, 1)
 
         return {

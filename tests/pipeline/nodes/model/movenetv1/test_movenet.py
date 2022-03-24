@@ -161,7 +161,7 @@ class TestMoveNet:
                 f"unexpected number of detection for {i} in singlepose, "
                 f"expected 1 got {len(output[i])}"
             )
-        assert output["bbox_labels"] == ["Person"]
+        assert output["bbox_labels"] == ["person"]
         ground_truth = GT_RESULTS[model_type][single_person_image]
         for key in ("bboxes", "keypoints", "keypoint_scores", "keypoint_conns"):
             gt_values = np.asarray(ground_truth[key])
@@ -193,7 +193,7 @@ class TestMoveNet:
             assert (
                 len(output[i]) >= 2
             ), f"unexpected number of outputs for {i} in multipose"
-        npt.assert_array_equal(output["bbox_labels"], "Person")
+        npt.assert_array_equal(output["bbox_labels"], "person")
         ground_truth = GT_RESULTS[model_type][multi_person_image]
         for key in ("bboxes", "keypoints", "keypoint_scores"):
             gt_values = ground_truth[key]

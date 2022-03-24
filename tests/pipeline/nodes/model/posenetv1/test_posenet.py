@@ -82,7 +82,7 @@ class TestPoseNet:
         for i in expected_output.keys():
             assert len(output[i]) >= 1, "unexpected number of outputs for {}".format(i)
         for label in output["bbox_labels"]:
-            assert label == "Person"
+            assert label == "person"
 
     def test_no_weights(self, posenet_config, replace_download_weights):
         with mock.patch(
