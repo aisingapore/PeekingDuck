@@ -9,7 +9,7 @@ How can I post-process and visualize model outputs?
 The common output of all ``model`` nodes is :term:`bboxes`. :term:`bboxes` can
 be used for subsequent actions like counting (:mod:`dabble.bbox_count`), drawing
 (:mod:`draw.bbox`), tagging (:mod:`draw.tag`), etc. You can also create custom
-nodes which takes :term:`bboxes` as an input to visualize your results.
+nodes which take :term:`bboxes` as an input to visualize your results.
 
 
 How can I dynamically use all prior outputs as the input at run time?
