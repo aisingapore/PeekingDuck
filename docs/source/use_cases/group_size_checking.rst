@@ -21,7 +21,7 @@ The most accurate way to measure distance is to use a 3D sensor with depth perce
 RGB-D camera or a `LiDAR <https://en.wikipedia.org/wiki/Lidar>`_. However, most cameras such as CCTVs
 and IP cameras usually only produce 2D videos. We developed heuristics that are able to give an
 approximate measure of physical distance from 2D videos, addressing this limitation. This is
-further elaborated in the `How it Works`_ section.
+further elaborated in the `How It Works`_ section.
 
 Demo
 ====
@@ -36,7 +36,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are three main components to obtain the distance between individuals:

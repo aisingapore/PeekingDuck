@@ -15,7 +15,7 @@ the guidelines.
    :width: 50 %
 
 We have trained a custom YOLOv4 model to detect whether or not a person is wearing a face mask.
-This is explained in the `How it Works`_ section.
+This is explained in the `How It Works`_ section.
 
 Demo
 ====
@@ -30,7 +30,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 The main component is the detection of face mask using the custom YOLOv4 model.

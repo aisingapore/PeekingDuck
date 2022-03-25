@@ -17,7 +17,7 @@ event, monitor crowd levels and prevent human stampedes.
 
 Our solution utilizes CSRNet to estimate the size of a crowd. In addition, it generates a heat map
 that can be used to pinpoint possible bottlenecks at a venue. This is explained in the 
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
@@ -34,7 +34,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/large_crowd.mp4>`_.
 
-How it Works
+How It Works
 ============
 
 There are two main components to our solution:

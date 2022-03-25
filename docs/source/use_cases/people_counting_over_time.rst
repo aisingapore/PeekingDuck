@@ -16,7 +16,7 @@ applied to areas such as retail analytics, queue management, or occupancy monito
    :width: 50 %
 
 Our solution automatically detects, tracks and counts people over time. This is explained in the
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
@@ -34,7 +34,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/people_walking.mp4>`_.
 
 
-How it Works
+How It Works
 ============
 
 People counting over time comprises three main components:

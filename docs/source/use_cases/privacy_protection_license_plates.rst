@@ -15,7 +15,7 @@ privacy laws.
    :width: 50 %
 
 Our solution automatically detects and blurs vehicles' license plates. This is explained in the
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
@@ -30,7 +30,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are two main components to license plate anonymization:

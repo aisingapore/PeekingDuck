@@ -19,7 +19,7 @@ Overview
    :class: no-scaled-link
    :width: 100 %
 
-<General one-liner or two on the solution>. This is explained in the `How it Works`_ section.
+<General one-liner or two on the solution>. This is explained in the `How It Works`_ section.
 
 Demo
 ====
@@ -37,7 +37,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are <number> main components to our solution:

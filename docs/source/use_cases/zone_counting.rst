@@ -22,7 +22,7 @@ vehicles travelling on one side of a road, or counting the shoppers entering a m
 
 Zone counting is done by counting the number of objects detected by the object detection models
 that fall within the specified zones. For example, we can count the number of people in the blue
-and red zones, as shown in the GIF above. This is explained in the `How it Works`_ section.
+and red zones, as shown in the GIF above. This is explained in the `How It Works`_ section.
 
 Demo
 ====
@@ -37,7 +37,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are three main components to obtain the zone counts:

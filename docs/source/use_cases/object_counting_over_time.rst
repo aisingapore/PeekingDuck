@@ -32,7 +32,7 @@ giving rise to a wide breadth of potential applications.
 
 Object counting over time is achieved by detecting the objects using an object detection model,
 then tracking each unique object. As a new object appears, the number of counted objects is
-incremented. This is explained in the `How it Works`_ section.
+incremented. This is explained in the `How It Works`_ section.
 
 Demo
 ====
@@ -47,7 +47,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 Object counting over time comprises three main components:
@@ -120,7 +120,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 **1. Object Detection Node**
 
 In the demo, the :mod:`model.efficientdet` node is used for object detection, set to detect cars.
-As mentioned in the earlier `How it Works`_ section, for object tracking to work well, the upstream
+As mentioned in the earlier `How It Works`_ section, for object tracking to work well, the upstream
 object detector needs to produce predictions which are as accurate as possible. Please
 take a look at the :doc:`benchmarks </resources/01a_object_detection>` of object detection models
 that are included in PeekingDuck if you would like to use a different model or model type better
@@ -157,7 +157,7 @@ For :mod:`model.efficientdet`:
 
 For :mod:`dabble.tracking`:
 
-* ``tracking_type``: Choose either ``["iou", "mosse"]``, described earlier in the `How it Works`_ 
+* ``tracking_type``: Choose either ``["iou", "mosse"]``, described earlier in the `How It Works`_ 
   section.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.

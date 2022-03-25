@@ -26,7 +26,7 @@ scenarios, from traffic control to counting livestock.
    :width: 50 %
 
 In the GIF above, the count and statistics change as the number of detected persons change. 
-This is explained in the `How it Works`_ section.
+This is explained in the `How It Works`_ section.
 
 Demo
 ====
@@ -41,7 +41,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are 3 main components to this solution:
