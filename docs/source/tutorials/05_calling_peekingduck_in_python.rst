@@ -1,14 +1,14 @@
-*************************************
-Import PeekingDuck as a Python Module
-*************************************
+*****************************
+Calling PeekingDuck in Python
+*****************************
 
 .. include:: /include/substitution.rst
 
 
-.. _tutorial_import_peekingduck:
+.. _tutorial_calling_peekingduck_in_python:
 
-Running in a Script
-===================
+Using PeekingDuck's Pipeline
+============================
 
 As an alternative to running PeekingDuck using the command-line interface (CLI), users
 can also import PeekingDuck as a Python module and run it in a Python script. This demo
@@ -238,8 +238,8 @@ Lines 17 - 23: The debugging output showing the frame number and the confidence 
 bounding boxes predicted as "cat".
 
 
-Running in a Notebook
-=====================
+Integrating with Your Workflow
+==============================
 
 The modular design of PeekingDuck allows users to pick and choose the nodes they want to use. Users
 are also able to use PeekingDuck nodes with external packages when designing their pipeline.

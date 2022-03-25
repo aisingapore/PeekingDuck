@@ -37,7 +37,7 @@ Features
 * PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
 
 ### Create custom nodes
-* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/05_import_as_module.html) to fit into your existing workflows.
+* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/05_calling_peekingduck_in_python.html) to fit into your existing workflows.
 
 
 Installation
