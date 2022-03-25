@@ -64,7 +64,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         resize (:obj:`Dict`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Dimension of extracted image frame.
-        source (:obj:`int`):
+        source (:obj:`Union[int, str]`):
             **default = https://storage.googleapis.com/peekingduck/videos/wave.mp4**. |br|
             Input source can be: |br|
             - filename : local image or video file |br|
