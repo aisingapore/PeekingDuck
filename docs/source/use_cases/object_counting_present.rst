@@ -7,10 +7,10 @@ Object Counting (Present)
 Overview
 ========
 
-Object counting (present) is a no-frills solution within PeekingDuck's suite of 
+Object counting (present) is a solution within PeekingDuck's suite of 
 :ref:`smart monitoring <smart_monitoring_use_cases>` use cases. It counts the number of objects
 detected by PeekingDuck's object detection models at the present point in time, and calculates 
-statistics such as the cumulative average, maximum, and minimum for further analytics. Up to
+statistics such as the cumulative average, maximum and minimum for further analytics. Up to
 :ref:`80 types <general-object-detection-ids>` of objects can be counted, including humans,
 vehicles, animals and even household objects. Thus, this can be applied to a wide variety of
 scenarios, from traffic control to counting livestock.

@@ -37,15 +37,18 @@ You may like to try it on this `sample video <https://storage.googleapis.com/pee
 How it Works
 ============
 
-There are two main components to our solution: 1) crowd counting; and 2) heat map generation.
+There are two main components to our solution:
+
+#. Crowd counting, and
+#. Heat map generation.
 
 **1. Crowd Counting**
 
 We use an open source crowd counting model known as `CSRNet <https://arxiv.org/pdf/1802.10062.pdf>`_
 to predict the number of people in a sparse or dense crowd. The solution uses the
 sparse crowd model by default and can be configured to use the dense crowd model if required. The
-dense and sparse crowd models were trained using data from ShanghaiTech Part A and Part B
-respectively.
+dense and sparse crowd models were trained using data from `ShanghaiTech <https://github.com/desenzhou/ShanghaiTechDataset>`_
+Part A and Part B respectively.
 
 As a rule of thumb, you might want to use the dense crowd model if the people in a given image or
 video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how to adjust the

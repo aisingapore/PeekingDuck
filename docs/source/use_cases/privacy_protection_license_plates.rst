@@ -6,7 +6,7 @@ Overview
 ========
 
 Posting images or videos of our vehicles online might lead to others misusing our license plate
-number to reveal our personal information. Our solution that performs license plate anonymization,
+numbers to reveal our personal information. Our solution performs license plate anonymization,
 and can also be used to comply with the General Data Protection Regulation (GDPR) or other data
 privacy laws.
 
@@ -52,7 +52,7 @@ the :doc:`license plate detector configurable parameters </nodes/model.yolo_lice
 **2. License Plate De-Identification**
 
 To perform license plate de-identification, the areas bounded by the bounding boxes are blurred
-using a Gaussian function (Gaussian blur).
+using a Gaussian blur function.
 
 Nodes Used
 ==========
@@ -70,7 +70,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    
 **1. License Plate Detection Node**
 
-By default, :mod:`model.yolo_license_plate` uses the ``v4`` model variant to detect license plates.
+By default, :mod:`model.yolo_license_plate` uses the ``v4`` model type to detect license plates.
 If faster inference speed is required, the ``v4tiny`` model type can be used instead. 
 
 **2. License Plate De-Identification Nodes**
