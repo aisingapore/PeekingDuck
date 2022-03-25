@@ -6,6 +6,11 @@
 Tutorials
 *********
 
+The tutorials are presented in order of increasing difficulty, from the basic
+:doc:`Hello Computer Vision </tutorials/01_hello_cv>` to the advanced
+:doc:`Peaking Duck </tutorials/04_peaking_duck>`. It is recommended to go
+through these tutorials in order, especially if you are new to PeekingDuck.
+
 .. toctree::
    :maxdepth: 2
 

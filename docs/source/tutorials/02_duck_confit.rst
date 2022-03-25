@@ -148,8 +148,12 @@ For instance, :mod:`draw.bbox` default configuration is:
 
    show_labels: False
 
+| The keys ``input`` and ``output`` are compulsory and common across every node.
+| ``input`` specifies the data types the node would consume, to be read from the pipeline.
+| ``output`` specifies the data types the node would produce, to be put into the pipeline.
+
 By default, ``show_labels`` is disabled.
-When you enable it on with ``show_labels: True``, what PeekingDuck does is to override
+When you enable it with ``show_labels: True``, what PeekingDuck does is to override
 the default ``show_labels: False`` configuration with your specified ``True`` value.
 You will see another instance of this at work in the advanced *Peaking Duck* tutorial on
 :ref:`Tracking People Within a Zone <tutorial_tracking_people_within_zone>`.

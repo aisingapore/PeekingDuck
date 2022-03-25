@@ -38,7 +38,7 @@ First, create a new custom ``output.sqlite`` node in the ``custom_project`` fold
       | Select node type (input, augment, model, draw, dabble, output): \ :green:`output` \
       | Enter node name [my_custom_node]: \ :green:`sqlite` \
       |
-      | Node directory:	/user/wave_project/src/custom_nodes
+      | Node directory:	~user/wave_project/src/custom_nodes
       | Node type:	output
       | Node name:	sqlite
       |
@@ -208,7 +208,7 @@ Edit the following **five files** as described below:
    waves<tutorial_count_hand_wave>` tutorial, except for the changes in the last few
    lines as shown above.
    These changes outputs the ``hand_direction`` and ``num_waves`` to the pipeline's 
-   data pool for subsequent consumption by the new ``output.sqlite`` custom node.
+   data pool for subsequent consumption by the ``output.sqlite`` custom node.
 
 
 #. **pipeline_config.yml**:
@@ -336,7 +336,7 @@ Object Tracking
 Object tracking is the application of CV models to automatically detect objects 
 in a video and to assign a unique identity to each of them.
 These objects can be either living (e.g. person) or non-living (e.g. car). 
-Then, as these objects moved around in the video, they are identified based on 
+As they move around in the video, these objects are identified based on 
 their assigned identities and tracked according to their movements.
 
 This tutorial demonstrates using :mod:`dabble.statistics` with a custom node to 
@@ -419,7 +419,7 @@ Start by creating a custom node ``dabble.filter_bbox``:
       | Select node type (input, augment, model, draw, dabble, output): \ :green:`dabble` \
       | Enter node name [my_custom_node]: \ :green:`filter_bbox` \
       |
-      | Node directory:	/user/people_walking/src/custom_nodes
+      | Node directory:	~user/people_walking/src/custom_nodes
       | Node type:	dabble
       | Node name:	filter_bbox
       |
@@ -481,7 +481,7 @@ We make use of :mod:`dabble.zone_count` and :mod:`dabble.bbox_to_btm_midpoint` n
 create a zone in the middle. The zone is defined by a rectangle with the 
 four corners (0.35, 0.0) - (0.65, 0.0) - (0.65, 1.0) - (0.35, 1.0).
 (For more info, see :doc:`Zone Counting </use_cases/zone_counting>`)
-This zone is also passed to our custom node ``dabble.filter_bbox`` for bounding box
+This zone is also defined in our custom node ``dabble.filter_bbox`` for bounding box
 filtering.
 What ``dabble.filter_bbox`` will do is to take the list of bboxes as input and 
 output a list of bboxes within the zone, dropping all bboxes outside it.
@@ -493,7 +493,7 @@ walking in the zone currently.
 
 The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
 
-**src/custom_nodes/configs/dabble/filter_bbox.yml**:
+#. **src/custom_nodes/configs/dabble/filter_bbox.yml**:
 
    .. code-block:: yaml
       :linenos:
@@ -513,7 +513,7 @@ The ``filter_bbox.yml`` and ``filter_bbox.py`` files are shown below:
       See :ref:`Configuration - Behind The Scenes<tutorial_behind_the_scenes>` for more
       details.
 
-**src/custom_nodes/dabble/filter_bbox.py**:
+#. **src/custom_nodes/dabble/filter_bbox.py**:
 
    .. container:: toggle
 
