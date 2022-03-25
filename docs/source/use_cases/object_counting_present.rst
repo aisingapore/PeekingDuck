@@ -52,7 +52,7 @@ There are 3 main components to this solution:
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
+We use an open source object detection model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
 and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of chosen
 objects we want to detect. This allows the application to identify where objects are located within
 the video feed. The location is returned as two `x, y` coordinates in the form
@@ -72,7 +72,7 @@ detected for the object category.
 
 **3. Calculate Statistics**
 
-The cumulative average, minimum, and maximum over time is calculated from the count from each frame.
+The cumulative average, minimum and maximum over time is calculated from the count from each frame.
 
 Nodes Used
 ==========
@@ -99,8 +99,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 By default, the node uses the YOLOv4-tiny model for object detection, set to detect people. Please
 take a look at the :doc:`benchmarks </resources/01a_object_detection>` of object detection models
-that are included in PeekingDuck if you would like to use a different model variation or an
-alternative model better suited to your use case.
+that are included in PeekingDuck if you would like to use a different model or model type better
+suited to your use case.
 
 **2. Object Counting Node**
 
@@ -109,7 +109,7 @@ This node has no configurable parameters.
 
 **3. Statistics Node**
 
-The :mod:`dabble.statistics` node calculates the :term:`cum_avg`, :term:`cum_max`, and :term:`cum_min`
+The :mod:`dabble.statistics` node calculates the :term:`cum_avg`, :term:`cum_max` and :term:`cum_min`
 from the output of the object counting node.
 
 **4. Adjusting Nodes**

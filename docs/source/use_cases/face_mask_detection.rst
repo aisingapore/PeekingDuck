@@ -7,7 +7,7 @@ Overview
 
 Wearing of face masks in public places can help prevent the spread of COVID-19 and other infectious
 diseases. AI Singapore has developed a solution that checks whether or not a person is wearing a
-face mask. This can be used in places such as in malls or shops to ensure that visitors adhere to
+face mask. This can be used in places such as malls or shops to ensure that visitors adhere to
 the guidelines.
 
 .. image:: /assets/use_cases/face_mask_detection.gif

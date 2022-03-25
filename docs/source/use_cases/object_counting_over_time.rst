@@ -9,7 +9,7 @@ Overview
 
 Object counting over time involves detecting and tracking unique objects, and incrementing the
 count when new objects appear. When applied to the vehicles in the GIF below, it can count the
-total number of vehicles passing by in a period of time, aiding tranportation planning by
+total number of vehicles passing by over a period of time, aiding transportation planning by
 identifying periods of peak traffic. This use case is not limited to just vehicles, as up to
 :ref:`80 types <general-object-detection-ids>` of objects can be monitored (including animals),
 giving rise to a wide breadth of potential applications.
@@ -60,7 +60,7 @@ Object counting over time comprises three main components:
 
 The EfficientDet model is used here to predict the bounding boxes of objects of interest. This
 allows the application to identify where each object is located within the video feed. The location
-is returned as two `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
+is returned as a pair of `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
 :math:`(x_1, y_1)` is the top-left corner of the bounding box, and :math:`(x_2, y_2)` is the bottom
 right.
 
@@ -88,9 +88,9 @@ More details can be found from this
 
 **3. Incrementing the Count**
 
-Monotonically increasing integer IDs beginning from "0" are assigned to new unique objects. For
-example, the first tracked object is assigned an ID of "0", the second tracked object is assigned
-an ID of "1", and so on. Thus the total number of unique objects that have appeared in the entire
+Monotonically increasing integer IDs beginning from `0` are assigned to new unique objects. For
+example, the first tracked object is assigned an ID of `0`, the second tracked object is assigned
+an ID of `1`, and so on. Thus the total number of unique objects that have appeared in the entire
 duration is simply the cumulative maximum.
 
 
@@ -123,8 +123,8 @@ In the demo, the :mod:`model.efficientdet` node is used for object detection, se
 As mentioned in the earlier `How it Works`_ section, for object tracking to work well, the upstream
 object detector needs to produce predictions which are as accurate as possible. Please
 take a look at the :doc:`benchmarks </resources/01a_object_detection>` of object detection models
-that are included in PeekingDuck if you would like to use a different model variation or an
-alternative model better suited to your use case.
+that are included in PeekingDuck if you would like to use a different model or model type better
+suited to your use case.
 
 **2. Tracking Node**
 
@@ -140,7 +140,7 @@ its usage to only humans.
 
 The :mod:`dabble.statistics` node retrieves the maximum detected ID for each frame. If the ID
 exceeds the previous maximum, the :term:`cum_max` (cumulative maximum) is updated. As monotonically
-increasing integer IDs beginning from "0" are assigned to new unique objects, the maximum ID is
+increasing integer IDs beginning from `0` are assigned to new unique objects, the maximum ID is
 equal to the total number of unique objects over time. 
 
 **4. Adjusting Nodes**
