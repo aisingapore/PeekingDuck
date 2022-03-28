@@ -253,7 +253,7 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
       <https://pypi.org/project/easyocr/>`_, and
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
-The notebook corresponding to this tutorial, ``demo_import_peekingduck.ipynb``, can be found in the
+The notebook corresponding to this tutorial, ``calling_peekingduck_in_python.ipynb``, can be found in the
 `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
 PeekingDuck repository and is also available as a
 `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
@@ -351,13 +351,13 @@ Run the following command after installing the prerequisites:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
-Copy ``demo_import_peekingduck.ipynb`` to the ``pkd_project`` folder and you should have the
+Copy ``calling_peekingduck_in_python.ipynb`` to the ``pkd_project`` folder and you should have the
 following directory structure at this point:
 
 .. parsed-literal::
 
    \ :blue:`pkd_project/` \ |Blank|
-   ├── demo_import_peekingduck.ipynb
+   ├── calling_peekingduck_in_python.ipynb
    └── \ :blue:`data/` \ |Blank|
        └── \ :blue:`oidv6/` \ |Blank|
            ├── \ :blue:`boxes/` \ |Blank|
