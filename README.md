@@ -15,7 +15,9 @@
   <span> · </span>
   <a href="https://peekingduck.readthedocs.io/en/stable/tutorials/index.html">Tutorials</a>
   <span> · </span>
-  <a href="https://peekingduck.readthedocs.io/en/stable/master.html#api-documentation">API documentation</a>
+  <a href="https://peekingduck.readthedocs.io/en/stable/master.html#api-documentation">API docs</a>
+  <span> · </span>
+  <a href="https://peekingduck.readthedocs.io/en/stable/faq.html">FAQ</a>
   <span> · </span>
   <a href="https://github.com/aimakerspace/PeekingDuck/issues">Report a bug</a>
   <span> · </span>
