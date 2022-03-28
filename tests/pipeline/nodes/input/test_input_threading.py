@@ -24,7 +24,18 @@ PKD_ROOT_DIR = Path(__file__).parents[4]  # dependent on __file__ location
 PKD_PIPELINE_ORIG_PATH = PKD_ROOT_DIR / "pipeline_config.yml"
 PKD_PIPELINE_BAK_PATH = PKD_ROOT_DIR / "pipeline_config_orig.yml"
 PKD_RUN_DIR = Path(__file__).parents[5]  # dependent on __file__ location
-RTSP_URL = "http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30"
+# collect list of public RTSP URLs
+RTSP_URL_GERMANY = (
+    "http://clausenrc5.viewnetcam.com:50003/nphMotionJpeg?Resolution=320x240"
+)
+RTSP_URL_JAPAN_DOWN = "http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30"
+RTSP_URL_JAPAN_1 = (
+    "http://61.211.241.239/nphMotionJpeg?Resolution=320x240&Quality=Standard"
+)
+RTSP_URL_JAPAN_2 = (
+    "http://honjin1.miemasu.net/nphMotionJpeg?Resolution=640x480&Quality=Standard"
+)
+RTSP_URL = RTSP_URL_GERMANY
 
 # Helper Functions
 def get_fps_number(avg_fps_msg: str) -> float:
