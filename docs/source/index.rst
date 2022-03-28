@@ -48,8 +48,8 @@ Create custom nodes
 -------------------
 
 You can create :ref:`custom nodes <tutorial_custom_nodes>` to meet your own project's requirements.
-PeekingDuck can also be :doc:`imported as a library </tutorials/05_import_as_module>` to fit into
-your existing workflows.
+PeekingDuck can also be :doc:`imported as a library </tutorials/05_calling_peekingduck_in_python>`
+to fit into your existing workflows.
 
 
 .. _how_peekingduck_works:
@@ -57,7 +57,7 @@ your existing workflows.
 How PeekingDuck Works
 =====================
 
-**Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a Python function, and
+**Nodes** are the building blocks of PeekingDuck. Each node is a wrapper for a pipeline function, and
 contains information on how other PeekingDuck nodes may interact with it.
 
 PeekingDuck has 6 types of nodes:
@@ -79,7 +79,7 @@ Acknowledgements
 
 This project is supported by the National Research Foundation, Singapore under its AI Singapore
 Programme (AISG-RP-2019-050). Any opinions, findings, and conclusions or recommendations expressed
-in this material are those of the author(s) and do not reflect the views of National Research
+in this material are those of the author(s) and do not reflect the views of the National Research
 Foundation, Singapore.
 
 

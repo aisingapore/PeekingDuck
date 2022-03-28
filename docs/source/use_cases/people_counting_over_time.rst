@@ -15,14 +15,14 @@ applied to areas such as retail analytics, queue management, or occupancy monito
    :class: no-scaled-link
    :width: 50 %
 
-Our solution automatically detects, tracks, and counts people over time. This is explained in the
-`How it Works`_ section.
+Our solution automatically detects, tracks and counts people over time. This is explained in the
+`How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: people_counting_over_time.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/people_counting_over_time.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/people_counting_over_time.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -34,7 +34,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/people_walking.mp4>`_.
 
 
-How it Works
+How It Works
 ============
 
 People counting over time comprises three main components:
@@ -45,7 +45,7 @@ People counting over time comprises three main components:
 
 **1. Human Detection**
 
-We use an open source detection model known as `JDE <https://arxiv.org/abs/1909.12605>`_ to
+We use an open source detection model known as `JDE <https://arxiv.org/abs/1909.12605>`_ to detect
 persons. JDE has been trained on pedestrian detection and person search datasets. This allows the
 application to identify the locations of persons in a video feed. Each of these locations is
 represented as a pair of `x, y` coordinates in the form :math:`[x_1, y_1, x_2, y_2]`, where
@@ -62,9 +62,9 @@ current frame. The model outputs an ID for each detection based on the appearanc
 
 **3. Incrementing the Count**
 
-Monotonically increasing integer IDs beginning from "0" are assigned to new unique objects. For
-example, the first tracked object is assigned an ID of "0", the second tracked object is assigned
-an ID of "1", and so on. Thus the total number of unique objects that have appeared in the entire
+Monotonically increasing integer IDs beginning from `0` are assigned to new unique persons. For
+example, the first tracked person is assigned an ID of `0`, the second tracked person is assigned
+an ID of `1`, and so on. Thus the total number of unique persons that have appeared in the entire
 duration is simply the cumulative maximum.
 
 Nodes Used
@@ -94,14 +94,14 @@ This node employs a single network to **simultaneously** output detection result
 corresponding appearance embeddings of the detected boxes. Therefore JDE stands for Joint Detection
 and Embedding. Please take a look at the :doc:`benchmarks </resources/01c_object_tracking>` of
 object tracking models that are included in PeekingDuck if you would like to use a different model
-variation or an alternative model better suited to your use case.
+or model type better suited to your use case.
 
 **2. Statistics Node**
 
 The :mod:`dabble.statistics` node retrieves the maximum detected ID for each frame. If the ID
 exceeds the previous maximum, the :term:`cum_max` (cumulative maximum) is updated. As monotonically
-increasing integer IDs beginning from "0" are assigned to new unique objects, the maximum ID is
-equal to the total number of unique objects over time. 
+increasing integer IDs beginning from `0` are assigned to new unique persons, the maximum ID is
+equal to the total number of unique persons over time. 
 
 **3. Adjusting Nodes**
 
@@ -113,7 +113,7 @@ With regard to the :mod:`model.jde` node, some common behaviors that you might w
   You may want to lower this value to increase the number of detections.
 * ``nms_threshold``: Specifies the threshold value for non-maximal suppression (default = 0.4).
   You may want to lower this value to increase the number of detections.
-* ``min_box_area``: Minimum value for area of detected bounding box. Calculated by
+* ``min_box_area``: Specifies the minimum value for area of detected bounding box. Calculated by
   :math:`width \times height` (default = 200).
 * ``track_buffer``: Specifies the threshold to remove track if track is lost for more
   frames than this value (default = 30).

@@ -19,14 +19,14 @@ Singapore.
 The most accurate way to measure distance is to use a 3D sensor with depth perception, such as a
 RGB-D camera or a `LiDAR <https://en.wikipedia.org/wiki/Lidar>`_. However, most cameras such as
 CCTVs and IP cameras usually only produce 2D videos. We developed heuristics that are able to give
-an approximate measure of physical distance from 2D videos, circumventing this limitation. This is
-explained in the `How it Works`_ section.
+an approximate measure of physical distance from 2D videos, addressing this limitation. This is
+explained in the `How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: social_distancing.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/social_distancing.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/social_distancing.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -35,11 +35,12 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
-There are two main components to obtain the distance between individuals: 1) human pose estimation
-using AI; and 2) depth and distance approximation using heuristics.
+There are two main components to obtain the distance between individuals:
+#. Human pose estimation using AI, and
+#. Depth and distance approximation using heuristics.
 
 **1. Human Pose Estimation**
 
@@ -103,8 +104,8 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 By default, we are using the PoseNet model with a ResNet backbone for pose estimation. Please take
 a look at the :doc:`benchmarks </resources/01b_pose_estimation>` of pose estimation models that
-are included in PeekingDuck if you would like to use a different model variation or an alternative
-model better suited to your use case.
+are included in PeekingDuck if you would like to use a different model or model type better suited
+to your use case.
 
 **2. Adjusting Nodes**
 

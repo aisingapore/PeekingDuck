@@ -32,7 +32,7 @@ Install PeekingDuck
          Install conda using the
          <a href="https://docs.conda.io/projects/conda/en/latest/user-guide/install/">Anaconda or miniconda</a>
          installers or the <a href="https://github.com/conda-forge/miniforge#miniforge3">miniforge</a>
-         installers (no administrator permission required for any of those).
+         installers (recommended).
        </span>
        <span class="pkd-expandable" data-venv="venv" data-os="windows">
          Install Python 3 (64-bit) from <a href="https://www.python.org/">https://www.python.org</a>.
@@ -76,6 +76,8 @@ Then run:
        ><span class="pkd-expandable" data-venv="none">pip install -U peekingduck</span
      ></pre></div>
    </div>
+
+PeekingDuck supports Python 3.6 to 3.9.
 
 It is recommended to install PeekingDuck in a Python virtual environment (such as
 ``pkd`` in the above commands), as it creates an isolated environment for a Python

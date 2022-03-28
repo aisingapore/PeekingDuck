@@ -60,7 +60,6 @@ The following test conditions were followed:
  | - The video sequence has 1050 frames and is encoded at 30 FPS, which translates to about 35 seconds
  | - 1280×720 (HD ready) resolution was used, as a bridge between 640×480 (VGA) of poorer quality
      webcams, and 1920×1080 (Full HD) of CCTVs
- | - All tests were performed in a containerized environment running on Google Cloud VMs
 
 Model Accuracy
 --------------
@@ -87,7 +86,7 @@ Dataset
 
 The `MOT16 <https://motchallenge.net/data/MOT16/>`__ (train) dataset is used. We integrated the
 MOT Challenge API into the PeekingDuck pipeline for loading the annotations and evaluating the
-outputs from the models. `MOTA` and `IDF1` are reported in percentage while `IDS`, `FP`, and `FN`
+outputs from the models. `MOTA` and `IDF1` are reported in percentages while `IDS`, `FP`, and `FN`
 are raw numbers.
 
 Only the "pedestrian" category in MOT16 (train) was processed.

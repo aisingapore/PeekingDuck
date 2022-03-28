@@ -17,13 +17,13 @@ event, monitor crowd levels and prevent human stampedes.
 
 Our solution utilizes CSRNet to estimate the size of a crowd. In addition, it generates a heat map
 that can be used to pinpoint possible bottlenecks at a venue. This is explained in the 
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: crowd_counting.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/crowd_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/crowd_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -34,18 +34,21 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
 You may like to try it on this `sample video <https://storage.googleapis.com/peekingduck/videos/large_crowd.mp4>`_.
 
-How it Works
+How It Works
 ============
 
-There are two main components to our solution: 1) crowd counting; and 2) heat map generation.
+There are two main components to our solution:
+
+#. Crowd counting, and
+#. Heat map generation.
 
 **1. Crowd Counting**
 
 We use an open source crowd counting model known as `CSRNet <https://arxiv.org/pdf/1802.10062.pdf>`_
 to predict the number of people in a sparse or dense crowd. The solution uses the
 sparse crowd model by default and can be configured to use the dense crowd model if required. The
-dense and sparse crowd models were trained using data from ShanghaiTech Part A and Part B
-respectively.
+dense and sparse crowd models were trained using data from `ShanghaiTech <https://github.com/desenzhou/ShanghaiTechDataset>`_
+Part A and Part B respectively.
 
 As a rule of thumb, you might want to use the dense crowd model if the people in a given image or
 video frame are packed shoulder to shoulder, e.g., stadiums. For more information on how to adjust the

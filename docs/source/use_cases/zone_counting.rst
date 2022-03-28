@@ -5,10 +5,9 @@ Zone Counting
 Overview
 ========
 
-Zone counting allows different zones to be created within a single image, and the number of objects
-within each zone can be separately counted. This is useful in many applications, such as counting
-vehicles travelling on one side of a road but not the other, or counting the shoppers entering the
-entrance of a mall.
+Zone counting creates different zones within a single image and counts the number of objects
+within each zone separately. This is useful in many applications, such as counting
+vehicles travelling on one side of a road, or counting the shoppers entering a mall.
 
 .. seealso::
 
@@ -23,13 +22,13 @@ entrance of a mall.
 
 Zone counting is done by counting the number of objects detected by the object detection models
 that fall within the specified zones. For example, we can count the number of people in the blue
-and red zones, as shown in the GIF above. This is explained in the `How it Works`_ section.
+and red zones, as shown in the GIF above. This is explained in the `How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: zone_counting.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/zone_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -38,7 +37,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are three main components to obtain the zone counts:
@@ -50,10 +49,10 @@ There are three main components to obtain the zone counts:
 
 **1. Object Detection**
 
-We use an open source object detection estimation model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
-and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of chosen
-types of objects we want to detect. This allows the application to identify where objects are
-located within the video feed. The location is returned as two
+We use an open source object detection model known as `YOLOv4 <https://arxiv.org/abs/2004.10934>`_
+and its smaller and faster variant known as YOLOv4-tiny to identify the bounding boxes of objects
+we want to detect. This allows the application to identify where objects are
+located within the video feed. The location is returned as a pair of
 :ref:`x, y coordinates <tutorial_coordinate_systems>` in the form :math:`[x_1, y_1, x_2, y_2]`,
 where :math:`(x_1, y_1)` is the top left corner of the bounding box, and :math:`(x_2, y_2)` is the
 bottom right. These are used to form the bounding box of each object detected. For more information
@@ -91,9 +90,7 @@ was created using the following zone::
 
 Given a resolution of 1280 by 720, these correspond to the top-left of the image, 60% of the length
 at the top of the image, 60% of the length at the bottom of the image, and the bottom-left of the
-image. These points form the rectangular blue zone in a clockwise direction. Zones do not have to
-be rectangular in shape. They can be of any polygonal shape, dictated by the number and position of
-the `x, y` coordinates set in a zone.
+image. These points form the rectangular blue zone in a clockwise direction.
 
 Note that because the `x, y` coordinates are fractions of the image resolution, the resolution
 config for :mod:`dabble.zone_count` needs to be set correctly.
@@ -109,9 +106,14 @@ intended.
 
 Elaboration for this adjustment can be found the :ref:`"4. Adjusting Nodes" <adjusting_nodes>` section.
 
+.. note::
+
+   Zones do not have to be rectangular in shape. They can be of any polygonal shape, dictated by
+   the number and position of the `x, y` coordinates set in a zone.
+
 **4. Zone Counts**
 
-Given the bottom midpoints of all detected objects, we check if the points fall within the area of
+Given the bottom midpoints of all detected objects, we check if the points fall within the areas of
 the specified zones. If it falls inside any zone, an object count is added for that specific zone.
 This continues until all objects detected are accounted for, which gives the final count of objects
 in each specified zone.
@@ -146,13 +148,13 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 
 By default, the node uses the YOLOv4-tiny model for object detection, set to detect people. Please
 take a look at the :doc:`benchmarks </resources/01a_object_detection>` of object detection models
-that are included in PeekingDuck if you would like to use a different model variation or an
-alternative model better suited to your use case.
+that are included in PeekingDuck if you would like to use a different model or model type better
+suited to your use case.
 
 **2. Bottom Midpoint Node**
 
 The bottom midpoint node is called by including :mod:`dabble.bbox_to_btm_midpoint` in the pipeline
-config declaration. This outputs all the bottom midpoints of all detected bounding boxes. The node
+config declaration. This outputs the bottom midpoints of all detected bounding boxes. The node
 has no configurable parameters.
 
 **3. Zone Counting Node**
@@ -175,8 +177,8 @@ are:
 
 * ``resolution``: If you are planning to use fractions to set the coordinates for the area of the
   zone, the resolution should be set to the image/video/livestream resolution used.
-* ``zones``: Used to specify the different zones which you would like to set. Each zone coordinates
-  should be set clock-wise in a list. See the `Nodes Used`_ section on how to properly configure
-  multiple zones.
+* ``zones``: Used to specify the different zones which you would like to set. The coordinates for
+  each zone are given in a list in a clockwise order. See the `Nodes Used`_ section on how to
+  properly configure multiple zones.
 
 For more adjustable node behaviors not listed here, check out the :ref:`API Documentation <api_doc>`.

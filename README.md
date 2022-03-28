@@ -1,6 +1,6 @@
 <br />
 
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/peekingduck.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/peekingduck.svg">
 
 ---
 
@@ -11,11 +11,13 @@
 [![Documentation Status](https://readthedocs.org/projects/peekingduck/badge/?version=stable)](https://peekingduck.readthedocs.io/en/stable/?badge=stable)
 
 <h4 align="center">
-  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/index.html">Getting started</a>
+  <a href="https://peekingduck.readthedocs.io/en/stable/getting_started/index.html">Getting started</a>
   <span> · </span>
-  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/index.html">Tutorials</a>
+  <a href="https://peekingduck.readthedocs.io/en/stable/tutorials/index.html">Tutorials</a>
   <span> · </span>
-  <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/master.html#api-documentation">API documentation</a>
+  <a href="https://peekingduck.readthedocs.io/en/stable/master.html#api-documentation">API docs</a>
+  <span> · </span>
+  <a href="https://peekingduck.readthedocs.io/en/stable/faq.html">FAQ</a>
   <span> · </span>
   <a href="https://github.com/aimakerspace/PeekingDuck/issues">Report a bug</a>
   <span> · </span>
@@ -33,11 +35,11 @@ Features
 ### Build realtime CV pipelines
 * PeekingDuck enables you to build powerful CV pipelines with minimal lines of code.
 
-### Leverage on various SOTA models
-* PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/docs-v1.2/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/index.html).
+### Leverage on SOTA models
+* PeekingDuck comes with various [object detection](https://peekingduck.readthedocs.io/en/stable/resources/01a_object_detection.html), [pose estimation](https://peekingduck.readthedocs.io/en/stable/resources/01b_pose_estimation.html), [object tracking](https://peekingduck.readthedocs.io/en/stable/resources/01c_object_tracking.html), and [crowd counting](https://peekingduck.readthedocs.io/en/stable/resources/01d_crowd_counting.html) models. Mix and match different nodes to construct solutions for various [use cases](https://peekingduck.readthedocs.io/en/stable/use_cases/index.html).
 
 ### Create custom nodes
-* You can create [custom nodes](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/docs-v1.2/tutorials/05_import_as_module.html) to fit into your existing workflows.
+* You can create [custom nodes](https://peekingduck.readthedocs.io/en/stable/tutorials/02_duck_confit.html#custom-nodes) to meet your own project's requirements. PeekingDuck can also be [imported as a library](https://peekingduck.readthedocs.io/en/stable/tutorials/05_calling_peekingduck_in_python.html) to fit into your existing workflows.
 
 
 Installation
@@ -49,9 +51,9 @@ Install from [PyPI](https://pypi.org/project/peekingduck/) using `pip`
 > pip install peekingduck
 ```
 
-*Note: for users with ARM-based devices such as a Raspberry Pi or M1 Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/03_custom_install.html).*
+*Note: for users with ARM-based devices such as a Raspberry Pi or Apple Silicon Mac, please refer to the documentation for more detailed [installation instructions](https://peekingduck.readthedocs.io/en/stable/getting_started/03_custom_install.html).*
 
-PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/docs-v1.2/getting_started/02_standard_install.html).
+PeekingDuck can also be [installed in a virtual environment](https://peekingduck.readthedocs.io/en/stable/getting_started/02_standard_install.html).
 
 
 ```
@@ -59,7 +61,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 ```
 
 You should see a video of a person waving his hand with
-[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/verify_install.gif).
+[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/getting_started/verify_install.gif).
 
 The video will close automatically when it is run to the end, select the video window and press `q` to exit earlier.
 
@@ -80,7 +82,7 @@ Run the demo pipeline.
 ```
 
 If you have a webcam, you should see a man waving on the output screen with
-[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/getting_started/default_pipeline.gif).
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/getting_started/default_pipeline.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
@@ -93,45 +95,45 @@ Gallery
 <table>
   <tr>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/social_distancing.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/social_distancing.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/social_distancing.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/privacy_protection_faces.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/privacy_protection_faces.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_faces.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/zone_counting.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/zone_counting.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/zone_counting.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/object_counting_over_time.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/object_counting_over_time.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting_over_time.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/object_counting_over_time.gif">
       </a>
     </td>
   </tr>
   <tr>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/group_size_checking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/group_size_checking.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/group_size_checking.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/privacy_protection_license_plates.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_license_plates.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/crowd_counting.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/crowd_counting.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/crowd_counting.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/crowd_counting.gif">
       </a>
     </td>
     <td>
-      <a href="https://peekingduck.readthedocs.io/en/docs-v1.2/use_cases/people_counting_over_time.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/docs-v1.2/docs/source/assets/use_cases/people_counting_over_time.gif">
+      <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/people_counting_over_time.html">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/people_counting_over_time.gif">
       </a>
     </td>
   </tr>

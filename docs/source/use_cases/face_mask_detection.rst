@@ -7,7 +7,7 @@ Overview
 
 Wearing of face masks in public places can help prevent the spread of COVID-19 and other infectious
 diseases. AI Singapore has developed a solution that checks whether or not a person is wearing a
-face mask. This can be used in places such as in malls or shops to ensure that visitors adhere to
+face mask. This can be used in places such as malls or shops to ensure that visitors adhere to
 the guidelines.
 
 .. image:: /assets/use_cases/face_mask_detection.gif
@@ -15,13 +15,13 @@ the guidelines.
    :width: 50 %
 
 We have trained a custom YOLOv4 model to detect whether or not a person is wearing a face mask.
-This is explained in the `How it Works`_ section.
+This is explained in the `How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: face_mask_detection.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/face_mask_detection.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/face_mask_detection.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -30,7 +30,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 The main component is the detection of face mask using the custom YOLOv4 model.

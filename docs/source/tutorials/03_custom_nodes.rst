@@ -11,8 +11,7 @@ PeekingDuck.
 Perhaps you'd like to take a snapshot of a video frame, and post it to your API
 endpoint; 
 or perhaps you have a model trained on a custom dataset, and would like to use
-PeekingDuck's :ref:`input <api_doc>`, :ref:`draw <api_doc>`, and :ref:`output
-<api_doc>` nodes. 
+PeekingDuck's :mod:`input`, :mod:`draw`, and :mod:`output` nodes. 
 PeekingDuck is designed to be very flexible --- you can create your own nodes
 and use them with ours.
 
@@ -602,7 +601,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
    The number of hand waves is displayed at the top-left corner of the screen.
 
    A simple heuristic is used to count the number of times the person waves his hand. 
-   It tracks the direction the right wrist is moving in and notes when the wrist changes
+   It tracks the direction in which the right wrist is moving and notes when the wrist changes
    direction. 
    Upon encountering two direction changes, e.g., left -> right -> left, one wave is
    counted.
@@ -691,9 +690,9 @@ The updated folder structure is:
    │           └── wave.py
    └── wave.mp4
 
-Then, make the following **three** changes:
+Make the following **three** changes:
 
-1. Specify ``debug.yml`` to receive everything ":term:`all <(input) all>`" from
+1. Define ``debug.yml`` to receive ":term:`all <(input) all>`" inputs from
    the pipeline, as follows:
 
    .. code-block:: yaml
@@ -766,7 +765,7 @@ Then, make the following **three** changes:
    It also demonstrates how to debug a specific data object, such as :term:`bboxes`, by
    printing relevant information for each item within the data.
 
-3. Update **pipeline_config.yml**:
+3. Update ``pipeline_config.yml``:
 
    .. code-block:: yaml
       :linenos:
@@ -819,7 +818,7 @@ with PeekingDuck.
 CLI Recipe
 ----------
 
-You skip the step-by-step prompts from :green:`peekingduck create-node` by specifying all the
+You can skip the step-by-step prompts from :green:`peekingduck create-node` by specifying all the
 options on the command line, for instance:
 
 .. admonition:: Terminal Session

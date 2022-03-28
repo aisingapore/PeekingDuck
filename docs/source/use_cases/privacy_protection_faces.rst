@@ -14,13 +14,13 @@ with the General Data Protection Regulation (GDPR) or other data privacy laws.
    :width: 50 %
 
 Our solution automatically detects and mosaics (or blurs) human faces. This is explained in the
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_faces.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/privacy_protection_faces.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_faces.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -29,7 +29,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are two main components to face anonymization:
@@ -70,9 +70,9 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
 **1. Face Detection Node**
 
 As mentioned, we use the MTCNN model for face detection. It is able to detect human faces with face
-masks to a certain extent. Please take a look at the :doc:`benchmarks </resources/01a_object_detection>`
+masks. Please take a look at the :doc:`benchmarks </resources/01a_object_detection>`
 of object detection models that are included in PeekingDuck if you would like to use a different
-model variation or an alternative model better suited to your use case.
+model or model type better suited to your use case.
 
 **2. Face De-Identification Nodes**
 
@@ -92,7 +92,7 @@ With regard to the MTCNN model, some common node behaviors that you might want t
 
 * ``min_size``: Specifies in pixels the minimum height and width of a face to be detected.
   (default = 40) You may want to decrease the minimum size to increase the number of detections.
-* ``network_thresholds``: This specifies the threshold values for the Proposal Network (P-Net),
+* ``network_thresholds``: Specifies the threshold values for the Proposal Network (P-Net),
   Refine Network (R-Net), and Output Network (O-Net) in the MTCNN model. (default = [0.6, 0.7, 0.7])
   Calibration is performed at each stage in which bounding boxes with confidence scores less than
   the specified threshold are discarded. 

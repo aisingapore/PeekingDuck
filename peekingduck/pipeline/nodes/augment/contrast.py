@@ -25,8 +25,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Adjusts the contrast of an image, by multiplying with a gain/
-    `alpha parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
+    """Adjusts the contrast of an image, by multiplying with a gain/`alpha
+    parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
     linear_transform.html>`_.
 
     Inputs:

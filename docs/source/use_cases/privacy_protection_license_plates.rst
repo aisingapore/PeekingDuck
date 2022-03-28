@@ -6,7 +6,7 @@ Overview
 ========
 
 Posting images or videos of our vehicles online might lead to others misusing our license plate
-number to reveal our personal information. Our solution that performs license plate anonymization,
+numbers to reveal our personal information. Our solution performs license plate anonymization,
 and can also be used to comply with the General Data Protection Regulation (GDPR) or other data
 privacy laws.
 
@@ -15,13 +15,13 @@ privacy laws.
    :width: 50 %
 
 Our solution automatically detects and blurs vehicles' license plates. This is explained in the
-`How it Works`_ section.
+`How It Works`_ section.
 
 Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_license_plates.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/docs-v1.2/use_cases/privacy_protection_license_plates.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plates.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -30,7 +30,7 @@ PeekingDuck with the configuration file |pipeline_config|_ as shown:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck run -\-config_path <path/to/`\ |pipeline_config|\ :green:`>`
 
-How it Works
+How It Works
 ============
 
 There are two main components to license plate anonymization:
@@ -52,7 +52,7 @@ the :doc:`license plate detector configurable parameters </nodes/model.yolo_lice
 **2. License Plate De-Identification**
 
 To perform license plate de-identification, the areas bounded by the bounding boxes are blurred
-using a Gaussian function (Gaussian blur).
+using a Gaussian blur function.
 
 Nodes Used
 ==========
@@ -70,7 +70,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    
 **1. License Plate Detection Node**
 
-By default, :mod:`model.yolo_license_plate` uses the ``v4`` model variant to detect license plates.
+By default, :mod:`model.yolo_license_plate` uses the ``v4`` model type to detect license plates.
 If faster inference speed is required, the ``v4tiny`` model type can be used instead. 
 
 **2. License Plate De-Identification Nodes**

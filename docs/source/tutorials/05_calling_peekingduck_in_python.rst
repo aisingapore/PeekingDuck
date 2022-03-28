@@ -1,19 +1,19 @@
-*************************************
-Import PeekingDuck as a Python Module
-*************************************
+*****************************
+Calling PeekingDuck in Python
+*****************************
 
 .. include:: /include/substitution.rst
 
 
-.. _tutorial_import_peekingduck:
+.. _tutorial_calling_peekingduck_in_python:
 
-Running in a Script
-===================
+Using PeekingDuck's Pipeline
+============================
 
 As an alternative to running PeekingDuck using the command-line interface (CLI), users
 can also import PeekingDuck as a Python module and run it in a Python script. This demo
 corresponds to the :ref:`Record Video File with FPS <tutorial_media_writer>` Section of
-the *Duck Confit* tutorial.
+the :doc:`Duck Confit </tutorials/02_duck_confit>` tutorial.
 
 In addition, we will demonstrate basic debugging techniques which users can employ when
 troubleshooting PeekingDuck projects.
@@ -30,7 +30,7 @@ Create a PeekingDuck project using:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck init` \
 
-Then, download the `demo video <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_
+Then, download the `cat and computer video <https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_
 to the ``pkd_project`` folder and create a Python script ``demo_debug.py`` in the same folder.
 
 You should have the following directory structure at this point:
@@ -44,8 +44,8 @@ You should have the following directory structure at this point:
    └── \ :blue:`src/` \ |Blank|
 
 
-Create a Custom Node for Debugging
-----------------------------------
+Creating a Custom Node for Debugging
+------------------------------------
 
 Run the following to create a :mod:`dabble` node for debugging:
 
@@ -53,8 +53,8 @@ Run the following to create a :mod:`dabble` node for debugging:
 
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`peekingduck create-node -\-node_subdir src/custom_nodes -\-node_type dabble -\-node_name debug` \
 
-The command should have generated the ``debug.py`` and ``debug.yml`` files in your
-project directory as shown:
+The command will create the ``debug.py`` and ``debug.yml`` files in your project directory as
+shown:
 
 .. parsed-literal::
 
@@ -146,23 +146,17 @@ Copy over the following code to ``demo_debug.py``:
   
       def main():
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
-  
-          visual_config = {"source": str(Path.cwd().resolve() / "cat_and_computer.mp4")}
-          visual_node = visual.Node(**visual_config)
-  
-          yolo_config = {"detect_ids": ["cup", "cat", "laptop", "keyboard", "mouse"]}
-          yolo_node = yolo.Node(**yolo_config)
-  
-          bbox_config = {"show_labels": True}
-          bbox_node = bbox.Node(**bbox_config)
-  
+      
+          visual_node = visual.Node(source=str(Path.cwd() / "cat_and_computer.mp4"))
+          yolo_node = yolo.Node(detect_ids=["cup", "cat", "laptop", "keyboard", "mouse"])
+          bbox_node = bbox.Node(show_labels=True)
+      
           fps_node = fps.Node()
           legend_node = legend.Node(show=["fps"])
           screen_node = screen.Node()
-  
-          media_writer_config = {"output_dir": str(Path.cwd().resolve() / "results")}
-          media_writer_node = media_writer.Node(**media_writer_config)
-  
+      
+          media_writer_node = media_writer.Node(output_dir=str(Path.cwd() / "results"))
+      
           runner = Runner(
               nodes=[
                   visual_node,
@@ -185,14 +179,19 @@ Lines 9, 13: Import and initialize the ``debug`` custom node. Pass in the
 ``path/to/project_dir/src/custom_nodes`` via ``pkd_base_dir`` for the configuration YAML file of
 the custom node to be loaded properly.
 
-Lines 15 - 29: Create the PeekingDuck nodes necessary to replicate the demo shown in the
+Lines 15 - 23: Create the PeekingDuck nodes necessary to replicate the demo shown in the
 :ref:`Record Video File with FPS <tutorial_media_writer>` tutorial. To change the node
-configuration, you can pass the new values to the `Node()` constructor as keyword arguments.
+configuration, you can pass the new values to the ``Node()`` constructor as keyword arguments.
 
 
-Lines 31 - 42: Initialize the PeekingDuck ``Runner`` from
+Lines 25 - 37: Initialize the PeekingDuck ``Runner`` from
 `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
+
+.. note::
+
+   A PeekingDuck node can be created in Python code by passing a dictionary of config keyword -
+   config value pairs to the ``Node()`` constructor.
 
 
 Running the Python Script
@@ -239,23 +238,25 @@ Lines 17 - 23: The debugging output showing the frame number and the confidence 
 bounding boxes predicted as "cat".
 
 
-Running in a Notebook
-=====================
+Integrating with Your Workflow
+==============================
 
 The modular design of PeekingDuck allows users to pick and choose the nodes they want to use. Users
-are also able to use PeekingDuck nodes with external libraries when designing their pipeline.
+are also able to use PeekingDuck nodes with external packages when designing their pipeline.
 
 In this demo, we will show how users can construct a custom PeekingDuck pipeline using:
 
     * Data loaders such as `tf.keras.utils.image_dataset_from_directory
       <https://www.tensorflow.org/api_docs/python/tf/keras/utils/image_dataset_from_directory>`_
       (available in ``tensorflow>=2.3.0``),
-    * External models (not implemented as PeekingDuck nodes) such as `easyocr
+    * External packages (not implemented as PeekingDuck nodes) such as `easyocr
       <https://pypi.org/project/easyocr/>`_, and
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
-The notebook corresponding to this tutorial can be found in the `notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
-PeekingDuck repository and is also available at a `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
+The notebook corresponding to this tutorial, ``calling_peekingduck_in_python.ipynb``, can be found in the
+`notebooks <https://github.com/aimakerspace/PeekingDuck/tree/dev/notebooks>`_ folder of the
+PeekingDuck repository and is also available as a
+`Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
 
 
 .. raw:: html
@@ -319,7 +320,7 @@ PeekingDuck repository and is also available at a `Colab notebook <https://colab
           ><br /><span class="pkd-raw-terminal">pip install tensorflow-macos tensorflow-metal</span
           ><br /><span></span
           ><br /><span class="pkd-raw-terminal">pip install torch torchvision</span
-          ><br /><span class="pkd-raw-terminal">pip install 'peekingduck==1.2.0rc2' --no-dependencies</span
+          ><br /><span class="pkd-raw-terminal">pip install 'peekingduck==1.2.0' --no-dependencies</span
         ></pre></div>
       </p>
 
@@ -350,13 +351,13 @@ Run the following command after installing the prerequisites:
    | \ :blue:`[~user]` \ > \ :green:`cd pkd_project` \
    | \ :blue:`[~user/pkd_project]` \ > \ :green:`oidv6 downloader en -\-dataset data/oidv6 -\-type_data train -\-classes car -\-limit 10 -\-yes` \
 
-Copy ``demo_import_peekingduck.ipynb`` to the ``pkd_project`` folder and you should have the
+Copy ``calling_peekingduck_in_python.ipynb`` to the ``pkd_project`` folder and you should have the
 following directory structure at this point:
 
 .. parsed-literal::
 
    \ :blue:`pkd_project/` \ |Blank|
-   ├── demo_import_peekingduck.ipynb
+   ├── calling_peekingduck_in_python.ipynb
    └── \ :blue:`data/` \ |Blank|
        └── \ :blue:`oidv6/` \ |Blank|
            ├── \ :blue:`boxes/` \ |Blank|
@@ -365,8 +366,8 @@ following directory structure at this point:
                └── \ :blue:`car/` \ |Blank|
 
 
-Importing the Modules
----------------------
+Import the Modules
+------------------
 
 .. container:: toggle
 
@@ -392,9 +393,11 @@ Importing the Modules
 
 Lines 9 - 10: You can also do::
 
-    from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
-
-    bbox_node = pkd_bbox.Node()
+   from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
+   from peekingduck.pipeline.nodes.model import yolo_license_plate as pkd_yolo_license_plate
+    
+   bbox_node = pkd_bbox.Node()
+   yolo_license_plate_node = pkd_yolo_license_plate.Node()
 
 to avoid potential name conflicts.
 
@@ -413,10 +416,9 @@ Initialize PeekingDuck Nodes
   
       yolo_lp_node = yolo_license_plate.Node()
   
-      bbox_config = {"show_labels": True}
-      bbox_node = bbox.Node(**bbox_config)
+      bbox_node = bbox.Node(show_labels=True)
 
-Lines 3 - 4: To change the node configuration, you can pass the new values to the ``Node()``
+Lines 3: To change the node configuration, you can pass the new values to the ``Node()``
 constructor as keyword arguments.
 
 Refer to the :ref:`API Documentation <api_doc>` for the configurable settings for each node.
@@ -468,10 +470,10 @@ Create a License Plate Parser Class
       reader = LPReader(False)
 
 We create the license plate parser class in a Python class using ``easyocr`` to demonstrate how
-users can integrate the PeekingDuck pipeline with external processes.
+users can integrate the PeekingDuck pipeline with external packages.
 
 Alternatively, users can create a custom node for parsing license plates and run the pipeline
-through the command-line interface (CLI) instead. Refer to the :ref:`custom nodes <tutorial_custom_nodes>`
+through the CLI instead. Refer to the :ref:`custom nodes <tutorial_custom_nodes>`
 tutorial for more information.
 
 
@@ -539,15 +541,14 @@ The Inference Loop
               ax[i][2].title.set_text(f"Pred: {lp_pred}")
 
 Lines 1 - 11: We define a utility function for retrieving the image region of the license
-plate with a highest confidence score to improve code clarity. For more information on
+plate with the highest confidence score to improve code clarity. For more information on
 how to convert between bounding box and image coordinates, please refer to the
-:ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` section in our
-tutorials.
+:ref:`Bounding Box vs Image Coordinates <tutorial_coordinate_systems>` tutorial.
 
 Lines 27 - 35: By carefully constructing the input for each of the nodes, we can perform the
-inference loop without having to use PeekingDuck's `runner.py <https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/runner.py>`_.
+inference loop within a custom workflow.
 
-Lines 37 - 38: We plot the data for debugging and visualization purposes.
+Lines 37 - 38: We plot the data using ``matplotlib`` for debugging and visualization purposes.
 
-Lines 41 - 48: We integrate the inference loop with external processes such as the license plate
-parser we have created earlier.
+Lines 41 - 48: We integrate the inference loop with external packages such as the license plate
+parser we have created earlier using ``easyocr``.

@@ -129,7 +129,7 @@
    to :term:`bboxes` and :term:`bbox_labels`.
 
 .. |btm_midpoint_def| replace:: A list of tuples each representing the
-   :math:`(x, y)` coordinate of the bottom middle of a bounding box for use in
+   :math:`(x, y)` coordinates of the bottom middle of a bounding box for use in
    zone analytics. The order corresponds to :term:`bboxes`.
 
 .. |count_def| replace:: An integer representing the number of counted objects.
@@ -143,7 +143,7 @@
 .. |density_map_def| replace:: A NumPy array of shape :math:`(H, W)`
    representing the number of persons per pixel. :math:`H` and :math:`W` are the
    height and width of the input image, respectively. The sum of the array
-   returns the total estimated count of people.
+   is the estimated total number of people.
 
 .. |filename_def| replace:: The filename of video/image being read.
 
