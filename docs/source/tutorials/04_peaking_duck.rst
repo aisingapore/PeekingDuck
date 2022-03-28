@@ -297,6 +297,7 @@ Edit ``pipeline_config.yml`` as follows:
           source: highway_cars.mp4
       - model.yolo:
           detect_ids: ["car"]
+          score_threshold: 0.3
       - dabble.bbox_count
       - dabble.fps
       - dabble.statistics:
