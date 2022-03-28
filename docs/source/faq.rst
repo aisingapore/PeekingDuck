@@ -37,7 +37,7 @@ attempts to estimate the total frame count using the input media's metadata dura
 FPS.
 However, the total frame count is only an estimate.
 It is not guaranteed to be accurate because it is affected by potential errors, such as
-frame corruption, video decoder failure, inaccurate FPS and rounding errors.
+frame corruption, video decoder failure, inaccurate FPS, and rounding errors.
 
 
 Why does the output screen flash briefly and disappear on my second run?

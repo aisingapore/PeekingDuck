@@ -26,8 +26,8 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Adjusts the brightness of an image, by adding a bias/
-    `beta parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
+    """Adjusts the brightness of an image, by adding a bias/`beta parameter
+    <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
     linear_transform.html>`_.
 
     Inputs:
@@ -37,7 +37,7 @@ class Node(AbstractNode):
         |img_data|
 
     Configs:
-        beta (:obj:`int`): **[-100,100], default = 0**. |br|
+        beta (:obj:`int`): **[-100, 100], default = 0**. |br|
             Increasing the value of beta increases image brightness, and vice
             versa.
     """
