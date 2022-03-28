@@ -35,7 +35,7 @@ RTSP_URL_JAPAN_1 = (
 RTSP_URL_JAPAN_2 = (
     "http://honjin1.miemasu.net/nphMotionJpeg?Resolution=640x480&Quality=Standard"
 )
-RTSP_URL = RTSP_URL_JAPAN_1
+RTSP_URL = RTSP_URL_GERMANY
 
 # Helper Functions
 def get_fps_number(avg_fps_msg: str) -> float:
