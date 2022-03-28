@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 functions for drawing legend related UI components
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 import cv2
 import numpy as np
@@ -38,7 +38,6 @@ class Legend:
     """Legend class that uses available info to draw legend box on frame"""
 
     def __init__(self) -> None:
-        self.func_reg = self._get_legend_registry()
         self.legend_left_x = 15
 
         self.frame = None
@@ -64,40 +63,42 @@ class Legend:
         self._draw_legend_box(self.frame)
         y_pos = self.legend_starting_y + 20
         for item in items:
-            self.func_reg[item](self.frame, y_pos, inputs[item])
+            if item == "zone_count":
+                self._draw_zone_count(self.frame, y_pos, inputs[item])
+            else:
+                self.draw_item_info(self.frame, y_pos, item, inputs[item])
             y_pos += 20
 
-    def _draw_count(self, frame: np.ndarray, y_pos: int, count: int) -> None:
-        """draw count of selected object onto frame
+    def draw_item_info(
+        self,
+        frame: np.ndarray,
+        y_pos: int,
+        item_name: str,
+        item_info: Union[int, float, str],
+    ) -> None:
+        """Draw item name followed by item info onto frame. If item info is
+        of float type, it will be displayed in 2 decimal places.
 
         Args:
             frame (np.array): image of current frame
             y_pos (int): y_position to draw the count text
-            count (int): total count of selected object
-                in current frame
+            item_name (str): name of the legend item
+            item_info: Union[int, float, str]: info contained by the legend item
         """
-        text = "COUNT: {0}".format(count)
-        cv2.putText(
-            frame,
-            text,
-            (self.legend_left_x + 10, y_pos),
-            FONT_HERSHEY_SIMPLEX,
-            SMALL_FONTSCALE,
-            WHITE,
-            THICK,
-            LINE_AA,
-        )
+        if isinstance(item_info, (int, float, str)):
+            pass
+        else:
+            raise TypeError(
+                f"With the exception of the 'zone_count' data type, "
+                f"the draw.legend node only draws values that are of type 'int', 'float' or 'str' "
+                f"within the legend box. The value: {item_info} from the data type: {item_name} "
+                f"is of type: {type(item_info)} and is unable to be drawn."
+            )
 
-    def _draw_fps(self, frame: np.ndarray, y_pos: int, current_fps: float) -> None:
-        """Draw FPS onto frame image
-
-        Args:
-            frame (np.array): image of current frame
-            y_pos (int): y position to draw the count info text
-            current_fps (float): value of the calculated FPS
-        """
-        text = "FPS: {:.05}".format(current_fps)
-
+        if isinstance(item_info, float):
+            text = f"{item_name.upper()}: {item_info:.2f}"
+        else:
+            text = f"{item_name.upper()}: {str(item_info)}"
         cv2.putText(
             frame,
             text,
@@ -139,7 +140,7 @@ class Legend:
                 PRIMARY_PALETTE[(i + 1) % PRIMARY_PALETTE_LENGTH],
                 FILLED,
             )
-            text = " ZONE-{0}: {1}".format(i + 1, count)
+            text = f" ZONE-{i+1}: {count}"
             cv2.putText(
                 frame,
                 text,
@@ -180,15 +181,6 @@ class Legend:
             no_of_items += len(inputs["zone_count"])
         return 12 * no_of_items + 8 * (no_of_items - 1) + 20
 
-    def _get_legend_registry(self) -> Dict[str, Any]:
-        """Get registry of functions that draw items
-        available in the legend"""
-        return {
-            "fps": self._draw_fps,
-            "count": self._draw_count,
-            "zone_count": self._draw_zone_count,
-        }
-
     def _set_legend_variables(self, position: str) -> None:
         assert self.legend_height != 0
         if position == "top":
@@ -196,13 +188,3 @@ class Legend:
         else:
             _, image_height = get_image_size(self.frame)
             self.legend_starting_y = image_height - 10 - self.legend_height
-
-    def add_register(self, name: str, method: Any) -> None:
-        """Add new legend drawing information to the registry
-
-        Args:
-            name (str): name of method, corresponding to key to get input
-            method (Any): function of the method. Note that take in 1) image frame
-            and 2) input needed for the method, taken in using inputs[<key>]
-        """
-        self.func_reg[name] = method

@@ -1,5 +1,6 @@
 nodes:
-- input.live
+- input.visual:
+    source: 0
 - model.posenet
 - dabble.keypoints_to_3d_loc:
     focal_length: 1.14
@@ -7,8 +8,7 @@ nodes:
 - dabble.check_nearby_objs:
     near_threshold: 1.5
     tag_msg: "TOO CLOSE!"
-- dabble.fps
 - draw.poses
-- draw.tag
-- draw.legend
+- draw.tag:
+    show: ["flags"]
 - output.screen

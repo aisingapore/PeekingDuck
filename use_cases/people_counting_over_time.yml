@@ -1,0 +1,12 @@
+nodes:
+- input.visual:
+    source: <path/to/video with people>
+- model.jde
+- dabble.statistics:
+    maximum: obj_attrs["ids"]
+- draw.bbox
+- draw.tag:
+    show: ["ids"]
+- draw.legend:
+    show: ["cum_max"]
+- output.screen

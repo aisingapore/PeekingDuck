@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -47,6 +47,7 @@ def project_points_onto_original_image(
 
     Returns:
         project_points (np.ndarray): projected points on the original image
+                                     in integer coordinates
     """
     if len(points) == 0:
         return []

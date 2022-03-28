@@ -5,6 +5,14 @@ body {
   font-family: "Nunito", sans-serif;
 }
 
+dt.sig {
+  width: 100%;
+}
+
+.viewcode-link {
+  float: right;
+}
+
 .wy-menu-vertical p.caption {
   color: #ffffff;
 }
@@ -12,7 +20,7 @@ body {
 .wy-nav-content {
   padding: 1.618em 3.236em;
   height: 100%;
-  max-width: 1000px;
+  max-width: 90%;
   margin: auto;
 }
 
@@ -31,4 +39,168 @@ body {
 .wy-table-responsive table.longtable td,
 .wy-table-responsive table.longtable th {
   white-space: normal;
+}
+
+div.deprecated,
+div.versionchanged {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  border: 1px solid #ddd;
+}
+
+div.deprecated {
+  color: #b94a48;
+  background-color: #f3e5e5;
+  border-color: #eed3d7;
+}
+
+div.versionchanged {
+  background-color: #fffbe8;
+  border-color: #fbeed5;
+}
+
+/*****************************************************************************
+ * Installation quickstart
+ * This quickstart installation is a hack of the awesome
+ * https://spacy.io/usage/#quickstart page.
+ * See the original javascript implementation
+ * https://github.com/ines/quickstart
+ *****************************************************************************/
+/* style input radio and checkbox */
+div.install > input {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  opacity: 0;
+}
+
+/* Style the button */
+div.install > label {
+  display: inline-block;
+  margin-top: 12px;
+  padding: 5px 11px;
+  background-color: #fff3cd;
+  border: none;
+  border-radius: 3px;
+  color: black;
+}
+
+div.install > label:hover {
+  cursor: pointer;
+}
+
+/* Style the button when the checkbox is checked */
+div.install > input:checked + label {
+  background-color: #a76d60;
+  color: white;
+}
+
+/* Hide expandable content by default */
+.pkd-expandable {
+  display: none;
+}
+
+div.highlight span.pkd-expandable:before {
+  content: "> ";
+}
+
+div.highlight span.pkd-raw-terminal:before {
+  content: "> ";
+}
+
+/* Show hidden content when the checkbox is checked */
+#quickstart-cond:checked ~ * [data-venv="conda"] {
+  display: block;
+}
+
+#quickstart-venv:checked ~ * [data-venv="venv"] {
+  display: block;
+}
+
+#quickstart-none:checked ~ * [data-venv="none"] {
+  display: block;
+}
+
+#quickstart-win:not(:checked) ~ * [data-os="windows"] {
+  display: none;
+}
+#quickstart-lin:not(:checked) ~ * [data-os="linux"] {
+  display: none;
+}
+#quickstart-mac:not(:checked) ~ * [data-os="mac"] {
+  display: none;
+}
+
+/* Colors */
+.red {
+  color: red;
+}
+
+.blue {
+  color: blue;
+}
+
+.green {
+  color: green;
+}
+
+.greenbox {
+  border: 1px solid rgba(161, 236, 143, 0.5);
+  color: green;
+  font-family: "Courier New", Courier, monospace;
+  padding: 2px;
+}
+
+.yellow {
+  color: yellow;
+}
+
+.orange {
+  color: orange;
+}
+
+/*****************************************************************************
+ * Terminal session box
+ *****************************************************************************/
+.admonition-terminal-session.admonition {
+  background-color: white;
+  color: black;
+}
+
+.admonition-terminal-session .admonition-title {
+  font-weight: bold;
+  background-color: darkslategray;
+  color: darkseagreen;
+}
+
+.admonition-terminal-session .admonition-title::before {
+  content: "🖥";
+}
+
+.admonition-terminal-session .line {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1em;
+  line-height: 1em;
+}
+
+/*****************************************************************************
+ * Toggle container
+ *****************************************************************************/
+.toggle .header {
+  display: block;
+  clear: both;
+}
+
+.toggle .header p {
+  display: inline;
+}
+
+.toggle .header:before {
+  content: "▶";
+}
+
+.toggle .header.open:before {
+  content: "▼";
 }

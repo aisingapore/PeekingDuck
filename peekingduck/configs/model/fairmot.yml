@@ -1,0 +1,21 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores", "obj_attrs"]
+
+optional_inputs: ["mot_metadata"]
+
+weights_parent_dir: null
+weights: {
+  model_subdir: fairmot,
+  blob_file: fairmot.zip,
+  model_file: {
+    dla_34: fairmot_dla34-stripped-half.pth
+  },
+}
+
+model_type: dla_34
+
+score_threshold: 0.4
+K: 500 # max number of output objects
+min_box_area: 100
+track_buffer: 30
+input_size: [864, 480]

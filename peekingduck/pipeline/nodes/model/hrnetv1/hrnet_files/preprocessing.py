@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,19 +17,22 @@ Preprocessing functions for HRNet
 """
 
 from typing import Tuple
-import numpy as np
+
 import cv2
+import numpy as np
 
 
 def project_bbox(bboxes: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
     """Project the normalized bbox to specified image coordinates.
 
     Args:
-        bboxes (np.array): Array of detected bboxes in (top left, btm right) format
-        size (tuple): width and height of image space
+        bboxes (np.ndarray): Array of detected bboxes in (top left, btm right)
+            format.
+        size (Tuple[int, int]): Width and height of image space.
 
     Returns:
-        array of bboxes in (x, y, w, h) format where x,y is top left coordinate
+        (np.ndarray): Array of bboxes in (x, y, w, h) format where x, y is top
+            left coordinate.
     """
     width, height = size[0] - 1, size[1] - 1
 
@@ -48,17 +51,19 @@ def project_bbox(bboxes: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
 
 
 def box2cs(bboxes: np.ndarray, aspect_ratio: float) -> np.ndarray:
-    """Convert bounding box defined by top left x, y, w, h to its center x,y,w,h
-    The bounding box is also expanded to meet the input aspect ratio.
+    """Converts bounding box defined by top left (x, y, w, h) to its
+    center (x, y, w, h). The bounding box is also expanded to meet the input
+    aspect ratio.
 
     Args:
-        bboxes (np.array): Array of bboxes in of x, y, w, h (top left)
-        aspect_ratio(float): W:H ratio for the new box
+        bboxes (np.ndarray): Array of bboxes in the form of top left
+            (x, y, w, h).
+        aspect_ratio (float): W:H ratio for the new box.
 
     Returns:
-        Array of bboxes in x, y, w, h (center) format that meets the aspect ratio
+        (np.ndarray): Array of bboxes in center (x, y, w, h) format that meets
+        the aspect ratio.
     """
-
     bboxes[:, 0] = bboxes[:, 0] + bboxes[:, 2] * 0.5
     bboxes[:, 1] = bboxes[:, 1] + bboxes[:, 3] * 0.5
 
@@ -80,16 +85,15 @@ def crop_and_resize(
     cropped region is resized to out_size.
 
     Args:
-        frame (np.array): Image in numpy array
-        bboxes (np.array): bboxes (x,y,w,h) center coordinates
-        out_size (tuple): cropped region will be resized to out_size
+        frame (np.ndarray): Image in numpy array.
+        bboxes (np.ndarray): Bboxes center (x, y, w, h) coordinates.
+        out_size (tuple): Cropped region will be resized to out_size.
 
-    return:
-        the resized and cropped region array and the affine transform matrix
-        to map a point in cropped image coordinate space to source frame
-        coordinate space
+    Returns:
+        (Tuple[np.ndarray, np.ndarray]): The resized and cropped region array
+        and the affine transform matrix to map a point in cropped image
+        coordinate space to source frame coordinate space.
     """
-
     translate_x = bboxes[:, 0] - (bboxes[:, 2] - 1) * 0.5
     translate_y = bboxes[:, 1] - (bboxes[:, 3] - 1) * 0.5
     scale_x = bboxes[:, 2] / out_size[0]

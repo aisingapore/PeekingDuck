@@ -1,16 +1,14 @@
 nodes:
-- input.recorded:
-    input_dir: "images/testing" 
+- input.visual:
+    source: "tests/data/images"
 - model.posenet
 - dabble.keypoints_to_3d_loc:
     focal_length: 1.14
     torso_factor: 0.9
 - dabble.group_nearby_objs:
-    obj_dist_thres: 1.5
+    obj_dist_threshold: 1.5
 - dabble.check_large_groups:
-    group_size_thres: 2
-- dabble.fps
+    group_size_threshold: 2
 - draw.bbox     # not in demo config, but included here
 - draw.poses
 - draw.group_bbox_and_tag
-- draw.legend

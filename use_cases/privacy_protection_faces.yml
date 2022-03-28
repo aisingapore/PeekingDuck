@@ -1,7 +1,6 @@
 nodes:
-- input.live
+- input.visual:
+    source: 0
 - model.mtcnn
-- dabble.fps
 - draw.mosaic_bbox
-- draw.legend
 - output.screen

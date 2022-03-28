@@ -1,0 +1,8 @@
+nodes:
+- input.visual:
+    source: "tests/data/images"
+- model.csrnet:
+    model_type: dense
+- draw.heat_map
+- draw.legend:
+    show: ["count"]

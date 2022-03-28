@@ -1,0 +1,6 @@
+nodes:
+- input.visual:
+    source: data/benchmark/single
+- model.yolox:
+    model_type: yolox-l
+- dabble.fps

@@ -1,11 +1,11 @@
-# Copyright 2021 AI Singapore
-
+# Copyright 2022 AI Singapore
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #     https://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -33,22 +33,23 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Outputs the processed image or video to a file.
+    """Outputs the processed image or video to a file. A timestamp is appended to the
+    end of the file name.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |filename|
+        |filename_data|
 
-        |saved_video_fps|
+        |saved_video_fps_data|
 
-        |pipeline_end|
+        |pipeline_end_data|
 
     Outputs:
-        |none|
+        |none_output_data|
 
     Configs:
-        output_dir (:obj:`str`): **default = 'PeekingDuck/data/output'**. |br|
+        output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
     """
 
@@ -113,8 +114,8 @@ class Node(AbstractNode):
     def _append_datetime_filename(self, filename: str) -> str:
         self._file_name = filename
         current_time = datetime.datetime.now()
-        # output as '240621-15-09-13'
-        time_str = current_time.strftime("%d%m%y-%H-%M-%S")
+        # output as 'YYYYMMDD_hhmmss'
+        time_str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension
         filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])

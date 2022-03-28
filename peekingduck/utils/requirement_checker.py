@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -98,15 +98,9 @@ def check_requirements(
             logger.warning(
                 f"The {identifier} node requires {req.name.strip()} which needs to be "
                 "manually installed. Please follow the instructions at "
-                "https://peekingduck.readthedocs.io/en/stable/peekingduck.pipeline.nodes.html "
+                "https://peekingduck.readthedocs.io/en/stable/master.html#api-documentation "
                 "and rerun. Ignore this warning if the package is already installed"
             )
-
-    if n_update > 0:
-        logger.warning(
-            f"{n_update} package{'s' * int(n_update > 1)} updated. Please rerun for "
-            "the updates to take effect."
-        )
 
     return n_update
 

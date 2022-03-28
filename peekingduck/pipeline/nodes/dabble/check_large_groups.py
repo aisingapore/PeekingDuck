@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,31 +23,40 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Checks which groups have exceeded the group size threshold.
+    """Checks which groups have exceeded the group size threshold. The group
+    associated with each object is accessed by the ``groups`` key of
+    :term:`obj_attrs`.
 
     Inputs:
-        |obj_groups|
+        |obj_attrs_data|
+        :mod:`dabble.check_large_groups` requires the ``groups`` attribute.
 
     Outputs:
-        |large_groups|
+        |large_groups_data|
 
     Configs:
-        group_size_thres (:obj:`int`): **default = 5**. |br|
+        group_size_threshold (:obj:`int`): **default = 5**. |br|
             Threshold of group size.
+
+    .. versionchanged:: 1.2.0
+        :mod:`draw.check_large_groups` used to take in ``obj_tags``
+        (:obj:`List[str]`) as an input data type, which has been deprecated and
+        now subsumed under :term:`obj_attrs`. The same attribute is accessed by
+        using the ``groups`` key of :term:`obj_attrs`.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    def run(self, inputs: Dict[str, List[int]]) -> Dict[str, List[int]]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, List[int]]:
         """Checks which groups have exceeded the group size threshold,
         and returns a list of such groups.
         """
-        group_counter = Counter(inputs["obj_groups"])
+        group_counter: Counter = Counter(inputs["obj_attrs"]["groups"])
         large_groups = [
             group
             for group in group_counter
-            if group_counter[group] > self.group_size_thres
+            if group_counter[group] > self.group_size_threshold
         ]
 
         return {"large_groups": large_groups}

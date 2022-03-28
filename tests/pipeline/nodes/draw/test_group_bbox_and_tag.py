@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.draw.group_bbox_and_tag import Node
 def draw_group_bbox_and_tag():
     node = Node(
         {
-            "input": ["img", "bboxes", "obj_groups", "large_groups"],
+            "input": ["img", "bboxes", "obj_attrs", "large_groups"],
             "output": ["none"],
             "bbox_color": [0, 140, 255],
             "bbox_thickness": 4,
@@ -40,7 +40,12 @@ class TestTag:
     def test_no_groups(self, draw_group_bbox_and_tag, create_image):
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
-        input1 = {"img": output_img, "bboxes": [], "obj_groups": [], "large_groups": []}
+        input1 = {
+            "img": output_img,
+            "bboxes": [],
+            "obj_attrs": {"groups": []},
+            "large_groups": [],
+        }
         draw_group_bbox_and_tag.run(input1)
         assert original_img.shape == output_img.shape
         np.testing.assert_equal(original_img, output_img)
@@ -52,7 +57,7 @@ class TestTag:
         input1 = {
             "img": output_img,
             "bboxes": [np.array([0, 0, 10, 10])],
-            "obj_groups": [0],
+            "obj_attrs": {"groups": [0]},
             "large_groups": [0],
         }
         draw_group_bbox_and_tag.run(input1)

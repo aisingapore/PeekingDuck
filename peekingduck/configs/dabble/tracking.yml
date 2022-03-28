@@ -1,0 +1,8 @@
+input: ["img", "bboxes"]
+output: ["obj_attrs"]
+
+optional_inputs: ["mot_metadata"]
+
+tracking_type: "iou" # [iou, mosse]
+iou_threshold: 0.1
+max_lost: 10

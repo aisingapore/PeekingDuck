@@ -1,0 +1,9 @@
+nodes:
+- input.visual:
+    source: <path/to/video with crowd>
+- model.csrnet:
+    model_type: dense
+- draw.heat_map
+- draw.legend:
+    show: ["count"]
+- output.screen

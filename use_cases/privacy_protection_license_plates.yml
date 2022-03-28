@@ -1,0 +1,6 @@
+nodes:
+- input.visual:
+    source: <path to video with cars>
+- model.yolo_license_plate
+- draw.blur_bbox
+- output.screen

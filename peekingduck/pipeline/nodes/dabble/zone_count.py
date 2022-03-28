@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Counts the number of detected objects within a boundary.
-"""
+"""Counts the number of detected objects within a boundary."""
 
 from typing import Any, Dict, List
 
@@ -26,18 +24,18 @@ class Node(AbstractNode):
     """Uses the bottom midpoints of all detected bounding boxes and outputs the
     number of object counts in each specified zone.
 
-    Given the bottom mid-points of all detected objects, this script checks if
+    Given the bottom mid-points of all detected objects, this node checks if
     the points fall within the area of the specified zones. The zone counting
     detections depend on the configuration set in the object detection models,
     such as the type of object to detect.
 
     Inputs:
-        |btm_midpoint|
+        |btm_midpoint_data|
 
     Outputs:
-        |zones|
+        |zones_data|
 
-        |zone_count|
+        |zone_count_data|
 
     Configs:
         resolution (:obj:`List[int]`): **default = [1280, 720]**. |br|

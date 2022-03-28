@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,17 +16,17 @@
 Main class for HRNet Model
 """
 
-
 import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
-from peekingduck.weights_utils import checker, downloader, finder
+
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.detector import Detector
+from peekingduck.weights_utils import checker, downloader, finder
 
 
 class HRNetModel:  # pylint: disable=too-few-public-methods
-    """HRNet model to detect poses from detected bboxes"""
+    """HRNet model to detect poses from detected bboxes."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__()
@@ -53,17 +53,15 @@ class HRNetModel:  # pylint: disable=too-few-public-methods
     def predict(
         self, frame: np.ndarray, bboxes: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Predict poses from input frame and bboxes
+        """Predicts poses from input frame and bboxes.
 
         Args:
-            frame (np.array): image in numpy array
-            bboxes (np.array): detected bboxes in image
+            frame (np.ndarray): Image in numpy array.
+            bboxes (np.ndarray): Detected bboxes in image.
 
         Returns:
-            keypoints, keypoint_scores, keypoint_conns, keypoint_bboxes
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
-            tuple containing list of bboxes and pose related info i.e coordinates,
-            scores, connections
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Tuple containing list
+            of pose related info, i.e., coordinates, scores, and connections.
         """
         assert isinstance(frame, np.ndarray)
         assert isinstance(bboxes, np.ndarray)

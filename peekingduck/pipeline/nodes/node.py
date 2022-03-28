@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -23,6 +23,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
 from peekingduck.configloader import ConfigLoader
+from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
 
 class AbstractNode(metaclass=ABCMeta):
@@ -53,11 +54,23 @@ class AbstractNode(metaclass=ABCMeta):
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
+        # This is only initialized when the `optional_inputs` key is found in
+        # the nodes' config file
+        self.optional_inputs: List[str]
+
         # NOTE: config and kwargs_config are similar but are from different
         # inputs config is when users input a dictionary to update the node
         # kwargs_config is when users input parameters to update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
+
+        # For object detection nodes, convert class names to class ids, if any
+        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
+            current_ids = self.config["detect_ids"]
+            _, updated_ids = obj_det_change_class_name_to_id(
+                self.node_name, "detect_ids", current_ids
+            )
+            self.config["detect_ids"] = updated_ids
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:

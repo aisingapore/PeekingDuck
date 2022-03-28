@@ -1,11 +1,11 @@
-# Copyright 2021 AI Singapore
-
+# Copyright 2022 AI Singapore
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
-#      https://www.apache.org/licenses/LICENSE-2.0
-
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -60,8 +60,8 @@ class Detector:
             "Yolo model loaded with following configs: \n\t"
             f"Model type: {self.config['model_type']}, \n\t"
             f"Input resolution: {self.config['size']}, \n\t"
-            f"NMS threshold: {self.config['yolo_iou_threshold']}, \n\t"
-            f"Score threshold: {self.config['yolo_score_threshold']}"
+            f"IOU threshold: {self.config['iou_threshold']}, \n\t"
+            f"Score threshold: {self.config['score_threshold']}"
         )
 
         return model
@@ -99,12 +99,13 @@ class Detector:
                 boxes: (Numpy Array) an array of bounding box with
                     definition like (x1, y1, x2, y2), in a
                     coordinate system with origin point in
-                    the left top corner
+                    the top-left corner
                 labels: (Numpy Array) an array of class labels
                 scores: (Numpy Array) an array of confidence scores
         """
         # Use TF2 .pb saved model format for inference
-        image_data = cv.resize(image, (self.config["size"], self.config["size"]))
+        image_data = cv.cvtColor(image, cv.COLOR_BGR2RGB)
+        image_data = cv.resize(image_data, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
 
         image_data = np.asarray([image_data]).astype(np.float32)
@@ -122,8 +123,8 @@ class Detector:
             ),
             self.config["max_output_size_per_class"],
             self.config["max_total_size"],
-            self.config["yolo_iou_threshold"],
-            self.config["yolo_score_threshold"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
         )
         classes = classes.numpy()[0]
         classes = classes[: nums[0]]

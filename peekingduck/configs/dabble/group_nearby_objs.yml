@@ -1,4 +1,4 @@
 input: ["obj_3D_locs"]
-output: ["obj_groups"]
+output: ["obj_attrs"]
 
-obj_dist_thres: 1.5
+obj_dist_threshold: 1.5

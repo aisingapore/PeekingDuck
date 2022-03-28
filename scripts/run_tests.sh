@@ -5,12 +5,12 @@
 # This shellscript controls the behavior of running/printing coverage 
 # and the varying extent to run the test.
 
-test_dir=$PWD/peekingduck
+readonly TEST_DIR=$PWD/peekingduck
+readonly ALLOWED_EXT=(all unit mlmodel module)
+
 selectedTest="$1"
-allowedExt=(all unit mlmodel module)
 
-
-show_coverage(){
+show_coverage() {
     # shows coverage if parameter is set to true and echos information.
     # showCoverage: type(bool) - shows coverage if set to true
 
@@ -24,7 +24,7 @@ show_coverage(){
     fi
 }
 
-run_test(){
+run_tests_batch() {
     # runs pytest together with coverage, allows multiple configurations
     # showCoverage: type(bool) - whether to show coverage
     # testType: type(str) - type of test suite to run
@@ -32,35 +32,71 @@ run_test(){
     testType=$1
     showCoverage=$2
 
-    if ! (coverage run --source="$test_dir" -m pytest -m "$testType"); then
-        show_coverage $showCoverage
+    if ! (coverage run --source="${TEST_DIR}" -m pytest -m "${testType}"); then
+        show_coverage "${showCoverage}"
         echo "TEST FAILED."
         exit 1
     else
-        show_coverage $showCoverage
+        show_coverage "${showCoverage}"
         echo "TEST PASSED!"
     fi
 
     exit 0
 }
 
-echo "Running $selectedTest tests in $test_dir"
+run_tests_iteratively() {
+    # Iteratively run a fresh pytest instance for each test script marked as
+    # mlmodel due to memory constraints. Then runs the rest of the tests in two
+    # batches: "not mlmodel and not module" and "module".
+    #
+    # showCoverage: type(bool) - whether to show coverage.
+    #
+    # References:
+    # Convert multiline string to array: https://stackoverflow.com/a/45565601
+    # Extract string before a colon: https://stackoverflow.com/a/20348214
 
-case $selectedTest in 
+    showCoverage=$1
+
+    local IFS=$'\n'
+    local testSuites=($(pytest -p no:warnings -qq -m mlmodel --co))
+    # Prepend "-m" for pytest to run marker
+    testSuites+=("-m not mlmodel and not module" "-m module")
+
+    coverage erase
+    local testSuite
+    for testSuite in "${testSuites[@]}"; do
+        coverage run --source="${TEST_DIR}" -a -m pytest "${testSuite%:*}"
+        if [[ $? -ne 0 ]]; then
+            show_coverage "${showCoverage}"
+            echo "TEST FAILED."
+            exit 1
+        fi
+    done
+    show_coverage "${showCoverage}"
+    echo "TEST PASSED!"
+    exit 0
+}
+
+echo "Running ${selectedTest} tests in ${TEST_DIR}"
+
+case "${selectedTest}" in 
     "all")
-        run_test "" true
-        ;;
-    "module")
-        run_test "module" false
+        run_tests_batch "" true
         ;;
     "mlmodel")
-        run_test "mlmodel" false
+        run_tests_batch "mlmodel" false
+        ;;
+    "module")
+        run_tests_batch "module" false
+        ;;
+    "post_merge")
+        run_tests_iteratively true
         ;;
     "unit")
-        run_test "not mlmodel and not module" false
+        run_tests_batch "not mlmodel and not module" false
         ;;
     *)
-        echo "'$1' is an illegal argument, choose from: " "${allowedExt[@]}"
+        echo "'${selectedTest}' is an illegal argument, choose from: ${ALLOWED_EXT[@]}"
         exit 1
         ;;
 esac

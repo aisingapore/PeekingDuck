@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,8 +17,9 @@ EfficientDet model with model types: D0-D4
 """
 
 import logging
+from pathlib import Path
 from typing import Any, Dict, List, Tuple
-
+import json
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
@@ -41,36 +42,53 @@ class EfficientDetModel:
         if not 0 <= config["model_type"] <= 4:
             raise ValueError("model_type must be an integer in [0, 4]")
 
+        # check for efficientdet weights, if none then download into weights folder
         weights_dir, model_dir = finder.find_paths(
             config["root"], config["weights"], config["weights_parent_dir"]
         )
-
-        # check for efficientdet weights, if none then download into weights folder
         if not checker.has_weights(weights_dir, model_dir):
             self.logger.info("---no weights detected. proceeding to download...---")
             downloader.download_weights(weights_dir, config["weights"]["blob_file"])
             self.logger.info(f"---weights downloaded to {weights_dir}.---")
 
+        classes_path = model_dir / config["weights"]["classes_file"]
+        self.class_names = {
+            val["id"] - 1: val["name"]
+            for val in json.loads(Path(classes_path).read_text()).values()
+        }
+        self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
-        self.logger.info(f"efficientdet model detecting ids: {self.detect_ids}")
 
-        self.detector = Detector(config, model_dir)
+    @property
+    def detect_ids(self) -> List[int]:
+        """The list of selected object category IDs."""
+        return self._detect_ids
 
-    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    @detect_ids.setter
+    def detect_ids(self, ids: List[int]) -> None:
+        if not isinstance(ids, list):
+            raise TypeError("detect_ids has to be a list")
+        if not ids:
+            self.logger.info("Detecting all EfficientDet classes")
+        self._detect_ids = ids
+
+    def predict(
+        self, image: np.ndarray
+    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
         """predict the bbox from frame
 
-        returns:
-        object_bboxes(np.ndarray): list of bboxes detected
-        object_labels(np.ndarray): list of index labels of the
-            object detected for the corresponding bbox
-        object_scores(np.ndarray): list of confidence scores of the
-            object detected for the corresponding bbox
+        Args:
+            image (np.ndarray): Input image frame.
+
+        Returns:
+            object_bboxes(List[Numpy ndarray]): list of bboxes detected
+            object_labels(List[str]): list of index labels of the
+                object detected for the corresponding bbox
+            object_scores(List[float]): list of confidence scores of the
+                object detected for the corresponding bbox
         """
-        assert isinstance(frame, np.ndarray)
+        if not isinstance(image, np.ndarray):
+            raise TypeError("image must be a np.ndarray")
 
-        # return bboxes, object_bboxes, object_labels, object_scores
-        return self.detector.predict_bbox_from_image(frame, self.detect_ids)
-
-    def get_detect_ids(self) -> List[int]:
-        """getter function for ids to be detected"""
-        return self.detect_ids
+        # returns object_bboxes, object_labels, object_scores
+        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)

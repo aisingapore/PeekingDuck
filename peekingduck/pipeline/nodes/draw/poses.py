@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,23 +25,23 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws poses onto image.
 
-    The ``draw.poses`` node uses the ``keypoints``, ``keypoint_scores``, and
-    ``keypoint_conns`` predictions from pose models to draw the human poses
-    onto the image. For better understanding, check out the pose models such
-    as :py:class:`HRNet <peekingduck.pipeline.nodes.model.hrnet.Node>` and
-    :py:class:`PoseNet <peekingduck.pipeline.nodes.model.posenet.Node>`.
+    The :mod:`draw.poses` node uses the :term:`keypoints`,
+    :term:`keypoint_scores`, and :term:`keypoint_conns` predictions from pose
+    models to draw the human poses onto the image. For better understanding,
+    check out the pose models such as :mod:`HRNet <model.hrnet>` and
+    :mod:`PoseNet <model.posenet>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
     Outputs:
-        |none|
+        |none_output_data|
 
     Configs:
         None.

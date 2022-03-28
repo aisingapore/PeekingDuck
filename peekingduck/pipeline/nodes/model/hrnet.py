@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Slower but more accurate Pose Estimation model. Requires an object detector.
+"""🕺 High-Resolution Network: Deep high-resolution representation learning for
+human pose estimation. Requires an object detector.
 """
 
 
@@ -24,7 +24,7 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises and use HRNet model to infer poses from detected bboxes.
+    """Initializes and uses HRNet model to infer poses from detected bboxes.
     Note that HRNet must be used in conjunction with an object detector applied
     prior.
 
@@ -32,26 +32,26 @@ class Node(AbstractNode):
     called HRNetV1.
 
     The HRNet node is capable of detecting single human figures simultaneously
-    per inference and for each detected human figure, 17 keypoints are
-    estimated. The keypoint indices table can be found
+    per inference, with 17 keypoints estimated for each detected human figure.
+    The keypoint indices table can be found
     :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
     Configs:
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`):
             **default = { height: 192, width: 256 }**. |br|
             Resolution of input array to HRNet model.

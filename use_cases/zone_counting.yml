@@ -1,7 +1,8 @@
 nodes:
-- input.live
+- input.visual:
+    source: 0
 - model.yolo:
-    detect_ids: [0]
+    detect_ids: ["person"]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
     resolution: [1280, 720]
@@ -9,9 +10,9 @@ nodes:
     [[0, 0], [0.6, 0], [0.6, 1], [0, 1]],
     [[0.6, 0], [1, 0], [1, 1], [0.6, 1]]
     ]
-- dabble.fps
 - draw.bbox
 - draw.btm_midpoint
 - draw.zones
-- draw.legend
+- draw.legend:
+    show: ["zone_count"]
 - output.screen

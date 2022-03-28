@@ -1,0 +1,15 @@
+nodes:
+- input.visual:
+    source: <path/to/video with cars>
+- model.efficientdet:
+    detect_ids: ["car"]
+- dabble.tracking:
+    tracking_type: "iou"
+- dabble.statistics:
+    maximum: obj_attrs["ids"]
+- draw.bbox
+- draw.tag:
+    show: ["ids"]
+- draw.legend:
+    show: ["cum_max"]
+- output.screen

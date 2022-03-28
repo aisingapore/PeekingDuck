@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Counts the number of detected boxes.
-"""
+"""Counts the number of detected boxes."""
 
 from typing import Any, Dict
 
@@ -22,13 +20,13 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Counts total number of detected objects.
+    """Counts the total number of detected objects.
 
     Inputs:
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |count|
+        |count_data|
 
     Configs:
         None.

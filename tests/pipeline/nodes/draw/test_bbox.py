@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ PKD_DIR = Path(__file__).resolve().parents[3]
 
 @pytest.fixture(params=BLACK_IMAGE)
 def black_image(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
+    test_img_dir = PKD_DIR.parent / "tests" / "data" / "images"
 
     yield test_img_dir / request.param
 

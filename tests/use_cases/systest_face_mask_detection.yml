@@ -1,8 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: "images/testing" 
+- input.visual:
+    source: "tests/data/images"
 - model.yolo_face
-- dabble.fps
 - draw.bbox:
     show_labels: True
-- draw.legend

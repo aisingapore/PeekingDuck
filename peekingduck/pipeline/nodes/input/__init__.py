@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,4 +14,8 @@
 
 """
 Reads data from a given input.
+
+.. deprecated:: 1.2.0
+    :mod:`input.live` and :mod:`input.recorded` are deprecated.
+    They have been replaced by the :mod:`input.visual` node.
 """

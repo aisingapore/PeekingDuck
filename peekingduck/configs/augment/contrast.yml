@@ -1,0 +1,4 @@
+input: ["img"]
+output: ["img"]
+
+alpha: 1.0

@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ class Node(AbstractNode):
     """Uses 2D bounding boxes information to estimate 3D location.
 
     Inputs:
-        |bboxes|
+        |bboxes_data|
 
     Outputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Configs:
         focal_length (:obj:`float`): **default = 1.14**. |br|
@@ -40,7 +40,10 @@ class Node(AbstractNode):
         height_factor (:obj:`float`): **default = 2.5**. |br|
             A factor used to estimate real-world distance from pixels, based on
             average human height in metres. The value varies across different
-            camera set-ups, and calibration may be required.
+            camera set-ups, and calibration may be required. Please refer to
+            the :ref:`Social Distancing use case
+            <use_case_social_distancing_using_object_detection>` for more
+            information.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

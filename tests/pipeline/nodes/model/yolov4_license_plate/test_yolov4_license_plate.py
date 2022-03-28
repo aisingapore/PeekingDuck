@@ -1,5 +1,16 @@
-# (26.10.21) Work in progress to troubleshoot this unit test, where testing
-# only fails in Github runner
+# Copyright 2022 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#      https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 from pathlib import Path
 from unittest import TestCase, mock
@@ -17,16 +28,9 @@ from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.de
 
 @pytest.fixture
 def yolo_config():
-    filepath = (
-        Path.cwd()
-        / "tests"
-        / "pipeline"
-        / "nodes"
-        / "model"
-        / "yolov4_license_plate"
-        / "test_yolov4_license_plate.yml"
-    )
-    with open(filepath) as file:
+    with open(
+        Path(__file__).resolve().parent / "test_yolov4_license_plate.yml"
+    ) as file:
         node_config = yaml.safe_load(file)
     node_config["root"] = Path.cwd()
 
@@ -43,29 +47,16 @@ def model_dir(yolo_config):
 
 
 @pytest.fixture(params=["v4", "v4tiny"])
-def yolo(request, yolo_config):
+def yolo_type(request, yolo_config):
     yolo_config["model_type"] = request.param
-    node = Node(yolo_config)
-
-    return node
-
-
-@pytest.fixture()
-def yolo_detector(yolo_config):
-    yolo_config["model_type"] = "v4tiny"
-    detector = Detector(yolo_config)
-
-    return detector
-
-
-def replace_download_weights(model_dir, blob_file):
-    return False
+    return yolo_config
 
 
 @pytest.mark.mlmodel
 class TestLPYolo:
-    def test_no_lp_image(self, test_no_lp_images, yolo):
+    def test_no_lp_image(self, test_no_lp_images, yolo_type):
         blank_image = cv2.imread(test_no_lp_images)
+        yolo = Node(yolo_type)
         output = yolo.run({"img": blank_image})
         expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
         assert output.keys() == expected_output.keys()
@@ -76,14 +67,15 @@ class TestLPYolo:
         assert len(output["bbox_labels"]) == 0
         assert len(output["bbox_scores"]) == 0
 
-    def test_at_least_one_lp_image(self, test_lp_images, yolo):
+    def test_at_least_one_lp_image(self, test_lp_images, yolo_type):
         test_img = cv2.imread(test_lp_images)
+        yolo = Node(yolo_type)
         output = yolo.run({"img": test_img})
         assert "bboxes" in output
         assert len(output["bboxes"]) != 0
         assert len(output["bboxes"]) == len(output["bbox_labels"])
 
-    def test_no_weights(self, yolo_config):
+    def test_no_weights(self, yolo_config, replace_download_weights):
         with mock.patch(
             "peekingduck.weights_utils.checker.has_weights", return_value=False
         ), mock.patch(

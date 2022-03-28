@@ -1,11 +1,11 @@
-# Copyright 2021 AI Singapore
-
+# Copyright 2022 AI Singapore
+#
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-
+#
 #      https://www.apache.org/licenses/LICENSE-2.0
-
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -18,7 +18,7 @@ Face detection class using mtcnn model to find face bboxes
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 import tensorflow as tf
@@ -26,6 +26,7 @@ import tensorflow as tf
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
     load_graph,
 )
+from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
 class Detector:  # pylint: disable=too-many-instance-attributes
@@ -36,10 +37,12 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.config = config
         self.model_dir = model_dir
-        self.min_size = self.config["mtcnn_min_size"]
-        self.factor = self.config["mtcnn_factor"]
-        self.thresholds = self.config["mtcnn_thresholds"]
-        self.score = self.config["mtcnn_score"]
+        self.min_size = self.config["min_size"]
+        self.factor = self.config["scale_factor"]
+        self.thresholds = [
+            float(threshold) for threshold in self.config["network_thresholds"]
+        ]
+        self.score = self.config["score_threshold"]
         self.mtcnn = self._create_mtcnn_model()
 
     def _create_mtcnn_model(self) -> tf.keras.Model:
@@ -50,10 +53,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.logger.info(
             "MTCNN model loaded with following configs: \n\t"
-            f"Min size: {self.config['mtcnn_min_size']}, \n\t"
-            f"Scale Factor: {self.config['mtcnn_factor']}, \n\t"
-            f"Steps Thresholds: {self.config['mtcnn_thresholds']}, \n\t"
-            f"Score Threshold: {self.config['mtcnn_score']}"
+            f"Min size: {self.config['min_size']}, \n\t"
+            f"Scale Factor: {self.config['scale_factor']}, \n\t"
+            f"Network Thresholds: {self.config['network_thresholds']}, \n\t"
+            f"Score Threshold: {self.config['score_threshold']}"
         )
 
         return self._load_mtcnn_graph(model_path)
@@ -64,7 +67,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             return load_graph(str(model_path))
 
         raise ValueError(
-            "Graph file does not exist. Please check that " "%s exists" % model_path
+            f"Graph file does not exist. Please check that {model_path} exists"
         )
 
     def predict_bbox_landmarks(
@@ -83,12 +86,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         # 1. process inputs
         image = self.process_image(image)
-        min_size, factor, thresholds = self.process_params(
-            self.min_size, self.factor, self.thresholds
-        )
 
         # 2. evaluate image
-        bboxes, scores, landmarks = self.mtcnn(image, min_size, factor, thresholds)
+        bboxes, scores, landmarks = self.mtcnn(
+            image, self.min_size, self.factor, self.thresholds
+        )
 
         # 3. process outputs
         bboxes, scores, landmarks = self.process_outputs(
@@ -114,29 +116,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         image = tf.convert_to_tensor(image)
 
         return image
-
-    @staticmethod
-    def process_params(
-        min_size: int, factor: float, thresholds: List[float]
-    ) -> Tuple[tf.Tensor, tf.Tensor, tf.Tensor]:
-        """Processes model input parameters
-
-        Args:
-            min_size (int): minimum face size
-            factor (float): scale factor
-            thresholds (list): steps thresholds
-
-        Returns:
-            min_size (tf.Tensor): processed minimum face size
-            factor (tf.Tensor): processed scale factor
-            thresholds (tf.Tensor): processed steps thresholds
-        """
-        min_size = tf.convert_to_tensor(float(min_size))
-        factor = tf.convert_to_tensor(float(factor))
-        thresholds = [float(integer) for integer in thresholds]
-        thresholds = tf.convert_to_tensor(thresholds)
-
-        return min_size, factor, thresholds
 
     def process_outputs(
         self,
@@ -170,8 +149,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
         bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
 
-        # Express image coordinates as a percentage of image height and width
-        bboxes[:, [0, 2]] = bboxes[:, [0, 2]] / image.shape[1]
-        bboxes[:, [1, 3]] = bboxes[:, [1, 3]] / image.shape[0]
+        bboxes = xyxy2xyxyn(bboxes, image.shape[0], image.shape[1])
 
         return bboxes, scores, landmarks

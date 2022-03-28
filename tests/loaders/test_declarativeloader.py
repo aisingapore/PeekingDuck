@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -43,17 +43,17 @@ UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for _ in range(8))
 CUSTOM_NODES_DIR_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
 
 MODULE_DIR = Path("tmp_dir")
-RUN_CONFIG_PATH = MODULE_DIR / "run_config.yml"
+PIPELINE_PATH = MODULE_DIR / "pipeline_config.yml"
 CUSTOM_NODES_DIR = MODULE_DIR / CUSTOM_NODES_DIR_NAME
 PKD_NODE_DIR = MODULE_DIR / PKD_NODE_TYPE
 CUSTOM_NODE_DIR = CUSTOM_NODES_DIR / CUSTOM_NODE_TYPE
 PKD_NODE_CONFIG_DIR = MODULE_DIR / "configs" / PKD_NODE_TYPE
 CUSTOM_NODE_CONFIG_DIR = CUSTOM_NODES_DIR / "configs" / CUSTOM_NODE_TYPE
-CONFIG_UPDATES_CLI = "{'input.live': {'resize':{'do_resizing':True, 'width':320}}}"
+CONFIG_UPDATES_CLI = "{'input.visual': {'resize':{'do_resizing':True, 'width':320}}}"
 
 
-def create_run_config_yaml(nodes):
-    with open(RUN_CONFIG_PATH, "w") as outfile:
+def create_pipeline_yaml(nodes):
+    with open(PIPELINE_PATH, "w") as outfile:
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
@@ -93,7 +93,7 @@ def setup():
     PKD_NODE_CONFIG_DIR.mkdir(parents=True)
     CUSTOM_NODE_CONFIG_DIR.mkdir(parents=True)
 
-    create_run_config_yaml(NODES)
+    create_pipeline_yaml(NODES)
 
     create_node_python(PKD_NODE_DIR, PKD_NODE_NAME)
     create_node_python(CUSTOM_NODE_DIR, CUSTOM_NODE_NAME)
@@ -106,7 +106,7 @@ def setup():
 def declarativeloader():
     setup()
     declarative_loader = DeclarativeLoader(
-        RUN_CONFIG_PATH, CONFIG_UPDATES_CLI, MODULE_DIR
+        PIPELINE_PATH, CONFIG_UPDATES_CLI, MODULE_DIR
     )
     declarative_loader.config_loader._base_dir = MODULE_DIR
     declarative_loader.custom_config_loader._base_dir = CUSTOM_NODES_DIR
@@ -231,7 +231,7 @@ class TestDeclarativeLoader:
         assert init_node.outputs == ["end"]
 
     def test_edit_config(self, declarativeloader):
-        node_name = "input.live"
+        node_name = "input.visual"
         orig_config = {
             "mirror_image": True,
             "resize": {"do_resizing": False, "width": 1280, "height": 720},
@@ -259,6 +259,97 @@ class TestDeclarativeLoader:
         # erase "width" or "height"
         assert "width" in orig_config["resize"]
         assert "invalid_key" not in ground_truth
+
+    def test_obj_detection_label_to_id_all_int(self, declarativeloader):
+        node_name = "model.yolo"
+        orig_config = {
+            "detect_ids": [0],
+        }
+        config_update = {"detect_ids": [0, 1, 2, 3, 5]}
+        ground_truth = {"detect_ids": [0, 1, 2, 3, 5]}
+
+        test_config = declarativeloader._edit_config(
+            orig_config, config_update, node_name
+        )
+        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+
+    def test_obj_detection_label_to_id_all_text(self, declarativeloader):
+        node_name = "model.yolo"
+        orig_config = {
+            "detect_ids": [0],
+        }
+        config_update = {"detect_ids": ["person", "car", "bus", "cell phone", "oven"]}
+        ground_truth = {"detect_ids": [0, 2, 5, 67, 69]}
+
+        test_config = declarativeloader._edit_config(
+            orig_config, config_update, node_name
+        )
+        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+
+    def test_obj_detection_label_to_id_mix_int_and_text(self, declarativeloader):
+        node_name = "model.yolo"
+        orig_config = {
+            "detect_ids": [0],
+        }
+        config_update = {"detect_ids": [4, "bicycle", 10, "laptop", "teddy bear"]}
+        ground_truth = {"detect_ids": [1, 4, 10, 63, 77]}
+
+        test_config = declarativeloader._edit_config(
+            orig_config, config_update, node_name
+        )
+        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+
+    def test_obj_detection_label_to_id_mix_int_and_text_duplicates(
+        self, declarativeloader
+    ):
+        node_name = "model.yolo"
+        orig_config = {
+            "detect_ids": [0],
+        }
+        config_update = {
+            "detect_ids": [
+                4,
+                "bicycle",
+                10,
+                "laptop",
+                "teddy bear",
+                "aeroplane",
+                63,
+                10,
+            ]
+        }
+        ground_truth = {"detect_ids": [1, 4, 10, 63, 77]}
+
+        test_config = declarativeloader._edit_config(
+            orig_config, config_update, node_name
+        )
+        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+
+    def test_obj_detection_label_to_id_mix_int_and_text_errors(self, declarativeloader):
+        node_name = "model.yolo"
+        orig_config = {
+            "detect_ids": [0],
+        }
+        config_update = {
+            "detect_ids": [
+                4,
+                "bicycle",
+                10,
+                "laptop",
+                "teddy bear",
+                "aeroplane",
+                63,
+                10,
+                "pokemon",
+                "scary monster",
+            ]
+        }
+        ground_truth = {"detect_ids": [0, 1, 4, 10, 63, 77]}
+
+        test_config = declarativeloader._edit_config(
+            orig_config, config_update, node_name
+        )
+        assert test_config["detect_ids"] == ground_truth["detect_ids"]
 
     def test_get_pipeline(self, declarativeloader):
         with mock.patch(

@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,17 +25,17 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws the boundaries of each specified zone onto the image.
 
-    The ``draw.zones`` node uses the ``zones`` output from the
+    The ``draw.zones`` node uses the :term:`zones` output from the
     ``dabble.zone_count`` node to draw a bounding box that represents the zone
     boundaries onto the image.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |zones|
+        |zones_data|
 
     Outputs:
-        |none|
+        |none_output_data|
 
     Configs:
         None.

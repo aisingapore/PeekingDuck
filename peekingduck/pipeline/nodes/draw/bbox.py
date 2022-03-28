@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -25,25 +25,24 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 class Node(AbstractNode):
     """Draws bounding boxes on image.
 
-    The ``draw.bbox`` node uses the ``bboxes`` and, optionally, the
-    ``bbox_labels`` from the model predictions to draw the bbox predictions
-    onto the image. For better understanding of the usecase, refer to the
-    `object counting usecase <use_cases/object_counting.html>`_.
+    The :mod:`draw.bbox` node uses :term:`bboxes` and, optionally,
+    :term:`bbox_labels` from the model predictions to draw the bbox predictions
+    onto the image.
 
     Inputs:
-        |img|
+        |img_data|
 
-        |bboxes|
+        |bboxes_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
     Outputs:
-        |none|
+        |none_output_data|
 
     Configs:
         show_labels (:obj:`bool`): **default = False**. |br|
-            If ``True``, shows class label, e.g. "person", above the bounding
-            box
+            If ``True``, shows class label, e.g., "person", above the bounding
+            box.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

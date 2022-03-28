@@ -17,8 +17,8 @@ num_classes: 80
 detect_ids: [0]
 max_output_size_per_class: 50
 max_total_size: 50
-yolo_iou_threshold: 0.5
-yolo_score_threshold: 0.2
+iou_threshold: 0.5
+score_threshold: 0.2
 MODEL_NODES: {
     yolov41: {
         inputs: [x:0],

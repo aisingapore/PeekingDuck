@@ -1,8 +1,7 @@
 nodes:
-- input.live
+- input.visual:
+    source: 0
 - model.yolo_face
-- dabble.fps
 - draw.bbox:
     show_labels: True
-- draw.legend
 - output.screen

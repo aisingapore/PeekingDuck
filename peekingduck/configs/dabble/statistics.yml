@@ -1,0 +1,8 @@
+input: ["all"]
+output: ["cum_avg", "cum_min", "cum_max"]
+
+identity: null
+length: null
+minimum: null
+maximum: null
+cond_count: null

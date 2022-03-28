@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 """
 Draws results/outputs to an image.
 
-For information from dabble nodes such as ``fps``, ``bbox_count`` and
-``zone_count``, use ``draw.legend`` to display them.
+.. deprecated:: 1.2.0
+    :mod:`draw.image_processor` is deprecated, and replaced by the nodes
+    :mod:`augment.brightness` and :mod:`augment.contrast`.
 """

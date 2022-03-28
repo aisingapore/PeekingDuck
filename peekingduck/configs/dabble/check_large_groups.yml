@@ -1,4 +1,4 @@
-input: ["obj_groups"]
+input: ["obj_attrs"]
 output: ["large_groups"]
 
-group_size_thres: 5
+group_size_threshold: 5

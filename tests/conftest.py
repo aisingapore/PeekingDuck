@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -22,13 +22,23 @@ import cv2
 import numpy as np
 import pytest
 import tensorflow.keras.backend as K
+import yaml
 
 TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
 TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
+TEST_HUMAN_VIDEOS = ["humans_mot.mp4"]
+# Folders of frames from the video sequence
+TEST_HUMAN_VIDEO_SEQUENCES = ["two_people_crossing"]
 
 TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
 TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
+
+TEST_CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
+
+# Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
+TEST_DATA_DIR = PKD_DIR.parent / "tests" / "data"
+TEST_IMAGES_DIR = TEST_DATA_DIR / "images"
 
 
 @pytest.fixture
@@ -76,6 +86,14 @@ def create_input_video(create_video):
 
 
 @pytest.fixture
+def replace_download_weights():
+    def _replace_download_weights(*_):
+        return False
+
+    return _replace_download_weights
+
+
+@pytest.fixture
 def tmp_dir():
     cwd = Path.cwd()
     newpath = tempfile.mkdtemp()
@@ -99,35 +117,71 @@ def tmp_project_dir():
 
 @pytest.fixture(params=TEST_HUMAN_IMAGES)
 def test_human_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
 def test_no_human_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_LP_IMAGES)
 def test_lp_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
-
-    yield str(test_img_dir / request.param)
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=TEST_NO_LP_IMAGES)
 def test_no_lp_images(request):
-    test_img_dir = PKD_DIR.parent / "images" / "testing"
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
 
-    yield str(test_img_dir / request.param)
+
+@pytest.fixture(params=TEST_CROWD_IMAGES)
+def test_crowd_images(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=TEST_HUMAN_VIDEOS)
+def test_human_videos(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=TEST_HUMAN_VIDEO_SEQUENCES)
+def test_human_video_sequences(request):
+    """This actually returns a list of dictionaries each containing:
+    - A video frame
+    - Bounding boxes
+
+    Yielding bounding box allows us to test dabble.tracking without having to
+    attach a object detector before it.
+
+    Yielding a list of frames instead of a video file allows for better control
+    of test data and frame specific manipulations to trigger certain code
+    branches.
+    """
+    sequence_dir = TEST_DATA_DIR / "video_sequences" / request.param
+    with open(sequence_dir / "detections.yml") as infile:
+        detections = yaml.safe_load(infile.read())
+    # Yielding video sequence name as well in case there are specific things to
+    # check for based on video content
+    yield request.param, [
+        {
+            "img": cv2.imread(str(sequence_dir / f"{key}.jpg")),
+            "bboxes": np.array(val["bboxes"]),
+        }
+        for key, val in detections.items()
+    ]
+
     K.clear_session()
     gc.collect()

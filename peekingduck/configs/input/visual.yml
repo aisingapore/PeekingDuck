@@ -1,0 +1,15 @@
+input: ["none"]
+output: ["img", "filename", "pipeline_end", "saved_video_fps"]
+
+filename: video.mp4
+frames_log_freq: 100
+mirror_image: False
+resize: {
+            do_resizing: False,
+            width: 1280,
+            height: 720
+        }
+saved_video_fps: 10
+source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+threading: False
+buffering: False

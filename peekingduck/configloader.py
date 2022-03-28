@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,6 +19,7 @@ Loads configurations for individual nodes.
 from pathlib import Path
 from typing import Any, Dict
 
+import logging
 import yaml
 
 
@@ -34,6 +35,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
 
     def __init__(self, base_dir: Path) -> None:
         self._base_dir = base_dir
+        self.logger = logging.getLogger(__name__)
 
     def _get_config_path(self, node: str) -> Path:
         """Based on the node, return the corresponding node config path"""

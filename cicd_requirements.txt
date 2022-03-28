@@ -13,6 +13,7 @@ myst-parser
 sphinx-autodoc-typehints
 sphinx-rtd-theme
 texttable # for pretty print scripts/check_links.py output
+
 # optional requirements
-shapely == 1.7.1
--r requirements.txt
+shapely >= 1.7.1
+lap == 0.4.0

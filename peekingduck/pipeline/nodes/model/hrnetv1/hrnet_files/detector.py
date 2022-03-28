@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Detector class to handle detection of poses for hrnet
+Detector class to handle detection of poses for HRNet
 """
 
 import logging
@@ -39,7 +39,7 @@ from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
-    """Detector class to handle detection of poses for hrnet"""
+    """Detector class to handle detection of poses for HRNet."""
 
     def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
         self.logger = logging.getLogger(__name__)
@@ -58,10 +58,10 @@ class Detector:
         When graph is frozen, we need a different way to extract the
         arrays. We use this to return the values needed. The purpose
         of this function is to make it consistent with how our regular
-        hrnet is used for inference.
+        HRNet is used for inference.
 
         The "training" argument is needed because in the usual implementation
-        of hrnet has the training argument. It does nothing here.
+        of HRNet has the training argument. It does nothing here.
         """
         heatmap = self.frozen_fn(tf.cast(person_frame, float))[0]
         return heatmap
@@ -85,15 +85,15 @@ class Detector:
     def preprocess(
         self, frame: np.ndarray, bboxes: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, Tuple[int, int]]:
-        """Preprocessing function that crops bboxes while preserving aspect ratio
+        """Crops bboxes while preserving aspect ratio.
 
         Args:
-            frame (np.ndarray): input image in numpy array
-            bboxes (np.ndarray): array of detected bboxes
+            frame (np.ndarray): Input image in numpy array.
+            bboxes (np.ndarray): Array of detected bboxes.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, Tuple[int, int]]: array of cropped bboxes, \
-            transformation matrices and original frame size
+            (Tuple[np.ndarray, np.ndarray, Tuple[int, int]]): Array of cropped
+            bboxes, transformation matrices, and original frame size.
         """
         frame = frame / 255.0
         frame_size = (frame.shape[1], frame.shape[0])
@@ -116,18 +116,19 @@ class Detector:
         cropped_frames_scale: List[int],
         frame_size: Tuple[int, int],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Postprocessing function to process output heatmaps to required keypoint arays
+        """Post processes output heatmaps to required keypoint arrays.
 
         Args:
-            heatmaps (np.ndarray): Output heatmaps from hrnet network
-            affine_matrices (np.ndarray): transformation matrices of preprocess cropping
-            cropped_frames_scale (List[int]): Shape of cropped bboxes
-            frame_size (Tuple[int, int]): Size of original image
+            heatmaps (np.ndarray): Output heatmaps from hrnet network.
+            affine_matrices (np.ndarray): transformation matrices of preprocess
+                cropping.
+            cropped_frames_scale (List[int]): Shape of cropped bboxes.
+            frame_size (Tuple[int, int]): Size of original image.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, np.ndarray]: \
-            tuple containing array of bboxes and pose related info i.e coordinates,
-            scores, connections
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Tuple containing array
+            of bboxes and pose related info, i.e., coordinates, scores, and
+            connections
         """
         batch, out_h, out_w, num_joints = heatmaps.shape
         heatmaps_reshaped = reshape_heatmaps(heatmaps)
@@ -156,16 +157,16 @@ class Detector:
     def predict(
         self, frame: np.ndarray, bboxes: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """HRnet prediction function
+        """HRnet prediction function.
 
         Args:
-            frame (np.ndarray): Image in numpy array
-            bboxes (np.ndarray): Array of detected bboxes
+            frame (np.ndarray): Image in numpy array.
+            bboxes (np.ndarray): Array of detected bboxes.
 
         Returns:
-            Tuple[np.ndarray, np.ndarray, np.ndarray]: \
-            tuple containing list of bboxes and pose related info i.e coordinates,
-            scores, connections
+            Tuple[np.ndarray, np.ndarray, np.ndarray]: Tuple containing list of
+            bboxes and pose related info, i.e., coordinates, scores, and
+            connections
         """
         cropped_frames, affine_matrices, frame_size = self.preprocess(frame, bboxes)
         heatmaps = self.hrnet(cropped_frames, training=False)

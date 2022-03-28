@@ -1,0 +1,6 @@
+nodes:
+- input.visual:
+    source: data/benchmark/multi
+- model.movenet:
+    model_type: multipose_lightning
+- dabble.fps

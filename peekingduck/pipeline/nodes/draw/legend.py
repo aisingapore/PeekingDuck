@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,8 +13,7 @@
 # limitations under the License.
 
 """
-Displays info from dabble nodes such as FPS, object count, and zone count in a
-legend box.
+Displays selected information from preceding nodes in a legend box.
 """
 
 from typing import Any, Dict, List
@@ -24,38 +23,57 @@ from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Draws legend box and information on image.
+    """Draws a translucent legend box on a corner of the image, containing
+    selected information produced by preceding nodes in the format
+    ``<data type>: <value>``. Supports in-built PeekingDuck data types defined
+    in :doc:`Glossary </glossary>` as well as custom data types produced by
+    custom nodes.
 
-    The ``draw.legend`` node dynamically pulls the output results of previous
-    nodes and uses it to draw the information into a legend box. Currently
-    draws fps, object counts and object count in zones.
+    This example screenshot shows :term:`fps` from :mod:`dabble.fps`,
+    :term:`count` from :mod:`dabble.bbox_count` and :term:`cum_avg` from
+    :mod:`dabble.statistics` displayed within the legend box.
+
+    .. image:: /assets/api/legend.png
+
+    |br|
+
+    With the exception of the :term:`zone_count` data type from
+    :mod:`dabble.zone_count`, all other selected in-built PeekingDuck data
+    types or custom data types must be of types :obj:`int`, :obj:`float`, or
+    :obj:`str`. Note that values of float type such as :term:`fps` and
+    :term:`cum_avg` are displayed in 2 decimal places.
 
     Inputs:
-        ``all`` (:obj:`Any`): Receives inputs from all preceding outputs to use as
-        dynamic input for legend creation.
+        |all_input_data|
 
     Outputs:
-        |none|
+        |img_data|
 
     Configs:
-        all_legend_items (:obj:`List[str]`):
-            **default = ["fps", "count", "zone_count"]**. |br|
-            A list of all possible items that can be drawn in legend box. The
-            information to be drawn is selected by ``include``. This is done so
-            we can have the outputs but choose not to draw them on screen.
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
             Position to draw legend box. "top" draws it at the top-left
             position while "bottom" draws it at bottom-left.
-        include (:obj:`List[str]`): **default = ["all_legend_items"]**. |br|
-            List of information to draw. Currently, "fps", "count" and/or
-            "zone_count" can be drawn. The default value "all_legend_items"
-            draws everything dynamically depending on inputs.
+        show (:obj:`List[str]`): **default = []**. |br|
+            Include in this list the desired data type(s) to be drawn within
+            the legend box, such as ``["fps", "count", "cum_avg"]`` in the
+            example screenshot. Custom data types produced by custom nodes are
+            also supported. If no data types are included, an error will be
+            produced.
+
+    .. versionchanged:: 1.2.0
+        Merged previous ``all_legend_items`` and ``include`` configs into a
+        single ``show`` config for greater clarity. Added support for drawing
+        custom data types produced by custom nodes, to improve the flexibility
+        of this node.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.include: List[str]
-        self.legend_items: List[str] = []
+        if not self.show:
+            raise KeyError(
+                "To display information in the legend box, at least one data type must be "
+                "selected in the 'show' config."
+            )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws legend box with information from nodes.
@@ -66,20 +84,18 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "none".
         """
-        if len(self.legend_items) == 0:
-            # Check inputs to set legend items to draw
-            if self.include[0] == "all_legend_items":
-                self.include = self.all_legend_items
-            self._include(inputs)
-        if len(self.legend_items) != 0:
-            Legend().draw(inputs, self.legend_items, self.position)
-        else:
-            return {}
-        # cv2 weighted does not update the referenced image. Need to return and
-        # replace.
+        _check_data_type(inputs, self.show)
+        Legend().draw(inputs, self.show, self.position)
+        # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
-    def _include(self, inputs: Dict[str, Any]) -> None:
-        for item in self.all_legend_items:
-            if item in inputs.keys() and item in self.include:
-                self.legend_items.append(item)
+
+def _check_data_type(inputs: Dict[str, Any], show: List[str]) -> None:
+    """Checks if the data types provided in show were produced from preceding nodes."""
+
+    for item in show:
+        if item not in inputs:
+            raise KeyError(
+                f"'{item}' was selected for drawing, but is not a valid data type from preceding "
+                f"nodes."
+            )

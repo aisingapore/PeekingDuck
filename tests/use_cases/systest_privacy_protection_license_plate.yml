@@ -1,7 +1,5 @@
 nodes:
-- input.recorded:
-    input_dir: "images/testing"
+- input.visual:
+    source: "tests/data/images"
 - model.yolo_license_plate
-- dabble.fps
 - draw.blur_bbox
-- draw.legend

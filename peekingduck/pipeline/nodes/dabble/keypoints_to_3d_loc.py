@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Estimates the 3D coordinates of a human given 2D pose coordinates.
+Estimates the 3D coordinates of a person given 2D pose coordinates.
 """
 
 from typing import Any, Dict
@@ -31,13 +31,13 @@ TORSO_KEYPOINTS = [NOSE, LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_PELVIS, RIGHT_PELVI
 
 
 class Node(AbstractNode):
-    """Uses pose keypoint information of torso to estimate 3D location.
+    """Uses pose keypoint information of the torso to estimate 3D location.
 
     Inputs:
-        |keypoints|
+        |keypoints_data|
 
     Outputs:
-        |obj_3D_locs|
+        |obj_3D_locs_data|
 
     Configs:
         focal_length (:obj:`float`): **default = 1.14**. |br|

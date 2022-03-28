@@ -1,1 +1,3 @@
-dabble.zone_count PYTHON shapely == 1.7.1
+dabble.zone_count PYTHON shapely >= 1.7.1
+model.jde PYTHON lap == 0.4.0
+model.fairmot PYTHON lap == 0.4.0

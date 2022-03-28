@@ -1,0 +1,11 @@
+nodes:
+- input.visual:
+    source: tests/data/videos/humans_mot.mp4
+- model.jde
+- dabble.statistics:
+    maximum: obj_attrs["ids"]
+- draw.bbox
+- draw.tag:
+    show: ["ids"]
+- draw.legend:
+    show: ["cum_max"]

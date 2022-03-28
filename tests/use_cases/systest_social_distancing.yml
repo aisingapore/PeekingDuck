@@ -1,6 +1,6 @@
 nodes:
-- input.recorded:
-    input_dir: "images/testing" 
+- input.visual:
+    source: "tests/data/images"
 - model.posenet
 - dabble.keypoints_to_3d_loc:
     focal_length: 1.14
@@ -8,8 +8,7 @@ nodes:
 - dabble.check_nearby_objs:
     near_threshold: 1.5
     tag_msg: "TOO CLOSE!"
-- dabble.fps
 - draw.poses
 - draw.bbox     # not in demo config, but included here
-- draw.tag
-- draw.legend
+- draw.tag:
+    show: ["flags"]

@@ -1,4 +1,4 @@
-# Copyright 2021 AI Singapore
+# Copyright 2022 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Fast Pose Estimation model.
-"""
+"""🕺 Fast Pose Estimation model."""
 
 from typing import Any, Dict
+
+import numpy as np
 
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
-    """Initialises a PoseNet model to detect human poses from an image.
+    """Initializes a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
     simultaneously per inference and for each detected human figure, 17
@@ -31,33 +31,34 @@ class Node(AbstractNode):
     :ref:`here <whole-body-keypoint-ids>`.
 
     Inputs:
-        |img|
+        |img_data|
 
     Outputs:
-        |bboxes|
+        |bboxes_data|
 
-        |keypoints|
+        |keypoints_data|
 
-        |keypoint_scores|
+        |keypoint_scores_data|
 
-        |keypoint_conns|
+        |keypoint_conns_data|
 
-        |bbox_labels|
+        |bbox_labels_data|
 
     Configs:
         model_type (:obj:`str`):
             **{"resnet", "50", "75", "100"}, default="resnet"**. |br|
             Defines the backbone model for PoseNet.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
-            Change the parent directory where weights will be stored by replacing
-            ``null`` with an absolute path to the desired directory.
+            Change the parent directory where weights will be stored by
+            replacing ``null`` with an absolute path to the desired directory.
         resolution (:obj:`Dict`):
             **default = { height: 225, width: 225 }**. |br|
             Resolution of input array to PoseNet model.
         max_pose_detection (:obj:`int`): **default = 10**. |br|
             Maximum number of poses to be detected.
         score_threshold (:obj:`float`): **[0, 1], default = 0.4**. |br|
-            Threshold to determine if detection should be returned
+            Detected keypoints confidence score threshold, only keypoints above
+            threshold will be kept in output.
 
     References:
         PersonLab: Person Pose Estimation and Instance Segmentation with a
@@ -72,13 +73,15 @@ class Node(AbstractNode):
         self.model = posenet_model.PoseNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """function that reads the image input and returns the bboxes
-        of the specified objects chosen to be detected
+        """Reads the image input and returns the bboxes of the specified
+        objects chosen to be detected.
         """
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
             inputs["img"]
         )
-        bbox_labels = ["Person"] * len(bboxes)
+        bbox_labels = np.array(["person"] * len(bboxes))
+        bboxes = np.clip(bboxes, 0, 1)
+
         outputs = {
             "bboxes": bboxes,
             "keypoints": keypoints,

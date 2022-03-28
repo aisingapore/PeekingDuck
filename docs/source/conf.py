@@ -14,12 +14,13 @@ import os
 import sys
 
 sys.path.insert(0, os.path.abspath("../.."))
+sys.path.insert(0, os.path.abspath("../../peekingduck/pipeline/nodes"))
 
 
 # -- Project information -----------------------------------------------------
 
 project = "PeekingDuck"
-copyright = "2021, CVHub AI Singapore"
+copyright = "2022, CVHub AI Singapore"
 author = "CVHub AI Singapore"
 
 # The full version, including alpha/beta/rc tags
@@ -47,7 +48,7 @@ napoleon_custom_sections = [
     ("Outputs", "returns_style"),
 ]
 
-
+add_module_names = False
 autosummary_generate = True
 master_doc = "master"
 
@@ -57,7 +58,7 @@ templates_path = ["../_templates"]
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
-exclude_patterns = []
+exclude_patterns = ["**/_template_*.rst"]
 source_suffix = [".rst", ".md"]
 # -- Options for HTML output -------------------------------------------------
 
@@ -71,22 +72,28 @@ html_theme = "sphinx_rtd_theme"
 # so a file named 'default.css' will overwrite the builtin 'default.css'.
 html_static_path = ["_static"]
 html_style = "css/pkdk.css"
-html_logo = "../../images/readme/peekingduck.png"
+html_logo = "assets/peekingduck.png"
 html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
 
 autosummary_mock_imports = [
-    "peekingduck.pipeline.nodes.dabble.utils",
-    "peekingduck.pipeline.nodes.dabble.zoningv1",
-    "peekingduck.pipeline.nodes.draw.utils",
-    "peekingduck.pipeline.nodes.input.utils",
-    "peekingduck.pipeline.nodes.model.efficientdet_d04",
-    "peekingduck.pipeline.nodes.model.hrnetv1",
-    "peekingduck.pipeline.nodes.model.mtcnnv1",
-    "peekingduck.pipeline.nodes.model.posenetv1",
-    "peekingduck.pipeline.nodes.model.yolov4",
-    "peekingduck.pipeline.nodes.model.yolov4_face",
-    "peekingduck.pipeline.nodes.model.yolov4_license_plate",
-    "peekingduck.pipeline.nodes.output.utils",
-    "peekingduck.utils",
+    "dabble.statisticsv1",
+    "dabble.trackingv1",
+    "dabble.utils",
+    "dabble.zoningv1",
+    "draw.utils",
+    "input.utils",
+    "model.csrnetv1",
+    "model.efficientdet_d04",
+    "model.fairmotv1",
+    "model.hrnetv1",
+    "model.jdev1",
+    "model.mtcnnv1",
+    "model.posenetv1",
+    "model.movenetv1",
+    "model.yolov4",
+    "model.yolov4_face",
+    "model.yolov4_license_plate",
+    "model.yoloxv1",
+    "output.utils",
 ]
