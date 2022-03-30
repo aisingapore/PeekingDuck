@@ -22,6 +22,8 @@ import pytest
 import torch
 import yaml
 
+# import peekingduck
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.yolox import Node
 from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
@@ -132,11 +134,12 @@ class TestYOLOX:
 
     def test_no_weights(self, yolox_config, replace_download_weights):
         weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
         ) as captured:
@@ -160,11 +163,11 @@ class TestYOLOX:
     def test_invalid_config_value(self, yolox_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolox_bad_config_value)
-        assert "_threshold must be in [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
     def test_invalid_config_model_files(self, yolox_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=True
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=True
         ), pytest.raises(ValueError) as excinfo:
             yolox_config["weights"]["model_file"][
                 yolox_config["model_type"]

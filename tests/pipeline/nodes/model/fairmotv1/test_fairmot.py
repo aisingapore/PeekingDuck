@@ -8,6 +8,7 @@ import pytest
 import torch
 import yaml
 
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.fairmot import Node
 from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching import (
     fuse_motion,
@@ -258,7 +259,7 @@ class TestFairMOT:
     def test_invalid_config_value(self, fairmot_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=fairmot_bad_config_value)
-        assert "_threshold must be in [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
     def test_negative_config_value(self, fairmot_negative_config_value):
         with pytest.raises(ValueError) as excinfo:
@@ -287,11 +288,12 @@ class TestFairMOT:
 
     def test_no_weights(self, fairmot_config, replace_download_weights):
         weights_dir = fairmot_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.fairmot_mot.fairmot_model.logger"
         ) as captured:

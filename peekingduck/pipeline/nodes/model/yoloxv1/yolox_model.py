@@ -19,11 +19,14 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.detector import Detector
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YOLOXModel:
+class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """Validates configuration, loads YOLOX model, and performs inference.
 
     Configuration options are validated to ensure they have valid types and
@@ -41,28 +44,17 @@ class YOLOXModel:
     """
 
     def __init__(self, config: Dict[str, Any]) -> None:
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # Check threshold values
-        if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
-        if not 0 <= config["iou_threshold"] <= 1:
-            raise ValueError("iou_threshold must be in [0, 1]")
+        self.ensure_within_bounds(["iou_threshold", "score_threshold"], 0, 1)
 
-        # Check for YOLOX weights
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
-        )
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.warning("No weights detected. Proceeding to download...")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"Weights downloaded to {weights_dir}.")
-
-        with open(model_dir / config["weights"]["classes_file"]) as infile:
+        model_dir = self.download_weights()
+        with open(model_dir / self.config["weights"]["classes_file"]) as infile:
             self.class_names = [line.strip() for line in infile.readlines()]
 
-        self.detector = Detector(config, model_dir, self.class_names)
-        self.detect_ids = config["detect_ids"]
+        self.detector = Detector(self.config, model_dir, self.class_names)
+        self.detect_ids = self.config["detect_ids"]
 
     @property
     def detect_ids(self) -> List[int]:

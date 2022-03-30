@@ -22,10 +22,11 @@ from typing import Any, Dict
 import cv2
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):
+class Node(ThresholdCheckerMixin, AbstractNode):
     """Adjusts the brightness of an image, by adding a bias/`beta parameter
     <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
     linear_transform.html>`_.
@@ -45,8 +46,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if not -100 <= self.beta <= 100:
-            raise ValueError("beta for brightness must be between [-100, 100]")
+        self.ensure_within_bounds("beta", -100, 100)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the brightness of an image frame.
