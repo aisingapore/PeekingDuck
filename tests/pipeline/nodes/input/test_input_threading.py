@@ -28,14 +28,11 @@ PKD_RUN_DIR = Path(__file__).parents[5]  # dependent on __file__ location
 RTSP_URL_GERMANY = (
     "http://clausenrc5.viewnetcam.com:50003/nphMotionJpeg?Resolution=320x240"
 )
-RTSP_URL_JAPAN_DOWN = "http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30"
-RTSP_URL_JAPAN_1 = (
-    "http://61.211.241.239/nphMotionJpeg?Resolution=320x240&Quality=Standard"
-)
+RTSP_URL_JAPAN_1 = "http://takemotopiano.aa1.netvolante.jp:8190/nphMotionJpeg?Resolution=640x480&Quality=Standard&Framerate=30"
 RTSP_URL_JAPAN_2 = (
     "http://honjin1.miemasu.net/nphMotionJpeg?Resolution=640x480&Quality=Standard"
 )
-RTSP_URL = RTSP_URL_GERMANY
+URL_LIST = [RTSP_URL_JAPAN_1, RTSP_URL_JAPAN_2, RTSP_URL_GERMANY]
 
 # Helper Functions
 def get_fps_number(avg_fps_msg: str) -> float:
@@ -143,14 +140,18 @@ def test_input_threading():
 
         return avg_fps
 
-    res = False
-    with run_pipeline_yml():
+    def run_url_test(the_url: str) -> bool:
+        print(f"url={the_url}")
         print("Run test without threading")
-        avg_fps_1 = run_rtsp_test(url=RTSP_URL, threading=False)
-
+        avg_fps_1 = run_rtsp_test(url=the_url, threading=False)
         print("Run test with threading")
-        avg_fps_2 = run_rtsp_test(url=RTSP_URL, threading=True)
-
+        avg_fps_2 = run_rtsp_test(url=the_url, threading=True)
+        # check outcome
         res = avg_fps_2 > avg_fps_1
         print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
-    assert res
+        return res
+
+    with run_pipeline_yml():
+        results = [run_url_test(url) for url in URL_LIST]
+        print(f"results={results}")
+        assert any(results)
