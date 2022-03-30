@@ -162,6 +162,12 @@ class WeightsDownloaderMixin:
 
     @staticmethod
     def extract_file(zip_path: Path, destination_dir: Path) -> None:
+        """Extracts the zip file to ``destination_dir``.
+
+        Args:
+            zip_path (Path): Path to zip file.
+            destination (Path): Destination directory for extraction.
+        """
         with zipfile.ZipFile(zip_path, "r") as infile:
             for file in tqdm(iterable=infile.namelist(), total=len(infile.namelist())):
                 infile.extract(member=file, path=destination_dir)
