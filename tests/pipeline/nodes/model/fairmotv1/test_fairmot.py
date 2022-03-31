@@ -8,13 +8,15 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.fairmot import Node
 from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching import (
     fuse_motion,
     iou_distance,
 )
-from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -50,22 +52,12 @@ def fairmot_config_gpu():
     params=[
         {"key": "score_threshold", "value": -0.5},
         {"key": "score_threshold", "value": 1.5},
-    ],
-)
-def fairmot_bad_config_value(request, fairmot_config):
-    """Various invalid config values."""
-    fairmot_config[request.param["key"]] = request.param["value"]
-    return fairmot_config
-
-
-@pytest.fixture(
-    params=[
         {"key": "K", "value": -0.5},
         {"key": "min_box_area", "value": -0.5},
         {"key": "track_buffer", "value": -0.5},
     ],
 )
-def fairmot_negative_config_value(request, fairmot_config):
+def fairmot_bad_config_value(request, fairmot_config):
     """Various invalid config values."""
     fairmot_config[request.param["key"]] = request.param["value"]
     return fairmot_config
@@ -256,36 +248,6 @@ class TestFairMOT:
                 assert fairmot._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
-    def test_invalid_config_value(self, fairmot_bad_config_value):
-        with pytest.raises(ValueError) as excinfo:
-            _ = Node(config=fairmot_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
-
-    def test_negative_config_value(self, fairmot_negative_config_value):
-        with pytest.raises(ValueError) as excinfo:
-            _ = Node(config=fairmot_negative_config_value)
-        assert "must be more than 0" in str(excinfo.value)
-
-    def test_invalid_config_model_files(self, fairmot_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=True
-        ), pytest.raises(ValueError) as excinfo:
-            fairmot_config["weights"]["model_file"]["dla_34"] = "some/invalid/path"
-            _ = Node(config=fairmot_config)
-        assert "Model file does not exist. Please check that" in str(excinfo.value)
-
-    def test_invalid_image(self, test_no_human_images, fairmot_config):
-        blank_image = cv2.imread(test_no_human_images)
-        # Potentially passing in a file path or a tuple from image reader
-        # output
-        fairmot = Node(fairmot_config)
-        with pytest.raises(TypeError) as excinfo:
-            _ = fairmot.run({"img": Path.cwd()})
-        assert str(excinfo.value) == "image must be a np.ndarray"
-        with pytest.raises(TypeError) as excinfo:
-            _ = fairmot.run({"img": ("image name", blank_image)})
-        assert str(excinfo.value) == "image must be a np.ndarray"
-
     def test_no_weights(self, fairmot_config, replace_download_weights):
         weights_dir = fairmot_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
         with mock.patch.object(
@@ -309,3 +271,28 @@ class TestFairMOT:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert fairmot is not None
+
+    def test_invalid_config_value(self, fairmot_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=fairmot_bad_config_value)
+        assert "must be" in str(excinfo.value)
+
+    def test_invalid_config_model_files(self, fairmot_config):
+        with mock.patch(
+            "peekingduck.weights_utils.checker.has_weights", return_value=True
+        ), pytest.raises(ValueError) as excinfo:
+            fairmot_config["weights"]["model_file"]["dla_34"] = "some/invalid/path"
+            _ = Node(config=fairmot_config)
+        assert "Model file does not exist. Please check that" in str(excinfo.value)
+
+    def test_invalid_image(self, test_no_human_images, fairmot_config):
+        blank_image = cv2.imread(test_no_human_images)
+        # Potentially passing in a file path or a tuple from image reader
+        # output
+        fairmot = Node(fairmot_config)
+        with pytest.raises(TypeError) as excinfo:
+            _ = fairmot.run({"img": Path.cwd()})
+        assert str(excinfo.value) == "image must be a np.ndarray"
+        with pytest.raises(TypeError) as excinfo:
+            _ = fairmot.run({"img": ("image name", blank_image)})
+        assert str(excinfo.value) == "image must be a np.ndarray"

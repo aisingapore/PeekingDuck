@@ -46,9 +46,7 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.tracker import Tracker
 
 
-class FairMOTModel(
-    ThresholdCheckerMixin, WeightsDownloaderMixin
-):  # pylint: disable=too-few-public-methods
+class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """FairMOT Model for person tracking.
     Args:
         config (Dict[str, Any]): Model configuration options.
@@ -69,7 +67,6 @@ class FairMOTModel(
         self.ensure_within_bounds("score_threshold", 0, 1)
 
         model_dir = self.download_weights()
-
         self.tracker = Tracker(config, model_dir, frame_rate)
 
     def predict(
@@ -95,25 +92,3 @@ class FairMOTModel(
         bboxes, track_ids, bbox_scores = self.tracker.track_objects_from_image(image)
         bbox_labels = ["person"] * len(bboxes)
         return bboxes, bbox_labels, bbox_scores, track_ids
-
-
-# def ensure_more_than_zero(config: Dict[str, Any], key: Union[List[str], str]) -> None:
-#     """Checks that configuration values specified by ``key`` is more than zero.
-
-#     Args:
-#         config (Dict[str, Any]): Dictionary containing various configuration
-#             values.
-#         key (Union[List[str], str]): List of configuration keys to check for.
-
-#     Raises:
-#         TypeError: ``key`` is not in (List[str], str).
-#         ValueError: If the configuration value is <=0.
-#     """
-#     if isinstance(key, str):
-#         if config[key] < 1:
-#             raise ValueError(f"{key} must be more than 0")
-#     elif isinstance(key, list):
-#         for k in key:
-#             ensure_more_than_zero(config, k)
-#     else:
-#         raise TypeError("'key' must be either 'str' or 'list'")
