@@ -21,6 +21,10 @@ import numpy.testing as npt
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.posenet import Node
 
 
@@ -85,11 +89,13 @@ class TestPoseNet:
             assert label == "person"
 
     def test_no_weights(self, posenet_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        weights_dir = posenet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.posenetv1.posenet_model.logger"
         ) as captured:
@@ -97,9 +103,12 @@ class TestPoseNet:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert posenet is not None
 
     def test_invalid_config_value(self, posenet_bad_config_value):

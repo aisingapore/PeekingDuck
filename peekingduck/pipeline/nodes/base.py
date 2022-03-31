@@ -17,7 +17,7 @@
 import os
 import zipfile
 from pathlib import Path
-from typing import List, Tuple, Union
+from typing import List, Set, Tuple, Union
 
 import requests
 from tqdm import tqdm
@@ -51,6 +51,24 @@ class ThresholdCheckerMixin:
                 self.ensure_above_value(k, value)
         else:
             raise TypeError("'key' must be either 'str' or 'list'")
+
+    def ensure_valid_choice(self, key: str, choices: Set[Union[int, str]]) -> None:
+        """Checks that configuration values specified by ``key`` can be found
+        in ``choices``.
+
+        Args:
+            key (str): The specified key.
+            choices (Set[Union[int, str]]): The valid choices.
+
+        Raises:
+            TypeError: ``key`` is not a str
+            ValueError: If the configuration value is not found in ``choices``.
+        """
+        if isinstance(key, str):
+            if self.config[key] not in choices:
+                raise ValueError(f"{key} must be one of {choices}")
+        else:
+            raise TypeError("'key' must be 'str'")
 
     def ensure_within_bounds(
         self, key: Union[str, List[str]], lower: float, upper: float
