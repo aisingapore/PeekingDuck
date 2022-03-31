@@ -28,10 +28,8 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
 
-class MTCNNModel(
-    ThresholdCheckerMixin, WeightsDownloaderMixin
-):  # pylint: disable=too-few-public-methods
-    """MTCNN model to detect face bboxes and landmarks"""
+class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
+    """MTCNN model to detect face bboxes and landmarks."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config

@@ -77,17 +77,17 @@ class Node(AbstractNode):
         self.model = movenet_model.MoveNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Function that reads the image input and returns the bboxes, keypoints,
-        keypoints confidence scores, keypoint connections and bounding box labels
-        of the persons detected
+        """Function that reads the image input and returns the bboxes,
+        keypoints, keypoints confidence scores, keypoint connections and
+        bounding box labels of the persons detected.
 
         Args:
-            inputs (dict): Dictionary of inputs with key "img".
+            inputs (Dict[str, Any]): Dictionary of inputs with key "img".
 
         Returns:
-            outputs (dict): bbox output in dictionary format with keys
-                "bboxes", "keypoints", "keypoint_scores", "keypoint_conns
-                and "bbox_labels".
+            (Dict[str, Any]): bbox output in dictionary format with keys
+            "bboxes", "keypoints", "keypoint_scores", "keypoint_conns", and
+            "bbox_labels".
         """
 
         bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(

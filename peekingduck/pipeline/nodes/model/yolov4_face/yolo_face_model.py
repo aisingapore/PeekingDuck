@@ -28,9 +28,7 @@ from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector impor
 )
 
 
-class YOLOFaceModel(
-    ThresholdCheckerMixin, WeightsDownloaderMixin
-):  # pylint: disable=too-few-public-methods
+class YOLOFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """YOLO face model with model types: v4 and v4tiny."""
 
     def __init__(self, config: Dict[str, Any]) -> None:

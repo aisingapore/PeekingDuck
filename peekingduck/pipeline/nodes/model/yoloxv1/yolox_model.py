@@ -77,10 +77,10 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
 
         Returns:
             (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
-                contains:
-                - A list of detection bboxes
-                - A list of human-friendly detection class names
-                - A list of detection scores
+            contains:
+            - A list of detection bboxes
+            - A list of human-friendly detection class names
+            - A list of detection scores
 
         Raises:
             TypeError: The provided `image` is not a numpy array.

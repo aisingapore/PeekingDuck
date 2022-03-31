@@ -28,9 +28,7 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
 
 
-class PoseNetModel(
-    ThresholdCheckerMixin, WeightsDownloaderMixin
-):  # pylint: disable=too-few-public-methods
+class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """PoseNet model with model types: mobilenet50, mobilenet75, mobilenet100
     and resnet.
     """

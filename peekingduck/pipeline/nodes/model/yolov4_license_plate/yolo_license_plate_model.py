@@ -30,9 +30,7 @@ from peekingduck.pipeline.nodes.model.yolov4_license_plate.yolo_license_plate_fi
 )
 
 
-class YOLOLicensePlateModel(
-    ThresholdCheckerMixin, WeightsDownloaderMixin
-):  # pylint: disable=too-few-public-methods
+class YOLOLicensePlateModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:

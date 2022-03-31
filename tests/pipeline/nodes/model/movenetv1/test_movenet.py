@@ -23,6 +23,10 @@ import pytest
 import tensorflow.keras.backend as K
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.movenet import Node
 
 TEST_DIR = Path.cwd() / "tests" / "data" / "images"
@@ -54,11 +58,6 @@ def multi_person_image(request):
     gc.collect()
 
 
-@pytest.fixture(params=[-1, 1.1])
-def invalid_thresholds(request):
-    yield request.param
-
-
 @pytest.fixture
 def movenet_config():
     filepath = Path(__file__).resolve().parent / "test_movenet.yml"
@@ -67,6 +66,20 @@ def movenet_config():
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "bbox_score_threshold", "value": -0.5},
+        {"key": "bbox_score_threshold", "value": 1.5},
+        {"key": "keypoint_score_threshold", "value": -0.5},
+        {"key": "keypoint_score_threshold", "value": 1.5},
+        {"key": "model_type", "value": "bad_model_type"},
+    ],
+)
+def movenet_bad_config_value(request, movenet_config):
+    movenet_config[request.param["key"]] = request.param["value"]
+    return movenet_config
 
 
 @pytest.fixture(
@@ -106,24 +119,6 @@ class TestMoveNet:
                     f"unexpected output for {i}, Expected {np.zeros(0)} got {output[i]}"
                 ),
             )
-
-    def test_no_weights(self, movenet_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
-        ), TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
-        ) as captured:
-            movenet = Node(config=movenet_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
-            )
-            assert "weights downloaded" in captured.records[1].getMessage()
-            assert movenet is not None
 
     def test_no_human_multi(self, empty_image, movenet_config_multi):
         no_human_img = cv2.imread(str(TEST_DIR / empty_image))
@@ -208,12 +203,14 @@ class TestMoveNet:
                 ),
             )
 
-        # Due to the different detections plausibly having difference number of valid keypoints conns.
+        # Due to the different detections plausibly having difference number of
+        # valid keypoints conns.
         # The array of keypoint_conns will come in form of
-        # np.array([List(array of keypoints conns),List(array of next keypoints conns),..]) when
-        # a list of different length of lists are converted to numpy array.
-        # Thus, iterate through the detections and convert the inner List into numpy array before
-        # assert testing.
+        # np.array([List(array of keypoints conns),
+        # List(array of next keypoints conns),..]) when a list of different
+        # length of lists are converted to numpy array.
+        # Thus, iterate through the detections and convert the inner List into
+        # numpy array before assert testing.
         ground_truth_keypoint_conns = np.asarray(ground_truth["keypoint_conns"])
         for i in range(output["keypoint_conns"].shape[0]):
             npt.assert_allclose(
@@ -232,23 +229,30 @@ class TestMoveNet:
             f"got {output['bbox_labels']}"
         )
 
-    def test_bbox_score_threshold(self, movenet_config, invalid_thresholds):
-        movenet_config["bbox_score_threshold"] = invalid_thresholds
-        with pytest.raises(ValueError) as excinfo:
-            _ = Node(movenet_config)
-        assert str(excinfo.value) == "bbox_score_threshold must be in [0, 1]"
+    def test_no_weights(self, movenet_config, replace_download_weights):
+        weights_dir = movenet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
+        ) as captured:
+            movenet = Node(config=movenet_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "No weights detected. Proceeding to download..."
+            )
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
+            assert movenet is not None
 
-    def test_keypoint_score_threshold(self, movenet_config, invalid_thresholds):
-        movenet_config["keypoint_score_threshold"] = invalid_thresholds
+    def test_invalid_config_value(self, movenet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
-            _ = Node(movenet_config)
-        assert str(excinfo.value) == "keypoint_score_threshold must be in [0, 1]"
-
-    def test_model_type(self, movenet_config):
-        movenet_config["model_type"] = "not_movenet"
-        with pytest.raises(ValueError) as excinfo:
-            _ = Node(movenet_config)
-        assert str(excinfo.value) == (
-            "model_type must be one of ['singlepose_lightning', "
-            "'singlepose_thunder', 'multipose_lightning']"
-        )
+            _ = Node(config=movenet_bad_config_value)
+        assert "must be" in str(excinfo.value)
