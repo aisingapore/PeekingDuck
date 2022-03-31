@@ -26,9 +26,6 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolo_face import Node
-from peekingduck.pipeline.nodes.model.yolov4_face.yolo_face_files.detector import (
-    Detector,
-)
 
 
 @pytest.fixture
@@ -123,8 +120,3 @@ class TestYolo:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolo_bad_config_value)
         assert "_threshold must be between [0, 1]" in str(excinfo.value)
-
-    def test_model_initialization(self, yolo_config, model_dir):
-        detector = Detector(yolo_config, model_dir)
-        model = detector.yolo
-        assert model is not None

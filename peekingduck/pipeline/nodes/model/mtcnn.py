@@ -85,7 +85,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = mtcnn_model.MtcnnModel(self.config)
+        self.model = mtcnn_model.MTCNNModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads the image input and returns the bboxes, scores and labels of

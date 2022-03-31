@@ -21,8 +21,11 @@ import numpy.testing as npt
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.mtcnn import Node
-from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -39,23 +42,16 @@ def mtcnn_config():
 
 @pytest.fixture(
     params=[
-        {"key": "scale_factor", "value": -0.5},
-        {"key": "scale_factor", "value": 1.5},
+        {"key": "min_size", "value": -0.5},
         {"key": "network_thresholds", "value": [-0.5, -0.5, -0.5]},
         {"key": "network_thresholds", "value": [1.5, 1.5, 1.5]},
+        {"key": "scale_factor", "value": -0.5},
+        {"key": "scale_factor", "value": 1.5},
         {"key": "score_threshold", "value": -0.5},
         {"key": "score_threshold", "value": 1.5},
     ],
 )
 def mtcnn_bad_config_value(request, mtcnn_config):
-    mtcnn_config[request.param["key"]] = request.param["value"]
-    return mtcnn_config
-
-
-@pytest.fixture(
-    params=[{"key": "min_size", "value": -0.5}],
-)
-def mtcnn_negative_config_value(request, mtcnn_config):
     mtcnn_config[request.param["key"]] = request.param["value"]
     return mtcnn_config
 
@@ -101,11 +97,13 @@ class TestMtcnn:
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     def test_no_weights(self, mtcnn_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        weights_dir = mtcnn_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
         ) as captured:
@@ -113,30 +111,23 @@ class TestMtcnn:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert mtcnn is not None
 
     def test_invalid_config_value(self, mtcnn_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=mtcnn_bad_config_value)
-        assert "must be in [0, 1]" in str(excinfo.value)
-
-    def test_negative_config_value(self, mtcnn_negative_config_value):
-        with pytest.raises(ValueError) as excinfo:
-            _ = Node(config=mtcnn_negative_config_value)
-        assert "must be more than 0" in str(excinfo.value)
+        assert "must be" in str(excinfo.value)
 
     def test_invalid_config_model_files(self, mtcnn_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=True
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=True
         ), pytest.raises(ValueError) as excinfo:
             mtcnn_config["weights"]["model_file"] = "some/invalid/path"
             _ = Node(config=mtcnn_config)
         assert "Graph file does not exist. Please check that" in str(excinfo.value)
-
-    def test_model_initialization(self, mtcnn_config, model_dir):
-        detector = Detector(mtcnn_config, model_dir)
-        model = detector.mtcnn
-        assert model is not None
