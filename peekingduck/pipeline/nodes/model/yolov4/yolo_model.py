@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Yolo model with model types: v4 and v4tiny
-"""
+"""YOLO model with model types: v4 and v4tiny."""
 
 import logging
 from typing import Any, Dict, List, Tuple
@@ -28,8 +26,8 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
 
 
-class YoloModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
-    """Yolo model with model types: v4 and v4tiny"""
+class YOLOModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
+    """YOLO model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config

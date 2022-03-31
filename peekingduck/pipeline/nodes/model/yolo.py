@@ -79,7 +79,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = yolo_model.YoloModel(self.config)
+        self.model = yolo_model.YOLOModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads the image input and returns the bboxes of the specified
