@@ -69,7 +69,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = csrnet_model.CsrnetModel(self.config)
+        self.model = csrnet_model.CSRNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads in image frames and returns the density map and crowd count.
