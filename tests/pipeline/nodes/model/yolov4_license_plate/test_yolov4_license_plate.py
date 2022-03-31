@@ -20,10 +20,11 @@ import numpy as np
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
-from peekingduck.pipeline.nodes.model.yolov4_license_plate.licenseplate_files.detector import (
-    Detector,
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
 )
+from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
 
 
 @pytest.fixture
@@ -37,13 +38,17 @@ def yolo_config():
     return node_config
 
 
-@pytest.fixture
-def model_dir(yolo_config):
-    return (
-        yolo_config["root"].parent
-        / "peekingduck_weights"
-        / yolo_config["weights"]["model_subdir"]
-    )
+@pytest.fixture(
+    params=[
+        {"key": "iou_threshold", "value": -0.5},
+        {"key": "iou_threshold", "value": 1.5},
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+    ],
+)
+def yolo_bad_config_value(request, yolo_config):
+    yolo_config[request.param["key"]] = request.param["value"]
+    return yolo_config
 
 
 @pytest.fixture(params=["v4", "v4tiny"])
@@ -53,7 +58,7 @@ def yolo_type(request, yolo_config):
 
 
 @pytest.mark.mlmodel
-class TestLPYolo:
+class TestYOLOLicensePlate:
     def test_no_lp_image(self, test_no_lp_images, yolo_type):
         blank_image = cv2.imread(test_no_lp_images)
         yolo = Node(yolo_type)
@@ -76,24 +81,29 @@ class TestLPYolo:
         assert len(output["bboxes"]) == len(output["bbox_labels"])
 
     def test_no_weights(self, yolo_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        weights_dir = yolo_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.yolov4_license_plate.LP_detector_model.logger"
+            "peekingduck.pipeline.nodes.model.yolov4_license_plate.yolo_license_plate_model.logger"
         ) as captured:
             yolo = Node(config=yolo_config)
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert yolo is not None
 
-    def test_model_initialization(self, yolo_config, model_dir):
-        detector = Detector(yolo_config, model_dir)
-        model = detector.yolo
-        assert model is not None
+    def test_invalid_config_value(self, yolo_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=yolo_bad_config_value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)

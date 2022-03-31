@@ -18,7 +18,9 @@ from typing import Any, Dict
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.yolov4_license_plate import lp_detector_model
+from peekingduck.pipeline.nodes.model.yolov4_license_plate import (
+    yolo_license_plate_model,
+)
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
@@ -68,7 +70,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = lp_detector_model.Yolov4(self.config)
+        self.model = yolo_license_plate_model.YOLOLicensePlateModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads the image input and returns the bboxes of the specified
