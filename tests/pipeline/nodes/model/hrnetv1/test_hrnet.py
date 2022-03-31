@@ -48,8 +48,8 @@ class TestHrnet:
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():
             npt.assert_array_equal(
-                output[i], expected_output[i]
-            ), "unexpected output for {}".format(i)
+                output[i], expected_output[i], err_msg=f"unexpected output for {i}"
+            )
 
     def test_return_at_least_one_person_and_one_bbox(
         self, test_human_images, hrnet_config
