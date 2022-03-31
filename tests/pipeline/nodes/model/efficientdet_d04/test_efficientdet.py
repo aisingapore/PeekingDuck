@@ -14,6 +14,7 @@
 
 import json
 from pathlib import Path
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -21,6 +22,10 @@ import numpy.testing as npt
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
     detector,
@@ -34,6 +39,19 @@ def efficientdet_config():
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+        {"key": "model_type", "value": 5},
+        {"key": "model_type", "value": 1.5},
+    ],
+)
+def efficientdet_bad_config_value(request, efficientdet_config):
+    efficientdet_config[request.param["key"]] = request.param["value"]
+    return efficientdet_config
 
 
 @pytest.fixture
@@ -96,12 +114,12 @@ class TestEfficientDet:
         assert output["bbox_scores"].size != 0
 
     def test_efficientdet_preprocess(
-        self, create_image, efficientdet_type_0, model_dir, class_names
+        self, create_image, efficientdet_config, model_dir, class_names
     ):
         test_img1 = create_image((720, 1280, 3))
         test_img2 = create_image((640, 480, 3))
         efficientdet_detector = detector.Detector(
-            efficientdet_type_0, model_dir, class_names
+            efficientdet_config, model_dir, class_names
         )
         actual_img1, actual_scale1 = efficientdet_detector.preprocess(test_img1, 512)
         actual_img2, actual_scale2 = efficientdet_detector.preprocess(test_img2, 512)
@@ -114,7 +132,7 @@ class TestEfficientDet:
         assert actual_scale2 == 0.8
 
     def test_efficientdet_postprocess(
-        self, efficientdet_type_0, model_dir, class_names
+        self, efficientdet_config, model_dir, class_names
     ):
         output_bbox = np.array([[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]])
         output_label = np.array([0, 0])
@@ -124,7 +142,7 @@ class TestEfficientDet:
         img_shape = (720, 1280)
         detect_ids = [0]
         efficientdet_detector = detector.Detector(
-            efficientdet_type_0, model_dir, class_names
+            efficientdet_config, model_dir, class_names
         )
         boxes, labels, scores = efficientdet_detector.postprocess(
             network_output, scale, img_shape, detect_ids
@@ -138,3 +156,31 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(["person"]), labels)
+
+    def test_no_weights(self, efficientdet_config, replace_download_weights):
+        weights_dir = efficientdet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
+        ) as captured:
+            efficientdet = Node(config=efficientdet_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "No weights detected. Proceeding to download..."
+            )
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
+            assert efficientdet is not None
+
+    def test_invalid_config_value(self, efficientdet_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=efficientdet_bad_config_value)
+        assert "must be" in str(excinfo.value)

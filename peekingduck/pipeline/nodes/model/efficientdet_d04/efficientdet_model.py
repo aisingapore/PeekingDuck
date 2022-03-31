@@ -16,45 +16,36 @@
 EfficientDet model with model types: D0-D4
 """
 
-import logging
-from pathlib import Path
-from typing import Any, Dict, List, Tuple
 import json
+import logging
+from typing import Any, Dict, List, Tuple
+
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
     Detector,
 )
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class EfficientDetModel:
+class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """EfficientDet model with model types: D0-D4"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
-
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # check threshold values
-        if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
-        if not 0 <= config["model_type"] <= 4:
-            raise ValueError("model_type must be an integer in [0, 4]")
+        self.ensure_valid_choice("model_type", {0, 1, 2, 3, 4})
+        self.ensure_within_bounds("score_threshold", 0, 1)
 
-        # check for efficientdet weights, if none then download into weights folder
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
-        )
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("---no weights detected. proceeding to download...---")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---weights downloaded to {weights_dir}.---")
-
+        model_dir = self.download_weights()
         classes_path = model_dir / config["weights"]["classes_file"]
         self.class_names = {
             val["id"] - 1: val["name"]
-            for val in json.loads(Path(classes_path).read_text()).values()
+            for val in json.loads(classes_path.read_text()).values()
         }
         self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
