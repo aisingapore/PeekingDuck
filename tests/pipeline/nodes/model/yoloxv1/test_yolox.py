@@ -22,10 +22,11 @@ import pytest
 import torch
 import yaml
 
-# import peekingduck
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.yolox import Node
-from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())

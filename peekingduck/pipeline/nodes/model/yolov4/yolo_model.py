@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Yolo model with model types: v3 and v3tiny
+Yolo model with model types: v4 and v4tiny
 """
 
 import logging
@@ -21,34 +21,24 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector import Detector
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class YoloModel:
+class YoloModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """Yolo model with model types: v4 and v4tiny"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # check threshold values
-        if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
-        if not 0 <= config["iou_threshold"] <= 1:
-            raise ValueError("iou_threshold must be in [0, 1]")
+        self.ensure_within_bounds(["iou_threshold", "score_threshold"], 0, 1)
 
-        # check for yolo weights, if none then download into weights folder
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
-        )
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("---no weights detected. proceeding to download...---")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---weights downloaded to {weights_dir}.---")
-
-        classes_path = model_dir / config["weights"]["classes_file"]
-        with open(classes_path) as infile:
+        model_dir = self.download_weights()
+        with open(model_dir / config["weights"]["classes_file"]) as infile:
             self.class_names = [c.strip() for c in infile.readlines()]
 
         self.detector = Detector(config, model_dir, self.class_names)

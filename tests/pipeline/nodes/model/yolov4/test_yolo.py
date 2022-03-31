@@ -21,6 +21,10 @@ import numpy.testing as npt
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.yolo import Node
 from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import (
     yolov3,
@@ -35,6 +39,19 @@ def yolo_config():
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "iou_threshold", "value": -0.5},
+        {"key": "iou_threshold", "value": 1.5},
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+    ],
+)
+def yolo_bad_config_value(request, yolo_config):
+    yolo_config[request.param["key"]] = request.param["value"]
+    return yolo_config
 
 
 @pytest.fixture(params=["v4", "v4tiny"])
@@ -68,12 +85,18 @@ class TestYolo:
         assert "bboxes" in output
         assert output["bboxes"].size != 0
 
+    def test_get_detect_ids(self, yolo_type):
+        yolo = Node(yolo_type)
+        assert yolo.model.detect_ids == [0]
+
     def test_no_weights(self, yolo_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
+        weights_dir = yolo_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
         ), TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger"
         ) as captured:
@@ -81,14 +104,18 @@ class TestYolo:
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert yolo is not None
 
-    def test_get_detect_ids(self, yolo_type):
-        yolo = Node(yolo_type)
-        assert yolo.model.detect_ids == [0]
+    def test_invalid_config_value(self, yolo_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=yolo_bad_config_value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
     def test_yolo_model_initialization(self):
         model1 = yolov3()
