@@ -22,12 +22,15 @@ import pytest
 import torch
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.jde import Node
 from peekingduck.pipeline.nodes.model.jdev1.jde_files.matching import (
     fuse_motion,
     iou_distance,
 )
-from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -262,10 +265,33 @@ class TestJDE:
                 assert jde._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
+    def test_no_weights(self, jde_config, replace_download_weights):
+        weights_dir = jde_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.jdev1.jde_model.logger"
+        ) as captured:
+            jde = Node(config=jde_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "No weights detected. Proceeding to download..."
+            )
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
+            assert jde is not None
+
     def test_invalid_config_value(self, jde_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=jde_bad_config_value)
-        assert "_threshold must be in [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
     def test_invalid_config_model_files(self, jde_config):
         with mock.patch(
@@ -286,25 +312,3 @@ class TestJDE:
         with pytest.raises(TypeError) as excinfo:
             _ = jde.run({"img": ("image name", blank_image)})
         assert str(excinfo.value) == "image must be a np.ndarray"
-
-    def test_no_weights(self, jde_config, replace_download_weights):
-        weights_dir = jde_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
-        ), TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.jdev1.jde_model.logger"
-        ) as captured:
-            jde = Node(config=jde_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert jde is not None
