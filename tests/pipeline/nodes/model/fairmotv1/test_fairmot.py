@@ -17,6 +17,7 @@ from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching import (
     fuse_motion,
     iou_distance,
 )
+from tests.conftest import PKD_DIR
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -26,9 +27,8 @@ SEQ_IDX = 6
 @pytest.fixture
 def fairmot_config():
     """Yields config while forcing the model to run on CPU."""
-    file_path = Path(__file__).resolve().parent / "test_fairmot.yml"
-    with open(file_path) as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "fairmot.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     with mock.patch("torch.cuda.is_available", return_value=False):
@@ -40,9 +40,8 @@ def fairmot_config_gpu():
     """Yields config which allows the model to run on GPU on CUDA-enabled
     devices.
     """
-    file_path = Path(__file__).resolve().parent / "test_fairmot.yml"
-    with open(file_path) as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "fairmot.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     yield node_config

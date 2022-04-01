@@ -35,8 +35,8 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 def yolo_config():
     with open(
         Path(__file__).resolve().parent / "test_yolov4_license_plate.yml"
-    ) as file:
-        node_config = yaml.safe_load(file)
+    ) as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config

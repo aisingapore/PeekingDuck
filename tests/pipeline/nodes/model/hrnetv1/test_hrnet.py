@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from pathlib import Path
+from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -20,16 +21,32 @@ import numpy.testing as npt
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.hrnet import Node
+from tests.conftest import PKD_DIR
 
 
 @pytest.fixture
 def hrnet_config():
-    with open(Path(__file__).resolve().parent / "test_hrnet.yml") as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "hrnet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+    ],
+)
+def hrnet_bad_config_value(request, hrnet_config):
+    hrnet_config[request.param["key"]] = request.param["value"]
+    return hrnet_config
 
 
 @pytest.mark.mlmodel
@@ -68,3 +85,31 @@ class TestHrnet:
         assert "keypoint_scores" in output
         assert "keypoint_conns" in output
         assert output["keypoints"].size != 0
+
+    def test_no_weights(self, hrnet_config, replace_download_weights):
+        weights_dir = hrnet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with mock.patch.object(
+            WeightsDownloaderMixin, "_has_weights", return_value=False
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
+        ), mock.patch.object(
+            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
+        ), TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model.logger"
+        ) as captured:
+            hrnet = Node(config=hrnet_config)
+            # records 0 - 20 records are updates to configs
+            assert (
+                captured.records[0].getMessage()
+                == "No weights detected. Proceeding to download..."
+            )
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
+            assert hrnet is not None
+
+    def test_invalid_config_value(self, hrnet_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=hrnet_bad_config_value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)

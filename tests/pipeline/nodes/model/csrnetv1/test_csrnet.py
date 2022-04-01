@@ -24,13 +24,13 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.csrnet import Node
+from tests.conftest import PKD_DIR
 
 
 @pytest.fixture(params=["sparse", "dense"])
 def csrnet_config():
-    filepath = Path(__file__).resolve().parent / "test_csrnet.yml"
-    with open(filepath) as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "csrnet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
@@ -42,15 +42,6 @@ def csrnet_config():
 def csrnet_bad_config_value(request, csrnet_config):
     csrnet_config[request.param["key"]] = request.param["value"]
     return csrnet_config
-
-
-@pytest.fixture
-def model_dir(csrnet_config):
-    return (
-        csrnet_config["root"].parent
-        / "peekingduck_weights"
-        / csrnet_config["weights"]["model_subdir"]
-    )
 
 
 @pytest.mark.mlmodel

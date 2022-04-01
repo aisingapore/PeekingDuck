@@ -37,8 +37,8 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def yolo_config():
-    with open(Path(__file__).resolve().parent / "test_yolo.yml") as file:
-        node_config = yaml.safe_load(file)
+    with open(Path(__file__).resolve().parent / "test_yolo.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config

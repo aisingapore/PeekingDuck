@@ -24,8 +24,7 @@ import tensorflow.keras.backend as K
 import yaml
 
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
-
-TEST_DIR = Path.cwd() / "tests" / "data" / "images"
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 
 @pytest.fixture(params=["t2.jpg"])
@@ -35,7 +34,7 @@ def single_person_image(request):
 
 @pytest.fixture
 def movenet_config():
-    with open(Path(__file__).resolve().parent / "test_movenet.yml") as infile:
+    with open(PKD_DIR / "configs" / "model" / "movenet.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
@@ -79,7 +78,7 @@ class TestPredictor:
         ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
 
     def test_predict(self, movenet_config, model_dir, single_person_image):
-        img = cv2.imread(str(TEST_DIR / single_person_image))
+        img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
         movenet_predictor = Predictor(movenet_config, model_dir)
         (
             bboxes,

@@ -30,6 +30,7 @@ from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
     detector,
 )
+from tests.conftest import PKD_DIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -37,8 +38,8 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def efficientdet_config():
-    with open(Path(__file__).resolve().parent / "test_efficientdet.yml") as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "efficientdet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
@@ -78,12 +79,6 @@ def class_names(efficientdet_config, model_dir):
 @pytest.fixture(params=[0, 1, 2, 3, 4])
 def efficientdet_type(request, efficientdet_config):
     efficientdet_config["model_type"] = request.param
-    return efficientdet_config
-
-
-@pytest.fixture
-def efficientdet_type_0(efficientdet_config):
-    efficientdet_config["model_type"] = 0
     return efficientdet_config
 
 

@@ -28,8 +28,9 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.movenet import Node
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
-TEST_DIR = Path.cwd() / "tests" / "data" / "images"
+TEST_IMAGES_DIR = Path.cwd() / "tests" / "data" / "images"
 TOLERANCE = 1e-2
 
 
@@ -60,9 +61,8 @@ def multi_person_image(request):
 
 @pytest.fixture
 def movenet_config():
-    filepath = Path(__file__).resolve().parent / "test_movenet.yml"
-    with filepath.open() as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "movenet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
@@ -99,7 +99,7 @@ def movenet_config_multi(request, movenet_config):
 @pytest.mark.mlmodel
 class TestMoveNet:
     def test_no_human_single(self, empty_image, movenet_config_single):
-        no_human_img = cv2.imread(str(TEST_DIR / empty_image))
+        no_human_img = cv2.imread(str(TEST_IMAGES_DIR / empty_image))
         movenet_config, _ = movenet_config_single
         model = Node(movenet_config)
         output = model.run({"img": no_human_img})
@@ -121,7 +121,7 @@ class TestMoveNet:
             )
 
     def test_no_human_multi(self, empty_image, movenet_config_multi):
-        no_human_img = cv2.imread(str(TEST_DIR / empty_image))
+        no_human_img = cv2.imread(str(TEST_IMAGES_DIR / empty_image))
         movenet_config, _ = movenet_config_multi
         model = Node(movenet_config)
         output = model.run({"img": no_human_img})
@@ -143,7 +143,7 @@ class TestMoveNet:
             )
 
     def test_single_human(self, single_person_image, movenet_config_single):
-        single_human_img = cv2.imread(str(TEST_DIR / single_person_image))
+        single_human_img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
         movenet_config, model_type = movenet_config_single
         model = Node(movenet_config)
         output = model.run({"img": single_human_img})
@@ -176,7 +176,7 @@ class TestMoveNet:
         )
 
     def test_multi_human(self, multi_person_image, movenet_config_multi):
-        multi_human_img = cv2.imread(str(TEST_DIR / multi_person_image))
+        multi_human_img = cv2.imread(str(TEST_IMAGES_DIR / multi_person_image))
         movenet_config, model_type = movenet_config_multi
         model = Node(movenet_config)
         output = model.run({"img": multi_human_img})
