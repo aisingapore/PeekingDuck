@@ -89,10 +89,10 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary containing:
             - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
-            - bbox_labels (List[str]): Tracking IDs, for compatibility with
-                draw nodes.
+            - bbox_labels (np.ndarray): Bounding box labels, hard coded as
+                "person".
             - bbox_scores (List[float]): Detection confidence scores.
-            - obj_attrs (Dict[str, int]): Tracking IDs, specifically for use
+            - obj_attrs (Dict[str, List[int]]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
         """
         metadata = inputs.get(
@@ -105,7 +105,8 @@ class Node(AbstractNode):
             self._frame_rate = frame_rate
             self._reset_model()
 
-        bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bboxes, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bbox_labels = np.array(["person"] * len(bboxes))
         bboxes = np.clip(bboxes, 0, 1)
 
         return {

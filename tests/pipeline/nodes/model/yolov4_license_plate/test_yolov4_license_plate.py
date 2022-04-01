@@ -17,6 +17,7 @@ from unittest import TestCase, mock
 
 import cv2
 import numpy as np
+import numpy.testing as npt
 import pytest
 import yaml
 
@@ -25,6 +26,9 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
+
+with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
+    GT_RESULTS = yaml.safe_load(infile.read())
 
 
 @pytest.fixture
@@ -72,13 +76,21 @@ class TestYOLOLicensePlate:
         assert len(output["bbox_labels"]) == 0
         assert len(output["bbox_scores"]) == 0
 
-    def test_at_least_one_lp_image(self, test_lp_images, yolo_type):
-        test_img = cv2.imread(test_lp_images)
+    def test_detect_human_bboxes(self, test_lp_images, yolo_type):
+        test_image = cv2.imread(test_lp_images)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": test_img})
+        output = yolo.run({"img": test_image})
+
         assert "bboxes" in output
-        assert len(output["bboxes"]) != 0
-        assert len(output["bboxes"]) == len(output["bbox_labels"])
+        assert output["bboxes"].size > 0
+
+        model_type = yolo.config["model_type"]
+        image_name = Path(test_lp_images).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     def test_no_weights(self, yolo_config, replace_download_weights):
         weights_dir = yolo_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR

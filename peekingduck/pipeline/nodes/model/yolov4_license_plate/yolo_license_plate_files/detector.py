@@ -21,7 +21,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-import cv2 as cv
+import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
@@ -45,10 +45,8 @@ class Detector:
 
         return class_labels
 
-    def _create_yolo_model(self) -> cv.dnn_Net:
-        """
-        Creates yolo model for license plate detection
-        """
+    def _create_yolo_model(self) -> cv2.dnn_Net:
+        """Creates yolo model for license plate detection."""
         self.model_type = self.config["model_type"]
         model_path = (
             self.model_dir
@@ -68,11 +66,11 @@ class Detector:
 
     @staticmethod
     def bbox_scaling(bboxes: List[list], scale_factor: float) -> List[list]:
-        """
-        To scale the width and height of bboxes from v4tiny
-        After the conversion of the model in .cfg and .weight file format, from
-        Alexey's Darknet repo, to tf model, bboxes are bigger.
-        So downscaling is required for a better fit
+        """Scales the width and height of bboxes from v4tiny.
+
+        After converting the model from .cfg and .weight file format (Alexey's
+        Darknet repo) to tf model, bboxes are bigger. So downscaling is
+        required for a better fit.
         """
         for idx, box in enumerate(bboxes):
             x_1, y_1, x_2, y_2 = tuple(box)
@@ -89,23 +87,22 @@ class Detector:
     def predict_object_bbox_from_image(
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """
-        Detect all license plate objects' bounding box from one image
+        """Detects all license plate objects' bounding box from one image
 
-        args:
-                image: (Numpy Array) input image
+        Args:
+            image (np.ndarray): Input image.
 
-        return:
-                boxes: (Numpy Array) an array of bounding box with
-                    definition like (x1, y1, x2, y2), in a
-                    coordinate system with origin point in
-                    the top-left corner
-                labels: (Numpy Array) an array of class labels
-                scores: (Numpy Array) an array of confidence scores
+        Return:
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): A tuple containing the
+            following arrays:
+            - boxes: An array of bounding box with definition like
+                (x1, y1, x2, y2), in a coordinate system with origin point in
+                the top-left corner
+            - labels: An array of class labels.
+            - scores: An array of confidence scores.
         """
         # Use TF2 .pb saved model format for inference
-        image_data = cv.cvtColor(image, cv.COLOR_BGR2RGB)
-        image_data = cv.resize(image_data, (self.config["size"], self.config["size"]))
+        image_data = cv2.resize(image, (self.config["size"], self.config["size"]))
         image_data = image_data / 255.0
 
         image_data = np.asarray([image_data]).astype(np.float32)

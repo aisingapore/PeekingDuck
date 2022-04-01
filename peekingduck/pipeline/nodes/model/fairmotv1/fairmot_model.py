@@ -71,7 +71,7 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
 
     def predict(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float], List[int]]:
+    ) -> Tuple[List[np.ndarray], List[float], List[int]]:
         """Track objects from image.
 
         Args:
@@ -80,7 +80,6 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         Returns:
             (Tuple[List[np.ndarray], List[str], List[float], List[int]]): A tuple of
             - Numpy array of detected bounding boxes.
-            - List of detection class labels (person).
             - List of detection confidence scores.
             - List of track IDs.
 
@@ -90,5 +89,4 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
         bboxes, track_ids, bbox_scores = self.tracker.track_objects_from_image(image)
-        bbox_labels = ["person"] * len(bboxes)
-        return bboxes, bbox_labels, bbox_scores, track_ids
+        return bboxes, bbox_scores, track_ids

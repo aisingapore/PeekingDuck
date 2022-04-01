@@ -16,6 +16,7 @@
 
 from typing import Any, Dict
 
+import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
@@ -89,10 +90,8 @@ class Node(AbstractNode):
             "bboxes", "keypoints", "keypoint_scores", "keypoint_conns", and
             "bbox_labels".
         """
-
-        bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
-            inputs["img"]
-        )
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(image)
         bbox_labels = np.array(["person"] * len(bboxes))
         bboxes = np.clip(bboxes, 0, 1)
 

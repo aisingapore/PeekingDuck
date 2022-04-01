@@ -31,6 +31,9 @@ from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import
     detector,
 )
 
+with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
+    GT_RESULTS = yaml.safe_load(infile.read())
+
 
 @pytest.fixture
 def efficientdet_config():
@@ -100,18 +103,21 @@ class TestEfficientDet:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_return_at_least_one_person_and_one_bbox(
-        self, test_human_images, efficientdet_type
-    ):
-        test_img = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, test_human_images, efficientdet_type):
+        test_image = cv2.imread(test_human_images)
         efficientdet = Node(efficientdet_type)
-        output = efficientdet.run({"img": test_img})
+        output = efficientdet.run({"img": test_image})
+
         assert "bboxes" in output
-        assert "bbox_labels" in output
-        assert "bbox_scores" in output
-        assert output["bboxes"].size != 0
-        assert output["bbox_labels"].size != 0
-        assert output["bbox_scores"].size != 0
+        assert output["bboxes"].size > 0
+
+        model_type = efficientdet.config["model_type"]
+        image_name = Path(test_human_images).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     def test_efficientdet_preprocess(
         self, create_image, efficientdet_config, model_dir, class_names

@@ -21,7 +21,6 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-import cv2
 import numpy as np
 import tensorflow as tf
 
@@ -30,7 +29,7 @@ from peekingduck.utils.graph_functions import load_graph
 
 
 class Detector:
-    """Object detection class using yolo model to find object bboxes"""
+    """Object detection class using YOLO model to find object bboxes"""
 
     def __init__(
         self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
@@ -43,13 +42,13 @@ class Detector:
 
     def _create_yolo_model(self) -> tf.keras.Model:
         """
-        Creates yolo model for human detection
+        Creates YOLO model for human detection
         """
         model_type = self.config["model_type"]
         model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
 
         self.logger.info(
-            "Yolo model loaded with following configs: \n\t"
+            "YOLO model loaded with following configs: \n\t"
             f"Model type: {self.config['model_type']}, \n\t"
             f"Input resolution: {self.config['size']}, \n\t"
             f"IDs being detected: {self.config['detect_ids']} \n\t"
@@ -149,15 +148,8 @@ class Detector:
 
     @staticmethod
     def _prepare_image_from_camera(image: np.ndarray) -> tf.Tensor:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)
-        return image
-
-    @staticmethod
-    def _prepare_image_from_file(image: np.ndarray) -> tf.Tensor:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image = tf.image.decode_image(image, channels=3)
         return image
 
     # possible that we may want to control what is being detection

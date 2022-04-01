@@ -94,7 +94,6 @@ class Detector:  # pylint: disable=too-few-public-methods
         return bboxes, classes, scores
 
     def _process_image(self, image: np.ndarray) -> np.ndarray:
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = cv2.resize(image, (self.config["size"], self.config["size"]))
         image = np.asarray([image]).astype(np.float32) / 255.0
 

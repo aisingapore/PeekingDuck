@@ -20,7 +20,7 @@ import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
 
-import cv2 as cv
+import cv2
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
@@ -61,25 +61,21 @@ class Predictor:
 
         if "multi" in self.model_type:
             self.logger.info(
-                (
-                    f"MoveNet model loaded with following configs: \n\t"
-                    f"Model type: {self.model_type}, \n\t"
-                    f"Input resolution: {self.resolution}, \n\t"
-                    f"bbox_score_threshold: {self.config['bbox_score_threshold']}, \n\t"
-                    f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
-                )
+                f"MoveNet model loaded with following configs: \n\t"
+                f"Model type: {self.model_type}, \n\t"
+                f"Input resolution: {self.resolution}, \n\t"
+                f"bbox_score_threshold: {self.config['bbox_score_threshold']}, \n\t"
+                f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
             )
         else:
             # movenet singlepose do not output bbox, so bbox score
             # threshold not applicable
             self.logger.info(
-                (
-                    f"MoveNet model loaded with following configs: \n\t"
-                    f"Model type: {self.model_type}, \n\t"
-                    f"Input resolution: {self.resolution}, \n\t"
-                    f"bbox_score_threshold: NA for singlepose models, \n\t"
-                    f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
-                ),
+                f"MoveNet model loaded with following configs: \n\t"
+                f"Model type: {self.model_type}, \n\t"
+                f"Input resolution: {self.resolution}, \n\t"
+                f"bbox_score_threshold: NA for singlepose models, \n\t"
+                f"keypoint_score_threshold: {self.config['keypoint_score_threshold']}"
             )
 
         return model
@@ -114,8 +110,7 @@ class Predictor:
             keypoints_conns (np.ndarray): NxD'x2 keypoint connections, where
                 D' is the varying pairs of valid keypoint connections per detection
         """
-        image_data = cv.resize(frame, (self.resolution))
-        image_data = cv.cvtColor(image_data, cv.COLOR_BGR2RGB)
+        image_data = cv2.resize(frame, (self.resolution))
         image_data = np.asarray([image_data]).astype(np.int32)
         infer = self.movenet_model.signatures["serving_default"]
         outputs = infer(tf.constant(image_data))
