@@ -21,10 +21,11 @@ from typing import Any, Dict
 
 import cv2
 
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.node import AbstractNode
 
 
-class Node(AbstractNode):
+class Node(ThresholdCheckerMixin, AbstractNode):
     """Adjusts the contrast of an image, by multiplying with a gain/`alpha
     parameter <https://docs.opencv.org/4.x/d3/dc1/tutorial_basic_
     linear_transform.html>`_.
@@ -43,8 +44,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        if not 0 <= self.alpha <= 3.0:
-            raise ValueError("alpha for contrast must be between [0, 3]")
+        self.ensure_within_bounds("alpha", 0, 3)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the contrast of an image frame.
