@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.posenet import Node
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 
 @pytest.fixture
@@ -88,15 +88,18 @@ class TestPoseNet:
         for label in output["bbox_labels"]:
             assert label == "person"
 
-    def test_no_weights(self, posenet_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        posenet_config,
+    ):
         weights_dir = posenet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.posenetv1.posenet_model.logger"
         ) as captured:
             posenet = Node(config=posenet_config)
@@ -110,6 +113,9 @@ class TestPoseNet:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert posenet is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_value(self, posenet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.movenet import Node
-from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR, do_nothing
 
 TEST_IMAGES_DIR = Path.cwd() / "tests" / "data" / "images"
 TOLERANCE = 1e-2
@@ -229,15 +229,18 @@ class TestMoveNet:
             f"got {output['bbox_labels']}"
         )
 
-    def test_no_weights(self, movenet_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        movenet_config,
+    ):
         weights_dir = movenet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
         ) as captured:
             movenet = Node(config=movenet_config)
@@ -251,6 +254,9 @@ class TestMoveNet:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert movenet is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_value(self, movenet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

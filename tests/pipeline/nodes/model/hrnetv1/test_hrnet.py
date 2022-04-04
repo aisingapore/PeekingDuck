@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.hrnet import Node
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 
 @pytest.fixture
@@ -86,15 +86,18 @@ class TestHrnet:
         assert "keypoint_conns" in output
         assert output["keypoints"].size != 0
 
-    def test_no_weights(self, hrnet_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        hrnet_config,
+    ):
         weights_dir = hrnet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model.logger"
         ) as captured:
             hrnet = Node(config=hrnet_config)
@@ -108,6 +111,9 @@ class TestHrnet:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert hrnet is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_value(self, hrnet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

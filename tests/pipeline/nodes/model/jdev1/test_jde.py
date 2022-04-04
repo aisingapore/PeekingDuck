@@ -31,7 +31,7 @@ from peekingduck.pipeline.nodes.model.jdev1.jde_files.matching import (
     fuse_motion,
     iou_distance,
 )
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -264,15 +264,18 @@ class TestJDE:
                 assert jde._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
-    def test_no_weights(self, jde_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        jde_config,
+    ):
         weights_dir = jde_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.jdev1.jde_model.logger"
         ) as captured:
             jde = Node(config=jde_config)
@@ -287,15 +290,17 @@ class TestJDE:
             )
             assert jde is not None
 
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
+
     def test_invalid_config_value(self, jde_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=jde_bad_config_value)
         assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
-    def test_invalid_config_model_files(self, jde_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=True
-        ), pytest.raises(ValueError) as excinfo:
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    def test_invalid_config_model_files(self, _, jde_config):
+        with pytest.raises(ValueError) as excinfo:
             jde_config["weights"]["model_file"]["864x480"] = "some/invalid/path"
             _ = Node(config=jde_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)

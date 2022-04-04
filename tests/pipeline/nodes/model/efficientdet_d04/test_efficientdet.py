@@ -30,7 +30,7 @@ from peekingduck.pipeline.nodes.model.efficientdet import Node
 from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
     detector,
 )
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -158,15 +158,18 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(["person"]), labels)
 
-    def test_no_weights(self, efficientdet_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        efficientdet_config,
+    ):
         weights_dir = efficientdet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
         ) as captured:
             efficientdet = Node(config=efficientdet_config)
@@ -180,6 +183,9 @@ class TestEfficientDet:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert efficientdet is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_value(self, efficientdet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

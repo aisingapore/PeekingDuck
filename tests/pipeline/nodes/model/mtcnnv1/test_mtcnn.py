@@ -26,7 +26,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.mtcnn import Node
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -88,15 +88,18 @@ class TestMtcnn:
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
-    def test_no_weights(self, mtcnn_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        mtcnn_config,
+    ):
         weights_dir = mtcnn_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
         ) as captured:
             mtcnn = Node(config=mtcnn_config)
@@ -110,6 +113,9 @@ class TestMtcnn:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert mtcnn is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_value(self, mtcnn_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

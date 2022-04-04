@@ -86,14 +86,6 @@ def create_input_video(create_video):
 
 
 @pytest.fixture
-def replace_download_weights():
-    def _replace_download_weights(*_):
-        return False
-
-    return _replace_download_weights
-
-
-@pytest.fixture
 def tmp_dir():
     cwd = Path.cwd()
     newpath = tempfile.mkdtemp()
@@ -185,3 +177,7 @@ def test_human_video_sequences(request):
 
     K.clear_session()
     gc.collect()
+
+
+def do_nothing(*_):
+    """Does nothing. For use with ``mock.patch``."""

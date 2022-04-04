@@ -27,7 +27,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolox import Node
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -133,15 +133,18 @@ class TestYOLOX:
         yolox = Node(yolox_config)
         assert yolox.model.detect_ids == [0]
 
-    def test_no_weights(self, yolox_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        yolox_config,
+    ):
         weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=False
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
         ) as captured:
             yolox = Node(config=yolox_config)
@@ -155,6 +158,9 @@ class TestYOLOX:
                 == f"Weights downloaded to {weights_dir}."
             )
             assert yolox is not None
+
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
     def test_invalid_config_detect_ids(self, yolox_config):
         yolox_config["detect_ids"] = 1

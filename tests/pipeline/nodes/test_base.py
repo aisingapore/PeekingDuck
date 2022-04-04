@@ -21,7 +21,7 @@ from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
 )
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, do_nothing
 
 
 @pytest.fixture
@@ -59,18 +59,19 @@ class TestBase:
         )
 
     @pytest.mark.usefixtures("tmp_dir")
-    def test_create_weights_dir(self, weights_model, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_create_weights_dir(
+        self, mock_download_blob_to, mock_extract_file, weights_model
+    ):
         weights_parent_dir = Path.cwd().resolve()
         weights_model.config["weights_parent_dir"] = weights_parent_dir
         weights_model.config["weights"] = {"model_subdir": "some_model"}
 
         assert not (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
 
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_download_blob_to", wraps=replace_download_weights
-        ), mock.patch.object(
-            WeightsDownloaderMixin, "extract_file", wraps=replace_download_weights
-        ):
-            weights_model.download_weights()
+        weights_model.download_weights()
 
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
         assert (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
