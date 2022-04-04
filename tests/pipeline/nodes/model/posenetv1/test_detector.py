@@ -22,7 +22,6 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
     get_keypoints_relative_coords,
 )
 
-TEST_DIR = Path.cwd() / "images"
 NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
 
 

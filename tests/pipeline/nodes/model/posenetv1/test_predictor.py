@@ -20,17 +20,18 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.posenet import Node
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
-
-TEST_DIR = Path.cwd() / "tests" / "data" / "images"
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 
 @pytest.fixture
 def posenet_config():
-    with open(Path(__file__).resolve().parent / "test_posenet.yml") as infile:
+    with open(PKD_DIR / "configs" / "model" / "posenet.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
+    # Only test model_type=75 instead of the default resnet or other types.
+    node_config["model_type"] = 75
+
     return node_config
 
 
@@ -50,7 +51,7 @@ class TestPredictor:
         assert predictor is not None, "Predictor is not instantiated"
 
     def test_predict(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
+        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
         predictor = Predictor(posenet_config, model_dir)
         output = predictor.predict(frame)
         assert len(output) == 4, "Predicted output has missing keys"
@@ -65,7 +66,7 @@ class TestPredictor:
         assert len(tuple_res) == 2, "Loaded data must be of length 2"
 
     def test_create_image_from_frame(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
+        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
         predictor = Predictor(posenet_config, model_dir)
         _, output_scale, image_size = predictor._create_image_from_frame(
             16, frame, (225, 225), "75"
@@ -83,7 +84,7 @@ class TestPredictor:
         assert posenet_model is not None, "Model is not instantiated"
 
     def test_predict_all_poses(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_DIR / "t2.jpg"))
+        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
         predictor = Predictor(posenet_config, model_dir)
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
