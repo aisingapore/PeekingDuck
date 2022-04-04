@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods

@@ -23,7 +23,7 @@ import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):

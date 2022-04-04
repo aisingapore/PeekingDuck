@@ -25,7 +25,7 @@ from typing import Any, Dict, Optional, Union
 
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class SourceType:  # pylint: disable=too-few-public-methods

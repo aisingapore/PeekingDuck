@@ -20,7 +20,7 @@ import operator
 from typing import Any, Dict, Union
 
 from peekingduck.pipeline.nodes.dabble.statisticsv1 import utils
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 # Order matters so that regex doesn't read ">=" as ">" or "<=" as "<"
 # Dictionaries are insertion ordered from Python 3.6 onwards

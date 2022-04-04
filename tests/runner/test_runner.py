@@ -19,7 +19,7 @@ from unittest import mock
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.runner import Runner
 from peekingduck.utils.requirement_checker import RequirementChecker
 

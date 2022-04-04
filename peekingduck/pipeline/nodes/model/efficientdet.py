@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

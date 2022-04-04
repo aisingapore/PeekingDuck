@@ -22,7 +22,7 @@ import numpy as np
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import (
     yolo_license_plate_model,
 )
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods

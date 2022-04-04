@@ -20,7 +20,7 @@ human pose estimation. Requires an object detector.
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

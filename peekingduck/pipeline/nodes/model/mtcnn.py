@@ -21,7 +21,7 @@ from typing import Any, Dict
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.mtcnnv1 import mtcnn_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

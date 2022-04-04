@@ -19,7 +19,7 @@ from typing import Any, Dict
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

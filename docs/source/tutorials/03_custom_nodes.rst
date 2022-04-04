@@ -174,7 +174,7 @@ implement our custom node function.
    
          from typing import Any, Dict, List, Tuple
          import cv2
-         from peekingduck.pipeline.nodes.node import AbstractNode
+         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
    
          YELLOW = (0, 255, 255)        # in BGR format, per opencv's convention
    
@@ -412,7 +412,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
    
          from typing import Any, Dict, List, Tuple
          import cv2
-         from peekingduck.pipeline.nodes.node import AbstractNode
+         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
    
          # setup global constants
          FONT = cv2.FONT_HERSHEY_SIMPLEX
@@ -721,7 +721,7 @@ Make the following **three** changes:
 
          from typing import Any, Dict
 
-         from peekingduck.pipeline.nodes.node import AbstractNode
+         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
          class Node(AbstractNode):

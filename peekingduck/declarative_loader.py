@@ -27,7 +27,7 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 import yaml
 
 from peekingduck.configloader import ConfigLoader
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 

@@ -19,7 +19,7 @@ networks for understanding the highly congested scenes.
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.model.csrnetv1 import csrnet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

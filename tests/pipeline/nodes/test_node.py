@@ -16,7 +16,7 @@ from typing import Dict
 
 import pytest
 
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 
 

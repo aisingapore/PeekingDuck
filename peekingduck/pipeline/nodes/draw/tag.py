@@ -18,7 +18,7 @@ import copy
 from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.draw.utils.bbox import check_bgr_type, draw_tags
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

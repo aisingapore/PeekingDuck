@@ -83,7 +83,7 @@ class TestModuleImport:
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
             from peekingduck.pipeline.pipeline import Pipeline
-            from peekingduck.pipeline.nodes.node import AbstractNode
+            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
             print("good")
             """
@@ -103,7 +103,7 @@ class TestModuleImport:
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
             from peekingduck.pipeline.pipeline import Pipeline
-            from peekingduck.pipeline.nodes.node import AbstractNode
+            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
             import inspect
 
             the_types = []

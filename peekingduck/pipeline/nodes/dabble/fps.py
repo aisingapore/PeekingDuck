@@ -20,7 +20,7 @@ from statistics import mean
 from time import perf_counter
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 NUM_FRAMES = 10
 
