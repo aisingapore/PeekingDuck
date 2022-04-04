@@ -79,7 +79,7 @@ class TestModuleImport:
         code = textwrap.dedent(
             """
             from peekingduck import cli
-            from peekingduck.configloader import ConfigLoader
+            from peekingduck.config_loader import ConfigLoader
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
             from peekingduck.pipeline.pipeline import Pipeline
@@ -99,7 +99,7 @@ class TestModuleImport:
         code = textwrap.dedent(
             """
             from peekingduck import cli
-            from peekingduck.configloader import ConfigLoader
+            from peekingduck.config_loader import ConfigLoader
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
             from peekingduck.pipeline.pipeline import Pipeline
