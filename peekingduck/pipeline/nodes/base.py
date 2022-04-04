@@ -118,7 +118,7 @@ class WeightsDownloaderMixin:
 
         return model_dir
 
-    def _download_blob_to(self, destination: Path) -> None:
+    def _download_blob_to(self, destination: Path) -> None:  # pragma: no cover
         """Downloads publicly shared files from Google Cloud Platform.
 
         Saves download content in chunks. Chunk size set to large integer as
@@ -142,9 +142,10 @@ class WeightsDownloaderMixin:
             model_dir (Path): Path to where weights for a model are stored.
         """
         if self.config["weights_parent_dir"] is None:
-            weights_dir = self.config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+            weights_parent_dir = self.config["root"].parent
         else:
             weights_parent_dir = Path(self.config["weights_parent_dir"])
+
             if not weights_parent_dir.exists():
                 raise FileNotFoundError(
                     f"The specified weights_parent_dir: {weights_parent_dir} does not exist."
@@ -154,8 +155,8 @@ class WeightsDownloaderMixin:
                     f"The specified weights_parent_dir: {weights_parent_dir} "
                     "must be an absolute path."
                 )
-            weights_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR
 
+        weights_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR
         model_dir = weights_dir / self.config["weights"]["model_subdir"]
 
         return weights_dir, model_dir
@@ -179,7 +180,7 @@ class WeightsDownloaderMixin:
         return model_dir.exists()
 
     @staticmethod
-    def extract_file(zip_path: Path, destination_dir: Path) -> None:
+    def extract_file(zip_path: Path, destination_dir: Path) -> None:  # pragma: no cover
         """Extracts the zip file to ``destination_dir``.
 
         Args:
