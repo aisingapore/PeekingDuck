@@ -26,6 +26,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.mtcnn import Node
+from tests.conftest import PKD_DIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -33,7 +34,7 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def mtcnn_config():
-    with open(Path(__file__).resolve().parent / "test_mtcnn.yml") as infile:
+    with open(PKD_DIR / "configs" / "model" / "mtcnn.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
@@ -54,15 +55,6 @@ def mtcnn_config():
 def mtcnn_bad_config_value(request, mtcnn_config):
     mtcnn_config[request.param["key"]] = request.param["value"]
     return mtcnn_config
-
-
-@pytest.fixture
-def model_dir(mtcnn_config):
-    return (
-        mtcnn_config["root"].parent
-        / "peekingduck_weights"
-        / mtcnn_config["weights"]["model_subdir"]
-    )
 
 
 @pytest.mark.mlmodel

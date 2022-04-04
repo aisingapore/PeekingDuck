@@ -27,6 +27,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolox import Node
+from tests.conftest import PKD_DIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -34,8 +35,7 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def yolox_config():
-    file_path = Path(__file__).resolve().parent / "test_yolox.yml"
-    with open(file_path) as infile:
+    with open(PKD_DIR / "configs" / "model" / "yolox.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 

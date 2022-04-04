@@ -30,6 +30,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import (
     yolov3,
     yolov3_tiny,
 )
+from tests.conftest import PKD_DIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -37,7 +38,7 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def yolo_config():
-    with open(Path(__file__).resolve().parent / "test_yolo.yml") as infile:
+    with open(PKD_DIR / "configs" / "model" / "yolo.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 

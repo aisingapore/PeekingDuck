@@ -26,6 +26,7 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolo_license_plate import Node
+from tests.conftest import PKD_DIR
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
     GT_RESULTS = yaml.safe_load(infile.read())
@@ -33,9 +34,7 @@ with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
 
 @pytest.fixture
 def yolo_config():
-    with open(
-        Path(__file__).resolve().parent / "test_yolov4_license_plate.yml"
-    ) as infile:
+    with open(PKD_DIR / "configs" / "model" / "yolo_license_plate.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
