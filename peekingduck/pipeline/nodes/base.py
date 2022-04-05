@@ -262,7 +262,10 @@ class ThresholdCheckerMixin:
                 fails.
         """
         if isinstance(key, str):
-            if not method(self.config[key], value):
+            if isinstance(self.config[key], list):
+                if not all(method(val, value) for val in self.config[key]):
+                    raise ValueError(f"{key} must be {reason}")
+            elif not method(self.config[key], value):
                 raise ValueError(f"{key} must be {reason}")
         elif isinstance(key, list):
             for k in key:

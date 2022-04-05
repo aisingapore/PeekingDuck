@@ -35,13 +35,10 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # check threshold values
-        for threshold in config["network_thresholds"]:
-            if not 0 <= threshold <= 1:
-                raise ValueError("network_thresholds must be in [0, 1]")
-
         self.check_bounds("min_size", 0, "above", include=None)
-        self.check_bounds(["scale_factor", "score_threshold"], (0, 1), "within")
+        self.check_bounds(
+            ["network_thresholds", "scale_factor", "score_threshold"], (0, 1), "within"
+        )
 
         model_dir = self.download_weights()
         self.detector = Detector(config, model_dir)
