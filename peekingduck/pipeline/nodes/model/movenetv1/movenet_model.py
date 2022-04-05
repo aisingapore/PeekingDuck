@@ -33,12 +33,12 @@ class MoveNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.ensure_valid_choice(
+        self.check_valid_choice(
             "model_type",
             {"singlepose_lightning", "singlepose_thunder", "multipose_lightning"},
         )
-        self.ensure_within_bounds(
-            ["bbox_score_threshold", "keypoint_score_threshold"], 0, 1
+        self.check_bounds(
+            ["bbox_score_threshold", "keypoint_score_threshold"], (0, 1), "within"
         )
 
         model_dir = self.download_weights()

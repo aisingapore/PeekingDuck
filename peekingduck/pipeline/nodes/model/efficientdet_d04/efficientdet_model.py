@@ -38,8 +38,8 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.ensure_valid_choice("model_type", {0, 1, 2, 3, 4})
-        self.ensure_within_bounds("score_threshold", 0, 1)
+        self.check_valid_choice("model_type", {0, 1, 2, 3, 4})
+        self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
         classes_path = model_dir / config["weights"]["classes_file"]

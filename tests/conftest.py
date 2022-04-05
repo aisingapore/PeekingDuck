@@ -16,6 +16,7 @@ import gc
 import os
 import shutil
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 import cv2
@@ -181,3 +182,11 @@ def test_human_video_sequences(request):
 
 def do_nothing(*_):
     """Does nothing. For use with ``mock.patch``."""
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

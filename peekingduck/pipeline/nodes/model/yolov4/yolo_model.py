@@ -33,7 +33,7 @@ class YOLOModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.ensure_within_bounds(["iou_threshold", "score_threshold"], 0, 1)
+        self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
 
         model_dir = self.download_weights()
         with open(model_dir / config["weights"]["classes_file"]) as infile:

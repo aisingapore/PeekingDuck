@@ -35,7 +35,7 @@ class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.ensure_above_value("width", 0)
+        self.check_bounds("width", 0, "above", include=None)
 
         model_dir = self.download_weights()
         self.predictor = Predictor(config, model_dir)

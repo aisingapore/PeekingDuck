@@ -14,10 +14,11 @@
 
 """Mixin classes for PeekingDuck nodes and models."""
 
+import operator
 import os
 import zipfile
 from pathlib import Path
-from typing import List, Set, Tuple, Union
+from typing import Callable, List, Optional, Set, Tuple, Union
 
 import requests
 from tqdm import tqdm
@@ -25,74 +26,249 @@ from tqdm import tqdm
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
 
+Number = Union[float, int]
+
 
 class ThresholdCheckerMixin:
     """Mixin class providing utility methods for checking validity of config
     values, typically thresholds.
     """
 
-    def ensure_above_value(self, key: Union[str, List[str]], value: float) -> None:
-        """Checks that configuration values specified by ``key`` is more than
-        the specified ``value``.
+    def check_bounds(
+        self,
+        key: Union[str, List[str]],
+        value: Union[Number, Tuple[Number, Number]],
+        method: str,
+        include: Optional[str] = "both",
+    ) -> None:
+        """Checks if the configuration value(s) specified by `key` satisties
+        the specified bounds.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-            value (float): The specified value.
+            value (Union[Number, Tuple[Number, Number]]): Either a single
+                number to specify the upper or lower bound or a tuple of
+                numbers to specify both the upper and lower bounds.
+            method (str): The bounds checking methods, one of
+                {"above", "below", "both"}. If "above", checks if the
+                configuration value is above the specified `value`. If "below",
+                checks if the configuration value is below the specified
+                `value`. If "both", checks if the configuration value is above
+                `value[0]` and below `value[1]`.
+            include (Optional[str]): Indicates if the `value` itself should be
+                included in the bound, one of {"lower", "upper", "both", None}.
+                Please see Technotes for details.
 
         Raises:
-            TypeError: ``key`` is not in (List[str], str).
-            ValueError: If the configuration value is <=value.
-        """
-        if isinstance(key, str):
-            if self.config[key] <= value:
-                raise ValueError(f"{key} must be more than {value}")
-        elif isinstance(key, list):
-            for k in key:
-                self.ensure_above_value(k, value)
-        else:
-            raise TypeError("'key' must be either 'str' or 'list'")
+            TypeError: `key` type is not in (List[str], str).
+            TypeError: If `value` is not a tuple of only float/int.
+            TypeError: If `value` is not a tuple with 2 elements.
+            TypeError: If `value` is not a float, int, or tuple.
+            TypeError: If `value` type is not a tuple when `method` is
+                "within".
+            TypeError: If `value` type is a tuple when `method` is
+                "above"/"below".
+            ValueError: If `method` is not one of {"above", "below", "within"}.
+            ValueError: If the configuration value fails the bounds comparison.
 
-    def ensure_valid_choice(self, key: str, choices: Set[Union[int, str]]) -> None:
-        """Checks that configuration values specified by ``key`` can be found
-        in ``choices``.
+        Technotes:
+            The behavior of `include` depends on the specified `method`. The
+            table below shows the comparison done for various argument
+            combinations.
+
+            +-----------+---------+-------------------------------------+
+            | method    | include | comparison                          |
+            +===========+=========+=====================================+
+            |           | "lower" | config[key] >= value                |
+            +           +---------+-------------------------------------+
+            |           | "upper" | config[key] > value                 |
+            +           +---------+-------------------------------------+
+            |           | "both"  | config[key] >= value                |
+            +           +---------+-------------------------------------+
+            | "above"   | None    | config[key] > value                 |
+            +-----------+---------+-------------------------------------+
+            |           | "lower" | config[key] < value                 |
+            +           +---------+-------------------------------------+
+            |           | "upper" | config[key] <= value                |
+            +           +---------+-------------------------------------+
+            |           | "both"  | config[key] <= value                |
+            +           +---------+-------------------------------------+
+            | "below"   | None    | config[key] < value                 |
+            +-----------+---------+-------------------------------------+
+            |           | "lower" | value[0] <= config[key] < value[1]  |
+            +           +---------+-------------------------------------+
+            |           | "upper" | value[0] < config[key] <= value[1]  |
+            +           +---------+-------------------------------------+
+            |           | "both"  | value[0] <= config[key] <= value[1] |
+            +           +---------+-------------------------------------+
+            | "within"  | None    | value[0] < config[key] < value[1]   |
+            +-----------+---------+-------------------------------------+
+        """
+        # available checking methods
+        methods = {"above", "below", "within"}
+        # available options of lower/upper bound inclusion
+        lower_includes = {"lower", "both"}
+        upper_includes = {"upper", "both"}
+
+        if method not in methods:
+            raise ValueError(f"`method` must be one of {methods}")
+
+        if isinstance(value, tuple):
+            if not all(isinstance(val, (float, int)) for val in value):
+                raise TypeError(
+                    "When using tuple for `value`, it must be a tuple of float/int"
+                )
+            if len(value) != 2:
+                raise ValueError(
+                    "When using tuple for `value`, it must contain only 2 elements"
+                )
+        elif isinstance(value, (float, int)):
+            pass
+        else:
+            raise TypeError(
+                "`value` must be a float/int or tuple, but you passed a "
+                f"{type(value).__name__}"
+            )
+
+        if method == "within":
+            if not isinstance(value, tuple):
+                raise TypeError("`value` must be a tuple when `method` is 'within'")
+            self._check_within_bounds(
+                key, value, (include in lower_includes, include in upper_includes)
+            )
+        else:
+            if isinstance(value, tuple):
+                raise TypeError(
+                    "`value` must be a float/int when `method` is 'above'/'below'"
+                )
+            if method == "above":
+                self._check_above_value(key, value, include in lower_includes)
+            elif method == "below":
+                self._check_below_value(key, value, include in upper_includes)
+
+    def check_valid_choice(
+        self, key: str, choices: Set[Union[int, float, str]]
+    ) -> None:
+        """Checks that configuration value specified by `key` can be found
+        in `choices`.
 
         Args:
             key (str): The specified key.
-            choices (Set[Union[int, str]]): The valid choices.
+            choices (Set[Union[int, float, str]]): The valid choices.
 
         Raises:
-            TypeError: ``key`` is not a str
-            ValueError: If the configuration value is not found in ``choices``.
+            TypeError: `key` type is not a str.
+            ValueError: If the configuration value is not found in `choices`.
         """
-        if isinstance(key, str):
-            if self.config[key] not in choices:
-                raise ValueError(f"{key} must be one of {choices}")
-        else:
-            raise TypeError("'key' must be 'str'")
+        if not isinstance(key, str):
+            raise TypeError("`key` must be str")
+        if self.config[key] not in choices:
+            raise ValueError(f"{key} must be one of {choices}")
 
-    def ensure_within_bounds(
-        self, key: Union[str, List[str]], lower: float, upper: float
+    def _check_above_value(
+        self, key: Union[str, List[str]], value: Number, inclusive: bool
     ) -> None:
-        """Checks that configuration values specified by ``key`` is within the
-        specified bounds [start, stop].
+        """Checks that configuration values specified by `key` is more than
+        (or equal to) the specified `value`.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-            lower (float): The lower bound.
-            upper (float): The upper bound.
+            value (Number): The specified value.
+            inclusive (bool): If `True`, compares `config[key] >= value`. If
+                `False`, compares `config[key] > value`.
 
         Raises:
-            TypeError: ``key`` is not in (List[str], str).
-            ValueError: If the configuration value is <=value.
+            TypeError: `key` type is not in (List[str], str).
+            ValueError: If the configuration value is less than (or equal to)
+                `value`.
+        """
+        method = operator.ge if inclusive else operator.gt
+        extra_reason = " or equal to" if inclusive else ""
+        self._compare(key, value, method, reason=f"more than{extra_reason} {value}")
+
+    def _check_below_value(
+        self, key: Union[str, List[str]], value: Number, inclusive: bool
+    ) -> None:
+        """Checks that configuration values specified by `key` is more than
+        (or equal to) the specified `value`.
+
+        Args:
+            key (Union[str, List[str]]): The specified key or list of keys.
+            value (Number): The specified value.
+            inclusive (bool): If `True`, compares `config[key] <= value`. If
+                `False`, compares `config[key] < value`.
+
+        Raises:
+            TypeError: `key` type is not in (List[str], str).
+            ValueError: If the configuration value is less than (or equal to)
+                `value`.
+        """
+        method = operator.le if inclusive else operator.lt
+        extra_reason = " or equal to" if inclusive else ""
+        self._compare(key, value, method, reason=f"less than{extra_reason} {value}")
+
+    def _check_within_bounds(
+        self,
+        key: Union[str, List[str]],
+        bounds: Tuple[Number, Number],
+        includes: Tuple[bool, bool],
+    ) -> None:
+        """Checks that configuration values specified by `key` is within the
+        specified bounds between `lower` and `upper`.
+
+        Args:
+            key (Union[str, List[str]]): The specified key or list of keys.
+             (Union[float, int]): The lower bound.
+            bounds (Tuple[Number, Number]): The lower and upper bounds.
+            includes (Tuple[bool, bool]): If `True`, compares `config[key] >= value`.
+                If `False`, compares `config[key] > value`.
+            inclusive_upper (bool): If `True`, compares `config[key] <= value`.
+                If `False`, compares `config[key] < value`.
+
+        Raises:
+            TypeError: `key` type is not in (List[str], str).
+            ValueError: If the configuration value is not between `lower` and
+                `upper`.
+        """
+        method_lower = operator.ge if includes[0] else operator.gt
+        method_upper = operator.le if includes[1] else operator.lt
+        reason_lower = "[" if includes[0] else "("
+        reason_upper = "]" if includes[1] else ")"
+        reason = f"between {reason_lower}{bounds[0]}, {bounds[1]}{reason_upper}"
+        self._compare(key, bounds[0], method_lower, reason)
+        self._compare(key, bounds[1], method_upper, reason)
+
+    def _compare(
+        self,
+        key: Union[str, List[str]],
+        value: Union[float, int],
+        method: Callable,
+        reason: str,
+    ) -> None:
+        """Compares the configuration values specified by `key` with
+        `value` using the specified comparison `method`, raises error with
+        `reason` if comparison fails.
+
+        Args:
+            key (Union[str, List[str]]): The specified key or list of keys.
+            value (Union[float, int]): The specified value.
+            method (Callable): The method to be used to compare the
+                configuration value specified by `key` and `value`.
+            reason (str): The failure reason.
+
+        Raises:
+            TypeError: `key` type is not in (List[str], str).
+            ValueError: If the comparison between `config[key]` and `value`
+                fails.
         """
         if isinstance(key, str):
-            if not lower <= self.config[key] <= upper:
-                raise ValueError(f"{key} must be between [{lower}, {upper}]")
+            if not method(self.config[key], value):
+                raise ValueError(f"{key} must be {reason}")
         elif isinstance(key, list):
             for k in key:
-                self.ensure_within_bounds(k, lower, upper)
+                self._compare(k, value, method, reason)
         else:
-            raise TypeError("'key' must be either 'str' or 'list'")
+            raise TypeError("`key` must be either str or list")
 
 
 class WeightsDownloaderMixin:

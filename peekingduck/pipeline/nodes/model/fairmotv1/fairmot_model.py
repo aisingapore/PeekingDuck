@@ -63,8 +63,10 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.ensure_above_value(["K", "min_box_area", "track_buffer"], 0)
-        self.ensure_within_bounds("score_threshold", 0, 1)
+        self.check_bounds(
+            ["K", "min_box_area", "track_buffer"], 0, "above", include=None
+        )
+        self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
         self.tracker = Tracker(config, model_dir, frame_rate)

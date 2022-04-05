@@ -22,8 +22,8 @@ from typing import Any, Dict
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):
@@ -46,7 +46,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.ensure_within_bounds("beta", -100, 100)
+        self.check_bounds("beta", (-100, 100), "within")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the brightness of an image frame.
