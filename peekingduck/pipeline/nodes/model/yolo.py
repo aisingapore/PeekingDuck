@@ -92,8 +92,6 @@ class Node(AbstractNode):
             outputs (dict): bbox output in dictionary format with keys
             "bboxes", "bbox_labels", and "bbox_scores".
         """
-        # Currently prototyped to return just the bounding boxes
-        # without the scores
         bboxes, labels, scores = self.model.predict(inputs["img"])
         bboxes = np.clip(bboxes, 0, 1)
 
