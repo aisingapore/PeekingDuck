@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -43,7 +43,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         yolox (YOLOX): The YOLOX model for performing inference.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
         class_names: List[str],
