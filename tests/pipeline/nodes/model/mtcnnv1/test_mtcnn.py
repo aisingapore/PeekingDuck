@@ -122,10 +122,9 @@ class TestMtcnn:
             _ = Node(config=mtcnn_bad_config_value)
         assert "must be" in str(excinfo.value)
 
-    def test_invalid_config_model_files(self, mtcnn_config):
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=True
-        ), pytest.raises(ValueError) as excinfo:
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
+    def test_invalid_config_model_files(self, _, mtcnn_config):
+        with pytest.raises(ValueError) as excinfo:
             mtcnn_config["weights"]["model_file"] = "some/invalid/path"
             _ = Node(config=mtcnn_config)
         assert "Graph file does not exist. Please check that" in str(excinfo.value)
