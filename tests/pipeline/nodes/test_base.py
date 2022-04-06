@@ -43,7 +43,7 @@ class WeightsModel(WeightsDownloaderMixin):
 
 class ThresholdModel(ThresholdCheckerMixin):
     def __init__(self):
-        self.config = {"a": 12.5, "b": 10, "c": "value"}
+        self.config = {"a": 12.5, "b": 10, "c": "value", "d": [10, 12.5, 13]}
 
 
 class TestBase:
@@ -95,9 +95,9 @@ class TestBase:
             # single value, inclusive
             threshold_model.check_bounds("a", 12, "above", include)
             # multiple values
-            threshold_model.check_bounds(["a", "b"], 9, "above", include)
+            threshold_model.check_bounds(["a", "b", "d"], 9, "above", include)
             # multiple values, inclusive
-            threshold_model.check_bounds(["a", "b"], 10, "above", include)
+            threshold_model.check_bounds(["a", "b", "d"], 10, "above", include)
 
         with pytest.raises(ValueError) as excinfo:
             # single value, fail
@@ -113,6 +113,13 @@ class TestBase:
             # multiple value, fail second
             threshold_model.check_bounds(["a", "b"], 11, "above", include)
         assert "b must be more than or equal to 11" == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            # multiple value, fail second
+            threshold_model.check_bounds(["a", "d"], 11, "above", include)
+        assert "All elements of d must be more than or equal to 11" == str(
+            excinfo.value
+        )
 
     @pytest.mark.parametrize("include", ["upper", None])
     def test_threshold_above_value_exclusive(self, threshold_model, include):
@@ -131,6 +138,11 @@ class TestBase:
             # single value, fail
             threshold_model.check_bounds("a", 13, "above", include)
         assert "a must be more than 13" == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            # single value, fail
+            threshold_model.check_bounds("d", 13, "above", include)
+        assert "All elements of d must be more than 13" == str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
             # multiple value, inclusive, fail first
@@ -168,6 +180,8 @@ class TestBase:
             threshold_model.check_bounds(["b", "a"], 13, "below", include)
             # multiple values, inclusive
             threshold_model.check_bounds(["b", "a"], 12.5, "below", include)
+            # multiple values, inclusive
+            threshold_model.check_bounds(["b", "a", "d"], 13, "below", include)
 
         with pytest.raises(ValueError) as excinfo:
             # single value, fail
@@ -196,6 +210,11 @@ class TestBase:
             # single value, inclusive, fail
             threshold_model.check_bounds("a", 12.5, "below", include)
         assert "a must be less than 12.5" == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            # single value, inclusive, fail
+            threshold_model.check_bounds("d", 13, "below", include)
+        assert "All elements of d must be less than 13" == str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
             # single value, fail
@@ -243,6 +262,8 @@ class TestBase:
             threshold_model.check_bounds(["a", "b"], (9, 12.5), "within")
             # multiple value, inclusive both
             threshold_model.check_bounds(["a", "b"], (10, 12.5), "within")
+            # multiple value, inclusive both
+            threshold_model.check_bounds(["a", "b", "d"], (10, 13), "within")
 
         with pytest.raises(ValueError) as excinfo:
             # single value, fail lower
@@ -281,6 +302,11 @@ class TestBase:
             # single value, inclusive lower, fail
             threshold_model.check_bounds("a", (12.5, 13), "within", include="upper")
         assert "a must be between (12.5, 13]" == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
+            # single value, inclusive lower, fail
+            threshold_model.check_bounds("d", (10, 13), "within", include="upper")
+        assert "All elements of d must be between (10, 13]" == str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
             # single value, above bounds, fail
@@ -342,6 +368,11 @@ class TestBase:
         assert "a must be between [9, 12.5)" == str(excinfo.value)
 
         with pytest.raises(ValueError) as excinfo:
+            # single value, inclusive upper, fail
+            threshold_model.check_bounds("d", (9, 13), "within", include="lower")
+        assert "All elements of d must be between [9, 13)" == str(excinfo.value)
+
+        with pytest.raises(ValueError) as excinfo:
             # multiple value, fail lower
             threshold_model.check_bounds(
                 ["a", "b"], (11, 13), "within", include="lower"
@@ -373,6 +404,10 @@ class TestBase:
             threshold_model.check_bounds("a", (9, 13), "within", include=None)
             # multiple value
             threshold_model.check_bounds(["a", "b"], (9, 13), "within", include=None)
+            # multiple value
+            threshold_model.check_bounds(
+                ["a", "b", "d"], (9, 13.5), "within", include=None
+            )
 
         with pytest.raises(ValueError) as excinfo:
             # single value, fail lower
