@@ -172,10 +172,9 @@ class TestYOLOX:
             _ = Node(config=yolox_bad_config_value)
         assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
-    def test_invalid_config_model_files(self, yolox_config):
-        with mock.patch.object(
-            WeightsDownloaderMixin, "_has_weights", return_value=True
-        ), pytest.raises(ValueError) as excinfo:
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
+    def test_invalid_config_model_files(self, _, yolox_config):
+        with pytest.raises(ValueError) as excinfo:
             yolox_config["weights"]["model_file"][
                 yolox_config["model_type"]
             ] = "some/invalid/path"

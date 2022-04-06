@@ -16,7 +16,7 @@
 Object detection class using yolo model to find object bboxes
 """
 
-import builtins
+
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.model.yolov4.yolo_files.dataset import transform
 from peekingduck.utils.graph_functions import load_graph
 
 
-class Detector:
+class Detector:  # pylint: disable=too-few-public-methods
     """Object detection class using YOLO model to find object bboxes"""
 
     def __init__(
@@ -178,13 +178,3 @@ class Detector:
         labels = np.array([self.class_names[int(i)] for i in classes])
 
         return boxes, labels, scores
-
-    def setup_gpu(self) -> None:
-        """Method to give info on whether the current device code is running on
-        Is using GPU or CPU.
-        """
-        physical_devices = tf.config.experimental.list_physical_devices("GPU")
-        if len(physical_devices) > 0:
-            self.logger.info(f"GPU setup with {len(physical_devices)} devices")
-        else:
-            self.logger.info("use CPU")
