@@ -45,8 +45,8 @@ class Node(AbstractNode):
         |bbox_labels_data|
 
     Configs:
-        model_type (:obj:`str`):
-            **{"resnet", "50", "75", "100"}, default="resnet"**. |br|
+        model_type (:obj:`Union[str, int]`):
+            **{"resnet", 50, 75, 100}, default="resnet"**. |br|
             Defines the backbone model for PoseNet.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by

@@ -19,8 +19,8 @@ from typing import Any, Dict
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
 
 
 class Node(AbstractNode):

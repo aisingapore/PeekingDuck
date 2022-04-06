@@ -104,12 +104,12 @@ class Node(AbstractNode):
             else:
                 invalid.append(stat)
 
-        if not invalid:
+        if invalid:
             msg = textwrap.dedent(
                 f"""\
                 {invalid} are not valid outputs.
                 Data pool only has this outputs: {list(inputs.keys())}
-                Only {valid} will be logged in the csv file
+                Only {valid} will be logged in the csv file.
                 """
             )
             self.logger.warning(msg)
