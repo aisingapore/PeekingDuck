@@ -51,10 +51,24 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
 
         model_dir = self.download_weights()
         with open(model_dir / self.config["weights"]["classes_file"]) as infile:
-            self.class_names = [line.strip() for line in infile.readlines()]
+            class_names = [line.strip() for line in infile.readlines()]
 
-        self.detector = Detector(self.config, model_dir, self.class_names)
         self.detect_ids = self.config["detect_ids"]
+        self.detector = Detector(
+            model_dir,
+            class_names,
+            self.detect_ids,
+            self.config["model_type"],
+            self.config["num_classes"],
+            self.config["model_size"],
+            self.config["weights"]["model_file"],
+            self.config["agnostic_nms"],
+            self.config["fuse"],
+            self.config["half"],
+            self.config["input_size"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
+        )
 
     @property
     def detect_ids(self) -> List[int]:
@@ -87,4 +101,4 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         """
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
-        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)
+        return self.detector.predict_object_bbox_from_image(image)
