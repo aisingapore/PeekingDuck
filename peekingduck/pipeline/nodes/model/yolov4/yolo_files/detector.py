@@ -78,11 +78,6 @@ class Detector:
             f"Graph file does not exist. Please check that {model_path} exists"
         )
 
-    def _load_image(self, image_file: str) -> builtins.bytes:
-        img = open(image_file, "rb").read()
-        self.logger.info(f"image file {image_file} loaded")
-        return img
-
     @staticmethod
     def _reshape_image(image: tf.Tensor, image_size: int) -> tf.Tensor:
         image = tf.expand_dims(image, 0)

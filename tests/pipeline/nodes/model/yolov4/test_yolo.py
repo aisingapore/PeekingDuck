@@ -26,10 +26,6 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolo import Node
-from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import (
-    yolov3,
-    yolov3_tiny,
-)
 from tests.conftest import PKD_DIR, do_nothing
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
@@ -133,8 +129,3 @@ class TestYolo:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolo_bad_config_value)
         assert "_threshold must be between [0, 1]" in str(excinfo.value)
-
-    def test_yolo_model_initialization(self):
-        model1 = yolov3()
-        model2 = yolov3_tiny()
-        assert model1 is not None and model2 is not None

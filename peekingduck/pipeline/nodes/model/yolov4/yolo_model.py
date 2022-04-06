@@ -52,7 +52,7 @@ class YOLOModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
         if not ids:
-            self.logger.info("Detecting all Yolo classes")
+            self.logger.info("Detecting all YOLO classes")
         self._detect_ids = ids
 
     def predict(
