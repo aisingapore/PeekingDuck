@@ -19,7 +19,7 @@ Crowd counting class using csrnet model to predict density map and crowd count
 import logging
 import math
 from pathlib import Path
-from typing import Any, Callable, Dict, Tuple
+from typing import Callable, Dict, Tuple
 
 import cv2
 import numpy as np
