@@ -38,7 +38,13 @@ class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("width", 0, "above", include=None)
 
         model_dir = self.download_weights()
-        self.predictor = Predictor(config, model_dir)
+        # self.predictor = Predictor(config, model_dir)
+        self.predictor = Predictor(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["width"],
+        )
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, int]:
         """Predicts density map and crowd count from frame.

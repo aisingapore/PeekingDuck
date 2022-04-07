@@ -26,12 +26,16 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.csrnet import Node
 from tests.conftest import PKD_DIR, do_nothing
 
+with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
+    GT_RESULTS = yaml.safe_load(infile.read())
+
 
 @pytest.fixture(params=["sparse", "dense"])
-def csrnet_config():
+def csrnet_config(request):
     with open(PKD_DIR / "configs" / "model" / "csrnet.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
+    node_config["model_type"] = request.param
 
     return node_config
 
@@ -51,8 +55,8 @@ class TestCsrnet:
         csrnet = Node(csrnet_config)
         output = csrnet.run({"img": blank_image})
         assert list(output.keys()) == ["density_map", "count"]
-        # Model is less accurate and detects extra people when cnt is low or
-        # none. Threshold of 9 is chosen based on the min cnt in ShanghaiTech
+        # Model is less accurate and detects extra people when count is low or
+        # none. Threshold of 9 is chosen based on the min count in ShanghaiTech
         # dataset
         assert output["count"] < 9
 
@@ -60,8 +64,13 @@ class TestCsrnet:
         crowd_image = cv2.imread(test_crowd_images)
         csrnet = Node(csrnet_config)
         output = csrnet.run({"img": crowd_image})
+
+        model_type = csrnet.config["model_type"]
+        image_name = Path(test_crowd_images).stem
+        expected = GT_RESULTS[model_type][image_name]
+
         assert list(output.keys()) == ["density_map", "count"]
-        assert output["count"] >= 10
+        assert output["count"] == expected["count"]
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
     @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
