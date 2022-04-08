@@ -40,7 +40,20 @@ class YOLOLicensePlateModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
 
         model_dir = self.download_weights()
-        self.detector = Detector(config, model_dir)
+        with open(model_dir / self.config["weights"]["classes_file"]) as infile:
+            class_names = [line.strip() for line in infile.readlines()]
+
+        self.detector = Detector(
+            model_dir,
+            class_names,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["input_size"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
+        )
 
     def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts the bboxes from image frame
