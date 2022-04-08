@@ -138,7 +138,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             "YOLOX model loaded with the following configs:\n\t"
             f"Model type: {self.model_type}\n\t"
             f"Input resolution: {self.input_size}\n\t"
-            f"IDs being detected: {self.detect_ids}\n\t"
+            f"IDs being detected: {self.detect_ids.int().tolist()}\n\t"
             f"IOU threshold: {self.iou_threshold}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
             f"Class agnostic NMS: {self.agnostic_nms}\n\t"
