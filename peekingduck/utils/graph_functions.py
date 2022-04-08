@@ -36,14 +36,15 @@ def wrap_frozen_graph(
     It will return your predicted values.
 
     Args:
-        - graph_def: The frozen graph in graph_def format
-        - inputs: The name(s) of the input nodes from your graph. e.g.['inputs']
-        - outputs: The name(s) of your output nodes from your graph.
-                    e.g. ['heatmap', 'offsets', 'displacement_fwd', 'displacement_bwd']
-        - print_graph: Whether to print the graph
+        graph_def (tf.compat.v1.GraphDef): The frozen graph in graph_def format
+        inputs (List[str]): The name(s) of the input nodes from your graph,
+            e.g., ['inputs']
+        outputs (List[str]): The name(s) of your output nodes from your graph,
+            e.g., ['heatmap', 'offsets', 'displacement_fwd',
+            'displacement_bwd']
 
-    Return:
-        a wrapped_import function to perform your inference with.
+    Returns:
+        (Callable): A wrapped_import function to perform your inference with.
     """
 
     def _imports_graph_def() -> None:  # this needs to be here because of graph_def
@@ -58,27 +59,20 @@ def wrap_frozen_graph(
     )
 
 
-def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> tf.function:
-    """
-    Loads the graph
-    """
+def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> Callable:
+    """Loads the graph."""
     with tf.io.gfile.GFile(file_path, "rb") as graph_file:
         graph_def = tf.compat.v1.GraphDef()
         graph_def.ParseFromString(graph_file.read())
 
-        frozen_func = wrap_frozen_graph(
-            graph_def=graph_def, inputs=inputs, outputs=outputs
-        )
+        frozen_func = wrap_frozen_graph(graph_def, inputs, outputs)
 
         return frozen_func
 
 
 def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
-    """
-    Prints the input nodes of graph_def
-    """
-    # pylint: disable=not-context-manager
-    with tf.Graph().as_default() as graph:
+    """Prints the input nodes of graph_def."""
+    with tf.Graph().as_default() as graph:  # pylint: disable=not-context-manager
         tf.import_graph_def(graph_def, name="")
 
     input_list = []
@@ -90,9 +84,7 @@ def print_inputs(graph_def: tf.compat.v1.GraphDef) -> None:
 
 
 def print_outputs(graph_def: tf.compat.v1.GraphDef) -> None:
-    """
-    Prints the output nodes of graph_def
-    """
+    """Prints the output nodes of graph_def."""
     name_list = []
     input_list = []
     for node in graph_def.node:  # tensorflow.core.framework.node_def_pb2.NodeDef

@@ -37,10 +37,22 @@ class YOLOModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
 
         model_dir = self.download_weights()
         with open(model_dir / config["weights"]["classes_file"]) as infile:
-            self.class_names = [c.strip() for c in infile.readlines()]
+            class_names = [line.strip() for line in infile.readlines()]
 
-        self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
+        self.detector = Detector(
+            model_dir,
+            class_names,
+            self.detect_ids,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["input_size"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
+        )
 
     @property
     def detect_ids(self) -> List[int]:
@@ -55,23 +67,20 @@ class YOLOModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.logger.info("Detecting all YOLO classes")
         self._detect_ids = ids
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """predict the bbox from frame
 
         Args:
             image (np.ndarray): Input image frame.
 
         Returns:
-            object_bboxes (List[Numpy Array]): list of bboxes detected
-            object_labels (List[str]): list of string labels of the
-                object detected for the corresponding bbox
-            object_scores (List(float)): list of confidence scores of the
-                object detected for the corresponding bbox
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
         """
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
 
-        # return object_bboxes, object_labels, object_scores
-        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)
+        return self.detector.predict_object_bbox_from_image(image)

@@ -78,7 +78,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         pred = next(iter(pred.values()))
 
         bboxes, scores, classes = self._postprocess(pred[:, :, :4], pred[:, :, 4:])
-
         labels = np.array([self.class_names[int(i)] for i in classes])
 
         return bboxes, labels, scores

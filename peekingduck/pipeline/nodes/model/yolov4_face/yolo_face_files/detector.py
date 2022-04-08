@@ -74,7 +74,6 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         pred = next(iter(pred.values()))
 
         bboxes, scores, classes = self._postprocess(pred[:, :, :4], pred[:, :, 4:])
-
         labels = np.array([self.class_names[int(i)] for i in classes])
 
         return bboxes, labels, scores
@@ -119,15 +118,15 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         classes = classes.numpy()[0]
         classes = classes[:num_valid]
         # only identify objects we are interested in
-        mask1 = np.isin(classes, self.detect_ids)
+        mask = np.isin(classes, self.detect_ids)
 
         scores = scores.numpy()[0]
         scores = scores[:num_valid]
-        scores = scores[mask1]
+        scores = scores[mask]
 
         bboxes = bboxes.numpy()[0]
         bboxes = bboxes[:num_valid]
-        bboxes = bboxes[mask1]
+        bboxes = bboxes[mask]
 
         # swapping x and y axes
         bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
