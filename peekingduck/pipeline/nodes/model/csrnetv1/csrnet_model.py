@@ -38,7 +38,6 @@ class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("width", 0, "above", include=None)
 
         model_dir = self.download_weights()
-        # self.predictor = Predictor(config, model_dir)
         self.predictor = Predictor(
             model_dir,
             self.config["model_type"],

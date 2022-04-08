@@ -19,7 +19,8 @@ Core functions to use posenet to detect poses
 """
 
 
-from typing import List
+from typing import Callable, List
+
 import numpy as np
 import tensorflow as tf
 
@@ -54,7 +55,7 @@ def _sigmoid(array: np.ndarray) -> np.ndarray:
 
 
 def detect_keypoints(
-    tf_model: tf.keras.Model,
+    tf_model: Callable,
     image: tf.Tensor,
     output_stride: int,
     dst_scores: np.ndarray,

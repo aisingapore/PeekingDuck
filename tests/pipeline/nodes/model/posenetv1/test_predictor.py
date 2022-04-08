@@ -47,12 +47,28 @@ def model_dir(posenet_config):
 @pytest.mark.mlmodel
 class TestPredictor:
     def test_predictor(self, posenet_config, model_dir):
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         assert predictor is not None, "Predictor is not instantiated"
 
     def test_predict(self, posenet_config, model_dir):
         frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         output = predictor.predict(frame)
         assert len(output) == 4, "Predicted output has missing keys"
         for i in output:
@@ -60,14 +76,30 @@ class TestPredictor:
 
     def test_get_resolution_as_tuple(self, posenet_config, model_dir):
         resolution = {"height": 225, "width": 225}
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         tuple_res = predictor.get_resolution_as_tuple(resolution)
         assert type(tuple_res) is tuple, "Loaded data must be a tuple"
         assert len(tuple_res) == 2, "Loaded data must be of length 2"
 
     def test_create_image_from_frame(self, posenet_config, model_dir):
         frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         _, output_scale, image_size = predictor._create_image_from_frame(
             16, frame, (225, 225), "75"
         )
@@ -79,16 +111,32 @@ class TestPredictor:
         ), "Incorrect scale"
 
     def test_model_instantiation(self, posenet_config, model_dir):
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not instantiated"
 
     def test_predict_all_poses(self, posenet_config, model_dir):
         frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
-        predictor = Predictor(posenet_config, model_dir)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
-        coords, scores, masks = predictor._predict_all_poses(posenet_model, frame, "75")
+        coords, scores, masks = predictor._predict_all_poses(frame)
         assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
         assert scores.shape == (1, 17), "Scores is of wrong shape"
         assert masks.shape == (1, 17), "Masks is of wrong shape"

@@ -1,23 +1,21 @@
 input: ["img"]
-output: ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
+output:
+  ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
 
-model_type: resnet # 50, 75, 100 or resnet
 weights_parent_dir: null
-weights: {
+weights:
+  {
     model_subdir: posenet,
     blob_file: posenet.zip,
-    model_file: {
-      50: models/model-mobilenet_v1_050.pb,
-      75: models/model-mobilenet_v1_075.pb,
-      100: models/model-mobilenet_v1_100.pb,
-      resnet: models/model-resnet.pb,
+    model_file:
+      {
+        50: models/model-mobilenet_v1_050.pb,
+        75: models/model-mobilenet_v1_075.pb,
+        100: models/model-mobilenet_v1_100.pb,
+        resnet: models/model-resnet.pb,
+      },
   }
-}
-resolution: { height: 225, width: 225 }
-max_pose_detection: 10
-score_threshold: 0.4
-
-MODEL_NODES:
+model_nodes:
   {
     mobilenet:
       {
@@ -37,3 +35,8 @@ MODEL_NODES:
           ],
       },
   }
+
+model_type: resnet # 50, 75, 100 or resnet
+resolution: { height: 225, width: 225 }
+max_pose_detection: 10
+score_threshold: 0.4

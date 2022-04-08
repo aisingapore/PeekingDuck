@@ -41,7 +41,15 @@ class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
-        self.predictor = Predictor(config, model_dir)
+        self.predictor = Predictor(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["resolution"],
+            self.config["max_pose_detection"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, frame: np.ndarray
