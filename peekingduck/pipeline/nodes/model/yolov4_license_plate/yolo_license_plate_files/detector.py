@@ -27,10 +27,10 @@ import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
 
-class Detector:
+class Detector:  # pylint: disable=too-many-instance-attributes
     """Object detection class using yolo model to find object bboxes"""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
         class_names: List[str],
