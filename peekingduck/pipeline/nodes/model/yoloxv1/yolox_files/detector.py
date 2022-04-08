@@ -82,7 +82,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
     @torch.no_grad()
     def predict_object_bbox_from_image(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Detects bounding boxes of selected object categories from an image.
 
         The input image is first scaled according to the `input_size`
@@ -95,11 +95,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             image (np.ndarray): Input image.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
-                contains:
-                - A list of detection bboxes
-                - A list of human-friendly detection class names
-                - A list of detection scores
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
         """
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
@@ -196,7 +196,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         scale: float,
         image_shape: Tuple[int, int],
         class_names: List[str],
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Postprocesses detection result to be compatible with other nodes.
 
         Args:
@@ -208,11 +208,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 names.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
-                contains:
-                - A list of detection bboxes
-                - A list of human-friendly detection class names
-                - A list of detection scores
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
         """
         prediction[:, :4] = xywh2xyxy(prediction[:, :4])
         # Get score and class with highest confidence

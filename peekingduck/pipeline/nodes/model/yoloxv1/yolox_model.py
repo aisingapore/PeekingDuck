@@ -81,20 +81,18 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             raise TypeError("detect_ids has to be a list")
         self._detect_ids = ids
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts bboxes from image.
 
         Args:
             image (np.ndarray): Input image frame.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
             contains:
-            - A list of detection bboxes
-            - A list of human-friendly detection class names
-            - A list of detection scores
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
 
         Raises:
             TypeError: The provided `image` is not a numpy array.
