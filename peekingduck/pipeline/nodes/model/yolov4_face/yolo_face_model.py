@@ -38,8 +38,33 @@ class YOLOFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
 
         model_dir = self.download_weights()
+        with open(model_dir / self.config["weights"]["classes_file"]) as infile:
+            class_names = [line.strip() for line in infile.readlines()]
+
         self.detect_ids = config["detect_ids"]
-        self.detector = Detector(config, model_dir)
+        self.detector = Detector(
+            model_dir,
+            class_names,
+            self.detect_ids,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["max_output_size_per_class"],
+            self.config["max_total_size"],
+            self.config["input_size"],
+            self.config["iou_threshold"],
+            self.config["score_threshold"],
+        )
+
+    @property
+    def detect_ids(self) -> List[int]:
+        """The list of selected object category IDs."""
+        return self._detect_ids
+
+    @detect_ids.setter
+    def detect_ids(self, ids: List[int]) -> None:
+        if not isinstance(ids, list):
+            raise TypeError("detect_ids has to be a list")
+        self._detect_ids = ids
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, labels and scores
@@ -55,12 +80,3 @@ class YOLOFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         assert isinstance(frame, np.ndarray)
 
         return self.detector.predict_object_bbox_from_image(frame)
-
-    def get_detect_ids(self) -> List[int]:
-        """Getter for selected ids for detection. This function is used in unit
-        testing.
-
-        Returns:
-            List[int]: list of selected detection ids
-        """
-        return self.detect_ids

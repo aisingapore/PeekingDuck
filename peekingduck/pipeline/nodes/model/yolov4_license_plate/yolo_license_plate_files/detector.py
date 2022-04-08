@@ -12,9 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Object detection class using yolo single label model
-to find license plate object bboxes
+"""Object detection class using YOLOv4 single label model to find license
+plates.
 """
 
 import logging
@@ -73,43 +72,14 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - labels: An array of class labels.
             - scores: An array of confidence scores.
         """
-        # Use TF2 .pb saved model format for inference
-        image_data = cv2.resize(image, self.input_size)
-        image_data = image_data / 255.0
+        image = self._preprocess(image)
 
-        image_data = np.asarray([image_data]).astype(np.float32)
-        pred_bbox = self.yolo(tf.constant(image_data))
-        for _, value in pred_bbox.items():
-            pred_conf = value[:, :, 4:]
-            boxes = value[:, :, 0:4]
+        pred = self.yolo(tf.constant(image))
+        pred = next(iter(pred.values()))
 
-        # performs nms using model's predictions
-        bboxes, scores, classes, valid_dets = tf.image.combined_non_max_suppression(
-            tf.reshape(boxes, (tf.shape(boxes)[0], -1, 1, 4)),
-            tf.reshape(
-                pred_conf, (tf.shape(pred_conf)[0], -1, tf.shape(pred_conf)[-1])
-            ),
-            self.max_output_size_per_class,
-            self.max_total_size,
-            self.iou_threshold,
-            self.score_threshold,
-        )
-        classes = classes.numpy()[0]
-        classes = classes[: valid_dets[0]]
-        bboxes = bboxes.numpy()[0]
-        bboxes = bboxes[: valid_dets[0]]
-        scores = scores.numpy()[0]
-        scores = scores[: valid_dets[0]]
+        bboxes, scores, classes = self._postprocess(pred[:, :, :4], pred[:, :, 4:])
 
-        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]  # swapping x and y axes
-        bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
-
-        # scaling of bboxes if v4tiny model is used
-        if self.model_type == "v4tiny":
-            bboxes = self.scale_bboxes(bboxes, 0.75)
-
-        # update the labels names of the object detected
-        labels = np.asarray([self.class_names[int(i)] for i in classes])
+        labels = np.array([self.class_names[int(i)] for i in classes])
 
         return bboxes, labels, scores
 
@@ -119,6 +89,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             "Yolo model loaded with following configs:\n\t"
             f"Model type: {self.model_type},\n\t"
             f"Input resolution: {self.input_size},\n\t"
+            f"Max detections per class: {self.max_output_size_per_class},\n\t"
+            f"Max total detections: {self.max_total_size},\n\t"
             f"IOU threshold: {self.iou_threshold},\n\t"
             f"Score threshold: {self.score_threshold}"
         )
@@ -130,6 +102,49 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             str(self.model_path), tags=[tag_constants.SERVING]
         )
         return self.model.signatures["serving_default"]
+
+    def _postprocess(
+        self,
+        pred_boxes: tf.Tensor,
+        pred_scores: tf.Tensor,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        # performs nms using model's predictions
+        bboxes, scores, classes, valid_dets = tf.image.combined_non_max_suppression(
+            tf.reshape(pred_boxes, (tf.shape(pred_boxes)[0], -1, 1, 4)),
+            tf.reshape(
+                pred_scores, (tf.shape(pred_scores)[0], -1, tf.shape(pred_scores)[-1])
+            ),
+            self.max_output_size_per_class,
+            self.max_total_size,
+            self.iou_threshold,
+            self.score_threshold,
+        )
+        num_valid = valid_dets[0]
+
+        classes = classes.numpy()[0]
+        classes = classes[:num_valid]
+
+        scores = scores.numpy()[0]
+        scores = scores[:num_valid]
+
+        bboxes = bboxes.numpy()[0]
+        bboxes = bboxes[:num_valid]
+
+        # swapping x and y axes
+        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
+        bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
+
+        # scaling of bboxes if v4tiny model is used
+        if self.model_type == "v4tiny":
+            bboxes = self.scale_bboxes(bboxes, 0.75)
+
+        return bboxes, scores, classes
+
+    def _preprocess(self, image: np.ndarray) -> np.ndarray:
+        image = cv2.resize(image, self.input_size)
+        image = np.asarray([image]).astype(np.float32) / 255.0
+
+        return image
 
     @staticmethod
     def scale_bboxes(bboxes: np.ndarray, scale_factor: float) -> np.ndarray:

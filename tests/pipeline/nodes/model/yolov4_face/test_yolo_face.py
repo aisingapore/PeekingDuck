@@ -94,9 +94,14 @@ class TestYolo:
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
-    def test_get_detect_ids(self, yolo_type):
+    def test_detect_ids(self, yolo_type):
         yolo = Node(yolo_type)
-        assert yolo.model.get_detect_ids() == [0, 1]
+        assert yolo.model.detect_ids == [0, 1]
+
+    def test_invalid_config_detect_ids(self, yolo_type):
+        yolo_type["detect_ids"] = 1
+        with pytest.raises(TypeError):
+            _ = Node(config=yolo_type)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
     @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
