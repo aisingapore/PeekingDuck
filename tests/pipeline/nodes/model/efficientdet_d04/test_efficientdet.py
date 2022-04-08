@@ -114,16 +114,13 @@ class TestEfficientDet:
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
-    def test_efficientdet_preprocess(
-        self, create_image, efficientdet_config, model_dir, class_names
-    ):
+    def test_efficientdet_preprocess(self, create_image, efficientdet_config):
         test_img1 = create_image((720, 1280, 3))
         test_img2 = create_image((640, 480, 3))
-        efficientdet_detector = detector.Detector(
-            efficientdet_config, model_dir, class_names
-        )
-        actual_img1, actual_scale1 = efficientdet_detector.preprocess(test_img1, 512)
-        actual_img2, actual_scale2 = efficientdet_detector.preprocess(test_img2, 512)
+        efficientdet = Node(efficientdet_config)
+
+        actual_img1, actual_scale1 = efficientdet.model.detector._preprocess(test_img1)
+        actual_img2, actual_scale2 = efficientdet.model.detector._preprocess(test_img2)
 
         assert actual_img1.shape == (512, 512, 3)
         assert actual_img2.shape == (512, 512, 3)
@@ -132,21 +129,17 @@ class TestEfficientDet:
         assert actual_scale1 == 0.4
         assert actual_scale2 == 0.8
 
-    def test_efficientdet_postprocess(
-        self, efficientdet_config, model_dir, class_names
-    ):
+    def test_efficientdet_postprocess(self, efficientdet_config):
         output_bbox = np.array([[1.0, 2.0, 3.0, 4.0], [1.0, 2.0, 3.0, 4.0]])
         output_label = np.array([0, 0])
         output_score = np.array([0.9, 0.2])
         network_output = (output_bbox, output_score, output_label)
         scale = 0.5
         img_shape = (720, 1280)
-        detect_ids = [0]
-        efficientdet_detector = detector.Detector(
-            efficientdet_config, model_dir, class_names
-        )
-        boxes, labels, scores = efficientdet_detector.postprocess(
-            network_output, scale, img_shape, detect_ids
+        efficientdet = Node(efficientdet_config)
+
+        boxes, labels, scores = efficientdet.model.detector._postprocess(
+            network_output, scale, img_shape
         )
 
         expected_bbox = np.array([[1, 2, 3, 4]]) / scale

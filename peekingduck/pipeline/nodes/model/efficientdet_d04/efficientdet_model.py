@@ -42,13 +42,23 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
-        classes_path = model_dir / config["weights"]["classes_file"]
-        self.class_names = {
+        classes_path = model_dir / self.config["weights"]["classes_file"]
+        class_names = {
             val["id"] - 1: val["name"]
             for val in json.loads(classes_path.read_text()).values()
         }
-        self.detector = Detector(config, model_dir, self.class_names)
         self.detect_ids = config["detect_ids"]
+        self.detector = Detector(
+            model_dir,
+            class_names,
+            self.detect_ids,
+            self.config["model_type"],
+            self.config["num_classes"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["image_size"],
+            self.config["score_threshold"],
+        )
 
     @property
     def detect_ids(self) -> List[int]:
@@ -82,4 +92,4 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             raise TypeError("image must be a np.ndarray")
 
         # returns object_bboxes, object_labels, object_scores
-        return self.detector.predict_object_bbox_from_image(image, self.detect_ids)
+        return self.detector.predict_object_bbox_from_image(image)
