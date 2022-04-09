@@ -285,7 +285,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         self.total_frame_count = (
             self.videocap.frame_count if self.videocap.frame_count > 0 else 0
         )
-        self.frame_counter: int = 0  # reset for newly opened input
+        self.frame_counter = 0  # reset for newly opened input
         self._progress_tenth: int = 1  # each 10% progress
         # check resizing configuration
         width, height = self.videocap.resolution
