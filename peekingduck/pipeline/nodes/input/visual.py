@@ -21,7 +21,7 @@ Reads inputs from multiple visual sources |br|
 """
 
 from pathlib import Path
-from typing import Any, Dict, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
@@ -144,70 +144,49 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
     thus "stretching out" the video.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(
+        self,
+        config: Dict[str, Any] = None,
+        node_path: str = "",
+        pkd_base_dir: Optional[Path] = None,
+        **kwargs: Any,
+    ) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self._allowed_extensions = [
-            "gif",
-            "jpeg",
-            "jpg",
-            "png",
-            "avi",
-            "m4v",
-            "mkv",
-            "mov",
-            "mp4",
-        ]
-        self._file_name: str = ""
+        self._image_ext = ["gif", "jpeg", "jpg", "png"]
+        self._video_ext = ["avi", "m4v", "mkv", "mov", "mp4"]
+        self._allowed_extensions = self._image_ext + self._video_ext
         self._fps: float = 0  # self._fps > 0 if file playback
+        self._file_name: str = ""
+        self._filepaths: List[Path] = []
+        self.do_resize: bool = self.resize["do_resizing"]
         self.frame_counter: int = 0
-        self.tens_counter: int = 10
         self.total_frame_count: int = 0
+        self.has_multiple_inputs: bool = False
         self.progress: int = 0
         self.videocap: Optional[Union[VideoNoThread, VideoThread]] = None
-        self.do_resize = self.resize["do_resizing"]
         self._determine_source_type()
-        self.has_multiple_inputs = SourceType.DIRECTORY == self._source_type
-
+        # error checking for user-defined output filename
         if not self._is_valid_file_type(Path(self.filename)):
             raise ValueError(
-                f"filename extension must be one of: {self._allowed_extensions}"
+                f"filename {self.filename}: extension must be one of {self._allowed_extensions}"
             )
+        self._open_next_input()
 
-        if self.has_multiple_inputs:
-            self._get_files(Path(self.source))
-            self._get_next_file()
-        else:
-            self._open_input(self.source)
-
+    def release_resources(self) -> None:
+        """Override base class method to free video resource"""
         if self.videocap:
-            # check resizing configuration
-            width, height = self.videocap.resolution
-            self.logger.info(f"Input size: {width} by {height}")
-            if self.do_resize:
-                self.logger.info(
-                    f"Resizing of input set to {self.resize['width']} "
-                    f"by {self.resize['height']}"
-                )
+            self.videocap.shutdown()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Run this node
-
-        Args:
-            inputs (Dict[str, Any]): ["img"]
-
-        Returns:
-            Dict[str, Any]: ["img", "pipeline_end", "saved_video_fps"]
-        """
         outputs = self._get_next_frame()
-        self._show_progress()
-        # chain next input if available
         if self.file_end and self.has_multiple_inputs:
-            self.logger.info(f"Completed processing file: {self._file_name}")
+            self.logger.info(
+                f"Completed processing file: {self._file_name}"
+                f" ({self._curr_file_num} / {self._num_files})"
+            )
             self.logger.debug(f"#frames={self.frame_counter}, done={self.progress}%")
-            self._get_next_file()
+            self._open_next_input()
             outputs = self._get_next_frame()
-            self.frame_counter = 0
-            self.tens_counter = 10
         return outputs
 
     def _determine_source_type(self) -> None:
@@ -232,11 +211,15 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                 raise FileNotFoundError(f"Path '{path}' does not exist")
             if path.is_dir():
                 self._source_type = SourceType.DIRECTORY
+                self._get_files(Path(self.source))
+                self.has_multiple_inputs = True
+                self._num_files = len(self._filepaths)
+                self._curr_file_num = 0
             else:
                 self._source_type = SourceType.FILE
 
     def _get_files(self, path: Path) -> None:
-        """Read all files in given directory
+        """Read all files in given directory (non-recursive)
 
         Args:
             path (Path): the directory path
@@ -247,29 +230,13 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         if not path.exists():
             raise FileNotFoundError("Filepath does not exist")
 
-        self._filepaths = [path]
         self.logger.info(f"Directory: {path}")
         self._filepaths = list(path.iterdir())
         self._filepaths.sort()
 
-    def _get_next_file(self) -> None:
-        """Load next file in a directory of files"""
-        if self._filepaths:
-            file_path = self._filepaths.pop(0)
-            self._file_name = file_path.name
-
-            if self._is_valid_file_type(file_path):
-                self._open_input(str(file_path))
-            else:
-                self.logger.warning(
-                    f"Skipping '{file_path}' as it is not an accepted "
-                    f"file format {str(self._allowed_extensions)}"
-                )
-                self._get_next_file()
-
     def _get_next_frame(self) -> Dict[str, Any]:
         """Read next frame from current input file/source"""
-        self.file_end = True
+        self.file_end = True  # assume no more frames
         outputs = {
             "img": None,
             "filename": self._file_name if self._file_name else self.filename,
@@ -284,6 +251,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                     img = resize_image(img, self.resize["width"], self.resize["height"])
                 outputs["img"] = img
                 outputs["pipeline_end"] = False
+                self._show_progress()
             else:
                 self.logger.debug("No video frames available for processing.")
         return outputs
@@ -314,7 +282,40 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         else:
             self.videocap = VideoNoThread(input_source, self.mirror_image)
         self._fps = self.videocap.fps
-        self.total_frame_count = self.videocap.frame_count
+        self.total_frame_count = (
+            self.videocap.frame_count if self.videocap.frame_count > 0 else 0
+        )
+        self.frame_counter: int = 0  # reset for newly opened input
+        self._progress_tenth: int = 1  # each 10% progress
+        # check resizing configuration
+        width, height = self.videocap.resolution
+        self.logger.info(f"Input size: {width} by {height}")
+        if self.do_resize:
+            self.logger.info(
+                f"Resizing of input set to {self.resize['width']} by {self.resize['height']}"
+            )
+
+    def _open_next_file(self) -> None:
+        """Load next file in a directory of files"""
+        while self._filepaths:
+            file_path = self._filepaths.pop(0)
+            self._file_name = file_path.name
+            self._curr_file_num += 1
+            if self._is_valid_file_type(file_path):
+                self._open_input(str(file_path))
+                break  # do not proceed to next file
+            self.logger.warning(
+                f"Skipping '{file_path}' as it is not an accepted "
+                f"file format {str(self._allowed_extensions)}"
+                f" ({self._curr_file_num} / {self._num_files})"
+            )
+
+    def _open_next_input(self) -> None:
+        """To open the next input source"""
+        if self.has_multiple_inputs:
+            self._open_next_file()
+        else:
+            self._open_input(self.source)
 
     def _show_progress(self) -> None:
         """Show progress information during pipeline iteration"""
@@ -327,12 +328,10 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             )
             self.logger.info(f"Frames Processed: {self.frame_counter}{buffer_info}")
         if self.total_frame_count > 0:
-            self.progress = round((self.frame_counter / self.total_frame_count) * 100)
-            if self.progress >= self.tens_counter:
-                self.logger.info(f"Approximate Progress: {self.tens_counter}%")
-                self.tens_counter += 10
-
-    def release_resources(self) -> None:
-        """Override base class method to free video resource"""
-        if self.videocap:
-            self.videocap.shutdown()
+            # more accurate to round down with int() than just round()
+            self.progress = int(100 * (self.frame_counter / self.total_frame_count))
+            progress_tenth = self.progress // 10
+            if self.total_frame_count > 1 and progress_tenth >= self._progress_tenth:
+                # progress only meaningful if input has > 1 frame
+                self.logger.info(f"Approximate Progress: {self.progress}%")
+                self._progress_tenth += 1  # next 10% progress

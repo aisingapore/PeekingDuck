@@ -15,6 +15,7 @@
 from contextlib import contextmanager
 import numpy as np
 import pytest
+from unittest import TestCase
 
 from peekingduck.pipeline.nodes.input.visual import Node
 
@@ -116,3 +117,41 @@ class TestMediaReader:
 
         read_video2 = _get_video_file(reader, num_frames)
         assert np.array_equal(read_video2, video2)
+
+    def test_input_folder_of_mixed_media(self, create_input_image, create_input_video):
+        """Test read a folder of mixed media files: jpg, png, avi,
+        and verifying progress log messages"""
+        size = (640, 480, 3)
+        contents = {
+            "img1": create_input_image("mix_image1.jpg", size),
+            "img2": create_input_image("mix_image2.png", size),
+            "img3": create_input_image("mix_image3.png", size),
+            # NB: be sure to sync number of frames with 'key_frames'!
+            "vid_30": create_input_video(
+                "mix_video1.avi", fps=10, nframes=30, size=size
+            ),
+            "vid_3": create_input_video("mix_video2.avi", fps=1, nframes=3, size=size),
+        }
+        msg_set = set()
+        with TestCase.assertLogs("peekingduck.pipeline.nodes.input.visual") as captured:
+            reader = create_reader()
+            for k, v in contents.items():
+                if k.startswith("vid"):
+                    toks = k.split("_")  # decode number of frames
+                    num_frames = int(toks[1])
+                    print(f"num_frames={num_frames}")
+                    for _ in range(num_frames):
+                        reader.run({})
+                else:
+                    reader.run({})
+            reader.run({})  # run last pipeline iteration
+
+            for record in captured.records:
+                msg = record.getMessage()
+                msg_set.add(msg)
+
+        assert "Approximate Progress: 33%" in msg_set
+        assert "Approximate Progress: 100%" in msg_set
+        assert "Completed processing file: mix_image1.jpg (1 / 5)" in msg_set
+        assert "Completed processing file: mix_image3.png (3 / 5)" in msg_set
+        assert "Completed processing file: mix_video2.avi (5 / 5)" in msg_set
