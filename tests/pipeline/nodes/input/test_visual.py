@@ -150,6 +150,7 @@ class TestMediaReader:
                 msg = record.getMessage()
                 msg_set.add(msg)
 
+        print(msg_set)
         assert "Approximate Progress: 33%" in msg_set
         assert "Approximate Progress: 100%" in msg_set
         assert "Completed processing file: mix_image1.jpg (1 / 5)" in msg_set
