@@ -18,7 +18,6 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
-
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
@@ -42,7 +41,14 @@ class MoveNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         )
 
         model_dir = self.download_weights()
-        self.predictor = Predictor(config, model_dir)
+        self.predictor = Predictor(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["resolution"],
+            self.config["bbox_score_threshold"],
+            self.config["keypoint_score_threshold"],
+        )
 
     def predict(
         self, frame: np.ndarray
