@@ -26,10 +26,10 @@ from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
-class Detector:  # pylint: disable=too-many-instance-attributes
+class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
     """Face detection class using MTCNN model to find bboxes and landmarks."""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
         model_type: str,
