@@ -20,7 +20,6 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
-
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
@@ -41,11 +40,18 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         )
 
         model_dir = self.download_weights()
-        self.detector = Detector(config, model_dir)
+        self.detector = Detector(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["min_size"],
+            self.config["scale_factor"],
+            list(map(float, self.config["network_thresholds"])),
+            self.config["score_threshold"],
+        )
 
-    def predict(
-        self, frame: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, scores and landmarks
 
         Args:
@@ -55,9 +61,7 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             bboxes (np.ndarray): numpy array of detected bboxes
             scores (np.ndarray): numpy array of confidence scores
             landmarks (np.ndarray): numpy array of facial landmarks
-            labels (np.ndarray): numpy array of class labels (i.e. face)
         """
         assert isinstance(frame, np.ndarray)
 
-        # return bboxes, scores, landmarks and class labels
-        return self.detector.predict_bbox_landmarks(frame)
+        return self.detector.predict_object_bbox_from_image(frame)

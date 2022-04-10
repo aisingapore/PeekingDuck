@@ -20,7 +20,6 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import yaml
-
 from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
@@ -125,6 +124,8 @@ class TestMtcnn:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, mtcnn_config):
         with pytest.raises(ValueError) as excinfo:
-            mtcnn_config["weights"]["model_file"] = "some/invalid/path"
+            mtcnn_config["weights"]["model_file"][
+                mtcnn_config["model_type"]
+            ] = "some/invalid/path"
             _ = Node(config=mtcnn_config)
         assert "Graph file does not exist. Please check that" in str(excinfo.value)
