@@ -298,10 +298,12 @@ class TestJDE:
             _ = Node(config=jde_bad_config_value)
         assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, jde_config):
         with pytest.raises(ValueError) as excinfo:
-            jde_config["weights"]["model_file"]["864x480"] = "some/invalid/path"
+            jde_config["weights"]["model_file"][
+                jde_config["model_type"]
+            ] = "some/invalid/path"
             _ = Node(config=jde_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 

@@ -282,7 +282,7 @@ class TestFairMOT:
             _ = Node(config=fairmot_bad_config_value)
         assert "must be" in str(excinfo.value)
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, fairmot_config):
         with pytest.raises(ValueError) as excinfo:
             fairmot_config["weights"]["model_file"]["dla_34"] = "some/invalid/path"

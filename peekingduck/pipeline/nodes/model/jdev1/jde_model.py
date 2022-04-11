@@ -69,7 +69,18 @@ class JDEModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         )
 
         model_dir = self.download_weights()
-        self.tracker = Tracker(config, model_dir, frame_rate)
+        self.tracker = Tracker(
+            model_dir,
+            frame_rate,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["weights"]["config_file"],
+            self.config["min_box_area"],
+            self.config["track_buffer"],
+            self.config["iou_threshold"],
+            self.config["nms_threshold"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, image: np.ndarray
