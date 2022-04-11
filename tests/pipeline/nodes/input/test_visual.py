@@ -119,18 +119,26 @@ class TestMediaReader:
         assert np.array_equal(read_video2, video2)
 
     def test_input_folder_of_mixed_media(self, create_input_image, create_input_video):
-        """Test read a folder of mixed media files: jpg, png, avi,
-        and verifying progress log messages"""
+        """Test read a folder of mixed media files: images and videos, and verifying
+        progress log messages
+        """
         size = (640, 480, 3)
+        test_filenames = [
+            "test_image_1.jpg",
+            "test_image_2.png",
+            "test_image_3.png",
+            "test_video_1.avi",
+            "test_video_2.avi",
+        ]
         contents = {
-            "img1": create_input_image("mix_image1.jpg", size),
-            "img2": create_input_image("mix_image2.png", size),
-            "img3": create_input_image("mix_image3.png", size),
+            "img1": create_input_image(test_filenames[0], size),
+            "img2": create_input_image(test_filenames[1], size),
+            "img3": create_input_image(test_filenames[2], size),
             # NB: be sure to sync number of frames with 'key_frames'!
             "vid_30": create_input_video(
-                "mix_video1.avi", fps=10, nframes=30, size=size
+                test_filenames[3], fps=10, nframes=30, size=size
             ),
-            "vid_3": create_input_video("mix_video2.avi", fps=1, nframes=3, size=size),
+            "vid_3": create_input_video(test_filenames[4], fps=1, nframes=3, size=size),
         }
         msg_set = set()
         with TestCase.assertLogs("peekingduck.pipeline.nodes.input.visual") as captured:
@@ -143,6 +151,7 @@ class TestMediaReader:
                     for _ in range(num_frames):
                         reader.run({})
                 else:
+                    print(f"read {k}")
                     reader.run({})
             reader.run({})  # run last pipeline iteration
 
@@ -153,6 +162,6 @@ class TestMediaReader:
         print(msg_set)
         assert "Approximate Progress: 33%" in msg_set
         assert "Approximate Progress: 100%" in msg_set
-        assert "Completed processing file: mix_image1.jpg (1 / 5)" in msg_set
-        assert "Completed processing file: mix_image3.png (3 / 5)" in msg_set
-        assert "Completed processing file: mix_video2.avi (5 / 5)" in msg_set
+        assert f"Completed processing file: {test_filenames[0]} (1 / 5)" in msg_set
+        assert f"Completed processing file: {test_filenames[2]} (3 / 5)" in msg_set
+        assert f"Completed processing file: {test_filenames[4]} (5 / 5)" in msg_set

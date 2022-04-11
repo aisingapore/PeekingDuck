@@ -25,6 +25,7 @@ from typing import Any, Tuple
 
 import cv2
 
+from peekingduck.pipeline.nodes.input.utils.png_reader import PNGReader
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
@@ -40,13 +41,21 @@ class VideoThread:
             if str(input_source).isdigit():
                 # to eliminate opencv's "[WARN] terminating async callback"
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            elif Path(input_source.lower()).suffix == ".png":
+                self.stream = PNGReader(input_source)
             else:
                 # no cv2.CAP_DSHOW flag if input_source is file
                 self.stream = cv2.VideoCapture(str(input_source))
         else:
-            self.stream = cv2.VideoCapture(
-                str(input_source) if isinstance(input_source, Path) else input_source
-            )
+            # Linux or macOS
+            if Path(input_source.lower()).suffix == ".png":
+                self.stream = PNGReader(input_source)
+            else:
+                self.stream = cv2.VideoCapture(
+                    str(input_source)
+                    if isinstance(input_source, Path)
+                    else input_source
+                )
         self.logger = logging.getLogger("VideoThread")
         self.mirror = mirror_image
         if not self.stream.isOpened():
@@ -173,18 +182,26 @@ class VideoNoThread:
     """
 
     def __init__(self, input_source: str, mirror_image: bool) -> None:
+        self.logger = logging.getLogger("VideoNoThread")
         if platform.system().startswith("Windows"):
             if str(input_source).isdigit():
                 # to eliminate opencv's "[WARN] terminating async callback"
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
+            elif Path(input_source.lower()).suffix == ".png":
+                self.stream = PNGReader(input_source)
             else:
                 # no cv2.CAP_DSHOW flag if input_source is file
                 self.stream = cv2.VideoCapture(str(input_source))
         else:
-            self.stream = cv2.VideoCapture(
-                str(input_source) if isinstance(input_source, Path) else input_source
-            )
-        self.logger = logging.getLogger("VideoNoThread")
+            # Linux or macOS
+            if Path(input_source.lower()).suffix == ".png":
+                self.stream = PNGReader(input_source)
+            else:
+                self.stream = cv2.VideoCapture(
+                    str(input_source)
+                    if isinstance(input_source, Path)
+                    else input_source
+                )
         self.mirror = mirror_image
         if not self.stream.isOpened():
             raise ValueError(f"Video or image path incorrect: {input_source}")
