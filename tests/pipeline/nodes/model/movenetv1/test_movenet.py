@@ -30,8 +30,7 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.movenet import Node
 from tests.conftest import PKD_DIR, TEST_IMAGES_DIR, do_nothing
 
-TEST_IMAGES_DIR = Path.cwd() / "tests" / "data" / "images"
-TOLERANCE = 1e-2
+TOLERANCE = 1e-6
 
 
 with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
@@ -40,21 +39,21 @@ with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
 
 @pytest.fixture(params=["black.jpg", "t3.jpg"])
 def empty_image(request):
-    yield request.param
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=["t2.jpg"])
 def single_person_image(request):
-    yield request.param
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
 @pytest.fixture(params=["t1.jpg", "t4.jpg"])
 def multi_person_image(request):
-    yield request.param
+    yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
@@ -87,21 +86,20 @@ def movenet_bad_config_value(request, movenet_config):
 )
 def movenet_config_single(request, movenet_config):
     movenet_config["model_type"] = request.param
-    return movenet_config, movenet_config["model_type"]
+    return movenet_config
 
 
 @pytest.fixture(params=["multipose_lightning"])
 def movenet_config_multi(request, movenet_config):
     movenet_config["model_type"] = request.param
-    return movenet_config, movenet_config["model_type"]
+    return movenet_config
 
 
 @pytest.mark.mlmodel
 class TestMoveNet:
     def test_no_human_single(self, empty_image, movenet_config_single):
-        no_human_img = cv2.imread(str(TEST_IMAGES_DIR / empty_image))
-        movenet_config, _ = movenet_config_single
-        model = Node(movenet_config)
+        no_human_img = cv2.imread(empty_image)
+        model = Node(movenet_config_single)
         output = model.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.zeros(0),
@@ -121,9 +119,8 @@ class TestMoveNet:
             )
 
     def test_no_human_multi(self, empty_image, movenet_config_multi):
-        no_human_img = cv2.imread(str(TEST_IMAGES_DIR / empty_image))
-        movenet_config, _ = movenet_config_multi
-        model = Node(movenet_config)
+        no_human_img = cv2.imread(empty_image)
+        model = Node(movenet_config_multi)
         output = model.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.zeros(0),
@@ -143,90 +140,80 @@ class TestMoveNet:
             )
 
     def test_single_human(self, single_person_image, movenet_config_single):
-        single_human_img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
-        movenet_config, model_type = movenet_config_single
-        model = Node(movenet_config)
-        output = model.run({"img": single_human_img})
-        expected_output = dict.fromkeys(
-            ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
+        single_human_img = cv2.imread(single_person_image)
+        movenet = Node(movenet_config_single)
+        output = movenet.run({"img": single_human_img})
+
+        expected_keys = {
+            "bboxes",
+            "bbox_labels",
+            "keypoints",
+            "keypoint_conns",
+            "keypoint_scores",
+        }
+        assert set(output.keys()) == expected_keys
+        for key in expected_keys:
+            assert len(output[key]) == 1, (
+                f"unexpected number of detection for {key} in singlepose, "
+                f"expected 1 got {len(output[key])}"
+            )
+
+        model_type = movenet.config["model_type"]
+        image_name = Path(single_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=TOLERANCE)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+        npt.assert_allclose(
+            output["keypoint_conns"], expected["keypoint_conns"], atol=TOLERANCE
         )
-        assert output.keys() == expected_output.keys()
-        for i in expected_output.keys():
-            assert len(output[i]) == 1, (
-                f"unexpected number of detection for {i} in singlepose, "
-                f"expected 1 got {len(output[i])}"
-            )
-        assert output["bbox_labels"] == ["person"]
-        ground_truth = GT_RESULTS[model_type][single_person_image]
-        for key in ("bboxes", "keypoints", "keypoint_scores", "keypoint_conns"):
-            gt_values = np.asarray(ground_truth[key])
-            npt.assert_allclose(
-                actual=output[key],
-                desired=gt_values,
-                atol=TOLERANCE,
-                err_msg=(
-                    f"output for {key} exceed tolerance of {TOLERANCE} from ground truth: "
-                    f"expected {gt_values} got {output[key]}"
-                ),
-            )
-        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
-        assert (output["bbox_labels"] == ground_truth_bbox_labels).all(), (
-            f"unexpected output for bbox_labels: expected {ground_truth_bbox_labels} "
-            f"got {output['bbox_labels']}"
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
         )
 
     def test_multi_human(self, multi_person_image, movenet_config_multi):
-        multi_human_img = cv2.imread(str(TEST_IMAGES_DIR / multi_person_image))
-        movenet_config, model_type = movenet_config_multi
-        model = Node(movenet_config)
-        output = model.run({"img": multi_human_img})
-        expected_output = dict.fromkeys(
-            ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
-        )
-        assert output.keys() == expected_output.keys()
-        for i in expected_output.keys():
+        multi_human_img = cv2.imread(multi_person_image)
+        movenet = Node(movenet_config_multi)
+        output = movenet.run({"img": multi_human_img})
+
+        expected_keys = {
+            "bboxes",
+            "bbox_labels",
+            "keypoints",
+            "keypoint_conns",
+            "keypoint_scores",
+        }
+        assert set(output.keys()) == expected_keys
+        for key in expected_keys:
             assert (
-                len(output[i]) >= 2
-            ), f"unexpected number of outputs for {i} in multipose"
-        npt.assert_array_equal(output["bbox_labels"], "person")
-        ground_truth = GT_RESULTS[model_type][multi_person_image]
-        for key in ("bboxes", "keypoints", "keypoint_scores"):
-            gt_values = ground_truth[key]
+                len(output[key]) > 1
+            ), f"unexpected number of detection for {key} in multipose"
+
+        model_type = movenet.config["model_type"]
+        image_name = Path(multi_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=TOLERANCE)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+
+        assert len(output["keypoint_conns"]) == len(expected["keypoint_conns"])
+        # Detections can have different number of valid keypoint connections
+        # and the keypoint connections result can be a ragged list lists.  When
+        # converted to numpy array, the `keypoint_conns`` array will become
+        # np.array([list(keypoint connections array), list(next keypoint
+        # connections array), ...])
+        # Thus, iterate through the detections
+        for i, expected_keypoint_conns in enumerate(expected["keypoint_conns"]):
             npt.assert_allclose(
-                actual=output[key],
-                desired=gt_values,
+                output["keypoint_conns"][i],
+                expected_keypoint_conns,
                 atol=TOLERANCE,
-                rtol=TOLERANCE,
-                err_msg=(
-                    f"output for {key} exceed tolerance of {TOLERANCE} from ground truth: "
-                    f"expected {gt_values} got {output[key]}"
-                ),
             )
 
-        # Due to the different detections plausibly having difference number of
-        # valid keypoints conns.
-        # The array of keypoint_conns will come in form of
-        # np.array([List(array of keypoints conns),
-        # List(array of next keypoints conns),..]) when a list of different
-        # length of lists are converted to numpy array.
-        # Thus, iterate through the detections and convert the inner List into
-        # numpy array before assert testing.
-        ground_truth_keypoint_conns = np.asarray(ground_truth["keypoint_conns"])
-        for i in range(output["keypoint_conns"].shape[0]):
-            npt.assert_allclose(
-                actual=np.asarray(output["keypoint_conns"][i]),
-                desired=np.asarray(ground_truth_keypoint_conns[i]),
-                atol=TOLERANCE,
-                rtol=TOLERANCE,
-                err_msg=(
-                    f"output for {i}th idx detection, keypoint_conns exceed tolerance of {TOLERANCE} from ground truth: "
-                    f"expected {np.asarray(ground_truth_keypoint_conns[i])} got {np.asarray(output['keypoint_conns'][i])}"
-                ),
-            )
-        ground_truth_bbox_labels = np.asarray(ground_truth["bbox_labels"])
-        assert (output["bbox_labels"] == ground_truth_bbox_labels).all(), (
-            f"unexpected output for bbox_labels: expected {ground_truth_bbox_labels} "
-            f"got {output['bbox_labels']}"
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
         )
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
