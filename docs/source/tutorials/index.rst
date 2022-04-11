@@ -19,3 +19,4 @@ through these tutorials in order, especially if you are new to PeekingDuck.
    /tutorials/03_custom_nodes
    /tutorials/04_peaking_duck
    /tutorials/05_calling_peekingduck_in_python
+   /tutorials/06_using_your_own_models
