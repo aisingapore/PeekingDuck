@@ -70,7 +70,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             for computing size of track buffer.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
         frame_rate: float,
