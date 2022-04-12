@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from contextlib import contextmanager
+
 import numpy as np
 import pytest
 
@@ -96,7 +97,9 @@ class TestMediaReader:
     def test_reader_reads_one_video(self, create_input_video):
         num_frames = 30
         size = (600, 800, 3)
-        video1 = create_input_video("video1.avi", fps=10, size=size, nframes=num_frames)
+        video1 = create_input_video(
+            "video1.avi", fps=10, size=size, num_frames=num_frames
+        )
         reader = create_reader()
 
         read_video1 = _get_video_file(reader, num_frames)
@@ -106,8 +109,12 @@ class TestMediaReader:
         num_frames = 20
         size = (600, 800, 3)
 
-        video1 = create_input_video("video1.avi", fps=5, size=size, nframes=num_frames)
-        video2 = create_input_video("video2.avi", fps=5, size=size, nframes=num_frames)
+        video1 = create_input_video(
+            "video1.avi", fps=5, size=size, num_frames=num_frames
+        )
+        video2 = create_input_video(
+            "video2.avi", fps=5, size=size, num_frames=num_frames
+        )
 
         reader = create_reader()
 

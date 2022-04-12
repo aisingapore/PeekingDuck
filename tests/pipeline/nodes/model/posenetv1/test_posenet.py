@@ -28,6 +28,12 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.posenet import Node
 from tests.conftest import PKD_DIR, do_nothing
 
+TOLERANCE = 1e-5
+
+
+with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
+    GT_RESULTS = yaml.safe_load(infile)
+
 
 @pytest.fixture
 def posenet_config():
@@ -88,6 +94,71 @@ class TestPoseNet:
         for label in output["bbox_labels"]:
             assert label == "person"
 
+    def test_single_human(self, single_person_image, posenet_type):
+        single_human_img = cv2.imread(single_person_image)
+        posenet = Node(posenet_type)
+        output = posenet.run({"img": single_human_img})
+
+        model_type = posenet.config["model_type"]
+        image_name = Path(single_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=TOLERANCE)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+        npt.assert_allclose(
+            output["keypoint_conns"], expected["keypoint_conns"], atol=TOLERANCE
+        )
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
+        )
+
+    def test_multi_person(self, multi_person_image, posenet_type):
+        multi_person_img = cv2.imread(multi_person_image)
+        posenet = Node(posenet_type)
+        output = posenet.run({"img": multi_person_img})
+
+        model_type = posenet.config["model_type"]
+        image_name = Path(multi_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=TOLERANCE)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+
+        assert len(output["keypoint_conns"]) == len(expected["keypoint_conns"])
+        # Detections can have different number of valid keypoint connections
+        # and the keypoint connections result can be a ragged list lists.  When
+        # converted to numpy array, the `keypoint_conns`` array will become
+        # np.array([list(keypoint connections array), list(next keypoint
+        # connections array), ...])
+        # Thus, iterate through the detections
+        for i, expected_keypoint_conns in enumerate(expected["keypoint_conns"]):
+            npt.assert_allclose(
+                output["keypoint_conns"][i],
+                expected_keypoint_conns,
+                atol=TOLERANCE,
+            )
+
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
+        )
+
+    def test_detect_specified_max_poses(self, multi_person_image, posenet_type):
+        multi_person_img = cv2.imread(multi_person_image)
+
+        posenet_type["max_pose_detection"] = 1
+        posenet = Node(posenet_type)
+        output = posenet.run({"img": multi_person_img})
+
+        # only check length of outputs as groundtruth is tested in another test
+        assert len(output["bboxes"]) == 1
+        assert len(output["bbox_labels"]) == 1
+        assert len(output["keypoints"]) == 1
+
+        assert len(output["keypoint_conns"]) == 1
+        assert len(output["keypoint_scores"]) == 1
+
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
     @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
     @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
@@ -121,3 +192,12 @@ class TestPoseNet:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=posenet_bad_config_value)
         assert "must be" in str(excinfo.value)
+
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
+    def test_invalid_config_model_files(self, _, posenet_config):
+        with pytest.raises(ValueError) as excinfo:
+            posenet_config["weights"]["model_file"][
+                posenet_config["model_type"]
+            ] = "some/invalid/path"
+            _ = Node(config=posenet_config)
+        assert "Graph file does not exist. Please check that" in str(excinfo.value)

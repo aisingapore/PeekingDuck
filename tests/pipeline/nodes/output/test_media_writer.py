@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
 import re
 from pathlib import Path
+
+import pytest
+
 from peekingduck.pipeline.nodes.output.media_writer import Node
 
 OUTPUT_PATH = Path("output")
@@ -106,7 +108,7 @@ class TestMediaWriter:
             assert re.search(FILENAME_PATTERN, str(filename))
 
     def test_writer_writes_single_video(self, writer, create_video):
-        video = create_video(SIZE, nframes=20)
+        video = create_video(SIZE, num_frames=20)
         for frame in video:
             writer.run(
                 {
@@ -130,8 +132,8 @@ class TestMediaWriter:
         assert re.search(FILENAME_PATTERN, str(directory_contents()[0]))
 
     def test_writer_writes_multi_video(self, writer, create_video):
-        video1 = create_video(SIZE, nframes=20)
-        video2 = create_video(SIZE, nframes=20)
+        video1 = create_video(SIZE, num_frames=20)
+        video2 = create_video(SIZE, num_frames=20)
         for frame in video1:
             writer.run(
                 {

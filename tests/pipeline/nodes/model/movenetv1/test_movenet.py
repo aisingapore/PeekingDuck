@@ -20,7 +20,6 @@ import cv2
 import numpy as np
 import numpy.testing as npt
 import pytest
-import tensorflow.keras.backend as K
 import yaml
 
 from peekingduck.pipeline.nodes.base import (
@@ -118,24 +117,10 @@ class TestMoveNet:
                 ),
             )
 
-    def test_single_human(self, single_person_image, movenet_config_single):
-        single_human_img = cv2.imread(single_person_image)
+    def test_single_person(self, single_person_image, movenet_config_single):
+        single_person_img = cv2.imread(single_person_image)
         movenet = Node(movenet_config_single)
-        output = movenet.run({"img": single_human_img})
-
-        expected_keys = {
-            "bboxes",
-            "bbox_labels",
-            "keypoints",
-            "keypoint_conns",
-            "keypoint_scores",
-        }
-        assert set(output.keys()) == expected_keys
-        for key in expected_keys:
-            assert len(output[key]) == 1, (
-                f"unexpected number of detection for {key} in singlepose, "
-                f"expected 1 got {len(output[key])}"
-            )
+        output = movenet.run({"img": single_person_img})
 
         model_type = movenet.config["model_type"]
         image_name = Path(single_person_image).stem
@@ -151,23 +136,10 @@ class TestMoveNet:
             output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
         )
 
-    def test_multi_human(self, multi_person_image, movenet_config_multi):
-        multi_human_img = cv2.imread(multi_person_image)
+    def test_multi_person(self, multi_person_image, movenet_config_multi):
+        multi_person_img = cv2.imread(multi_person_image)
         movenet = Node(movenet_config_multi)
-        output = movenet.run({"img": multi_human_img})
-
-        expected_keys = {
-            "bboxes",
-            "bbox_labels",
-            "keypoints",
-            "keypoint_conns",
-            "keypoint_scores",
-        }
-        assert set(output.keys()) == expected_keys
-        for key in expected_keys:
-            assert (
-                len(output[key]) > 1
-            ), f"unexpected number of detection for {key} in multipose"
+        output = movenet.run({"img": multi_person_img})
 
         model_type = movenet.config["model_type"]
         image_name = Path(multi_person_image).stem

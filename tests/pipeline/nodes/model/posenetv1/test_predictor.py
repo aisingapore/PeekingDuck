@@ -109,8 +109,8 @@ class TestPredictor:
         assert image_size == [439, 640], "Incorrect image size"
         assert type(output_scale) is np.ndarray, "Output scale must be a numpy array"
         npt.assert_almost_equal(
-            output_scale, np.array([1.95, 2.84]), 2
-        ), "Incorrect scale"
+            output_scale, np.array([1.95, 2.84]), 2, err_msg="Incorrect scale"
+        )
 
     def test_model_instantiation(self, posenet_config, model_dir):
         predictor = Predictor(
@@ -126,6 +126,24 @@ class TestPredictor:
         assert posenet_model is not None, "Model is not instantiated"
 
     def test_predict_all_poses(self, single_person_image, posenet_config, model_dir):
+        single_person_img = cv2.imread(single_person_image)
+        predictor = Predictor(
+            model_dir,
+            posenet_config["model_type"],
+            posenet_config["weights"]["model_file"],
+            posenet_config["model_nodes"],
+            posenet_config["resolution"],
+            posenet_config["max_pose_detection"],
+            posenet_config["score_threshold"],
+        )
+        posenet_model = predictor._create_posenet_model()
+        assert posenet_model is not None, "Model is not created"
+        coords, scores, masks = predictor._predict_all_poses(single_person_img)
+        assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
+        assert scores.shape == (1, 17), "Scores is of wrong shape"
+        assert masks.shape == (1, 17), "Masks is of wrong shape"
+
+    def test_get_bbox_of_one_pose(self, single_person_image, posenet_config, model_dir):
         single_person_img = cv2.imread(single_person_image)
         predictor = Predictor(
             model_dir,
