@@ -21,10 +21,11 @@ import platform
 import queue
 from pathlib import Path
 from threading import Event, Thread
-from typing import Any, Tuple
+from typing import Any, Tuple, Union
 
 import cv2
 
+from peekingduck.pipeline.nodes.input.utils.png_reader import PNGReader
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
 
@@ -35,22 +36,24 @@ class VideoThread:
 
     # pylint: disable=too-many-instance-attributes
 
-    def __init__(self, input_source: str, mirror_image: bool, buffering: bool) -> None:
-        if platform.system().startswith("Windows"):
-            if str(input_source).isdigit():
-                # to eliminate opencv's "[WARN] terminating async callback"
+    def __init__(
+        self, input_source: Union[int, str], mirror_image: bool, buffering: bool
+    ) -> None:
+        assert isinstance(input_source, (int, str))
+        if isinstance(input_source, int):
+            if platform.system().startswith("Windows"):
+                # to eliminate opencv's "[WARN] terminating async callback" on Windows
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
             else:
-                # no cv2.CAP_DSHOW flag if input_source is file
-                self.stream = cv2.VideoCapture(str(input_source))
+                self.stream = cv2.VideoCapture(input_source)
+        elif Path(input_source.lower()).suffix == ".png":
+            self.stream = PNGReader(input_source)
         else:
-            self.stream = cv2.VideoCapture(
-                str(input_source) if isinstance(input_source, Path) else input_source
-            )
-        self.logger = logging.getLogger("VideoThread")
-        self.mirror = mirror_image
+            self.stream = cv2.VideoCapture(input_source)
         if not self.stream.isOpened():
             raise ValueError(f"Camera or video input not detected: {input_source}")
+        self.logger = logging.getLogger(type(self).__name__)
+        self.mirror = mirror_image
         # events to coordinate threading
         self.is_done = Event()
         self.is_thread_start = Event()
@@ -89,7 +92,7 @@ class VideoThread:
             if self.stream.isOpened():
                 ret, frame = self.stream.read()
                 if not ret:
-                    self.logger.info(
+                    self.logger.debug(
                         f"_reading_thread: ret={ret}, "
                         f"#frames read={self.frame_counter}"
                     )
@@ -172,23 +175,23 @@ class VideoNoThread:
     No threading to deal with recorded videos and images.
     """
 
-    def __init__(self, input_source: str, mirror_image: bool) -> None:
-        if platform.system().startswith("Windows"):
-            if str(input_source).isdigit():
-                # to eliminate opencv's "[WARN] terminating async callback"
+    def __init__(self, input_source: Union[int, str], mirror_image: bool) -> None:
+        assert isinstance(input_source, (int, str))
+        if isinstance(input_source, int):
+            if platform.system().startswith("Windows"):
+                # to eliminate opencv's "[WARN] terminating async callback" on Windows
                 self.stream = cv2.VideoCapture(input_source, cv2.CAP_DSHOW)
             else:
-                # no cv2.CAP_DSHOW flag if input_source is file
-                self.stream = cv2.VideoCapture(str(input_source))
+                self.stream = cv2.VideoCapture(input_source)
+        elif Path(input_source.lower()).suffix == ".png":
+            self.stream = PNGReader(input_source)
         else:
-            self.stream = cv2.VideoCapture(
-                str(input_source) if isinstance(input_source, Path) else input_source
-            )
-        self.logger = logging.getLogger("VideoNoThread")
-        self.mirror = mirror_image
+            self.stream = cv2.VideoCapture(input_source)
         if not self.stream.isOpened():
             raise ValueError(f"Video or image path incorrect: {input_source}")
         self._frame_counter = 0
+        self.logger = logging.getLogger(type(self).__name__)
+        self.mirror = mirror_image
 
     def __del__(self) -> None:
         # dotw: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
@@ -202,7 +205,7 @@ class VideoNoThread:
         """
         ret, frame = self.stream.read()
         if not ret:
-            self.logger.info(
+            self.logger.debug(
                 f"read_frame: ret={ret}, #frames read={self._frame_counter}"
             )
         else:
