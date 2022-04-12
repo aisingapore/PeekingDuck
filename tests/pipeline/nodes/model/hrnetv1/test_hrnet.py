@@ -28,6 +28,12 @@ from peekingduck.pipeline.nodes.base import (
 from peekingduck.pipeline.nodes.model.hrnet import Node
 from tests.conftest import PKD_DIR, do_nothing
 
+TOLERANCE = 1e-5
+
+
+with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
+    GT_RESULTS = yaml.safe_load(infile)
+
 
 @pytest.fixture
 def hrnet_config():
@@ -68,21 +74,62 @@ class TestHrnet:
                 output[i], expected_output[i], err_msg=f"unexpected output for {i}"
             )
 
-    def test_return_at_least_one_person_and_one_bbox(self, human_image, hrnet_config):
-        """Tests HRnet on images with at least one human present. Bbox
-        coordinates is set as the entire image.
-        """
-        human_img = cv2.imread(human_image)
-        img_h, img_w, _ = human_img.shape
+    def test_single_human(self, single_person_image, hrnet_config):
+        """Using bboxes from MoveNet multipose_thunder."""
+        single_human_img = cv2.imread(single_person_image)
         hrnet = Node(hrnet_config)
         output = hrnet.run(
-            {"img": human_img, "bboxes": np.array([[0, 0, img_w, img_h]])}
+            {
+                "img": single_human_img,
+                "bboxes": np.array([[0.181950, 0.081390, 0.590675, 0.902916]]),
+            }
         )
 
-        assert "keypoints" in output
-        assert "keypoint_scores" in output
-        assert "keypoint_conns" in output
-        assert output["keypoints"].size != 0
+        model_type = hrnet.config["model_type"]
+        image_name = Path(single_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+        npt.assert_allclose(
+            output["keypoint_conns"].tolist(),
+            expected["keypoint_conns"],
+            atol=TOLERANCE,
+        )
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
+        )
+
+    def test_multi_person(self, multi_person_image, hrnet_config):
+        """Using bboxes from MoveNet multipose_thunder."""
+        multi_person_img = cv2.imread(multi_person_image)
+        hrnet = Node(hrnet_config)
+
+        model_type = hrnet.config["model_type"]
+        image_name = Path(multi_person_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+        output = hrnet.run(
+            {"img": multi_person_img, "bboxes": np.array(expected["bboxes"])}
+        )
+
+        npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
+
+        assert len(output["keypoint_conns"]) == len(expected["keypoint_conns"])
+        # Detections can have different number of valid keypoint connections
+        # and the keypoint connections result can be a ragged list lists.  When
+        # converted to numpy array, the `keypoint_conns`` array will become
+        # np.array([list(keypoint connections array), list(next keypoint
+        # connections array), ...])
+        # Thus, iterate through the detections
+        for i, expected_keypoint_conns in enumerate(expected["keypoint_conns"]):
+            npt.assert_allclose(
+                output["keypoint_conns"][i],
+                expected_keypoint_conns,
+                atol=TOLERANCE,
+            )
+
+        npt.assert_allclose(
+            output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
+        )
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
     @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
