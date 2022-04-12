@@ -36,7 +36,14 @@ class HRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
-        self.detector = Detector(config, model_dir)
+        self.detector = Detector(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["resolution"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, frame: np.ndarray, bboxes: np.ndarray

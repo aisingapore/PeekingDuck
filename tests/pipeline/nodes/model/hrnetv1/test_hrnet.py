@@ -91,9 +91,7 @@ class TestHrnet:
 
         npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
         npt.assert_allclose(
-            output["keypoint_conns"].tolist(),
-            expected["keypoint_conns"],
-            atol=TOLERANCE,
+            output["keypoint_conns"], expected["keypoint_conns"], atol=TOLERANCE
         )
         npt.assert_allclose(
             output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
