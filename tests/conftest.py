@@ -202,6 +202,12 @@ def do_nothing(*_):
     """Does nothing. For use with ``mock.patch``."""
 
 
+def get_groundtruth(test_file_path):
+    assert isinstance(test_file_path, Path)
+    with open(test_file_path.parent / "test_groundtruth.yml") as infile:
+        return yaml.safe_load(infile)
+
+
 @contextmanager
 def not_raises(exception):
     try:

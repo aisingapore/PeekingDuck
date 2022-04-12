@@ -27,13 +27,10 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.movenet import Node
-from tests.conftest import PKD_DIR, do_nothing
+from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
 
 TOLERANCE = 1e-5
-
-
-with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
-    GT_RESULTS = yaml.safe_load(infile)
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
 @pytest.fixture

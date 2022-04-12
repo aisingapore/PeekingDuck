@@ -26,10 +26,9 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.mtcnn import Node
-from tests.conftest import PKD_DIR, do_nothing
+from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
 
-with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
-    GT_RESULTS = yaml.safe_load(infile.read())
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
 @pytest.fixture
