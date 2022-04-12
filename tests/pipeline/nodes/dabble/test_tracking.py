@@ -85,12 +85,12 @@ class TestTracking:
         assert not outputs["obj_attrs"]["ids"]
 
     def test_tracking_ids_should_be_consistent_across_frames(
-        self, tracker, test_human_video_sequences
+        self, tracker, human_video_sequence
     ):
         # skip for mosse due to inconsistent results on Intel MacOS
         if tracker.tracking_type == "mosse" and platform.system() == "Darwin":
             pytest.skip()
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         prev_tags = []
         for i, inputs in enumerate(detections):
             outputs = tracker.run(inputs)
@@ -99,11 +99,11 @@ class TestTracking:
                 assert outputs["obj_attrs"]["ids"] == prev_tags
             prev_tags = outputs["obj_attrs"]["ids"]
 
-    def test_should_track_new_detection(self, tracker, test_human_video_sequences):
+    def test_should_track_new_detection(self, tracker, human_video_sequence):
         # skip for mosse due to inconsistent results on Intel MacOS
         if tracker.tracking_type == "mosse" and platform.system() == "Darwin":
             pytest.skip()
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
             detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
@@ -122,15 +122,13 @@ class TestTracking:
                 assert outputs["obj_attrs"]["ids"] == prev_tags
             prev_tags = outputs["obj_attrs"]["ids"]
 
-    def test_should_remove_lost_tracks(
-        self, tracking_config, test_human_video_sequences
-    ):
+    def test_should_remove_lost_tracks(self, tracking_config, human_video_sequence):
         """This only applies to IOU Tracker.
 
         NOTE: We are manually making a track to be lost since we don't
         have enough frames for it to occur naturally.
         """
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         # Add a new detection at the specified SEQ_IDX
         detections[SEQ_IDX]["bboxes"] = np.append(
             detections[SEQ_IDX]["bboxes"], [[0.1, 0.2, 0.3, 0.4]], axis=0
@@ -160,9 +158,7 @@ class TestTracking:
                 assert outputs["obj_attrs"]["ids"] == prev_tags
             prev_tags = outputs["obj_attrs"]["ids"]
 
-    def test_should_remove_update_failures(
-        self, tracking_config, test_human_video_sequences
-    ):
+    def test_should_remove_update_failures(self, tracking_config, human_video_sequence):
         """This only applies to OpenCV Tracker.
 
         NOTE: We are manually making a track to be lost since we don't
@@ -174,7 +170,7 @@ class TestTracking:
         # skip for mosse due to inconsistent results on Intel MacOS
         if platform.system() == "Darwin":
             pytest.skip()
-        sequence_name, detections = test_human_video_sequences
+        sequence_name, detections = human_video_sequence
         if sequence_name != "two_people_crossing":
             return
         # Add a new detection at the specified SEQ_IDX
@@ -204,12 +200,12 @@ class TestTracking:
                 assert outputs["obj_attrs"]["ids"] == prev_tags
             prev_tags = outputs["obj_attrs"]["ids"]
 
-    def test_reset_model(self, tracker, test_human_video_sequences):
+    def test_reset_model(self, tracker, human_video_sequence):
         # skip for mosse due to inconsistent results on Intel MacOS
         if tracker.tracking_type == "mosse" and platform.system() == "Darwin":
             pytest.skip()
         mot_metadata = {"reset_model": True}
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         prev_tags = []
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.dabble.tracking.logger"

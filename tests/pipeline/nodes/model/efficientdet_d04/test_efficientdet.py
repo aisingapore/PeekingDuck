@@ -27,9 +27,6 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.efficientdet import Node
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files import (
-    detector,
-)
 from tests.conftest import PKD_DIR, do_nothing
 
 with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
@@ -58,24 +55,6 @@ def efficientdet_bad_config_value(request, efficientdet_config):
     return efficientdet_config
 
 
-@pytest.fixture
-def model_dir(efficientdet_config):
-    return (
-        efficientdet_config["root"].parent
-        / "peekingduck_weights"
-        / efficientdet_config["weights"]["model_subdir"]
-    )
-
-
-@pytest.fixture
-def class_names(efficientdet_config, model_dir):
-    classes_path = model_dir / efficientdet_config["weights"]["classes_file"]
-    return {
-        val["id"] - 1: val["name"]
-        for val in json.loads(Path(classes_path).read_text()).values()
-    }
-
-
 @pytest.fixture(params=[0, 1, 2, 3, 4])
 def efficientdet_type(request, efficientdet_config):
     efficientdet_config["model_type"] = request.param
@@ -84,10 +63,10 @@ def efficientdet_type(request, efficientdet_config):
 
 @pytest.mark.mlmodel
 class TestEfficientDet:
-    def test_no_human_image(self, test_no_human_images, efficientdet_type):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, no_human_image, efficientdet_type):
+        no_human_img = cv2.imread(no_human_image)
         efficientdet = Node(efficientdet_type)
-        output = efficientdet.run({"img": blank_image})
+        output = efficientdet.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_labels": np.empty((0)),
@@ -98,16 +77,16 @@ class TestEfficientDet:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_detect_human_bboxes(self, test_human_images, efficientdet_type):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, human_image, efficientdet_type):
+        human_img = cv2.imread(human_image)
         efficientdet = Node(efficientdet_type)
-        output = efficientdet.run({"img": test_image})
+        output = efficientdet.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = efficientdet.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)

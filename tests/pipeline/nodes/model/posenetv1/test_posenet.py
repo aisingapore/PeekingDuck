@@ -58,10 +58,10 @@ def posenet_bad_config_value(request, posenet_config):
 
 @pytest.mark.mlmodel
 class TestPoseNet:
-    def test_no_detection(self, test_no_human_images, posenet_type):
-        blank_image = cv2.imread(str(test_no_human_images))
+    def test_no_detection(self, no_human_image, posenet_type):
+        no_human_img = cv2.imread(str(no_human_image))
         posenet = Node(posenet_type)
-        output = posenet.run({"img": blank_image})
+        output = posenet.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.zeros(0),
             "keypoints": np.zeros(0),
@@ -72,13 +72,13 @@ class TestPoseNet:
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():
             npt.assert_array_equal(
-                output[i], expected_output[i]
-            ), "unexpected output for {}".format(i)
+                output[i], expected_output[i], err_msg=f"unexpected output for {i}"
+            )
 
-    def test_different_models(self, test_human_images, posenet_type):
-        pose_image = cv2.imread(str(test_human_images))
+    def test_different_models(self, human_image, posenet_type):
+        human_img = cv2.imread(str(human_image))
         posenet = Node(posenet_type)
-        output = posenet.run({"img": pose_image})
+        output = posenet.run({"img": human_img})
         expected_output = dict.fromkeys(
             ["bboxes", "keypoints", "keypoint_scores", "keypoint_conns", "bbox_labels"]
         )

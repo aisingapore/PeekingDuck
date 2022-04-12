@@ -62,10 +62,10 @@ def yolo_type(request, yolo_config):
 
 @pytest.mark.mlmodel
 class TestYOLOLicensePlate:
-    def test_no_lp_image(self, test_no_lp_images, yolo_type):
-        blank_image = cv2.imread(test_no_lp_images)
+    def test_no_license_plate_image(self, no_license_plate_image, yolo_type):
+        no_license_plate_img = cv2.imread(no_license_plate_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": blank_image})
+        output = yolo.run({"img": no_license_plate_img})
         expected_output = {"bboxes": [], "bbox_labels": [], "bbox_scores": []}
         assert output.keys() == expected_output.keys()
         assert type(output["bboxes"]) == np.ndarray
@@ -75,16 +75,16 @@ class TestYOLOLicensePlate:
         assert len(output["bbox_labels"]) == 0
         assert len(output["bbox_scores"]) == 0
 
-    def test_detect_human_bboxes(self, test_lp_images, yolo_type):
-        test_image = cv2.imread(test_lp_images)
+    def test_detect_license_plate_image(self, license_plate_image, yolo_type):
+        license_plate_img = cv2.imread(license_plate_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": test_image})
+        output = yolo.run({"img": license_plate_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolo.config["model_type"]
-        image_name = Path(test_lp_images).stem
+        image_name = Path(license_plate_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)

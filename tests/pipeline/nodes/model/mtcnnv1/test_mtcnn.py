@@ -20,6 +20,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import yaml
+
 from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
@@ -58,10 +59,10 @@ def mtcnn_bad_config_value(request, mtcnn_config):
 
 @pytest.mark.mlmodel
 class TestMtcnn:
-    def test_no_human_face_image(self, test_no_human_images, mtcnn_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_face_image(self, no_human_image, mtcnn_config):
+        no_human_img = cv2.imread(no_human_image)
         mtcnn = Node(mtcnn_config)
-        output = mtcnn.run({"img": blank_image})
+        output = mtcnn.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_scores": np.empty((0), dtype=np.float32),
@@ -72,15 +73,15 @@ class TestMtcnn:
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
 
-    def test_detect_face_bboxes(self, test_human_images, mtcnn_config):
-        test_img = cv2.imread(test_human_images)
+    def test_detect_face_bboxes(self, human_image, mtcnn_config):
+        human_img = cv2.imread(human_image)
         mtcnn = Node(mtcnn_config)
-        output = mtcnn.run({"img": test_img})
+        output = mtcnn.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size != 0
 
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)

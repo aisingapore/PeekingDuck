@@ -50,23 +50,23 @@ def csrnet_bad_config_value(request, csrnet_config):
 
 @pytest.mark.mlmodel
 class TestCsrnet:
-    def test_no_human(self, test_no_human_images, csrnet_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human(self, no_human_image, csrnet_config):
+        no_human_img = cv2.imread(no_human_image)
         csrnet = Node(csrnet_config)
-        output = csrnet.run({"img": blank_image})
+        output = csrnet.run({"img": no_human_img})
         assert list(output.keys()) == ["density_map", "count"]
         # Model is less accurate and detects extra people when count is low or
         # none. Threshold of 9 is chosen based on the min count in ShanghaiTech
         # dataset
         assert output["count"] < 9
 
-    def test_crowd(self, test_crowd_images, csrnet_config):
-        crowd_image = cv2.imread(test_crowd_images)
+    def test_crowd(self, crowd_image, csrnet_config):
+        crowd_img = cv2.imread(crowd_image)
         csrnet = Node(csrnet_config)
-        output = csrnet.run({"img": crowd_image})
+        output = csrnet.run({"img": crowd_img})
 
         model_type = csrnet.config["model_type"]
-        image_name = Path(test_crowd_images).stem
+        image_name = Path(crowd_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         assert list(output.keys()) == ["density_map", "count"]

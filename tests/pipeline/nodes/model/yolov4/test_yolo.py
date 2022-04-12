@@ -62,10 +62,10 @@ def yolo_type(request, yolo_config):
 
 @pytest.mark.mlmodel
 class TestYolo:
-    def test_no_human_image(self, test_no_human_images, yolo_type):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, no_human_image, yolo_type):
+        no_human_img = cv2.imread(no_human_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": blank_image})
+        output = yolo.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_labels": np.empty((0)),
@@ -76,16 +76,16 @@ class TestYolo:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_detect_human_bboxes(self, test_human_images, yolo_type):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, human_image, yolo_type):
+        human_img = cv2.imread(human_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": test_image})
+        output = yolo.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolo.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)

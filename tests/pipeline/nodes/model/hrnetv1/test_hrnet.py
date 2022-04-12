@@ -51,11 +51,11 @@ def hrnet_bad_config_value(request, hrnet_config):
 
 @pytest.mark.mlmodel
 class TestHrnet:
-    def test_no_human_image(self, test_no_human_images, hrnet_config):
+    def test_no_human_image(self, no_human_image, hrnet_config):
         """Tests HRnet on images with no humans present."""
-        blank_image = cv2.imread(test_no_human_images)
+        no_human_img = cv2.imread(no_human_image)
         hrnet = Node(hrnet_config)
-        output = hrnet.run({"img": blank_image, "bboxes": np.empty((0, 4))})
+        output = hrnet.run({"img": no_human_img, "bboxes": np.empty((0, 4))})
         expected_output = {
             "keypoints": np.zeros(0),
             "keypoint_scores": np.zeros(0),
@@ -68,17 +68,15 @@ class TestHrnet:
                 output[i], expected_output[i], err_msg=f"unexpected output for {i}"
             )
 
-    def test_return_at_least_one_person_and_one_bbox(
-        self, test_human_images, hrnet_config
-    ):
+    def test_return_at_least_one_person_and_one_bbox(self, human_image, hrnet_config):
         """Tests HRnet on images with at least one human present. Bbox
         coordinates is set as the entire image.
         """
-        test_img = cv2.imread(test_human_images)
-        img_h, img_w, _ = test_img.shape
+        human_img = cv2.imread(human_image)
+        img_h, img_w, _ = human_img.shape
         hrnet = Node(hrnet_config)
         output = hrnet.run(
-            {"img": test_img, "bboxes": np.array([[0, 0, img_w, img_h]])}
+            {"img": human_img, "bboxes": np.array([[0, 0, img_w, img_h]])}
         )
 
         assert "keypoints" in output

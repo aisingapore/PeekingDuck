@@ -28,34 +28,13 @@ from peekingduck.pipeline.nodes.base import (
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.movenet import Node
-from tests.conftest import PKD_DIR, TEST_IMAGES_DIR, do_nothing
+from tests.conftest import PKD_DIR, do_nothing
 
-TOLERANCE = 1e-6
+TOLERANCE = 1e-5
 
 
 with open(Path(__file__).resolve().parent / "test_groundtruth.yml") as infile:
     GT_RESULTS = yaml.safe_load(infile)
-
-
-@pytest.fixture(params=["black.jpg", "t3.jpg"])
-def empty_image(request):
-    yield str(TEST_IMAGES_DIR / request.param)
-    K.clear_session()
-    gc.collect()
-
-
-@pytest.fixture(params=["t2.jpg"])
-def single_person_image(request):
-    yield str(TEST_IMAGES_DIR / request.param)
-    K.clear_session()
-    gc.collect()
-
-
-@pytest.fixture(params=["t1.jpg", "t4.jpg"])
-def multi_person_image(request):
-    yield str(TEST_IMAGES_DIR / request.param)
-    K.clear_session()
-    gc.collect()
 
 
 @pytest.fixture
@@ -97,8 +76,8 @@ def movenet_config_multi(request, movenet_config):
 
 @pytest.mark.mlmodel
 class TestMoveNet:
-    def test_no_human_single(self, empty_image, movenet_config_single):
-        no_human_img = cv2.imread(empty_image)
+    def test_no_human_single(self, no_human_image, movenet_config_single):
+        no_human_img = cv2.imread(no_human_image)
         model = Node(movenet_config_single)
         output = model.run({"img": no_human_img})
         expected_output = {
@@ -118,8 +97,8 @@ class TestMoveNet:
                 ),
             )
 
-    def test_no_human_multi(self, empty_image, movenet_config_multi):
-        no_human_img = cv2.imread(empty_image)
+    def test_no_human_multi(self, no_human_image, movenet_config_multi):
+        no_human_img = cv2.imread(no_human_image)
         model = Node(movenet_config_multi)
         output = model.run({"img": no_human_img})
         expected_output = {

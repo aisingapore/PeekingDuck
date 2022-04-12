@@ -80,13 +80,13 @@ def replace_iou_distance(*args):
 
 @pytest.mark.mlmodel
 class TestFairMOT:
-    def test_should_give_empty_output_for_no_human_images(
-        self, test_no_human_images, fairmot_config
+    def test_should_give_empty_output_for_no_human_image(
+        self, no_human_image, fairmot_config
     ):
         """Input images either contain nothing or non-humans."""
-        blank_image = cv2.imread(test_no_human_images)
+        no_human_img = cv2.imread(no_human_image)
         fairmot = Node(fairmot_config)
-        output = fairmot.run({"img": blank_image})
+        output = fairmot.run({"img": no_human_img})
         expected_output = {
             "bboxes": [],
             "bbox_labels": [],
@@ -102,9 +102,9 @@ class TestFairMOT:
         )
 
     def test_tracking_ids_should_be_consistent_across_frames(
-        self, test_human_video_sequences, fairmot_config
+        self, human_video_sequence, fairmot_config
     ):
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         prev_tags = []
         for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -117,9 +117,9 @@ class TestFairMOT:
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
     def test_tracking_ids_should_be_consistent_across_frames_gpu(
-        self, test_human_video_sequences, fairmot_config_gpu
+        self, human_video_sequence, fairmot_config_gpu
     ):
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config_gpu)
         prev_tags = []
         for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -129,9 +129,9 @@ class TestFairMOT:
             prev_tags = output["obj_attrs"]["ids"]
 
     def test_should_activate_unconfirmed_tracks_subsequently(
-        self, test_human_video_sequences, fairmot_config
+        self, human_video_sequence, fairmot_config
     ):
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         # Make frame_id start at 2 internally to avoid STrack from activating
         # in activate() when frame_id == 1
@@ -143,8 +143,8 @@ class TestFairMOT:
                 assert output["obj_attrs"]["ids"] == prev_tags
             prev_tags = output["obj_attrs"]["ids"]
 
-    def test_reactivate_tracks(self, test_human_video_sequences, fairmot_config):
-        _, detections = test_human_video_sequences
+    def test_reactivate_tracks(self, human_video_sequence, fairmot_config):
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         prev_tags = []
         for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -157,8 +157,8 @@ class TestFairMOT:
                 assert output["obj_attrs"]["ids"] == prev_tags
             prev_tags = output["obj_attrs"]["ids"]
 
-    def test_associate_with_iou(self, test_human_video_sequences, fairmot_config):
-        _, detections = test_human_video_sequences
+    def test_associate_with_iou(self, human_video_sequence, fairmot_config):
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         prev_tags = []
         with mock.patch(
@@ -172,13 +172,13 @@ class TestFairMOT:
                 prev_tags = output["obj_attrs"]["ids"]
 
     def test_mark_unconfirmed_tracks_for_removal(
-        self, test_human_video_sequences, fairmot_config
+        self, human_video_sequence, fairmot_config
     ):
         """Manipulate both embedding and iou distance to be above the cost
         limit so nothing gets associated and all gets marked for removal. As a
         result, the Tracker should not produce any track IDs.
         """
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         with mock.patch(
             "peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching.fuse_motion",
@@ -196,10 +196,10 @@ class TestFairMOT:
                     continue
                 assert not output["obj_attrs"]["ids"]
 
-    def test_remove_lost_tracks(self, test_human_video_sequences, fairmot_config):
+    def test_remove_lost_tracks(self, human_video_sequence, fairmot_config):
         # Set buffer and as a result `max_time_lost` to extremely short so
         # lost tracks will get removed
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot_config["track_buffer"] = 1
         fairmot = Node(fairmot_config)
         prev_tags = []
@@ -223,9 +223,9 @@ class TestFairMOT:
         ],
     )
     def test_new_video_frame_rate(
-        self, test_human_video_sequences, fairmot_config, mot_metadata
+        self, human_video_sequence, fairmot_config, mot_metadata
     ):
-        _, detections = test_human_video_sequences
+        _, detections = human_video_sequence
         fairmot = Node(config=fairmot_config)
         prev_tags = []
         with TestCase.assertLogs(
@@ -289,8 +289,8 @@ class TestFairMOT:
             _ = Node(config=fairmot_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 
-    def test_invalid_image(self, test_no_human_images, fairmot_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_invalid_image(self, no_human_image, fairmot_config):
+        no_human_img = cv2.imread(no_human_image)
         # Potentially passing in a file path or a tuple from image reader
         # output
         fairmot = Node(fairmot_config)
@@ -298,5 +298,5 @@ class TestFairMOT:
             _ = fairmot.run({"img": Path.cwd()})
         assert str(excinfo.value) == "image must be a np.ndarray"
         with pytest.raises(TypeError) as excinfo:
-            _ = fairmot.run({"img": ("image name", blank_image)})
+            _ = fairmot.run({"img": ("image name", no_human_img)})
         assert str(excinfo.value) == "image must be a np.ndarray"

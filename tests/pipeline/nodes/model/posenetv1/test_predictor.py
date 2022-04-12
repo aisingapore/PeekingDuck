@@ -21,7 +21,7 @@ import pytest
 import yaml
 
 from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
-from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
+from tests.conftest import PKD_DIR
 
 
 @pytest.fixture
@@ -58,8 +58,8 @@ class TestPredictor:
         )
         assert predictor is not None, "Predictor is not instantiated"
 
-    def test_predict(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
+    def test_predict(self, single_person_image, posenet_config, model_dir):
+        single_person_img = cv2.imread(single_person_image)
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
@@ -69,7 +69,7 @@ class TestPredictor:
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
         )
-        output = predictor.predict(frame)
+        output = predictor.predict(single_person_img)
         assert len(output) == 4, "Predicted output has missing keys"
         for i in output:
             assert len(i) == 1, "Unexpected number of outputs"
@@ -89,8 +89,10 @@ class TestPredictor:
         assert type(tuple_res) is tuple, "Loaded data must be a tuple"
         assert len(tuple_res) == 2, "Loaded data must be of length 2"
 
-    def test_create_image_from_frame(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
+    def test_create_image_from_frame(
+        self, single_person_image, posenet_config, model_dir
+    ):
+        single_person_img = cv2.imread(single_person_image)
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
@@ -101,7 +103,7 @@ class TestPredictor:
             posenet_config["score_threshold"],
         )
         _, output_scale, image_size = predictor._create_image_from_frame(
-            16, frame, (225, 225), "75"
+            16, single_person_img, (225, 225), "75"
         )
         assert type(image_size) is list, "Image size must be a list"
         assert image_size == [439, 640], "Incorrect image size"
@@ -123,8 +125,8 @@ class TestPredictor:
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not instantiated"
 
-    def test_predict_all_poses(self, posenet_config, model_dir):
-        frame = cv2.imread(str(TEST_IMAGES_DIR / "t2.jpg"))
+    def test_predict_all_poses(self, single_person_image, posenet_config, model_dir):
+        single_person_img = cv2.imread(single_person_image)
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
@@ -136,7 +138,7 @@ class TestPredictor:
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
-        coords, scores, masks = predictor._predict_all_poses(frame)
+        coords, scores, masks = predictor._predict_all_poses(single_person_img)
         assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
         assert scores.shape == (1, 17), "Scores is of wrong shape"
         assert masks.shape == (1, 17), "Masks is of wrong shape"

@@ -81,10 +81,10 @@ def yolox_config_cpu(request, yolox_matrix_config):
 
 @pytest.mark.mlmodel
 class TestYOLOX:
-    def test_no_human_image(self, test_no_human_images, yolox_config_cpu):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, no_human_image, yolox_config_cpu):
+        no_human_img = cv2.imread(no_human_image)
         yolox = Node(yolox_config_cpu)
-        output = yolox.run({"img": blank_image})
+        output = yolox.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_labels": np.empty((0)),
@@ -95,16 +95,16 @@ class TestYOLOX:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_detect_human_bboxes(self, test_human_images, yolox_config_cpu):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, human_image, yolox_config_cpu):
+        human_img = cv2.imread(human_image)
         yolox = Node(yolox_config_cpu)
-        output = yolox.run({"img": test_image})
+        output = yolox.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolox.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
@@ -112,17 +112,17 @@ class TestYOLOX:
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
-    def test_detect_human_bboxes_gpu(self, test_human_images, yolox_matrix_config):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes_gpu(self, human_image, yolox_matrix_config):
+        human_img = cv2.imread(human_image)
         # Ran on YOLOX-tiny only due to GPU OOM error on some systems
         yolox = Node(yolox_matrix_config)
-        output = yolox.run({"img": test_image})
+        output = yolox.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolox.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
@@ -181,8 +181,8 @@ class TestYOLOX:
             _ = Node(config=yolox_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 
-    def test_invalid_image(self, test_no_human_images, yolox_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_invalid_image(self, no_human_image, yolox_config):
+        no_human_img = cv2.imread(no_human_image)
         yolox = Node(yolox_config)
         # Potentially passing in a file path or a tuple from image reader
         # output
@@ -190,5 +190,5 @@ class TestYOLOX:
             _ = yolox.run({"img": Path.cwd()})
         assert "image must be a np.ndarray" == str(excinfo.value)
         with pytest.raises(TypeError) as excinfo:
-            _ = yolox.run({"img": ("image name", blank_image)})
+            _ = yolox.run({"img": ("image name", no_human_img)})
         assert "image must be a np.ndarray" == str(excinfo.value)
