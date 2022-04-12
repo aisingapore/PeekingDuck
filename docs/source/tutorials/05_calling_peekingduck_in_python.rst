@@ -246,8 +246,8 @@ are also able to use PeekingDuck nodes with external packages when designing the
 
 In this demo, we will show how users can construct a custom PeekingDuck pipeline using:
 
-    * Data loaders such as `tf.keras.utils.image_dataset_from_directory
-      <https://www.tensorflow.org/api_docs/python/tf/keras/utils/image_dataset_from_directory>`_
+    * Data loaders such as `tf.keras.preprocessing.image_dataset_from_directory
+      <https://www.tensorflow.org/api_docs/python/tf/keras/preprocessing/image_dataset_from_directory>`_
       (available in ``tensorflow>=2.3.0``),
     * External packages (not implemented as PeekingDuck nodes) such as `easyocr
       <https://pypi.org/project/easyocr/>`_, and
@@ -437,12 +437,12 @@ Create a Dataset Loader
       :linenos:
   
       data_dir = Path.cwd().resolve() / "data" / "oidv6" / "train"
-      dataset = tf.keras.utils.image_dataset_from_directory(
+      dataset = tf.keras.preprocessing.image_dataset_from_directory(
           data_dir, batch_size=1, shuffle=False
       )
 
-Lines 2 - 4: We create the data loader using ``tf.keras.utils.image_dataset_from_directory()``; you can
-also create your own data loader class.
+Lines 2 - 4: We create the data loader using ``tf.keras.preprocessing.image_dataset_from_directory()``;
+you can also create your own data loader class.
 
 
 Create a License Plate Parser Class
