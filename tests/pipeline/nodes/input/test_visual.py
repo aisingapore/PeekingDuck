@@ -143,9 +143,11 @@ class TestMediaReader:
             "img3": create_input_image(test_filenames[2], size),
             # NB: be sure to sync number of frames with 'key_frames'!
             "vid_30": create_input_video(
-                test_filenames[3], fps=10, nframes=30, size=size
+                test_filenames[3], fps=10, num_frames=30, size=size
             ),
-            "vid_3": create_input_video(test_filenames[4], fps=1, nframes=3, size=size),
+            "vid_3": create_input_video(
+                test_filenames[4], fps=1, num_frames=3, size=size
+            ),
         }
         msg_set = set()
         with TestCase.assertLogs("peekingduck.pipeline.nodes.input.visual") as captured:
