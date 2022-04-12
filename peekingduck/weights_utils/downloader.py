@@ -17,6 +17,7 @@ Functions to download model weights.
 """
 
 import os
+import sys
 import zipfile
 from pathlib import Path
 
@@ -39,7 +40,9 @@ def download_weights(weights_dir: Path, blob_file: str) -> None:
 
     # search for downloaded .zip file and extract, then delete
     with zipfile.ZipFile(zip_path, "r") as temp:
-        for file in tqdm(iterable=temp.namelist(), total=len(temp.namelist())):
+        for file in tqdm(
+            file=sys.stdout, iterable=temp.namelist(), total=len(temp.namelist())
+        ):
             temp.extract(member=file, path=weights_dir)
 
     os.remove(zip_path)
@@ -71,6 +74,6 @@ def save_response_content(response: requests.Response, destination: Path) -> Non
     chunk_size = 32768
 
     with open(destination, "wb") as temp:
-        for chunk in tqdm(response.iter_content(chunk_size)):
+        for chunk in tqdm(response.iter_content(chunk_size), file=sys.stdout):
             if chunk:  # filter out keep-alive new chunks
                 temp.write(chunk)
