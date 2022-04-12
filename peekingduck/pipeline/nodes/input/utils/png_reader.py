@@ -64,7 +64,7 @@ class PNGReader:
         if self.has_frames:
             self.has_frames = False  # only 1 frame to read and return
             return True, self.img
-        return False, self.img
+        return False, None
 
     def release(self) -> None:
         """To mimic opencv's video capture object release().

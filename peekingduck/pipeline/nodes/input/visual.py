@@ -282,9 +282,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
         else:
             self.videocap = VideoNoThread(input_source, self.mirror_image)
         self._fps = self.videocap.fps
-        self.total_frame_count = (
-            self.videocap.frame_count if self.videocap.frame_count > 0 else 0
-        )
+        self.total_frame_count = max(0, self.videocap.frame_count)
         self.frame_counter = 0  # reset for newly opened input
         self._progress_tenth: int = 1  # each 10% progress
         # check resizing configuration
