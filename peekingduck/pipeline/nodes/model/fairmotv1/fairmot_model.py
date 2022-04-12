@@ -69,7 +69,17 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
-        self.tracker = Tracker(config, model_dir, frame_rate)
+        self.tracker = Tracker(
+            model_dir,
+            frame_rate,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["input_size"],
+            self.config["K"],
+            self.config["min_box_area"],
+            self.config["track_buffer"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, image: np.ndarray
