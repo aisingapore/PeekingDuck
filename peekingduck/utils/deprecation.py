@@ -12,18 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Abstract Node class for all nodes.
-"""
+import warnings
 
 
-# pylint: disable=unused-import
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.utils.deprecation import deprecate
+def deprecate(message: str, level: int) -> None:
+    """Issues a deprecation warning using the FutureWarning category.
 
-deprecate(
-    "importing AbstractNode from peekingduck.pipeline.nodes.node is deprecated "
-    "and will be removed in a future version. Please import from "
-    "peekingduck.pipeline.nodes.abstract_node instead.",
-    3,
-)
+    Args:
+        message (str): The deprecation warning message.
+        level (int): The `stacklevel`, can be used to refer to `deprecate()`'s
+            caller instead of the source of `deprecate()` itself.
+
+    """
+    warnings.warn(message, category=FutureWarning, stacklevel=level)

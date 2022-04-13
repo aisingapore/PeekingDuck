@@ -30,6 +30,7 @@ from peekingduck.config_loader import ConfigLoader
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
+from peekingduck.utils.deprecation import deprecate
 
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
 
@@ -84,8 +85,12 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
 
         # dotw 2022-03-17: Temporary helper methods
         def deprecation_warning(name: str, config: Union[str, Dict[str, Any]]) -> None:
-            self.logger.warning(f"`{name}` deprecated, replaced by `input.visual`")
-            self.logger.warning(f"convert `{name}` to `input.visual`:{config}")
+            deprecate(
+                f"`{name}` deprecated and will be removed in the future. "
+                "Please use `input.visual` instead.",
+                4,
+            )
+            self.logger.warning(f"convert `{name}` to `input.visual`: {config}")
 
         with open(pipeline_path) as node_yml:
             data = yaml.safe_load(node_yml)
