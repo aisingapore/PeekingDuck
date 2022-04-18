@@ -16,6 +16,7 @@
 
 import operator
 import os
+import sys
 import zipfile
 from pathlib import Path
 from typing import Callable, List, Optional, Set, Tuple, Union
@@ -367,7 +368,11 @@ class WeightsDownloaderMixin:
             destination (Path): Destination directory for extraction.
         """
         with zipfile.ZipFile(zip_path, "r") as infile:
-            for file in tqdm(iterable=infile.namelist(), total=len(infile.namelist())):
+            for file in tqdm(
+                file=sys.stdout,
+                iterable=infile.namelist(),
+                total=len(infile.namelist()),
+            ):
                 infile.extract(member=file, path=destination_dir)
 
         os.remove(zip_path)

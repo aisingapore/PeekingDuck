@@ -217,6 +217,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                 self._curr_file_num = 0
             else:
                 self._source_type = SourceType.FILE
+                self._file_name = path.name
 
     def _get_files(self, path: Path) -> None:
         """Read all files in given directory (non-recursive)
