@@ -28,7 +28,7 @@ def not_raises(exception):
         raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
 
 
-def create_reader():
+def create_reader(source=None):
     media_reader = Node(
         {
             "input": "source",
@@ -40,7 +40,7 @@ def create_reader():
             "pipeline_end": False,
             "saved_video_fps": 0,
             "threading": False,
-            "source": ".",
+            "source": source if source else ".",
         }
     )
     return media_reader
@@ -76,10 +76,12 @@ class TestMediaReader:
             reader.run({})
 
     def test_reader_reads_one_image(self, create_input_image):
-        image1 = create_input_image("image1.png", (900, 800, 3))
-        reader = create_reader()
+        filename = "image1.png"
+        image1 = create_input_image(filename, (900, 800, 3))
+        reader = create_reader(source=filename)
         output1 = reader.run({})
         assert np.array_equal(output1["img"], image1)
+        assert output1["filename"] == filename
 
     def test_reader_reads_multi_images(self, create_input_image):
         image1 = create_input_image("image1.png", (900, 800, 3))
