@@ -315,11 +315,21 @@ class WeightsDownloaderMixin:
                     outfile.write(chunk)
 
     def _find_paths(self) -> Tuple[Path, Path]:
-        """Checks for model weight paths from weights folder.
+        """Constructs the `peekingduck_weights` directory path and the model
+        sub-directory path.
 
         Returns:
-            weights_dir (Path): Path to where all weights are stored.
-            model_dir (Path): Path to where weights for a model are stored.
+            (Tuple[Path, Path]): A tuple of paths containing:
+            - weights_dir: /path/to/peekingduck_weights where all weights are
+              stored.
+            - model_dir: /path/to/peekingduck_weights/<model_name> where
+              weights for a model are stored.
+
+        Raises:
+            FileNotFoundError: When the user-specified `weights_parent_dir`
+                does not exist.
+            ValueError: When the user-specified `weights_parent_dir` is not an
+                absolute path.
         """
         if self.config["weights_parent_dir"] is None:
             weights_parent_dir = self.config["root"].parent
@@ -328,12 +338,11 @@ class WeightsDownloaderMixin:
 
             if not weights_parent_dir.exists():
                 raise FileNotFoundError(
-                    f"The specified weights_parent_dir: {weights_parent_dir} does not exist."
+                    f"weights_parent_dir does not exist: {weights_parent_dir}"
                 )
             if not weights_parent_dir.is_absolute():
                 raise ValueError(
-                    f"The specified weights_parent_dir: {weights_parent_dir} "
-                    "must be an absolute path."
+                    f"weights_parent_dir must be an absolute path: {weights_parent_dir}"
                 )
 
         weights_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR
