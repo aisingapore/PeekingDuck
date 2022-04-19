@@ -377,11 +377,8 @@ class WeightsDownloaderMixin:
             destination (Path): Destination directory for extraction.
         """
         with zipfile.ZipFile(zip_path, "r") as infile:
-            for file in tqdm(
-                file=sys.stdout,
-                iterable=infile.namelist(),
-                total=len(infile.namelist()),
-            ):
+            file_list = infile.namelist()
+            for file in tqdm(file=sys.stdout, iterable=file_list, total=len(file_list)):
                 infile.extract(member=file, path=destination_dir)
 
         os.remove(zip_path)
