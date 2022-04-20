@@ -42,10 +42,7 @@ class TestWeightsDownloaderMixin:
 
         with pytest.raises(FileNotFoundError) as excinfo:
             weights_model.download_weights()
-        assert (
-            f"The specified weights_parent_dir: {invalid_dir} does not exist."
-            == str(excinfo.value)
-        )
+        assert f"weights_parent_dir does not exist: {invalid_dir}" == str(excinfo.value)
 
     def test_parent_dir_not_absolute(self, weights_model):
         relative_dir = PKD_DIR.relative_to(PKD_DIR.parent)
@@ -53,9 +50,8 @@ class TestWeightsDownloaderMixin:
 
         with pytest.raises(ValueError) as excinfo:
             weights_model.download_weights()
-        assert (
-            f"The specified weights_parent_dir: {relative_dir} must be an absolute path."
-            == str(excinfo.value)
+        assert f"weights_parent_dir must be an absolute path: {relative_dir}" == str(
+            excinfo.value
         )
 
     @pytest.mark.usefixtures("tmp_dir")
