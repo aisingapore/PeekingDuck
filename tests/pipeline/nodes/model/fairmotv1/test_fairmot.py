@@ -248,33 +248,34 @@ class TestFairMOT:
                 prev_tags = output["obj_attrs"]["ids"]
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_extract_file", wraps=do_nothing)
     def test_no_weights(
         self,
         _,
-        mock_download_blob_to,
+        mock_download_to,
         mock_extract_file,
         fairmot_config,
     ):
-        weights_dir = fairmot_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        weights_dir = (
+            fairmot_config["root"].parent
+            / PEEKINGDUCK_WEIGHTS_SUBDIR
+            / fairmot_config["weights"]["model_subdir"]
+        )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.fairmot_mot.fairmot_model.logger"
         ) as captured:
             fairmot = Node(config=fairmot_config)
             print(captured)
             # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
+            assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
                 == f"Weights downloaded to {weights_dir}."
             )
             assert fairmot is not None
 
-        assert mock_download_blob_to.called
+        assert mock_download_to.called
         assert mock_extract_file.called
 
     def test_invalid_config_value(self, fairmot_bad_config_value):

@@ -5,7 +5,13 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: yolox,
-    blob_file: yolox.zip,
+    blob_file:
+      {
+        yolox-tiny: yolox-tiny.zip,
+        yolox-s: yolox-s.zip,
+        yolox-m: yolox-m.zip,
+        yolox-l: yolox-l.zip,
+      },
     classes_file: coco.names,
     model_file:
       {

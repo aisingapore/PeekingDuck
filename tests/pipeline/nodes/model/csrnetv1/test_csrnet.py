@@ -72,32 +72,33 @@ class TestCsrnet:
         assert output["count"] == expected["count"]
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_extract_file", wraps=do_nothing)
     def test_no_weights(
         self,
         _,
-        mock_download_blob_to,
+        mock_download_to,
         mock_extract_file,
         csrnet_config,
     ):
-        weights_dir = csrnet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        weights_dir = (
+            csrnet_config["root"].parent
+            / PEEKINGDUCK_WEIGHTS_SUBDIR
+            / csrnet_config["weights"]["model_subdir"]
+        )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.csrnetv1.csrnet_model.logger"
         ) as captured:
             csrnet = Node(config=csrnet_config)
             # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
+            assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
                 == f"Weights downloaded to {weights_dir}."
             )
             assert csrnet is not None
 
-        assert mock_download_blob_to.called
+        assert mock_download_to.called
         assert mock_extract_file.called
 
     def test_invalid_config_value(self, csrnet_bad_config_value):

@@ -133,32 +133,33 @@ class TestYOLOX:
         assert yolox.model.detect_ids == [0]
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "_extract_file", wraps=do_nothing)
     def test_no_weights(
         self,
         _,
-        mock_download_blob_to,
+        mock_download_to,
         mock_extract_file,
         yolox_config,
     ):
-        weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        model_dir = (
+            yolox_config["root"].parent
+            / PEEKINGDUCK_WEIGHTS_SUBDIR
+            / yolox_config["weights"]["model_subdir"]
+        )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
         ) as captured:
             yolox = Node(config=yolox_config)
             # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
+            assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert yolox is not None
 
-        assert mock_download_blob_to.called
+        assert mock_download_to.called
         assert mock_extract_file.called
 
     def test_invalid_config_detect_ids(self, yolox_config):

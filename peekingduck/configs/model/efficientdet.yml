@@ -5,7 +5,14 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: efficientdet,
-    blob_file: efficientdet.zip,
+    blob_file:
+      {
+        0: efficientdet-d0.zip,
+        1: efficientdet-d1.zip,
+        2: efficientdet-d2.zip,
+        3: efficientdet-d3.zip,
+        4: efficientdet-d4.zip,
+      },
     classes_file: coco_90.json,
     model_file:
       {

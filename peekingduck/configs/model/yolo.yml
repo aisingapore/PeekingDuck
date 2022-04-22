@@ -4,8 +4,8 @@ output: ["bboxes", "bbox_labels", "bbox_scores"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: yolov4,
-    blob_file: yolo.zip,
+    model_subdir: yolo,
+    blob_file: { v4: yolov4.zip, v4tiny: yolov4-tiny.zip },
     classes_file: coco.names,
     model_file: { v4: yolov4.pb, v4tiny: yolov4-tiny.pb },
   }

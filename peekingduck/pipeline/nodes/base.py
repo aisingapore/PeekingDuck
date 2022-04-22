@@ -14,6 +14,7 @@
 
 """Mixin classes for PeekingDuck nodes and models."""
 
+import hashlib
 import operator
 import os
 import sys
@@ -278,41 +279,77 @@ class ThresholdCheckerMixin:
 class WeightsDownloaderMixin:
     """Mixin class providing utility methods for downloading model weights."""
 
+    @property
+    def blob_filename(self) -> str:
+        """Name of the selected weights on GCP."""
+        return self.config["weights"]["blob_file"][self.config["model_type"]]
+
+    @property
+    def classes_filename(self) -> Optional[str]:
+        """Name of the file containing classes IDs/labels for the selected
+        model.
+        """
+        return self.config["weights"].get("classes_file")
+
+    @property
+    def model_filename(self) -> str:
+        """Name of the selected weights on local machine."""
+        return self.config["weights"]["model_file"][self.config["model_type"]]
+
     def download_weights(self) -> Path:
         """Downloads weights for specified ``blob_file``.
 
         Returns:
             (Path): Path to the directory where the model's weights are stored.
         """
-        weights_dir, model_dir = self._find_paths()
-        if self._has_weights(weights_dir, model_dir):
+        _, model_dir = self._find_paths()
+        if self._has_weights(model_dir):
             return model_dir
 
-        self.logger.warning("No weights detected. Proceeding to download...")
+        self.logger.info("Proceeding to download...")
 
-        zip_path = weights_dir / "temp.zip"
-        self._download_blob_to(zip_path)
-        self.extract_file(zip_path, weights_dir)
+        model_dir.mkdir(parents=True, exist_ok=True)
+        # zip_path = weights_dir / "temp.zip"
+        self._download_to(self.blob_filename, model_dir)
+        self._extract_file(model_dir)
+        if self.classes_filename is not None:
+            self._download_to(self.classes_filename, model_dir)
 
-        self.logger.info(f"Weights downloaded to {weights_dir}.")
+        self.logger.info(f"Weights downloaded to {model_dir}.")
 
         return model_dir
 
-    def _download_blob_to(self, destination: Path) -> None:  # pragma: no cover
+    def _download_to(
+        self, filename: str, destination_dir: Path
+    ) -> None:  # pragma: no cover
         """Downloads publicly shared files from Google Cloud Platform.
 
         Saves download content in chunks. Chunk size set to large integer as
         weights are usually pretty large.
 
         Args:
-            destination (Path): Destination path of download.
+            destination_dir (Path): Destination directory of downloaded file.
         """
-        with open(destination, "wb") as outfile, requests.get(
+        with open(destination_dir / filename, "wb") as outfile, requests.get(
             f"{BASE_URL}/{self.config['weights']['blob_file']}", stream=True
         ) as response:
             for chunk in tqdm(response.iter_content(chunk_size=32768)):
                 if chunk:  # filter out keep-alive new chunks
                     outfile.write(chunk)
+
+    def _extract_file(self, destination_dir: Path) -> None:  # pragma: no cover
+        """Extracts the zip file to ``destination_dir``.
+
+        Args:
+            destination_dir (Path): Destination directory for extraction.
+        """
+        zip_path = destination_dir / self.blob_filename
+        with zipfile.ZipFile(zip_path, "r") as infile:
+            file_list = infile.namelist()
+            for file in tqdm(file=sys.stdout, iterable=file_list, total=len(file_list)):
+                infile.extract(member=file, path=destination_dir)
+
+        os.remove(zip_path)
 
     def _find_paths(self) -> Tuple[Path, Path]:
         """Constructs the `peekingduck_weights` directory path and the model
@@ -350,35 +387,60 @@ class WeightsDownloaderMixin:
 
         return weights_dir, model_dir
 
-    @staticmethod
-    def _has_weights(weights_dir: Path, model_dir: Path) -> bool:
-        """Checks for model weight paths from weights folder.
+    def _get_weights_checksum(self) -> str:
+        with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
+            checksums = response.json()
+        return checksums[self.config["weights"]["model_subdir"]][
+            str(self.config["model_type"])
+        ]
+
+    def _has_weights(self, model_dir: Path) -> bool:
+        """Checks if the specified weights file is present in the model
+        sub-directory of the PeekingDuck weights directory.
 
         Args:
-            weights_dir (Path): Path to where all weights are stored.
-            model_dir (Path): Path to where weights for a model are stored.
+            model_dir (Path): /path/to/peekingduck_weights/<model_name> where
+                weights for a model are stored.
 
         Returns:
-            (bool): ``True`` if specified files/directories in
-            ``weights_dir`` exist, else ``False``.
+            (bool): ``True`` if specified weights file in ``model_dir``
+            exists and up-to-date/not corrupted, else ``False``.
         """
-        if not weights_dir.exists():
-            weights_dir.mkdir()
+        weights_path = model_dir / self.model_filename
+        if not weights_path.exists():
+            self.logger.warning("No weights detected.")
             return False
-        # Doesn't actually check if the files exist
-        return model_dir.exists()
+        if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
+            self.logger.warning("Weights file is corrupted/out-of-date.")
+            return False
+        return True
 
     @staticmethod
-    def extract_file(zip_path: Path, destination_dir: Path) -> None:  # pragma: no cover
-        """Extracts the zip file to ``destination_dir``.
+    def sha256sum(path: Path, hash_func: "hashlib._Hash" = None) -> "hashlib._Hash":
+        """Hashes the specified file/directory using SHA256. Reads the file in
+        chunks to be more memory efficient.
+
+        When a directory path is passed as the argument, sort the folder
+        content and hash the content recursively.
 
         Args:
-            zip_path (Path): Path to zip file.
-            destination (Path): Destination directory for extraction.
-        """
-        with zipfile.ZipFile(zip_path, "r") as infile:
-            file_list = infile.namelist()
-            for file in tqdm(file=sys.stdout, iterable=file_list, total=len(file_list)):
-                infile.extract(member=file, path=destination_dir)
+            path (Path): Path to the file to be hashed.
+            hash_func (Optional[hashlib._Hash]): A hash function which uses the
+                SHA-256 algorithm.
 
-        os.remove(zip_path)
+        Returns:
+            (hashlib._Hash): The updated hash function.
+        """
+        if hash_func is None:
+            hash_func = hashlib.sha256()
+
+        if path.is_dir():
+            for subpath in sorted(path.iterdir()):
+                if subpath.name not in {".DS_Store", "__MACOSX"}:
+                    hash_func = WeightsDownloaderMixin.sha256sum(subpath, hash_func)
+        else:
+            buffer_size = hash_func.block_size * 1024
+            with open(path, "rb") as infile:
+                for chunk in iter(lambda: infile.read(buffer_size), b""):
+                    hash_func.update(chunk)
+        return hash_func

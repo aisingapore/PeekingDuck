@@ -6,7 +6,12 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: movenet,
-    blob_file: movenet.zip,
+    blob_file:
+      {
+        multipose_lightning: multipose_lightning.zip,
+        singlepose_lightning: singlepose_lightning.zip,
+        singlepose_thunder: singlepose_thunder.zip,
+      },
     model_file:
       {
         multipose_lightning: multipose_lightning,

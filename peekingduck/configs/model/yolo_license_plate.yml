@@ -5,7 +5,7 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: yolo_license_plate,
-    blob_file: yolo_license_plate.zip,
+    blob_file: { v4: LPyolov4.zip, v4tiny: LPyolov4tiny.zip },
     classes_file: classes.names,
     model_file: { v4: LPyolov4, v4tiny: LPyolov4tiny },
   }

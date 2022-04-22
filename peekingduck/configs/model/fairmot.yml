@@ -7,7 +7,7 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: fairmot,
-    blob_file: fairmot.zip,
+    blob_file: { dla_34: fairmot_dla34-stripped-half.zip },
     model_file: { dla_34: fairmot_dla34-stripped-half.pth },
   }
 

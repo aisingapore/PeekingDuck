@@ -5,7 +5,7 @@ weights_parent_dir: null
 weights:
   {
     model_subdir: yolo_face,
-    blob_file: yolo_face.zip,
+    blob_file: { v4: yolov4.zip, v4tiny: yolov4tiny.zip },
     classes_file: classes.names,
     model_file: { v4: yolov4, v4tiny: yolov4tiny },
   }
