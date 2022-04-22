@@ -274,10 +274,11 @@ class TestJDE:
         mock_extract_file,
         jde_config,
     ):
-        weights_dir = (
+        model_dir = (
             jde_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / jde_config["weights"]["model_subdir"]
+            / jde_config["weights"][jde_config["model_format"]]["model_subdir"]
+            / jde_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.jdev1.jde_model.logger"
@@ -287,7 +288,7 @@ class TestJDE:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert jde is not None
 
@@ -302,7 +303,7 @@ class TestJDE:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, jde_config):
         with pytest.raises(ValueError) as excinfo:
-            jde_config["weights"]["model_file"][
+            jde_config["weights"][jde_config["model_format"]]["model_file"][
                 jde_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=jde_config)

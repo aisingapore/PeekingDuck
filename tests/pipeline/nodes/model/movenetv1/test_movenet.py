@@ -174,10 +174,11 @@ class TestMoveNet:
         mock_extract_file,
         movenet_config,
     ):
-        weights_dir = (
+        model_dir = (
             movenet_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / movenet_config["weights"]["model_subdir"]
+            / movenet_config["weights"][movenet_config["model_format"]]["model_subdir"]
+            / movenet_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.movenetv1.movenet_model.logger"
@@ -187,7 +188,7 @@ class TestMoveNet:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert movenet is not None
 

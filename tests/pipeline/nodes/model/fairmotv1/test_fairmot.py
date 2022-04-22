@@ -257,10 +257,11 @@ class TestFairMOT:
         mock_extract_file,
         fairmot_config,
     ):
-        weights_dir = (
+        model_dir = (
             fairmot_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / fairmot_config["weights"]["model_subdir"]
+            / fairmot_config["weights"][fairmot_config["model_format"]]["model_subdir"]
+            / fairmot_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.fairmot_mot.fairmot_model.logger"
@@ -271,7 +272,7 @@ class TestFairMOT:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert fairmot is not None
 
@@ -286,7 +287,9 @@ class TestFairMOT:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, fairmot_config):
         with pytest.raises(ValueError) as excinfo:
-            fairmot_config["weights"]["model_file"]["dla_34"] = "some/invalid/path"
+            fairmot_config["weights"][fairmot_config["model_format"]]["model_file"][
+                "dla_34"
+            ] = "some/invalid/path"
             _ = Node(config=fairmot_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 

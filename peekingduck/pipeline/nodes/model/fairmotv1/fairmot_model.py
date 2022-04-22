@@ -73,7 +73,7 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             model_dir,
             frame_rate,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["input_size"],
             self.config["K"],
             self.config["min_box_area"],

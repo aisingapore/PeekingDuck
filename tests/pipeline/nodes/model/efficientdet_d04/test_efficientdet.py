@@ -139,10 +139,13 @@ class TestEfficientDet:
         mock_extract_file,
         efficientdet_config,
     ):
-        weights_dir = (
+        model_dir = (
             efficientdet_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / efficientdet_config["weights"]["model_subdir"]
+            / efficientdet_config["weights"][efficientdet_config["model_format"]][
+                "model_subdir"
+            ]
+            / efficientdet_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
@@ -152,7 +155,7 @@ class TestEfficientDet:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert efficientdet is not None
 

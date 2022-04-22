@@ -136,10 +136,11 @@ class TestHrnet:
         mock_extract_file,
         hrnet_config,
     ):
-        weights_dir = (
+        model_dir = (
             hrnet_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / hrnet_config["weights"]["model_subdir"]
+            / hrnet_config["weights"][hrnet_config["model_format"]]["model_subdir"]
+            / hrnet_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model.logger"
@@ -149,7 +150,7 @@ class TestHrnet:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert hrnet is not None
 

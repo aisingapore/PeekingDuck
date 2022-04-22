@@ -105,10 +105,11 @@ class TestYolo:
         mock_extract_file,
         yolo_config,
     ):
-        weights_dir = (
+        model_dir = (
             yolo_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / yolo_config["weights"]["model_subdir"]
+            / yolo_config["weights"][yolo_config["model_format"]]["model_subdir"]
+            / yolo_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger"
@@ -118,7 +119,7 @@ class TestYolo:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert yolo is not None
 
@@ -138,7 +139,7 @@ class TestYolo:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, yolo_config):
         with pytest.raises(ValueError) as excinfo:
-            yolo_config["weights"]["model_file"][
+            yolo_config["weights"][yolo_config["model_format"]]["model_file"][
                 yolo_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=yolo_config)

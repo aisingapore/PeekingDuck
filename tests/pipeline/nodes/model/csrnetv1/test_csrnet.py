@@ -81,10 +81,11 @@ class TestCsrnet:
         mock_extract_file,
         csrnet_config,
     ):
-        weights_dir = (
+        model_dir = (
             csrnet_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / csrnet_config["weights"]["model_subdir"]
+            / csrnet_config["weights"][csrnet_config["model_format"]]["model_subdir"]
+            / csrnet_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.csrnetv1.csrnet_model.logger"
@@ -94,7 +95,7 @@ class TestCsrnet:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert csrnet is not None
 

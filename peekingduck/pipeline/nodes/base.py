@@ -20,7 +20,7 @@ import os
 import sys
 import zipfile
 from pathlib import Path
-from typing import Callable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
 
 import requests
 from tqdm import tqdm
@@ -282,19 +282,33 @@ class WeightsDownloaderMixin:
     @property
     def blob_filename(self) -> str:
         """Name of the selected weights on GCP."""
-        return self.config["weights"]["blob_file"][self.config["model_type"]]
+        return self.weights["blob_file"][self.config["model_type"]]
 
     @property
     def classes_filename(self) -> Optional[str]:
         """Name of the file containing classes IDs/labels for the selected
         model.
         """
-        return self.config["weights"].get("classes_file")
+        return self.weights.get("classes_file")
+
+    @property
+    def weights(self) -> Dict[str, Any]:
+        """Dictionary of `blob_file`, `config_file`, and `model_file` names
+        based on the selected `model_format`.
+        """
+        return self.config["weights"][self.config["model_format"]]
 
     @property
     def model_filename(self) -> str:
         """Name of the selected weights on local machine."""
-        return self.config["weights"]["model_file"][self.config["model_type"]]
+        return self.weights["model_file"][self.config["model_type"]]
+
+    @property
+    def model_subdir(self) -> str:
+        """Model weights sub-directory name based on the selected model
+        format.
+        """
+        return self.weights["model_subdir"]
 
     def download_weights(self) -> Path:
         """Downloads weights for specified ``blob_file``.
@@ -302,14 +316,13 @@ class WeightsDownloaderMixin:
         Returns:
             (Path): Path to the directory where the model's weights are stored.
         """
-        _, model_dir = self._find_paths()
+        model_dir = self._find_paths()
         if self._has_weights(model_dir):
             return model_dir
 
         self.logger.info("Proceeding to download...")
 
         model_dir.mkdir(parents=True, exist_ok=True)
-        # zip_path = weights_dir / "temp.zip"
         self._download_to(self.blob_filename, model_dir)
         self._extract_file(model_dir)
         if self.classes_filename is not None:
@@ -331,7 +344,8 @@ class WeightsDownloaderMixin:
             destination_dir (Path): Destination directory of downloaded file.
         """
         with open(destination_dir / filename, "wb") as outfile, requests.get(
-            f"{BASE_URL}/{self.config['weights']['blob_file']}", stream=True
+            f"{BASE_URL}/{self.model_subdir}/{self.config['model_format']}/{filename}",
+            stream=True,
         ) as response:
             for chunk in tqdm(response.iter_content(chunk_size=32768)):
                 if chunk:  # filter out keep-alive new chunks
@@ -351,15 +365,12 @@ class WeightsDownloaderMixin:
 
         os.remove(zip_path)
 
-    def _find_paths(self) -> Tuple[Path, Path]:
+    def _find_paths(self) -> Path:
         """Constructs the `peekingduck_weights` directory path and the model
         sub-directory path.
 
         Returns:
-            (Tuple[Path, Path]): A tuple of paths containing:
-            - weights_dir: /path/to/peekingduck_weights where all weights are
-              stored.
-            - model_dir: /path/to/peekingduck_weights/<model_name> where
+            (Path): /path/to/peekingduck_weights/<model_name> where
               weights for a model are stored.
 
         Raises:
@@ -382,15 +393,17 @@ class WeightsDownloaderMixin:
                     f"weights_parent_dir must be an absolute path: {weights_parent_dir}"
                 )
 
-        weights_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR
-        model_dir = weights_dir / self.config["weights"]["model_subdir"]
-
-        return weights_dir, model_dir
+        return (
+            weights_parent_dir
+            / PEEKINGDUCK_WEIGHTS_SUBDIR
+            / self.model_subdir
+            / self.config["model_format"]
+        )
 
     def _get_weights_checksum(self) -> str:
         with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
             checksums = response.json()
-        return checksums[self.config["weights"]["model_subdir"]][
+        return checksums[self.model_subdir][self.config["model_format"]][
             str(self.config["model_type"])
         ]
 

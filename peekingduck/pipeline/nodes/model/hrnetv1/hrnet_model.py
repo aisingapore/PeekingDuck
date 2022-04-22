@@ -39,7 +39,7 @@ class HRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.detector = Detector(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["resolution"],
             self.config["score_threshold"],

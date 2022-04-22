@@ -166,10 +166,11 @@ class TestPoseNet:
         mock_extract_file,
         posenet_config,
     ):
-        weights_dir = (
+        model_dir = (
             posenet_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / posenet_config["weights"]["model_subdir"]
+            / posenet_config["weights"][posenet_config["model_format"]]["model_subdir"]
+            / posenet_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.posenetv1.posenet_model.logger"
@@ -179,7 +180,7 @@ class TestPoseNet:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert posenet is not None
 
@@ -194,7 +195,7 @@ class TestPoseNet:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, posenet_config):
         with pytest.raises(ValueError) as excinfo:
-            posenet_config["weights"]["model_file"][
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"][
                 posenet_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=posenet_config)

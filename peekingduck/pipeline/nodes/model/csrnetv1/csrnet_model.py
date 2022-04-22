@@ -41,7 +41,7 @@ class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.predictor = Predictor(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["width"],
         )
 

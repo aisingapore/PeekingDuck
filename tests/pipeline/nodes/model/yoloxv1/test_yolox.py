@@ -145,7 +145,8 @@ class TestYOLOX:
         model_dir = (
             yolox_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / yolox_config["weights"]["model_subdir"]
+            / yolox_config["weights"][yolox_config["model_format"]]["model_subdir"]
+            / yolox_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
@@ -175,7 +176,7 @@ class TestYOLOX:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, yolox_config):
         with pytest.raises(ValueError) as excinfo:
-            yolox_config["weights"]["model_file"][
+            yolox_config["weights"][yolox_config["model_format"]]["model_file"][
                 yolox_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=yolox_config)

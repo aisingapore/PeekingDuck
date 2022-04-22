@@ -57,7 +57,7 @@ def mtcnn_bad_config_value(request, mtcnn_config):
 
 
 @pytest.mark.mlmodel
-class TestMtcnn:
+class TestMTCNN:
     def test_no_human_face_image(self, no_human_image, mtcnn_config):
         no_human_img = cv2.imread(no_human_image)
         mtcnn = Node(mtcnn_config)
@@ -97,10 +97,11 @@ class TestMtcnn:
         mock_extract_file,
         mtcnn_config,
     ):
-        weights_dir = (
+        model_dir = (
             mtcnn_config["root"].parent
             / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / mtcnn_config["weights"]["model_subdir"]
+            / mtcnn_config["weights"][mtcnn_config["model_format"]]["model_subdir"]
+            / mtcnn_config["model_format"]
         )
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
@@ -110,7 +111,7 @@ class TestMtcnn:
             assert captured.records[0].getMessage() == "Proceeding to download..."
             assert (
                 captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
+                == f"Weights downloaded to {model_dir}."
             )
             assert mtcnn is not None
 
@@ -125,7 +126,7 @@ class TestMtcnn:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, mtcnn_config):
         with pytest.raises(ValueError) as excinfo:
-            mtcnn_config["weights"]["model_file"][
+            mtcnn_config["weights"][mtcnn_config["model_format"]]["model_file"][
                 mtcnn_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=mtcnn_config)
