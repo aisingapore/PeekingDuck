@@ -12,22 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-from unittest import mock
-
 import pytest
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from tests.conftest import PKD_DIR, do_nothing, not_raises
-
-
-@pytest.fixture
-def weights_model():
-    return WeightsModel()
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from tests.conftest import not_raises
 
 
 @pytest.fixture
@@ -35,58 +23,12 @@ def threshold_model():
     return ThresholdModel()
 
 
-class WeightsModel(WeightsDownloaderMixin):
-    def __init__(self):
-        self.config = {}
-        self.logger = mock.Mock()
-
-
 class ThresholdModel(ThresholdCheckerMixin):
     def __init__(self):
         self.config = {"a": 12.5, "b": 10, "c": "value", "d": [10, 12.5, 13]}
 
 
-class TestBase:
-    def test_parent_dir_not_exist(self, weights_model):
-        invalid_dir = "invalid_dir"
-        weights_model.config["weights_parent_dir"] = invalid_dir
-
-        with pytest.raises(FileNotFoundError) as excinfo:
-            weights_model.download_weights()
-        assert (
-            f"The specified weights_parent_dir: {invalid_dir} does not exist."
-            == str(excinfo.value)
-        )
-
-    def test_parent_dir_not_absolute(self, weights_model):
-        relative_dir = PKD_DIR.relative_to(PKD_DIR.parent)
-        weights_model.config["weights_parent_dir"] = relative_dir
-
-        with pytest.raises(ValueError) as excinfo:
-            weights_model.download_weights()
-        assert (
-            f"The specified weights_parent_dir: {relative_dir} must be an absolute path."
-            == str(excinfo.value)
-        )
-
-    @pytest.mark.usefixtures("tmp_dir")
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_create_weights_dir(
-        self, mock_download_blob_to, mock_extract_file, weights_model
-    ):
-        weights_parent_dir = Path.cwd().resolve()
-        weights_model.config["weights_parent_dir"] = weights_parent_dir
-        weights_model.config["weights"] = {"model_subdir": "some_model"}
-
-        assert not (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
-
-        weights_model.download_weights()
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
-        assert (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
-
+class TestThresholdCheckerMixin:
     @pytest.mark.parametrize("include", ["lower", "both"])
     def test_threshold_above_value(self, threshold_model, include):
         with not_raises(ValueError):
