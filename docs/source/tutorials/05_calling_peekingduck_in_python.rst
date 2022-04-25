@@ -97,7 +97,7 @@ Change the content of ``debug.py`` to:
   
       import numpy as np
   
-      from peekingduck.pipeline.nodes.node import AbstractNode
+      from peekingduck.pipeline.nodes.abstract_node import AbstractNode
   
   
       class Node(AbstractNode):

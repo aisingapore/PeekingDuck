@@ -19,7 +19,7 @@ Crowd counting class using csrnet model to predict density map and crowd count
 import logging
 import math
 from pathlib import Path
-from typing import Any, Dict, Tuple, Callable
+from typing import Callable, Dict, Tuple
 
 import cv2
 import numpy as np
@@ -29,11 +29,14 @@ import tensorflow as tf
 class Predictor:  # pylint: disable=too-few-public-methods
     """Crowd counting class using csrnet model to predict density map and crowd count"""
 
-    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+    def __init__(
+        self, model_dir: Path, model_type: str, model_file: Dict[str, str], width: int
+    ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        self.config = config
-        self.model_dir = model_dir
+        self.model_type = model_type
+        self.model_path = model_dir / model_file[self.model_type]
+        self.width = width
 
         self.csrnet = self._create_csrnet_model()
 
@@ -41,22 +44,20 @@ class Predictor:  # pylint: disable=too-few-public-methods
         """
         Creates csrnet model to predict density map and crowd count
         """
-        model_type = self.config["model_type"]
-        model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
-
         self.logger.info(
             "CSRNet model loaded with following configs: \n\t"
-            f"Model type: {self.config['model_type']}, \n\t"
-            f"Input width: {self.config['width']} \n\t"
+            f"Model type: {self.model_type}, \n\t"
+            f"Input width: {self.width} \n\t"
         )
 
-        return self._load_csrnet(model_path)
+        return self._load_csrnet_weights()
 
-    def _load_csrnet(self, model_path: Path) -> Callable:
-        self.module = tf.saved_model.load(str(model_path))
-        self.saved_model = self.module.signatures["serving_default"]
+    def _load_csrnet_weights(self) -> Callable:
+        # Have to create this member variable to keep the loaded weights in
+        # memory
+        self.model = tf.saved_model.load(str(self.model_path))
 
-        return self.saved_model
+        return self.model.signatures["serving_default"]
 
     def predict_count_from_image(self, image: np.ndarray) -> Tuple[np.ndarray, int]:
         """Predicts density map and crowd count from image.
@@ -72,7 +73,7 @@ class Predictor:  # pylint: disable=too-few-public-methods
         processed_image = self._process_input(image)
 
         # 2. generates the predicted density map
-        density_map = self.saved_model(processed_image)["y_out"].numpy()
+        density_map = self.csrnet(processed_image)["y_out"].numpy()
 
         # 3. resizes density map and counts the number of people
         density_map, crowd_count = self._process_output(image, density_map)
@@ -90,7 +91,6 @@ class Predictor:  # pylint: disable=too-few-public-methods
             image (np.ndarray): processed image.
         """
         image = self._resize_image(image)
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = image / 255.0
         image[:, :, 0] = (image[:, :, 0] - 0.485) / 0.229
         image[:, :, 1] = (image[:, :, 1] - 0.456) / 0.224
@@ -108,8 +108,8 @@ class Predictor:  # pylint: disable=too-few-public-methods
         Returns:
             image (np.ndarray): resized image.
         """
-        ratio = self.config["width"] / image.shape[1]
-        dim = (self.config["width"], int(image.shape[0] * ratio))
+        ratio = self.width / image.shape[1]
+        dim = (self.width, int(image.shape[0] * ratio))
         image = cv2.resize(image, dim, interpolation=cv2.INTER_LINEAR)
         return image
 

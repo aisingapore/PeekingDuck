@@ -1,0 +1,32 @@
+v4:
+  t1:
+    bboxes: [[0.3254, 0.2821, 0.3584, 0.3807]]
+    bbox_labels: ["no_mask"]
+    bbox_scores: [0.921]
+  t2:
+    bboxes: [[0.3280, 0.1133, 0.4198, 0.1852]]
+    bbox_labels: ["no_mask"]
+    bbox_scores: [0.994]
+  t4:
+    bboxes:
+      [
+        [0.2909, 0.3028, 0.3282, 0.3670],
+        [0.4330, 0.3472, 0.4603, 0.3892],
+        [0.6288, 0.3298, 0.6575, 0.3816],
+        [0.5132, 0.3163, 0.5426, 0.3703],
+      ]
+    bbox_labels: ["no_mask", "no_mask", "no_mask", "no_mask"]
+    bbox_scores: [0.991, 0.985, 0.970, 0.966]
+v4tiny:
+  t1:
+    bboxes: [[0.3080, 0.2930, 0.3507, 0.3779]]
+    bbox_labels: ["no_mask"]
+    bbox_scores: [0.728]
+  t2:
+    bboxes: [[0.3202, 0.1177, 0.4208, 0.2013]]
+    bbox_labels: ["no_mask"]
+    bbox_scores: [0.9134]
+  t4:
+    bboxes: [[0.5126, 0.3149, 0.5436, 0.3708]]
+    bbox_labels: ["no_mask"]
+    bbox_scores: [0.715]

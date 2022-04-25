@@ -39,11 +39,14 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.jdev1.jde_files.tracker import Tracker
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class JDEModel:  # pylint: disable=too-few-public-methods
+class JDEModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """JDE Model with model types: 576x320, 865x480, and 1088x608.
 
     Args:
@@ -58,38 +61,38 @@ class JDEModel:  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self, config: Dict[str, Any], frame_rate: float) -> None:
+        self.config = config
         self.logger = logging.getLogger(__name__)
-        # Check threshold values
-        if not 0 <= config["iou_threshold"] <= 1:
-            raise ValueError("iou_threshold must be in [0, 1]")
-        if not 0 <= config["nms_threshold"] <= 1:
-            raise ValueError("nms_threshold must be in [0, 1]")
-        if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
 
-        # Check for weights
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
+        self.check_bounds(
+            ["iou_threshold", "nms_threshold", "score_threshold"], (0, 1), "within"
         )
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("No weights detected. Proceeding to download...")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"Weights downloaded to {weights_dir}.")
 
-        self.tracker = Tracker(config, model_dir, frame_rate)
+        model_dir = self.download_weights()
+        self.tracker = Tracker(
+            model_dir,
+            frame_rate,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["weights"]["config_file"],
+            self.config["min_box_area"],
+            self.config["track_buffer"],
+            self.config["iou_threshold"],
+            self.config["nms_threshold"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float], List[int]]:
+    ) -> Tuple[List[np.ndarray], List[float], List[int]]:
         """Track objects from image.
 
         Args:
             image (np.ndarray): Image in numpy array.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): A tuple of
+            (Tuple[List[np.ndarray], List[float], List[int]]): A tuple of
             - Numpy array of detected bounding boxes.
-            - List of detection class labels (person).
             - List of detection confidence scores.
             - List of track IDs.
 
@@ -99,5 +102,4 @@ class JDEModel:  # pylint: disable=too-few-public-methods
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
         bboxes, track_ids, bbox_scores = self.tracker.track_objects_from_image(image)
-        bbox_labels = ["person"] * len(bboxes)
-        return bboxes, bbox_labels, bbox_scores, track_ids
+        return bboxes, bbox_scores, track_ids

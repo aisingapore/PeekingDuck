@@ -63,7 +63,7 @@ def create_node_python(node_dir, node_name):
         content = textwrap.dedent(
             """\
             import pathlib
-            from peekingduck.pipeline.nodes.node import AbstractNode
+            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
             
             class Node(AbstractNode):
                 def __init__(self, config, pkd_base_dir=None):

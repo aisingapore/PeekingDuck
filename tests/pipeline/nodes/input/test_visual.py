@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from contextlib import contextmanager
+
 import numpy as np
 import pytest
 from unittest import TestCase
@@ -99,7 +100,9 @@ class TestMediaReader:
     def test_reader_reads_one_video(self, create_input_video):
         num_frames = 30
         size = (600, 800, 3)
-        video1 = create_input_video("video1.avi", fps=10, size=size, nframes=num_frames)
+        video1 = create_input_video(
+            "video1.avi", fps=10, size=size, num_frames=num_frames
+        )
         reader = create_reader()
 
         read_video1 = _get_video_file(reader, num_frames)
@@ -109,8 +112,12 @@ class TestMediaReader:
         num_frames = 20
         size = (600, 800, 3)
 
-        video1 = create_input_video("video1.avi", fps=5, size=size, nframes=num_frames)
-        video2 = create_input_video("video2.avi", fps=5, size=size, nframes=num_frames)
+        video1 = create_input_video(
+            "video1.avi", fps=5, size=size, num_frames=num_frames
+        )
+        video2 = create_input_video(
+            "video2.avi", fps=5, size=size, num_frames=num_frames
+        )
 
         reader = create_reader()
 
@@ -138,9 +145,11 @@ class TestMediaReader:
             "img3": create_input_image(test_filenames[2], size),
             # NB: be sure to sync number of frames with 'key_frames'!
             "vid_30": create_input_video(
-                test_filenames[3], fps=10, nframes=30, size=size
+                test_filenames[3], fps=10, num_frames=30, size=size
             ),
-            "vid_3": create_input_video(test_filenames[4], fps=1, nframes=3, size=size),
+            "vid_3": create_input_video(
+                test_filenames[4], fps=1, num_frames=3, size=size
+            ),
         }
         msg_set = set()
         with TestCase.assertLogs("peekingduck.pipeline.nodes.input.visual") as captured:

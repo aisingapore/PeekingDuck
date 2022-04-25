@@ -22,60 +22,52 @@ import cv2
 import numpy as np
 
 
-def project_bbox(bboxes: np.ndarray, size: Tuple[int, int]) -> np.ndarray:
-    """Project the normalized bbox to specified image coordinates.
+def tlwh2xywh(inputs: np.ndarray, aspect_ratio: float) -> np.ndarray:
+    """Converts from [t, l, w, h] to [x, y, w1, h] format.
+
+    (t, l) is the coordinates of the top left corner, w is the width, and h is
+    the height. (x, y) is the coordinates of the center. The bounding box is
+    adjusted to meet the input aspect ratio, w1 is the new width and h1 is the
+    new height.
+
+    [x, y, w1, h1] is calculated as:
+    x = t + w * 0.5
+    y = l + h * 0.5
+    w1 = {
+        h * aspect_ratio, if w < h * aspect_ratio
+        w               , otherwise
+    }
+    h1 = {
+        w / aspect_ratio, if w > h * aspect_ratio
+        h               , otherwise
+    }
 
     Args:
-        bboxes (np.ndarray): Array of detected bboxes in (top left, btm right)
-            format.
-        size (Tuple[int, int]): Width and height of image space.
-
-    Returns:
-        (np.ndarray): Array of bboxes in (x, y, w, h) format where x, y is top
-            left coordinate.
-    """
-    width, height = size[0] - 1, size[1] - 1
-
-    bboxes[:, 0] = np.clip(bboxes[:, 0], 0, 1)
-    bboxes[:, 1] = np.clip(bboxes[:, 1], 0, 1)
-    bboxes[:, 2] = np.clip(bboxes[:, 2], bboxes[:, 0], 1)
-    bboxes[:, 3] = np.clip(bboxes[:, 3], bboxes[:, 1], 1)
-
-    bboxes[:, [0, 2]] *= width
-    bboxes[:, [1, 3]] *= height
-
-    bboxes[:, 2] = bboxes[:, 2] - bboxes[:, 0]
-    bboxes[:, 3] = bboxes[:, 3] - bboxes[:, 1]
-
-    return bboxes
-
-
-def box2cs(bboxes: np.ndarray, aspect_ratio: float) -> np.ndarray:
-    """Converts bounding box defined by top left (x, y, w, h) to its
-    center (x, y, w, h). The bounding box is also expanded to meet the input
-    aspect ratio.
-
-    Args:
+        inputs (np.ndarray): Input bounding boxes (2-d array) each with the
+            format `(top left x, top left y, width, height)`.
         bboxes (np.ndarray): Array of bboxes in the form of top left
             (x, y, w, h).
-        aspect_ratio (float): W:H ratio for the new box.
+        aspect_ratio (float): w:h ratio for the new box.
 
     Returns:
-        (np.ndarray): Array of bboxes in center (x, y, w, h) format that meets
-        the aspect ratio.
+        (np.ndarray): Array of bboxes in center (x, y, w1, h1) format that
+        meets the aspect ratio.
     """
-    bboxes[:, 0] = bboxes[:, 0] + bboxes[:, 2] * 0.5
-    bboxes[:, 1] = bboxes[:, 1] + bboxes[:, 3] * 0.5
+    outputs = np.empty_like(inputs)
+    outputs[:, 0] = inputs[:, 0] + inputs[:, 2] * 0.5
+    outputs[:, 1] = inputs[:, 1] + inputs[:, 3] * 0.5
+    outputs[:, 2] = inputs[:, 2]
+    outputs[:, 3] = inputs[:, 3]
 
-    req_w = aspect_ratio * bboxes[:, 3]
-    bboxes[:, 3][bboxes[:, 2] > req_w] = (
-        bboxes[bboxes[:, 2] > req_w][:, 2] / aspect_ratio
-    )
-    bboxes[:, 2][bboxes[:, 2] < req_w] = (
-        bboxes[bboxes[:, 2] < req_w][:, 3] * aspect_ratio
-    )
+    target_width = inputs[:, 3] * aspect_ratio
 
-    return bboxes
+    tall_bboxes = inputs[:, 2] < target_width
+    outputs[tall_bboxes, 2] = inputs[tall_bboxes, 3] * aspect_ratio
+
+    wide_bboxes = inputs[:, 2] > target_width
+    outputs[wide_bboxes, 3] = inputs[wide_bboxes, 2] / aspect_ratio
+
+    return outputs
 
 
 def crop_and_resize(

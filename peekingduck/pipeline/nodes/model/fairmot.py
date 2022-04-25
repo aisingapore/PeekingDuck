@@ -21,7 +21,7 @@ from typing import Any, Dict
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.fairmotv1 import fairmot_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -94,8 +94,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         Returns:
             (Dict[str, Any]): Dictionary containing:
             - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
-            - bbox_labels (List[str]): Tracking IDs, for compatibility with
-                draw nodes.
+            - bbox_labels (np.ndarray): Bounding box labels, hard coded as
+                "person".
             - bbox_scores (List[float]): Detection confidence scores.
             - obj_attrs (Dict[str, List[int]]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
@@ -110,7 +110,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             self._frame_rate = frame_rate
             self._reset_model()
 
-        bboxes, bbox_labels, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bboxes, bbox_scores, track_ids = self.model.predict(inputs["img"])
+        bbox_labels = np.array(["person"] * len(bboxes))
         bboxes = np.clip(bboxes, 0, 1)
 
         outputs = {

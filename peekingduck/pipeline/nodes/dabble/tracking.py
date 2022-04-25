@@ -19,7 +19,7 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.dabble.trackingv1.detection_tracker import (
     DetectionTracker,
 )
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

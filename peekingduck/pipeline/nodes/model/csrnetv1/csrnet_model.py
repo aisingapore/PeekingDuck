@@ -17,32 +17,33 @@ CSRNet model with model types: sparse and dense
 """
 
 import logging
-from typing import Dict, Any, Tuple
+from typing import Any, Dict, Tuple
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.csrnetv1.csrnet_files.predictor import Predictor
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class CsrnetModel:  # pylint: disable=too-few-public-methods
+class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """CSRNet model with model types: sparse and dense"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
+        self.check_bounds("width", 0, "above", include=None)
+
+        model_dir = self.download_weights()
+        self.predictor = Predictor(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["width"],
         )
-
-        # check for csrnet weights, if none then download into weights folder
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("---no weights detected. proceeding to download...---")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---weights downloaded to {weights_dir}.---")
-
-        self.predictor = Predictor(config, model_dir)
 
     def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, int]:
         """Predicts density map and crowd count from frame.

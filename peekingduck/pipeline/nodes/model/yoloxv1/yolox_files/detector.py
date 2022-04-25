@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -30,7 +30,7 @@ from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy, xyxy2xyxyn
 NUM_CHANNELS = 3
 
 
-class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
+class Detector:  # pylint: disable=too-many-instance-attributes
     """Object detection class using YOLOX to predict object bboxes.
 
     Attributes:
@@ -43,22 +43,46 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
         yolox (YOLOX): The YOLOX model for performing inference.
     """
 
-    def __init__(
-        self, config: Dict[str, Any], model_dir: Path, class_names: List[str]
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        model_dir: Path,
+        class_names: List[str],
+        detect_ids: List[int],
+        model_type: str,
+        num_classes: int,
+        model_size: Dict[str, Dict[str, float]],
+        model_file: Dict[str, str],
+        agnostic_nms: bool,
+        fuse: bool,
+        half: bool,
+        input_size: int,
+        iou_threshold: float,
+        score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-        self.config = config
-        self.model_dir = model_dir
-        self.class_names = class_names
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.class_names = class_names
+        self.model_type = model_type
+        self.num_classes = num_classes
+        self.model_size = model_size[self.model_type]
+        self.model_path = model_dir / model_file[self.model_type]
+        self.agnostic_nms = agnostic_nms
+        self.fuse = fuse
         # Half-precision only supported on CUDA
-        self.config["half"] = self.config["half"] and self.device.type == "cuda"
+        self.half = half and self.device.type == "cuda"
+        self.input_size = (input_size, input_size)
+        self.iou_threshold = iou_threshold
+        self.score_threshold = score_threshold
+
+        self.update_detect_ids(detect_ids)
+
         self.yolox = self._create_yolox_model()
 
     @torch.no_grad()
     def predict_object_bbox_from_image(
-        self, image: np.ndarray, detect_ids: List[int]
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+        self, image: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Detects bounding boxes of selected object categories from an image.
 
         The input image is first scaled according to the `input_size`
@@ -69,21 +93,19 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
 
         Args:
             image (np.ndarray): Input image.
-            detect_ids (List[int]): List of label IDs to be detected
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
-                contains:
-                - A list of detection bboxes
-                - A list of human-friendly detection class names
-                - A list of detection scores
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
         """
-        self.update_detect_ids(detect_ids)
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
         image = torch.from_numpy(image).unsqueeze(0).to(self.device)
-        image = image.half() if self.config["half"] else image.float()
+        image = image.half() if self.half else image.float()
 
         prediction = self.yolox(image)[0]
         bboxes, classes, scores = self._postprocess(
@@ -100,7 +122,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             ids: List of selected object category IDs
         """
         self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
-        if self.config["half"]:
+        if self.half:
             self.detect_ids = self.detect_ids.half()
 
     def _create_yolox_model(self) -> YOLOX:
@@ -112,23 +134,18 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
         Returns:
             (YOLOX): YOLOX model.
         """
-        self.input_size = (self.config["input_size"], self.config["input_size"])
-        model_type = self.config["model_type"]
-        model_path = self.model_dir / self.config["weights"]["model_file"][model_type]
-        model_size = self.config["model_size"][model_type]
-
         self.logger.info(
             "YOLOX model loaded with the following configs:\n\t"
-            f"Model type: {self.config['model_type']}\n\t"
+            f"Model type: {self.model_type}\n\t"
             f"Input resolution: {self.input_size}\n\t"
-            f"IDs being detected: {self.config['detect_ids']}\n\t"
-            f"IOU threshold: {self.config['iou_threshold']}\n\t"
-            f"Score threshold: {self.config['score_threshold']}\n\t"
-            f"Class agnostic NMS: {self.config['agnostic_nms']}\n\t"
-            f"Half-precision floating-point: {self.config['half']}\n\t"
-            f"Fuse convolution and batch normalization layers: {self.config['fuse']}"
+            f"IDs being detected: {self.detect_ids.int().tolist()}\n\t"
+            f"IOU threshold: {self.iou_threshold}\n\t"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Class agnostic NMS: {self.agnostic_nms}\n\t"
+            f"Half-precision floating-point: {self.half}\n\t"
+            f"Fuse convolution and batch normalization layers: {self.fuse}"
         )
-        return self._load_yolox_weights(model_path, model_size)
+        return self._load_yolox_weights()
 
     def _get_model(self, model_size: Dict[str, float]) -> YOLOX:
         """Constructs YOLOX model based on parsed configuration.
@@ -140,14 +157,12 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             (YOLOX): YOLOX model.
         """
         return YOLOX(
-            self.config["num_classes"],
+            self.num_classes,
             model_size["depth"],
             model_size["width"],
         )
 
-    def _load_yolox_weights(
-        self, model_path: Path, model_settings: Dict[str, float]
-    ) -> YOLOX:
+    def _load_yolox_weights(self) -> YOLOX:
         """Loads YOLOX model weights.
 
         Args:
@@ -160,19 +175,19 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
         Raises:
             ValueError: `model_path` does not exist.
         """
-        if model_path.is_file():
-            ckpt = torch.load(str(model_path), map_location="cpu")
-            model = self._get_model(model_settings).to(self.device)
-            if self.config["half"]:
+        if self.model_path.is_file():
+            ckpt = torch.load(str(self.model_path), map_location="cpu")
+            model = self._get_model(self.model_size).to(self.device)
+            if self.half:
                 model.half()
             model.eval()
             model.load_state_dict(ckpt["model"])
 
-            if self.config["fuse"]:
+            if self.fuse:
                 model = fuse_model(model)
             return model
         raise ValueError(
-            f"Model file does not exist. Please check that {model_path} exists."
+            f"Model file does not exist. Please check that {self.model_path} exists."
         )
 
     def _postprocess(
@@ -181,7 +196,7 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
         scale: float,
         image_shape: Tuple[int, int],
         class_names: List[str],
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Postprocesses detection result to be compatible with other nodes.
 
         Args:
@@ -193,20 +208,20 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
                 names.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): Returned tuple
-                contains:
-                - A list of detection bboxes
-                - A list of human-friendly detection class names
-                - A list of detection scores
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
         """
         prediction[:, :4] = xywh2xyxy(prediction[:, :4])
         # Get score and class with highest confidence
         class_score, class_pred = torch.max(
-            prediction[:, 5 : 5 + self.config["num_classes"]], 1, keepdim=True
+            prediction[:, 5 : 5 + self.num_classes], 1, keepdim=True
         )
         # Filter by score_threshold
         conf_mask = (
-            prediction[:, 4] * class_score.squeeze() >= self.config["score_threshold"]
+            prediction[:, 4] * class_score.squeeze() >= self.score_threshold
         ).squeeze()
         # Detections ordered as (x1, y1, x2, y2, obj_conf, class_conf, class_pred)
         detections = torch.cat((prediction[:, :5], class_score, class_pred.float()), 1)
@@ -216,18 +231,18 @@ class Detector:  # pylint: disable=too-few-public-methods, too-many-instance-att
             return np.empty((0, 4)), np.empty(0), np.empty(0)
 
         # Class agnostic NMS
-        if self.config["agnostic_nms"]:
+        if self.agnostic_nms:
             nms_out_index = torchvision.ops.nms(
                 detections[:, :4],
                 detections[:, 4] * detections[:, 5],
-                self.config["iou_threshold"],
+                self.iou_threshold,
             )
         else:
             nms_out_index = torchvision.ops.batched_nms(
                 detections[:, :4],
                 detections[:, 4] * detections[:, 5],
                 detections[:, 6],
-                self.config["iou_threshold"],
+                self.iou_threshold,
             )
         output = detections[nms_out_index]
 

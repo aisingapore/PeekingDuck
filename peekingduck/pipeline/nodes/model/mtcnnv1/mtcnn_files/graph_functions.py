@@ -12,28 +12,49 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Utility functions to load the MTCNN model
-"""
+"""Utility functions to load the MTCNN model."""
 
 import logging
-from typing import Tuple, Callable
+from typing import Callable, List, Tuple
 
 import tensorflow as tf
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef) -> Callable:
-    """
-    Wraps a frozen graph into a function
+def load_graph(file_path: str, inputs: List[str], outputs: List[str]) -> Callable:
+    """Loads a frozen graph and wraps it into a function.
 
     Args:
-        graph_def (tf.compat.v1.GraphDef): A frozen graph in graph_def format
+        file_path (str): Path to the frozen graph or model.
+        inputs (List[str]): List of input names.
+        outputs (List[str]): List of tensor names to be returned.
+
+    Returns:
+        (Callable): A WrappedFunction which wraps a tf V1 piece of code in a
+        function.
+    """
+    with tf.io.gfile.GFile(file_path, "rb") as graph_file:
+        graph_def = tf.compat.v1.GraphDef()
+        graph_def.ParseFromString(graph_file.read())
+
+        frozen_func = wrap_frozen_graph(graph_def, inputs, outputs)
+
+        return frozen_func
+
+
+def wrap_frozen_graph(
+    graph_def: tf.compat.v1.GraphDef, inputs: List[str], outputs: List[str]
+) -> Callable:
+    """Wraps a frozen graph into a function.
+
+    Args:
+        graph_def (tf.compat.v1.GraphDef): A frozen graph in graph_def format.
+        inputs (List[str]): List of input names.
+        outputs (List[str]): List of tensor names to be returned.
 
     Return:
-        wrapped_import (tensorflow.python.eager.wrap_function.WrappedFunction):
-        A wrapped_import function to perform your inference with
+        (Callable): A wrapped_import function to perform your inference with.
     """
 
     def _imports_graph_def(
@@ -42,12 +63,12 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef) -> Callable:
         prob, landmarks, box = tf.compat.v1.import_graph_def(
             graph_def,
             input_map={
-                "input:0": img,
-                "min_size:0": min_size,
-                "thresholds:0": thresholds,
-                "factor:0": factor,
+                inputs[0]: img,
+                inputs[1]: min_size,
+                inputs[2]: thresholds,
+                inputs[3]: factor,
             },
-            return_elements=["prob:0", "landmarks:0", "box:0"],
+            return_elements=outputs,
             name="",
         )
 
@@ -64,23 +85,3 @@ def wrap_frozen_graph(graph_def: tf.compat.v1.GraphDef) -> Callable:
     )
 
     return wrapped_import
-
-
-def load_graph(filename: str) -> tf.function:
-    """
-    Loads a frozen graph and wraps it into a function
-
-    Args:
-        filename (str): Path to the frozen graph or model
-
-    Return:
-        wrapped_import (tensorflow.python.eager.wrap_function.WrappedFunction):
-        A wrapped_import function to perform your inference with
-    """
-    with tf.io.gfile.GFile(filename, "rb") as graph_file:
-        graph_def = tf.compat.v1.GraphDef()
-        graph_def.ParseFromString(graph_file.read())
-
-        frozen_func = wrap_frozen_graph(graph_def=graph_def)
-
-        return frozen_func

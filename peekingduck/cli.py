@@ -39,6 +39,7 @@ from peekingduck.utils.create_node_helper import (
     get_config_and_script_paths,
     verify_option,
 )
+from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
@@ -303,6 +304,12 @@ def run(
         if (curr_dir / "pipeline_config.yml").is_file():
             config_path = curr_dir / "pipeline_config.yml"
         elif (curr_dir / "run_config.yml").is_file():
+            deprecate(
+                "using 'run_config.yml' as the default pipeline configuration "
+                "file is deprecated and will be removed in the future. Please "
+                "use 'pipeline_config.yml' instead.",
+                2,
+            )
             config_path = curr_dir / "run_config.yml"
         else:
             config_path = curr_dir / "pipeline_config.yml"

@@ -12,98 +12,130 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Face detection class using mtcnn model to find face bboxes
-"""
+"""Face detection class using MTCNN model to find face bboxes."""
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, Tuple
+from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
-
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
     load_graph,
 )
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
-class Detector:  # pylint: disable=too-many-instance-attributes
-    """Face detection class using MTCNN model to find bboxes and landmarks"""
+class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
+    """Face detection class using MTCNN model to find bboxes and landmarks."""
 
-    def __init__(self, config: Dict[str, Any], model_dir: Path) -> None:
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        model_dir: Path,
+        model_type: str,
+        model_file: Dict[str, str],
+        model_nodes: Dict[str, List[str]],
+        min_size: int,
+        scale_factor: float,
+        network_thresholds: List[float],
+        score_threshold: float,
+    ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        self.config = config
-        self.model_dir = model_dir
-        self.min_size = self.config["min_size"]
-        self.factor = self.config["scale_factor"]
-        self.thresholds = [
-            float(threshold) for threshold in self.config["network_thresholds"]
-        ]
-        self.score = self.config["score_threshold"]
+        self.model_path = model_dir / model_file[model_type]
+        self.model_nodes = model_nodes
+
+        self.min_size = min_size
+        self.scale_factor = scale_factor
+        self.network_thresholds = network_thresholds
+        self.score_threshold = score_threshold
+
         self.mtcnn = self._create_mtcnn_model()
 
-    def _create_mtcnn_model(self) -> tf.keras.Model:
-        """
-        Creates MTCNN model for face detection
-        """
-        model_path = self.model_dir / self.config["weights"]["model_file"]
-
-        self.logger.info(
-            "MTCNN model loaded with following configs: \n\t"
-            f"Min size: {self.config['min_size']}, \n\t"
-            f"Scale Factor: {self.config['scale_factor']}, \n\t"
-            f"Network Thresholds: {self.config['network_thresholds']}, \n\t"
-            f"Score Threshold: {self.config['score_threshold']}"
-        )
-
-        return self._load_mtcnn_graph(model_path)
-
-    @staticmethod
-    def _load_mtcnn_graph(model_path: Path) -> tf.compat.v1.GraphDef:
-        if model_path.is_file():
-            return load_graph(str(model_path))
-
-        raise ValueError(
-            f"Graph file does not exist. Please check that {model_path} exists"
-        )
-
-    def predict_bbox_landmarks(
+    def predict_object_bbox_from_image(
         self, image: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Predicts face bboxes, scores and landmarks
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Predicts face bboxes, scores, and landmarks.
 
         Args:
-            image (np.ndarray): image in numpy array
+            image (np.ndarray): Image in numpy array
 
         Returns:
-            bboxes (np.ndarray): numpy array of detected bboxes
-            scores (np.ndarray): numpy array of confidence scores
-            landmarks (np.ndarray): numpy array of facial landmarks
-            labels (np.ndarray): numpy array of class labels (i.e. face)
+            bboxes (np.ndarray): Detected bboxes.
+            scores (np.ndarray): Confidence scores.
+            landmarks (np.ndarray): Facial landmarks.
         """
-        # 1. process inputs
-        image = self.process_image(image)
-
-        # 2. evaluate image
+        image = self._preprocess(image)
         bboxes, scores, landmarks = self.mtcnn(
-            image, self.min_size, self.factor, self.thresholds
+            image, self.min_size, self.scale_factor, self.network_thresholds
+        )
+        bboxes, scores, landmarks = self._post_process(image, bboxes, scores, landmarks)
+
+        return bboxes, scores, landmarks
+
+    def _create_mtcnn_model(self) -> Callable:
+        """Creates MTCNN model for face detection."""
+        self.logger.info(
+            "MTCNN model loaded with following configs:\n\t"
+            f"Min size: {self.min_size},\n\t"
+            f"Scale Factor: {self.scale_factor},\n\t"
+            f"Network Thresholds: {self.network_thresholds},\n\t"
+            f"Score Threshold: {self.score_threshold}"
         )
 
-        # 3. process outputs
-        bboxes, scores, landmarks = self.process_outputs(
-            image, bboxes, scores, landmarks
+        return self._load_mtcnn_weights()
+
+    def _load_mtcnn_weights(self) -> Callable:
+        if not self.model_path.is_file():
+            raise ValueError(
+                f"Graph file does not exist. Please check that {self.model_path} exists"
+            )
+
+        return load_graph(
+            str(self.model_path),
+            self.model_nodes["inputs"],
+            self.model_nodes["outputs"],
         )
 
-        # 4. create bbox_labels
-        classes = np.array(["face"] * len(bboxes))
+    def _post_process(
+        self,
+        image: np.ndarray,
+        bboxes: tf.Tensor,
+        scores: tf.Tensor,
+        landmarks: tf.Tensor,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Processes MTCNN model outputs. Filter detections by confidence score
+        and swaps the x and y coordinates of the bboxes.
 
-        return bboxes, scores, landmarks, classes
+        Args:
+            image (np.ndarray): Image in numpy array.
+            bboxes (tf.Tensor): Tensor array of detected bboxes.
+            scores (tf.Tensor): Tensor array of confidence scores.
+            landmarks (tf.Tensor): Tensor array of facial landmarks.
+
+        Returns:
+            bboxes (np.ndarray): Processed detected bboxes.
+            scores (np.ndarray): Processed confidence scores.
+            landmarks (np.ndarray): Processed facial landmarks.
+        """
+        bboxes, scores, landmarks = bboxes.numpy(), scores.numpy(), landmarks.numpy()
+
+        # Filter bboxes by confidence score
+        indices = np.where(scores > self.score_threshold)[0]
+        bboxes = bboxes[indices]
+        scores = scores[indices]
+        landmarks = landmarks[indices]
+
+        # Swap position of x, y coordinates
+        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
+        bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
+
+        bboxes = xyxy2xyxyn(bboxes, image.shape[0], image.shape[1])
+
+        return bboxes, scores, landmarks
 
     @staticmethod
-    def process_image(image: np.ndarray) -> tf.Tensor:
+    def _preprocess(image: np.ndarray) -> tf.Tensor:
         """Processes input image
 
         Args:
@@ -116,39 +148,3 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         image = tf.convert_to_tensor(image)
 
         return image
-
-    def process_outputs(
-        self,
-        image: np.ndarray,
-        bboxes: tf.Tensor,
-        scores: tf.Tensor,
-        landmarks: tf.Tensor,
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-        """Processes MTCNN model outputs
-
-        Args:
-            image (np.ndarray): image in numpy array
-            bboxes (tf.Tensor): tensor array of detected bboxes
-            scores (tf.Tensor): tensor array of confidence scores
-            landmarks (tf.Tensor): tensor array of facial landmarks
-
-        Returns:
-            bboxes (np.ndarray): processed numpy array of detected bboxes
-            scores (np.ndarray): processed numpy array of confidence scores
-            landmarks (np.ndarray): processed numpy array of facial landmarks
-        """
-        bboxes, scores, landmarks = bboxes.numpy(), scores.numpy(), landmarks.numpy()
-
-        # Filter bboxes by confidence score
-        indices = np.where(scores > self.score)[0]
-        bboxes = bboxes[indices]
-        scores = scores[indices]
-        landmarks = landmarks[indices]
-
-        # Swap position of x, y coordinates
-        bboxes[:, [0, 1]] = bboxes[:, [1, 0]]
-        bboxes[:, [2, 3]] = bboxes[:, [3, 2]]
-
-        bboxes = xyxy2xyxyn(bboxes, image.shape[0], image.shape[1])
-
-        return bboxes, scores, landmarks

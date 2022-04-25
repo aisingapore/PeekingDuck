@@ -84,6 +84,7 @@ def _rescale_image(
     image_processed = cv2.resize(
         source_img, (target_width, target_height), interpolation=cv2.INTER_LINEAR
     )
+    # Color conversion part of original repo code
     image_processed = cv2.cvtColor(image_processed, cv2.COLOR_BGR2RGB).astype(
         np.float32
     )

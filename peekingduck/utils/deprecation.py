@@ -12,25 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""
-Checks for model weights in weights folder.
-"""
+"""Utility module to display deprecation warnings."""
 
-from pathlib import Path
+import warnings
 
 
-def has_weights(weights_dir: Path, model_dir: Path) -> bool:
-    """Checks for model weight paths from weights folder.
+def deprecate(message: str, level: int) -> None:
+    """Issues a deprecation warning using the FutureWarning category.
 
     Args:
-        weights_dir (:obj:`Path`): Path to where all weights are stored.
-        model_dir (:obj:`Path`): Path to where weights for a model are stored.
+        message (str): The deprecation warning message.
+        level (int): The `stacklevel`, can be used to refer to `deprecate()`'s
+            caller instead of the source of `deprecate()` itself.
 
-    Returns:
-        (:obj:`bool`): ``True`` if specified files/directories in
-        ``weights_dir`` exist, else ``False``.
     """
-    if not weights_dir.exists():
-        weights_dir.mkdir()
-        return False
-    return model_dir.exists()
+    warnings.warn(message, category=FutureWarning, stacklevel=level)

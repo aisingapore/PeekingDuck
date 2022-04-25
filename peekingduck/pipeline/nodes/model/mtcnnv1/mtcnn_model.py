@@ -20,50 +20,38 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
-
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.detector import Detector
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class MtcnnModel:  # pylint: disable=too-few-public-methods
-    """MTCNN model to detect face bboxes and landmarks"""
+class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
+    """MTCNN model to detect face bboxes and landmarks."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
-        super().__init__()
-
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        if config["min_size"] <= 0:
-            raise ValueError("min_size must be more than 0")
-
-        # check factor value
-        if not 0 <= config["scale_factor"] <= 1:
-            raise ValueError("scale_factor must be in [0, 1]")
-
-        # check threshold values
-        for threshold in config["network_thresholds"]:
-            if not 0 <= threshold <= 1:
-                raise ValueError("network_thresholds must be in [0, 1]")
-
-        # check score value
-        if not 0 <= config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
-
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
+        self.check_bounds("min_size", 0, "above", include=None)
+        self.check_bounds(
+            ["network_thresholds", "scale_factor", "score_threshold"], (0, 1), "within"
         )
 
-        # check for mtcnn weights, if none then download into weights folder
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("---no weights detected. proceeding to download...---")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"---weights downloaded to {weights_dir}.---")
+        model_dir = self.download_weights()
+        self.detector = Detector(
+            model_dir,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["model_nodes"],
+            self.config["min_size"],
+            self.config["scale_factor"],
+            list(map(float, self.config["network_thresholds"])),
+            self.config["score_threshold"],
+        )
 
-        self.detector = Detector(config, model_dir)
-
-    def predict(
-        self, frame: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def predict(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """Predicts face bboxes, scores and landmarks
 
         Args:
@@ -73,9 +61,7 @@ class MtcnnModel:  # pylint: disable=too-few-public-methods
             bboxes (np.ndarray): numpy array of detected bboxes
             scores (np.ndarray): numpy array of confidence scores
             landmarks (np.ndarray): numpy array of facial landmarks
-            labels (np.ndarray): numpy array of class labels (i.e. face)
         """
         assert isinstance(frame, np.ndarray)
 
-        # return bboxes, scores, landmarks and class labels
-        return self.detector.predict_bbox_landmarks(frame)
+        return self.detector.predict_object_bbox_from_image(frame)

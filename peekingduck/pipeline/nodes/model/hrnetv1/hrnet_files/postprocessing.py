@@ -17,6 +17,7 @@ Postprocessing functions for HRNet
 """
 
 from typing import List, Tuple
+
 import numpy as np
 
 # fmt: off
@@ -87,7 +88,7 @@ def reshape_heatmaps(heatmaps: np.ndarray) -> np.ndarray:
 
 
 def get_valid_keypoints(
-    keypoints: np.ndarray, keypoint_scores: np.ndarray, batch: int, min_score: int
+    keypoints: np.ndarray, keypoint_scores: np.ndarray, batch: int, min_score: float
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Helper function to get visible keypoints
 
@@ -95,7 +96,7 @@ def get_valid_keypoints(
         keypoints (np.ndarray): array of detected keypoints
         keypoint_scores (np.ndarray): array of keypoint scores
         batch (int): number of detected bboxes
-        min_score (int): min score threshold
+        min_score (float): min score threshold
 
     Returns:
         Tuple[np.ndarray, np.ndarray]: array of keypoints above threshold and keypoint mask
@@ -122,7 +123,7 @@ def get_keypoint_conns(rel_keypoints: np.ndarray, masks: np.ndarray) -> np.ndarr
     for keypoint, mask in zip(rel_keypoints, masks):
         single_conn = _get_keypoint_of_single_pose(keypoint, mask)
         compiled_connections.append(single_conn)
-    return np.array(compiled_connections, dtype=object)
+    return np.array(compiled_connections)
 
 
 def _get_keypoint_of_single_pose(keypoint: np.ndarray, mask: np.ndarray) -> np.ndarray:

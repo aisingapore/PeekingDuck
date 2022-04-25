@@ -19,8 +19,8 @@ human pose estimation. Requires an object detector.
 
 from typing import Any, Dict
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -57,9 +57,6 @@ class Node(AbstractNode):
             Resolution of input array to HRNet model.
         score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
             Threshold to determine if detection should be returned
-        model_nodes (:obj:`Dict`):
-            **default = { inputs: [x:0], outputs: [Identity:0] }** |br|
-            Names of input and output nodes from model graph for prediction.
 
     References:
         Deep High-Resolution Representation Learning for Visual Recognition:

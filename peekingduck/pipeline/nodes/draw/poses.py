@@ -19,7 +19,7 @@ Draws keypoints on a detected pose.
 from typing import Any, Dict
 
 from peekingduck.pipeline.nodes.draw.utils.pose import draw_human_poses
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

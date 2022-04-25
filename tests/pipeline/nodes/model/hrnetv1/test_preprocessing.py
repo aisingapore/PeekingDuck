@@ -17,9 +17,8 @@ import numpy.testing as npt
 import pytest
 
 from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    box2cs,
+    tlwh2xywh,
     crop_and_resize,
-    project_bbox,
 )
 
 
@@ -35,19 +34,10 @@ def projected_bbox_arr():
 
 
 class TestPreprocessing:
-    def test_project_bbox(self, projected_bbox_arr):
-        test_arr = np.array(
-            [[0.5, 0.5, 0.7, 0.7], [-0.5, 0.5, 1.5, 0.7], [0.5, -0.5, 0.7, 1.5]]
-        )
-        test_size = (720, 480)
-        output_arr = project_bbox(test_arr, test_size)
-
-        npt.assert_almost_equal(output_arr, projected_bbox_arr)
-
-    def test_box2cs(self, projected_bbox_arr):
+    def test_tlwh2xywh(self, projected_bbox_arr):
         test_arr = projected_bbox_arr
         test_aspect_ratio = 1280 / 720
-        actual_output = box2cs(test_arr, test_aspect_ratio)
+        actual_output = tlwh2xywh(test_arr, test_aspect_ratio)
 
         expected_output = np.array(
             [

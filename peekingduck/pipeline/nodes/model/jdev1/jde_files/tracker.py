@@ -70,21 +70,45 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             for computing size of track buffer.
     """
 
-    def __init__(
-        self, config: Dict[str, Any], model_dir: Path, frame_rate: float
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        model_dir: Path,
+        frame_rate: float,
+        model_type: str,
+        model_file: Dict[str, str],
+        model_config_file: Dict[str, str],
+        min_box_area: int,
+        track_buffer: int,
+        iou_threshold: float,
+        nms_threshold: float,
+        score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-
-        self.config = config
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = self._create_darknet_model(model_dir)
+
+        self.model_type = model_type
+        self.model_path = model_dir / model_file[self.model_type]
+        self.model_settings = self._parse_model_config(
+            model_dir / model_config_file[self.model_type]
+        )
+        self.input_size = [
+            int(self.model_settings[0]["width"]),
+            int(self.model_settings[0]["height"]),
+        ]
+        self.min_box_area = min_box_area
+        self.track_buffer = track_buffer
+        self.iou_threshold = iou_threshold
+        self.nms_threshold = nms_threshold
+        self.score_threshold = score_threshold
+
+        self.model = self._create_darknet_model()
 
         self.tracked_stracks: List[STrack] = []
         self.lost_stracks: List[STrack] = []
         self.removed_stracks: List[STrack] = []
 
         self.frame_id = 0
-        self.max_time_lost = int(frame_rate / 30.0 * config["track_buffer"])
+        self.max_time_lost = int(frame_rate / 30.0 * self.track_buffer)
 
         self.kalman_filter = KalmanFilter()
 
@@ -113,7 +137,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         for target in online_targets:
             tlwh = target.tlwh
             vertical = tlwh[2] / tlwh[3] > 1.6
-            if not vertical and tlwh[2] * tlwh[3] > self.config["min_box_area"]:
+            if not vertical and tlwh[2] * tlwh[3] > self.min_box_area:
                 online_tlwhs.append(tlwh)
                 online_ids.append(target.track_id)
                 scores.append(target.score.item())
@@ -158,14 +182,11 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         # and embeddings
         pred = self.model(padded_image)
         # Proposals rejected on basis of object confidence score
-        pred = pred[pred[..., 4] > self.config["score_threshold"]]
+        pred = pred[pred[..., 4] > self.score_threshold]
         if len(pred) > 0:
             # Final proposals are obtained in dets. Information of bounding box
             # and embeddings also included
-            dets = non_max_suppression(
-                pred.unsqueeze(0),
-                self.config["nms_threshold"],
-            )[0].cpu()
+            dets = non_max_suppression(pred.unsqueeze(0), self.nms_threshold)[0].cpu()
             # Next step changes the detection scales
             scale_coords(self.input_size, dets[:, :4], image.shape[:2]).round()
 
@@ -283,7 +304,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         # Step 4: Init new stracks
         for i in unmatched_det_indices:
             track = detections[i]
-            if track.score < self.config["score_threshold"]:  # pragma: no cover
+            if track.score < self.score_threshold:  # pragma: no cover
                 # This shouldn't be reached since we already rejected proposals
                 # on basis of object confidence score earlier
                 continue
@@ -318,41 +339,26 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         return output_stracks
 
-    def _create_darknet_model(self, model_dir: Path) -> Darknet:
+    def _create_darknet_model(self) -> Darknet:
         """Creates a Darknet-53 model corresponding specified `model_type`.
-
-        Args:
-            model_dir (Path): Directory containing model weights files and
-                backbone configuration files.
 
         Returns:
             (Darknet): Darknet backbone of the specified architecture and
                 weights.
         """
-        model_type = self.config["model_type"]
-        model_path = model_dir / self.config["weights"]["model_file"][model_type]
-        model_settings = self._parse_model_config(
-            model_dir / self.config["weights"]["config_file"][model_type]
-        )
-        self.input_size = [
-            int(model_settings[0]["width"]),
-            int(model_settings[0]["height"]),
-        ]
         self.logger.info(
             "JDE model loaded with the following configs:\n\t"
-            f"Model type: {self.config['model_type']}\n\t"
+            f"Model type: {self.model_type}\n\t"
             f"Input resolution: {self.input_size}\n\t"
-            f"IOU threshold: {self.config['iou_threshold']}\n\t"
-            f"NMS threshold: {self.config['nms_threshold']}\n\t"
-            f"Score threshold: {self.config['score_threshold']}\n\t"
-            f"Min bounding box area: {self.config['min_box_area']}\n\t"
-            f"Track buffer: {self.config['track_buffer']}"
+            f"IOU threshold: {self.iou_threshold}\n\t"
+            f"NMS threshold: {self.nms_threshold}\n\t"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Min bounding box area: {self.min_box_area}\n\t"
+            f"Track buffer: {self.track_buffer}"
         )
-        return self._load_darknet_weights(model_path, model_settings)
+        return self._load_darknet_weights()
 
-    def _load_darknet_weights(
-        self, model_path: Path, model_settings: List[Dict[str, Any]]
-    ) -> Darknet:
+    def _load_darknet_weights(self) -> Darknet:
         """Loads pretrained Darknet-53 weights.
 
         Args:
@@ -364,12 +370,12 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             (Darknet): Darknet backbone of the specified architecture and
                 weights.
         """
-        if not model_path.is_file():
+        if not self.model_path.is_file():
             raise ValueError(
-                f"Model file does not exist. Please check that {model_path} exists."
+                f"Model file does not exist. Please check that {self.model_path} exists."
             )
-        ckpt = torch.load(str(model_path), map_location="cpu")
-        model = Darknet(model_settings, self.device, num_identities=14455)
+        ckpt = torch.load(str(self.model_path), map_location="cpu")
+        model = Darknet(self.model_settings, self.device, num_identities=14455)
         model.load_state_dict(ckpt["model"], strict=False)
         model.to(self.device).eval()
         return model

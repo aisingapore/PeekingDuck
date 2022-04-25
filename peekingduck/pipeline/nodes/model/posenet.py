@@ -18,8 +18,8 @@ from typing import Any, Dict
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -84,9 +84,9 @@ class Node(AbstractNode):
 
         outputs = {
             "bboxes": bboxes,
+            "bbox_labels": bbox_labels,
             "keypoints": keypoints,
             "keypoint_scores": keypoint_scores,
             "keypoint_conns": keypoint_conns,
-            "bbox_labels": bbox_labels,
         }
         return outputs

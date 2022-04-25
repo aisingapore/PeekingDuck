@@ -1,19 +1,21 @@
 input: ["img"]
-output: ["bboxes", "bbox_scores", "bbox_labels"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
 
 weights_parent_dir: null
-weights: {
+weights:
+  {
     model_subdir: mtcnn,
     blob_file: mtcnn.zip,
-    model_file: mtcnn.pb
-}
+    model_file: { default: mtcnn.pb },
+  }
+model_nodes:
+  {
+    inputs: [input:0, min_size:0, thresholds:0, factor:0],
+    outputs: [prob:0, landmarks:0, box:0],
+  }
+
+model_type: default
 min_size: 40
 scale_factor: 0.709
 network_thresholds: [0.6, 0.7, 0.7]
 score_threshold: 0.7
-MODEL_NODES: {
-    mtcnn: {
-        inputs: [input:0, min_size:0, thresholds:0, factor:0],
-        outputs: [prob:0, landmarks:0, box:0]
-    }
-}

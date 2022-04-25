@@ -19,7 +19,7 @@ Displays selected information from preceding nodes in a legend box.
 from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

@@ -23,7 +23,7 @@ from typing import Any, Dict, Optional
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 # role of this node is to be able to take in multiple frames, stitch them
 # together and output them.

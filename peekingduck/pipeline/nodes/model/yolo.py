@@ -16,10 +16,11 @@
 
 from typing import Any, Dict
 
+import cv2
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.yolov4 import yolo_model
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -79,7 +80,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = yolo_model.YoloModel(self.config)
+        self.model = yolo_model.YOLOModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads the image input and returns the bboxes of the specified
@@ -92,7 +93,8 @@ class Node(AbstractNode):
             outputs (dict): bbox output in dictionary format with keys
             "bboxes", "bbox_labels", and "bbox_scores".
         """
-        bboxes, labels, scores = self.model.predict(inputs["img"])
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        bboxes, labels, scores = self.model.predict(image)
         bboxes = np.clip(bboxes, 0, 1)
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}

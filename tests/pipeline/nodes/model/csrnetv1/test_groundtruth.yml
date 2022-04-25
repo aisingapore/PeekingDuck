@@ -1,0 +1,10 @@
+sparse:
+  crowd1:
+    count: 25
+  crowd2:
+    count: 54
+dense:
+  crowd1:
+    count: 20
+  crowd2:
+    count: 48

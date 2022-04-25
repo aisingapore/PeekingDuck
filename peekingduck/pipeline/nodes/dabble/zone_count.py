@@ -17,7 +17,7 @@
 from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.dabble.zoningv1.zone import Zone
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

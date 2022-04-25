@@ -19,67 +19,88 @@ import cv2
 import pytest
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.csrnet import Node
-from peekingduck.pipeline.nodes.model.csrnetv1.csrnet_files.predictor import Predictor
+from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
 @pytest.fixture(params=["sparse", "dense"])
-def csrnet_config():
-    filepath = Path(__file__).resolve().parent / "test_csrnet.yml"
-    with open(filepath) as file:
-        node_config = yaml.safe_load(file)
+def csrnet_config(request):
+    with open(PKD_DIR / "configs" / "model" / "csrnet.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
+    node_config["model_type"] = request.param
 
     return node_config
 
 
-@pytest.fixture
-def model_dir(csrnet_config):
-    return (
-        csrnet_config["root"].parent
-        / "peekingduck_weights"
-        / csrnet_config["weights"]["model_subdir"]
-    )
+@pytest.fixture(
+    params=[{"key": "width", "value": -1}, {"key": "width", "value": 0}],
+)
+def csrnet_bad_config_value(request, csrnet_config):
+    csrnet_config[request.param["key"]] = request.param["value"]
+    return csrnet_config
 
 
 @pytest.mark.mlmodel
 class TestCsrnet:
-    def test_no_human(self, test_no_human_images, csrnet_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human(self, no_human_image, csrnet_config):
+        no_human_img = cv2.imread(no_human_image)
         csrnet = Node(csrnet_config)
-        output = csrnet.run({"img": blank_image})
+        output = csrnet.run({"img": no_human_img})
         assert list(output.keys()) == ["density_map", "count"]
-        # Model is less accurate and detects extra people when cnt is low or
-        # none. Threshold of 9 is chosen based on the min cnt in ShanghaiTech
+        # Model is less accurate and detects extra people when count is low or
+        # none. Threshold of 9 is chosen based on the min count in ShanghaiTech
         # dataset
         assert output["count"] < 9
 
-    def test_crowd(self, test_crowd_images, csrnet_config):
-        crowd_image = cv2.imread(test_crowd_images)
+    def test_crowd(self, crowd_image, csrnet_config):
+        crowd_img = cv2.imread(crowd_image)
         csrnet = Node(csrnet_config)
-        output = csrnet.run({"img": crowd_image})
-        assert list(output.keys()) == ["density_map", "count"]
-        assert output["count"] >= 10
+        output = csrnet.run({"img": crowd_img})
 
-    def test_no_weights(self, csrnet_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
-        ), TestCase.assertLogs(
+        model_type = csrnet.config["model_type"]
+        image_name = Path(crowd_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        assert list(output.keys()) == ["density_map", "count"]
+        assert output["count"] == expected["count"]
+
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        csrnet_config,
+    ):
+        weights_dir = csrnet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.csrnetv1.csrnet_model.logger"
         ) as captured:
             csrnet = Node(config=csrnet_config)
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert csrnet is not None
 
-    def test_model_initialization(self, csrnet_config, model_dir):
-        predictor = Predictor(csrnet_config, model_dir)
-        model = predictor.csrnet
-        assert model is not None
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
+
+    def test_invalid_config_value(self, csrnet_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=csrnet_bad_config_value)
+        assert "must be more than 0" in str(excinfo.value)

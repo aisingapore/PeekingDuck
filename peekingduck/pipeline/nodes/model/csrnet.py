@@ -18,8 +18,10 @@ networks for understanding the highly congested scenes.
 
 from typing import Any, Dict
 
+import cv2
+
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.csrnetv1 import csrnet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -69,7 +71,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = csrnet_model.CsrnetModel(self.config)
+        self.model = csrnet_model.CSRNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads in image frames and returns the density map and crowd count.
@@ -81,6 +83,7 @@ class Node(AbstractNode):
             outputs (dict): csrnet output in dictionary format with keys
             "density_map" and "count".
         """
-        density_map, crowd_count = self.model.predict(inputs["img"])
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        density_map, crowd_count = self.model.predict(image)
         outputs = {"density_map": density_map, "count": crowd_count}
         return outputs

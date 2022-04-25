@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 
 from peekingduck.pipeline.nodes.dabble.utils.quick_find import QuickFind
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

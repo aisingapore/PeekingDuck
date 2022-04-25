@@ -22,17 +22,19 @@ import pytest
 import torch
 import yaml
 
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.yolox import Node
-from peekingduck.weights_utils.finder import PEEKINGDUCK_WEIGHTS_SUBDIR
+from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
 
-with open(Path(__file__).parent / "test_groundtruth.yml", "r") as infile:
-    GT_RESULTS = yaml.safe_load(infile.read())
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
 @pytest.fixture
 def yolox_config():
-    file_path = Path(__file__).resolve().parent / "test_yolox.yml"
-    with open(file_path) as infile:
+    with open(PKD_DIR / "configs" / "model" / "yolox.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
@@ -78,10 +80,10 @@ def yolox_config_cpu(request, yolox_matrix_config):
 
 @pytest.mark.mlmodel
 class TestYOLOX:
-    def test_no_human_image(self, test_no_human_images, yolox_config_cpu):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, no_human_image, yolox_config_cpu):
+        no_human_img = cv2.imread(no_human_image)
         yolox = Node(yolox_config_cpu)
-        output = yolox.run({"img": blank_image})
+        output = yolox.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_labels": np.empty((0)),
@@ -92,16 +94,16 @@ class TestYOLOX:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_detect_human_bboxes(self, test_human_images, yolox_config_cpu):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, human_image, yolox_config_cpu):
+        human_img = cv2.imread(human_image)
         yolox = Node(yolox_config_cpu)
-        output = yolox.run({"img": test_image})
+        output = yolox.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolox.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
@@ -109,17 +111,17 @@ class TestYOLOX:
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
     @pytest.mark.skipif(not torch.cuda.is_available(), reason="requires GPU")
-    def test_detect_human_bboxes_gpu(self, test_human_images, yolox_matrix_config):
-        test_image = cv2.imread(test_human_images)
+    def test_detect_human_bboxes_gpu(self, human_image, yolox_matrix_config):
+        human_img = cv2.imread(human_image)
         # Ran on YOLOX-tiny only due to GPU OOM error on some systems
         yolox = Node(yolox_matrix_config)
-        output = yolox.run({"img": test_image})
+        output = yolox.run({"img": human_img})
 
         assert "bboxes" in output
         assert output["bboxes"].size > 0
 
         model_type = yolox.config["model_type"]
-        image_name = Path(test_human_images).stem
+        image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
 
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
@@ -130,14 +132,18 @@ class TestYOLOX:
         yolox = Node(yolox_config)
         assert yolox.model.detect_ids == [0]
 
-    def test_no_weights(self, yolox_config, replace_download_weights):
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        yolox_config,
+    ):
         weights_dir = yolox_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
-        ), TestCase.assertLogs(
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
         ) as captured:
             yolox = Node(config=yolox_config)
@@ -152,6 +158,9 @@ class TestYOLOX:
             )
             assert yolox is not None
 
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
+
     def test_invalid_config_detect_ids(self, yolox_config):
         yolox_config["detect_ids"] = 1
         with pytest.raises(TypeError):
@@ -160,20 +169,19 @@ class TestYOLOX:
     def test_invalid_config_value(self, yolox_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolox_bad_config_value)
-        assert "_threshold must be in [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
 
-    def test_invalid_config_model_files(self, yolox_config):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=True
-        ), pytest.raises(ValueError) as excinfo:
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
+    def test_invalid_config_model_files(self, _, yolox_config):
+        with pytest.raises(ValueError) as excinfo:
             yolox_config["weights"]["model_file"][
                 yolox_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=yolox_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 
-    def test_invalid_image(self, test_no_human_images, yolox_config):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_invalid_image(self, no_human_image, yolox_config):
+        no_human_img = cv2.imread(no_human_image)
         yolox = Node(yolox_config)
         # Potentially passing in a file path or a tuple from image reader
         # output
@@ -181,5 +189,5 @@ class TestYOLOX:
             _ = yolox.run({"img": Path.cwd()})
         assert "image must be a np.ndarray" == str(excinfo.value)
         with pytest.raises(TypeError) as excinfo:
-            _ = yolox.run({"img": ("image name", blank_image)})
+            _ = yolox.run({"img": ("image name", no_human_img)})
         assert "image must be a np.ndarray" == str(excinfo.value)

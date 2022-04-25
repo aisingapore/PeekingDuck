@@ -35,15 +35,18 @@
 """FairMOT model for human detection and tracking."""
 
 import logging
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.base import (
+    ThresholdCheckerMixin,
+    WeightsDownloaderMixin,
+)
 from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.tracker import Tracker
-from peekingduck.weights_utils import checker, downloader, finder
 
 
-class FairMOTModel:  # pylint: disable=too-few-public-methods
+class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """FairMOT Model for person tracking.
     Args:
         config (Dict[str, Any]): Model configuration options.
@@ -57,27 +60,30 @@ class FairMOTModel:  # pylint: disable=too-few-public-methods
     """
 
     def __init__(self, config: Dict[str, Any], frame_rate: float) -> None:
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # Check threshold values
-        if not 0 < config["score_threshold"] <= 1:
-            raise ValueError("score_threshold must be in [0, 1]")
-        ensure_more_than_zero(config, ["K", "min_box_area", "track_buffer"])
-
-        # Check for weights
-        weights_dir, model_dir = finder.find_paths(
-            config["root"], config["weights"], config["weights_parent_dir"]
+        self.check_bounds(
+            ["K", "min_box_area", "track_buffer"], 0, "above", include=None
         )
-        if not checker.has_weights(weights_dir, model_dir):
-            self.logger.info("No weights detected. Proceeding to download...")
-            downloader.download_weights(weights_dir, config["weights"]["blob_file"])
-            self.logger.info(f"Weights downloaded to {weights_dir}.")
+        self.check_bounds("score_threshold", (0, 1), "within")
 
-        self.tracker = Tracker(config, model_dir, frame_rate)
+        model_dir = self.download_weights()
+        self.tracker = Tracker(
+            model_dir,
+            frame_rate,
+            self.config["model_type"],
+            self.config["weights"]["model_file"],
+            self.config["input_size"],
+            self.config["K"],
+            self.config["min_box_area"],
+            self.config["track_buffer"],
+            self.config["score_threshold"],
+        )
 
     def predict(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float], List[int]]:
+    ) -> Tuple[List[np.ndarray], List[float], List[int]]:
         """Track objects from image.
 
         Args:
@@ -86,7 +92,6 @@ class FairMOTModel:  # pylint: disable=too-few-public-methods
         Returns:
             (Tuple[List[np.ndarray], List[str], List[float], List[int]]): A tuple of
             - Numpy array of detected bounding boxes.
-            - List of detection class labels (person).
             - List of detection confidence scores.
             - List of track IDs.
 
@@ -96,27 +101,4 @@ class FairMOTModel:  # pylint: disable=too-few-public-methods
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
         bboxes, track_ids, bbox_scores = self.tracker.track_objects_from_image(image)
-        bbox_labels = ["person"] * len(bboxes)
-        return bboxes, bbox_labels, bbox_scores, track_ids
-
-
-def ensure_more_than_zero(config: Dict[str, Any], key: Union[List[str], str]) -> None:
-    """Checks that configuration values specified by ``key`` is more than zero.
-
-    Args:
-        config (Dict[str, Any]): Dictionary containing various configuration
-            values.
-        key (Union[List[str], str]): List of configuration keys to check for.
-
-    Raises:
-        TypeError: ``key`` is not in (List[str], str).
-        ValueError: If the configuration value is <=0.
-    """
-    if isinstance(key, str):
-        if config[key] < 1:
-            raise ValueError(f"{key} must be more than 0")
-    elif isinstance(key, list):
-        for k in key:
-            ensure_more_than_zero(config, k)
-    else:
-        raise TypeError("'key' must be either 'str' or 'list'")
+        return bboxes, bbox_scores, track_ids

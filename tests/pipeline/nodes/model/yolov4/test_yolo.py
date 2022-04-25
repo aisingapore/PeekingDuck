@@ -21,20 +21,36 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.yolo import Node
-from peekingduck.pipeline.nodes.model.yolov4.yolo_files.models import (
-    yolov3,
-    yolov3_tiny,
+from peekingduck.pipeline.nodes.base import (
+    PEEKINGDUCK_WEIGHTS_SUBDIR,
+    WeightsDownloaderMixin,
 )
+from peekingduck.pipeline.nodes.model.yolo import Node
+from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
 @pytest.fixture
 def yolo_config():
-    with open(Path(__file__).resolve().parent / "test_yolo.yml") as file:
-        node_config = yaml.safe_load(file)
+    with open(PKD_DIR / "configs" / "model" / "yolo.yml") as infile:
+        node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
     return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "iou_threshold", "value": -0.5},
+        {"key": "iou_threshold", "value": 1.5},
+        {"key": "score_threshold", "value": -0.5},
+        {"key": "score_threshold", "value": 1.5},
+    ],
+)
+def yolo_bad_config_value(request, yolo_config):
+    yolo_config[request.param["key"]] = request.param["value"]
+    return yolo_config
 
 
 @pytest.fixture(params=["v4", "v4tiny"])
@@ -45,10 +61,10 @@ def yolo_type(request, yolo_config):
 
 @pytest.mark.mlmodel
 class TestYolo:
-    def test_no_human_image(self, test_no_human_images, yolo_type):
-        blank_image = cv2.imread(test_no_human_images)
+    def test_no_human_image(self, no_human_image, yolo_type):
+        no_human_img = cv2.imread(no_human_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": blank_image})
+        output = yolo.run({"img": no_human_img})
         expected_output = {
             "bboxes": np.empty((0, 4), dtype=np.float32),
             "bbox_labels": np.empty((0)),
@@ -59,38 +75,70 @@ class TestYolo:
         npt.assert_equal(output["bbox_labels"], expected_output["bbox_labels"])
         npt.assert_equal(output["bbox_scores"], expected_output["bbox_scores"])
 
-    def test_return_at_least_one_person_and_one_bbox(
-        self, test_human_images, yolo_type
-    ):
-        test_img = cv2.imread(test_human_images)
+    def test_detect_human_bboxes(self, human_image, yolo_type):
+        human_img = cv2.imread(human_image)
         yolo = Node(yolo_type)
-        output = yolo.run({"img": test_img})
-        assert "bboxes" in output
-        assert output["bboxes"].size != 0
+        output = yolo.run({"img": human_img})
 
-    def test_no_weights(self, yolo_config, replace_download_weights):
-        with mock.patch(
-            "peekingduck.weights_utils.checker.has_weights", return_value=False
-        ), mock.patch(
-            "peekingduck.weights_utils.downloader.download_weights",
-            wraps=replace_download_weights,
-        ), TestCase.assertLogs(
+        assert "bboxes" in output
+        assert output["bboxes"].size > 0
+
+        model_type = yolo.config["model_type"]
+        image_name = Path(human_image).stem
+        expected = GT_RESULTS[model_type][image_name]
+
+        npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
+        npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
+        npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
+
+    def test_get_detect_ids(self, yolo_type):
+        yolo = Node(yolo_type)
+        assert yolo.model.detect_ids == [0]
+
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
+    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
+    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
+    def test_no_weights(
+        self,
+        _,
+        mock_download_blob_to,
+        mock_extract_file,
+        yolo_config,
+    ):
+        weights_dir = yolo_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
+        with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger"
         ) as captured:
             yolo = Node(config=yolo_config)
             # records 0 - 20 records are updates to configs
             assert (
                 captured.records[0].getMessage()
-                == "---no weights detected. proceeding to download...---"
+                == "No weights detected. Proceeding to download..."
             )
-            assert "weights downloaded" in captured.records[1].getMessage()
+            assert (
+                captured.records[1].getMessage()
+                == f"Weights downloaded to {weights_dir}."
+            )
             assert yolo is not None
 
-    def test_get_detect_ids(self, yolo_type):
-        yolo = Node(yolo_type)
-        assert yolo.model.detect_ids == [0]
+        assert mock_download_blob_to.called
+        assert mock_extract_file.called
 
-    def test_yolo_model_initialization(self):
-        model1 = yolov3()
-        model2 = yolov3_tiny()
-        assert model1 is not None and model2 is not None
+    def test_invalid_config_detect_ids(self, yolo_config):
+        yolo_config["detect_ids"] = 1
+        with pytest.raises(TypeError):
+            _ = Node(config=yolo_config)
+
+    def test_invalid_config_value(self, yolo_bad_config_value):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=yolo_bad_config_value)
+        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+
+    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
+    def test_invalid_config_model_files(self, _, yolo_config):
+        with pytest.raises(ValueError) as excinfo:
+            yolo_config["weights"]["model_file"][
+                yolo_config["model_type"]
+            ] = "some/invalid/path"
+            _ = Node(config=yolo_config)
+        assert "Graph file does not exist. Please check that" in str(excinfo.value)

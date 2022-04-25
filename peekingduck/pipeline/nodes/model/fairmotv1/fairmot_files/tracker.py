@@ -46,7 +46,7 @@ Modifications include:
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Dict, List, Tuple
 
 import numpy as np
 import torch
@@ -85,22 +85,37 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
     mean = np.array([0.408, 0.447, 0.470], dtype=np.float32).reshape((1, 1, 3))
     std = np.array([0.289, 0.274, 0.278], dtype=np.float32).reshape((1, 1, 3))
 
-    def __init__(
-        self, config: Dict[str, Any], model_dir: Path, frame_rate: float
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        model_dir: Path,
+        frame_rate: float,
+        model_type: str,
+        model_file: Dict[str, str],
+        input_size: List[int],
+        max_per_image: int,
+        min_box_area: int,
+        track_buffer: int,
+        score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-
-        self.config = config
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.model = self._create_model(model_dir)
+
+        self.model_type = model_type
+        self.model_path = model_dir / model_file[self.model_type]
+        self.input_size = input_size
+        self.max_per_image = max_per_image
+        self.min_box_area = min_box_area
+        self.track_buffer = track_buffer
+        self.score_threshold = score_threshold
+
+        self.model = self._create_model()
 
         self.tracked_stracks: List[STrack] = []
         self.lost_stracks: List[STrack] = []
         self.removed_stracks: List[STrack] = []
 
         self.frame_id = 0
-        self.max_time_lost = int(frame_rate / 30.0 * config["track_buffer"])
-        self.max_per_image = self.config["K"]
+        self.max_time_lost = int(frame_rate / 30.0 * self.track_buffer)
 
         self.decoder = Decoder(self.max_per_image, self.down_ratio)
         self.kalman_filter = KalmanFilter()
@@ -133,7 +148,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         id_feature = transpose_and_gather_feat(id_feature, indices)
         id_feature = id_feature.squeeze(0).cpu().numpy()
 
-        id_feature = id_feature[detections[:, 4] > self.config["score_threshold"]]
+        id_feature = id_feature[detections[:, 4] > self.score_threshold]
         return detections, id_feature
 
     def track_objects_from_image(
@@ -162,7 +177,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         for target in online_targets:
             tlwh = target.tlwh
             vertical = tlwh[2] / tlwh[3] > 1.6
-            if not vertical and tlwh[2] * tlwh[3] > self.config["min_box_area"]:
+            if not vertical and tlwh[2] * tlwh[3] > self.min_box_area:
                 online_tlwhs.append(tlwh)
                 online_ids.append(target.track_id)
                 scores.append(target.score.item())
@@ -311,7 +326,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         # Step 4: Init new stracks
         for i in unmatched_det_indices:
             track = detections[i]
-            if track.score < self.config["score_threshold"]:  # pragma: no cover
+            if track.score < self.score_threshold:  # pragma: no cover
                 # This shouldn't be reached since we already rejected proposals
                 # on basis of object confidence score in predict()
                 continue
@@ -346,27 +361,25 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
         return output_stracks
 
-    def _create_model(self, model_dir: Path) -> DLASeg:
-        model_type = self.config["model_type"]
-        model_path = model_dir / self.config["weights"]["model_file"][model_type]
+    def _create_model(self) -> DLASeg:
         self.logger.info(
             "FairMOT model loaded with the following config:\n\t"
-            f"Model type: {model_type}\n\t"
-            f"Score threshold: {self.config['score_threshold']}\n\t"
-            f"Max number of output objects: {self.config['K']}\n\t"
-            f"Min bounding box area: {self.config['min_box_area']}\n\t"
-            f"Track buffer: {self.config['track_buffer']}\n\t"
-            f"Input size: {self.config['input_size']}"
+            f"Model type: {self.model_type}\n\t"
+            f"Input resolution: {self.input_size}"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Max number of output objects: {self.max_per_image}\n\t"
+            f"Min bounding box area: {self.min_box_area}\n\t"
+            f"Track buffer: {self.track_buffer}\n\t"
         )
-        return self._load_model_weights(model_path)
+        return self._load_model_weights()
 
-    def _load_model_weights(self, model_path: Path) -> DLASeg:
-        if not model_path.is_file():
+    def _load_model_weights(self) -> DLASeg:
+        if not self.model_path.is_file():
             raise ValueError(
-                f"Model file does not exist. Please check that {model_path} exists."
+                f"Model file does not exist. Please check that {self.model_path} exists."
             )
 
-        ckpt = torch.load(str(model_path), map_location="cpu")
+        ckpt = torch.load(str(self.model_path), map_location="cpu")
         model = DLASeg(self.heads, self.down_ratio)
         model.load_state_dict(ckpt["state_dict"], strict=False)
         model.to(self.device).eval()
@@ -384,9 +397,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         """
         # Padded resize
         padded_image = letterbox(
-            image,
-            height=self.config["input_size"][1],
-            width=self.config["input_size"][0],
+            image, height=self.input_size[1], width=self.input_size[0]
         )
         # Normalize RGB
         padded_image = padded_image[..., ::-1].transpose(2, 0, 1)

@@ -22,10 +22,8 @@ import pytest
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import yaml
-
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
-
-TEST_DIR = Path.cwd() / "tests" / "data" / "images"
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 
 @pytest.fixture(params=["t2.jpg"])
@@ -35,7 +33,7 @@ def single_person_image(request):
 
 @pytest.fixture
 def movenet_config():
-    with open(Path(__file__).resolve().parent / "test_movenet.yml") as infile:
+    with open(PKD_DIR / "configs" / "model" / "movenet.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
 
@@ -56,16 +54,37 @@ def model_dir(movenet_config):
 @pytest.mark.mlmodel
 class TestPredictor:
     def test_predictor(self, movenet_config, model_dir):
-        movenet_predictor = Predictor(movenet_config, model_dir)
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
         assert movenet_predictor is not None, "Predictor is not instantiated"
 
     def test_model_creation(self, movenet_config, model_dir):
-        movenet_predictor = Predictor(movenet_config, model_dir)
-        assert movenet_predictor.movenet_model is not None, "Model is not loaded"
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
+        assert movenet_predictor.model is not None, "Model is not loaded"
 
     def test_get_resolution_as_tuple(self, movenet_config, model_dir):
         resolution = {"height": 256, "width": 256}
-        movenet_predictor = Predictor(movenet_config, model_dir)
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
         tuple_res = movenet_predictor.get_resolution_as_tuple(resolution)
         assert isinstance(
             tuple_res, tuple
@@ -79,8 +98,15 @@ class TestPredictor:
         ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
 
     def test_predict(self, movenet_config, model_dir, single_person_image):
-        img = cv2.imread(str(TEST_DIR / single_person_image))
-        movenet_predictor = Predictor(movenet_config, model_dir)
+        img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
         (
             bboxes,
             valid_keypoints,
@@ -98,7 +124,14 @@ class TestPredictor:
         prediction = tf.random.uniform(
             (1, 1, 17, 3), minval=0.3, maxval=0.9, dtype=tf.dtypes.float32, seed=24
         )
-        movenet_predictor = Predictor(movenet_config, model_dir)
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
         (
             bbox,
             valid_keypoints,
@@ -163,7 +196,14 @@ class TestPredictor:
         prediction = tf.random.uniform(
             (1, 6, 56), minval=0.2, maxval=0.9, dtype=tf.dtypes.float32, seed=24
         )
-        movenet_predictor = Predictor(movenet_config, model_dir)
+        movenet_predictor = Predictor(
+            model_dir,
+            movenet_config["model_type"],
+            movenet_config["weights"]["model_file"],
+            movenet_config["resolution"],
+            movenet_config["bbox_score_threshold"],
+            movenet_config["keypoint_score_threshold"],
+        )
         (
             bbox,
             valid_keypoints,

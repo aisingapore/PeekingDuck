@@ -16,10 +16,11 @@
 
 from typing import Any, Dict
 
+import cv2
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -77,29 +78,27 @@ class Node(AbstractNode):
         self.model = movenet_model.MoveNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Function that reads the image input and returns the bboxes, keypoints,
-        keypoints confidence scores, keypoint connections and bounding box labels
-        of the persons detected
+        """Function that reads the image input and returns the bboxes,
+        keypoints, keypoints confidence scores, keypoint connections and
+        bounding box labels of the persons detected.
 
         Args:
-            inputs (dict): Dictionary of inputs with key "img".
+            inputs (Dict[str, Any]): Dictionary of inputs with key "img".
 
         Returns:
-            outputs (dict): bbox output in dictionary format with keys
-                "bboxes", "keypoints", "keypoint_scores", "keypoint_conns
-                and "bbox_labels".
+            (Dict[str, Any]): bbox output in dictionary format with keys
+            "bboxes", "keypoints", "keypoint_scores", "keypoint_conns", and
+            "bbox_labels".
         """
-
-        bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(
-            inputs["img"]
-        )
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        bboxes, keypoints, keypoint_scores, keypoint_conns = self.model.predict(image)
         bbox_labels = np.array(["person"] * len(bboxes))
         bboxes = np.clip(bboxes, 0, 1)
 
         return {
             "bboxes": bboxes,
-            "keypoints": keypoints,
-            "keypoint_scores": keypoint_scores,
-            "keypoint_conns": keypoint_conns,
             "bbox_labels": bbox_labels,
+            "keypoints": keypoints,
+            "keypoint_conns": keypoint_conns,
+            "keypoint_scores": keypoint_scores,
         }

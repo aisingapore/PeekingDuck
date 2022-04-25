@@ -17,11 +17,11 @@ from pathlib import Path
 import pytest
 import yaml
 
-from peekingduck.declarative_loader import ConfigLoader
+from peekingduck.config_loader import ConfigLoader
 
 
 @pytest.fixture
-def configloader():
+def config_loader():
     config_loader = ConfigLoader(Path.cwd() / "tmp_dir")
 
     return config_loader
@@ -42,10 +42,10 @@ def create_config_yaml(node, data):
 
 @pytest.mark.usefixtures("tmp_dir")
 class TestConfigLoader:
-    def test_config_loader_returns_correct_config_file_path(self, configloader):
+    def test_config_loader_returns_correct_config_file_path(self, config_loader):
         node = "type.node"
         # .replace("\\","/") for windows where os.path.join uses "\\"
-        file_path = str(configloader._get_config_path(node)).replace("\\", "/")
+        file_path = str(config_loader._get_config_path(node)).replace("\\", "/")
 
         ground_truth = str(
             Path.cwd() / "tmp_dir" / "configs" / f"{node.replace('.', '/')}.yml"
@@ -53,12 +53,12 @@ class TestConfigLoader:
 
         assert file_path == ground_truth
 
-    def test_config_loader_load_correct_yaml(self, configloader):
+    def test_config_loader_load_correct_yaml(self, config_loader):
         node = "input.test"
         data = {"input": "img", "output": "img"}
         create_config_yaml(node, data)
 
-        config = configloader.get(node)
+        config = config_loader.get(node)
 
         for key in data.keys():
             assert data[key] == config[key]

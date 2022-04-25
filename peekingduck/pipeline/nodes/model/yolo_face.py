@@ -18,10 +18,11 @@ unmasked faces.
 
 from typing import Any, Dict
 
+import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -77,10 +78,11 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = yolo_face_model.Yolov4(self.config)
+        self.model = yolo_face_model.YOLOFaceModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        bboxes, labels, scores = self.model.predict(inputs["img"])
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        bboxes, labels, scores = self.model.predict(image)
         bboxes = np.clip(bboxes, 0, 1)
 
         outputs = {

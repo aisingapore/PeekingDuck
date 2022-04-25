@@ -23,28 +23,7 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode import (
     _traverse_to_target_keypoint,
 )
 
-TEST_DIR = Path.cwd() / "images"
 NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
-
-
-@pytest.fixture
-def scores():
-    return NP_FILE["scores"]
-
-
-@pytest.fixture
-def offsets():
-    return NP_FILE["offsets"]
-
-
-@pytest.fixture
-def displacements_fwd():
-    return NP_FILE["displacements_fwd"]
-
-
-@pytest.fixture
-def displacements_bwd():
-    return NP_FILE["displacements_bwd"]
 
 
 @pytest.fixture
@@ -58,37 +37,48 @@ class TestDecode:
             keypoints=source_keypoint, output_stride=16, width=14, height=14
         )
         npt.assert_almost_equal(
-            source_keypoint_indices, np.array([5, 4]), 4
-        ), "Unexpected output from clipping to indices"
+            source_keypoint_indices,
+            np.array([5, 4]),
+            4,
+            err_msg="Unexpected output from clipping to indices",
+        )
 
-    def test_traverse_to_target_keypoint(
-        self, source_keypoint, scores, offsets, displacements_bwd, displacements_fwd
-    ):
+    def test_traverse_to_target_keypoint(self, source_keypoint):
         score, coords = _traverse_to_target_keypoint(
             edge_id=0,
             source_keypoint=source_keypoint,
             target_keypoint_id=0,
-            scores=scores,
-            offsets=offsets,
+            scores=NP_FILE["scores"],
+            offsets=NP_FILE["offsets"],
             output_stride=16,
-            displacements=displacements_bwd,
+            displacements=NP_FILE["displacements_bwd"],
         )
         assert score == pytest.approx(0.9706, 0.01), "Score did not meet expected value"
-        npt.assert_almost_equal(score, 0.9706, 4), "Score did not meet expected value"
         npt.assert_almost_equal(
-            coords, np.array([74.90, 72.22]), 2
-        ), "Coordinates of incorrect values"
+            score, 0.9706, 4, err_msg="Score did not meet expected value"
+        )
+        npt.assert_almost_equal(
+            coords,
+            np.array([74.90, 72.22]),
+            2,
+            err_msg="Coordinates of incorrect values",
+        )
 
         score, coords = _traverse_to_target_keypoint(
             edge_id=1,
             source_keypoint=np.array([76.23, 70.98]),
             target_keypoint_id=3,
-            scores=scores,
-            offsets=offsets,
+            scores=NP_FILE["scores"],
+            offsets=NP_FILE["offsets"],
             output_stride=16,
-            displacements=displacements_fwd,
+            displacements=NP_FILE["displacements_fwd"],
         )
-        npt.assert_almost_equal(score, 0.4393, 4), "Score did not meet expected value"
         npt.assert_almost_equal(
-            coords, np.array([77.11, 71.62]), 2
-        ), "Coordinates of incorrect values"
+            score, 0.4393, 4, err_msg="Score did not meet expected value"
+        )
+        npt.assert_almost_equal(
+            coords,
+            np.array([77.11, 71.62]),
+            2,
+            err_msg="Coordinates of incorrect values",
+        )

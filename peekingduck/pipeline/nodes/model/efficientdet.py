@@ -16,10 +16,11 @@
 
 from typing import Any, Dict
 
+import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
-from peekingduck.pipeline.nodes.node import AbstractNode
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -74,7 +75,8 @@ class Node(AbstractNode):
         """Takes an image as input and returns bboxes of objects specified
         in config.
         """
-        bboxes, labels, scores = self.model.predict(inputs["img"])
+        image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
+        bboxes, labels, scores = self.model.predict(image)
         bboxes = np.clip(bboxes, 0, 1)
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}

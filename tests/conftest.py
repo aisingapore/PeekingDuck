@@ -16,6 +16,7 @@ import gc
 import os
 import shutil
 import tempfile
+from contextlib import contextmanager
 from pathlib import Path
 
 import cv2
@@ -24,16 +25,20 @@ import pytest
 import tensorflow.keras.backend as K
 import yaml
 
-TEST_HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
-TEST_NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
-TEST_HUMAN_VIDEOS = ["humans_mot.mp4"]
+HUMAN_IMAGES = ["t1.jpg", "t2.jpg", "t4.jpg"]
+NO_HUMAN_IMAGES = ["black.jpg", "t3.jpg"]
+
+SINGLE_PERSON_IMAGES = ["t2.jpg"]
+MULTI_PERSON_IMAGES = ["t1.jpg", "t4.jpg"]
+
+HUMAN_VIDEOS = ["humans_mot.mp4"]
 # Folders of frames from the video sequence
-TEST_HUMAN_VIDEO_SEQUENCES = ["two_people_crossing"]
+HUMAN_VIDEO_SEQUENCES = ["two_people_crossing"]
 
-TEST_NO_LP_IMAGES = ["black.jpg", "t3.jpg"]
-TEST_LP_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
+LICENSE_PLATE_IMAGES = ["tcar1.jpg", "tcar3.jpg", "tcar4.jpg"]
+NO_LICENSE_PLATE_IMAGES = ["black.jpg", "t3.jpg"]
 
-TEST_CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
+CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
 
 # Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
@@ -62,9 +67,9 @@ def create_input_image(create_image):
 
 @pytest.fixture
 def create_video():
-    def _create_video(size, nframes):
+    def _create_video(size, num_frames):
         res = [
-            np.random.randint(255, size=size, dtype=np.uint8) for _ in range(nframes)
+            np.random.randint(255, size=size, dtype=np.uint8) for _ in range(num_frames)
         ]
         return res
 
@@ -73,8 +78,8 @@ def create_video():
 
 @pytest.fixture
 def create_input_video(create_video):
-    def _create_input_video(path, fps, size, nframes):
-        vid = create_video(size, nframes)
+    def _create_input_video(path, fps, size, num_frames):
+        vid = create_video(size, num_frames)
         fourcc = cv2.VideoWriter_fourcc(*"FFV1")
         resolution = (size[1], size[0])
         writer = cv2.VideoWriter(path, fourcc, fps, resolution)
@@ -83,14 +88,6 @@ def create_input_video(create_video):
         return vid
 
     return _create_input_video
-
-
-@pytest.fixture
-def replace_download_weights():
-    def _replace_download_weights(*_):
-        return False
-
-    return _replace_download_weights
 
 
 @pytest.fixture
@@ -115,50 +112,64 @@ def tmp_project_dir():
     os.chdir(cwd)
 
 
-@pytest.fixture(params=TEST_HUMAN_IMAGES)
-def test_human_images(request):
+@pytest.fixture(params=HUMAN_IMAGES)
+def human_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_NO_HUMAN_IMAGES)
-def test_no_human_images(request):
+@pytest.fixture(params=NO_HUMAN_IMAGES)
+def no_human_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_LP_IMAGES)
-def test_lp_images(request):
+@pytest.fixture(params=SINGLE_PERSON_IMAGES)
+def single_person_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_NO_LP_IMAGES)
-def test_no_lp_images(request):
+@pytest.fixture(params=MULTI_PERSON_IMAGES)
+def multi_person_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_CROWD_IMAGES)
-def test_crowd_images(request):
+@pytest.fixture(params=LICENSE_PLATE_IMAGES)
+def license_plate_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_HUMAN_VIDEOS)
-def test_human_videos(request):
+@pytest.fixture(params=NO_LICENSE_PLATE_IMAGES)
+def no_license_plate_image(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
 
-@pytest.fixture(params=TEST_HUMAN_VIDEO_SEQUENCES)
-def test_human_video_sequences(request):
+@pytest.fixture(params=CROWD_IMAGES)
+def crowd_image(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=HUMAN_VIDEOS)
+def human_video(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
+def human_video_sequence(request):
     """This actually returns a list of dictionaries each containing:
     - A video frame
     - Bounding boxes
@@ -185,3 +196,21 @@ def test_human_video_sequences(request):
 
     K.clear_session()
     gc.collect()
+
+
+def do_nothing(*_):
+    """Does nothing. For use with ``mock.patch``."""
+
+
+def get_groundtruth(test_file_path):
+    assert isinstance(test_file_path, Path)
+    with open(test_file_path.parent / "test_groundtruth.yml") as infile:
+        return yaml.safe_load(infile)
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
