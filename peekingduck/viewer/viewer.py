@@ -194,7 +194,7 @@ class Viewer:
             orient=tk.HORIZONTAL,
             from_=1,
             to=100,
-            command=self._sync_slider,
+            command=self._sync_slider_to_frame,
         )
         self.tk_scale.grid(row=0, column=3, columnspan=6, sticky="nsew")
         self.tk_scale.grid_remove()  # hide it first
@@ -306,6 +306,7 @@ class Viewer:
             return
         self.logger.debug("btn_first_frame_press")
         self.frame_idx = 0
+        self._sync_frame_to_slider()
         self._show_frame()
 
     def btn_last_frame_press(self):
@@ -313,6 +314,7 @@ class Viewer:
             return
         self.logger.debug("btn_last_frame_press")
         self.frame_idx = len(self.frames) - 1
+        self._sync_frame_to_slider()
         self._show_frame()
 
     def btn_forward_press(self):
@@ -407,6 +409,7 @@ class Viewer:
         """Internal method to move back one frame, can be called repeatedly"""
         if self.frame_idx > 0:
             self.frame_idx -= 1
+            self._sync_frame_to_slider()
             self._show_frame()
             return True
         return False
@@ -415,6 +418,7 @@ class Viewer:
         """Internal method to move forward one frame, can be called repeatedly"""
         if self.frame_idx + 1 < len(self.frames):
             self.frame_idx += 1
+            self._sync_frame_to_slider()
             self._show_frame()
             return True
         return False
@@ -473,7 +477,25 @@ class Viewer:
             frame = cv2.resize(frame, (new_size[1], new_size[0]))
         return frame
 
-    def _sync_slider(self, val) -> None:
+    #
+    # Header update methods
+    #
+    def _set_header_playing(self) -> None:
+        self.tk_lbl_header["text"] = f"Playing {self._pipeline_path}"
+        self.tk_lbl_header.config(fg="green")
+
+    def _set_header_running(self) -> None:
+        self.tk_lbl_header["text"] = f"Running {self._pipeline_path}"
+        self.tk_lbl_header.config(fg="red")
+
+    def _set_header_stop(self) -> None:
+        self.tk_lbl_header["text"] = f"{self._pipeline_path}"
+        self.tk_lbl_header.config(fg="white")
+
+    def _sync_frame_to_slider(self) -> None:
+        self.tk_scale.set(self.frame_idx + 1)
+
+    def _sync_slider_to_frame(self, val) -> None:
         # self.logger.info(f"sync slider: {val}")
         # self.tk_frame_num["text"] = val
         self.frame_idx = int(val) - 1
@@ -490,7 +512,7 @@ class Viewer:
         self.tk_scale.grid()  # show slider
         self.tk_scale.configure(to=len(self.frames))
         # self.tk_frame_num["text"] = self.tk_scale.get()
-        self._sync_slider(self.tk_scale.get())
+        self._sync_slider_to_frame(self.tk_scale.get())
 
     def _run_pipeline_end(self) -> None:
         """Called when pipeline execution is completed.
@@ -505,6 +527,7 @@ class Viewer:
         self._enable_slider()
         self._state = "stop"
         self.tk_btn_play["text"] = "Play"
+        self._set_header_stop()
 
     def _run_pipeline_one_iteration(self) -> None:
         # self.logger.info("run pipeline one iteration")
@@ -565,6 +588,7 @@ class Viewer:
         )
         self.pipeline: Pipeline = self.node_loader.get_pipeline()
         # self.logger.info(f"self.pipeline: {self.pipeline}")
+        self._set_header_running()
 
         self.frames = []
         self.frame_idx = -1
@@ -575,6 +599,7 @@ class Viewer:
         self._output_playback = True
         self._state = "play"
         self.tk_btn_play["text"] = "Stop"
+        self._set_header_playing()
         if self._forward_one_frame():
             self.tk_scale.set(self.frame_idx + 1)
             self.logger.debug("forward one frame ok")
@@ -588,7 +613,7 @@ class Viewer:
         self._output_playback = False
         self._state = "stop"
         self.tk_btn_play["text"] = "Play"
-        # self._toggle_btn_play_stop(state="play")
+        self._set_header_stop()
 
     def _stop_running_pipeline(self) -> None:
         """Signal pipeline execution to be stopped"""
