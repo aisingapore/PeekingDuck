@@ -41,6 +41,7 @@ from peekingduck.utils.create_node_helper import (
 )
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
+from peekingduck.viewer import Viewer
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
@@ -289,11 +290,18 @@ def nodes(type_name: str = None) -> None:
     type=int,
     help="Stop pipeline after running this number of iterations",
 )
+@click.option(
+    "--viewer",
+    default=False,
+    is_flag=True,
+    help="Launch PeekingDuck viewer",
+)
 def run(
     config_path: str,
     log_level: str,
     node_config: str,
     num_iter: int,
+    viewer: bool,
     nodes_parent_dir: str = "src",
 ) -> None:
     """Runs PeekingDuck"""
@@ -315,16 +323,28 @@ def run(
             config_path = curr_dir / "pipeline_config.yml"
     pipeline_config_path = Path(config_path)
 
-    start_time = perf_counter()
-    runner = Runner(
-        pipeline_path=pipeline_config_path,
-        config_updates_cli=node_config,
-        custom_nodes_parent_subdir=nodes_parent_dir,
-        num_iter=num_iter,
-    )
-    end_time = perf_counter()
-    logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
-    runner.run()
+    if viewer:
+        logger.info("viewer")
+        viewer = Viewer(
+            pipeline_path=pipeline_config_path,
+            config_updates_cli=node_config,
+            custom_nodes_parent_subdir=nodes_parent_dir,
+            num_iter=num_iter,
+        )
+        viewer.run()
+    else:
+        logger.info("no viewer")
+
+        start_time = perf_counter()
+        runner = Runner(
+            pipeline_path=pipeline_config_path,
+            config_updates_cli=node_config,
+            custom_nodes_parent_subdir=nodes_parent_dir,
+            num_iter=num_iter,
+        )
+        end_time = perf_counter()
+        logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
+        runner.run()
 
 
 def _create_nodes_from_config_file(
