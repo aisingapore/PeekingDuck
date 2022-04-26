@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from pathlib import Path
-from unittest import TestCase, mock
+from unittest import mock
 
 import cv2
 import numpy as np
@@ -21,12 +21,9 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.yolo import Node
-from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
@@ -94,37 +91,6 @@ class TestYolo:
     def test_get_detect_ids(self, yolo_type):
         yolo = Node(yolo_type)
         assert yolo.model.detect_ids == [0]
-
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "_extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_to,
-        mock_extract_file,
-        yolo_config,
-    ):
-        model_dir = (
-            yolo_config["root"].parent
-            / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / yolo_config["weights"][yolo_config["model_format"]]["model_subdir"]
-            / yolo_config["model_format"]
-        )
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.yolov4.yolo_model.logger"
-        ) as captured:
-            yolo = Node(config=yolo_config)
-            # records 0 - 20 records are updates to configs
-            assert captured.records[0].getMessage() == "Proceeding to download..."
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {model_dir}."
-            )
-            assert yolo is not None
-
-        assert mock_download_to.called
-        assert mock_extract_file.called
 
     def test_invalid_config_detect_ids(self, yolo_config):
         yolo_config["detect_ids"] = 1

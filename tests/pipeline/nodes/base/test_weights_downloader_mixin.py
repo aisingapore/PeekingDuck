@@ -178,14 +178,29 @@ class TestWeightsDownloaderMixin:
     def test_create_weights_dir(
         self, mock_download_to, mock_extract_file, weights_model
     ):
-        weights_parent_dir = Path.cwd().resolve()
-        weights_model.config["weights_parent_dir"] = weights_parent_dir
-        weights_model.config["weights"] = {"model_subdir": "some_model"}
+        with tempfile.TemporaryDirectory() as tmp_dir, TestCase.assertLogs(
+            "test_weights_downloader_mixin.WeightsModel"
+        ) as captured:
+            weights_parent_dir = Path(tmp_dir)
+            model_dir = (
+                weights_parent_dir
+                / PEEKINGDUCK_WEIGHTS_SUBDIR
+                / weights_model.model_subdir
+                / weights_model.config["model_format"]
+            )
+            weights_model.config["weights_parent_dir"] = weights_parent_dir
 
-        assert not (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
+            assert not (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
 
-        weights_model.download_weights()
+            weights_model.download_weights()
 
-        assert mock_download_to.called
-        assert mock_extract_file.called
-        assert (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
+            assert mock_download_to.called
+            assert mock_extract_file.called
+            assert (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
+
+            assert captured.records[0].getMessage() == "No weights detected."
+            assert captured.records[1].getMessage() == "Proceeding to download..."
+            assert (
+                captured.records[2].getMessage()
+                == f"Weights downloaded to {model_dir}."
+            )
