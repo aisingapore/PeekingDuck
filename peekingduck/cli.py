@@ -296,7 +296,7 @@ def nodes(type_name: str = None) -> None:
     is_flag=True,
     help="Launch PeekingDuck viewer",
 )
-def run(
+def run(  # pylint: disable=too-many-arguments
     config_path: str,
     log_level: str,
     node_config: str,

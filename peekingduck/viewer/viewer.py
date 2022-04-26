@@ -16,27 +16,20 @@
 Implement PeekingDuck Viewer
 """
 
-from typing import List, Tuple
-from functools import partial
+from typing import List, Union
+from io import StringIO
 from pathlib import Path
 import logging
-import time
-
-# imports to run PeekingDuck
-import copy
-import cv2
-from io import StringIO
-import numpy as np
 import os
-import traceback
-from peekingduck.declarative_loader import DeclarativeLoader
-from peekingduck.pipeline.pipeline import Pipeline
-
-# import for PeekingDuck Viewer
-from PIL import ImageTk, Image
+import time
 import tkinter as tk
 from tkinter import ttk
-from peekingduck.viewer.canvas_view import CanvasView
+import copy
+import cv2
+import numpy as np
+from PIL import ImageTk, Image
+from peekingduck.declarative_loader import DeclarativeLoader
+from peekingduck.pipeline.pipeline import Pipeline
 
 LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
 WIN_WIDTH = 1280
@@ -65,6 +58,26 @@ MOUSE_BTN_MAP = {
     3: "middle",
 }
 
+#
+# Helper Methods
+#
+def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
+    """Load and resize an image
+
+    Args:
+        resize_pct (float, optional): percentage to resize. Defaults to 0.25.
+
+    Returns:
+        ImageTk.PhotoImage: the loaded image
+    """
+    img = Image.open(image_path)
+    width = int(resize_pct * img.size[0])
+    height = int(resize_pct * img.size[1])
+    resized_img = img.resize((width, height))
+    # self.logger.info(f"img size={img.size}")
+    the_img = ImageTk.PhotoImage(resized_img)
+    return the_img
+
 
 def parse_streams(strio: StringIO) -> str:
     """Helper method to parse I/O streams.
@@ -81,12 +94,14 @@ def parse_streams(strio: StringIO) -> str:
     return msg
 
 
-class Viewer:
+class Viewer:  # pylint: disable=too-many-instance-attributes
+    """Implement PeekingDuck Viewer class"""
+
     def __init__(
         self,
-        pipeline_path: Path = None,
-        config_updates_cli: str = None,
-        custom_nodes_parent_subdir: str = None,
+        pipeline_path: Path,
+        config_updates_cli: str,
+        custom_nodes_parent_subdir: str,
         num_iter: int = None,
     ) -> None:
         self.logger = logging.getLogger(__name__)
@@ -94,7 +109,7 @@ class Viewer:
         self._custom_nodes_parent_path = custom_nodes_parent_subdir
         self._num_iter = num_iter
         # for PeekingDuck pipeline run/playback
-        self.frames: List[np.ndarray] = None
+        self.frames: Union[List[np.ndarray], None] = None
         self.frame_idx: int = -1
         self.zoom_idx: int = 2
         self._output_playback: bool = False
@@ -103,7 +118,8 @@ class Viewer:
         self._state: str = "play"  # activate auto play
         self._image_container = None
 
-    def run(self):
+    def run(self) -> None:
+        """Main method to setup Viewer and run Tk event loop"""
         self.logger.info(f"run {self._pipeline_path}")
         self.logger.info(f"cwd={Path.cwd()}")
         logo_path = Path(LOGO)
@@ -118,12 +134,8 @@ class Viewer:
         # bind event handlers
         self.root.bind("<Key>", self.on_keypress)
         # self.root.bind("<Configure>", self.on_resize)
-        # self.root.bind("<Button>", self.on_mousedown)
-        # self.root.bind("<ButtonRelease>", self.on_mouseup)
 
-        # self._timer = tk.Label(self.root)
         self.tick()
-
         self.root.mainloop()
 
     def _create_canvas(self) -> None:
@@ -136,16 +148,16 @@ class Viewer:
         self.tk_pkd_image = canvas
         self.canvas_frm = canvas_frm
 
-    def _create_canvas_old(self) -> None:
-        """Create the main image for viewing PeekingDuck output
-        using Canvas widget"""
-        canvas_frm = ttk.Frame(master=self.root)
-        canvas_frm.pack(fill=tk.BOTH, expand=True)
-        # canvas = CanvasView(canvas_frm, bg="blue")
-        canvas = CanvasView(canvas_frm)
-        canvas.pack(fill=tk.BOTH, expand=True)
-        self.tk_pkd_image = canvas
-        self.canvas_frm = canvas_frm
+    # def _create_canvas_old(self) -> None:
+    #     """Create the main image for viewing PeekingDuck output
+    #     using Canvas widget"""
+    #     canvas_frm = ttk.Frame(master=self.root)
+    #     canvas_frm.pack(fill=tk.BOTH, expand=True)
+    #     # canvas = CanvasView(canvas_frm, bg="blue")
+    #     canvas = CanvasView(canvas_frm)
+    #     canvas.pack(fill=tk.BOTH, expand=True)
+    #     self.tk_pkd_image = canvas
+    #     self.canvas_frm = canvas_frm
 
     def _create_window(self) -> None:
         """Create the PeekingDuck viewer window"""
@@ -162,7 +174,8 @@ class Viewer:
         header_frm = ttk.Frame(master=self.root)
         header_frm.pack(side=tk.TOP, fill=tk.X)
         # header contents
-        self.img_logo = self._load_image(resize_pct=0.15)  # prevent garbage collection
+        # self.img_logo = self._load_image(resize_pct=0.15)  # prevent garbage collection
+        self.img_logo = load_image(LOGO, resize_pct=0.15)  # prevent garbage collection
         logo = tk.Label(header_frm, image=self.img_logo)
         logo.grid(row=0, column=0, sticky="nsew")
         for i in range(2):
@@ -270,27 +283,28 @@ class Viewer:
         # save it
         self.footer_frm = btn_frm
 
-    def _load_image(self, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
-        """Load and resize an image
+    # def _load_image(self, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
+    #     """Load and resize an image
 
-        Args:
-            resize_pct (float, optional): percentage to resize. Defaults to 0.25.
+    #     Args:
+    #         resize_pct (float, optional): percentage to resize. Defaults to 0.25.
 
-        Returns:
-            ImageTk.PhotoImage: the loaded image
-        """
-        img = Image.open(LOGO)
-        w = int(resize_pct * img.size[0])
-        h = int(resize_pct * img.size[1])
-        resized_img = img.resize((w, h))
-        # self.logger.info(f"img size={img.size}")
-        the_img = ImageTk.PhotoImage(resized_img)
-        return the_img
+    #     Returns:
+    #         ImageTk.PhotoImage: the loaded image
+    #     """
+    #     img = Image.open(LOGO)
+    #     width = int(resize_pct * img.size[0])
+    #     height = int(resize_pct * img.size[1])
+    #     resized_img = img.resize((width, height))
+    #     # self.logger.info(f"img size={img.size}")
+    #     the_img = ImageTk.PhotoImage(resized_img)
+    #     return the_img
 
     #
     # Tk Event Handlers
     #
-    def btn_play_stop_press(self):
+    def btn_play_stop_press(self) -> None:
+        """Handle Play/Stop button"""
         self.logger.info("btn_play_stop_press")
         if self._pipeline_running:
             self._stop_running_pipeline()
@@ -301,7 +315,8 @@ class Viewer:
             self._do_playback()
         self.logger.info(f"btn_play_stop_press end: self._state={self._state}")
 
-    def btn_first_frame_press(self):
+    def btn_first_frame_press(self) -> None:
+        """Goto first frame"""
         if self._pipeline_running or self._output_playback or self.frames is None:
             return
         self.logger.debug("btn_first_frame_press")
@@ -309,7 +324,8 @@ class Viewer:
         self._sync_frame_to_slider()
         self._show_frame()
 
-    def btn_last_frame_press(self):
+    def btn_last_frame_press(self) -> None:
+        """Goto last frame"""
         if self._pipeline_running or self._output_playback or self.frames is None:
             return
         self.logger.debug("btn_last_frame_press")
@@ -317,35 +333,43 @@ class Viewer:
         self._sync_frame_to_slider()
         self._show_frame()
 
-    def btn_forward_press(self):
+    def btn_forward_press(self) -> None:
+        """Forward one frame"""
         if self._pipeline_running or self._output_playback or self.frames is None:
             return
         self._forward_one_frame()
 
-    def btn_backward_press(self):
+    def btn_backward_press(self) -> None:
+        """Back one frame"""
         if self._pipeline_running or self._output_playback or self.frames is None:
             return
         self._backward_one_frame()
 
-    def btn_zoom_in_press(self):
+    def btn_zoom_in_press(self) -> None:
         """Zoom in: make image larger"""
         self.logger.info("btn_zoom_in_press")
         if self.zoom_idx + 1 < len(ZOOMS):
             self.zoom_idx += 1
             self._update_zoom_text()
 
-    def btn_zoom_out_press(self):
+    def btn_zoom_out_press(self) -> None:
         """Zoom out: make image smaller"""
         self.logger.info("btn_zoom_out_press")
         if self.zoom_idx > 0:
             self.zoom_idx -= 1
             self._update_zoom_text()
 
-    def btn_quit_press(self):
+    def btn_quit_press(self) -> None:
+        """Quit viewer"""
         self.logger.debug("btn_quit_press")
         self.root.destroy()
 
-    def on_keypress(self, event):
+    def on_keypress(self, event: tk.Event) -> None:
+        """Handle keydown events
+
+        Args:
+            event (tk.Event): the key down event
+        """
         self.logger.info(
             f"keypressed: char={event.char}, keysym={event.keysym}, state={event.state}"
         )
@@ -386,7 +410,7 @@ class Viewer:
     #
     # Background "Event Loop"
     #
-    def tick(self):
+    def tick(self) -> None:
         """Main background processing entry point"""
         the_time = time.strftime("%H:%M:%S")
         self.tk_lbl_timer.config(text=the_time)
@@ -424,6 +448,7 @@ class Viewer:
         return False
 
     def _show_frame(self) -> None:
+        """Internal method to display a frame"""
         if self.frames:
             frame = self.frames[self.frame_idx]
             frame = self._apply_zoom(frame)  # note: can speed up zoom?
@@ -529,7 +554,7 @@ class Viewer:
         self.tk_btn_play["text"] = "Play"
         self._set_header_stop()
 
-    def _run_pipeline_one_iteration(self) -> None:
+    def _run_pipeline_one_iteration(self) -> None:  # pylint: disable=too-many-branches
         # self.logger.info("run pipeline one iteration")
         self._pipeline_running = True
         for node in self.pipeline.nodes:
@@ -584,7 +609,9 @@ class Viewer:
         self.logger.info(f"pipeline path: {self._pipeline_path}")
         self.logger.info(f"custom_nodes: {self._custom_nodes_parent_path}")
         self.node_loader = DeclarativeLoader(
-            self._pipeline_path, "None", self._custom_nodes_parent_path
+            self._pipeline_path,
+            self._config_updates_cli,
+            self._custom_nodes_parent_path,
         )
         self.pipeline: Pipeline = self.node_loader.get_pipeline()
         # self.logger.info(f"self.pipeline: {self.pipeline}")
