@@ -332,9 +332,7 @@ class WeightsDownloaderMixin:
 
         return model_dir
 
-    def _download_to(
-        self, filename: str, destination_dir: Path
-    ) -> None:  # pragma: no cover
+    def _download_to(self, filename: str, destination_dir: Path) -> None:
         """Downloads publicly shared files from Google Cloud Platform.
 
         Saves download content in chunks. Chunk size set to large integer as
@@ -351,7 +349,7 @@ class WeightsDownloaderMixin:
                 if chunk:  # filter out keep-alive new chunks
                     outfile.write(chunk)
 
-    def _extract_file(self, destination_dir: Path) -> None:  # pragma: no cover
+    def _extract_file(self, destination_dir: Path) -> None:
         """Extracts the zip file to ``destination_dir``.
 
         Args:
