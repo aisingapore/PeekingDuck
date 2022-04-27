@@ -324,17 +324,15 @@ def run(  # pylint: disable=too-many-arguments
     pipeline_config_path = Path(config_path)
 
     if viewer:
-        logger.info("viewer")
-        viewer = Viewer(
+        logger.info("Launching PeekingDuck Viewer")
+        pkd_viewer = Viewer(
             pipeline_path=pipeline_config_path,
             config_updates_cli=node_config,
             custom_nodes_parent_subdir=nodes_parent_dir,
             num_iter=num_iter,
         )
-        viewer.run()
+        pkd_viewer.run()
     else:
-        logger.info("no viewer")
-
         start_time = perf_counter()
         runner = Runner(
             pipeline_path=pipeline_config_path,

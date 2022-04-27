@@ -17,10 +17,8 @@ Implement PeekingDuck Viewer
 """
 
 from typing import List, Union
-from io import StringIO
 from pathlib import Path
 import logging
-import os
 import time
 import tkinter as tk
 from tkinter import ttk
@@ -31,38 +29,32 @@ from PIL import ImageTk, Image
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
 
-LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
-WIN_WIDTH = 1280
-WIN_HEIGHT = 800
-FPS_60: int = int(1000 / 60)  # milliseconds per iteration
-# FPS_60 = 500
+####################
+# Globals
+####################
 BUTTON_DELAY: int = 250  # milliseconds (0.25 of a second)
 BUTTON_REPEAT: int = int(1000 / 60)  # milliseconds (60 fps)
-ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
-# Test unicode glyphs for zoom factors
-# ZOOM_TEXT = ["\u00BD", "\u00BE", "1.0", "1\u00BC", "1\u00BD", "2.0"]
-ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
-#
-# Tk Mapping Stuff
-#
-KEY_STATE_MAP = {
+FPS_60: int = int(1000 / 60)  # milliseconds per iteration
+KEY_STATE_MAP = {  # Tkinter keyboard modifiers
     1: "shift",
     2: "capslock",
     4: "ctrl",
     8: "meta",
     16: "alt",
+    32: "keypad",
 }
-MOUSE_BTN_MAP = {
-    1: "left",
-    2: "right",
-    3: "middle",
-}
+LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
+WIN_HEIGHT = 800
+WIN_WIDTH = 1280
+ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
+ZOOM_DEFAULT_IDX = 2
+ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
 
-#
+####################
 # Helper Methods
-#
+####################
 def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
-    """Load and resize an image
+    """Load and resize an image, 'coz plain vanilla Tkinter doesn't support JPG, PNG
 
     Args:
         resize_pct (float, optional): percentage to resize. Defaults to 0.25.
@@ -74,24 +66,8 @@ def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
     width = int(resize_pct * img.size[0])
     height = int(resize_pct * img.size[1])
     resized_img = img.resize((width, height))
-    # self.logger.info(f"img size={img.size}")
     the_img = ImageTk.PhotoImage(resized_img)
     return the_img
-
-
-def parse_streams(strio: StringIO) -> str:
-    """Helper method to parse I/O streams.
-    Used to capture errors/exceptions from PeekingDuck.
-
-    Args:
-        strio (StringIO): the I/O stream to parse
-
-    Returns:
-        str: parsed stream
-    """
-    msg = strio.getvalue()
-    msg = os.linesep.join([s for s in msg.splitlines() if s])
-    return msg
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes
@@ -102,81 +78,75 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         pipeline_path: Path,
         config_updates_cli: str,
         custom_nodes_parent_subdir: str,
-        num_iter: int = None,
+        num_iter: int = 0,
     ) -> None:
         self.logger = logging.getLogger(__name__)
+        self._pipeline_path = pipeline_path
         self._config_updates_cli = config_updates_cli
         self._custom_nodes_parent_path = custom_nodes_parent_subdir
         self._num_iter = num_iter
         # for PeekingDuck pipeline run/playback
-        self.frames: Union[List[np.ndarray], None] = None
-        self.frame_idx: int = -1
-        self.zoom_idx: int = 2
-        self._output_playback: bool = False
-        self._pipeline_path = pipeline_path
-        self._pipeline_running: bool = False
-        self._state: str = "play"  # activate auto play
-        self._image_container = None
+        self._frames: List[np.ndarray] = []
+        self._frame_idx: int = -1
+        self.zoom_idx: int = ZOOM_DEFAULT_IDX
+        self._is_output_playback: bool = False
+        self._is_pipeline_running: bool = False
+        self._state: str = "play"  # activate auto play (cf. self.timer_function)
+        # configure keyboard shortcuts map
+        self._keyboard_shortcuts = {
+            "z": self._zoom_reset,
+            "+": self._zoom_in,
+            "-": self._zoom_out,
+        }
 
     def run(self) -> None:
         """Main method to setup Viewer and run Tk event loop"""
-        self.logger.info(f"run {self._pipeline_path}")
         self.logger.info(f"cwd={Path.cwd()}")
+        self.logger.info(f"pipeline={self._pipeline_path}")
         logo_path = Path(LOGO)
-        self.logger.info(f"{logo_path} exists={logo_path.exists()}")
-
+        self.logger.debug(f"logo={logo_path}, exists={logo_path.exists()}")
+        # create Tkinter window and frames
         self._create_window()
         self._create_header()
         self._create_canvas()
-        self._create_footer()
+        self._create_footer()  # need to order last two frames correctly
         self._create_progress_slider()
-
         # bind event handlers
         self.root.bind("<Key>", self.on_keypress)
-        # self.root.bind("<Configure>", self.on_resize)
-
-        self.tick()
+        # activate internal timer function and start Tkinter event loop
+        self._timer_function()
         self.root.mainloop()
 
-    def _create_canvas(self) -> None:
-        """Create the main image for viewing PeekingDuck output
-        using Label widget"""
-        canvas_frm = ttk.Frame(master=self.root)
-        canvas_frm.pack(fill=tk.BOTH, expand=True)
-        canvas = tk.Label(canvas_frm)
-        canvas.pack(fill=tk.BOTH, expand=True)
-        self.tk_pkd_image = canvas
-        self.canvas_frm = canvas_frm
-
-    # def _create_canvas_old(self) -> None:
-    #     """Create the main image for viewing PeekingDuck output
-    #     using Canvas widget"""
-    #     canvas_frm = ttk.Frame(master=self.root)
-    #     canvas_frm.pack(fill=tk.BOTH, expand=True)
-    #     # canvas = CanvasView(canvas_frm, bg="blue")
-    #     canvas = CanvasView(canvas_frm)
-    #     canvas.pack(fill=tk.BOTH, expand=True)
-    #     self.tk_pkd_image = canvas
-    #     self.canvas_frm = canvas_frm
-
+    ####################
+    #
+    # Tk Main Window and Frames Creation
+    #
+    ####################
     def _create_window(self) -> None:
         """Create the PeekingDuck viewer window"""
         root = tk.Tk()
-        root.title = "PeekingDuck Viewer"
+        root.title("PeekingDuck Viewer")
         root.geometry(f"{WIN_WIDTH}x{WIN_HEIGHT}")
-        root.update()  # force update without mainloop()
+        root.update()  # force update without mainloop() to get correct size
         root.minsize(root.winfo_width(), root.winfo_height())
-        # save it
-        self.root = root
+        self.root = root  # save main window
+
+    def _create_canvas(self) -> None:
+        """Create the main image widget for viewing PeekingDuck output"""
+        image_frm = ttk.Frame(master=self.root)
+        image_frm.pack(fill=tk.BOTH, expand=True)
+        output_image = tk.Label(image_frm)
+        output_image.pack(fill=tk.BOTH, expand=True)
+        self.tk_output_image = output_image
+        self.image_frm = image_frm  # save image frame
 
     def _create_header(self) -> None:
-        """Create header with logo and info text"""
+        """Create header with logo and pipeline info text"""
         header_frm = ttk.Frame(master=self.root)
         header_frm.pack(side=tk.TOP, fill=tk.X)
         # header contents
-        # self.img_logo = self._load_image(resize_pct=0.15)  # prevent garbage collection
-        self.img_logo = load_image(LOGO, resize_pct=0.15)  # prevent garbage collection
-        logo = tk.Label(header_frm, image=self.img_logo)
+        self._img_logo = load_image(LOGO, resize_pct=0.15)  # prevent python GC
+        logo = tk.Label(header_frm, image=self._img_logo)
         logo.grid(row=0, column=0, sticky="nsew")
         for i in range(2):
             dummy = tk.Label(header_frm, text="")
@@ -184,7 +154,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         lbl = tk.Label(header_frm, text="PeekingDuck Viewer Header")
         lbl.grid(row=0, column=1, columnspan=3, sticky="nsew")
         self.tk_lbl_header = lbl
-        # trick to do background processing with this widget
+        # setup "timer" widget to do background processing later
         lbl_timer = tk.Label(header_frm, text="timer")
         lbl_timer.grid(row=0, column=4, sticky="nsew")
         self.tk_lbl_timer = lbl_timer
@@ -192,11 +162,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         num_col, _ = header_frm.grid_size()
         for i in range(num_col):
             header_frm.grid_columnconfigure(i, weight=1, uniform="tag")
-        # save it
-        self.header_frm = header_frm
+        self.header_frm = header_frm  # save header frame
 
     def _create_progress_slider(self) -> None:
-        """Create progress bar/slider, frame count, zoom"""
+        """Create frame for progress bar/slider, frame count, zoom.
+        Need to align columns with footer below.
+        Progress bar and slider overlaps on the same columns.
+        """
         progress_frm = ttk.Frame(master=self.root)
         progress_frm.pack(side=tk.BOTTOM, fill=tk.X)
         lbl = tk.Label(progress_frm, text="")  # spacer
@@ -221,8 +193,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             maximum=100,
         )
         self.tk_progress.grid(row=0, column=3, columnspan=6, sticky="nsew")
-        # self.tk_frame_num = tk.Label(progress_frm, text="0")
-        # self.tk_frame_num.grid(row=0, column=9, sticky="nsew")
+        # zoom
         glyph = ZOOM_TEXT[self.zoom_idx]
         self.tk_lbl_zoom = tk.Label(progress_frm, text=f"{glyph}")
         self.tk_lbl_zoom.grid(row=0, column=9, sticky="nsew")
@@ -232,22 +203,23 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         num_col, _ = progress_frm.grid_size()
         for i in range(num_col):
             progress_frm.grid_columnconfigure(i, weight=1, uniform="tag")
-        # save it
-        self.progress_frm = progress_frm
+        self.progress_frm = progress_frm  # save progress/slider frame
 
     def _create_footer(self) -> None:
-        """Create footer of control buttons"""
+        """Create footer of control buttons.
+        Use blank tk.Label to guide spacing as Tkinter can't micromanage layout
+        by specifying percentages/pixels.
+        """
         btn_frm = ttk.Frame(master=self.root)
         btn_frm.pack(side=tk.BOTTOM, fill=tk.X)
         # footer contents
         self.tk_btn_play = tk.Button(
             btn_frm, text="Play", command=self.btn_play_stop_press
-        )
-        btn_list = [
+        )  # store widget to modifying button text later
+        btn_list: List[Union[tk.Button, tk.Label]] = [
             tk.Label(btn_frm, text=""),  # spacer
             tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
-            # tk.Button(btn_frm, text="Play", command=self.btn_play_stop_press),
             self.tk_btn_play,
             tk.Button(btn_frm, text="|<<", command=self.btn_first_frame_press),
             tk.Button(
@@ -267,105 +239,106 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             tk.Button(btn_frm, text=">>|", command=self.btn_last_frame_press),
             tk.Button(btn_frm, text="-", command=self.btn_zoom_out_press),
             tk.Button(btn_frm, text="+", command=self.btn_zoom_in_press),
-            # tk.Button(btn_frm, text="Quit", command=self.btn_quit_press),
             tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
         ]
         for i, btn in enumerate(btn_list):
             btn.configure(height=2)  # NB: height is in text units!
             btn.grid(row=0, column=i, sticky="nsew")
-            # btn.grid(row=0, column=i, ipady=10, ipadx=10, pady=10, padx=10)
-
         # configure expansion and uniform column sizes
         num_col, _ = btn_frm.grid_size()
         for i in range(num_col):
             btn_frm.grid_columnconfigure(i, weight=1, uniform="tag")
-        # save it
-        self.footer_frm = btn_frm
+        self.footer_frm = btn_frm  # save footer frame
 
-    # def _load_image(self, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
-    #     """Load and resize an image
-
-    #     Args:
-    #         resize_pct (float, optional): percentage to resize. Defaults to 0.25.
-
-    #     Returns:
-    #         ImageTk.PhotoImage: the loaded image
-    #     """
-    #     img = Image.open(LOGO)
-    #     width = int(resize_pct * img.size[0])
-    #     height = int(resize_pct * img.size[1])
-    #     resized_img = img.resize((width, height))
-    #     # self.logger.info(f"img size={img.size}")
-    #     the_img = ImageTk.PhotoImage(resized_img)
-    #     return the_img
-
+    ####################
     #
     # Tk Event Handlers
     #
+    ####################
     def btn_play_stop_press(self) -> None:
         """Handle Play/Stop button"""
-        self.logger.info("btn_play_stop_press")
-        if self._pipeline_running:
+        self.logger.debug(f"btn_play_stop_press start: self._state={self._state}")
+        if self._is_pipeline_running:
             self._stop_running_pipeline()
-        elif self._output_playback:
+        elif self._is_output_playback:
             self._stop_playback()
         else:
-            self.logger.info(f"self._state={self._state}")
             self._do_playback()
-        self.logger.info(f"btn_play_stop_press end: self._state={self._state}")
+        self.logger.debug(f"btn_play_stop_press end: self._state={self._state}")
 
     def btn_first_frame_press(self) -> None:
         """Goto first frame"""
-        if self._pipeline_running or self._output_playback or self.frames is None:
+        if (
+            self._is_pipeline_running
+            or self._is_output_playback
+            or self._frames is None
+        ):
             return
         self.logger.debug("btn_first_frame_press")
-        self.frame_idx = 0
-        self._sync_frame_to_slider()
-        self._show_frame()
+        self._frame_idx = 0
+        self._update_slider_and_show_frame()
 
     def btn_last_frame_press(self) -> None:
         """Goto last frame"""
-        if self._pipeline_running or self._output_playback or self.frames is None:
+        if (
+            self._is_pipeline_running
+            or self._is_output_playback
+            or self._frames is None
+        ):
             return
         self.logger.debug("btn_last_frame_press")
-        self.frame_idx = len(self.frames) - 1
-        self._sync_frame_to_slider()
-        self._show_frame()
+        self._frame_idx = len(self._frames) - 1
+        self._update_slider_and_show_frame()
 
     def btn_forward_press(self) -> None:
         """Forward one frame"""
-        if self._pipeline_running or self._output_playback or self.frames is None:
+        if (
+            self._is_pipeline_running
+            or self._is_output_playback
+            or self._frames is None
+        ):
             return
         self._forward_one_frame()
 
     def btn_backward_press(self) -> None:
         """Back one frame"""
-        if self._pipeline_running or self._output_playback or self.frames is None:
+        if (
+            self._is_pipeline_running
+            or self._is_output_playback
+            or self._frames is None
+        ):
             return
         self._backward_one_frame()
 
     def btn_zoom_in_press(self) -> None:
         """Zoom in: make image larger"""
         self.logger.info("btn_zoom_in_press")
-        if self.zoom_idx + 1 < len(ZOOMS):
-            self.zoom_idx += 1
-            self._update_zoom_text()
+        self._zoom_in()
 
     def btn_zoom_out_press(self) -> None:
         """Zoom out: make image smaller"""
         self.logger.info("btn_zoom_out_press")
-        if self.zoom_idx > 0:
-            self.zoom_idx -= 1
-            self._update_zoom_text()
+        self._zoom_out()
 
-    def btn_quit_press(self) -> None:
-        """Quit viewer"""
-        self.logger.debug("btn_quit_press")
-        self.root.destroy()
+    def _get_keyboard_modifier(self, state: int) -> str:
+        ctrl = 0 != (state & 0x4)
+        alt = 0 != (state & 0x8) or 0 != (state & 0x80)
+        shift = 0 != (state & 0x1)
+        res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
+        return res
+
+    def _get_keyboard_char(self, char: str, keysym: str) -> str:
+        res = char if char else keysym
+        if keysym == "minus":
+            res = "-"
+        if keysym == "plus":
+            res = "+"
+        return res
 
     def on_keypress(self, event: tk.Event) -> None:
-        """Handle keydown events
+        """Handle all keydown events.
+        Default system shortcuts are automatically handled, e.g. CMD-Q quits on macOS
 
         Args:
             event (tk.Event): the key down event
@@ -373,113 +346,75 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.logger.info(
             f"keypressed: char={event.char}, keysym={event.keysym}, state={event.state}"
         )
-        mod = KEY_STATE_MAP[event.state] if event.state in KEY_STATE_MAP else "unknown"
-        if event.char or mod == "ctrl":  # make sure we have a key
-            key = event.char if event.char else event.keysym
-            self.logger.info(f"key = {mod}-{key}")
-            # handle supported keyboard shortcuts here
-            if mod == "ctrl" and key == "z":
-                # reset zoom
-                self.zoom_idx = 2
-                self._update_zoom_text()
-
-    # def on_mousedown(self, event):
-    #     mouse_btn = MOUSE_BTN_MAP[event.num]
-    #     self.logger.info(f"mousedown event={event} button={mouse_btn}")
-
-    # def on_mouseup(self, event):
-    #     mouse_btn = MOUSE_BTN_MAP[event.num]
-    #     self.logger.info(f"mouseup event={event} button={mouse_btn}")
-
-    # def on_resize(self, event):
-    #     # self.logger.info(f"resize: event={event}")
-    #     # self.logger.info(f"canvas: size={self.canvas.width}x{self.canvas.height}")
-    #     if self._image_container:
-    #         coords = self.canvas.coords(self._image_container)
-    #         x1, y1 = coords
-    #         x2 = self.canvas.width // 2
-    #         y2 = self.canvas.height // 2
-    #         dx = x2 - x1
-    #         dy = y2 - y1
-    #         if dx or dy:
-    #             self.logger.info(
-    #                 f"image: pos={coords}, x2={x2}, y2={y2}, dx={dx}, dy={dy}"
-    #             )
-    #             self.canvas.move(self._image_container, dx, dy)
+        key_state: int = int(event.state)
+        mod = self._get_keyboard_modifier(key_state)
+        key = self._get_keyboard_char(event.char, event.keysym)
+        self.logger.info(f"mod={mod}, key={key}")
+        # handle supported keyboard shortcuts here
+        if mod.startswith("ctrl"):
+            if key in self._keyboard_shortcuts:
+                self._keyboard_shortcuts[key]()
 
     #
     # Background "Event Loop"
     #
-    def tick(self) -> None:
-        """Main background processing entry point"""
+    def _timer_function(self) -> None:
+        """Function to do background processing in Tkinter's way"""
         the_time = time.strftime("%H:%M:%S")
         self.tk_lbl_timer.config(text=the_time)
-        # self.logger.info(f"tick {the_time}, self._state={self._state}")
+        # self.logger.debug(f"timer function: {the_time}, _state={self._state}")
 
         if self._state == "play":
-            if self._output_playback:
+            # Only two states: 1) playing back video or 2) executing pipeline
+            if self._is_output_playback:
                 self._do_playback()
-            elif not self._pipeline_running:
-                self._run_pipeline_start()
-            elif self.pipeline.terminate:
-                self._run_pipeline_end()
             else:
-                self._run_pipeline_one_iteration()
+                # Executing pipeline: check which execution state we are in
+                if not self._is_pipeline_running:
+                    self._run_pipeline_start()
+                elif self._pipeline.terminate:
+                    self._run_pipeline_end()
+                else:
+                    self._run_pipeline_one_iteration()
 
         self.root.update()  # wake up GUI
-        self.tk_lbl_timer.after(FPS_60, self.tick)
+        self.tk_lbl_timer.after(FPS_60, self._timer_function)
 
+    ####################
+    #
+    # Internal Methods for Display Management
+    #
+    ####################
     def _backward_one_frame(self) -> bool:
-        """Internal method to move back one frame, can be called repeatedly"""
-        if self.frame_idx > 0:
-            self.frame_idx -= 1
-            self._sync_frame_to_slider()
-            self._show_frame()
+        """Move back one frame, can be called repeatedly"""
+        if self._frame_idx > 0:
+            self._frame_idx -= 1
+            self._update_slider_and_show_frame()
             return True
         return False
 
     def _forward_one_frame(self) -> bool:
-        """Internal method to move forward one frame, can be called repeatedly"""
-        if self.frame_idx + 1 < len(self.frames):
-            self.frame_idx += 1
-            self._sync_frame_to_slider()
-            self._show_frame()
+        """Move forward one frame, can be called repeatedly"""
+        if self._frame_idx + 1 < len(self._frames):
+            self._frame_idx += 1
+            self._update_slider_and_show_frame()
             return True
         return False
 
     def _show_frame(self) -> None:
-        """Internal method to display a frame"""
-        if self.frames:
-            frame = self.frames[self.frame_idx]
-            frame = self._apply_zoom(frame)  # note: can speed up zoom?
-            # self.logger.info(f"show_frame {self.frame_idx} size={frame.shape}")
+        """Display image frame pointed to by frame_idx"""
+        if self._frames:
+            frame = self._frames[self._frame_idx]
+            frame = self._apply_zoom(frame)
+            # self.logger.debug(f"show_frame {self.frame_idx} size={frame.shape}")
             img_arr = Image.fromarray(frame)
             img_tk = ImageTk.PhotoImage(img_arr)
-            # self.logger.info(f"img_tk: {img_tk.width()}x{img_tk.height()}")
-
-            self._img_tk = img_tk  # save to avoid GC
-
-            # using label
-            self.tk_pkd_image.config(image=img_tk)
-            # self.canvas.update()
-
-            # # using actual canvas widget
-            # ox = self.canvas.width // 2
-            # oy = self.canvas.height // 2
-            # # self.logger.info(
-            # #     f"canvas: {self.canvas.width}x{self.canvas.height}, origin=({ox}, {oy})"
-            # # )
-            # if self._image_container:
-            #     self.canvas.itemconfig(self._image_container, image=img_tk)
-            # else:
-            #     # self._image_container = self.canvas.create_image(
-            #     #     ox, oy, anchor="center", image=img_tk
-            #     # )
-            #     self._image_container = self.canvas.create_image(ox, oy, image=img_tk)
-            # self.canvas.update()  # need this to show image
+            # self.logger.debug(f"img_tk: {img_tk.width()}x{img_tk.height()}")
+            self._img_tk = img_tk  # save to avoid python GC
+            self.tk_output_image.config(image=img_tk)
 
     def _apply_zoom(self, frame: np.ndarray) -> np.ndarray:
-        """Zoom output image in real-time
+        """Zoom output image according to current zoom setting
 
         Args:
             frame (np.ndarray): image frame data to be zoomed
@@ -488,7 +423,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             np.ndarray: the zoomed image
         """
         # logger.debug(f"zoom_idx={self.zoom_idx}")
-        if self.zoom_idx != 2:
+        if self.zoom_idx != ZOOM_DEFAULT_IDX:
             # zoom image
             zoom = ZOOMS[self.zoom_idx]
             # logger.debug(f"img.shape = {img.shape}, zoom = {zoom}")
@@ -502,153 +437,181 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             frame = cv2.resize(frame, (new_size[1], new_size[0]))
         return frame
 
-    #
-    # Header update methods
-    #
+    def _zoom_in(self) -> None:
+        """Zoom in on image"""
+        if self.zoom_idx + 1 < len(ZOOMS):
+            self.zoom_idx += 1
+            self._update_zoom_and_show_frame()
+
+    def _zoom_out(self) -> None:
+        """Zoom out on image"""
+        if self.zoom_idx > 0:
+            self.zoom_idx -= 1
+            self._update_zoom_and_show_frame()
+
+    def _zoom_reset(self) -> None:
+        """Reset zoom to default 1x"""
+        self.zoom_idx = ZOOM_DEFAULT_IDX
+        self._update_zoom_and_show_frame()
+
+    def _update_zoom_and_show_frame(self) -> None:
+        """Update zoom widget and refresh current frame"""
+        glyph = ZOOM_TEXT[self.zoom_idx]
+        self.logger.info(f"Zoom: {glyph}")
+        self.tk_lbl_zoom["text"] = f"{glyph}"
+        self._show_frame()
+
     def _set_header_playing(self) -> None:
+        """Change header text to playing..."""
         self.tk_lbl_header["text"] = f"Playing {self._pipeline_path}"
         self.tk_lbl_header.config(fg="green")
 
     def _set_header_running(self) -> None:
+        """Change header text to running..."""
         self.tk_lbl_header["text"] = f"Running {self._pipeline_path}"
         self.tk_lbl_header.config(fg="red")
 
     def _set_header_stop(self) -> None:
+        """Change header text to pipeline pathname"""
         self.tk_lbl_header["text"] = f"{self._pipeline_path}"
         self.tk_lbl_header.config(fg="white")
 
-    def _sync_frame_to_slider(self) -> None:
-        self.tk_scale.set(self.frame_idx + 1)
+    def _update_slider_and_show_frame(self) -> None:
+        """Update slider based on frame index and show new frame"""
+        self.tk_scale.set(self._frame_idx + 1)
+        self._show_frame()
 
-    def _sync_slider_to_frame(self, val) -> None:
-        # self.logger.info(f"sync slider: {val}")
-        # self.tk_frame_num["text"] = val
-        self.frame_idx = int(val) - 1
+    def _sync_slider_to_frame(self, val: str) -> None:
+        """Update frame index based on slider value change
+
+        Args:
+            val (str): slider value
+        """
+        self.logger.debug(f"sync slider to frame: {val} {type(val)}")
+        self._frame_idx = int(val) - 1
         self._show_frame()
 
     def _enable_progress(self) -> None:
-        self.logger.info("enable progress")
+        """Show progress bar and hide slider"""
+        self.logger.debug("enable progress")
         self.tk_scale.grid_remove()  # hide slider
         self.tk_progress.grid()  # show progress bar
 
     def _enable_slider(self) -> None:
-        self.logger.info("enable slider")
+        """Show slider and hide progress bar"""
+        self.logger.debug("enable slider")
         self.tk_progress.grid_remove()  # hide progress bar
         self.tk_scale.grid()  # show slider
-        self.tk_scale.configure(to=len(self.frames))
-        # self.tk_frame_num["text"] = self.tk_scale.get()
+        self.tk_scale.configure(to=len(self._frames))
         self._sync_slider_to_frame(self.tk_scale.get())
 
+    ####################
+    #
+    # Pipeline Execution Methods
+    #
+    ####################
     def _run_pipeline_end(self) -> None:
         """Called when pipeline execution is completed.
         To perform clean-up/housekeeping tasks to ensure system consistency"""
-        # self.logger.info("run pipeline end")
-        for node in self.pipeline.nodes:
+        self.logger.debug("run pipeline end")
+        for node in self._pipeline.nodes:
             if node.name.endswith("input.visual"):
                 node.release_resources()  # clean up nodes with threads
-        self._pipeline_running = False
-        # self._toggle_btn_play_stop(state="play")
-        # self.output_layout.install_slider()
+        self._is_pipeline_running = False
         self._enable_slider()
-        self._state = "stop"
-        self.tk_btn_play["text"] = "Play"
+        self._set_viewer_state_to_stop()
         self._set_header_stop()
 
     def _run_pipeline_one_iteration(self) -> None:  # pylint: disable=too-many-branches
-        # self.logger.info("run pipeline one iteration")
-        self._pipeline_running = True
-        for node in self.pipeline.nodes:
-            if self.pipeline.data.get("pipeline_end", False):
-                self.pipeline.terminate = True
+        self._is_pipeline_running = True
+        for node in self._pipeline.nodes:
+            if self._pipeline.data.get("pipeline_end", False):
+                self._pipeline.terminate = True
                 if "pipeline_end" not in node.inputs:
                     continue
             if "all" in node.inputs:
-                inputs = copy.deepcopy(self.pipeline.data)
+                inputs = copy.deepcopy(self._pipeline.data)
             else:
                 inputs = {
-                    key: self.pipeline.data[key]
+                    key: self._pipeline.data[key]
                     for key in node.inputs
-                    if key in self.pipeline.data
+                    if key in self._pipeline.data
                 }
             if hasattr(node, "optional_inputs"):
+                # Nodes won't receive inputs with optional key if not found upstream
                 for key in node.optional_inputs:
-                    # The nodes will not receive inputs with the optional
-                    # key if it's not found upstream
-                    if key in self.pipeline.data:
-                        inputs[key] = self.pipeline.data[key]
+                    if key in self._pipeline.data:
+                        inputs[key] = self._pipeline.data[key]
             if node.name.endswith("output.screen"):
-                # intercept screen output to Kivy
-                img = self.pipeline.data["img"]
-                # (0,0) == opencv top-left == kivy bottom-left
-                # frame = cv2.flip(img, 0)  # flip around x-axis
-                # convert from BGR to RGB for Tkinter
-                frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-                self.frames.append(frame)  # save frame for playback
-                self.frame_idx += 1
+                # intercept screen output to Tkinter
+                img = self._pipeline.data["img"]
+                frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR -> RGB for Tkinter
+                self._frames.append(frame)  # save frame for playback
+                self._frame_idx += 1
                 self._show_frame()
             else:
                 outputs = node.run(inputs)
-                self.pipeline.data.update(outputs)
+                self._pipeline.data.update(outputs)
             # check for FPS on first iteration
-            if self.frame_idx == 0 and node.name.endswith("input.visual"):
+            if self._frame_idx == 0 and node.name.endswith("input.visual"):
                 num_frames = node.total_frame_count
                 if num_frames > 0:
-                    self.num_frames = num_frames
                     self.tk_progress["maximum"] = num_frames
                 else:
-                    self.num_frames = 0
-                    # self.progress = None
                     self.tk_progress["mode"] = "indeterminate"
+            # check if need to stop after fixed number of iterations
+            if self._num_iter and self._frame_idx + 1 >= self._num_iter:
+                self.logger.info(f"Stopping pipeline after {self._num_iter} iterations")
+                self._stop_running_pipeline()
         # update progress bar after each iteration
-        self.tk_progress["value"] = self.frame_idx
-        # self.tk_frame_num["text"] = self.tk_progress["value"]
+        self.tk_progress["value"] = self._frame_idx
 
     def _run_pipeline_start(self) -> None:
         """Init PeekingDuck's pipeline"""
-        # self.logger.info("run pipeline start")
-        self.logger.info(f"pipeline path: {self._pipeline_path}")
-        self.logger.info(f"custom_nodes: {self._custom_nodes_parent_path}")
-        self.node_loader = DeclarativeLoader(
+        self.logger.debug("run pipeline start")
+        self.logger.debug(f"pipeline path: {self._pipeline_path}")
+        self.logger.debug(f"custom_nodes: {self._custom_nodes_parent_path}")
+        self._node_loader = DeclarativeLoader(
             self._pipeline_path,
             self._config_updates_cli,
             self._custom_nodes_parent_path,
         )
-        self.pipeline: Pipeline = self.node_loader.get_pipeline()
-        # self.logger.info(f"self.pipeline: {self.pipeline}")
+        self._pipeline: Pipeline = self._node_loader.get_pipeline()
         self._set_header_running()
+        self._set_viewer_state_to_play()
+        self._is_pipeline_running = True
 
-        self.frames = []
-        self.frame_idx = -1
-        self.tk_btn_play["text"] = "Stop"
-        self._pipeline_running = True
+    def _stop_running_pipeline(self) -> None:
+        """Signal pipeline execution to be stopped"""
+        self._pipeline.terminate = True
 
+    ####################
+    #
+    # Pipeline Playback Methods
+    #
+    ####################
     def _do_playback(self) -> None:
-        self._output_playback = True
-        self._state = "play"
-        self.tk_btn_play["text"] = "Stop"
+        """Playback saved video frames"""
+        self._is_output_playback = True
+        self._set_viewer_state_to_play()
         self._set_header_playing()
         if self._forward_one_frame():
-            self.tk_scale.set(self.frame_idx + 1)
-            self.logger.debug("forward one frame ok")
+            self.tk_scale.set(self._frame_idx + 1)
         else:
             self._stop_playback()
 
     def _stop_playback(self) -> None:
         """Stop output playback"""
-        if hasattr(self, "forward_one_frame_held"):
-            self.forward_one_frame_held.cancel()
-        self._output_playback = False
-        self._state = "stop"
-        self.tk_btn_play["text"] = "Play"
+        self._is_output_playback = False
+        self._set_viewer_state_to_stop()
         self._set_header_stop()
 
-    def _stop_running_pipeline(self) -> None:
-        """Signal pipeline execution to be stopped"""
-        self.pipeline.terminate = True
+    def _set_viewer_state_to_play(self) -> None:
+        """Set self state to play for either 1) pipeline execution or 2) playback"""
+        self._state = "play"
+        self.tk_btn_play["text"] = "Stop"
 
-    def _update_zoom_text(self) -> None:
-        """Databinding for zoom -> image"""
-        glyph = ZOOM_TEXT[self.zoom_idx]
-        self.logger.info(f"Zoom: {glyph}")
-        self.tk_lbl_zoom["text"] = f"{glyph}"
-        self._show_frame()
+    def _set_viewer_state_to_stop(self) -> None:
+        """Set self state to stop"""
+        self._state = "stop"
+        self.tk_btn_play["text"] = "Play"
