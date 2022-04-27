@@ -70,6 +70,40 @@ def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
     return the_img
 
 
+def get_keyboard_modifier(state: int) -> str:
+    """Get keyboard modifier keys: support ctrl, alt/option, shift
+
+    Args:
+        state (int): Tk keypress event key state
+
+    Returns:
+        str: detected modifier keys
+    """
+    ctrl = (state & 0x4) != 0
+    alt = (state & 0x8) != 0 or (state & 0x80) != 0
+    shift = (state & 0x1) != 0
+    res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
+    return res
+
+
+def get_keyboard_char(char: str, keysym: str) -> str:
+    """Get keyboard character
+
+    Args:
+        char (str): Tk keypress event character
+        keysym (str): Tk keypress event key symbol
+
+    Returns:
+        str: keyboard character
+    """
+    res = char if char else keysym
+    if keysym == "minus":
+        res = "-"
+    if keysym == "plus":
+        res = "+"
+    return res
+
+
 class Viewer:  # pylint: disable=too-many-instance-attributes
     """Implement PeekingDuck Viewer class"""
 
@@ -321,21 +355,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.logger.info("btn_zoom_out_press")
         self._zoom_out()
 
-    def _get_keyboard_modifier(self, state: int) -> str:
-        ctrl = 0 != (state & 0x4)
-        alt = 0 != (state & 0x8) or 0 != (state & 0x80)
-        shift = 0 != (state & 0x1)
-        res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
-        return res
-
-    def _get_keyboard_char(self, char: str, keysym: str) -> str:
-        res = char if char else keysym
-        if keysym == "minus":
-            res = "-"
-        if keysym == "plus":
-            res = "+"
-        return res
-
     def on_keypress(self, event: tk.Event) -> None:
         """Handle all keydown events.
         Default system shortcuts are automatically handled, e.g. CMD-Q quits on macOS
@@ -347,8 +366,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             f"keypressed: char={event.char}, keysym={event.keysym}, state={event.state}"
         )
         key_state: int = int(event.state)
-        mod = self._get_keyboard_modifier(key_state)
-        key = self._get_keyboard_char(event.char, event.keysym)
+        mod = get_keyboard_modifier(key_state)
+        key = get_keyboard_char(event.char, event.keysym)
         self.logger.info(f"mod={mod}, key={key}")
         # handle supported keyboard shortcuts here
         if mod.startswith("ctrl"):
