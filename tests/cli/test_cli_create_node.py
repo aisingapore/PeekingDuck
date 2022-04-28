@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import sys
-from logging import LogRecord
 from pathlib import Path
 from unittest import TestCase
 
@@ -87,8 +86,8 @@ def get_custom_node_subpaths(node_subdir, node_type, node_name):
 
 def setup_custom_node(node_subdir, node_type, node_name):
     cwd = Path.cwd()
-    config_dir = cwd / node_subdir / "configs" / node_type
-    script_dir = cwd / node_subdir / node_type
+    config_dir = cwd / "src" / node_subdir / "configs" / node_type
+    script_dir = cwd / "src" / node_subdir / node_type
     config_dir.mkdir(parents=True, exist_ok=True)
     script_dir.mkdir(parents=True, exist_ok=True)
 
@@ -166,8 +165,10 @@ class TestCliCreateNode:
         node_type = good_type.strip()
         node_name = good_name.strip()
         cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name}.py"
+        config_path = (
+            cwd / "src" / node_subdir / "configs" / node_type / f"{node_name}.yml"
+        )
+        script_path = cwd / "src" / node_subdir / node_type / f"{node_name}.py"
         assert config_path.exists()
         assert script_path.exists()
 
@@ -207,8 +208,10 @@ class TestCliCreateNode:
         assert result.output.count("Node name already exists!") == 1
 
         cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name_2}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name_2}.py"
+        config_path = (
+            cwd / "src" / node_subdir / "configs" / node_type / f"{node_name_2}.yml"
+        )
+        script_path = cwd / "src" / node_subdir / node_type / f"{node_name_2}.py"
         assert config_path.exists()
         assert script_path.exists()
 
@@ -294,8 +297,10 @@ class TestCliCreateNode:
         assert result.output.count("Created node!") == 1
 
         cwd = Path.cwd()
-        config_path = cwd / node_subdir / "configs" / node_type / f"{node_name}.yml"
-        script_path = cwd / node_subdir / node_type / f"{node_name}.py"
+        config_path = (
+            cwd / "src" / node_subdir / "configs" / node_type / f"{node_name}.yml"
+        )
+        script_path = cwd / "src" / node_subdir / node_type / f"{node_name}.py"
         assert config_path.exists()
         assert script_path.exists()
 
