@@ -17,18 +17,15 @@ CLI functions for PeekingDuck.
 """
 
 import logging
-import tempfile
 from pathlib import Path
-from time import perf_counter
-from typing import Any, Dict, List, Optional, Union
+from typing import Optional
 
 import click
-import yaml
 
 from peekingduck import __version__
+from peekingduck.commands.core import init, run, verify_installation
 from peekingduck.commands.nodes import nodes
 from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES, DeclarativeLoader
-from peekingduck.runner import Runner
 from peekingduck.utils.create_node_helper import (
     create_config_and_script_files,
     ensure_relative_path,
@@ -39,71 +36,22 @@ from peekingduck.utils.create_node_helper import (
     get_config_and_script_paths,
     verify_option,
 )
-from peekingduck.utils.deprecation import deprecate
-from peekingduck.utils.logger import LoggerSetup
-from peekingduck.viewer import Viewer
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
-def create_custom_folder(custom_folder_name: str) -> None:
-    """Makes custom nodes folder to create custom nodes.
-
-    Args:
-        custom_folder_name (:obj:`str`): Name of the custom nodes folder.
-    """
-    curr_dir = _get_cwd()
-    custom_nodes_dir = curr_dir / "src" / custom_folder_name
-    custom_nodes_config_dir = custom_nodes_dir / "configs"
-
-    logger.info(f"Creating custom nodes folder in {custom_nodes_dir}")
-    custom_nodes_dir.mkdir(parents=True, exist_ok=True)
-    custom_nodes_config_dir.mkdir(parents=True, exist_ok=True)
-
-
-def create_pipeline_config_yml(
-    default_nodes: List[Union[str, Dict[str, Any]]] = None,
-    default_path: Path = Path("pipeline_config.yml"),
-) -> None:
-    """Initializes the declarative *pipeline_config.yml*.
-
-    Args:
-        default_nodes (List[Union[str, Dict[str, Any]]]): A list of PeekingDuck
-            node. For nodes with custom configuration, use a dictionary instead
-            of a string.
-        default_path (Path): Path of the pipeline config file.
-    """
-    # Default yml to be discussed
-    if default_nodes is None:
-        default_nodes = [
-            {
-                "input.visual": {
-                    "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
-                }
-            },
-            "model.posenet",
-            "draw.poses",
-            "output.screen",
-        ]
-    default_yml = dict(nodes=default_nodes)
-
-    with open(default_path, "w") as yml_file:
-        yaml.dump(default_yml, yml_file, default_flow_style=False)
-
-
 @click.group(invoke_without_command=True)
 @click.version_option(__version__)
-@click.option("--verify_install", is_flag=True, help="Verify PeekingDuck installation")
+@click.option("--verify_install", is_flag=True, help="Verify PeekingDuck installation.")
 @click.pass_context
 def cli(ctx: click.Context, verify_install: bool) -> None:
-    """
-    PeekingDuck is a modular computer vision inference framework.
+    """PeekingDuck is a modular computer vision inference framework.
 
     Developed by Computer Vision Hub at AI Singapore.
     """
     if ctx.invoked_subcommand is None:
         if verify_install:
-            _verify_install()
+            verify_installation()
         else:
             print(ctx.get_help())
 
@@ -218,96 +166,6 @@ def create_node(
             click.echo("Aborted!")
 
 
-@cli.command()
-@click.option("--custom_folder_name", default="custom_nodes")
-def init(custom_folder_name: str) -> None:
-    """Initialize a PeekingDuck project"""
-    print("Welcome to PeekingDuck!")
-    create_custom_folder(custom_folder_name)
-    create_pipeline_config_yml()
-
-
-@cli.command()
-@click.option(
-    "--config_path",
-    default=None,
-    type=click.Path(),
-    help=(
-        "List of nodes to run. None assumes pipeline_config.yml at current working directory"
-    ),
-)
-@click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
-)
-@click.option(
-    "--node_config",
-    default="None",
-    help="""Modify node configs by wrapping desired configs in a JSON string.\n
-        Example: --node_config '{"node_name": {"param_1": var_1}}'""",
-)
-@click.option(
-    "--num_iter",
-    default=None,
-    type=int,
-    help="Stop pipeline after running this number of iterations",
-)
-@click.option(
-    "--viewer",
-    default=False,
-    is_flag=True,
-    help="Launch PeekingDuck viewer",
-)
-def run(  # pylint: disable=too-many-arguments
-    config_path: str,
-    log_level: str,
-    node_config: str,
-    num_iter: int,
-    viewer: bool,
-    nodes_parent_dir: str = "src",
-) -> None:
-    """Runs PeekingDuck"""
-    LoggerSetup.set_log_level(log_level)
-
-    if config_path is None:
-        curr_dir = _get_cwd()
-        if (curr_dir / "pipeline_config.yml").is_file():
-            config_path = curr_dir / "pipeline_config.yml"
-        elif (curr_dir / "run_config.yml").is_file():
-            deprecate(
-                "using 'run_config.yml' as the default pipeline configuration "
-                "file is deprecated and will be removed in the future. Please "
-                "use 'pipeline_config.yml' instead.",
-                2,
-            )
-            config_path = curr_dir / "run_config.yml"
-        else:
-            config_path = curr_dir / "pipeline_config.yml"
-    pipeline_config_path = Path(config_path)
-
-    if viewer:
-        logger.info("Launching PeekingDuck Viewer")
-        pkd_viewer = Viewer(
-            pipeline_path=pipeline_config_path,
-            config_updates_cli=node_config,
-            custom_nodes_parent_subdir=nodes_parent_dir,
-            num_iter=num_iter,
-        )
-        pkd_viewer.run()
-    else:
-        start_time = perf_counter()
-        runner = Runner(
-            pipeline_path=pipeline_config_path,
-            config_updates_cli=node_config,
-            custom_nodes_parent_subdir=nodes_parent_dir,
-            num_iter=num_iter,
-        )
-        end_time = perf_counter()
-        logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
-        runner.run()
-
-
 def _create_nodes_from_config_file(
     config_path: str, project_dir: Path, node_type_choices: click.Choice
 ) -> None:
@@ -361,38 +219,6 @@ def _get_cwd() -> Path:
     return Path.cwd()
 
 
-def _verify_install() -> None:
-    """Verifies PeekingDuck installation by running object detection on
-    'wave.mp4'.
-    """
-    LoggerSetup.set_log_level("info")
-
-    with tempfile.TemporaryDirectory() as tmp_dir:
-        pipeline_config_path = Path(tmp_dir) / "verification_pipeline.yml"
-
-        create_pipeline_config_yml(
-            [
-                {
-                    "input.visual": {
-                        "source": "https://storage.googleapis.com/peekingduck/videos/wave.mp4"
-                    }
-                },
-                "model.yolo",
-                "draw.bbox",
-                "output.screen",
-            ],
-            pipeline_config_path,
-        )
-
-        print(tmp_dir)
-
-        runner = Runner(
-            pipeline_path=pipeline_config_path,
-            config_updates_cli="None",
-            custom_nodes_parent_subdir="src",
-            num_iter=None,
-        )
-        runner.run()
-
-
+cli.add_command(init)
 cli.add_command(nodes)
+cli.add_command(run)
