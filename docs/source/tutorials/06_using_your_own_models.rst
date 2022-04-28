@@ -18,7 +18,7 @@ a significant amount of time and cost, and thus there is an incentive to automat
 
 The images of castings used in this tutorial are the front faces of steel `pump impellers 
 <https://en.wikipedia.org/wiki/Impeller>`_. From the comparison below, it can be seen that the
-"defective" casting has a rough, uneven edges while the "normal" casting has smooth edges.
+defective casting has a rough, uneven edges while the normal casting has smooth edges.
 
    .. figure:: /assets/tutorials/normal_vs_defective.png
       :width: 416
@@ -35,8 +35,8 @@ Model Training
 PeekingDuck is designed for model *inference* rather than model *training*. This optional section
 shows how a simple Convolutional Neural Network (CNN) model can be trained separately from the
 PeekingDuck framework. If you have already trained your own model, the
-:ref:`following section <tutorial_converting_to_custom_model_node>` describes how you can convert
-it to a custom model node, and use PeekingDuck for inference.
+:ref:`following section <tutorial_using_your_trained_model_with_peekingduck>` describes how you can
+convert it to a custom model node, and use PeekingDuck for inference.
 
 
 
@@ -80,7 +80,7 @@ Install the following prerequisite for visualization. ::
 Update Training Script
 ----------------------
 
-#. **train_classifier.py**:
+**train_classifier.py**:
 
    Update the empty ``train_classifier.py`` file you have created with the following code:
 
@@ -97,7 +97,6 @@ Update Training Script
          Script to train a classification model on images, save the model, and plot the training results
 
          Adapted from: https://www.tensorflow.org/tutorials/images/classification
-         Dataset from: https://www.kaggle.com/datasets/ravirajsinh45/real-life-industrial-dataset-of-casting-product?resource=download
          """
 
          import pathlib
@@ -124,27 +123,22 @@ Update Training Script
             Generate training and validation datasets from a folder of images.
 
             Returns:
-               train_ds (tf.data.Dataset): A pre-fetched training dataset.
-               val_ds (tf.data.Dataset): A pre-fetched validation dataset.
+               train_ds (tf.data.Dataset): Training dataset.
+               val_ds (tf.data.Dataset): Validation dataset.
                class_names (List[str]): Names of all classes to be classified.
             """
 
-            data_dir = pathlib.Path(DATA_DIR)
+            train_dir = pathlib.Path(DATA_DIR, "train")
+            validation_dir = pathlib.Path(DATA_DIR, "validation")
 
             train_ds = tf.keras.preprocessing.image_dataset_from_directory(
-               data_dir,
-               validation_split=0.2,
-               subset="training",
-               seed=123,
+               train_dir,
                image_size=(IMG_HEIGHT, IMG_WIDTH),
                batch_size=BATCH_SIZE,
             )
 
             val_ds = tf.keras.preprocessing.image_dataset_from_directory(
-               data_dir,
-               validation_split=0.2,
-               subset="validation",
-               seed=123,
+               validation_dir,
                image_size=(IMG_HEIGHT, IMG_WIDTH),
                batch_size=BATCH_SIZE,
             )
@@ -161,13 +155,13 @@ Update Training Script
             Train and save a classification model on the provided data.
 
             Args:
-               train_ds (tf.data.Dataset): A pre-fetched training dataset.
-               val_ds (tf.data.Dataset): A pre-fetched validation dataset.
+               train_ds (tf.data.Dataset): Training dataset.
+               val_ds (tf.data.Dataset): Validation dataset.
                class_names (List[str]): Names of all classes to be classified.
 
             Returns:
                history (tf.keras.callbacks.History): A History object containing recorded events from
-                     model training.
+                        model training.
             """
 
             num_classes = len(class_names)
@@ -194,6 +188,7 @@ Update Training Script
                metrics=["accuracy"],
             )
 
+            print(model.summary())
             history = model.fit(train_ds, validation_data=val_ds, epochs=EPOCHS)
             model.save(WEIGHTS_DIR)
 
@@ -206,7 +201,7 @@ Update Training Script
 
             Args:
                history (tf.keras.callbacks.History): A History object containing recorded events from
-                     model training.
+                        model training.
             """
             acc = history.history["accuracy"]
             val_acc = history.history["val_accuracy"]
@@ -234,6 +229,7 @@ Update Training Script
             history = train_and_save_model(train_ds, val_ds, class_names)
             plot_training_results(history)
 
+
 Training the Model
 ------------------
 
@@ -256,12 +252,13 @@ folder and ``training_results.png`` will be created:
    │     ├── \ :blue:`validation/` \ |Blank|
    │     └── \ :blue:`test/` \ |Blank|
    └── \ :blue:`weights/` \ |Blank|
+         ├── keras_metadata.pb
          ├── saved_model.pb
-   │     ├── \ :blue:`assets/` \ |Blank|
-   │     └── \ :blue:`variables/` \ |Blank|
+         ├── \ :blue:`assets/` \ |Blank|
+         └── \ :blue:`variables/` \ |Blank|
 
-The plots below indicate that the model has performed well on the validation dataset, and we are
-ready to create a custom :mod:`model` node from it.
+The plots from ``training_results.png`` shown below indicate that the model has performed well on
+the validation dataset, and we are ready to create a custom :mod:`model` node from it.
 
    .. figure:: /assets/tutorials/training_results.png
       :width: 416
@@ -269,14 +266,18 @@ ready to create a custom :mod:`model` node from it.
 
       Model Training Results
 
-.. _tutorial_converting_to_custom_model_node:
+.. _tutorial_using_your_trained_model_with_peekingduck:
 
-Converting to Custom Model Node
-===============================
+Using Your Trained Model with PeekingDuck
+=========================================
 
-This section will show you how to convert the trained model into a custom PeekingDuck node. It
-assumes that you are already familiar with the process of creating custom nodes, covered in the
-earlier :ref:`custom node <tutorial_custom_nodes>` tutorial. 
+This section will show you how to convert the trained model into a custom PeekingDuck node, and
+give an example of how you can integrate this node in a PeekingDuck pipeline. It assumes that you
+are already familiar with the process of creating custom nodes, covered in the earlier
+:ref:`custom node <tutorial_custom_nodes>` tutorial.
+
+Converting to a Custom Model Node
+---------------------------------
 
 First, let's create a new PeekingDuck project within the existing ``castings_project`` folder.
 
@@ -324,6 +325,7 @@ The ``castings_project`` folder structure should now look like this:
    │           └── \ :blue:`model/` \ |Blank|
    │                 └── casting_classifier.py
    └── \ :blue:`weights/` \ |Blank|
+         ├── keras_metadata.pb
          ├── saved_model.pb
          ├── \ :blue:`assets/` \ |Blank|
          └── \ :blue:`variables/` \ |Blank|
@@ -403,10 +405,127 @@ node.
                      "pred_score": 100.0 * np.max(score),
                }
 
+The custom node takes in the in-built PeekingDuck :term:`img` data type, makes a prediction based
+on the image, and produces two custom data types: `pred_label`, the predicted label ("defective"
+or "normal"); and `pred_score`, which is the confidence score of the prediction.
 
-.. _tutorial_building_the_complete_solution:
 
-Building The Complete Solution
+Using the Classifier in a PeekingDuck Pipeline
+----------------------------------------------
+
+We'll now pair this custom node with other PeekingDuck nodes to build a complete solution. Imagine
+an automated inspection system like the one shown below, where the castings are placed on a
+conveyor belt and a camera takes a picture of each casting and sends it to the PeekingDuck pipeline
+for prediction. A report showing the predicted result for each casting is produced for the quality
+inspector, and he/she can use the report for further analysis. 
+
+   .. figure:: /assets/tutorials/automated_inspection.png
+      :width: 416
+      :alt: Vision Based Inspection of Conveyed Objects
+
+      Vision Based Inspection of Conveyed Objects (Source: `ScienceDirect <https://www.sciencedirect.com/science/article/pii/S221282711200248X>`_)
+
+Edit the ``pipeline_config.yml`` file to use the :mod:`input.visual` node to read in the images,
+and the :mod:`output.csv_writer` node to produce the report. We will test our solution on the 10 
+casting images in ``castings_data/inspection``, where each image's filename is a unique casting ID
+such as ``28_4137.jpeg``.
+
+**src/custom_nodes/configs/model/casting_classifier.yml**:
+
+   ``pipeline_config.yml`` updated content:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.visual:
+         source: castings_data/inspection
+      - custom_nodes.model.casting_classifier
+      - output.csv_writer:
+         stats_to_track: ["filename", "pred_label", "pred_score"]
+         file_path: casting_predictions.csv
+         logging_interval: 0
+
+   | Line 2 :mod:`input.visual`: tells PeekingDuck to load the images from 
+            ``castings_data/inspection``.
+   | Line 4 Calls the custom model node that you have just created.
+   | Line 5 :mod:`output.csv_writer`: produces the report for the quality inspector in a csv file
+            (``castings_predictions.csv``). This node receives the :term:`filename` data type from
+            :mod:`input.visual`, the custom data types `pred_label` and `pred_score` from the 
+            custom model node, and writes them to the columns of the csv file.
+
+Run the above with the command :greenbox:`peekingduck run`. |br|
+
+The resulting csv file would have a ``<timestamp>`` appended to the file name.
+Open the created ``castings_predictions_<timestamp>.csv`` file and you would see the following 
+results. Half of the castings have been predicted as defective with high confidence scores. As the 
+file name of each image is its unique casting ID, the quality inspector would be able to check the 
+results with the actual castings if needed.
+
+   .. figure:: /assets/tutorials/casting_predictions_csv.png
+      :width: 416
+      :alt: Casting prediction results
+
+      Casting Prediction Results
+
+To visualize the predictions alongside the casting images, create an empty Python script named 
+``plot_results.py``, and update it with the following code:
+
+   .. container:: toggle
+
+      .. container:: header
+
+         **Show/Hide Code for plot_results.py**
+
+      .. code-block:: python
+         :linenos:
+
+         """
+         Script to plot the prediction results alongside the casting images
+         """
+
+         import csv
+
+         import cv2
+         import matplotlib.pyplot as plt
+
+         CSV_FILE = "casting_results_280422-11-50-30.csv"  # change file name accordingly
+         INSPECTION_IMGS_DIR = "castings_data/inspection/"
+         RESULTS_FILE = "inspection_results.png"
+
+         fig, axs = plt.subplots(2, 5, figsize=(50, 20))
+
+         with open(CSV_FILE) as csv_file:
+            csv_reader = csv.reader(csv_file, delimiter=",")
+            next(csv_reader, None)
+            for i, row in enumerate(csv_reader):
+               # csv columns follow this order: 'Time', 'filename', 'pred_label', 'pred_score'
+               image_path = INSPECTION_IMGS_DIR + row[1]
+               image_orig = cv2.imread(image_path)
+               image_orig = cv2.cvtColor(image_orig, cv2.COLOR_BGR2RGB)
+
+               row_idx = 0 if i < 5 else 1
+               axs[row_idx][i % 5].imshow(image_orig)
+               axs[row_idx][i % 5].set_title(row[1] + " - " + row[2], fontsize=35)
+               axs[row_idx][i % 5].axis("off")
+
+         fig.savefig(RESULTS_FILE)
+
+Replace Line 10 with the ...
+
+Run the followign command to show the results. You can see that 100%
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/castings_project]` \ > \ :green:`python plot_results.py` \
+
+   .. figure:: /assets/tutorials/casting_predictions_img.png
+      :width: 832
+      :alt: Casting prediction results
+
+      Casting Prediction Results
+
+.. _tutorial_custom_object_detection_models:
+
+Custom Object Detection Models
 ==============================
-
-Object Detection, etc
