@@ -17,16 +17,16 @@ CLI functions for PeekingDuck.
 """
 
 import logging
-import math
 import tempfile
 from pathlib import Path
 from time import perf_counter
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Union
 
 import click
 import yaml
 
 from peekingduck import __version__
+from peekingduck.commands.nodes import nodes
 from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES, DeclarativeLoader
 from peekingduck.runner import Runner
 from peekingduck.utils.create_node_helper import (
@@ -228,43 +228,6 @@ def init(custom_folder_name: str) -> None:
 
 
 @cli.command()
-@click.argument("type_name", required=False)
-def nodes(type_name: str = None) -> None:
-    """Lists available nodes in PeekingDuck. When no argument is given, all
-    available nodes will be listed. When the node type is given as an argument,
-    all available nodes in the specified node type will be listed.
-
-    Args:
-        type_name (str): input, model, dabble, draw or output
-    """
-    config_dir = Path(__file__).resolve().parent / "configs"
-
-    if type_name is None:
-        node_types = PEEKINGDUCK_NODE_TYPES
-    else:
-        node_types = [type_name]
-
-    for node_type in node_types:
-        click.secho("\nPeekingDuck has the following ", bold=True, nl=False)
-        click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
-        click.secho("nodes:", bold=True)
-
-        node_names = [path.stem for path in (config_dir / node_type).glob("*.yml")]
-        max_length = _len_enumerate(max(enumerate(node_names), key=_len_enumerate))
-        for num, node_name in enumerate(node_names):
-            idx = num + 1
-            url = _get_node_url(node_type, node_name)
-            node_name_width = max_length + 1 - _num_digits(idx)
-
-            click.secho(f"{idx}:", nl=False)
-            click.secho(f"{node_name: <{node_name_width}}", bold=True, nl=False)
-            click.secho("Info: ", fg="yellow", nl=False)
-            click.secho(url)
-
-    click.secho("\n")
-
-
-@cli.command()
 @click.option(
     "--config_path",
     default=None,
@@ -398,50 +361,6 @@ def _get_cwd() -> Path:
     return Path.cwd()
 
 
-def _get_node_url(node_type: str, node_name: str) -> str:
-    """Constructs the URL to documentation of the specified node.
-
-    Args:
-        node_type (str): One of input, model, dabble, draw or output.
-        node_name (str): Name of the node.
-
-    Returns:
-        (str): Full URL to the documentation of the specified node.
-    """
-    node_path = f"{node_type}.{node_name}"
-    url_prefix = "https://peekingduck.readthedocs.io/en/stable/nodes/"
-    url_postfix = ".html#module-"
-
-    return f"{url_prefix}{node_path}{url_postfix}{node_path}"
-
-
-def _len_enumerate(item: Tuple) -> int:
-    """Calculates the string length of an enumerate item while accounting for
-    the number of digits of the index.
-
-    Args:
-        item (Tuple): An item return by ``enumerate``, contains
-            ``(index, element)`` where ``element`` is a ``str``.
-
-    Returns:
-        (int): Sum of length of ``element`` and the number of digits of its
-            index.
-    """
-    return _num_digits(item[0] + 1) + len(item[1])
-
-
-def _num_digits(number: int) -> int:
-    """The number of digits of the given number.
-
-    Args:
-        number (int): The given number. It is assumed ``number > 0``.
-
-    Returns:
-        (int): Number of digits in the given number.
-    """
-    return int(math.log10(number))
-
-
 def _verify_install() -> None:
     """Verifies PeekingDuck installation by running object detection on
     'wave.mp4'.
@@ -474,3 +393,6 @@ def _verify_install() -> None:
             num_iter=None,
         )
         runner.run()
+
+
+cli.add_command(nodes)
