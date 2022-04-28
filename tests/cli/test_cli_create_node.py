@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import sys
-from logging import LogRecord
 from pathlib import Path
 from unittest import TestCase
 
