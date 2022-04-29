@@ -209,7 +209,7 @@ Update Training Script
             val_loss = history.history["val_loss"]
             epochs_range = range(EPOCHS)
 
-            plt.figure(figsize=(8, 8))
+            plt.figure(figsize=(16, 8))
             plt.subplot(1, 2, 1)
             plt.plot(epochs_range, acc, label="Training Accuracy")
             plt.plot(epochs_range, val_acc, label="Validation Accuracy")
@@ -261,7 +261,7 @@ The plots from ``training_results.png`` shown below indicate that the model has 
 the validation dataset, and we are ready to create a custom :mod:`model` node from it.
 
    .. figure:: /assets/tutorials/training_results.png
-      :width: 416
+      :width: 832
       :alt: Model training results
 
       Model Training Results
@@ -271,7 +271,7 @@ the validation dataset, and we are ready to create a custom :mod:`model` node fr
 Using Your Trained Model with PeekingDuck
 =========================================
 
-This section will show you how to convert the trained model into a custom PeekingDuck node, and
+This section will show you how to convert your trained model into a custom PeekingDuck node, and
 give an example of how you can integrate this node in a PeekingDuck pipeline. It assumes that you
 are already familiar with the process of creating custom nodes, covered in the earlier
 :ref:`custom node <tutorial_custom_nodes>` tutorial.
