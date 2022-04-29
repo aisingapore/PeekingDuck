@@ -449,14 +449,14 @@ such as ``28_4137.jpeg``.
    | Line 2 :mod:`input.visual`: tells PeekingDuck to load the images from 
             ``castings_data/inspection``.
    | Line 4 Calls the custom model node that you have just created.
-   | Line 5 :mod:`output.csv_writer`: produces the report for the quality inspector in a csv file
+   | Line 5 :mod:`output.csv_writer`: produces the report for the quality inspector in a CSV file
             (``castings_predictions.csv``). This node receives the :term:`filename` data type from
             :mod:`input.visual`, the custom data types `pred_label` and `pred_score` from the 
-            custom model node, and writes them to the columns of the csv file.
+            custom model node, and writes them to the columns of the CSV file.
 
 Run the above with the command :greenbox:`peekingduck run`. |br|
 
-Open the created csv file and you would see the following 
+Open the created CSV file and you would see the following 
 results. Half of the castings have been predicted as defective with high confidence scores. As the 
 file name of each image is its unique casting ID, the quality inspector would be able to check the 
 results with the actual castings if needed.
@@ -512,7 +512,7 @@ To visualize the predictions alongside the casting images, create an empty Pytho
 
          fig.savefig(RESULTS_FILE)
 
-In Line 10, replace the name of ``CSV_FILE`` with the name of the csv file produced on your system,
+In Line 10, replace the name of ``CSV_FILE`` with the name of the CSV file produced on your system,
 as a timestamp would have been appended to the file name.
 
 Run the following command to visualize the results. 
