@@ -13,3 +13,6 @@
 # limitations under the License.
 
 """PeekingDuck CLI commands."""
+
+# Make all CLI commands log through the same logger
+LOGGER_NAME = "peekingduck.cli"

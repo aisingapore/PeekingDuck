@@ -23,12 +23,13 @@ from typing import Any, Dict, List, Union
 import click
 import yaml
 
+from peekingduck.commands import LOGGER_NAME
 from peekingduck.runner import Runner
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
 from peekingduck.viewer import Viewer
 
-logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
 @click.command()
