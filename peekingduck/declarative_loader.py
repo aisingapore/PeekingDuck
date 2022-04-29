@@ -31,8 +31,8 @@ import yaml
 from peekingduck.config_loader import ConfigLoader
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 from peekingduck.utils.deprecation import deprecate
+from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
 
