@@ -430,7 +430,7 @@ and the :mod:`output.csv_writer` node to produce the report. We will test our so
 casting images in ``castings_data/inspection``, where each image's filename is a unique casting ID
 such as ``28_4137.jpeg``.
 
-**src/custom_nodes/configs/model/casting_classifier.yml**:
+**pipeline_config.yml**:
 
    ``pipeline_config.yml`` updated content:
 
@@ -456,8 +456,7 @@ such as ``28_4137.jpeg``.
 
 Run the above with the command :greenbox:`peekingduck run`. |br|
 
-The resulting csv file would have a ``<timestamp>`` appended to the file name.
-Open the created ``castings_predictions_<timestamp>.csv`` file and you would see the following 
+Open the created csv file and you would see the following 
 results. Half of the castings have been predicted as defective with high confidence scores. As the 
 file name of each image is its unique casting ID, the quality inspector would be able to check the 
 results with the actual castings if needed.
@@ -469,19 +468,21 @@ results with the actual castings if needed.
       Casting Prediction Results
 
 To visualize the predictions alongside the casting images, create an empty Python script named 
-``plot_results.py``, and update it with the following code:
+``visualize_results.py``, and update it with the following code:
+
+**visualize_results.py**:
 
    .. container:: toggle
 
       .. container:: header
 
-         **Show/Hide Code for plot_results.py**
+         **Show/Hide Code for visualize_results.py**
 
       .. code-block:: python
          :linenos:
 
          """
-         Script to plot the prediction results alongside the casting images
+         Script to visualize the prediction results alongside the casting images
          """
 
          import csv
@@ -489,7 +490,7 @@ To visualize the predictions alongside the casting images, create an empty Pytho
          import cv2
          import matplotlib.pyplot as plt
 
-         CSV_FILE = "casting_results_280422-11-50-30.csv"  # change file name accordingly
+         CSV_FILE = "casting_predictions_280422-11-50-30.csv"  # change file name accordingly
          INSPECTION_IMGS_DIR = "castings_data/inspection/"
          RESULTS_FILE = "inspection_results.png"
 
@@ -511,21 +512,67 @@ To visualize the predictions alongside the casting images, create an empty Pytho
 
          fig.savefig(RESULTS_FILE)
 
-Replace Line 10 with the ...
+In Line 10, replace the name of ``CSV_FILE`` with the name of the csv file produced on your system,
+as a timestamp would have been appended to the file name.
 
-Run the followign command to show the results. You can see that 100%
+Run the following command to visualize the results. 
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/castings_project]` \ > \ :green:`python plot_results.py` \
+   | \ :blue:`[~user/castings_project]` \ > \ :green:`python visualize_results.py` \
 
-   .. figure:: /assets/tutorials/casting_predictions_img.png
+A ``inspection_results.png`` would be created, as shown below. The top row of castings are clearly 
+defective, as they have rough, uneven edges, while the bottom row of castings look normal. 
+Therefore, the prediction results are accurate for this batch of inspected castings. The quality
+inspector can provide feedback to the manufacturing team to further investigate the defective 
+castings based on the casting IDs.
+
+   .. figure:: /assets/tutorials/casting_predictions_viz.png
       :width: 832
-      :alt: Casting prediction results
+      :alt: Casting prediction visualization
 
-      Casting Prediction Results
+      Casting Prediction Visualization
+
+This concludes the guided example on using your own custom models. 
 
 .. _tutorial_custom_object_detection_models:
 
 Custom Object Detection Models
 ==============================
+
+The previous example was centered on the task of image classification. *Object detection* is
+another common task in Computer Vision. PeekingDuck offers several pre-trained
+:doc:`object detection </resources/01a_object_detection>` model nodes which can detect up to
+80 different types of objects, such as persons, cars, and dogs, just to name a few. For the
+complete list of detectable objects, refer to the 
+:ref:`Object Detection IDs <general-object-detection-ids>` page. Quite often, you may need to train 
+a custom object detection model on your own dataset, such as defects on a printed circuit board
+(PCB) as shown below. This section discusses some important considerations for the object detection
+task, supplementing the guided example above.
+
+   .. figure:: /assets/tutorials/PCB_defect.png
+      :width: 416
+      :alt: Object detection of defects on PCB
+
+      Object Detection of Defects on PCB (Source: `The Institution of Engineering and Technology 
+      <https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/trit.2019.0019>`_)
+
+PeekingDuck's object detection model nodes conventionally receive the :term:`img` data type, and 
+produce the :term:`bboxes`, :term:`bbox_labels`, and :term:`bbox_scores` data types. An example of
+this can be seen in the API documentation for a node such as :mod:`model.efficientdet`. We 
+strongly recommend keeping to these data type conventions for your custom object detection node,
+ensuring that they adhere to the described format, e.g. :term:`img` is in BGR format, and
+:term:`bboxes` is a NumPy array of a certain shape.
+
+This allows you to leverage on PeekingDuck's ecosystem of existing nodes. For example, by ensuring
+that your custom model node receives :term:`img` in the correct format, you are able to use
+PeekingDuck's :mod:`input.visual` node, which can read from multiple visual sources such as a 
+folder of images or videos, an online cloud source, or a CCTV/webcam live feed. By ensuring that
+your custom model node produces :term:`bboxes` and :term:`bbox_labels` in the correct format, you
+are able to use PeekingDuck's :mod:`draw.bbox` node to draw bounding boxes and associated labels
+around the detected objects.
+
+By doing so, you would have saved a significant amount of development time, and can focus more on
+developing and finetuning your custom object detection model. This was just a simple example, and
+you can find out more about PeekingDuck's nodes from our :ref:`API Documentation <api_doc>`, and
+PeekingDuck's in-built data types from our :doc:`Glossary </glossary>`.
