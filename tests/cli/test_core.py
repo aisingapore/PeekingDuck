@@ -17,7 +17,7 @@ import string
 import sys
 import textwrap
 from pathlib import Path
-from unittest import TestCase
+from unittest import TestCase, mock
 
 import pytest
 import yaml
@@ -69,6 +69,25 @@ DEFAULT_YML = dict(
         "output.screen",
     ]
 )
+
+
+class MockRunner:
+    """Mocks the Runner class to print out the pipeline_config content."""
+
+    def __init__(
+        self,
+        pipeline_path=None,
+        config_updates_cli=None,
+        custom_nodes_parent_subdir=None,
+        num_iter=None,
+        nodes=None,
+    ):
+        with open(pipeline_path) as infile:
+            data = yaml.safe_load(infile.read())
+            print(data)
+
+    def run(self):
+        pass
 
 
 def create_node_config(config_dir, node_name, config_text):
@@ -236,3 +255,21 @@ class TestCliCore:
             assert_msg_in_logs(init_msg(PKD_NODE_2), captured.records)
             assert_msg_in_logs(f"Run pipeline for {n} iterations", captured.records)
             assert result.exit_code == 0
+
+    @mock.patch("peekingduck.commands.core.Runner", MockRunner)
+    def test_verify_install(self):
+        """Checks that verify install runs the basic object detection
+        pipeline.
+        """
+        setup()
+        result = CliRunner().invoke(cli, ["--verify_install"])
+
+        verification_pipeline_str = (
+            "{'nodes': ["
+            "{'input.visual': {'source': 'https://storage.googleapis.com/peekingduck/videos/wave.mp4'}}, "
+            "'model.yolo', "
+            "'draw.bbox', "
+            "'output.screen'"
+            "]}"
+        )
+        assert result.output.rstrip() == verification_pipeline_str
