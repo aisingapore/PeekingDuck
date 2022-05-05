@@ -105,7 +105,7 @@ class Node(AbstractNode):
             else:
                 invalid.append(stat)
 
-        if not invalid:
+        if invalid:
             msg = textwrap.dedent(
                 f"""\
                 {invalid} are not valid outputs.

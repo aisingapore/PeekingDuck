@@ -36,12 +36,15 @@ PeekingDuck is designed for model *inference* rather than model *training*. This
 shows how a simple Convolutional Neural Network (CNN) model can be trained separately from the
 PeekingDuck framework. If you have already trained your own model, the
 :ref:`following section <tutorial_using_your_trained_model_with_peekingduck>` describes how you can
-convert it to a custom model node, and use PeekingDuck for inference.
-
+convert it to a custom model node, and use it within PeekingDuck for inference.
 
 
 Setting Up
 ----------
+
+Install the following prerequisite for visualization. ::
+
+> conda install matplotlib
 
 Create the following project folder:
 
@@ -50,11 +53,8 @@ Create the following project folder:
    | \ :blue:`[~user]` \ > \ :green:`mkdir castings_project` \
    | \ :blue:`[~user]` \ > \ :green:`cd castings_project` \
 
-Within the ``castings_project`` folder:
-
-* Download the `castings dataset <https://storage.googleapis.com/peekingduck/data/castings_data.zip>`_
-  and unzip the file.
-* Create an empty Python script named ``train_classifier.py``.
+Download the `castings dataset <https://storage.googleapis.com/peekingduck/data/castings_data.zip>`_
+and unzip the file to the ``castings_project`` folder.
 
 .. note::
 
@@ -67,22 +67,19 @@ You should have the following directory structure at this point:
 .. parsed-literal::
 
    \ :blue:`castings_project/` \ |Blank|
-   ├── train_classifier.py
    └── \ :blue:`castings_data/` \ |Blank|
          ├── \ :blue:`train/` \ |Blank|
          ├── \ :blue:`validation/` \ |Blank|
-         └── \ :blue:`test/` \ |Blank|
+         └── \ :blue:`inspection/` \ |Blank|
 
-Install the following prerequisite for visualization. ::
-
-> pip install matplotlib
 
 Update Training Script
 ----------------------
 
-**train_classifier.py**:
+Create an empty ``train_classifier.py`` file within the ``castings_project`` folder, and update it
+with the following code:
 
-   Update the empty ``train_classifier.py`` file you have created with the following code:
+**train_classifier.py**:
 
    .. container:: toggle
 
@@ -239,6 +236,13 @@ Train the model by running the following command.
 
    | \ :blue:`[~user/castings_project]` \ > \ :green:`python train_classifier.py` \
 
+
+.. note::
+
+   For macOS Apple Silicon, the above code only works on macOS 12.x Monterey with the latest
+   tensorflow-macos and tensorflow-metal versions. It will crash on macOS 11.x Big Sur due to
+   bugs in the outdated tensorflow versions.
+
 The model will be trained for 10 epochs, and when training is completed, a new ``weights``
 folder and ``training_results.png`` will be created:
 
@@ -250,7 +254,7 @@ folder and ``training_results.png`` will be created:
    ├── \ :blue:`castings_data/` \ |Blank|
    │     ├── \ :blue:`train/` \ |Blank|
    │     ├── \ :blue:`validation/` \ |Blank|
-   │     └── \ :blue:`test/` \ |Blank|
+   │     └── \ :blue:`inspection/` \ |Blank|
    └── \ :blue:`weights/` \ |Blank|
          ├── keras_metadata.pb
          ├── saved_model.pb
@@ -316,7 +320,7 @@ The ``castings_project`` folder structure should now look like this:
    ├── \ :blue:`castings_data/` \ |Blank|
    │     ├── \ :blue:`train/` \ |Blank|
    │     ├── \ :blue:`validation/` \ |Blank|
-   │     └── \ :blue:`test/` \ |Blank|
+   │     └── \ :blue:`inspection/` \ |Blank|
    ├── \ :blue:`src/` \ |Blank|
    │     └── \ :blue:`custom_nodes/` \ |Blank|
    │           ├── \ :blue:`configs/` \ |Blank|
@@ -406,8 +410,8 @@ node.
                }
 
 The custom node takes in the in-built PeekingDuck :term:`img` data type, makes a prediction based
-on the image, and produces two custom data types: `pred_label`, the predicted label ("defective"
-or "normal"); and `pred_score`, which is the confidence score of the prediction.
+on the image, and produces two custom data types: ``pred_label``, the predicted label ("defective"
+or "normal"); and ``pred_score``, which is the confidence score of the prediction.
 
 
 Using the Classifier in a PeekingDuck Pipeline
@@ -416,8 +420,8 @@ Using the Classifier in a PeekingDuck Pipeline
 We'll now pair this custom node with other PeekingDuck nodes to build a complete solution. Imagine
 an automated inspection system like the one shown below, where the castings are placed on a
 conveyor belt and a camera takes a picture of each casting and sends it to the PeekingDuck pipeline
-for prediction. A report showing the predicted result for each casting is produced for the quality
-inspector, and he/she can use the report for further analysis. 
+for prediction. A report showing the predicted result for each casting is produced, and the quality
+inspector can use it for further analysis. 
 
    .. figure:: /assets/tutorials/automated_inspection.png
       :width: 416
@@ -450,9 +454,10 @@ such as ``28_4137.jpeg``.
             ``castings_data/inspection``.
    | Line 4 Calls the custom model node that you have just created.
    | Line 5 :mod:`output.csv_writer`: produces the report for the quality inspector in a CSV file
-            (``castings_predictions.csv``). This node receives the :term:`filename` data type from
-            :mod:`input.visual`, the custom data types `pred_label` and `pred_score` from the 
-            custom model node, and writes them to the columns of the CSV file.
+            ``castings_predictions_DDMMYY-hh-mm-ss.csv`` (time stamp appended to ``file_path``). 
+            This node receives the :term:`filename` data type from :mod:`input.visual`,
+            the custom data types ``pred_label`` and ``pred_score`` from the custom model node, 
+            and writes them to the columns of the CSV file.
 
 Run the above with the command :greenbox:`peekingduck run`. |br|
 
@@ -521,7 +526,7 @@ Run the following command to visualize the results.
 
    | \ :blue:`[~user/castings_project]` \ > \ :green:`python visualize_results.py` \
 
-A ``inspection_results.png`` would be created, as shown below. The top row of castings are clearly 
+An ``inspection_results.png`` would be created, as shown below. The top row of castings are clearly
 defective, as they have rough, uneven edges, while the bottom row of castings look normal. 
 Therefore, the prediction results are accurate for this batch of inspected castings. The quality
 inspector can provide feedback to the manufacturing team to further investigate the defective 
@@ -575,4 +580,4 @@ around the detected objects.
 By doing so, you would have saved a significant amount of development time, and can focus more on
 developing and finetuning your custom object detection model. This was just a simple example, and
 you can find out more about PeekingDuck's nodes from our :ref:`API Documentation <api_doc>`, and
-PeekingDuck's in-built data types from our :doc:`Glossary </glossary>`.
+PeekingDuck's built-in data types from our :doc:`Glossary </glossary>`.
