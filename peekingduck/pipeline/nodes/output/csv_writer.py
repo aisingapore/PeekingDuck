@@ -42,7 +42,8 @@ class Node(AbstractNode):
             present in the data pool.
         file_path (:obj:`str`):
             **default = "PeekingDuck/data/stats.csv"**. |br|
-            Directory where CSV file is saved.
+            Path of the CSV file to be saved. The resulting file name would have an appended
+            timestamp.
         logging_interval (:obj:`int`): **default = 1**. |br|
             Interval between each log, in terms of seconds.
     """
