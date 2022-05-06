@@ -68,9 +68,9 @@ You should have the following directory structure at this point:
 
    \ :blue:`castings_project/` \ |Blank|
    └── \ :blue:`castings_data/` \ |Blank|
+         ├── \ :blue:`inspection/` \ |Blank|
          ├── \ :blue:`train/` \ |Blank|
-         ├── \ :blue:`validation/` \ |Blank|
-         └── \ :blue:`inspection/` \ |Blank|
+         └── \ :blue:`validation/` \ |Blank|
 
 
 Update Training Script
@@ -252,9 +252,9 @@ folder and ``training_results.png`` will be created:
    ├── train_classifier.py
    ├── training_results.png
    ├── \ :blue:`castings_data/` \ |Blank|
+   │     ├── \ :blue:`inspection/` \ |Blank|
    │     ├── \ :blue:`train/` \ |Blank|
-   │     ├── \ :blue:`validation/` \ |Blank|
-   │     └── \ :blue:`inspection/` \ |Blank|
+   │     └── \ :blue:`validation/` \ |Blank|
    └── \ :blue:`weights/` \ |Blank|
          ├── keras_metadata.pb
          ├── saved_model.pb
@@ -318,9 +318,9 @@ The ``castings_project`` folder structure should now look like this:
    ├── train_classifier.py
    ├── training_results.png
    ├── \ :blue:`castings_data/` \ |Blank|
+   │     ├── \ :blue:`inspection/` \ |Blank|
    │     ├── \ :blue:`train/` \ |Blank|
-   │     ├── \ :blue:`validation/` \ |Blank|
-   │     └── \ :blue:`inspection/` \ |Blank|
+   │     └── \ :blue:`validation/` \ |Blank|
    ├── \ :blue:`src/` \ |Blank|
    │     └── \ :blue:`custom_nodes/` \ |Blank|
    │           ├── \ :blue:`configs/` \ |Blank|
@@ -409,7 +409,7 @@ node.
                      "pred_score": 100.0 * np.max(score),
                }
 
-The custom node takes in the in-built PeekingDuck :term:`img` data type, makes a prediction based
+The custom node takes in the built-in PeekingDuck :term:`img` data type, makes a prediction based
 on the image, and produces two custom data types: ``pred_label``, the predicted label ("defective"
 or "normal"); and ``pred_score``, which is the confidence score of the prediction.
 
