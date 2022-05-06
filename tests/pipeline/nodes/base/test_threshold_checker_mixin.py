@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import pytest
-import yaml
 
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from tests.conftest import not_raises
