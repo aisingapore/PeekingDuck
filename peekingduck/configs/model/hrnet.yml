@@ -4,12 +4,16 @@ output: ["keypoints", "keypoint_scores", "keypoint_conns"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: hrnet,
-    blob_file: hrnet.zip,
-    model_file: { default: hrnet_frozen.pb },
+    tensorflow:
+      {
+        model_subdir: hrnet,
+        blob_file: { default: hrnet_frozen.zip },
+        model_file: { default: hrnet_frozen.pb },
+      },
   }
 model_nodes: { inputs: [x:0], outputs: [Identity:0] }
 resolution: { height: 192, width: 256 }
 
+model_format: tensorflow
 model_type: default
 score_threshold: 0.1

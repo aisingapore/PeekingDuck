@@ -5,14 +5,23 @@ output:
 weights_parent_dir: null
 weights:
   {
-    model_subdir: posenet,
-    blob_file: posenet.zip,
-    model_file:
+    tensorflow:
       {
-        50: models/model-mobilenet_v1_050.pb,
-        75: models/model-mobilenet_v1_075.pb,
-        100: models/model-mobilenet_v1_100.pb,
-        resnet: models/model-resnet.pb,
+        model_subdir: posenet,
+        blob_file:
+          {
+            50: model-mobilenet_v1_050.zip,
+            75: model-mobilenet_v1_075.zip,
+            100: model-mobilenet_v1_100.zip,
+            resnet: model-resnet.zip,
+          },
+        model_file:
+          {
+            50: model-mobilenet_v1_050.pb,
+            75: model-mobilenet_v1_075.pb,
+            100: model-mobilenet_v1_100.pb,
+            resnet: model-resnet.pb,
+          },
       },
   }
 model_nodes:
@@ -36,6 +45,7 @@ model_nodes:
       },
   }
 
+model_format: tensorflow
 model_type: resnet # 50, 75, 100 or resnet
 resolution: { height: 225, width: 225 }
 max_pose_detection: 10

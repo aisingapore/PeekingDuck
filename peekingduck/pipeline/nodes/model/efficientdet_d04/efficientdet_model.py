@@ -42,7 +42,7 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds("score_threshold", (0, 1), "within")
 
         model_dir = self.download_weights()
-        classes_path = model_dir / self.config["weights"]["classes_file"]
+        classes_path = model_dir / self.weights["classes_file"]
         class_names = {
             val["id"] - 1: val["name"]
             for val in json.loads(classes_path.read_text()).values()
@@ -54,7 +54,7 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.detect_ids,
             self.config["model_type"],
             self.config["num_classes"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["image_size"],
             self.config["score_threshold"],
@@ -73,9 +73,7 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.logger.info("Detecting all EfficientDet classes")
         self._detect_ids = ids
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[str], List[float]]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
         """predict the bbox from frame
 
         Args:

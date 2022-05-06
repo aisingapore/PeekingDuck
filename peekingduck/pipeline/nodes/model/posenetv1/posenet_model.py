@@ -44,7 +44,7 @@ class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.predictor = Predictor(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["resolution"],
             self.config["max_pose_detection"],

@@ -22,6 +22,7 @@ import pytest
 import tensorflow as tf
 import tensorflow.keras.backend as K
 import yaml
+
 from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
 from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
@@ -47,7 +48,8 @@ def model_dir(movenet_config):
     return (
         movenet_config["root"].parent
         / "peekingduck_weights"
-        / movenet_config["weights"]["model_subdir"]
+        / movenet_config["weights"][movenet_config["model_format"]]["model_subdir"]
+        / movenet_config["model_format"]
     )
 
 
@@ -57,7 +59,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],
@@ -68,7 +70,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],
@@ -80,7 +82,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],
@@ -102,7 +104,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],
@@ -127,7 +129,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],
@@ -199,7 +201,7 @@ class TestPredictor:
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_type"],
-            movenet_config["weights"]["model_file"],
+            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
             movenet_config["bbox_score_threshold"],
             movenet_config["keypoint_score_threshold"],

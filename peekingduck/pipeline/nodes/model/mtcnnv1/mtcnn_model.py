@@ -20,6 +20,7 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
+
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
@@ -43,7 +44,7 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.detector = Detector(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["min_size"],
             self.config["scale_factor"],

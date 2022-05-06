@@ -6,12 +6,16 @@ optional_inputs: ["mot_metadata"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: jde,
-    blob_file: jde.zip,
-    model_file: { 864x480: jde_864x480_uncertainty-stripped-half.pt },
-    config_file: { 864x480: yolov3_864x480.cfg },
+    pytorch:
+      {
+        model_subdir: jde,
+        blob_file: { 864x480: jde_864x480_uncertainty-stripped-half.zip },
+        model_file: { 864x480: jde_864x480_uncertainty-stripped-half.pt },
+        config_file: { 864x480: yolov3_864x480.cfg },
+      },
   }
 
+model_format: pytorch
 model_type: 864x480
 min_box_area: 200
 track_buffer: 30

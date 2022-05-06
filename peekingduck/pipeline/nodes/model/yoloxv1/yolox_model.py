@@ -50,7 +50,7 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
 
         model_dir = self.download_weights()
-        with open(model_dir / self.config["weights"]["classes_file"]) as infile:
+        with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
         self.detect_ids = self.config["detect_ids"]
@@ -61,7 +61,7 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["model_type"],
             self.config["num_classes"],
             self.config["model_size"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["agnostic_nms"],
             self.config["fuse"],
             self.config["half"],
