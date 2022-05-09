@@ -131,6 +131,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self._is_output_playback: bool = False
         self._is_pipeline_running: bool = False
         self._state: str = "play"  # activate auto play (cf. self.timer_function)
+        self._bkgd_job: Union[None, str] = None
         # configure keyboard shortcuts map
         self._keyboard_shortcuts = {
             "z": self._zoom_reset,
@@ -262,7 +263,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.tk_btn_play = ttk.Button(
             btn_frm, text="Play", command=self.btn_play_stop_press
         )  # store widget to modifying button text later
-        btn_list: List[Union[tk.Button, tk.Label]] = [
+        btn_list: List[Union[ttk.Button, tk.Label]] = [
             tk.Label(btn_frm, text=""),  # spacer
             tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
