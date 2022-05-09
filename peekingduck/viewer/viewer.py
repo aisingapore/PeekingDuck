@@ -14,11 +14,16 @@
 
 """
 Implement PeekingDuck Viewer
+
+Todo:
+    - handle scenario whereby input image is larger than display widget size,
+      either resize window or resize input image
 """
 
 from typing import List, Union
 from pathlib import Path
 import logging
+import platform
 import time
 import tkinter as tk
 from tkinter import ttk
@@ -83,7 +88,7 @@ def get_keyboard_modifier(state: int) -> str:
     alt = (state & 0x8) != 0 or (state & 0x80) != 0
     shift = (state & 0x1) != 0
     res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
-    return res
+    return res[1:] if res[0] == "-" else res
 
 
 def get_keyboard_char(char: str, keysym: str) -> str:
@@ -147,6 +152,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self._create_progress_slider()
         # bind event handlers
         self.root.bind("<Key>", self.on_keypress)
+        if platform.system() == "Darwin":
+            self.logger.info("binding macOS cmd-Q")
+            self.root.createcommand("::tk::mac::Quit", self.on_exit)
         # activate internal timer function and start Tkinter event loop
         self._timer_function()
         self.root.mainloop()
@@ -159,6 +167,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
     def _create_window(self) -> None:
         """Create the PeekingDuck viewer window"""
         root = tk.Tk()
+        root.wm_protocol("WM_DELETE_WINDOW", self.on_exit)
         root.title("PeekingDuck Viewer")
         root.geometry(f"{WIN_WIDTH}x{WIN_HEIGHT}")
         root.update()  # force update without mainloop() to get correct size
@@ -206,9 +215,12 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         progress_frm = ttk.Frame(master=self.root)
         progress_frm.pack(side=tk.BOTTOM, fill=tk.X)
         lbl = tk.Label(progress_frm, text="")  # spacer
-        lbl.grid(row=0, column=0, columnspan=3, sticky="nsew")
+        lbl.grid(row=0, column=0, columnspan=2, sticky="nsew")
+        # frame number
+        self.tk_lbl_frame_num = tk.Label(progress_frm, text="0")
+        self.tk_lbl_frame_num.grid(row=0, column=2, sticky="nsew")
         # slider
-        self.tk_scale = tk.Scale(
+        self.tk_scale = ttk.Scale(
             progress_frm,
             orient=tk.HORIZONTAL,
             from_=1,
@@ -247,7 +259,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         btn_frm = ttk.Frame(master=self.root)
         btn_frm.pack(side=tk.BOTTOM, fill=tk.X)
         # footer contents
-        self.tk_btn_play = tk.Button(
+        self.tk_btn_play = ttk.Button(
             btn_frm, text="Play", command=self.btn_play_stop_press
         )  # store widget to modifying button text later
         btn_list: List[Union[tk.Button, tk.Label]] = [
@@ -255,29 +267,15 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
             self.tk_btn_play,
-            tk.Button(btn_frm, text="|<<", command=self.btn_first_frame_press),
-            tk.Button(
-                btn_frm,
-                text="<<",
-                command=self.btn_backward_press,
-                repeatdelay=BUTTON_DELAY,
-                repeatinterval=BUTTON_REPEAT,
-            ),
-            tk.Button(
-                btn_frm,
-                text=">>",
-                command=self.btn_forward_press,
-                repeatdelay=BUTTON_DELAY,
-                repeatinterval=BUTTON_REPEAT,
-            ),
-            tk.Button(btn_frm, text=">>|", command=self.btn_last_frame_press),
-            tk.Button(btn_frm, text="-", command=self.btn_zoom_out_press),
-            tk.Button(btn_frm, text="+", command=self.btn_zoom_in_press),
+            tk.Label(btn_frm, text=""),
+            ttk.Button(btn_frm, text="-", command=self.btn_zoom_out_press),
+            ttk.Button(btn_frm, text="+", command=self.btn_zoom_in_press),
+            tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
             tk.Label(btn_frm, text=""),
         ]
         for i, btn in enumerate(btn_list):
-            btn.configure(height=2)  # NB: height is in text units!
+            # btn.configure(height=2)  # NB: height in text units (N/A to ttk)
             btn.grid(row=0, column=i, sticky="nsew")
         # configure expansion and uniform column sizes
         num_col, _ = btn_frm.grid_size()
@@ -298,7 +296,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         elif self._is_output_playback:
             self._stop_playback()
         else:
-            self._do_playback()
+            self._start_playback()
         self.logger.debug(f"btn_play_stop_press end: self._state={self._state}")
 
     def btn_first_frame_press(self) -> None:
@@ -374,6 +372,12 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             if key in self._keyboard_shortcuts:
                 self._keyboard_shortcuts[key]()
 
+    def on_exit(self) -> None:
+        """Handle quit viewer event"""
+        self.logger.info("quitting viewer")
+        self._cancel_timer_function()
+        self.root.destroy()
+
     #
     # Background "Event Loop"
     #
@@ -397,7 +401,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
                     self._run_pipeline_one_iteration()
 
         self.root.update()  # wake up GUI
-        self.tk_lbl_timer.after(FPS_60, self._timer_function)
+        self._bkgd_job = self.tk_lbl_timer.after(FPS_60, self._timer_function)
+
+    def _cancel_timer_function(self) -> None:
+        """Cancel the background timer function"""
+        if self._bkgd_job:
+            self.tk_lbl_timer.after_cancel(self._bkgd_job)
+            self._bkgd_job = None
 
     ####################
     #
@@ -497,7 +507,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
 
     def _update_slider_and_show_frame(self) -> None:
         """Update slider based on frame index and show new frame"""
-        self.tk_scale.set(self._frame_idx + 1)
+        frame_num = self._frame_idx + 1
+        self.tk_scale.set(frame_num)
+        self.tk_lbl_frame_num["text"] = frame_num
         self._show_frame()
 
     def _sync_slider_to_frame(self, val: str) -> None:
@@ -507,7 +519,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             val (str): slider value
         """
         self.logger.debug(f"sync slider to frame: {val} {type(val)}")
-        self._frame_idx = int(val) - 1
+        self._frame_idx = round(float(val)) - 1
+        self.tk_lbl_frame_num["text"] = self._frame_idx + 1
         self._show_frame()
 
     def _enable_progress(self) -> None:
@@ -584,6 +597,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
                 self._stop_running_pipeline()
         # update progress bar after each iteration
         self.tk_progress["value"] = self._frame_idx
+        self.tk_lbl_frame_num["text"] = self._frame_idx + 1
 
     def _run_pipeline_start(self) -> None:
         """Init PeekingDuck's pipeline"""
@@ -609,11 +623,19 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
     # Pipeline Playback Methods
     #
     ####################
-    def _do_playback(self) -> None:
-        """Playback saved video frames"""
+    def _start_playback(self) -> None:
+        """Start output playback process"""
         self._is_output_playback = True
+        # auto-rewind if at last frame
+        if self._frame_idx + 1 >= len(self._frames):
+            self._frame_idx = 0
+            self._update_slider_and_show_frame()
         self._set_viewer_state_to_play()
         self._set_header_playing()
+        self._do_playback()
+
+    def _do_playback(self) -> None:
+        """Playback saved video frames: to be called continuously"""
         if self._forward_one_frame():
             self.tk_scale.set(self._frame_idx + 1)
         else:
