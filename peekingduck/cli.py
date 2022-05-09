@@ -16,35 +16,25 @@
 CLI functions for PeekingDuck.
 """
 
-import logging
-
 import click
 
 from peekingduck import __version__
-from peekingduck.commands.core import init, run, verify_installation
+from peekingduck.commands.core import init, run, verify_install
 from peekingduck.commands.create_node import create_node
 from peekingduck.commands.nodes import nodes
 
-logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
-
-@click.group(invoke_without_command=True)
+@click.group()
 @click.version_option(__version__)
-@click.option("--verify_install", is_flag=True, help="Verify PeekingDuck installation.")
-@click.pass_context
-def cli(ctx: click.Context, verify_install: bool) -> None:
+def cli() -> None:
     """PeekingDuck is a modular computer vision inference framework.
 
     Developed by Computer Vision Hub at AI Singapore.
     """
-    if ctx.invoked_subcommand is None:
-        if verify_install:
-            verify_installation()
-        else:
-            print(ctx.get_help())
 
 
 cli.add_command(create_node)
 cli.add_command(init)
 cli.add_command(nodes)
 cli.add_command(run)
+cli.add_command(verify_install)

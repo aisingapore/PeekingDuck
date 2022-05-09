@@ -262,7 +262,7 @@ class TestCliCore:
         pipeline.
         """
         setup()
-        result = CliRunner().invoke(cli, ["--verify_install"])
+        result = CliRunner().invoke(cli, ["verify-install"])
 
         verification_pipeline_str = (
             "{'nodes': ["

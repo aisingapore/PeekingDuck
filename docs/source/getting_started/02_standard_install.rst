@@ -98,7 +98,7 @@ To check that PeekingDuck is installed successfully, run the following command:
 
 .. admonition:: Terminal Session
 
-    | \ :blue:`[~user]` \ > \ :green:`peekingduck -\-verify_install` \
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck verify-install` \
 
 You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
 with bounding boxes overlaid as shown below:

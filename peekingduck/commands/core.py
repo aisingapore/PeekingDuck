@@ -122,7 +122,8 @@ def run(  # pylint: disable=too-many-arguments
         runner.run()
 
 
-def verify_installation() -> None:
+@click.command()
+def verify_install() -> None:
     """Verifies PeekingDuck installation by running object detection on
     'wave.mp4'.
     """

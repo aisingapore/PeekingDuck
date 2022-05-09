@@ -57,7 +57,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 
 
 ```
-> peekingduck --verify_install
+> peekingduck verify-install
 ```
 
 You should see a video of a person waving his hand with
