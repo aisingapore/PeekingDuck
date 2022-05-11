@@ -21,7 +21,7 @@ import re
 import sys
 import zipfile
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Union
 
 import requests
 from tqdm import tqdm

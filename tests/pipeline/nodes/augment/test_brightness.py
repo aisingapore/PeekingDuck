@@ -88,8 +88,8 @@ class TestBrightness:
     def test_beta_range(self):
         with pytest.raises(ValueError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "beta": -101})
-        assert str(excinfo.value) == "beta must be between [-100, 100]"
+        assert str(excinfo.value) == "beta must be between [-100.0, 100.0]"
 
         with pytest.raises(ValueError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "beta": 101})
-        assert str(excinfo.value) == "beta must be between [-100, 100]"
+        assert str(excinfo.value) == "beta must be between [-100.0, 100.0]"
