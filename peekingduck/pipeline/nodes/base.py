@@ -17,6 +17,7 @@
 import hashlib
 import operator
 import os
+import re
 import sys
 import zipfile
 from pathlib import Path
@@ -36,117 +37,75 @@ class ThresholdCheckerMixin:
     values, typically thresholds.
     """
 
-    def check_bounds(
-        self,
-        key: Union[str, List[str]],
-        value: Union[Number, Tuple[Number, Number]],
-        method: str,
-        include: Optional[str] = "both",
-    ) -> None:
-        """Checks if the configuration value(s) specified by `key` satisties
+    interval_pattern = re.compile(
+        r"^[\[\(]\s*[-+]?(inf|\d*\.?\d+)\s*,\s*[-+]?(inf|\d*\.?\d+)\s*[\]\)]$"
+    )
+
+    def check_bounds(self, key: Union[str, List[str]], interval: str) -> None:
+        """Checks if the configuration value(s) specified by `key` satisfies
         the specified bounds.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-            value (Union[Number, Tuple[Number, Number]]): Either a single
-                number to specify the upper or lower bound or a tuple of
-                numbers to specify both the upper and lower bounds.
-            method (str): The bounds checking methods, one of
-                {"above", "below", "both"}. If "above", checks if the
-                configuration value is above the specified `value`. If "below",
-                checks if the configuration value is below the specified
-                `value`. If "both", checks if the configuration value is above
-                `value[0]` and below `value[1]`.
-            include (Optional[str]): Indicates if the `value` itself should be
-                included in the bound, one of {"lower", "upper", "both", None}.
-                Please see Technotes for details.
+            interval (str): An mathematical interval representing the range of
+                valid values. The syntax of the `interval` string is:
+
+                <value> = <number> | "-inf" | "+inf"
+                <left_bracket> = "(" | "["
+                <right_bracket> = ")" | "]"
+                <interval> = <left_bracket> <value> "," <value> <right_bracket>
+
+                See Technotes for more details.
 
         Raises:
             TypeError: `key` type is not in (List[str], str).
-            TypeError: If `value` is not a tuple of only float/int.
-            TypeError: If `value` is not a tuple with 2 elements.
-            TypeError: If `value` is not a float, int, or tuple.
-            TypeError: If `value` type is not a tuple when `method` is
-                "within".
-            TypeError: If `value` type is a tuple when `method` is
-                "above"/"below".
-            ValueError: If `method` is not one of {"above", "below", "within"}.
+            ValueError: If `interval` does not match the specified format.
+            ValueError: If the lower bound is larger than the upper bound.
             ValueError: If the configuration value fails the bounds comparison.
 
         Technotes:
-            The behavior of `include` depends on the specified `method`. The
-            table below shows the comparison done for various argument
-            combinations.
+            The table below shows the comparison done for various interval
+            expressions.
 
-            +-----------+---------+-------------------------------------+
-            | method    | include | comparison                          |
-            +===========+=========+=====================================+
-            |           | "lower" | config[key] >= value                |
-            +           +---------+-------------------------------------+
-            |           | "upper" | config[key] > value                 |
-            +           +---------+-------------------------------------+
-            |           | "both"  | config[key] >= value                |
-            +           +---------+-------------------------------------+
-            | "above"   | None    | config[key] > value                 |
-            +-----------+---------+-------------------------------------+
-            |           | "lower" | config[key] < value                 |
-            +           +---------+-------------------------------------+
-            |           | "upper" | config[key] <= value                |
-            +           +---------+-------------------------------------+
-            |           | "both"  | config[key] <= value                |
-            +           +---------+-------------------------------------+
-            | "below"   | None    | config[key] < value                 |
-            +-----------+---------+-------------------------------------+
-            |           | "lower" | value[0] <= config[key] < value[1]  |
-            +           +---------+-------------------------------------+
-            |           | "upper" | value[0] < config[key] <= value[1]  |
-            +           +---------+-------------------------------------+
-            |           | "both"  | value[0] <= config[key] <= value[1] |
-            +           +---------+-------------------------------------+
-            | "within"  | None    | value[0] < config[key] < value[1]   |
-            +-----------+---------+-------------------------------------+
+            +---------------------+-------------------------------------+
+            | interval            | comparison                          |
+            +=====================+=====================================+
+            | [lower, +inf]       |                                     |
+            +---------------------+                                     |
+            | [lower, +inf)       | config[key] >= lower                |
+            +---------------------+-------------------------------------+
+            | (lower, +inf]       |                                     |
+            +---------------------+                                     |
+            | (lower, +inf)       | config[key] > lower                 |
+            +---------------------+-------------------------------------+
+            | [-inf, upper]       |                                     |
+            +---------------------+                                     |
+            | (-inf, upper]       | config[key] <= upper                |
+            +---------------------+-------------------------------------+
+            | [-inf, upper)       |                                     |
+            +---------------------+                                     |
+            | (-inf, upper)       | config[key] < upper                 |
+            +---------------------+-------------------------------------+
+            | [lower, upper]      | lower <= config[key] <= upper       |
+            +---------------------+-------------------------------------+
+            | (lower, upper]      | lower < config[key] <= upper        |
+            +---------------------+-------------------------------------+
+            | [lower, upper)      | lower <= config[key] < upper        |
+            +---------------------+-------------------------------------+
+            | (lower, upper)      | lower < config[key] < upper         |
+            +---------------------+-------------------------------------+
         """
-        # available checking methods
-        methods = {"above", "below", "within"}
-        # available options of lower/upper bound inclusion
-        lower_includes = {"lower", "both"}
-        upper_includes = {"upper", "both"}
+        if self.interval_pattern.match(interval) is None:
+            raise ValueError("Badly formatted interval")
 
-        if method not in methods:
-            raise ValueError(f"`method` must be one of {methods}")
+        lower_openness = interval[0]
+        upper_openness = interval[-1]
+        lower, upper = [float(value.strip()) for value in interval[1:-1].split(",")]
 
-        if isinstance(value, tuple):
-            if not all(isinstance(val, (float, int)) for val in value):
-                raise TypeError(
-                    "When using tuple for `value`, it must be a tuple of float/int"
-                )
-            if len(value) != 2:
-                raise ValueError(
-                    "When using tuple for `value`, it must contain only 2 elements"
-                )
-        elif isinstance(value, (float, int)):
-            pass
-        else:
-            raise TypeError(
-                "`value` must be a float/int or tuple, but you passed a "
-                f"{type(value).__name__}"
-            )
+        if lower > upper:
+            raise ValueError("Lower bound cannot be larger than upper bound")
 
-        if method == "within":
-            if not isinstance(value, tuple):
-                raise TypeError("`value` must be a tuple when `method` is 'within'")
-            self._check_within_bounds(
-                key, value, (include in lower_includes, include in upper_includes)
-            )
-        else:
-            if isinstance(value, tuple):
-                raise TypeError(
-                    "`value` must be a float/int when `method` is 'above'/'below'"
-                )
-            if method == "above":
-                self._check_above_value(key, value, include in lower_includes)
-            elif method == "below":
-                self._check_below_value(key, value, include in upper_includes)
+        self._check_within_bounds(key, lower, upper, lower_openness, upper_openness)
 
     def check_valid_choice(
         self, key: str, choices: Set[Union[int, float, str]]
@@ -167,78 +126,36 @@ class ThresholdCheckerMixin:
         if self.config[key] not in choices:
             raise ValueError(f"{key} must be one of {choices}")
 
-    def _check_above_value(
-        self, key: Union[str, List[str]], value: Number, inclusive: bool
-    ) -> None:
-        """Checks that configuration values specified by `key` is more than
-        (or equal to) the specified `value`.
-
-        Args:
-            key (Union[str, List[str]]): The specified key or list of keys.
-            value (Number): The specified value.
-            inclusive (bool): If `True`, compares `config[key] >= value`. If
-                `False`, compares `config[key] > value`.
-
-        Raises:
-            TypeError: `key` type is not in (List[str], str).
-            ValueError: If the configuration value is less than (or equal to)
-                `value`.
-        """
-        method = operator.ge if inclusive else operator.gt
-        extra_reason = " or equal to" if inclusive else ""
-        self._compare(key, value, method, reason=f"more than{extra_reason} {value}")
-
-    def _check_below_value(
-        self, key: Union[str, List[str]], value: Number, inclusive: bool
-    ) -> None:
-        """Checks that configuration values specified by `key` is more than
-        (or equal to) the specified `value`.
-
-        Args:
-            key (Union[str, List[str]]): The specified key or list of keys.
-            value (Number): The specified value.
-            inclusive (bool): If `True`, compares `config[key] <= value`. If
-                `False`, compares `config[key] < value`.
-
-        Raises:
-            TypeError: `key` type is not in (List[str], str).
-            ValueError: If the configuration value is less than (or equal to)
-                `value`.
-        """
-        method = operator.le if inclusive else operator.lt
-        extra_reason = " or equal to" if inclusive else ""
-        self._compare(key, value, method, reason=f"less than{extra_reason} {value}")
-
-    def _check_within_bounds(
+    def _check_within_bounds(  # pylint: disable=too-many-arguments
         self,
         key: Union[str, List[str]],
-        bounds: Tuple[Number, Number],
-        includes: Tuple[bool, bool],
+        lower: Number,
+        upper: Number,
+        lower_openness: str,
+        upper_openness: str,
     ) -> None:
         """Checks that configuration values specified by `key` is within the
         specified bounds between `lower` and `upper`.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-             (Union[float, int]): The lower bound.
-            bounds (Tuple[Number, Number]): The lower and upper bounds.
-            includes (Tuple[bool, bool]): If `True`, compares `config[key] >= value`.
-                If `False`, compares `config[key] > value`.
-            inclusive_upper (bool): If `True`, compares `config[key] <= value`.
-                If `False`, compares `config[key] < value`.
+            lower (Number): The lower bound.
+            upper (Number): The upper bound.
+            lower_openness (str): Either a "(" for an open lower bound or a "["
+                for a closed lower bound.
+            upper_openness (str): Either a ")" for an open upper bound or a "]"
+                for a closed upper bound.
 
         Raises:
             TypeError: `key` type is not in (List[str], str).
             ValueError: If the configuration value is not between `lower` and
                 `upper`.
         """
-        method_lower = operator.ge if includes[0] else operator.gt
-        method_upper = operator.le if includes[1] else operator.lt
-        reason_lower = "[" if includes[0] else "("
-        reason_upper = "]" if includes[1] else ")"
-        reason = f"between {reason_lower}{bounds[0]}, {bounds[1]}{reason_upper}"
-        self._compare(key, bounds[0], method_lower, reason)
-        self._compare(key, bounds[1], method_upper, reason)
+        method_lower = operator.ge if lower_openness == "[" else operator.gt
+        method_upper = operator.le if upper_openness == "]" else operator.lt
+        reason = f"between {lower_openness}{lower}, {upper}{upper_openness}"
+        self._compare(key, lower, method_lower, reason)
+        self._compare(key, upper, method_upper, reason)
 
     def _compare(
         self,
