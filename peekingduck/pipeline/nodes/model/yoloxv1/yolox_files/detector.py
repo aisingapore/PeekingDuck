@@ -48,6 +48,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_dir: Path,
         class_names: List[str],
         detect_ids: List[int],
+        model_format: str,
         model_type: str,
         num_classes: int,
         model_size: Dict[str, Dict[str, float]],
@@ -63,6 +64,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.class_names = class_names
+        self.model_format = model_format
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_size = model_size[self.model_type]
@@ -101,13 +103,33 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of human-friendly detection class names
             - An array of detection scores
         """
+
+        def get_last_2d(a: np.ndarray) -> np.ndarray:
+            """Helper method to get last two dimensions of array"""
+            m, n = a.shape[-2:]
+            a_2d = a.flat[: m * n].reshape(m, n)
+            return a_2d
+
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
-        image = torch.from_numpy(image).unsqueeze(0).to(self.device)
-        image = image.half() if self.half else image.float()
 
-        prediction = self.yolox(image)[0]
+        model_format = self.model_format
+        if model_format == "pytorch":
+            image = torch.from_numpy(image).unsqueeze(0).to(self.device)
+            image = image.half() if self.half else image.float()
+            prediction = self.yolox(image)[0]
+        elif model_format == "onnx":
+            input_name = self.yolox.get_inputs()[0].name
+            output_name = self.yolox.get_outputs()[0].name
+            image = image[np.newaxis, :]
+            result = self.yolox.run([output_name], {input_name: image})
+            res_arr = np.array(result)
+            pred = get_last_2d(res_arr)
+            prediction = torch.from_numpy(pred).to(self.device)
+        else:
+            self.logger.error(f"Unknown model format: {model_format}")
+
         bboxes, classes, scores = self._postprocess(
             prediction, scale, image_size, self.class_names
         )
@@ -175,17 +197,34 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: `model_path` does not exist.
         """
-        if self.model_path.is_file():
-            ckpt = torch.load(str(self.model_path), map_location="cpu")
-            model = self._get_model(self.model_size).to(self.device)
-            if self.half:
-                model.half()
-            model.eval()
-            model.load_state_dict(ckpt["model"])
+        model_format = self.model_format
+        if model_format == "pytorch":
+            if self.model_path.is_file():
+                ckpt = torch.load(str(self.model_path), map_location="cpu")
+                model = self._get_model(self.model_size).to(self.device)
+                if self.half:
+                    model.half()
+                model.eval()
+                model.load_state_dict(ckpt["model"])
 
-            if self.fuse:
-                model = fuse_model(model)
+                if self.fuse:
+                    model = fuse_model(model)
+                return model
+        elif model_format == "onnx":
+            import onnxruntime
+
+            if torch.cuda.is_available():
+                self.logger.info("creating onnx model on cuda")
+                model = onnxruntime.InferenceSession(
+                    str(self.model_path), None, providers=["CUDAExecutionProvider"]
+                )
+            else:
+                self.logger.info("creating onnx model on cpu")
+                model = onnxruntime.InferenceSession(str(self.model_path), None)
             return model
+        else:
+            self.logger.error(f"Unknown model format: {model_format}")
+
         raise ValueError(
             f"Model file does not exist. Please check that {self.model_path} exists."
         )

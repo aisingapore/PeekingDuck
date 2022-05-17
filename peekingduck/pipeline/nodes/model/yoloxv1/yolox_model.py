@@ -58,6 +58,7 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             model_dir,
             class_names,
             self.detect_ids,
+            self.config["model_format"],
             self.config["model_type"],
             self.config["num_classes"],
             self.config["model_size"],
