@@ -150,9 +150,11 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
             # Indices to filter out unwanted classes
             for detect_id in self.detect_ids:
-                detect_filter = network_output[0]["labels"]==detect_id
+                detect_filter = network_output[0]["labels"] == detect_id
                 for output_key in ["labels", "masks", "scores", "boxes"]:
-                    network_output[0][output_key] = network_output[0][output_key][detect_filter]
+                    network_output[0][output_key] = network_output[0][output_key][
+                        detect_filter
+                    ]
 
             if len(network_output[0]["labels"]) > 0:
                 bboxes = network_output[0]["boxes"].cpu().numpy()
@@ -185,4 +187,3 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         image_rgb_orig = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_rgb_norm = image_rgb_orig / 255
         return [self.preprocess_transform(image_rgb_norm).to(self.device)]
-        
