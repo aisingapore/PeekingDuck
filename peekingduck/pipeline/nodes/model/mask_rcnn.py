@@ -66,14 +66,14 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             object is detect at a particular pixel.
 
     References:
-        Mask R-CNN: A conceptually simple, flexible, and general framework for object 
+        Mask R-CNN: A conceptually simple, flexible, and general framework for object
         instance segmentation.:
         https://arxiv.org/abs/1703.06870
 
         Inference code adapted from:
         https://pytorch.org/vision/stable/_modules/torchvision/models/detection/mask_rcnn.html
         Model weights adapted from:
-        https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth 
+        https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

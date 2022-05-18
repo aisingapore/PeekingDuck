@@ -90,7 +90,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         return bboxes, labels, scores, masks
 
     def _create_mask_rcnn_model(self) -> torch.nn.Module:
-        """Initialize the Mask R-CNN model with the config settings and pretrained weights 
+        """Initialize the Mask R-CNN model with the config settings and pretrained weights
 
         Returns:
             torch.nn.Module: An initialized model in PyTorch framework
@@ -142,18 +142,18 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             masks (np.ndarray): postprocessed array of binarized masks
         """
         masks = np.array([])
-        scores = np.array([]) 
+        scores = np.array([])
         labels = np.array([])
         bboxes = np.array([])
         if len(network_output[0]["labels"]) > 0:
             network_output[0]["labels"] -= 1
 
             # Indices to filter out unwanted classes
-            for id in self.detect_ids:
-                detect_filter = network_output[0]["labels"]==id
+            for detect_id in self.detect_ids:
+                detect_filter = network_output[0]["labels"]==detect_id
                 for output_key in ["labels", "masks", "scores", "boxes"]:
                     network_output[0][output_key] = network_output[0][output_key][detect_filter]
-            
+
             if len(network_output[0]["labels"]) > 0:
                 bboxes = network_output[0]["boxes"].cpu().numpy()
                 # Normalize the bbox coordinates by the image size
