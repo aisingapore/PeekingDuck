@@ -27,6 +27,8 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detector impor
 
 
 class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
+    """Mask R-CNN model with ResNet 50 FPN backbone"""
+
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config
         self.logger = logging.getLogger(__name__)
@@ -71,7 +73,7 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     def predict(
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Predicts bboxes from image.
+        """Predicts bboxes and masks from image.
 
         Args:
             image (np.ndarray): Input image frame.
@@ -82,6 +84,7 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             - An array of detection bboxes
             - An array of human-friendly detection class names
             - An array of detection scores
+            - An array of binarized masks
 
         Raises:
             TypeError: The provided `image` is not a numpy array.

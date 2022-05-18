@@ -57,7 +57,6 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.score_threshold = score_threshold
         self.mask_threshold = mask_threshold
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-        self.mask_rcnn = self._create_mask_rcnn_model()
         self.model_name_map = {"r50-fpn": "resnet50"}
         self.preprocess_transform = T.Compose(
             [
@@ -65,11 +64,12 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
                 T.ConvertImageDtype(torch.float32),
             ]
         )
+        self.mask_rcnn = self._create_mask_rcnn_model()
 
     def predict_instance_mask_from_image(
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Mask RCNN masks and bboxes prediction function
+        """Mask R-CNN masks and bboxes prediction function
 
         Args:
             image (np.ndarray): image in numpy array
@@ -82,7 +82,6 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         """
         img_shape = image.shape[:2]
         with torch.no_grad():
-            img_shape = image.shape[:2]
             image = self._preprocess(image)
             # run network
             network_output = self.mask_rcnn(image)
@@ -91,9 +90,13 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         return bboxes, labels, scores, masks
 
     def _create_mask_rcnn_model(self) -> torch.nn.Module:
+        """Initialize the Mask R-CNN model with the config settings and pretrained weights 
+
+        Returns:
+            torch.nn.Module: An initialized model in PyTorch framework
+        """
         trainable_backbone_layers = 0
-        if self.model_type == "r50-fpn":
-            backbone_name = "resnet50"
+        backbone_name = self.model_name_map[self.model_type]
         backbone = detection.backbone_utils.resnet_fpn_backbone(
             backbone_name=backbone_name,
             pretrained=True,
@@ -126,7 +129,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         network_output: List[Dict[str, Any]],
         img_shape: Tuple[int, int],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Postprocessing of detected bboxes for mask_rcnn
+        """Postprocessing of detected bboxes and masks for mask_rcnn
 
         Args:
             network_output (list): list of boxes, scores and labels from network
@@ -136,6 +139,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             boxes (np.ndarray): postprocessed array of detected bboxes
             scores (np.ndarray): postprocessed array of scores
             labels (np.ndarray): postprocessed array of labels
+            masks (np.ndarray): postprocessed array of binarized masks
         """
         masks = np.array([])
         scores = np.array([]) 
@@ -146,9 +150,9 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
             # Indices to filter out unwanted classes
             for id in self.detect_ids:
-                masked_indices = network_output[0]["labels"]==id
+                detect_filter = network_output[0]["labels"]==id
                 for output_key in ["labels", "masks", "scores", "boxes"]:
-                    network_output[0][output_key] = network_output[0][output_key][masked_indices]
+                    network_output[0][output_key] = network_output[0][output_key][detect_filter]
             
             if len(network_output[0]["labels"]) > 0:
                 bboxes = network_output[0]["boxes"].cpu().numpy()
@@ -176,7 +180,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             image (np.ndarray): Image in numpy array.
 
         Returns:
-            image (np.ndarray): the preprocessed image
+            image (np.ndarray): The preprocessed image
         """
         image_rgb_orig = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image_rgb_norm = image_rgb_orig / 255
