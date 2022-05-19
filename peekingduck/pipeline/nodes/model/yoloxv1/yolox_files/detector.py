@@ -26,6 +26,7 @@ import torchvision
 from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.model import YOLOX
 from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.utils import fuse_model
 from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy, xyxy2xyxyn
+from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import TrtModel
 
 NUM_CHANNELS = 3
 
@@ -119,12 +120,27 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             image = torch.from_numpy(image).unsqueeze(0).to(self.device)
             image = image.half() if self.half else image.float()
             prediction = self.yolox(image)[0]
+            # self.logger.info(f"prediction.shape={prediction.shape}")
         elif model_format == "onnx":
+            # need to sync with loader code below
             input_name = self.yolox.get_inputs()[0].name
             output_name = self.yolox.get_outputs()[0].name
             image = image[np.newaxis, :]
             result = self.yolox.run([output_name], {input_name: image})
             res_arr = np.array(result)
+            pred = get_last_2d(res_arr)
+            prediction = torch.from_numpy(pred).to(self.device)
+
+            # image = image[np.newaxis, :]
+            # result = self.engine.run(image)
+            # # result[0].shape = (1, N, 85), only want (N, 85)
+            # pred = result[0][0]
+            # # self.logger.info(f"pred.shape={pred.shape}")
+            # prediction = torch.from_numpy(pred).to(self.device)
+            # self.logger.info(f"prediction.shape={prediction.shape}")
+        elif model_format == "tensorrt":
+            image = image[np.newaxis, :]
+            res_arr = self.yolox(image)
             pred = get_last_2d(res_arr)
             prediction = torch.from_numpy(pred).to(self.device)
         else:
@@ -211,6 +227,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                     model = fuse_model(model)
                 return model
         elif model_format == "onnx":
+            # need to sync with inference code above
             import onnxruntime
 
             if torch.cuda.is_available():
@@ -221,6 +238,19 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             else:
                 self.logger.info("creating onnx model on cpu")
                 model = onnxruntime.InferenceSession(str(self.model_path), None)
+            return model
+
+            # import onnx
+            # import onnx_tensorrt.backend as backend
+
+            # self.logger.info("converting onnx model to trt engine")
+            # model = onnx.load(str(self.model_path))
+            # self.engine = backend.prepare(model, device="CUDA:0")
+            # return model
+
+        elif model_format == "tensorrt":
+            self.logger.info(f"model_path={self.model_path}")
+            model = TrtModel(self.model_path)
             return model
         else:
             self.logger.error(f"Unknown model format: {model_format}")
