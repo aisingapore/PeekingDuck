@@ -141,7 +141,7 @@ def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
 
     Tech Notes
         master_map.yml comprises two documents:
-        1. model mapping: tells which mapping system a particular object detection or 
+        1. model mapping: tells which mapping system a particular object detection or
         instance segmentation model uses
         2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
 
