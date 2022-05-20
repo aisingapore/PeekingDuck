@@ -48,6 +48,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         self.class_names = class_names
         self.detect_ids = detect_ids
+        self.detect_ids_set = set(detect_ids)
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
@@ -66,6 +67,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         )
         self.mask_rcnn = self._create_mask_rcnn_model()
 
+    @torch.no_grad()
     def predict_instance_mask_from_image(
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
@@ -81,11 +83,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             masks (np.ndarray): array of detected masks
         """
         img_shape = image.shape[:2]
-        with torch.no_grad():
-            image = self._preprocess(image)
-            # run network
-            network_output = self.mask_rcnn(image)
-            bboxes, labels, scores, masks = self._postprocess(network_output, img_shape)
+        processed_image = self._preprocess(image)
+        # run network
+        network_output = self.mask_rcnn(processed_image)
+        bboxes, labels, scores, masks = self._postprocess(network_output, img_shape)
 
         return bboxes, labels, scores, masks
 
@@ -148,13 +149,15 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         if len(network_output[0]["labels"]) > 0:
             network_output[0]["labels"] -= 1
 
+            detect_filter = []
             # Indices to filter out unwanted classes
-            for detect_id in self.detect_ids:
-                detect_filter = network_output[0]["labels"] == detect_id
-                for output_key in ["labels", "masks", "scores", "boxes"]:
-                    network_output[0][output_key] = network_output[0][output_key][
-                        detect_filter
-                    ]
+            for label in network_output[0]["labels"]:
+                detect_filter.append(label.item() in self.detect_ids_set)
+
+            for output_key in network_output[0].keys():
+                network_output[0][output_key] = network_output[0][output_key][
+                    detect_filter
+                ]
 
             if len(network_output[0]["labels"]) > 0:
                 bboxes = network_output[0]["boxes"].cpu().numpy()

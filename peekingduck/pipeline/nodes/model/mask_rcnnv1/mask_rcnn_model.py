@@ -72,6 +72,8 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     def detect_ids(self, ids: List[int]) -> None:
         if not isinstance(ids, list):
             raise TypeError("detect_ids has to be a list")
+        if not ids:
+            self.logger.info("Detecting all Mask R-CNN classes")
         self._detect_ids = ids
 
     def predict(

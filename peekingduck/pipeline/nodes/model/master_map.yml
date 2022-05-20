@@ -4,6 +4,7 @@
 efficientdet: map_effdet
 yolo: map_yolo
 yolox: map_yolo
+mask_rcnn: map_effdet
 ...
 ---
 # This document holds the master class name to object ID mapping.
