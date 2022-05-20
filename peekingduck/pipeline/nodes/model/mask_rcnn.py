@@ -59,6 +59,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         nms_iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.
+        max_num_detections: (:obj:`int`): **default=100**. |br|
+            Maximum number of detections per image, for all classes.
         score_threshold (:obj:`float`): **[0, 1], default = 0.05**. |br|
             Bounding boxes with classification score below the threshold will be discarded.
         mask_threshold (:obj:`float`): **[0, 1], default = 0.05**. |br|

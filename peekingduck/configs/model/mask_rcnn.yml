@@ -20,5 +20,6 @@ model_format: pytorch
 model_type: r50-fpn
 detect_ids: [0]
 nms_iou_threshold: 0.5
+max_num_detections: 100
 score_threshold: 0.05
 mask_threshold: 0.5

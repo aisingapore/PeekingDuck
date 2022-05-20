@@ -41,6 +41,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         min_size: int,
         max_size: int,
         nms_iou_threshold: float,
+        max_num_detections: int,
         score_threshold: float,
         mask_threshold: float,
     ) -> None:
@@ -55,6 +56,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.min_size = min_size
         self.max_size = max_size
         self.nms_iou_threshold = nms_iou_threshold
+        self.max_num_detections = max_num_detections
         self.score_threshold = score_threshold
         self.mask_threshold = mask_threshold
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -108,6 +110,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             num_classes=self.num_classes,
             box_nms_thresh=self.nms_iou_threshold,
             box_score_thresh=self.score_threshold,
+            box_detections_per_img=self.max_num_detections,
             min_size=self.min_size,
             max_size=self.max_size,
         )
@@ -119,6 +122,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             f"Model type: {self.model_type}\n\t"
             f"IDs being detected: {self.detect_ids}\n\t"
             f"NMS IOU threshold: {self.nms_iou_threshold}\n\t"
+            f"Maximum number of detections per image: {self.max_num_detections}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
             f"Maximum size of the image: {self.max_size}\n\t"
             f"Minimum size of the image: {self.min_size}"

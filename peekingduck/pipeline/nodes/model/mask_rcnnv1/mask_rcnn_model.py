@@ -59,6 +59,7 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["min_size"],
             self.config["max_size"],
             self.config["nms_iou_threshold"],
+            self.config["max_num_detections"],
             self.config["score_threshold"],
             self.config["mask_threshold"],
         )
