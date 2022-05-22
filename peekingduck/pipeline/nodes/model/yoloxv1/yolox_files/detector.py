@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -105,10 +105,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of detection scores
         """
 
-        def get_last_2d(a: np.ndarray) -> np.ndarray:
+        def get_last_2d(arr: np.ndarray) -> np.ndarray:
             """Helper method to get last two dimensions of array"""
-            m, n = a.shape[-2:]
-            a_2d = a.flat[: m * n].reshape(m, n)
+            m_dim, n_dim = arr.shape[-2:]
+            a_2d = arr.flat[: m_dim * n_dim].reshape(m_dim, n_dim)
             return a_2d
 
         # Store the original image size to normalize bbox later
@@ -123,10 +123,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             # self.logger.info(f"prediction.shape={prediction.shape}")
         elif model_format == "onnx":
             # need to sync with loader code below
-            input_name = self.yolox.get_inputs()[0].name
-            output_name = self.yolox.get_outputs()[0].name
+            # ignore type for self.yolox below as it is an Onnx InferenceSession class
+            input_name = self.yolox.get_inputs()[0].name  # type: ignore
+            output_name = self.yolox.get_outputs()[0].name  # type: ignore
             image = image[np.newaxis, :]
-            result = self.yolox.run([output_name], {input_name: image})
+            result = self.yolox.run([output_name], {input_name: image})  # type: ignore
             res_arr = np.array(result)
             pred = get_last_2d(res_arr)
             prediction = torch.from_numpy(pred).to(self.device)
@@ -213,6 +214,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: `model_path` does not exist.
         """
+        model: Any = None
         model_format = self.model_format
         if model_format == "pytorch":
             if self.model_path.is_file():
@@ -228,7 +230,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 return model
         elif model_format == "onnx":
             # need to sync with inference code above
-            import onnxruntime
+            import onnxruntime  # pylint: disable=import-error, import-outside-toplevel
 
             if torch.cuda.is_available():
                 self.logger.info("creating onnx model on cuda")
@@ -250,7 +252,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         elif model_format == "tensorrt":
             self.logger.info(f"model_path={self.model_path}")
-            model = TrtModel(self.model_path)
+            model = TrtModel(str(self.model_path))
             return model
         else:
             self.logger.error(f"Unknown model format: {model_format}")

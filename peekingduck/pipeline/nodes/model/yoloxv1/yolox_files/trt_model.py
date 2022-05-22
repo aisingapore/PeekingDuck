@@ -1,38 +1,53 @@
+# Copyright 2022 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""TensorRT model for PeekingDuck"""
+
+from typing import Any, List, Tuple
 import numpy as np
-import tensorrt as trt
-import pycuda.driver as cuda
-import pycuda.autoinit
+import tensorrt as trt  # pylint: disable=import-error
+import pycuda.driver as cuda  # pylint: disable=import-error
 
 
-class HostDeviceMem(object):
+class HostDeviceMem:
     """Encapsulation for host CUDA device"""
-    def __init__(self, host_mem, device_mem):
+
+    def __init__(self, host_mem: Any, device_mem: Any):
         self.host = host_mem
         self.device = device_mem
 
-    def __str__(self):
+    def __str__(self) -> str:
         return "Host:\n" + str(self.host) + "\nDevice:\n" + str(self.device)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return self.__str__()
 
 
-class TrtModel:
+class TrtModel:  # pylint: disable=too-many-instance-attributes
     """YoloX TensorRT model class to load model engine and perform inference"""
+
     def __init__(self, engine_path: str, max_batch_size: int = 1):
-        self.dtype = np.float32 # TensorRT support float32, not 64
+        self.dtype = np.float32  # TensorRT support float32, not 64
         self.logger = trt.Logger(trt.Logger.WARNING)
         self.engine_path = engine_path
         self.max_batch_size = max_batch_size
-        # self.runtime = trt.Runtime(self.logger)
-        # self.engine = self.load_engine(self.engine_path, self.runtime)
         self.engine = self.load_engine(self.engine_path)
         self.inputs, self.outputs, self.bindings, self.stream = self.allocate_buffers()
         self.context = self.engine.create_execution_context()
 
     @staticmethod
-    # def load_engine(engine_path: str, trt_runtime):
-    def load_engine(engine_path: str):
+    def load_engine(engine_path: str) -> Any:
         """Load TensorRT model engine file
 
         Args:
@@ -43,16 +58,19 @@ class TrtModel:
         """
         trt.init_libnvinfer_plugins(None, "")
         trt_runtime = trt.Runtime(trt.Logger(trt.Logger.WARNING))
-        with open(engine_path, "rb") as f:
-            engine_data = f.read()
+        with open(engine_path, "rb") as trt_engine_file:
+            engine_data = trt_engine_file.read()
         engine = trt_runtime.deserialize_cuda_engine(engine_data)
         return engine
 
-    def allocate_buffers(self):
+    def allocate_buffers(
+        self,
+    ) -> Tuple[List[Any], List[Any], List[Any], Any]:
         """Allocate CUDA working memory buffers
 
         Returns:
-            (List[List[bytes], List[bytes], List[bytes], ?]): List of input, output, bindings, stream buffers
+            (Tuple[List[Any], List[Any], List[Any], Any]): List of input, output,
+                                                           bindings, stream buffers
         """
         inputs = []
         outputs = []
@@ -104,5 +122,3 @@ class TrtModel:
         # reshape the linear (1, N) res into YoloX-friendly shape (1, M, 85)
         result = res.reshape(1, -1, 85)
         return result
-
-

@@ -317,8 +317,9 @@ class WeightsDownloaderMixin:
             (Path): Path to the directory where the model's weights are stored.
         """
         model_dir = self._find_paths()
-        return model_dir    # dotw: override for development
+        return model_dir  # dotw: override for development
 
+        # pylint: disable=unreachable
         if self._has_weights(model_dir):
             return model_dir
 
