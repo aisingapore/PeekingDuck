@@ -19,6 +19,9 @@ import numpy as np
 import tensorrt as trt  # pylint: disable=import-error
 import pycuda.driver as cuda  # pylint: disable=import-error
 
+# NB: need below autoinit import to create CUDA context!
+import pycuda.autoinit  # pylint: disable=import-error, unused-import
+
 
 class HostDeviceMem:
     """Encapsulation for host CUDA device"""
