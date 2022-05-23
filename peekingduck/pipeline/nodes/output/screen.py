@@ -43,12 +43,17 @@ class Node(AbstractNode):
         window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
+
+    **See Also:**
+
+    :ref:`PeekingDuck Viewer<tutorial_viewer>`: a graphical viewer for viewing
+    and studying the output of a PeekingDuck pipeline.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-        cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
+        # cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+        # cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
