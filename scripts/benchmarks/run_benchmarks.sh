@@ -38,19 +38,52 @@ MULTI_PEOPLE_URL="${GCP_DATA_URL}/${MULTI_PEOPLE_FILE}"
 SINGLE_PERSON_DIR="${BM_DATA_DIR}/single"
 SINGLE_PERSON_PATH="${SINGLE_PERSON_DIR}/${SINGLE_PERSON_FILE}"
 SINGLE_PERSON_URL="${GCP_DATA_URL}/${SINGLE_PERSON_FILE}"
+#
+# PyTorch
+#
 # Object Detection Models
-YXLM=scripts/benchmarks/run_yolox_large_multi.yml
-YXLS=scripts/benchmarks/run_yolox_large_single.yml
-YXMM=scripts/benchmarks/run_yolox_medium_multi.yml
-YXMS=scripts/benchmarks/run_yolox_medium_single.yml
-YXSM=scripts/benchmarks/run_yolox_small_multi.yml
-YXSS=scripts/benchmarks/run_yolox_small_single.yml
-YXTM=scripts/benchmarks/run_yolox_tiny_multi.yml
-YXTS=scripts/benchmarks/run_yolox_tiny_single.yml
+YXLM=scripts/benchmarks/pytorch/run_yolox_large_multi.yml
+YXLS=scripts/benchmarks/pytorch/run_yolox_large_single.yml
+YXMM=scripts/benchmarks/pytorch/run_yolox_medium_multi.yml
+YXMS=scripts/benchmarks/pytorch/run_yolox_medium_single.yml
+YXSM=scripts/benchmarks/pytorch/run_yolox_small_multi.yml
+YXSS=scripts/benchmarks/pytorch/run_yolox_small_single.yml
+YXTM=scripts/benchmarks/pytorch/run_yolox_tiny_multi.yml
+YXTS=scripts/benchmarks/pytorch/run_yolox_tiny_single.yml
 # Pose Estimation Models
-MPL=scripts/benchmarks/run_multipose_lightning.yml
-SPL=scripts/benchmarks/run_singlepose_lightning.yml
-SPT=scripts/benchmarks/run_singlepose_thunder.yml
+MPL=scripts/benchmarks/pytorch/run_multipose_lightning.yml
+SPL=scripts/benchmarks/pytorch/run_singlepose_lightning.yml
+SPT=scripts/benchmarks/pytorch/run_singlepose_thunder.yml
+
+#
+# Onnx
+#
+YXLM_O=scripts/benchmarks/onnx/run_yolox_large_multi.yml
+YXLS_O=scripts/benchmarks/onnx/run_yolox_large_single.yml
+YXMM_O=scripts/benchmarks/onnx/run_yolox_medium_multi.yml
+YXMS_O=scripts/benchmarks/onnx/run_yolox_medium_single.yml
+YXSM_O=scripts/benchmarks/onnx/run_yolox_small_multi.yml
+YXSS_O=scripts/benchmarks/onnx/run_yolox_small_single.yml
+YXTM_O=scripts/benchmarks/onnx/run_yolox_tiny_multi.yml
+YXTS_O=scripts/benchmarks/onnx/run_yolox_tiny_single.yml
+
+#
+# TensorRT
+#
+# Object Detection Models
+YXLM_T=scripts/benchmarks/tensorrt/run_yolox_large_multi.yml
+YXLS_T=scripts/benchmarks/tensorrt/run_yolox_large_single.yml
+YXMM_T=scripts/benchmarks/tensorrt/run_yolox_medium_multi.yml
+YXMS_T=scripts/benchmarks/tensorrt/run_yolox_medium_single.yml
+YXSM_T=scripts/benchmarks/tensorrt/run_yolox_small_multi.yml
+YXSS_T=scripts/benchmarks/tensorrt/run_yolox_small_single.yml
+YXTM_T=scripts/benchmarks/tensorrt/run_yolox_tiny_multi.yml
+YXTS_T=scripts/benchmarks/tensorrt/run_yolox_tiny_single.yml
+# Pose Estimation Models
+MPL_T=scripts/benchmarks/tensorrt/run_multipose_lightning.yml
+SPL_T=scripts/benchmarks/tensorrt/run_singlepose_lightning.yml
+SPT_T=scripts/benchmarks/tensorrt/run_singlepose_thunder.yml
+
 # Working Files
 LOG=/tmp/benchmark_log.txt
 CURR_RUN=/tmp/benchmark_curr_run.txt
@@ -112,13 +145,28 @@ verify_data_files() {
 ####################
 
 # CMDS var stores the complete list of benchmarks to run
-declare -a CMDS=( "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" "${SPL}" "${SPT}" \
-                    "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" "${MPL}" )
-NUM_RUNS=5      # set this to number of consecutive runs desired
+#declare -a CMDS=( "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" "${SPL}" "${SPT}" \
+#                    "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" "${MPL}" )
+#NUM_RUNS=5      # set this to number of consecutive runs desired
 
 # Keep this single task, single run for debugging/testing script changes
-#declare -a CMDS=( "${SPL}" )
-#NUM_RUNS=1
+#declare -a CMDS=( "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" )
+
+# YoloX PyTorch
+#declare -a CMDS=( "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" \
+#                  "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" )
+
+# YoloX Onnx
+#declare -a CMDS=( "${YXTM_O}" "${YXSM_O}" "${YXMM_O}" "${YXLM_O}" \
+#                  "${YXTS_O}" "${YXSS_O}" "${YXMS_O}" "${YXLS_O}" )
+
+# YoloX TensorRT
+#declare -a CMDS=( "${YXTM_T}" "${YXSM_T}" "${YXMM_T}" "${YXLM_T}" \
+#                  "${YXTS_T}" "${YXSS_T}" "${YXMS_T}" "${YXLS_T}" \
+#                  "${MPL_T}" "${SPL_T}" "${SPT_T}" )
+
+declare -a CMDS=( "${MPL}" "${SPL}" "${SPT}" )
+NUM_RUNS=3
 
 # Check we are in PeekingDuck's root folder
 if [[ `pwd` == *PeekingDuck ]]; then

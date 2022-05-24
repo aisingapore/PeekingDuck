@@ -15,11 +15,22 @@ weights:
             singlepose_thunder: singlepose_thunder.zip,
           },
         model_file:
-          # {
-          #   multipose_lightning: multipose_lightning,
-          #   singlepose_lightning: singlepose_lightning,
-          #   singlepose_thunder: singlepose_thunder,
-          # },
+          {
+            multipose_lightning: multipose_lightning,
+            singlepose_lightning: singlepose_lightning,
+            singlepose_thunder: singlepose_thunder,
+          },
+      },
+    tensorrt:
+      {
+        model_subdir: movenet,
+        blob_file:
+          {
+            multipose_lightning: multipose_lightning_fp16.zip,
+            singlepose_lightning: singlepose_lightning_fp16.zip,
+            singlepose_thunder: singlepose_thunder_fp16.zip,
+          },
+        model_file:
           {
             multipose_lightning: multipose_lightning_fp16,
             singlepose_lightning: singlepose_lightning_fp16,
