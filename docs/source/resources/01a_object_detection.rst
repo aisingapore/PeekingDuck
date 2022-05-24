@@ -131,6 +131,17 @@ The following test conditions were followed:
  | - The evaluation metrics have been compared with the original repository of the respective object
      detection models for consistency
 
+
+Optimized Models
+================
+
+The YOLOX model is available in TensorRT format for deployment on Nvidia Jetson devices.
+
+The chart below shows the speed up obtainable using TensorRT models:
+
+.. figure:: /assets/charts/tensorrt_yolox_charts.png
+
+
 Object Detection IDs
 ====================
 
