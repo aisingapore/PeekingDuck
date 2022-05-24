@@ -418,14 +418,14 @@ class WeightsDownloaderMixin:
             exists and up-to-date/not corrupted, else ``False``.
         """
         weights_path = model_dir / self.model_filename
-        self.logger.info(f"has_weights: weights_path={weights_path}")
+        # self.logger.info(f"has_weights: weights_path={weights_path}")
 
         if not weights_path.exists():
             self.logger.warning("No weights detected.")
             return False
         # dotw: temp code for onnx/tensorrt to guarantee success
         if str(weights_path).endswith(("onnx", "trt", "fp16")):
-            self.logger.info("temp code override: return True")
+            # self.logger.info("temp code override: return True")
             return True
         if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
             self.logger.warning("Weights file is corrupted/out-of-date.")
