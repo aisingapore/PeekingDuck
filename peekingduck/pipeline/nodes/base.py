@@ -29,8 +29,6 @@ from tqdm import tqdm
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
 
-Number = Union[float, int]
-
 
 class ThresholdCheckerMixin:
     """Mixin class providing utility methods for checking validity of config
@@ -129,8 +127,8 @@ class ThresholdCheckerMixin:
     def _check_within_bounds(  # pylint: disable=too-many-arguments
         self,
         key: Union[str, List[str]],
-        lower: Number,
-        upper: Number,
+        lower: float,
+        upper: float,
         lower_openness: str,
         upper_openness: str,
     ) -> None:
@@ -139,8 +137,8 @@ class ThresholdCheckerMixin:
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-            lower (Number): The lower bound.
-            upper (Number): The upper bound.
+            lower (float): The lower bound.
+            upper (float): The upper bound.
             lower_openness (str): Either a "(" for an open lower bound or a "["
                 for a closed lower bound.
             upper_openness (str): Either a ")" for an open upper bound or a "]"
