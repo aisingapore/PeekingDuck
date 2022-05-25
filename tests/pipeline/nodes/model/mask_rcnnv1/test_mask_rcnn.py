@@ -20,7 +20,6 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import yaml
-import hashlib
 import torch
 
 from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
