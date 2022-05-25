@@ -98,6 +98,10 @@ class TestThresholdCheckerMixin:
             threshold_model.check_bounds("a", "[14, -inf]")
         assert "Lower bound cannot be larger than upper bound" == str(excinfo.value)
 
+        with pytest.raises(ValueError) as excinfo:
+            threshold_model.check_bounds("a", "[+inf, -inf]")
+        assert "Lower bound cannot be larger than upper bound" == str(excinfo.value)
+
     @pytest.mark.parametrize("include", [")", "]"])
     def test_threshold_above_value(self, threshold_model, include):
         with not_raises(ValueError):
