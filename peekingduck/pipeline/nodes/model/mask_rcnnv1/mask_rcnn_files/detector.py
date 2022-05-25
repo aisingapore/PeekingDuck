@@ -25,6 +25,7 @@ import torch
 import torchvision.transforms as T
 from torchvision.models import detection
 from torchvision.models.detection.mask_rcnn import MaskRCNN
+from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
 class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
@@ -114,7 +115,13 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             min_size=self.min_size,
             max_size=self.max_size,
         )
-        state_dict = torch.load(self.model_path)
+        if self.model_path.is_file():
+            state_dict = torch.load(self.model_path)
+        else:
+            raise FileNotFoundError(
+                f"Model file does not exist. Please check that {self.model_path} exists."
+            )
+
         model.load_state_dict(state_dict)
         model.eval().to(self.device)
         self.logger.info(
@@ -146,10 +153,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             labels (np.ndarray): postprocessed array of labels
             masks (np.ndarray): postprocessed array of binarized masks
         """
-        masks = np.array([])
-        scores = np.array([])
-        labels = np.array([])
-        bboxes = np.array([])
+        masks = np.empty((0, 0, 0), dtype=np.uint8)
+        scores = np.empty((0), dtype=np.float32)
+        labels = np.empty((0))
+        bboxes = np.empty((0, 4), dtype=np.float32)
         if len(network_output[0]["labels"]) > 0:
             network_output[0]["labels"] -= 1
 
@@ -166,9 +173,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             if len(network_output[0]["labels"]) > 0:
                 bboxes = network_output[0]["boxes"].cpu().numpy()
                 # Normalize the bbox coordinates by the image size
-                img_h, img_w = img_shape
-                bboxes[:, [0, 2]] /= img_w
-                bboxes[:, [1, 3]] /= img_h
+                bboxes = xyxy2xyxyn(bboxes, height=img_shape[0], width=img_shape[1])
                 bboxes = np.clip(bboxes, 0, 1)
 
                 label_numbers = network_output[0]["labels"].cpu().numpy()
@@ -191,6 +196,5 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         Returns:
             image (np.ndarray): The preprocessed image
         """
-        image_rgb_orig = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_rgb_norm = image_rgb_orig / 255
-        return [self.preprocess_transform(image_rgb_norm).to(self.device)]
+        image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        return [self.preprocess_transform(image_rgb).to(self.device)]
