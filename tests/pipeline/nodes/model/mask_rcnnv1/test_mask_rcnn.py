@@ -109,7 +109,9 @@ class TestMaskRCNN:
 
         # maximum percentage of allowable difference in mask pixel values
         perc_pixel_diff_tol = 0.002
-        assert np.sum(output["masks"] != expected_mask)/image_size <= perc_pixel_diff_tol
+        assert (
+            np.sum(output["masks"] != expected_mask) / image_size <= perc_pixel_diff_tol
+        )
 
     def test_mask_rcnn_preprocess(self, create_image, mask_rcnn_config):
         test_img = create_image((720, 1280, 3))
@@ -156,7 +158,7 @@ class TestMaskRCNN:
         assert masks.dtype == np.uint8
 
         expected_bbox = xyxy2xyxyn(
-            np.array([[0., 1., 1., 3.]], dtype=np.float32),
+            np.array([[0.0, 1.0, 1.0, 3.0]], dtype=np.float32),
             height=img_shape[0],
             width=img_shape[1],
         )
