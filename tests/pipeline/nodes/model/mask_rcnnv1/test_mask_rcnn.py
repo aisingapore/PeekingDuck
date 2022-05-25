@@ -199,3 +199,10 @@ class TestMaskRCNN:
         with pytest.raises(TypeError) as excinfo:
             _ = mask_rcnn.run({"img": ("image name", no_human_img)})
         assert "image must be a np.ndarray" == str(excinfo.value)
+
+    def test_invalid_detect_id(self, mask_rcnn_config):
+        mask_rcnn_config["detect_ids"] = 0
+        with pytest.raises(TypeError) as excinfo:
+            # Passing a non-list detect_id into the config
+            _ = Node(config=mask_rcnn_config)
+        assert "detect_ids has to be a list" == str(excinfo.value)
