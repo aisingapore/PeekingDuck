@@ -108,7 +108,7 @@ class TestMaskRCNN:
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
         # maximum percentage of allowable difference in mask pixel values
-        perc_pixel_diff_tol = 0.002
+        perc_pixel_diff_tol = 5e-4
         assert (
             np.sum(output["masks"] != expected_mask) / image_size <= perc_pixel_diff_tol
         )
