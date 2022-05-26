@@ -38,7 +38,7 @@ class MoveNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             {"singlepose_lightning", "singlepose_thunder", "multipose_lightning"},
         )
         self.check_bounds(
-            ["bbox_score_threshold", "keypoint_score_threshold"], (0, 1), "within"
+            ["bbox_score_threshold", "keypoint_score_threshold"], "[0, 1]"
         )
 
         model_dir = self.download_weights()

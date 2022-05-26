@@ -62,8 +62,8 @@ class TestContrast:
     def test_beta_range(self):
         with pytest.raises(ValueError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "alpha": -0.5})
-        assert str(excinfo.value) == "alpha must be between [0, 3]"
+        assert str(excinfo.value) == "alpha must be between [0.0, 3.0]"
 
         with pytest.raises(ValueError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "alpha": 3.1})
-        assert str(excinfo.value) == "alpha must be between [0, 3]"
+        assert str(excinfo.value) == "alpha must be between [0.0, 3.0]"

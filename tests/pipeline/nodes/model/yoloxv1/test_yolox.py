@@ -137,7 +137,7 @@ class TestYOLOX:
     def test_invalid_config_value(self, yolox_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolox_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, yolox_config):
