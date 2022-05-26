@@ -96,14 +96,14 @@ class ThresholdCheckerMixin:
         if self.interval_pattern.match(interval) is None:
             raise ValueError("Badly formatted interval")
 
-        lower_openness = interval[0]
-        upper_openness = interval[-1]
+        left_bracket = interval[0]
+        right_bracket = interval[-1]
         lower, upper = [float(value.strip()) for value in interval[1:-1].split(",")]
 
         if lower > upper:
             raise ValueError("Lower bound cannot be larger than upper bound")
 
-        self._check_within_bounds(key, lower, upper, lower_openness, upper_openness)
+        self._check_within_bounds(key, lower, upper, left_bracket, right_bracket)
 
     def check_valid_choice(
         self, key: str, choices: Set[Union[int, float, str]]
@@ -129,8 +129,8 @@ class ThresholdCheckerMixin:
         key: Union[str, List[str]],
         lower: float,
         upper: float,
-        lower_openness: str,
-        upper_openness: str,
+        left_bracket: str,
+        right_bracket: str,
     ) -> None:
         """Checks that configuration values specified by `key` is within the
         specified bounds between `lower` and `upper`.
@@ -139,9 +139,9 @@ class ThresholdCheckerMixin:
             key (Union[str, List[str]]): The specified key or list of keys.
             lower (float): The lower bound.
             upper (float): The upper bound.
-            lower_openness (str): Either a "(" for an open lower bound or a "["
+            left_bracket (str): Either a "(" for an open lower bound or a "["
                 for a closed lower bound.
-            upper_openness (str): Either a ")" for an open upper bound or a "]"
+            right_bracket (str): Either a ")" for an open upper bound or a "]"
                 for a closed upper bound.
 
         Raises:
@@ -149,9 +149,9 @@ class ThresholdCheckerMixin:
             ValueError: If the configuration value is not between `lower` and
                 `upper`.
         """
-        method_lower = operator.ge if lower_openness == "[" else operator.gt
-        method_upper = operator.le if upper_openness == "]" else operator.lt
-        reason = f"between {lower_openness}{lower}, {upper}{upper_openness}"
+        method_lower = operator.ge if left_bracket == "[" else operator.gt
+        method_upper = operator.le if right_bracket == "]" else operator.lt
+        reason = f"between {left_bracket}{lower}, {upper}{right_bracket}"
         self._compare(key, lower, method_lower, reason)
         self._compare(key, upper, method_upper, reason)
 
