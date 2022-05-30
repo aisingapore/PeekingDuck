@@ -116,7 +116,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             max_size=self.max_size,
         )
         if self.model_path.is_file():
-            state_dict = torch.load(self.model_path)
+            state_dict = torch.load(self.model_path, map_location=self.device)
         else:
             raise FileNotFoundError(
                 f"Model file does not exist. Please check that {self.model_path} exists."
