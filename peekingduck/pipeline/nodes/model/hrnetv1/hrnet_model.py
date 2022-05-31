@@ -33,7 +33,7 @@ class HRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_bounds("score_threshold", (0, 1), "within")
+        self.check_bounds("score_threshold", "[0, 1]")
 
         model_dir = self.download_weights()
         self.detector = Detector(

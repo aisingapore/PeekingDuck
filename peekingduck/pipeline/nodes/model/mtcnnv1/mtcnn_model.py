@@ -35,9 +35,9 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_bounds("min_size", 0, "above", include=None)
+        self.check_bounds("min_size", "(0, +inf]")
         self.check_bounds(
-            ["network_thresholds", "scale_factor", "score_threshold"], (0, 1), "within"
+            ["network_thresholds", "scale_factor", "score_threshold"], "[0, 1]"
         )
 
         model_dir = self.download_weights()
