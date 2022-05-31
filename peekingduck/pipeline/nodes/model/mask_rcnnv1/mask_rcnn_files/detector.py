@@ -48,9 +48,12 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.class_names = class_names
         self.detect_ids = detect_ids
-        self.detect_ids_set = set(detect_ids)
+        self.detect_ids_tensor = torch.tensor(
+            detect_ids, dtype=torch.int64, device=self.device
+        )
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
@@ -60,7 +63,6 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.max_num_detections = max_num_detections
         self.score_threshold = score_threshold
         self.mask_threshold = mask_threshold
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.model_name_map = {"r50-fpn": "resnet50"}
         self.preprocess_transform = T.Compose(
             [
@@ -160,10 +162,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         if len(network_output[0]["labels"]) > 0:
             network_output[0]["labels"] -= 1
 
-            detect_filter = []
             # Indices to filter out unwanted classes
-            for label in network_output[0]["labels"]:
-                detect_filter.append(label.item() in self.detect_ids_set)
+            detect_filter = torch.where(
+                torch.isin(network_output[0]["labels"], self.detect_ids_tensor)
+            )
 
             for output_key in network_output[0].keys():
                 network_output[0][output_key] = network_output[0][output_key][
