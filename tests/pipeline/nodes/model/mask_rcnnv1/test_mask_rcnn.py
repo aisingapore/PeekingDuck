@@ -129,6 +129,7 @@ class TestMaskRCNN:
         assert actual_img[0].dtype == torch.float32
 
     def test_mask_rcnn_postprocess(self, mask_rcnn_config):
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         img_shape = (3, 3)
 
         # boxes: [x1, y1, x2, y2] where 0 <= x1 < x2 <= W and 0 <= y1 < y2 <= H
@@ -136,12 +137,12 @@ class TestMaskRCNN:
         network_output = [
             {
                 "boxes": torch.tensor(
-                    [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]], dtype=torch.float32
+                    [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]], dtype=torch.float32, device=device
                 ),
-                "labels": torch.tensor([1, 35], dtype=torch.int64),
-                "scores": torch.tensor([0.9, 0.2], dtype=torch.float32),
+                "labels": torch.tensor([1, 35], dtype=torch.int64, device=device),
+                "scores": torch.tensor([0.9, 0.2], dtype=torch.float32, device=device),
                 "masks": torch.rand(
-                    (2, 1, img_shape[0], img_shape[1]), dtype=torch.float32
+                    (2, 1, img_shape[0], img_shape[1]), dtype=torch.float32, device=device
                 ),
             }
         ]
