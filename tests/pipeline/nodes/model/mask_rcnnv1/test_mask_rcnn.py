@@ -137,12 +137,16 @@ class TestMaskRCNN:
         network_output = [
             {
                 "boxes": torch.tensor(
-                    [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]], dtype=torch.float32, device=device
+                    [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]],
+                    dtype=torch.float32,
+                    device=device,
                 ),
                 "labels": torch.tensor([1, 35], dtype=torch.int64, device=device),
                 "scores": torch.tensor([0.9, 0.2], dtype=torch.float32, device=device),
                 "masks": torch.rand(
-                    (2, 1, img_shape[0], img_shape[1]), dtype=torch.float32, device=device
+                    (2, 1, img_shape[0], img_shape[1]),
+                    dtype=torch.float32,
+                    device=device,
                 ),
             }
         ]
