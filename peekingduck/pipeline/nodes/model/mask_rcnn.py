@@ -61,9 +61,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             the threshold will be discarded.
         max_num_detections: (:obj:`int`): **default=100**. |br|
             Maximum number of detections per image, for all classes.
-        score_threshold (:obj:`float`): **[0, 1], default = 0.05**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Bounding boxes with classification score below the threshold will be discarded.
-        mask_threshold (:obj:`float`): **[0, 1], default = 0.05**. |br|
+        mask_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             The confidence threshold for binarizing the masks' pixel values, whether an
             object is detect at a particular pixel.
 
