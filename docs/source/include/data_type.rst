@@ -12,6 +12,8 @@
 
 .. |bbox_scores_data| replace:: |bbox_scores|: |bbox_scores_def|
 
+.. |binary_masks_data| replace:: |masks|: |masks_def|
+
 .. |btm_midpoint_data| replace:: |btm_midpoint|: |btm_midpoint_def|
 
 .. |count_data| replace:: |count|: |count_def|
@@ -90,6 +92,8 @@
 .. |keypoint_scores| replace:: ``keypoint_scores`` (:obj:`numpy.ndarray`)
 
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`)
+
+.. |masks| replace:: ``masks`` (:obj:`numpy.ndarray`)
    
 .. |none| replace:: ``none``
    
@@ -172,6 +176,10 @@
 
 .. |large_groups_def| replace:: A list of integers representing the group IDs of
    groups that have exceeded the size threshold.
+
+.. |masks_def| replace:: A NumPy array of shape :math:`(N, height, width)`
+   containing the binarized masks of N detected instances. The order corresponds
+   to :term:`bbox_labels`.
 
 .. |none_input_def| replace:: No inputs required.
 
