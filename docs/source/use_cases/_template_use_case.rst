@@ -28,7 +28,7 @@ Demo
     Replace <use_case_config> with the actual name
 
 .. |pipeline_config| replace:: <use_case_config>.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/<use_case_config>.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/<use_case_config>.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/01_installation>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:

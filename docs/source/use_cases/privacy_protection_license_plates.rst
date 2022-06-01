@@ -21,7 +21,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_license_plates.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/privacy_protection_license_plates.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/privacy_protection_license_plates.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
