@@ -1,9 +1,9 @@
-***********************
+****************************
 Instance Segmentation Models
-***********************
+****************************
 
 List of Instance Segmentation Models
-===============================
+====================================
 
 The table below shows the instance segmentation models available.
 
@@ -27,7 +27,7 @@ The table below shows the frames per second (FPS) of each model type.
 | Model        | Type       | Size      | single | multiple | single | multiple |
 +==============+============+===========+========+==========+========+==========+
 | Mask R-CNN   | r50-fpn    | 800, 1333 | TBD    | TBD      | TBD    | TBD      |
-|--------------+------------+-----------+--------+----------+--------+----------+
++--------------+------------+-----------+--------+----------+--------+----------+
 
 Hardware
 ^^^^^^^^
@@ -92,15 +92,14 @@ The following test conditions were followed:
      segmentation models for consistency
 
 Instance Segmentation IDs
-====================
+=========================
 
 .. _general-instance-segmentation-ids:
 
-General Object Detection
-------------------------
-
-| The tables below provide the associated indices for each class in object detectors.
-| To detect all classes, specify :code:`detect_ids: ["*"]` under the object detection node configuration in ``pipeline_config.yml``.
+General Instance Segmentation
+-----------------------------
+| The tables below provide the associated indices for each class.
+| To detect all classes, specify :code:`detect_ids: ["*"]` under the instance segmentation node configuration in ``pipeline_config.yml``.
 
 +---------------+--------------+----------------+--------------+
 |               | ID           |                | ID           |

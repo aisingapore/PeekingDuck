@@ -177,9 +177,9 @@
 .. |large_groups_def| replace:: A list of integers representing the group IDs of
    groups that have exceeded the size threshold.
 
-.. |masks_def| replace:: A NumPy array of shape :math:`(N, height, width)`
-   containing the binarized masks of N detected instances. The order corresponds
-   to :term:`bbox_labels`.
+.. |masks_def| replace:: A NumPy array of shape :math:`(N, H, W)` containing
+   :math:`N` detected binarized masks where :math:`H` and :math:`W` are the
+   height and width of the masks. The order corresponds to :term:`bbox_labels`.
 
 .. |none_input_def| replace:: No inputs required.
 
