@@ -27,7 +27,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: group_size_checking.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/group_size_checking.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/group_size_checking.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
