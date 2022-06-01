@@ -100,4 +100,4 @@ class TestYolo:
     def test_invalid_config_value(self, yolo_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolo_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)

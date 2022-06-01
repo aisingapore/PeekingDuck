@@ -46,7 +46,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.check_bounds("beta", (-100, 100), "within")
+        self.check_bounds("beta", "[-100, 100]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the brightness of an image frame.
