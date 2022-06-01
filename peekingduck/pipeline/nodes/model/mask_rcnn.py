@@ -55,7 +55,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             backbone.
         detect_ids (:obj:`List[int]`): **default=[0]**. |br|
             List of object category IDs to be detected. To detect all classes,
-            refer to the :ref:`tech note <general-object-detection-ids>`.
+            refer to the :ref:`tech note <general-instance-segmentation-ids>`.
         nms_iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.
