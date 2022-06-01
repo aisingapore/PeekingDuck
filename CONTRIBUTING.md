@@ -139,8 +139,8 @@ The following are commonly used conventions which we adhere to:
   - Private/internal functions and methods can have less detailed docstrings, with optional `Args` and `Returns`
   - `__init__` methods do not require docstrings
   - Avoid inline comments if the line width limit is exceeded as it causes the code to be wrapped
-  - Example of a class docstring including Read the Docs info: [yolo.py](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/pipeline/nodes/model/yolo.py)
-  - Example of a function/method docstring: [checker.py](https://github.com/aimakerspace/PeekingDuck/blob/dev/peekingduck/weights_utils/checker.py)
+  - Example of a class docstring including Read the Docs info: [yolo.py](https://github.com/aimakerspace/PeekingDuck/blob/main/peekingduck/pipeline/nodes/model/yolo.py)
+  - Example of a function/method docstring: [checker.py](https://github.com/aimakerspace/PeekingDuck/blob/main/peekingduck/weights_utils/checker.py)
 - Type Hints
   - Use `pathlib.Path` type for arguments that are full paths (such as variables with `_dir` and `_path` postfixes) instead of `str`
   - Avoid using `#type: ignore` as much as possible - declare variable type instead
