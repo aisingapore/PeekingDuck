@@ -71,7 +71,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             ]
         )
         self.mask_rcnn = self._create_mask_rcnn_model()
-        self.filtered_output = dict()
+        self.filtered_output: Dict[str, torch.Tensor] = dict()
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
