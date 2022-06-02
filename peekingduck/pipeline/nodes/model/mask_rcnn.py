@@ -39,7 +39,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         |bbox_scores_data|
 
-        |binary_masks_data|
+        |masks_data|
 
     Configs:
         model_type (:obj:`str`): **{"r50-fpn"}, default="r50-fpn"**. |br|
