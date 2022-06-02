@@ -60,6 +60,9 @@ types when working with custom nodes.
    
    |large_groups|
       |large_groups_def|
+
+   |masks|
+      |masks_def|
    
    (input) |none|
       |none_input_def|
