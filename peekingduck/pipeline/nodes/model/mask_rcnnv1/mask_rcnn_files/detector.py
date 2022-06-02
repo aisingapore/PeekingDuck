@@ -71,6 +71,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             ]
         )
         self.mask_rcnn = self._create_mask_rcnn_model()
+        self.filtered_output = dict()
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
@@ -168,23 +169,23 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             )
 
             for output_key in network_output[0].keys():
-                network_output[0][output_key] = network_output[0][output_key][
+                self.filtered_output[output_key] = network_output[0][output_key][
                     detect_filter
                 ]
 
-            if len(network_output[0]["labels"]) > 0:
-                bboxes = network_output[0]["boxes"].cpu().numpy()
+            if len(self.filtered_output["labels"]) > 0:
+                bboxes = self.filtered_output["boxes"].cpu().numpy()
                 # Normalize the bbox coordinates by the image size
                 bboxes = xyxy2xyxyn(bboxes, height=img_shape[0], width=img_shape[1])
                 bboxes = np.clip(bboxes, 0, 1)
 
-                label_numbers = network_output[0]["labels"].cpu().numpy()
+                label_numbers = self.filtered_output["labels"].cpu().numpy()
                 labels = np.vectorize(self.class_names.get)(label_numbers)
 
-                scores = network_output[0]["scores"].cpu().numpy()
+                scores = self.filtered_output["scores"].cpu().numpy()
 
                 # Binarize mask's pixel values by confidence score
-                masks = network_output[0]["masks"] > self.mask_threshold
+                masks = self.filtered_output["masks"] > self.mask_threshold
                 masks = masks.squeeze(1).cpu().numpy().astype(np.uint8)
 
         return bboxes, labels, scores, masks
