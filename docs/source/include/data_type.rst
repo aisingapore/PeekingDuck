@@ -12,8 +12,6 @@
 
 .. |bbox_scores_data| replace:: |bbox_scores|: |bbox_scores_def|
 
-.. |binary_masks_data| replace:: |masks|: |masks_def|
-
 .. |btm_midpoint_data| replace:: |btm_midpoint|: |btm_midpoint_def|
 
 .. |count_data| replace:: |count|: |count_def|
@@ -39,6 +37,8 @@
 .. |keypoint_scores_data| replace:: |keypoint_scores|: |keypoint_scores_def|
 
 .. |large_groups_data| replace:: |large_groups|: |large_groups_def|
+
+.. |masks_data| replace:: |masks|: |masks_def|
 
 .. |none_input_data| replace:: |none|: |none_input_def|
 
