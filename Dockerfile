@@ -28,7 +28,9 @@ RUN apt update && \
     python3-pip \
     wget && \
     apt-get clean
-    
+
+COPY requirements.txt /tmp/
+WORKDIR /tmp/
 RUN pip install -r requirements.txt
 
 # COPY <repo_dir> <target location within Docker container>
