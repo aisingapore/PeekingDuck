@@ -28,9 +28,10 @@ RUN apt update && \
     python3-pip \
     wget && \
     apt-get clean
+    
+RUN pip install -r requirements.txt
 
 # COPY <repo_dir> <target location within Docker container>
 COPY . ${APP_HOME}/PeekingDuck
 WORKDIR ${APP_HOME}/PeekingDuck
 
-RUN pip install -r requirements.txt
