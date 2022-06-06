@@ -13,4 +13,5 @@ Model Resources & Information
    /resources/01b_pose_estimation
    /resources/01c_object_tracking
    /resources/01d_crowd_counting
+   /resources/01e_instance_segmentation
    /resources/02_bibliography
