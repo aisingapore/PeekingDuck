@@ -28,6 +28,9 @@ Verify the installation using:
 
    | \ :blue:`[~user]` \ > \ :green:`peekingduck verify-install` \
 
+*See* :ref:`here <verify_installation>` *for changes to the verify installation command in
+version 1.3.0.*
+
 You should see a video of :ref:`a person waving his hand with bounding boxes overlaid
 <custom_install_verify_gif>`.
 
@@ -89,6 +92,10 @@ macOS Monterey.
 
       | \ :blue:`[~user]` \ > \ :green:`pip install peekingduck -\-no-dependencies` \
       | \ :blue:`[~user]` \ > \ :green:`peekingduck verify-install` \
+
+
+   *See* :ref:`here <verify_installation>` *for changes to the verify installation command in
+   version 1.3.0.*
 
 .. _custom_install_verify_gif:
 

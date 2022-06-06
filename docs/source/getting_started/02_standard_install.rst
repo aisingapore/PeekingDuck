@@ -100,6 +100,10 @@ To check that PeekingDuck is installed successfully, run the following command:
 
     | \ :blue:`[~user]` \ > \ :green:`peekingduck verify-install` \
 
+.. versionchanged:: 1.3.0
+    The verify installation command has been changed from ``--verify_install`` to
+    ``verify-install``.
+
 You should see a video of a person waving his hand (`taken from here <https://www.youtube.com/watch?v=IKj_z2hgYUM>`_)
 with bounding boxes overlaid as shown below:
 
