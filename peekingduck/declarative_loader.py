@@ -224,14 +224,18 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     if key in ["detect", "detect_ids"]:
                         # Deprecation notice for "detect_ids"
                         if key == "detect_ids":
-                            self.logger.warning(
+                            deprecate(
                                 "`detect_ids` is deprecated and will be removed in future. "
-                                "Please use `detect` instead."
+                                "Please use `detect` instead.",
+                                4,
                             )
 
-                        key, value = obj_det_change_class_name_to_id(
-                            node_name, key, value
-                        )
+                        # Only convert class names to id if model is not yolo_face,
+                        # since yolo_face has no class names
+                        if node_name != "model.yolo_face":
+                            key, value = obj_det_change_class_name_to_id(
+                                node_name, key, value
+                            )
                         key = "detect"  # replace "detect_ids" with new "detect"
 
                     dict_orig[key] = value
