@@ -48,7 +48,8 @@ KEY_STATE_MAP = {  # Tkinter keyboard modifiers
     16: "alt",
     32: "keypad",
 }
-LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
+# LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
+LOGO = "peekingduck/viewer/PeekingDuckLogo.png"
 WIN_HEIGHT = 800
 WIN_WIDTH = 1280
 ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
@@ -191,7 +192,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         # header contents
         self._img_logo = load_image(LOGO, resize_pct=0.15)  # prevent python GC
         logo = tk.Label(header_frm, image=self._img_logo)
-        logo.grid(row=0, column=0, sticky="nsew")
+        logo.grid(row=0, column=0, sticky="w")
         for i in range(2):
             dummy = tk.Label(header_frm, text="")
             dummy.grid(row=0, column=i + 2, sticky="nsew")
@@ -200,7 +201,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.tk_lbl_header = lbl
         # setup "timer" widget to do background processing later
         lbl_timer = tk.Label(header_frm, text="timer")
-        lbl_timer.grid(row=0, column=4, sticky="nsew")
+        lbl_timer.grid(row=0, column=4, sticky="e")
         self.tk_lbl_timer = lbl_timer
         # configure expansion and uniform column sizes
         num_col, _ = header_frm.grid_size()
