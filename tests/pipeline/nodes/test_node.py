@@ -95,11 +95,11 @@ class TestNode:
     def test_node_obj_det_wildcard_efficientdet(self):
         """Test object detection wildcard for EfficientDet models"""
         node_name = "model.efficientdet"
-        key = "detect_ids"
+        key = "detect"
         val = ["*"]
         # fmt: off
         ground_truth = (
-            "detect_ids",
+            "detect",
             [
                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16,
                 17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 30, 31, 32, 33, 34, 35,
@@ -116,11 +116,11 @@ class TestNode:
     def test_config_loader_obj_det_wildcard_yolo(self):
         """Test object detection wildcard for Yolo models"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = ["*"]
         # fmt: off
         ground_truth = (
-            "detect_ids",
+            "detect",
             [
                 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
                 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
@@ -137,9 +137,9 @@ class TestNode:
     def test_config_loader_change_class_name_to_id_all_text(self):
         """Test translation on all text inputs"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = ["person", "car", "BUS", "CELL PHONE", "oven"]
-        ground_truth = ("detect_ids", [0, 2, 5, 67, 69])
+        ground_truth = ("detect", [0, 2, 5, 67, 69])
 
         test_res = obj_det_change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
@@ -147,9 +147,9 @@ class TestNode:
     def test_config_loader_change_class_name_to_id_all_int(self):
         """Test translation on all integer inputs"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = [0, 1, 2, 3, 5]
-        ground_truth = ("detect_ids", [0, 1, 2, 3, 5])
+        ground_truth = ("detect", [0, 1, 2, 3, 5])
 
         test_res = obj_det_change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
@@ -157,9 +157,9 @@ class TestNode:
     def test_config_loader_change_class_name_to_id_mix_int_text(self):
         """Test translation on heterogenous inputs"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = [4, "bicycle", 10, "LAPTOP", "teddy bear"]
-        ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
+        ground_truth = ("detect", [1, 4, 10, 63, 77])
 
         test_res = obj_det_change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
@@ -167,7 +167,7 @@ class TestNode:
     def test_config_loader_change_class_name_to_id_mix_int_text_duplicates(self):
         """Test translation with heterogenous inputs including duplicates"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = [
             4,
             "bicycle",
@@ -178,7 +178,7 @@ class TestNode:
             63,
             10,
         ]
-        ground_truth = ("detect_ids", [1, 4, 10, 63, 77])
+        ground_truth = ("detect", [1, 4, 10, 63, 77])
 
         test_res = obj_det_change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
@@ -186,7 +186,7 @@ class TestNode:
     def test_config_loader_change_class_name_to_id_mix_int_text_errors(self):
         """Test translation with heterogenous inputs including errors"""
         node_name = "model.yolo"
-        key = "detect_ids"
+        key = "detect"
         val = [
             4,
             "bicycle",
@@ -199,7 +199,7 @@ class TestNode:
             "pokemon",
             "scary monster",
         ]
-        ground_truth = ("detect_ids", [0, 1, 4, 10, 63, 77])
+        ground_truth = ("detect", [0, 1, 4, 10, 63, 77])
 
         test_res = obj_det_change_class_name_to_id(node_name, key, val)
         assert test_res == ground_truth
@@ -209,14 +209,14 @@ class TestNode:
     # class names to class IDs correctly
     #
     def test_model_yolo_class_ids(self):
-        node_config = {"detect_ids": [1, 2, 3, 4, 5]}
+        node_config = {"detect": [1, 2, 3, 4, 5]}
         yolo_node = ObjDetNodeYolo(config=node_config)
         ground_truth = [1, 2, 3, 4, 5]
-        assert yolo_node.config["detect_ids"] == ground_truth
+        assert yolo_node.config["detect"] == ground_truth
 
     def test_model_yolo_class_names(self):
         node_config = {
-            "detect_ids": [
+            "detect": [
                 "fire hydrant",
                 "stop sign",
                 "parking meter",
@@ -226,11 +226,11 @@ class TestNode:
         }
         yolo_node = ObjDetNodeYolo(config=node_config)
         ground_truth = [10, 11, 12, 13, 14]
-        assert yolo_node.config["detect_ids"] == ground_truth
+        assert yolo_node.config["detect"] == ground_truth
 
     def test_model_yolo_class_names_mixed(self):
         node_config = {
-            "detect_ids": [
+            "detect": [
                 1,
                 2,
                 3,
@@ -245,17 +245,17 @@ class TestNode:
         }
         yolo_node = ObjDetNodeYolo(config=node_config)
         ground_truth = [1, 2, 3, 10, 11, 12, 13, 14, 20, 21]
-        assert yolo_node.config["detect_ids"] == ground_truth
+        assert yolo_node.config["detect"] == ground_truth
 
     def test_model_efficientdet_class_ids(self):
-        node_config = {"detect_ids": [1, 2, 3, 4, 5]}
+        node_config = {"detect": [1, 2, 3, 4, 5]}
         efficientdet_node = ObjDetNodeEfficientDet(config=node_config)
         ground_truth = [1, 2, 3, 4, 5]
-        assert efficientdet_node.config["detect_ids"] == ground_truth
+        assert efficientdet_node.config["detect"] == ground_truth
 
     def test_model_efficientdet_class_names(self):
         node_config = {
-            "detect_ids": [
+            "detect": [
                 "fire hydrant",
                 "stop sign",
                 "parking meter",
@@ -265,11 +265,11 @@ class TestNode:
         }
         efficientdet_node = ObjDetNodeEfficientDet(config=node_config)
         ground_truth = [10, 12, 13, 14, 15]
-        assert efficientdet_node.config["detect_ids"] == ground_truth
+        assert efficientdet_node.config["detect"] == ground_truth
 
     def test_model_efficientdet_class_names_mixed(self):
         node_config = {
-            "detect_ids": [
+            "detect": [
                 1,
                 2,
                 3,
@@ -284,4 +284,4 @@ class TestNode:
         }
         efficientdet_node = ObjDetNodeEfficientDet(config=node_config)
         ground_truth = [1, 2, 3, 10, 12, 13, 14, 15, 20, 21]
-        assert efficientdet_node.config["detect_ids"] == ground_truth
+        assert efficientdet_node.config["detect"] == ground_truth

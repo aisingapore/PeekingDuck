@@ -47,7 +47,7 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             val["id"] - 1: val["name"]
             for val in json.loads(classes_path.read_text()).values()
         }
-        self.detect_ids = config["detect_ids"]
+        self.detect_ids = config["detect"]  # change "detect_ids" to "detect"
         self.detector = Detector(
             model_dir,
             class_names,
