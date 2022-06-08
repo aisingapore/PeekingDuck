@@ -22,16 +22,13 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.jde import Node
 from peekingduck.pipeline.nodes.model.jdev1.jde_files.matching import (
     fuse_motion,
     iou_distance,
 )
-from tests.conftest import PKD_DIR, do_nothing
+from tests.conftest import PKD_DIR
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -264,44 +261,15 @@ class TestJDE:
                 assert jde._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_blob_to,
-        mock_extract_file,
-        jde_config,
-    ):
-        weights_dir = jde_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.jdev1.jde_model.logger"
-        ) as captured:
-            jde = Node(config=jde_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert jde is not None
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
-
     def test_invalid_config_value(self, jde_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=jde_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, jde_config):
         with pytest.raises(ValueError) as excinfo:
-            jde_config["weights"]["model_file"][
+            jde_config["weights"][jde_config["model_format"]]["model_file"][
                 jde_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=jde_config)

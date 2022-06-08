@@ -8,16 +8,13 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.fairmot import Node
 from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching import (
     fuse_motion,
     iou_distance,
 )
-from tests.conftest import PKD_DIR, do_nothing
+from tests.conftest import PKD_DIR
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -247,36 +244,6 @@ class TestFairMOT:
                 assert fairmot._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_blob_to,
-        mock_extract_file,
-        fairmot_config,
-    ):
-        weights_dir = fairmot_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.fairmot_mot.fairmot_model.logger"
-        ) as captured:
-            fairmot = Node(config=fairmot_config)
-            print(captured)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert fairmot is not None
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
-
     def test_invalid_config_value(self, fairmot_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=fairmot_bad_config_value)
@@ -285,7 +252,9 @@ class TestFairMOT:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, fairmot_config):
         with pytest.raises(ValueError) as excinfo:
-            fairmot_config["weights"]["model_file"]["dla_34"] = "some/invalid/path"
+            fairmot_config["weights"][fairmot_config["model_format"]]["model_file"][
+                "dla_34"
+            ] = "some/invalid/path"
             _ = Node(config=fairmot_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 

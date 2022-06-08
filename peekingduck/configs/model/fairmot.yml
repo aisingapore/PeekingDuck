@@ -6,11 +6,15 @@ optional_inputs: ["mot_metadata"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: fairmot,
-    blob_file: fairmot.zip,
-    model_file: { dla_34: fairmot_dla34-stripped-half.pth },
+    pytorch:
+      {
+        model_subdir: fairmot,
+        blob_file: { dla_34: fairmot_dla34-stripped-half.zip },
+        model_file: { dla_34: fairmot_dla34-stripped-half.pth },
+      },
   }
 
+model_format: pytorch
 model_type: dla_34
 input_size: [864, 480]
 K: 500 # max number of output objects

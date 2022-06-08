@@ -175,11 +175,11 @@ def create_node(
         node_subdir = verify_option(node_subdir, value_proc=ensure_relative_path)
         if node_subdir is None:
             node_subdir = click.prompt(
-                f"Enter node directory relative to {project_dir}",
-                default="src/custom_nodes",
+                f"Enter node directory relative to {project_dir}/src",
+                default="custom_nodes",
                 value_proc=ensure_relative_path,
             )
-        node_dir = project_dir / node_subdir
+        node_dir = project_dir / "src" / node_subdir
 
         node_type = verify_option(
             node_type, value_proc=ensure_valid_type_partial(node_type_choices)

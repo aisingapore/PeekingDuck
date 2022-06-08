@@ -18,6 +18,7 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
+
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
@@ -37,14 +38,14 @@ class MoveNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             {"singlepose_lightning", "singlepose_thunder", "multipose_lightning"},
         )
         self.check_bounds(
-            ["bbox_score_threshold", "keypoint_score_threshold"], (0, 1), "within"
+            ["bbox_score_threshold", "keypoint_score_threshold"], "[0, 1]"
         )
 
         model_dir = self.download_weights()
         self.predictor = Predictor(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["resolution"],
             self.config["bbox_score_threshold"],
             self.config["keypoint_score_threshold"],

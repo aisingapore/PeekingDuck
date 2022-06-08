@@ -12,9 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import json
 from pathlib import Path
-from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -22,12 +20,8 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
 from peekingduck.pipeline.nodes.model.efficientdet import Node
-from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
@@ -128,35 +122,6 @@ class TestEfficientDet:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(np.array(["person"]), labels)
-
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_blob_to,
-        mock_extract_file,
-        efficientdet_config,
-    ):
-        weights_dir = efficientdet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.yoloxv1.yolox_model.logger"
-        ) as captured:
-            efficientdet = Node(config=efficientdet_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert efficientdet is not None
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
 
     def test_invalid_config_value(self, efficientdet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:

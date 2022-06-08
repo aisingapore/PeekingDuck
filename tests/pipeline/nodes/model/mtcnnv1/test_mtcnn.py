@@ -13,7 +13,7 @@
 # limitations under the License.
 
 from pathlib import Path
-from unittest import TestCase, mock
+from unittest import mock
 
 import cv2
 import numpy as np
@@ -21,12 +21,9 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
+from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.mtcnn import Node
-from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
@@ -57,7 +54,7 @@ def mtcnn_bad_config_value(request, mtcnn_config):
 
 
 @pytest.mark.mlmodel
-class TestMtcnn:
+class TestMTCNN:
     def test_no_human_face_image(self, no_human_image, mtcnn_config):
         no_human_img = cv2.imread(no_human_image)
         mtcnn = Node(mtcnn_config)
@@ -87,35 +84,6 @@ class TestMtcnn:
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_blob_to,
-        mock_extract_file,
-        mtcnn_config,
-    ):
-        weights_dir = mtcnn_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_model.logger"
-        ) as captured:
-            mtcnn = Node(config=mtcnn_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert mtcnn is not None
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
-
     def test_invalid_config_value(self, mtcnn_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=mtcnn_bad_config_value)
@@ -124,7 +92,7 @@ class TestMtcnn:
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, mtcnn_config):
         with pytest.raises(ValueError) as excinfo:
-            mtcnn_config["weights"]["model_file"][
+            mtcnn_config["weights"][mtcnn_config["model_format"]]["model_file"][
                 mtcnn_config["model_type"]
             ] = "some/invalid/path"
             _ = Node(config=mtcnn_config)

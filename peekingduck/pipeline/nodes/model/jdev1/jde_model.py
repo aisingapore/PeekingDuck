@@ -65,7 +65,7 @@ class JDEModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.logger = logging.getLogger(__name__)
 
         self.check_bounds(
-            ["iou_threshold", "nms_threshold", "score_threshold"], (0, 1), "within"
+            ["iou_threshold", "nms_threshold", "score_threshold"], "[0, 1]"
         )
 
         model_dir = self.download_weights()
@@ -73,8 +73,8 @@ class JDEModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             model_dir,
             frame_rate,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
-            self.config["weights"]["config_file"],
+            self.weights["model_file"],
+            self.weights["config_file"],
             self.config["min_box_area"],
             self.config["track_buffer"],
             self.config["iou_threshold"],

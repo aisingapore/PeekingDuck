@@ -13,7 +13,6 @@
 # limitations under the License.
 
 from pathlib import Path
-from unittest import TestCase, mock
 
 import cv2
 import numpy as np
@@ -21,12 +20,8 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.base import (
-    PEEKINGDUCK_WEIGHTS_SUBDIR,
-    WeightsDownloaderMixin,
-)
 from peekingduck.pipeline.nodes.model.hrnet import Node
-from tests.conftest import PKD_DIR, do_nothing, get_groundtruth
+from tests.conftest import PKD_DIR, get_groundtruth
 
 TOLERANCE = 1e-5
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
@@ -126,36 +121,7 @@ class TestHrnet:
             output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
         )
 
-    @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=False)
-    @mock.patch.object(WeightsDownloaderMixin, "_download_blob_to", wraps=do_nothing)
-    @mock.patch.object(WeightsDownloaderMixin, "extract_file", wraps=do_nothing)
-    def test_no_weights(
-        self,
-        _,
-        mock_download_blob_to,
-        mock_extract_file,
-        hrnet_config,
-    ):
-        weights_dir = hrnet_config["root"].parent / PEEKINGDUCK_WEIGHTS_SUBDIR
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.hrnetv1.hrnet_model.logger"
-        ) as captured:
-            hrnet = Node(config=hrnet_config)
-            # records 0 - 20 records are updates to configs
-            assert (
-                captured.records[0].getMessage()
-                == "No weights detected. Proceeding to download..."
-            )
-            assert (
-                captured.records[1].getMessage()
-                == f"Weights downloaded to {weights_dir}."
-            )
-            assert hrnet is not None
-
-        assert mock_download_blob_to.called
-        assert mock_extract_file.called
-
     def test_invalid_config_value(self, hrnet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=hrnet_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)

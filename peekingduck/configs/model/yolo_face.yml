@@ -4,16 +4,20 @@ output: ["bboxes", "bbox_labels", "bbox_scores"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: yolo_face,
-    blob_file: yolo_face.zip,
-    classes_file: classes.names,
-    model_file: { v4: yolov4, v4tiny: yolov4tiny },
+    tensorflow:
+      {
+        model_subdir: yolo_face,
+        blob_file: { v4: yolov4.zip, v4tiny: yolov4tiny.zip },
+        classes_file: classes.names,
+        model_file: { v4: yolov4, v4tiny: yolov4tiny },
+      },
   }
 input_size: 416
 max_output_size_per_class: 50
 max_total_size: 50
 
+model_format: tensorflow
 model_type: v4tiny # v4 or v4tiny
-detect_ids: [0, 1]
+detect: [0, 1]
 iou_threshold: 0.1
 score_threshold: 0.7

@@ -14,12 +14,14 @@
 
 """Mixin classes for PeekingDuck nodes and models."""
 
+import hashlib
 import operator
 import os
+import re
 import sys
 import zipfile
 from pathlib import Path
-from typing import Callable, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Union
 
 import requests
 from tqdm import tqdm
@@ -27,125 +29,81 @@ from tqdm import tqdm
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
 
-Number = Union[float, int]
-
 
 class ThresholdCheckerMixin:
     """Mixin class providing utility methods for checking validity of config
     values, typically thresholds.
     """
 
-    def check_bounds(
-        self,
-        key: Union[str, List[str]],
-        value: Union[Number, Tuple[Number, Number]],
-        method: str,
-        include: Optional[str] = "both",
-    ) -> None:
-        """Checks if the configuration value(s) specified by `key` satisties
+    interval_pattern = re.compile(
+        r"^[\[\(]\s*[-+]?(inf|\d*\.?\d+)\s*,\s*[-+]?(inf|\d*\.?\d+)\s*[\]\)]$"
+    )
+
+    def check_bounds(self, key: Union[str, List[str]], interval: str) -> None:
+        """Checks if the configuration value(s) specified by `key` satisfies
         the specified bounds.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-            value (Union[Number, Tuple[Number, Number]]): Either a single
-                number to specify the upper or lower bound or a tuple of
-                numbers to specify both the upper and lower bounds.
-            method (str): The bounds checking methods, one of
-                {"above", "below", "both"}. If "above", checks if the
-                configuration value is above the specified `value`. If "below",
-                checks if the configuration value is below the specified
-                `value`. If "both", checks if the configuration value is above
-                `value[0]` and below `value[1]`.
-            include (Optional[str]): Indicates if the `value` itself should be
-                included in the bound, one of {"lower", "upper", "both", None}.
-                Please see Technotes for details.
+            interval (str): An mathematical interval representing the range of
+                valid values. The syntax of the `interval` string is:
+
+                <value> = <number> | "-inf" | "+inf"
+                <left_bracket> = "(" | "["
+                <right_bracket> = ")" | "]"
+                <interval> = <left_bracket> <value> "," <value> <right_bracket>
+
+                See Technotes for more details.
 
         Raises:
             TypeError: `key` type is not in (List[str], str).
-            TypeError: If `value` is not a tuple of only float/int.
-            TypeError: If `value` is not a tuple with 2 elements.
-            TypeError: If `value` is not a float, int, or tuple.
-            TypeError: If `value` type is not a tuple when `method` is
-                "within".
-            TypeError: If `value` type is a tuple when `method` is
-                "above"/"below".
-            ValueError: If `method` is not one of {"above", "below", "within"}.
+            ValueError: If `interval` does not match the specified format.
+            ValueError: If the lower bound is larger than the upper bound.
             ValueError: If the configuration value fails the bounds comparison.
 
         Technotes:
-            The behavior of `include` depends on the specified `method`. The
-            table below shows the comparison done for various argument
-            combinations.
+            The table below shows the comparison done for various interval
+            expressions.
 
-            +-----------+---------+-------------------------------------+
-            | method    | include | comparison                          |
-            +===========+=========+=====================================+
-            |           | "lower" | config[key] >= value                |
-            +           +---------+-------------------------------------+
-            |           | "upper" | config[key] > value                 |
-            +           +---------+-------------------------------------+
-            |           | "both"  | config[key] >= value                |
-            +           +---------+-------------------------------------+
-            | "above"   | None    | config[key] > value                 |
-            +-----------+---------+-------------------------------------+
-            |           | "lower" | config[key] < value                 |
-            +           +---------+-------------------------------------+
-            |           | "upper" | config[key] <= value                |
-            +           +---------+-------------------------------------+
-            |           | "both"  | config[key] <= value                |
-            +           +---------+-------------------------------------+
-            | "below"   | None    | config[key] < value                 |
-            +-----------+---------+-------------------------------------+
-            |           | "lower" | value[0] <= config[key] < value[1]  |
-            +           +---------+-------------------------------------+
-            |           | "upper" | value[0] < config[key] <= value[1]  |
-            +           +---------+-------------------------------------+
-            |           | "both"  | value[0] <= config[key] <= value[1] |
-            +           +---------+-------------------------------------+
-            | "within"  | None    | value[0] < config[key] < value[1]   |
-            +-----------+---------+-------------------------------------+
+            +---------------------+-------------------------------------+
+            | interval            | comparison                          |
+            +=====================+=====================================+
+            | [lower, +inf]       |                                     |
+            +---------------------+                                     |
+            | [lower, +inf)       | config[key] >= lower                |
+            +---------------------+-------------------------------------+
+            | (lower, +inf]       |                                     |
+            +---------------------+                                     |
+            | (lower, +inf)       | config[key] > lower                 |
+            +---------------------+-------------------------------------+
+            | [-inf, upper]       |                                     |
+            +---------------------+                                     |
+            | (-inf, upper]       | config[key] <= upper                |
+            +---------------------+-------------------------------------+
+            | [-inf, upper)       |                                     |
+            +---------------------+                                     |
+            | (-inf, upper)       | config[key] < upper                 |
+            +---------------------+-------------------------------------+
+            | [lower, upper]      | lower <= config[key] <= upper       |
+            +---------------------+-------------------------------------+
+            | (lower, upper]      | lower < config[key] <= upper        |
+            +---------------------+-------------------------------------+
+            | [lower, upper)      | lower <= config[key] < upper        |
+            +---------------------+-------------------------------------+
+            | (lower, upper)      | lower < config[key] < upper         |
+            +---------------------+-------------------------------------+
         """
-        # available checking methods
-        methods = {"above", "below", "within"}
-        # available options of lower/upper bound inclusion
-        lower_includes = {"lower", "both"}
-        upper_includes = {"upper", "both"}
+        if self.interval_pattern.match(interval) is None:
+            raise ValueError("Badly formatted interval")
 
-        if method not in methods:
-            raise ValueError(f"`method` must be one of {methods}")
+        left_bracket = interval[0]
+        right_bracket = interval[-1]
+        lower, upper = [float(value.strip()) for value in interval[1:-1].split(",")]
 
-        if isinstance(value, tuple):
-            if not all(isinstance(val, (float, int)) for val in value):
-                raise TypeError(
-                    "When using tuple for `value`, it must be a tuple of float/int"
-                )
-            if len(value) != 2:
-                raise ValueError(
-                    "When using tuple for `value`, it must contain only 2 elements"
-                )
-        elif isinstance(value, (float, int)):
-            pass
-        else:
-            raise TypeError(
-                "`value` must be a float/int or tuple, but you passed a "
-                f"{type(value).__name__}"
-            )
+        if lower > upper:
+            raise ValueError("Lower bound cannot be larger than upper bound")
 
-        if method == "within":
-            if not isinstance(value, tuple):
-                raise TypeError("`value` must be a tuple when `method` is 'within'")
-            self._check_within_bounds(
-                key, value, (include in lower_includes, include in upper_includes)
-            )
-        else:
-            if isinstance(value, tuple):
-                raise TypeError(
-                    "`value` must be a float/int when `method` is 'above'/'below'"
-                )
-            if method == "above":
-                self._check_above_value(key, value, include in lower_includes)
-            elif method == "below":
-                self._check_below_value(key, value, include in upper_includes)
+        self._check_within_bounds(key, lower, upper, left_bracket, right_bracket)
 
     def check_valid_choice(
         self, key: str, choices: Set[Union[int, float, str]]
@@ -166,78 +124,36 @@ class ThresholdCheckerMixin:
         if self.config[key] not in choices:
             raise ValueError(f"{key} must be one of {choices}")
 
-    def _check_above_value(
-        self, key: Union[str, List[str]], value: Number, inclusive: bool
-    ) -> None:
-        """Checks that configuration values specified by `key` is more than
-        (or equal to) the specified `value`.
-
-        Args:
-            key (Union[str, List[str]]): The specified key or list of keys.
-            value (Number): The specified value.
-            inclusive (bool): If `True`, compares `config[key] >= value`. If
-                `False`, compares `config[key] > value`.
-
-        Raises:
-            TypeError: `key` type is not in (List[str], str).
-            ValueError: If the configuration value is less than (or equal to)
-                `value`.
-        """
-        method = operator.ge if inclusive else operator.gt
-        extra_reason = " or equal to" if inclusive else ""
-        self._compare(key, value, method, reason=f"more than{extra_reason} {value}")
-
-    def _check_below_value(
-        self, key: Union[str, List[str]], value: Number, inclusive: bool
-    ) -> None:
-        """Checks that configuration values specified by `key` is more than
-        (or equal to) the specified `value`.
-
-        Args:
-            key (Union[str, List[str]]): The specified key or list of keys.
-            value (Number): The specified value.
-            inclusive (bool): If `True`, compares `config[key] <= value`. If
-                `False`, compares `config[key] < value`.
-
-        Raises:
-            TypeError: `key` type is not in (List[str], str).
-            ValueError: If the configuration value is less than (or equal to)
-                `value`.
-        """
-        method = operator.le if inclusive else operator.lt
-        extra_reason = " or equal to" if inclusive else ""
-        self._compare(key, value, method, reason=f"less than{extra_reason} {value}")
-
-    def _check_within_bounds(
+    def _check_within_bounds(  # pylint: disable=too-many-arguments
         self,
         key: Union[str, List[str]],
-        bounds: Tuple[Number, Number],
-        includes: Tuple[bool, bool],
+        lower: float,
+        upper: float,
+        left_bracket: str,
+        right_bracket: str,
     ) -> None:
         """Checks that configuration values specified by `key` is within the
         specified bounds between `lower` and `upper`.
 
         Args:
             key (Union[str, List[str]]): The specified key or list of keys.
-             (Union[float, int]): The lower bound.
-            bounds (Tuple[Number, Number]): The lower and upper bounds.
-            includes (Tuple[bool, bool]): If `True`, compares `config[key] >= value`.
-                If `False`, compares `config[key] > value`.
-            inclusive_upper (bool): If `True`, compares `config[key] <= value`.
-                If `False`, compares `config[key] < value`.
+            lower (float): The lower bound.
+            upper (float): The upper bound.
+            left_bracket (str): Either a "(" for an open lower bound or a "["
+                for a closed lower bound.
+            right_bracket (str): Either a ")" for an open upper bound or a "]"
+                for a closed upper bound.
 
         Raises:
             TypeError: `key` type is not in (List[str], str).
             ValueError: If the configuration value is not between `lower` and
                 `upper`.
         """
-        method_lower = operator.ge if includes[0] else operator.gt
-        method_upper = operator.le if includes[1] else operator.lt
-        reason_lower = "[" if includes[0] else "("
-        reason_upper = "]" if includes[1] else ")"
-        reason = f"between {reason_lower}{bounds[0]}, {bounds[1]}{reason_upper}"
-        self._compare(key, bounds[0], method_lower, reason)
-        self._compare(key, bounds[1], method_upper, reason)
+        method_lower = operator.ge if left_bracket == "[" else operator.gt
+        method_upper = operator.le if right_bracket == "]" else operator.lt
+        reason = f"between {left_bracket}{lower}, {upper}{right_bracket}"
+        self._compare(key, lower, method_lower, reason)
+        self._compare(key, upper, method_upper, reason)
 
     def _compare(
         self,
@@ -278,48 +194,103 @@ class ThresholdCheckerMixin:
 class WeightsDownloaderMixin:
     """Mixin class providing utility methods for downloading model weights."""
 
+    @property
+    def blob_filename(self) -> str:
+        """Name of the selected weights on GCP."""
+        return self.weights["blob_file"][self.config["model_type"]]
+
+    @property
+    def classes_filename(self) -> Optional[str]:
+        """Name of the file containing classes IDs/labels for the selected
+        model.
+        """
+        return self.weights.get("classes_file")
+
+    @property
+    def weights(self) -> Dict[str, Any]:
+        """Dictionary of `blob_file`, `config_file`, and `model_file` names
+        based on the selected `model_format`.
+        """
+        return self.config["weights"][self.config["model_format"]]
+
+    @property
+    def model_filename(self) -> str:
+        """Name of the selected weights on local machine."""
+        return self.weights["model_file"][self.config["model_type"]]
+
+    @property
+    def model_subdir(self) -> str:
+        """Model weights sub-directory name based on the selected model
+        format.
+        """
+        return self.weights["model_subdir"]
+
     def download_weights(self) -> Path:
         """Downloads weights for specified ``blob_file``.
 
         Returns:
             (Path): Path to the directory where the model's weights are stored.
         """
-        weights_dir, model_dir = self._find_paths()
-        if self._has_weights(weights_dir, model_dir):
+        model_dir = self._find_paths()
+        if self._has_weights(model_dir):
             return model_dir
 
-        self.logger.warning("No weights detected. Proceeding to download...")
+        self.logger.info("Proceeding to download...")
 
-        zip_path = weights_dir / "temp.zip"
-        self._download_blob_to(zip_path)
-        self.extract_file(zip_path, weights_dir)
+        model_dir.mkdir(parents=True, exist_ok=True)
+        self._download_to(self.blob_filename, model_dir)
+        self._extract_file(model_dir)
+        if self.classes_filename is not None:
+            self._download_to(self.classes_filename, model_dir)
 
-        self.logger.info(f"Weights downloaded to {weights_dir}.")
+        self.logger.info(f"Weights downloaded to {model_dir}.")
 
         return model_dir
 
-    def _download_blob_to(self, destination: Path) -> None:  # pragma: no cover
+    def _download_to(self, filename: str, destination_dir: Path) -> None:
         """Downloads publicly shared files from Google Cloud Platform.
 
         Saves download content in chunks. Chunk size set to large integer as
         weights are usually pretty large.
 
         Args:
-            destination (Path): Destination path of download.
+            destination_dir (Path): Destination directory of downloaded file.
         """
-        with open(destination, "wb") as outfile, requests.get(
-            f"{BASE_URL}/{self.config['weights']['blob_file']}", stream=True
+        with open(destination_dir / filename, "wb") as outfile, requests.get(
+            f"{BASE_URL}/{self.model_subdir}/{self.config['model_format']}/{filename}",
+            stream=True,
         ) as response:
             for chunk in tqdm(response.iter_content(chunk_size=32768)):
                 if chunk:  # filter out keep-alive new chunks
                     outfile.write(chunk)
 
-    def _find_paths(self) -> Tuple[Path, Path]:
-        """Checks for model weight paths from weights folder.
+    def _extract_file(self, destination_dir: Path) -> None:
+        """Extracts the zip file to ``destination_dir``.
+
+        Args:
+            destination_dir (Path): Destination directory for extraction.
+        """
+        zip_path = destination_dir / self.blob_filename
+        with zipfile.ZipFile(zip_path, "r") as infile:
+            file_list = infile.namelist()
+            for file in tqdm(file=sys.stdout, iterable=file_list, total=len(file_list)):
+                infile.extract(member=file, path=destination_dir)
+
+        os.remove(zip_path)
+
+    def _find_paths(self) -> Path:
+        """Constructs the `peekingduck_weights` directory path and the model
+        sub-directory path.
 
         Returns:
-            weights_dir (Path): Path to where all weights are stored.
-            model_dir (Path): Path to where weights for a model are stored.
+            (Path): /path/to/peekingduck_weights/<model_name> where
+              weights for a model are stored.
+
+        Raises:
+            FileNotFoundError: When the user-specified `weights_parent_dir`
+                does not exist.
+            ValueError: When the user-specified `weights_parent_dir` is not an
+                absolute path.
         """
         if self.config["weights_parent_dir"] is None:
             weights_parent_dir = self.config["root"].parent
@@ -328,51 +299,74 @@ class WeightsDownloaderMixin:
 
             if not weights_parent_dir.exists():
                 raise FileNotFoundError(
-                    f"The specified weights_parent_dir: {weights_parent_dir} does not exist."
+                    f"weights_parent_dir does not exist: {weights_parent_dir}"
                 )
             if not weights_parent_dir.is_absolute():
                 raise ValueError(
-                    f"The specified weights_parent_dir: {weights_parent_dir} "
-                    "must be an absolute path."
+                    f"weights_parent_dir must be an absolute path: {weights_parent_dir}"
                 )
 
-        weights_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR
-        model_dir = weights_dir / self.config["weights"]["model_subdir"]
+        return (
+            weights_parent_dir
+            / PEEKINGDUCK_WEIGHTS_SUBDIR
+            / self.model_subdir
+            / self.config["model_format"]
+        )
 
-        return weights_dir, model_dir
+    def _get_weights_checksum(self) -> str:
+        with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
+            checksums = response.json()
+        return checksums[self.model_subdir][self.config["model_format"]][
+            str(self.config["model_type"])
+        ]
 
-    @staticmethod
-    def _has_weights(weights_dir: Path, model_dir: Path) -> bool:
-        """Checks for model weight paths from weights folder.
+    def _has_weights(self, model_dir: Path) -> bool:
+        """Checks if the specified weights file is present in the model
+        sub-directory of the PeekingDuck weights directory.
 
         Args:
-            weights_dir (Path): Path to where all weights are stored.
-            model_dir (Path): Path to where weights for a model are stored.
+            model_dir (Path): /path/to/peekingduck_weights/<model_name> where
+                weights for a model are stored.
 
         Returns:
-            (bool): ``True`` if specified files/directories in
-            ``weights_dir`` exist, else ``False``.
+            (bool): ``True`` if specified weights file in ``model_dir``
+            exists and up-to-date/not corrupted, else ``False``.
         """
-        if not weights_dir.exists():
-            weights_dir.mkdir()
+        weights_path = model_dir / self.model_filename
+        if not weights_path.exists():
+            self.logger.warning("No weights detected.")
             return False
-        # Doesn't actually check if the files exist
-        return model_dir.exists()
+        if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
+            self.logger.warning("Weights file is corrupted/out-of-date.")
+            return False
+        return True
 
     @staticmethod
-    def extract_file(zip_path: Path, destination_dir: Path) -> None:  # pragma: no cover
-        """Extracts the zip file to ``destination_dir``.
+    def sha256sum(path: Path, hash_func: "hashlib._Hash" = None) -> "hashlib._Hash":
+        """Hashes the specified file/directory using SHA256. Reads the file in
+        chunks to be more memory efficient.
+
+        When a directory path is passed as the argument, sort the folder
+        content and hash the content recursively.
 
         Args:
-            zip_path (Path): Path to zip file.
-            destination (Path): Destination directory for extraction.
-        """
-        with zipfile.ZipFile(zip_path, "r") as infile:
-            for file in tqdm(
-                file=sys.stdout,
-                iterable=infile.namelist(),
-                total=len(infile.namelist()),
-            ):
-                infile.extract(member=file, path=destination_dir)
+            path (Path): Path to the file to be hashed.
+            hash_func (Optional[hashlib._Hash]): A hash function which uses the
+                SHA-256 algorithm.
 
-        os.remove(zip_path)
+        Returns:
+            (hashlib._Hash): The updated hash function.
+        """
+        if hash_func is None:
+            hash_func = hashlib.sha256()
+
+        if path.is_dir():
+            for subpath in sorted(path.iterdir()):
+                if subpath.name not in {".DS_Store", "__MACOSX"}:
+                    hash_func = WeightsDownloaderMixin.sha256sum(subpath, hash_func)
+        else:
+            buffer_size = hash_func.block_size * 1024
+            with open(path, "rb") as infile:
+                for chunk in iter(lambda: infile.read(buffer_size), b""):
+                    hash_func.update(chunk)
+        return hash_func

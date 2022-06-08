@@ -4,15 +4,24 @@ output: ["bboxes", "bbox_labels", "bbox_scores"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: yolox,
-    blob_file: yolox.zip,
-    classes_file: coco.names,
-    model_file:
+    pytorch:
       {
-        yolox-tiny: yolox-tiny.pth,
-        yolox-s: yolox-s.pth,
-        yolox-m: yolox-m.pth,
-        yolox-l: yolox-l.pth,
+        model_subdir: yolox,
+        blob_file:
+          {
+            yolox-tiny: yolox-tiny.zip,
+            yolox-s: yolox-s.zip,
+            yolox-m: yolox-m.zip,
+            yolox-l: yolox-l.zip,
+          },
+        classes_file: coco.names,
+        model_file:
+          {
+            yolox-tiny: yolox-tiny.pth,
+            yolox-s: yolox-s.pth,
+            yolox-m: yolox-m.pth,
+            yolox-l: yolox-l.pth,
+          },
       },
   }
 model_size:
@@ -24,9 +33,10 @@ model_size:
   }
 num_classes: 80
 
+model_format: pytorch
 model_type: yolox-tiny # yolox-tiny, yolox-s, yolox-m, or yolox-l
 input_size: 416
-detect_ids: [0]
+detect: [0]
 iou_threshold: 0.45
 score_threshold: 0.25
 agnostic_nms: true

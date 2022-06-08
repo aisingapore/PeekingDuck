@@ -37,17 +37,17 @@ class YOLOLicensePlateModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
+        self.check_bounds(["iou_threshold", "score_threshold"], "[0, 1]")
 
         model_dir = self.download_weights()
-        with open(model_dir / self.config["weights"]["classes_file"]) as infile:
+        with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
         self.detector = Detector(
             model_dir,
             class_names,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["max_output_size_per_class"],
             self.config["max_total_size"],
             self.config["input_size"],

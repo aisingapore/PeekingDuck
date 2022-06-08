@@ -38,13 +38,13 @@ class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.logger = logging.getLogger(__name__)
 
         self.check_valid_choice("model_type", {50, 75, 100, "resnet"})
-        self.check_bounds("score_threshold", (0, 1), "within")
+        self.check_bounds("score_threshold", "[0, 1]")
 
         model_dir = self.download_weights()
         self.predictor = Predictor(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["resolution"],
             self.config["max_pose_detection"],

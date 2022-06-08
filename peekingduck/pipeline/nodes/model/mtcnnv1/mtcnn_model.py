@@ -20,6 +20,7 @@ import logging
 from typing import Any, Dict, Tuple
 
 import numpy as np
+
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
@@ -34,16 +35,16 @@ class MTCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_bounds("min_size", 0, "above", include=None)
+        self.check_bounds("min_size", "(0, +inf]")
         self.check_bounds(
-            ["network_thresholds", "scale_factor", "score_threshold"], (0, 1), "within"
+            ["network_thresholds", "scale_factor", "score_threshold"], "[0, 1]"
         )
 
         model_dir = self.download_weights()
         self.detector = Detector(
             model_dir,
             self.config["model_type"],
-            self.config["weights"]["model_file"],
+            self.weights["model_file"],
             self.config["model_nodes"],
             self.config["min_size"],
             self.config["scale_factor"],

@@ -38,7 +38,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: object_counting_over_time.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting_over_time.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/object_counting_over_time.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -105,7 +105,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - input.visual:
        source: <path/to/video with cars>
    - model.efficientdet:
-       detect_ids: ["car"]
+       detect: ["car"]
    - dabble.tracking:
        tracking_type: "iou"
    - dabble.statistics:
@@ -151,7 +151,7 @@ For :mod:`model.efficientdet`:
 
 * ``model_type``: ``0``, ``1``, ``2``, ``3``, or ``4``. The larger the number, the higher the
   accuracy, at the cost of inference speed.
-* ``detect_ids``: Object class IDs to be detected. 
+* ``detect``: Object class IDs to be detected. 
   Refer to :ref:`Object Detection IDs table <general-object-detection-ids>` for the class IDs for
   each model.
 

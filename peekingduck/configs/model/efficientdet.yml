@@ -4,16 +4,26 @@ output: ["bboxes", "bbox_labels", "bbox_scores"]
 weights_parent_dir: null
 weights:
   {
-    model_subdir: efficientdet,
-    blob_file: efficientdet.zip,
-    classes_file: coco_90.json,
-    model_file:
+    tensorflow:
       {
-        0: efficientdet-d0.pb,
-        1: efficientdet-d1.pb,
-        2: efficientdet-d2.pb,
-        3: efficientdet-d3.pb,
-        4: efficientdet-d4.pb,
+        model_subdir: efficientdet,
+        blob_file:
+          {
+            0: efficientdet-d0.zip,
+            1: efficientdet-d1.zip,
+            2: efficientdet-d2.zip,
+            3: efficientdet-d3.zip,
+            4: efficientdet-d4.zip,
+          },
+        classes_file: coco_90.json,
+        model_file:
+          {
+            0: efficientdet-d0.pb,
+            1: efficientdet-d1.pb,
+            2: efficientdet-d2.pb,
+            3: efficientdet-d3.pb,
+            4: efficientdet-d4.pb,
+          },
       },
   }
 image_size: { 0: 512, 1: 640, 2: 768, 3: 896, 4: 1024 }
@@ -21,6 +31,7 @@ num_classes: 90
 model_nodes:
   { inputs: [x:0], outputs: [Identity:0, Identity_1:0, Identity_2:0] }
 
+model_format: tensorflow
 model_type: 0 # 0-4
-detect_ids: [0]
+detect: [0]
 score_threshold: 0.3

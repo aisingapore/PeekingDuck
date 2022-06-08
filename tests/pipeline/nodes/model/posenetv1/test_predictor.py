@@ -40,7 +40,8 @@ def model_dir(posenet_config):
     return (
         posenet_config["root"].parent
         / "peekingduck_weights"
-        / posenet_config["weights"]["model_subdir"]
+        / posenet_config["weights"][posenet_config["model_format"]]["model_subdir"]
+        / posenet_config["model_format"]
     )
 
 
@@ -50,7 +51,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -63,7 +64,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -79,7 +80,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -96,7 +97,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -116,7 +117,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -130,7 +131,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
@@ -148,7 +149,7 @@ class TestPredictor:
         predictor = Predictor(
             model_dir,
             posenet_config["model_type"],
-            posenet_config["weights"]["model_file"],
+            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
             posenet_config["model_nodes"],
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
