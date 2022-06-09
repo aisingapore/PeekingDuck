@@ -77,7 +77,7 @@ Some common node behaviors that you might want to adjust are:
 
 * ``model_type``: This specifies the variant of YOLOv4 to be used. By default, the `v4tiny` model
   is used, but for better accuracy, you may want to try the `v4` model.
-* ``detect_ids``: This specifies the class to be detected where no_mask = 0 and mask = 1. By default,
+* ``detect``: This specifies the class to be detected where no_mask = 0 and mask = 1. By default,
   the model detects faces with and without face masks (default = [0, 1]).
 * ``score_threshold``: This specifies the threshold value. Bounding boxes with confidence score
   lower than the threshold are discarded. You may want to lower the threshold value to increase the

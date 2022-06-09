@@ -2,7 +2,7 @@ nodes:
 - input.visual:
     source: tests/data/videos/humans_mot.mp4
 - model.efficientdet:
-    detect_ids: ["car"]
+    detect: ["car"]
 - dabble.tracking:
     tracking_type: iou
 - dabble.statistics:

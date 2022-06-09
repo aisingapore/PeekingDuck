@@ -48,8 +48,8 @@ class Node(AbstractNode):
             replacing ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
-        detect_ids (:obj:`List`): **default = [0]**. |br|
-            List of object class IDs to be detected. To detect all classes,
+        detect (:obj:`List[Union[int, string]]`): **default = [0]**. |br|
+            List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|
             Maximum number of detected instances for each class in an image.
