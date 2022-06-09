@@ -175,7 +175,7 @@ class TestMaskRCNN:
         npt.assert_almost_equal(expected_bbox, boxes)
         npt.assert_almost_equal(expected_score, scores)
         npt.assert_equal(expected_masks, masks)
-        # Only one expected instance (person) because default detect_ids should only
+        # Only one expected instance (person) because default detect should only
         # be person only ``[0]``
         npt.assert_equal(np.array(["person"]), labels)
 
@@ -206,8 +206,8 @@ class TestMaskRCNN:
         assert "image must be a np.ndarray" == str(excinfo.value)
 
     def test_invalid_detect_id(self, mask_rcnn_config):
-        mask_rcnn_config["detect_ids"] = 0
+        mask_rcnn_config["detect"] = 0
         with pytest.raises(TypeError) as excinfo:
             # Passing a non-list detect_id into the config
             _ = Node(config=mask_rcnn_config)
-        assert "detect_ids has to be a list" == str(excinfo.value)
+        assert "detect has to be a list" == str(excinfo.value)

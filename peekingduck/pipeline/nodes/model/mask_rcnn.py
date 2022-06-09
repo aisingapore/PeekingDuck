@@ -25,7 +25,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
     The Mask-RCNN node is capable detecting objects and their respective masks
     from 80 categories. The table of object categories can be found
-    :ref:`here <general-object-detection-ids>`. The ``"r50-fpn"`` backbone is
+    :ref:`here <general-instance-segmentation-ids>`. The ``"r50-fpn"`` backbone is
     used by default, and different types of backbones would be available in
     the future.
 
@@ -53,8 +53,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         max_size (:obj:`int`): **default=1333**. |br|
             Maximum size of the image to be rescaled before feeding it to the
             backbone.
-        detect_ids (:obj:`List[int]`): **default=[0]**. |br|
-            List of object category IDs to be detected. To detect all classes,
+        detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
+            List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-instance-segmentation-ids>`.
         nms_iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
@@ -87,7 +87,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         objects.
 
         The classes of objects to be detected can be specified through the
-        `detect_ids` configuration option.
+        `detect` configuration option.
 
         Args:
             inputs (Dict): Inputs dictionary with the key `img`.
