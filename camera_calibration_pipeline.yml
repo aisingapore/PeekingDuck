@@ -1,10 +1,10 @@
 nodes:
 - input.visual:
-    #source: http://aisg:a1s1n9apore@192.168.1.107:8085/?action=stream
     source: rtsp://admin:a1s1n9apore@192.168.1.88:554/Streaming/Channels/101
+    #source: 0
     threading: True
-- augment.undistort
-- dabble.fps
+- dabble.camera_calibration:
+    scale_factor: 1
 - draw.legend:
-    show: ["fps"]
+    show: ["num_detections", "next_detection_in"]
 - output.screen
