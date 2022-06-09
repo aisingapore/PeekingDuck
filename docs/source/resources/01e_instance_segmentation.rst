@@ -99,7 +99,7 @@ Instance Segmentation IDs
 General Instance Segmentation
 -----------------------------
 | The tables below provide the associated indices for each class.
-| To detect all classes, specify :code:`detect_ids: ["*"]` under the instance segmentation node configuration in ``pipeline_config.yml``.
+| To detect all classes, specify :code:`detect: ["*"]` under the instance segmentation node configuration in ``pipeline_config.yml``.
 
 +---------------+--------------+----------------+--------------+
 |               | ID           |                | ID           |
