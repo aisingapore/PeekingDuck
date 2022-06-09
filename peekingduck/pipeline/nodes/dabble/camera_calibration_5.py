@@ -73,7 +73,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
         cv2.FILLED,
     )
     # apply the overlay
-    cv2.addWeighted(box_img, 0.3, img_copy, 0.7, 0, img_copy)
+    cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
 
     pos = (int(width / 2 - text_width / 2), int(height / 2 + text_height / 2))
 
@@ -84,7 +84,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
         fontFace = cv2.FONT_HERSHEY_SIMPLEX,
         fontScale = font_scale,
         color = (0, 0, 255), #red
-        thickness = 2,
+        thickness = 1,
         lineType = cv2.LINE_AA
     )
 

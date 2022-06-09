@@ -32,7 +32,7 @@ TOP_RIGHT = 1
 BOTTOM_LEFT = 2
 BOTTOM_RIGHT = 3
 MIDDLE = 4
-INITIAL_INSTRUCTION = "PLACE THE BOARD IN THE BOX AS BIG AS POSSIBLE"
+INITIAL_INSTRUCTION = "PLACE THE BOARD IN THE BOX"
 TOO_SMALL = "THE BOARD IS TOO SMALL!"
 OUT_OF_BOX = "MOVE THE BOARD INTO THE BOX"
 DETECTION_SUCCESS = "DETECTION SUCCESSFUL! PRESS ANY KEY TO CONTINUE."
@@ -67,7 +67,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
         else:
             newStr = lastStr + " " + word
 
-        text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 2)
+        text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 1)
         text_width = text_size[0][0]
         if text_width > width / 2:
             sentences.append(word)
@@ -91,7 +91,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
         cv2.FILLED,
     )
     # apply the overlay
-    cv2.addWeighted(box_img, 0.3, img_copy, 0.7, 0, img_copy)
+    cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
 
     pos = (width - text_width - 15, height - (text_height + 5) * (len(sentences) - 1) - 20)
 
@@ -104,7 +104,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
             fontFace = cv2.FONT_HERSHEY_SIMPLEX,
             fontScale = font_scale,
             color = (0, 0, 255), #red
-            thickness = 2,
+            thickness = 1,
             lineType = cv2.LINE_AA
         )
 

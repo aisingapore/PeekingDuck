@@ -77,7 +77,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
         cv2.FILLED,
     )
     # apply the overlay
-    cv2.addWeighted(box_img, 0.3, img_copy, 0.7, 0, img_copy)
+    cv2.addWeighted(box_img, 0.5, img_copy, 0.5, 0, img_copy)
 
     pos = (width - text_width - 15, height - 20)
 

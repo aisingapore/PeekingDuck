@@ -32,9 +32,9 @@ TOP_RIGHT = 1
 BOTTOM_LEFT = 2
 BOTTOM_RIGHT = 3
 MIDDLE = 4
-INITIAL_INSTRUCTION = "PLACE THE BOARD IN THE BOX AS LARGE AS POSSIBLE"
+INITIAL_INSTRUCTION = "PLACE BOARD HERE"
 TOO_SMALL = "THE BOARD IS TOO SMALL!"
-OUT_OF_BOX = "MOVE THE BOARD INTO THE BOX"
+OUT_OF_BOX = "MOVE BOARD HERE"
 DETECTION_SUCCESS = "DETECTION SUCCESSFUL! PRESS ANY KEY TO CONTINUE."
 DETECTION_COMPLETE = "DETECTION COMPLETE! PRESS ANY KEY TO EXIT."
 
@@ -57,7 +57,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
 
     height, width = img_copy.shape[:2]
 
-    font_scale = get_optimal_font_scale(text, width / 3 - 10))
+    font_scale = get_optimal_font_scale(text, width / 3 - 10)
 
     sentences = [""]
     for word in text.split(' '):
@@ -67,7 +67,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
         else:
             newStr = lastStr + " " + word
 
-        text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 2)
+        text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 1)
         text_width = text_size[0][0]
         if text_width > width / 3 - 10:
             sentences.append(word)
@@ -91,7 +91,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
             cv2.FILLED,
         )
         # apply the overlay
-        cv2.addWeighted(box_img, 0.3, img_copy, 0.7, 0, img_copy)
+        cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
 
         pos = (pos[0] + 5, pos[1] + text_height + 5)
 
@@ -106,7 +106,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
             cv2.FILLED,
         )
         # apply the overlay
-        cv2.addWeighted(box_img, 0.3, img_copy, 0.7, 0, img_copy)
+        cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
 
         pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(sentences) - 1) - 5)
 
@@ -117,8 +117,8 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
             org = pos,
             fontFace = cv2.FONT_HERSHEY_SIMPLEX,
             fontScale = font_scale,
-            color = (0, 0, 255), #red
-            thickness = 2,
+            color = (156, 223, 244),
+            thickness = 1,
             lineType = cv2.LINE_AA
         )
 
@@ -131,12 +131,20 @@ def draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> None:
 
     img_copy = img.copy()
 
+    cv2.rectangle(
+        img = img_copy, 
+        pt1 = start_point, 
+        pt2 = end_point, 
+        color = (0, 0, 0),
+        thickness = 3
+    )
+
     return cv2.rectangle(
         img = img_copy, 
         pt1 = start_point, 
         pt2 = end_point, 
-        color = (0, 0, 255), #red
-        thickness = 2
+        color = (156, 223, 244),
+        thickness = 1
     )
 
 
