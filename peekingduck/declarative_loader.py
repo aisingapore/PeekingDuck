@@ -84,7 +84,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         """Loads a list of nodes from pipeline_path.yml"""
 
         # dotw 2022-03-17: Temporary helper methods
-        def deprecation_warning(name: str, config: Union[str, Dict[str, Any]]) -> None:
+        def input_node_deprecation_warning(
+            name: str, config: Union[str, Dict[str, Any]]
+        ) -> None:
             deprecate(
                 f"`{name}` deprecated and will be removed in the future. "
                 "Please use `input.visual` instead.",
@@ -111,7 +113,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         for node in nodes:
             if isinstance(node, str):
                 if node in ["input.live", "input.recorded"]:
-                    deprecation_warning(node, "input.visual")
+                    input_node_deprecation_warning(node, "input.visual")
                     if node == "input.live":
                         node = {"input.visual": {"source": 0}}
                     else:
@@ -123,13 +125,13 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     if "input_source" in node_config:
                         node_config["source"] = node_config.pop("input_source")
                     node["input.visual"] = node_config
-                    deprecation_warning("input.live", node_config)
+                    input_node_deprecation_warning("input.live", node_config)
                 if "input.recorded" in node:
                     node_config = node.pop("input.recorded")
                     if "input_dir" in node_config:
                         node_config["source"] = node_config.pop("input_dir")
                     node["input.visual"] = node_config
-                    deprecation_warning("input.recorded", node_config)
+                    input_node_deprecation_warning("input.recorded", node_config)
             upgraded_nodes.append(node)
 
         self.logger.info("Successfully loaded pipeline file.")
@@ -212,15 +214,29 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     dict_orig.get(key, {}), value, node_name  # type: ignore
                 )
             else:
-                if key not in dict_orig:
+                # Replace "detect_ids" with "detect" in code below
+                if key not in dict_orig and key != "detect_ids":
                     self.logger.warning(
                         f"Config for node {node_name} does not have the key: {key}"
                     )
                 else:
-                    if key == "detect_ids":
-                        key, value = obj_det_change_class_name_to_id(
-                            node_name, key, value
-                        )
+                    # Support "detect: ['person']" instead of "detect_ids: ['person']"
+                    if key in ["detect", "detect_ids"]:
+                        # Deprecation notice for "detect_ids"
+                        if key == "detect_ids":
+                            deprecate(
+                                "`detect_ids` is deprecated and will be removed in future. "
+                                "Please use `detect` instead.",
+                                4,
+                            )
+
+                        # Only convert class names to id if model is not yolo_face,
+                        # since yolo_face has no class names
+                        if node_name != "model.yolo_face":
+                            key, value = obj_det_change_class_name_to_id(
+                                node_name, key, value
+                            )
+                        key = "detect"  # replace "detect_ids" with new "detect"
 
                     dict_orig[key] = value
                     self.logger.info(

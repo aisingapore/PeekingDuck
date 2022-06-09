@@ -174,7 +174,7 @@ To get a quick overview of PeekingDuck's nodes, run the following command:
    | \ :blue:`[~user]` \ > \ :green:`peekingduck nodes` \
 
 
-.. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/images/tutorials/ss_pkd_nodes.png
+.. url: https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/images/tutorials/ss_pkd_nodes.png
 .. image:: /assets/tutorials/ss_pkd_nodes.png
    :alt: PeekingDuck screenshot : nodes output
 

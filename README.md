@@ -1,13 +1,13 @@
 <br />
 
-<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/peekingduck.svg">
+<img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/peekingduck.svg">
 
 ---
 
 [![Python version](https://img.shields.io/badge/python-3.6%20%7C%203.7%20%7C%203.8%20%7C%203.9-blue.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI version](https://badge.fury.io/py/peekingduck.svg)](https://pypi.org/project/peekingduck/)
 [![PyPI Downloads](https://img.shields.io/pypi/dm/peekingduck)](https://pypi.org/project/peekingduck/)
-[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue.svg)](https://github.com/aimakerspace/PeekingDuck/blob/main/LICENSE)
 [![Documentation Status](https://readthedocs.org/projects/peekingduck/badge/?version=stable)](https://peekingduck.readthedocs.io/en/stable/?badge=stable)
 
 <h4 align="center">
@@ -61,7 +61,7 @@ PeekingDuck can also be [installed in a virtual environment](https://peekingduck
 ```
 
 You should see a video of a person waving his hand with
-[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/getting_started/verify_install.gif).
+[bounding boxes overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/getting_started/verify_install.gif).
 
 The video will close automatically when it is run to the end, select the video window and press `q` to exit earlier.
 
@@ -82,7 +82,7 @@ Run the demo pipeline.
 ```
 
 If you have a webcam, you should see a man waving on the output screen with
-[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/getting_started/default_pipeline.gif).
+[skeletal frame overlaid](https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/getting_started/default_pipeline.gif).
 
 Terminate the program by clicking on the output screen and pressing `q`.
 
@@ -96,44 +96,44 @@ Gallery
   <tr>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/social_distancing.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/social_distancing.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/social_distancing.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_faces.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_faces.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/privacy_protection_faces.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/zone_counting.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/zone_counting.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/zone_counting.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/object_counting_over_time.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/object_counting_over_time.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/object_counting_over_time.gif">
       </a>
     </td>
   </tr>
   <tr>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/group_size_checking.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/group_size_checking.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/group_size_checking.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/privacy_protection_license_plates.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/privacy_protection_license_plates.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/crowd_counting.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/crowd_counting.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/crowd_counting.gif">
       </a>
     </td>
     <td>
       <a href="https://peekingduck.readthedocs.io/en/stable/use_cases/people_counting_over_time.html">
-        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/dev/docs/source/assets/use_cases/people_counting_over_time.gif">
+        <img src="https://raw.githubusercontent.com/aimakerspace/PeekingDuck/main/docs/source/assets/use_cases/people_counting_over_time.gif">
       </a>
     </td>
   </tr>
@@ -149,7 +149,7 @@ This project is supported by the National Research Foundation, Singapore under i
 License
 -------
 
-PeekingDuck is under the open source [Apache License 2.0](https://github.com/aimakerspace/PeekingDuck/blob/dev/LICENSE) (:
+PeekingDuck is under the open source [Apache License 2.0](https://github.com/aimakerspace/PeekingDuck/blob/main/LICENSE) (:
 
 Even so, your organization may require legal proof of its right to use PeekingDuck, due to circumstances such as the following:
 - Your organization is using PeekingDuck in a jurisdiction that does not recognize this license

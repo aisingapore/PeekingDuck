@@ -66,11 +66,13 @@ class AbstractNode(metaclass=ABCMeta):
 
         # For object detection nodes, convert class names to class ids, if any
         if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
-            current_ids = self.config["detect_ids"]
+            key = "detect" if hasattr(self, "detect") else "detect_ids"
+            current_ids = self.config[key]
             _, updated_ids = obj_det_change_class_name_to_id(
-                self.node_name, "detect_ids", current_ids
+                self.node_name, key, current_ids
             )
-            self.config["detect_ids"] = updated_ids
+            # replace "detect_ids" with new "detect"
+            self.config["detect"] = updated_ids
 
     @classmethod
     def __subclasshook__(cls: Any, subclass: Any) -> bool:

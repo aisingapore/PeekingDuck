@@ -15,7 +15,7 @@ Arm64
 To install PeekingDuck on an ARM-based device, such as a Raspberry Pi, include
 the ``--no-dependencies`` flag, and separately install the other dependencies
 listed in PeekingDuck's `[requirements.txt]
-<https://github.com/aimakerspace/PeekingDuck/blob/dev/requirements.txt>`_:
+<https://github.com/aimakerspace/PeekingDuck/blob/main/requirements.txt>`_:
 
 .. admonition:: Terminal Session
 

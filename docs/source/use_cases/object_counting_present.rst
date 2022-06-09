@@ -32,7 +32,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: object_counting_present.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/object_counting_present.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/object_counting_present.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -85,7 +85,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - input.visual:
        source: 0
    - model.yolo:
-       detect_ids: ["person"]
+       detect: ["person"]
    - dabble.bbox_count
    - dabble.statistics:
        identity: count

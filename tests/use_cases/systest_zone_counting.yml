@@ -2,7 +2,7 @@ nodes:
 - input.visual:
     source: "tests/data/images"
 - model.yolo:
-    detect_ids: ["person"]
+    detect: ["person"]
 - dabble.bbox_to_btm_midpoint
 - dabble.zone_count:
     resolution: [1280, 720]

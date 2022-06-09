@@ -36,7 +36,7 @@ num_classes: 80
 model_format: pytorch
 model_type: yolox-tiny # yolox-tiny, yolox-s, yolox-m, or yolox-l
 input_size: 416
-detect_ids: [0]
+detect: [0]
 iou_threshold: 0.45
 score_threshold: 0.25
 agnostic_nms: true

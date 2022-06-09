@@ -93,7 +93,7 @@ class TestYolo:
         assert yolo.model.detect_ids == [0]
 
     def test_invalid_config_detect_ids(self, yolo_config):
-        yolo_config["detect_ids"] = 1
+        yolo_config["detect"] = 1
         with pytest.raises(TypeError):
             _ = Node(config=yolo_config)
 

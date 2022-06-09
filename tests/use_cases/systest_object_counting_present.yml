@@ -2,7 +2,7 @@ nodes:
 - input.visual:
     source: "tests/data/images"
 - model.yolo:
-    detect_ids: ["person"]
+    detect: ["person"]
 - dabble.bbox_count
 - dabble.statistics:
     identity: count
