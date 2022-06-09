@@ -48,7 +48,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        detect_ids (:obj:`List`): **default = [0, 1]**. |br|
+        detect (:obj:`List[int]`): **default = [0, 1]**. |br|
             List of object class IDs to be detected where `no_mask` is ``0``
             and `mask` is ``1``.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|

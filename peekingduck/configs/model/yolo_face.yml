@@ -18,6 +18,6 @@ max_total_size: 50
 
 model_format: tensorflow
 model_type: v4tiny # v4 or v4tiny
-detect_ids: [0, 1]
+detect: [0, 1]
 iou_threshold: 0.1
 score_threshold: 0.7

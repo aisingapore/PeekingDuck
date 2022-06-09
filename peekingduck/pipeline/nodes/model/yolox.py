@@ -50,8 +50,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             replacing ``null`` with an absolute path to the desired directory.
         input_size (:obj:`int`): **default=416**. |br|
             Input image resolution of the YOLOX model.
-        detect_ids (:obj:`List[int]`): **default=[0]**. |br|
-            List of object category IDs to be detected. To detect all classes,
+        detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
+            List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
@@ -87,7 +87,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         objects.
 
         The classes of objects to be detected can be specified through the
-        `detect_ids` configuration option.
+        `detect` configuration option.
 
         Args:
             inputs (Dict): Inputs dictionary with the key `img`.
