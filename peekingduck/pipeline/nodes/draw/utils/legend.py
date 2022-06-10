@@ -46,7 +46,11 @@ class Legend:
         self.legend_height = 0
 
     def draw(
-        self, inputs: Dict[str, Any], items: List[str], position: str, box_opacity: float
+        self,
+        inputs: Dict[str, Any],
+        items: List[str],
+        position: str,
+        box_opacity: float,
     ) -> np.ndarray:
         """Draw legends onto image
 
@@ -166,7 +170,10 @@ class Legend:
         cv2.rectangle(
             overlay,
             (self.legend_left_x, self.legend_starting_y),
-            (self.legend_left_x + self.legend_width, self.legend_starting_y + self.legend_height),
+            (
+                self.legend_left_x + self.legend_width,
+                self.legend_starting_y + self.legend_height,
+            ),
             BLACK,
             FILLED,
         )
@@ -209,12 +216,14 @@ class Legend:
         else:
             text = f"{item_name.upper()}: {str(item_info)}"
 
-        return cv2.getTextSize(
+        textSize = cv2.getTextSize(
             text,
             FONT_HERSHEY_SIMPLEX,
             SMALL_FONTSCALE,
             THICK,
-        )[0][0]
+        )
+
+        return textSize[0][0]
 
     @staticmethod
     def _get_legend_width(inputs: Dict[str, Any], items: List[str]) -> int:
