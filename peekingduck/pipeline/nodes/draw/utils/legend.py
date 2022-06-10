@@ -216,14 +216,14 @@ class Legend:
         else:
             text = f"{item_name.upper()}: {str(item_info)}"
 
-        textSize = cv2.getTextSize(
+        text_size = cv2.getTextSize(
             text,
             FONT_HERSHEY_SIMPLEX,
             SMALL_FONTSCALE,
             THICK,
         )
 
-        return textSize[0][0]
+        return text_size[0][0]
 
     @staticmethod
     def _get_legend_width(inputs: Dict[str, Any], items: List[str]) -> int:
