@@ -46,7 +46,7 @@ class Legend:
         self.legend_height = 0
 
     def draw(
-        self, inputs: Dict[str, Any], items: List[str], position: str
+        self, inputs: Dict[str, Any], items: List[str], position: str, box_opacity: float
     ) -> np.ndarray:
         """Draw legends onto image
 
@@ -61,7 +61,7 @@ class Legend:
         self.legend_width = self._get_legend_width(inputs, items)
         self._set_legend_variables(position)
 
-        self._draw_legend_box(self.frame)
+        self._draw_legend_box(self.frame, box_opacity)
         y_pos = self.legend_starting_y + 20
         for item in items:
             if item == "zone_count":
@@ -153,7 +153,7 @@ class Legend:
                 LINE_AA,
             )
 
-    def _draw_legend_box(self, frame: np.ndarray) -> None:
+    def _draw_legend_box(self, frame: np.ndarray, box_opacity: float) -> None:
         """draw pts of selected object onto frame
 
         Args:
@@ -171,7 +171,7 @@ class Legend:
             FILLED,
         )
         # apply the overlay
-        cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
+        cv2.addWeighted(overlay, box_opacity, frame, 1 - box_opacity, 0, frame)
 
     @staticmethod
     def _get_legend_height(inputs: Dict[str, Any], items: List[str]) -> int:
