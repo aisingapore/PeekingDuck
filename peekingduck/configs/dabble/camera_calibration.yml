@@ -1,6 +1,6 @@
 # Mandatory configs
 input: ["img"]
-output: ["img", "num_detections", "next_detection_in"]
+output: ["img"]
 
 # Optional configs
 num_corners: [10, 7]

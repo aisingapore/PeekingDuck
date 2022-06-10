@@ -32,9 +32,9 @@ TOP_RIGHT = 1
 BOTTOM_LEFT = 2
 BOTTOM_RIGHT = 3
 MIDDLE = 4
-INITIAL_INSTRUCTION = "PLACE BOARD HERE"
+INITIAL_INSTRUCTION = "PLACE THE BOARD IN THE BOX"
 TOO_SMALL = "THE BOARD IS TOO SMALL!"
-OUT_OF_BOX = "MOVE BOARD HERE"
+OUT_OF_BOX = "MOVE THE BOARD INTO THE BOX"
 DETECTION_SUCCESS = "DETECTION SUCCESSFUL! PRESS ANY KEY TO CONTINUE."
 DETECTION_COMPLETE = "DETECTION COMPLETE! PRESS ANY KEY TO EXIT."
 
@@ -50,14 +50,14 @@ def get_optimal_font_scale(text: str, width):
             return scale / 50
     return 0.5
 
-def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
+def draw_text(img: np.ndarray, text: str) -> None:
     """ Helper function to draw text on the image """
 
     img_copy = img.copy()
 
     height, width = img_copy.shape[:2]
 
-    font_scale = get_optimal_font_scale(text, width / 3 - 10)
+    font_scale = get_optimal_font_scale(text, width / 2)
 
     sentences = [""]
     for word in text.split(' '):
@@ -69,7 +69,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
 
         text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 1)
         text_width = text_size[0][0]
-        if text_width > width / 3 - 10:
+        if text_width > width / 2:
             sentences.append(word)
         else:
             sentences[-1] = newStr
@@ -77,38 +77,24 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
     text_size = (0, 0)
     for sentence in sentences:
         text_size = max(text_size, cv2.getTextSize(sentence, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 2)[0])
+    
     text_width = text_size[0]
     text_height = text_size[1]
 
-    if posType == TOP_LEFT:
-        # background box
-        box_img = img_copy.copy()
-        cv2.rectangle(
-            box_img,
-            (pos[0], pos[1]),
-            (pos[0] + text_width + 5, pos[1] + len(sentences) * (text_height + 5) + 5),
-            (0, 0, 0),
-            cv2.FILLED,
-        )
-        # apply the overlay
-        cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
+    # background box
+    box_img = img_copy.copy()
+    cv2.rectangle(
+        box_img,
+        (width - text_width - 15 - 5, height - (text_height + 5) * len(sentences) - 20),
+        (width - 15 + 5, height - 20 + 5),
+        (0, 0, 0),
+        cv2.FILLED,
+    )
+    # apply the overlay
+    cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
 
-        pos = (pos[0] + 5, pos[1] + text_height + 5)
+    pos = (width - text_width - 15, height - (text_height + 5) * (len(sentences) - 1) - 20)
 
-    elif posType == BOTTOM_LEFT:
-        # background box
-        box_img = img_copy.copy()
-        cv2.rectangle(
-            box_img,
-            (pos[0], pos[1] - len(sentences) * (text_height + 5) - 5),
-            (pos[0] + text_width + 5, pos[1]),
-            (0, 0, 0),
-            cv2.FILLED,
-        )
-        # apply the overlay
-        cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
-
-        pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(sentences) - 1) - 5)
 
     for sentence in sentences:
         img_copy = cv2.putText(
@@ -117,7 +103,7 @@ def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
             org = pos,
             fontFace = cv2.FONT_HERSHEY_SIMPLEX,
             fontScale = font_scale,
-            color = (156, 223, 244),
+            color = (0, 0, 255), #red
             thickness = 1,
             lineType = cv2.LINE_AA
         )
@@ -131,20 +117,12 @@ def draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> None:
 
     img_copy = img.copy()
 
-    cv2.rectangle(
-        img = img_copy, 
-        pt1 = start_point, 
-        pt2 = end_point, 
-        color = (0, 0, 0),
-        thickness = 3
-    )
-
     return cv2.rectangle(
         img = img_copy, 
         pt1 = start_point, 
         pt2 = end_point, 
-        color = (156, 223, 244),
-        thickness = 1
+        color = (0, 0, 255), #red
+        thickness = 2
     )
 
 
@@ -230,31 +208,26 @@ class Node(AbstractNode):
         if self.num_detections == TOP_LEFT:
             start_point = (0, 0)
             end_point = (int(w/3), int(h/2))
-            text_pos = (5, int(h/2) - 5)
-            pos_type = BOTTOM_LEFT
+            text_pos = (15, int(h/2) - 20)
         elif self.num_detections == TOP_RIGHT:
             start_point = (int(2*w/3), 0)
             end_point = (w, int(h/2))
-            text_pos = (int(2*w/3) + 5, int(h/2) - 5)
-            pos_type = BOTTOM_LEFT
+            text_pos = (int(2*w/3) + 15, int(h/2) - 20)
         elif self.num_detections == BOTTOM_LEFT:
             start_point = (0, int(h/2))
             end_point = (int(w/3), h)
-            text_pos = (5, int(h/2) + 5)
-            pos_type = TOP_LEFT
+            text_pos = (15, int(h/2) + 20)
         elif self.num_detections == BOTTOM_RIGHT:
             start_point = (int(2*w/3), int(h/2))
             end_point = (w, h)
-            text_pos = (int(2*w/3) + 5, int(h/2) + 5)
-            pos_type = TOP_LEFT
+            text_pos = (int(2*w/3) + 15, int(h/2) + 20)
         else: #MIDDLE
             start_point = (int(w/3), int(h/4))
             end_point = (int(2*w/3), int(3*h/4))
-            text_pos = (int(w/3) + 5, int(3*h/4) - 5)
-            pos_type = BOTTOM_LEFT
+            text_pos = (int(w/3) + 15, int(3*h/4) - 20)
 
         img_notext = draw_box(img, start_point, end_point)
-        img = draw_text(img_notext, INITIAL_INSTRUCTION, text_pos, pos_type)
+        img = draw_text(img_notext, INITIAL_INSTRUCTION)
 
         # if sufficient time has passed
         if time.time() - self.last_detection >= 5:
@@ -288,7 +261,7 @@ class Node(AbstractNode):
             area = (max_w - min_w) * (max_h - min_h)
 
             if area < w * h / (6 * 4):
-                img = draw_text(img_notext, TOO_SMALL, text_pos, pos_type)
+                img = draw_text(img_notext, TOO_SMALL)
                 detect_corners_success = False
 
             else:
@@ -300,7 +273,7 @@ class Node(AbstractNode):
                 area_in_box = max(0, (max_w_box - min_w_box) * (max_h_box - min_h_box))
 
                 if area_in_box < 3 * area / 4:
-                    img = draw_text(img_notext, OUT_OF_BOX, text_pos, pos_type)
+                    img = draw_text(img_notext, OUT_OF_BOX)
                     detect_corners_success = False
 
         if detect_corners_success:
@@ -317,9 +290,9 @@ class Node(AbstractNode):
             self.num_detections += 1
 
             if self.num_detections != self.num_pictures:
-                img = draw_text(img_notext, DETECTION_SUCCESS, (5, img_notext.shape[0] - 5), BOTTOM_LEFT)
+                img = draw_text(img_notext, DETECTION_SUCCESS)
             else:
-                img = draw_text(img_notext, DETECTION_COMPLETE, (5, img_notext.shape[0] - 5), BOTTOM_LEFT)
+                img = draw_text(img_notext, DETECTION_COMPLETE)
             
             # display the image and wait for user to press a key
             cv2.imshow("PeekingDuck", img)

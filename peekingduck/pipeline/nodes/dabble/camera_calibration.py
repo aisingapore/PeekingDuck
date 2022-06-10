@@ -23,6 +23,7 @@ import numpy as np
 from pathlib import Path
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE, BLACK
 
 # global constants
 # terminal criteria for subpixel finetuning 
@@ -32,14 +33,14 @@ TOP_RIGHT = 1
 BOTTOM_LEFT = 2
 BOTTOM_RIGHT = 3
 MIDDLE = 4
-INITIAL_INSTRUCTION = "PLACE THE BOARD IN THE BOX"
-TOO_SMALL = "THE BOARD IS TOO SMALL!"
-OUT_OF_BOX = "MOVE THE BOARD INTO THE BOX"
+DEFAULT_TEXT = "PLACE BOARD HERE"
+TOO_SMALL = "MOVE BOARD CLOSER"
 DETECTION_SUCCESS = "DETECTION SUCCESSFUL! PRESS ANY KEY TO CONTINUE."
 DETECTION_COMPLETE = "DETECTION COMPLETE! PRESS ANY KEY TO EXIT."
+BOX_OPACITY = 0.75
 
 def get_optimal_font_scale(text: str, width):
-    for scale in range(100, 25, -1):
+    for scale in range(250, 25, -1):
         if scale / 50 >= 0.5:
             thickness = 2
         else:
@@ -50,14 +51,13 @@ def get_optimal_font_scale(text: str, width):
             return scale / 50
     return 0.5
 
-def draw_text(img: np.ndarray, text: str) -> None:
+def draw_text(img: np.ndarray, text: str, pos: tuple, posType: int) -> None:
     """ Helper function to draw text on the image """
 
     img_copy = img.copy()
-
     height, width = img_copy.shape[:2]
 
-    font_scale = get_optimal_font_scale(text, width / 2)
+    font_scale = get_optimal_font_scale(text, width / 3 - 10)
 
     sentences = [""]
     for word in text.split(' '):
@@ -69,7 +69,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
 
         text_size = cv2.getTextSize(newStr, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 1)
         text_width = text_size[0][0]
-        if text_width > width / 2:
+        if text_width > width / 3 - 10:
             sentences.append(word)
         else:
             sentences[-1] = newStr
@@ -77,24 +77,38 @@ def draw_text(img: np.ndarray, text: str) -> None:
     text_size = (0, 0)
     for sentence in sentences:
         text_size = max(text_size, cv2.getTextSize(sentence, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 2)[0])
-    
     text_width = text_size[0]
     text_height = text_size[1]
 
-    # background box
-    box_img = img_copy.copy()
-    cv2.rectangle(
-        box_img,
-        (width - text_width - 15 - 5, height - (text_height + 5) * len(sentences) - 20),
-        (width - 15 + 5, height - 20 + 5),
-        (0, 0, 0),
-        cv2.FILLED,
-    )
-    # apply the overlay
-    cv2.addWeighted(box_img, 0.75, img_copy, 0.25, 0, img_copy)
+    if posType == TOP_LEFT:
+        # background box
+        box_img = img_copy.copy()
+        cv2.rectangle(
+            box_img,
+            (pos[0], pos[1]),
+            (pos[0] + text_width + 5, pos[1] + len(sentences) * (text_height + 5) + 5),
+            BLACK,
+            cv2.FILLED,
+        )
+        # apply the overlay
+        cv2.addWeighted(box_img, BOX_OPACITY, img_copy, 1 - BOX_OPACITY, 0, img_copy)
 
-    pos = (width - text_width - 15, height - (text_height + 5) * (len(sentences) - 1) - 20)
+        pos = (pos[0] + 5, pos[1] + text_height + 5)
 
+    elif posType == BOTTOM_LEFT:
+        # background box
+        box_img = img_copy.copy()
+        cv2.rectangle(
+            box_img,
+            (pos[0], pos[1] - len(sentences) * (text_height + 5) - 5),
+            (pos[0] + text_width + 5, pos[1]),
+            BLACK,
+            cv2.FILLED,
+        )
+        # apply the overlay
+        cv2.addWeighted(box_img, BOX_OPACITY, img_copy, 1 - BOX_OPACITY, 0, img_copy)
+
+        pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(sentences) - 1) - 5)
 
     for sentence in sentences:
         img_copy = cv2.putText(
@@ -103,7 +117,7 @@ def draw_text(img: np.ndarray, text: str) -> None:
             org = pos,
             fontFace = cv2.FONT_HERSHEY_SIMPLEX,
             fontScale = font_scale,
-            color = (0, 0, 255), #red
+            color = CHAMPAGNE,
             thickness = 1,
             lineType = cv2.LINE_AA
         )
@@ -112,17 +126,65 @@ def draw_text(img: np.ndarray, text: str) -> None:
 
     return img_copy
 
+
+def draw_countdown(img: np.ndarray, num: int) -> None:
+
+    img_copy = img.copy()
+    height, width = img_copy.shape[:2]
+
+    text = str(num)
+
+    font_scale = get_optimal_font_scale(text, width / 8)
+    text_width, text_height = cv2.getTextSize(text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness = 2)[0]
+    
+    pos = (
+        int(width / 2 - text_width / 2),
+        int(height / 2 + text_height / 2)
+    )
+
+    img_copy = cv2.putText(
+        img = img_copy,
+        text = text,
+        org = pos,
+        fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale = font_scale,
+        color = BLACK,
+        thickness = 3,
+        lineType = cv2.LINE_AA
+    )
+
+    return cv2.putText(
+        img = img_copy,
+        text = text,
+        org = pos,
+        fontFace = cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale = font_scale,
+        color = CHAMPAGNE,
+        thickness = 1,
+        lineType = cv2.LINE_AA
+    )
+
+    
+
 def draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> None:
     """ Helper function to draw rectangle on the image """
 
     img_copy = img.copy()
 
+    cv2.rectangle(
+        img = img_copy, 
+        pt1 = start_point, 
+        pt2 = end_point, 
+        color = (0, 0, 0),
+        thickness = 3
+    )
+
     return cv2.rectangle(
         img = img_copy, 
         pt1 = start_point, 
         pt2 = end_point, 
-        color = (0, 0, 255), #red
-        thickness = 2
+        color = CHAMPAGNE,
+        thickness = 1
     )
 
 
@@ -199,6 +261,7 @@ class Node(AbstractNode):
         """
 
         img = inputs["img"]
+        img = cv2.flip(img, 1)
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
         detect_corners_success = False
@@ -208,26 +271,33 @@ class Node(AbstractNode):
         if self.num_detections == TOP_LEFT:
             start_point = (0, 0)
             end_point = (int(w/3), int(h/2))
-            text_pos = (15, int(h/2) - 20)
+            text_pos = (5, int(h/2) - 5)
+            pos_type = BOTTOM_LEFT
         elif self.num_detections == TOP_RIGHT:
             start_point = (int(2*w/3), 0)
             end_point = (w, int(h/2))
-            text_pos = (int(2*w/3) + 15, int(h/2) - 20)
+            text_pos = (int(2*w/3) + 5, int(h/2) - 5)
+            pos_type = BOTTOM_LEFT
         elif self.num_detections == BOTTOM_LEFT:
             start_point = (0, int(h/2))
             end_point = (int(w/3), h)
-            text_pos = (15, int(h/2) + 20)
+            text_pos = (5, int(h/2) + 5)
+            pos_type = TOP_LEFT
         elif self.num_detections == BOTTOM_RIGHT:
             start_point = (int(2*w/3), int(h/2))
             end_point = (w, h)
-            text_pos = (int(2*w/3) + 15, int(h/2) + 20)
+            text_pos = (int(2*w/3) + 5, int(h/2) + 5)
+            pos_type = TOP_LEFT
         else: #MIDDLE
             start_point = (int(w/3), int(h/4))
             end_point = (int(2*w/3), int(3*h/4))
-            text_pos = (int(w/3) + 15, int(3*h/4) - 20)
+            text_pos = (int(w/3) + 5, int(3*h/4) - 5)
+            pos_type = BOTTOM_LEFT
+
+        display_text = f"{DEFAULT_TEXT} ({self.num_detections + 1}/{self.num_pictures})"
 
         img_notext = draw_box(img, start_point, end_point)
-        img = draw_text(img_notext, INITIAL_INSTRUCTION)
+        img = draw_text(img_notext, display_text, text_pos, pos_type)
 
         # if sufficient time has passed
         if time.time() - self.last_detection >= 5:
@@ -261,7 +331,7 @@ class Node(AbstractNode):
             area = (max_w - min_w) * (max_h - min_h)
 
             if area < w * h / (6 * 4):
-                img = draw_text(img_notext, TOO_SMALL)
+                img = draw_text(img_notext, TOO_SMALL, text_pos, pos_type)
                 detect_corners_success = False
 
             else:
@@ -270,10 +340,12 @@ class Node(AbstractNode):
                 min_h_box = max(min_h, start_point[1])
                 max_h_box = min(max_h, end_point[1])
 
+                if max_w_box < min_w_box or max_h_box < min_h_box:
+                    detect_corners_success = False
+
                 area_in_box = max(0, (max_w_box - min_w_box) * (max_h_box - min_h_box))
 
                 if area_in_box < 3 * area / 4:
-                    img = draw_text(img_notext, OUT_OF_BOX)
                     detect_corners_success = False
 
         if detect_corners_success:
@@ -290,9 +362,9 @@ class Node(AbstractNode):
             self.num_detections += 1
 
             if self.num_detections != self.num_pictures:
-                img = draw_text(img_notext, DETECTION_SUCCESS)
+                img = draw_text(img_notext, DETECTION_SUCCESS, text_pos, pos_type)
             else:
-                img = draw_text(img_notext, DETECTION_COMPLETE)
+                img = draw_text(img_notext, DETECTION_COMPLETE, text_pos, pos_type)
             
             # display the image and wait for user to press a key
             cv2.imshow("PeekingDuck", img)
@@ -305,6 +377,7 @@ class Node(AbstractNode):
                 calibration_success, camera_matrix, distortion_coeffs, rotation_vec, translation_vec = cv2.calibrateCamera(self.object_points, self.image_points, gray_img.shape[::-1], None, None)
 
                 if calibration_success:
+                    self.logger.info(f"Calibration successful!")
                     self.logger.info(f"camera_matrix: {camera_matrix}")
                     self.logger.info(f"distortion_coeffs: {distortion_coeffs}")
 
@@ -313,8 +386,6 @@ class Node(AbstractNode):
                     file_data['distortion_coeffs'] = distortion_coeffs.tolist()
 
                     yaml.dump(file_data, open(self.file_path, "w"), default_flow_style = None)
-
-                    self.logger.info(f"Calibration successful!")
                 else:
                     raise Exception("Calibration failed. Please try again.")
 
@@ -330,7 +401,8 @@ class Node(AbstractNode):
         # format text for the legend
         num_detections_string = f"{self.num_detections}/{self.num_pictures}"
 
-        time_to_next_detection = max(0, int(5 - time.time() + self.last_detection))
-        next_detection_in_string = f"{time_to_next_detection}s"
+        time_to_next_detection = int(5 - time.time() + self.last_detection)
+        if time_to_next_detection > 0:
+            img = draw_countdown(img, time_to_next_detection)
 
-        return {"img": img, "num_detections": num_detections_string, "next_detection_in": next_detection_in_string}
+        return {"img": img}

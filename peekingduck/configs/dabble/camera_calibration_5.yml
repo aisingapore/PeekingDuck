@@ -1,8 +1,0 @@
-# Mandatory configs
-input: ["img"]
-output: ["img", "num_detections", "next_detection_in"]
-
-# Optional configs
-num_corners: [10, 7]
-scale_factor: 4
-file_path: PeekingDuck/data/camera_calibration_coeffs.yml

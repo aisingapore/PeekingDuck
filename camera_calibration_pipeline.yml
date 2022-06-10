@@ -1,10 +1,8 @@
 nodes:
 - input.visual:
-    source: rtsp://admin:a1s1n9apore@192.168.1.88:554/Streaming/Channels/101
-    #source: 0
+    #source: rtsp://admin:a1s1n9apore@192.168.1.88:554/Streaming/Channels/101
+    source: 0
     threading: True
-- dabble.camera_calibration_3:
-    scale_factor: 4
-- draw.legend:
-    show: ["num_detections", "next_detection_in"]
+- dabble.camera_calibration:
+    scale_factor: 1
 - output.screen
