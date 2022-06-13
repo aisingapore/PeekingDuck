@@ -19,11 +19,13 @@ Undistorts an image.
 
 from typing import Any, Dict
 
-import cv2, yaml
-import numpy as np
 from pathlib import Path
+import cv2
+import yaml
+import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+
 
 class Node(AbstractNode):
     """Undistorts an image by removing radial distortion
@@ -44,16 +46,19 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.file_path = Path(self.file_path) # type: ignore
-        # check if file_path has a '.yml' extension
-        if self.file_path.suffix != '.yml':
+        self.file_path = Path(self.file_path)  # type: ignore
+        # check if file_path has a ".yml" extension
+        if self.file_path.suffix != ".yml":
             raise ValueError("Filepath must have a '.yml' extension.")
         if not self.file_path.exists():
-            raise FileNotFoundError(f"File {self.file_path} does not exist. Please run the camera calibration again.")
-        
+            raise FileNotFoundError(
+                f"File {self.file_path} does not exist. "
+                "Please run the camera calibration again."
+            )
+
         yaml_file = yaml.safe_load(open(self.file_path))
-        self.camera_matrix = np.array(yaml_file['camera_matrix'])
-        self.distortion_coeffs = np.array(yaml_file['distortion_coeffs'])
+        self.camera_matrix = np.array(yaml_file["camera_matrix"])
+        self.distortion_coeffs = np.array(yaml_file["distortion_coeffs"])
 
         self.new_camera_matrix = None
         self.roi = None
@@ -71,12 +76,23 @@ class Node(AbstractNode):
         img = inputs["img"]
 
         if self.new_camera_matrix is None or self.roi is None:
-            h, w = img.shape[:2]
-            self.new_camera_matrix, self.roi = cv2.getOptimalNewCameraMatrix(self.camera_matrix, self.distortion_coeffs, (w, h), 0, (w, h))
+            height, width = img.shape[:2]
+            self.new_camera_matrix, self.roi = cv2.getOptimalNewCameraMatrix(
+                self.camera_matrix,
+                self.distortion_coeffs,
+                (width, height),
+                0,
+                (width, height),
+            )
 
-        undistorted_img = cv2.undistort(img, self.camera_matrix, self.distortion_coeffs, None, self.new_camera_matrix)
-        x, y, w, h = self.roi
-        undistorted_img = undistorted_img[y:y+h, x:x+w]
+        undistorted_img = cv2.undistort(
+            img,
+            self.camera_matrix,
+            self.distortion_coeffs,
+            None,
+            self.new_camera_matrix,
+        )
+        x_pos, y_pos, img_w, img_h = self.roi
+        undistorted_img = undistorted_img[y_pos : y_pos + img_h, x_pos : x_pos + img_w]
 
         return {"img": undistorted_img}
-

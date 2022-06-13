@@ -4,7 +4,7 @@ fail="0"
 
 black --version
 
-if ! black --check .; then
+if ! black --check --diff .; then
     fail="1"
 fi
 
