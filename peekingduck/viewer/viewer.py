@@ -14,10 +14,6 @@
 
 """
 Implement PeekingDuck Viewer
-
-Todo:
-    - handle scenario whereby input image is larger than display widget size,
-      either resize window or resize input image
 """
 
 from typing import List, Union
@@ -33,6 +29,11 @@ import numpy as np
 from PIL import ImageTk, Image
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.viewer.viewer_utils import (
+    load_image,
+    get_keyboard_char,
+    get_keyboard_modifier,
+)
 
 ####################
 # Globals
@@ -40,74 +41,12 @@ from peekingduck.pipeline.pipeline import Pipeline
 BUTTON_DELAY: int = 250  # milliseconds (0.25 of a second)
 BUTTON_REPEAT: int = int(1000 / 60)  # milliseconds (60 fps)
 FPS_60: int = int(1000 / 60)  # milliseconds per iteration
-KEY_STATE_MAP = {  # Tkinter keyboard modifiers
-    1: "shift",
-    2: "capslock",
-    4: "ctrl",
-    8: "meta",
-    16: "alt",
-    32: "keypad",
-}
-# LOGO = "peekingduck/viewer/AISG_Logo_1536x290.png"
 LOGO = "peekingduck/viewer/PeekingDuckLogo.png"
-WIN_HEIGHT = 800
-WIN_WIDTH = 1280
+WIN_HEIGHT = 600
+WIN_WIDTH = 800
 ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
 ZOOM_DEFAULT_IDX = 2
 ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
-
-####################
-# Helper Methods
-####################
-def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
-    """Load and resize an image, 'coz plain vanilla Tkinter doesn't support JPG, PNG
-
-    Args:
-        resize_pct (float, optional): percentage to resize. Defaults to 0.25.
-
-    Returns:
-        ImageTk.PhotoImage: the loaded image
-    """
-    img = Image.open(image_path)
-    width = int(resize_pct * img.size[0])
-    height = int(resize_pct * img.size[1])
-    resized_img = img.resize((width, height))
-    the_img = ImageTk.PhotoImage(resized_img)
-    return the_img
-
-
-def get_keyboard_modifier(state: int) -> str:
-    """Get keyboard modifier keys: support ctrl, alt/option, shift
-
-    Args:
-        state (int): Tk keypress event key state
-
-    Returns:
-        str: detected modifier keys
-    """
-    ctrl = (state & 0x4) != 0
-    alt = (state & 0x8) != 0 or (state & 0x80) != 0
-    shift = (state & 0x1) != 0
-    res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
-    return res[1:] if res[0] == "-" else res
-
-
-def get_keyboard_char(char: str, keysym: str) -> str:
-    """Get keyboard character
-
-    Args:
-        char (str): Tk keypress event character
-        keysym (str): Tk keypress event key symbol
-
-    Returns:
-        str: keyboard character
-    """
-    res = char if char else keysym
-    if keysym == "minus":
-        res = "-"
-    if keysym == "plus":
-        res = "+"
-    return res
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes
