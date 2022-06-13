@@ -127,19 +127,22 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         """Create header with logo and pipeline info text"""
         header_frm = ttk.Frame(master=self.root)
         header_frm.pack(side=tk.TOP, fill=tk.X)
+        # header top padding
+        lbl = tk.Label(header_frm, text="")
+        lbl.grid(row=0, column=0)
         # header contents
         self._img_logo = load_image(LOGO, resize_pct=0.15)  # prevent python GC
         logo = tk.Label(header_frm, image=self._img_logo)
-        logo.grid(row=0, column=0, sticky="w")
+        logo.grid(row=1, column=0, sticky="nsew")
         for i in range(2):
             dummy = tk.Label(header_frm, text="")
-            dummy.grid(row=0, column=i + 2, sticky="nsew")
+            dummy.grid(row=1, column=i + 2, sticky="nsew")
         lbl = tk.Label(header_frm, text="PeekingDuck Viewer Header")
-        lbl.grid(row=0, column=1, columnspan=3, sticky="nsew")
+        lbl.grid(row=1, column=1, columnspan=3, sticky="nsew")
         self.tk_lbl_header = lbl
         # spacer
-        lbl_blank = tk.Label(header_frm, text="")
-        lbl_blank.grid(row=0, column=4)
+        lbl = tk.Label(header_frm, text="")
+        lbl.grid(row=1, column=4)
         # configure expansion and uniform column sizes
         num_col, _ = header_frm.grid_size()
         for i in range(num_col):
