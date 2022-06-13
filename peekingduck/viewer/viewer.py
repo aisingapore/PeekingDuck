@@ -110,18 +110,10 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         root.minsize(MIN_WIDTH, MIN_HEIGHT)
         self.root = root  # save main window
         self._create_header()
-        self._create_canvas()
-        self._create_footer()  # need to order last two frames correctly
-        self._create_progress_slider()
-
-    def _create_canvas(self) -> None:
-        """Create the main image widget for viewing PeekingDuck output"""
-        image_frm = ttk.Frame(master=self.root)
-        image_frm.pack(fill=tk.BOTH, expand=True)
-        output_image = tk.Label(image_frm)
-        output_image.pack(fill=tk.BOTH, expand=True)
-        self.tk_output_image = output_image
-        self.image_frm = image_frm  # save image frame
+        # dotw technotes: need to order last two frames correctly so that
+        #                 image zoom won't cover over the control buttons
+        self._create_footer()
+        self._create_body()
 
     def _create_header(self) -> None:
         """Create header with logo and pipeline info text"""
@@ -137,7 +129,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         for i in range(2):
             dummy = tk.Label(header_frm, text="")
             dummy.grid(row=1, column=i + 2, sticky="nsew")
-        lbl = tk.Label(header_frm, text="PeekingDuck Viewer Header")
+        lbl = tk.Label(header_frm, text="PeekingDuck Viewer Header", font=("None 20"))
         lbl.grid(row=1, column=1, columnspan=3, sticky="nsew")
         self.tk_lbl_header = lbl
         # spacer
@@ -149,81 +141,87 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             header_frm.grid_columnconfigure(i, weight=1, uniform="tag")
         self.header_frm = header_frm  # save header frame
 
-    def _create_progress_slider(self) -> None:
-        """Create frame for progress bar/slider, frame count, zoom.
-        Need to align columns with footer below.
-        Progress bar and slider overlaps on the same columns.
-        """
-        progress_frm = ttk.Frame(master=self.root)
-        progress_frm.pack(side=tk.BOTTOM, fill=tk.X)
-        lbl = tk.Label(progress_frm, text="")  # spacer
-        lbl.grid(row=0, column=0, columnspan=2, sticky="nsew")
-        # frame number
-        self.tk_lbl_frame_num = tk.Label(progress_frm, text="0")
-        self.tk_lbl_frame_num.grid(row=0, column=2, sticky="nsew")
+    def _create_body(self) -> None:
+        """Create the main image widget for viewing PeekingDuck output"""
+        image_frm = ttk.Frame(master=self.root)
+        image_frm.pack(fill=tk.BOTH, expand=True)
+        output_image = tk.Label(image_frm)
+        output_image.pack(fill=tk.BOTH, expand=True)
+        self.tk_output_image = output_image
+        self.image_frm = image_frm  # save image frame
+
+    def _create_footer(self) -> None:
+        """Create footer of progress info and control buttons."""
+        footer_frm = ttk.Frame(master=self.root)
+        footer_frm.pack(side=tk.BOTTOM, fill=tk.X)
+        # info: progress bar / slider
+        info_frm = ttk.Frame(master=footer_frm)
         # slider
         self.tk_scale = ttk.Scale(
-            progress_frm,
+            info_frm,
             orient=tk.HORIZONTAL,
             from_=1,
             to=100,
             command=self._sync_slider_to_frame,
         )
-        self.tk_scale.grid(row=0, column=3, columnspan=6, sticky="nsew")
+        self.tk_scale.grid(row=0, column=1, columnspan=7, sticky="nsew")
         self.tk_scale.grid_remove()  # hide it first
         # progress bar
         self.tk_progress = ttk.Progressbar(
-            progress_frm,
+            info_frm,
             orient=tk.HORIZONTAL,
             length=100,
             mode="determinate",
             value=0,
             maximum=100,
         )
-        self.tk_progress.grid(row=0, column=3, columnspan=6, sticky="nsew")
-        # zoom
-        glyph = ZOOM_TEXT[self.zoom_idx]
-        self.tk_lbl_zoom = tk.Label(progress_frm, text=f"{glyph}")
-        self.tk_lbl_zoom.grid(row=0, column=9, sticky="nsew")
-        lbl = tk.Label(progress_frm, text="")  # spacer
-        lbl.grid(row=0, column=10, columnspan=2, sticky="nsew")
+        self.tk_progress.grid(row=0, column=1, columnspan=7, sticky="nsew")
+        # frame number
+        self.tk_lbl_frame_num = tk.Label(info_frm, text="0")
+        self.tk_lbl_frame_num.grid(row=0, column=8, sticky="nsew")
+        # spacer
+        lbl = tk.Label(info_frm, text="")
+        lbl.grid(row=0, column=9)
         # configure expansion and uniform column sizes
-        num_col, _ = progress_frm.grid_size()
+        num_col, _ = info_frm.grid_size()
         for i in range(num_col):
-            progress_frm.grid_columnconfigure(i, weight=1, uniform="tag")
-        self.progress_frm = progress_frm  # save progress/slider frame
+            info_frm.grid_columnconfigure(i, weight=1, uniform="tag")
+        self.progress_frm = info_frm  # save progress/slider frame
 
-    def _create_footer(self) -> None:
-        """Create footer of control buttons.
-        Use blank tk.Label to guide spacing as Tkinter can't micromanage layout
-        by specifying percentages/pixels.
-        """
-        btn_frm = ttk.Frame(master=self.root)
-        btn_frm.pack(side=tk.BOTTOM, fill=tk.X)
-        # footer contents
+        # controls: buttons
+        controls_frm = ttk.Frame(master=footer_frm)
+        # play/stop button
         self.tk_btn_play = ttk.Button(
-            btn_frm, text="Play", command=self.btn_play_stop_press
+            controls_frm, text="Play", command=self.btn_play_stop_press
         )  # store widget to modifying button text later
-        btn_list: List[Union[ttk.Button, tk.Label]] = [
-            tk.Label(btn_frm, text=""),  # spacer
-            tk.Label(btn_frm, text=""),
-            tk.Label(btn_frm, text=""),
-            self.tk_btn_play,
-            tk.Label(btn_frm, text=""),
-            ttk.Button(btn_frm, text="-", command=self.btn_zoom_out_press),
-            ttk.Button(btn_frm, text="+", command=self.btn_zoom_in_press),
-            tk.Label(btn_frm, text=""),
-            tk.Label(btn_frm, text=""),
-            tk.Label(btn_frm, text=""),
-        ]
-        for i, btn in enumerate(btn_list):
-            # btn.configure(height=2)  # NB: height in text units (N/A to ttk)
-            btn.grid(row=0, column=i, sticky="nsew")
+        self.tk_btn_play.grid(row=1, column=1)
+        # zoom: - / zoom factor / +
+        self.tk_btn_zoom_out = ttk.Button(
+            controls_frm, text="-", command=self.btn_zoom_out_press
+        )
+        self.tk_btn_zoom_out.grid(row=1, column=6)
+        # zoom factor
+        glyph = ZOOM_TEXT[self.zoom_idx]
+        self.tk_lbl_zoom = tk.Label(controls_frm, text=f"{glyph}")
+        self.tk_lbl_zoom.grid(row=1, column=7, sticky="nsew")
+        self.tk_btn_zoom_in = ttk.Button(
+            controls_frm, text="+", command=self.btn_zoom_in_press
+        )
+        self.tk_btn_zoom_in.grid(row=1, column=8)
+        # spacer
+        lbl = tk.Label(controls_frm, text="")
+        lbl.grid(row=1, column=9)
         # configure expansion and uniform column sizes
-        num_col, _ = btn_frm.grid_size()
+        num_col, _ = controls_frm.grid_size()
         for i in range(num_col):
-            btn_frm.grid_columnconfigure(i, weight=1, uniform="tag")
-        self.footer_frm = btn_frm  # save footer frame
+            controls_frm.grid_columnconfigure(i, weight=1, uniform="tag")
+
+        # order is important: put controls first, then info
+        lbl = tk.Label(footer_frm, text="")  # bottom spacer
+        lbl.pack(side=tk.BOTTOM)
+        controls_frm.pack(side=tk.BOTTOM, fill=tk.X)
+        info_frm.pack(side=tk.BOTTOM, fill=tk.X)
+        self.footer_frm = footer_frm  # save footer frame
 
     ####################
     #
@@ -430,18 +428,15 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
 
     def _set_header_playing(self) -> None:
         """Change header text to playing..."""
-        self.tk_lbl_header["text"] = f"Playing {self._pipeline_path}"
-        self.tk_lbl_header.config(fg="green")
+        self.tk_lbl_header["text"] = f"Playing {self._pipeline_path.name}"
 
     def _set_header_running(self) -> None:
         """Change header text to running..."""
-        self.tk_lbl_header["text"] = f"Running {self._pipeline_path}"
-        self.tk_lbl_header.config(fg="red")
+        self.tk_lbl_header["text"] = f"Running {self._pipeline_path.name}"
 
     def _set_header_stop(self) -> None:
         """Change header text to pipeline pathname"""
-        self.tk_lbl_header["text"] = f"{self._pipeline_path}"
-        self.tk_lbl_header.config(fg="white")
+        self.tk_lbl_header["text"] = f"{self._pipeline_path.name}"
 
     def _update_slider_and_show_frame(self) -> None:
         """Update slider based on frame index and show new frame"""
