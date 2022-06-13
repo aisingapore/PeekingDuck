@@ -20,7 +20,6 @@ from typing import List, Union
 from pathlib import Path
 import logging
 import platform
-import time
 import tkinter as tk
 from tkinter import ttk
 import copy
@@ -42,8 +41,10 @@ BUTTON_DELAY: int = 250  # milliseconds (0.25 of a second)
 BUTTON_REPEAT: int = int(1000 / 60)  # milliseconds (60 fps)
 FPS_60: int = int(1000 / 60)  # milliseconds per iteration
 LOGO = "peekingduck/viewer/PeekingDuckLogo.png"
-WIN_HEIGHT = 600
-WIN_WIDTH = 800
+MIN_HEIGHT = 600
+MIN_WIDTH = 800
+WIN_HEIGHT = 768
+WIN_WIDTH = 1024
 ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
 ZOOM_DEFAULT_IDX = 2
 ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
@@ -83,14 +84,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         """Main method to setup Viewer and run Tk event loop"""
         self.logger.info(f"cwd={Path.cwd()}")
         self.logger.info(f"pipeline={self._pipeline_path}")
-        logo_path = Path(LOGO)
-        self.logger.debug(f"logo={logo_path}, exists={logo_path.exists()}")
         # create Tkinter window and frames
         self._create_window()
-        self._create_header()
-        self._create_canvas()
-        self._create_footer()  # need to order last two frames correctly
-        self._create_progress_slider()
         # bind event handlers
         self.root.bind("<Key>", self.on_keypress)
         if platform.system() == "Darwin":
@@ -112,8 +107,12 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         root.title("PeekingDuck Viewer")
         root.geometry(f"{WIN_WIDTH}x{WIN_HEIGHT}")
         root.update()  # force update without mainloop() to get correct size
-        root.minsize(root.winfo_width(), root.winfo_height())
+        root.minsize(MIN_WIDTH, MIN_HEIGHT)
         self.root = root  # save main window
+        self._create_header()
+        self._create_canvas()
+        self._create_footer()  # need to order last two frames correctly
+        self._create_progress_slider()
 
     def _create_canvas(self) -> None:
         """Create the main image widget for viewing PeekingDuck output"""
@@ -138,10 +137,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         lbl = tk.Label(header_frm, text="PeekingDuck Viewer Header")
         lbl.grid(row=0, column=1, columnspan=3, sticky="nsew")
         self.tk_lbl_header = lbl
-        # setup "timer" widget to do background processing later
-        lbl_timer = tk.Label(header_frm, text="timer")
-        lbl_timer.grid(row=0, column=4, sticky="e")
-        self.tk_lbl_timer = lbl_timer
+        # spacer
+        lbl_blank = tk.Label(header_frm, text="")
+        lbl_blank.grid(row=0, column=4)
         # configure expansion and uniform column sizes
         num_col, _ = header_frm.grid_size()
         for i in range(num_col):
@@ -324,10 +322,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
     #
     def _timer_function(self) -> None:
         """Function to do background processing in Tkinter's way"""
-        the_time = time.strftime("%H:%M:%S")
-        self.tk_lbl_timer.config(text=the_time)
-        # self.logger.debug(f"timer function: {the_time}, _state={self._state}")
-
         if self._state == "play":
             # Only two states: 1) playing back video or 2) executing pipeline
             if self._is_output_playback:
@@ -342,7 +336,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
                     self._run_pipeline_one_iteration()
 
         self.root.update()  # wake up GUI
-        self._bkgd_job = self.tk_lbl_timer.after(FPS_60, self._timer_function)
+        self._bkgd_job = self.tk_lbl_header.after(FPS_60, self._timer_function)
 
     def _cancel_timer_function(self) -> None:
         """Cancel the background timer function"""
