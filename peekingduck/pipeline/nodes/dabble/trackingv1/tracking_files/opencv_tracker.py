@@ -64,7 +64,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             for tlwh in tlwhs:
                 self._initialize_tracker(frame, tlwh)
             obj_track_ids = list(self.tracks.keys())
-            self.is_initialized = True
         self._update_tracker_bboxes(frame)
 
         return obj_track_ids
@@ -80,6 +79,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         tracker.init(frame, tuple(bbox))
         self.tracks[self.next_track_id] = Track(tracker, bbox)
         self.next_track_id += 1
+        self.is_initialized = True
 
     def _match_and_track(self, frame: np.ndarray, bboxes: np.ndarray) -> List[int]:
         """Matches detections to tracked bboxes, creates a new track if no
