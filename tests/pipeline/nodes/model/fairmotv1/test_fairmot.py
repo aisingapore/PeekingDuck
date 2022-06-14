@@ -244,6 +244,16 @@ class TestFairMOT:
                 assert fairmot._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
+    def test_handle_empty_detections(
+        self, human_video_sequence_with_empty_frames, fairmot_config
+    ):
+        _, detections = human_video_sequence_with_empty_frames
+        fairmot = Node(fairmot_config)
+        for i, inputs in enumerate(detections):
+            output = fairmot.run(inputs)
+            if i > 1:
+                assert len(output["obj_attrs"]["ids"]) == len(inputs["bboxes"])
+
     def test_invalid_config_value(self, fairmot_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=fairmot_bad_config_value)
