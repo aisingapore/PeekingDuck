@@ -242,7 +242,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             "img": None,
             "filename": self._file_name if self._file_name else self.filename,
             "pipeline_end": True,
-            "saved_video_fps": self._fps if self._fps > 0 else self.saved_video_fps,
+            "saved_video_fps": self._fps if (self._fps > 0 and self._fps <= 60) else self.saved_video_fps,
         }
         if self.videocap:
             success, img = self.videocap.read_frame()
