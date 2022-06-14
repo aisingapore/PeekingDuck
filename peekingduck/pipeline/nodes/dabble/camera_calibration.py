@@ -121,7 +121,9 @@ def _draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
 
     img_copy = img.copy()
 
-    font_scale = _get_optimal_font_scale(text, img.shape[1] / 3 - 10, img.shape[1] / 1920)
+    font_scale = _get_optimal_font_scale(
+        text, img.shape[1] / 3 - 10, img.shape[1] / 1920
+    )
     thickness = int(font_scale / 0.5)
 
     sentences = [""]
@@ -295,9 +297,9 @@ class Node(AbstractNode):
     """Calculates camera coefficients for `undistortion
     <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
 
-    To calculate your camera, first download the following image and print it 
+    To calculate your camera, first download the following image and print it
     out in a suitable size, or display it on a sufficiently large device screen,
-    such as a computer or a tablet. For most use cases, an A4-sized checkerboard works 
+    such as a computer or a tablet. For most use cases, an A4-sized checkerboard works
     well, but depending on the position and distance of the camera, a bigger checkerboard
     may be required.
 
@@ -318,7 +320,7 @@ class Node(AbstractNode):
 
     Run the above with the pipeline :greenbox:`peekingduck run`. |br|
     You should see a display of your camera with some instructions overlaid. Follow the instructions
-    to position the checkerboard at different positions in the camera. If the process is successful, 
+    to position the checkerboard at different positions in the camera. If the process is successful,
     the camera coefficients will be calculated and written to a file and you can start using the
     :mod:`augment.undistort` node.
 
