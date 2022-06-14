@@ -166,7 +166,8 @@ Augmenting Images
 
 PeekingDuck has a class of :mod:`augment` nodes that can be used to perform preprocessing
 or postprocessing of images/videos.
-Augment currently lets you modify the brightness and contrast.
+Augment currently lets you modify the brightness and contrast, and undistort an image. For more details
+on image undistortion, refer to the documentation on :mod:`augment.undistort` and :mod:`dabble.camera_calibration`.
 
 The ``pipeline_config.yml`` below shows how to use the :mod:`augment.brightness` node
 within the pipeline:
@@ -195,4 +196,3 @@ The following figure shows the difference between the original vs the brightened
 
         | Royalty free video of cat and computer from: https://www.youtube.com/watch?v=-C1TEGZavko
         | Royalty free video of man waving hand from: https://www.youtube.com/watch?v=IKj_z2hgYUM
-
