@@ -210,4 +210,4 @@ class TestMaskRCNN:
         with pytest.raises(TypeError) as excinfo:
             # Passing a non-list detect_id into the config
             _ = Node(config=mask_rcnn_config)
-        assert "detect has to be a list" == str(excinfo.value)
+        assert "detect_ids has to be a list" == str(excinfo.value)

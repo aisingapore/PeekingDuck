@@ -49,11 +49,11 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             for val in json.loads(classes_path.read_text()).values()
         }
 
-        self.detect = self.config["detect"]
+        self.detect_ids = self.config["detect"]
         self.detector = Detector(
             model_dir,
             class_names,
-            self.detect,
+            self.detect_ids,
             self.config["model_type"],
             self.config["num_classes"],
             self.weights["model_file"],
@@ -66,14 +66,14 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         )
 
     @property
-    def detect(self) -> List[int]:
+    def detect_ids(self) -> List[int]:
         """The list of selected object category IDs."""
         return self._detect_ids
 
-    @detect.setter
-    def detect(self, ids: List[int]) -> None:
+    @detect_ids.setter
+    def detect_ids(self, ids: List[int]) -> None:
         if not isinstance(ids, list):
-            raise TypeError("detect has to be a list")
+            raise TypeError("detect_ids has to be a list")
         if not ids:
             self.logger.info("Detecting all Mask R-CNN classes")
         self._detect_ids = ids

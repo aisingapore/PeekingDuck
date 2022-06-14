@@ -35,7 +35,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self,
         model_dir: Path,
         class_names: Dict[int, str],
-        detect: List[int],
+        detect_ids: List[int],
         model_type: str,
         num_classes: int,
         model_file: Dict[str, str],
@@ -50,8 +50,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.class_names = class_names
-        self.detect = detect
-        self.detect_tensor = torch.tensor(detect, dtype=torch.int64, device=self.device)
+        self.detect_ids = detect_ids
+        self.detect_ids_tensor = torch.tensor(
+            detect_ids, dtype=torch.int64, device=self.device
+        )
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
@@ -128,7 +130,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.logger.info(
             "Mask-RCNN model loaded with following configs:\n\t"
             f"Model type: {self.model_type}\n\t"
-            f"IDs being detected: {self.detect}\n\t"
+            f"IDs being detected: {self.detect_ids}\n\t"
             f"NMS IOU threshold: {self.nms_iou_threshold}\n\t"
             f"Maximum number of detections per image: {self.max_num_detections}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
@@ -163,7 +165,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
             # Indices to filter out unwanted classes
             detect_filter = torch.where(
-                torch.isin(network_output[0]["labels"], self.detect_tensor)
+                torch.isin(network_output[0]["labels"], self.detect_ids_tensor)
             )
 
             for output_key in network_output[0].keys():
