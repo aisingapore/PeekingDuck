@@ -30,12 +30,12 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 class Node(AbstractNode):
     """Undistorts an image by removing `radial distortion
-    <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_. 
+    <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
     This may help to improve the performance of certain models.
-    
-    Before using this node for the first time, please follow the tutorial in 
+
+    Before using this node for the first time, please follow the tutorial in
     :mod:`dabble.camera_calibration` to calculate the camera coefficients
-    of the camera you are using, and ensure that the file_path that the 
+    of the camera you are using, and ensure that the file_path that the
     coefficients are stored in is the same as the one specified in the configs.
 
     The images below show an example of an image before and after undistortion
@@ -106,7 +106,7 @@ class Node(AbstractNode):
             None,
             self.new_camera_matrix,
         )
-        
+
         x_pos, y_pos, img_w, img_h = self.roi
         undistorted_img = undistorted_img[y_pos : y_pos + img_h, x_pos : x_pos + img_w]
 
