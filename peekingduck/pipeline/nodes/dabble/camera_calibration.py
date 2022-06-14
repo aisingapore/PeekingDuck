@@ -81,9 +81,9 @@ def _get_box_info(num: int, width: int, height: int) -> tuple:
     return start_points[num], end_points[num], (text_positions[num], pos_types[num])
 
 
-def _get_optimal_font_scale(text: str, width: int) -> float:
+def _get_optimal_font_scale(text: str, width: int, min_width: float) -> float:
     """Calculate optimal font scale given text and width"""
-    for scale in range(250, 25, -1):
+    for scale in range(250, int(min_width * 50), -1):
         thickness = int((scale / 50) / 0.5)
 
         text_size = cv2.getTextSize(
@@ -95,7 +95,7 @@ def _get_optimal_font_scale(text: str, width: int) -> float:
         new_width = text_size[0][0]
         if new_width <= width:
             return scale / 50
-    return 0.5
+    return min_width
 
 
 def _draw_bgnd_box(
@@ -121,7 +121,7 @@ def _draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
 
     img_copy = img.copy()
 
-    font_scale = _get_optimal_font_scale(text, img_copy.shape[1] / 3 - 10)
+    font_scale = _get_optimal_font_scale(text, img.shape[1] / 3 - 10, img.shape[1] / 1920)
     thickness = int(font_scale / 0.5)
 
     sentences = [""]
@@ -205,7 +205,7 @@ def _draw_countdown(img: np.ndarray, num: int) -> np.ndarray:
 
     text = str(num)
 
-    font_scale = _get_optimal_font_scale(text, width / 8)
+    font_scale = _get_optimal_font_scale(text, width / 8, width / 1920)
     text_width, text_height = cv2.getTextSize(
         text=text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness=2
     )[0]
