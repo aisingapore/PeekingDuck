@@ -14,7 +14,7 @@
 
 """Tracking-by-detection using OpenCV's MOSSE Tracker."""
 
-from typing import Any, Dict, List, NamedTuple
+from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -96,14 +96,16 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             (List[int]): A list of track IDs for the detections in the current
                 frame.
         """
-        prev_tracked_bboxes = [track.bbox for _, track in self.tracks.items()]
-        matching_dict = {}
+        prev_tracks = [track.bbox for _, track in self.tracks.items()]
+        prev_tracked_bboxes = np.array(prev_tracks) if prev_tracks else np.empty((0, 4))
+        matching_dict: Dict[Tuple[float, ...], Optional[np.intp]] = {}
 
         for bbox in bboxes:
-            ious = iou_candidates(bbox, np.array(prev_tracked_bboxes))
-            matching_dict[tuple(bbox)] = (
-                ious.argmax() if max(ious) >= self.iou_threshold else None
-            )
+            ious = iou_candidates(bbox, prev_tracked_bboxes)
+            if len(ious) > 0 and max(ious) >= self.iou_threshold:
+                matching_dict[tuple(bbox)] = ious.argmax()
+            else:
+                matching_dict[tuple(bbox)] = None
 
         track_ids = []
         for bbox, matched_id in matching_dict.items():
