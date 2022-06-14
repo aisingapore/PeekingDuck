@@ -13,7 +13,8 @@
 # limitations under the License.
 
 """
-Calculates camera coefficients for undistortion
+Calculates camera coefficients for `undistortion
+<https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
 """
 
 from typing import Any, Dict, List
@@ -46,8 +47,8 @@ DETECTION_COMPLETE = "DETECTION COMPLETE! PRESS ANY KEY TO EXIT."
 BOX_OPACITY = 0.75
 
 
-def get_box_info(num: int, width: int, height: int) -> tuple:
-    """Gets start and end points of box, and position to put text"""
+def _get_box_info(num: int, width: int, height: int) -> tuple:
+    """Returns start and end points of box, and position to put text"""
     start_points = {
         TOP_LEFT: (0, 0),
         TOP_RIGHT: (int(2 * width / 3), 0),
@@ -80,8 +81,8 @@ def get_box_info(num: int, width: int, height: int) -> tuple:
     return start_points[num], end_points[num], (text_positions[num], pos_types[num])
 
 
-def get_optimal_font_scale(text: str, width: int) -> float:
-    """Helper function to get optimal font scale given text and width"""
+def _get_optimal_font_scale(text: str, width: int) -> float:
+    """Calculate optimal font scale given text and width"""
     for scale in range(250, 25, -1):
         thickness = int((scale / 50) / 0.5)
 
@@ -97,12 +98,12 @@ def get_optimal_font_scale(text: str, width: int) -> float:
     return 0.5
 
 
-def draw_bgnd_box(
+def _draw_bgnd_box(
     img: np.ndarray,
     pt1: tuple,
     pt2: tuple,
 ) -> np.ndarray:
-    """Helper function to draw box on image"""
+    """Draws background box on image"""
 
     box_img = img.copy()
 
@@ -113,14 +114,14 @@ def draw_bgnd_box(
     return cv2.addWeighted(box_img, BOX_OPACITY, img, 1 - BOX_OPACITY, 0, img)
 
 
-def draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
-    """Helper function to draw text on the image"""
+def _draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
+    """Draws text on the image"""
 
     pos, pos_type = pos_info
 
     img_copy = img.copy()
 
-    font_scale = get_optimal_font_scale(text, img_copy.shape[1] / 3 - 10)
+    font_scale = _get_optimal_font_scale(text, img_copy.shape[1] / 3 - 10)
     thickness = int(font_scale / 0.5)
 
     sentences = [""]
@@ -162,7 +163,7 @@ def draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
         )
 
     if pos_type == TOP_LEFT:
-        img_copy = draw_bgnd_box(
+        img_copy = _draw_bgnd_box(
             img_copy,
             (pos[0], pos[1]),
             (pos[0] + text_width + 5, pos[1] + len(sentences) * (text_height + 5) + 5),
@@ -171,7 +172,7 @@ def draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
         pos = (pos[0] + 5, pos[1] + text_height + 5)
 
     elif pos_type == BOTTOM_LEFT:
-        img_copy = draw_bgnd_box(
+        img_copy = _draw_bgnd_box(
             img_copy,
             (pos[0], pos[1] - len(sentences) * (text_height + 5) - 5),
             (pos[0] + text_width + 5, pos[1]),
@@ -196,15 +197,15 @@ def draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
     return img_copy
 
 
-def draw_countdown(img: np.ndarray, num: int) -> np.ndarray:
-    """Helper function to draw the countdown in the center of the screen"""
+def _draw_countdown(img: np.ndarray, num: int) -> np.ndarray:
+    """Draws a countdown in the center of the screen"""
 
     img_copy = img.copy()
     height, width = img_copy.shape[:2]
 
     text = str(num)
 
-    font_scale = get_optimal_font_scale(text, width / 8)
+    font_scale = _get_optimal_font_scale(text, width / 8)
     text_width, text_height = cv2.getTextSize(
         text=text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness=2
     )[0]
@@ -234,8 +235,8 @@ def draw_countdown(img: np.ndarray, num: int) -> np.ndarray:
     )
 
 
-def draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> np.ndarray:
-    """Helper function to draw rectangle on the image"""
+def _draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> np.ndarray:
+    """Draws rectangle on the image"""
 
     img_copy = img.copy()
 
@@ -256,7 +257,7 @@ def draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> np.ndarra
     )
 
 
-def check_corners_valid(
+def _check_corners_validity(
     width: int, height: int, corners: np.ndarray, start_point: tuple, end_point: tuple
 ) -> int:
     """Checks whether the corners are large enough and fall within the box"""
@@ -291,8 +292,35 @@ def check_corners_valid(
 
 
 class Node(AbstractNode):
-    """Calculates camera coefficients for undistortion
-    <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>'_.
+    """Calculates camera coefficients for `undistortion
+    <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
+
+    To calculate your camera, first download the following image and print it 
+    out in a suitable size, or display it on a sufficiently large device screen,
+    such as a computer or a tablet. For most use cases, an A4-sized checkerboard works 
+    well, but depending on the position and distance of the camera, a bigger checkerboard
+    may be required.
+
+    .. image:: /assets/api/checkerboard.png
+        :width: 20 %
+
+    Next, edit ```pipeline_config.yml``` in your project folder as shown below:
+
+    .. code-block:: yaml
+        :linenos:
+
+        nodes:
+        - input.visual:
+            source: 0 # change this to the camera you are using
+            threading: True
+        - dabble.camera_calibration
+        - output.screen
+
+    Run the above with the pipeline :greenbox:`peekingduck run`. |br|
+    You should see a display of your camera with some instructions overlaid. Follow the instructions
+    to position the checkerboard at different positions in the camera. If the process is successful, 
+    the camera coefficients will be calculated and written to a file and you can start using the
+    :mod:`augment.undistort` node.
 
     Inputs:
         |img_data|
@@ -302,16 +330,13 @@ class Node(AbstractNode):
 
 
     Configs:
-        num_corners (:obj:'List[int]'):
+        num_corners (:obj:`List[int]`):
             **default = [10, 7]**. |br|
             A list containing the number of internal corners
-            along the vertical and horizontal.
-        num_pictures (:obj:'int'):
-            **default = 5**. |br|
-            Number of pictures to take to calculate the coefficients
-        scale_factor (:obj:'int'):
+            along the vertical and horizontal axes.
+        scale_factor (:obj:`int`):
             **default = 4**. |br|
-            How much to scale the image by when finding chessboard corners. For
+            Factor to scale the image by when finding chessboard corners. For
             example, with a scale of 4, an image of size (1080 x 1920) will be
             scaled down to (270 x 480) when detecting the corners. Increasing this
             value reduces computation time. If the node is unable to detect corners,
@@ -348,8 +373,8 @@ class Node(AbstractNode):
 
         self.num_pictures = 5
 
-    def detect_corners(self, height: int, width: int, gray_img: np.ndarray) -> tuple:
-        """Tries to detect corners in the image"""
+    def _detect_corners(self, height: int, width: int, gray_img: np.ndarray) -> tuple:
+        """Detects corners in the image"""
         # downscale
         new_h = int(height / self.scale_factor)
         new_w = int(width / self.scale_factor)
@@ -361,7 +386,7 @@ class Node(AbstractNode):
             image=resized_img, patternSize=self.num_corners, corners=None
         )
 
-    def calculate_coeffs(self, img_shape: tuple) -> None:
+    def _calculate_coeffs(self, img_shape: tuple) -> None:
         """Performs calculations with detected corners"""
         (
             calibration_success,
@@ -428,12 +453,12 @@ class Node(AbstractNode):
 
         height, width = img.shape[:2]
 
-        start_point, end_point, text_pos = get_box_info(
+        start_point, end_point, text_pos = _get_box_info(
             self.num_detections, width, height
         )
 
-        img_notext = draw_box(img, start_point, end_point)
-        img = draw_text(
+        img_notext = _draw_box(img, start_point, end_point)
+        img = _draw_text(
             img_notext,
             f"{DEFAULT_TEXT} ({self.num_detections+1}/{self.num_pictures})",
             text_pos,
@@ -441,7 +466,7 @@ class Node(AbstractNode):
 
         # if sufficient time has passed
         if time.time() - self.last_detection >= 5:
-            detect_corners_success, corners = self.detect_corners(
+            detect_corners_success, corners = self._detect_corners(
                 height, width, gray_img
             )
 
@@ -450,14 +475,14 @@ class Node(AbstractNode):
 
         # cv2 successfully detected the corners
         if detect_corners_success:
-            corners_valid = check_corners_valid(
+            corners_valid = _check_corners_validity(
                 width, height, corners, start_point, end_point
             )
 
             if corners_valid != CORNERS_OK:
                 detect_corners_success = False
                 if corners_valid == IMAGE_TOO_SMALL:
-                    img = draw_text(img_notext, TOO_SMALL, text_pos)
+                    img = _draw_text(img_notext, TOO_SMALL, text_pos)
 
         if detect_corners_success:
 
@@ -484,9 +509,9 @@ class Node(AbstractNode):
             self.num_detections += 1
 
             if self.num_detections != self.num_pictures:
-                img = draw_text(img_notext, DETECTION_SUCCESS, text_pos)
+                img = _draw_text(img_notext, DETECTION_SUCCESS, text_pos)
             else:
-                img = draw_text(img_notext, DETECTION_COMPLETE, text_pos)
+                img = _draw_text(img_notext, DETECTION_COMPLETE, text_pos)
 
             # display the image and wait for user to press a key
             cv2.imshow("PeekingDuck", img)
@@ -496,11 +521,11 @@ class Node(AbstractNode):
 
             # if we have sufficient images, calculate the coefficients and write to a file
             if self.num_detections == self.num_pictures:
-                self.calculate_coeffs(img_shape=gray_img.shape[::-1])
+                self._calculate_coeffs(img_shape=gray_img.shape[::-1])
                 return {"pipeline_end": True}
 
         time_to_next_detection = math.ceil(5 - time.time() + self.last_detection)
         if time_to_next_detection > 0:
-            img = draw_countdown(img, time_to_next_detection)
+            img = _draw_countdown(img, time_to_next_detection)
 
         return {"img": img}
