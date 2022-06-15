@@ -19,31 +19,36 @@ Test for augment undistort node
 import cv2
 import numpy as np
 import pytest
+from pathlib import Path
 
 from peekingduck.pipeline.nodes.augment.undistort import Node
 
 
 @pytest.fixture
 def undistort():
-    file_path = "tests/data/distortion_coefficients/camera_calibration_coeffs.yml"
+    par_dir = Path(__file__).parent
+    file_path = str(par_dir) + "/undistort/camera_calibration_coeffs.yml"
     node = Node({"input": ["img"], "output": ["img"], "file_path": file_path})
     return node
 
 
-class TestContrast:
-    def test_undistort(self, undistort_before, undistort_after):
+class TestUndistort:
+    def test_undistort(self, undistort, undistort_before):
         before_img = cv2.imread(undistort_before)
-        after_img = cv2.imread(undistort_after)
 
         outputs = undistort.run({"img": before_img})
-        np.testing.assert_equal(after_img, outputs["img"])
-    
+        assert before_img.shape != outputs["img"].shape
+
     def test_file_io(self):
         with pytest.raises(ValueError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "file_path": "file.txt"})
         assert str(excinfo.value) == "Filepath must have a '.yml' extension."
 
-        file_path = "tests/data/distortion_coefficients/nonexistent_file.yml"
-        with pytest.raises(FileNotFoundError()) as excinfo:
+        par_dir = Path(__file__).parent
+        file_path = str(par_dir) + "/undistort/nonexistent_file.yml"
+        with pytest.raises(FileNotFoundError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "file_path": file_path})
-        assert str(excinfo.value) == f"File {file_path} does not exist. Please run the camera calibration again."
+        assert (
+            str(excinfo.value)
+            == f"File {file_path} does not exist. Please run the camera calibration again."
+        )
