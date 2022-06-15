@@ -20,6 +20,7 @@ import ast
 import collections.abc
 import importlib
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
@@ -63,6 +64,10 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         custom_nodes_parent_subdir: str,
     ) -> None:
         self.logger = logging.getLogger(__name__)
+
+        if pipeline_path.parent != Path.cwd():
+            self.logger.info(f"changing working directory to {pipeline_path.parent}")
+            os.chdir(pipeline_path.parent)
 
         self.pkd_base_dir = Path(__file__).resolve().parent
         self.config_loader = ConfigLoader(self.pkd_base_dir)
