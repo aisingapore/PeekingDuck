@@ -41,7 +41,7 @@ NO_LICENSE_PLATE_IMAGES = ["black.jpg", "t3.jpg"]
 CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
 
 UNDISTORT_BEFORE = ["undistort_before.jpg"]
-UNDISTORT_AFTER = ["undistort_after.jpg"]
+CORNER_DATA = ["corners_ok.npz", "image_too_small.npz", "not_in_box.npz"]
 
 # Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
@@ -170,17 +170,13 @@ def human_video(request):
     K.clear_session()
     gc.collect()
 
+
 @pytest.fixture(params=UNDISTORT_BEFORE)
 def undistort_before(request):
     yield str(TEST_IMAGES_DIR / request.param)
     K.clear_session()
     gc.collect()
 
-@pytest.fixture(params=UNDISTORT_AFTER)
-def undistort_after(request):
-    yield str(TEST_IMAGES_DIR / request.param)
-    K.clear_session()
-    gc.collect()
 
 @pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
 def human_video_sequence(request):
@@ -211,7 +207,12 @@ def human_video_sequence(request):
     K.clear_session()
     gc.collect()
 
-@pytest.fixtures(params=UNDISTORT_BEFORE)
+
+@pytest.fixture(params=CORNER_DATA)
+def corner_data(request):
+    yield str(request.param)
+    K.clear_session()
+    gc.collect()
 
 
 @pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
