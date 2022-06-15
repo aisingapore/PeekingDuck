@@ -12,8 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
 import platform
+from pathlib import Path
 from unittest import TestCase
 
 import numpy as np
@@ -224,3 +224,14 @@ class TestTracking:
                 if i > 0:
                     assert outputs["obj_attrs"]["ids"] == prev_tags
                 prev_tags = outputs["obj_attrs"]["ids"]
+
+    def test_handle_empty_detections(
+        self, tracker, human_video_sequence_with_empty_frames
+    ):
+        # skip for mosse due to inconsistent results on Intel MacOS
+        if tracker.tracking_type == "mosse" and platform.system() == "Darwin":
+            pytest.skip()
+        _, detections = human_video_sequence_with_empty_frames
+        for inputs in detections:
+            outputs = tracker.run(inputs)
+            assert len(outputs["obj_attrs"]["ids"]) == len(inputs["bboxes"])
