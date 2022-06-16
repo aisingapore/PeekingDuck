@@ -26,8 +26,9 @@ from peekingduck.pipeline.nodes.augment.undistort import Node
 
 @pytest.fixture
 def undistort():
-    par_dir = Path(__file__).parent
-    file_path = str(par_dir) + "/undistort/camera_calibration_coeffs.yml"
+    par_dir = Path(__file__).parent / "undistort" / "camera_calibration_coeffs.yml"
+    file_path = str(par_dir)
+
     node = Node({"input": ["img"], "output": ["img"], "file_path": file_path})
     return node
 
@@ -44,8 +45,9 @@ class TestUndistort:
             Node({"input": ["img"], "output": ["img"], "file_path": "file.txt"})
         assert str(excinfo.value) == "Filepath must have a '.yml' extension."
 
-        par_dir = Path(__file__).parent
-        file_path = str(par_dir) + "/undistort/nonexistent_file.yml"
+        par_dir = Path(__file__).parent / "undistort" / "nonexistent_file.yml"
+        file_path = str(par_dir)
+
         with pytest.raises(FileNotFoundError) as excinfo:
             Node({"input": ["img"], "output": ["img"], "file_path": file_path})
         assert (
