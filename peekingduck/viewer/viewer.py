@@ -342,7 +342,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
     def _cancel_timer_function(self) -> None:
         """Cancel the background timer function"""
         if self._bkgd_job:
-            self.tk_lbl_timer.after_cancel(self._bkgd_job)
+            self.tk_lbl_header.after_cancel(self._bkgd_job)
             self._bkgd_job = None
 
     ####################
