@@ -14,7 +14,7 @@
 
 """Tracking-by-detection using OpenCV's MOSSE Tracker."""
 
-from typing import Any, Dict, List, NamedTuple, Optional, Tuple
+from typing import Any, Dict, List, NamedTuple
 
 import cv2
 import numpy as np
@@ -64,6 +64,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             for tlwh in tlwhs:
                 self._initialize_tracker(frame, tlwh)
             obj_track_ids = list(self.tracks.keys())
+            self.is_initialized = True
         self._update_tracker_bboxes(frame)
 
         return obj_track_ids
@@ -79,7 +80,6 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         tracker.init(frame, tuple(bbox))
         self.tracks[self.next_track_id] = Track(tracker, bbox)
         self.next_track_id += 1
-        self.is_initialized = True
 
     def _match_and_track(self, frame: np.ndarray, bboxes: np.ndarray) -> List[int]:
         """Matches detections to tracked bboxes, creates a new track if no
@@ -96,16 +96,14 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             (List[int]): A list of track IDs for the detections in the current
                 frame.
         """
-        prev_tracks = [track.bbox for _, track in self.tracks.items()]
-        prev_tracked_bboxes = np.array(prev_tracks) if prev_tracks else np.empty((0, 4))
-        matching_dict: Dict[Tuple[float, ...], Optional[np.intp]] = {}
+        prev_tracked_bboxes = [track.bbox for _, track in self.tracks.items()]
+        matching_dict = {}
 
         for bbox in bboxes:
-            ious = iou_candidates(bbox, prev_tracked_bboxes)
-            if len(ious) > 0 and max(ious) >= self.iou_threshold:
-                matching_dict[tuple(bbox)] = ious.argmax()
-            else:
-                matching_dict[tuple(bbox)] = None
+            ious = iou_candidates(bbox, np.array(prev_tracked_bboxes))
+            matching_dict[tuple(bbox)] = (
+                ious.argmax() if max(ious) >= self.iou_threshold else None
+            )
 
         track_ids = []
         for bbox, matched_id in matching_dict.items():

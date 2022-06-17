@@ -42,8 +42,7 @@ class TestCameraCalibration:
         assert str(excinfo.value) == "Filepath must have a '.yml' extension."
 
     def test_check_corner_validity(self, corner_data):
-        par_dir = Path(__file__).parent / "camera_calibration" / corner_data
-        file_path = str(par_dir)
+        file_path = str(corner_data)
 
         data = np.load(file_path)
         width = data["width"]

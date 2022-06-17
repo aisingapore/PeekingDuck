@@ -42,6 +42,7 @@ CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
 
 UNDISTORT_BEFORE = ["undistort_before.jpg"]
 CORNER_DATA = ["corners_ok.npz", "image_too_small.npz", "not_in_box.npz"]
+CAMERA_COEFFICIENTS = ["camera_calibration_coeffs.yml"]
 
 # Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
@@ -178,6 +179,20 @@ def undistort_before(request):
     gc.collect()
 
 
+@pytest.fixture(params=CORNER_DATA)
+def corner_data(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CAMERA_COEFFICIENTS)
+def corner_data(request):
+    yield str(TEST_DATA_DIR / "undistort" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
 @pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
 def human_video_sequence(request):
     """This actually returns a list of dictionaries each containing:
@@ -204,13 +219,6 @@ def human_video_sequence(request):
         for key, val in detections.items()
     ]
 
-    K.clear_session()
-    gc.collect()
-
-
-@pytest.fixture(params=CORNER_DATA)
-def corner_data(request):
-    yield str(request.param)
     K.clear_session()
     gc.collect()
 

@@ -13,8 +13,8 @@
 # limitations under the License.
 
 """
-Calculates camera coefficients for `undistortion
-<https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
+Calculates camera coefficients to be used to
+remove distortion from a wide-angle camera image.
 """
 
 from typing import Any, Dict, List
@@ -40,273 +40,33 @@ MIDDLE = 4
 CORNERS_OK = 0
 IMAGE_TOO_SMALL = 1
 NOT_IN_BOX = 2
-DEFAULT_TEXT = "PLACE BOARD HERE"
-TOO_SMALL = "MOVE BOARD CLOSER"
-DETECTION_SUCCESS = "DETECTION SUCCESSFUL! PRESS ANY KEY TO CONTINUE."
-DETECTION_COMPLETE = "DETECTION COMPLETE! PRESS ANY KEY TO EXIT."
-BOX_OPACITY = 0.75
-
-
-def _get_box_info(num: int, width: int, height: int) -> tuple:
-    """Returns start and end points of box, and position to put text"""
-    start_points = {
-        TOP_LEFT: (0, 0),
-        TOP_RIGHT: (int(2 * width / 3), 0),
-        BOTTOM_LEFT: (0, int(height / 2)),
-        BOTTOM_RIGHT: (int(2 * width / 3), int(height / 2)),
-        MIDDLE: (int(width / 3), int(height / 4)),
-    }
-    end_points = {
-        TOP_LEFT: (int(width / 3), int(height / 2)),
-        TOP_RIGHT: (width, int(height / 2)),
-        BOTTOM_LEFT: (int(width / 3), height),
-        BOTTOM_RIGHT: (width, height),
-        MIDDLE: (int(2 * width / 3), int(3 * height / 4)),
-    }
-    text_positions = {
-        TOP_LEFT: (5, int(height / 2) - 5),
-        TOP_RIGHT: (int(2 * width / 3) + 5, int(height / 2) - 5),
-        BOTTOM_LEFT: (5, int(height / 2) + 5),
-        BOTTOM_RIGHT: (int(2 * width / 3) + 5, int(height / 2) + 5),
-        MIDDLE: (int(width / 3) + 5, int(3 * height / 4) - 5),
-    }
-    pos_types = {
-        TOP_LEFT: BOTTOM_LEFT,
-        TOP_RIGHT: BOTTOM_LEFT,
-        BOTTOM_LEFT: TOP_LEFT,
-        BOTTOM_RIGHT: TOP_LEFT,
-        MIDDLE: BOTTOM_LEFT,
-    }
-
-    return start_points[num], end_points[num], (text_positions[num], pos_types[num])
-
-
-def _get_optimal_font_scale(text: str, width: int, min_width: float) -> float:
-    """Calculate optimal font scale given text and width"""
-    for scale in range(250, int(min_width * 50), -1):
-        thickness = int((scale / 50) / 0.5)
-
-        text_size = cv2.getTextSize(
-            text=text,
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=scale / 50,
-            thickness=thickness,
-        )
-        new_width = text_size[0][0]
-        if new_width <= width:
-            return scale / 50
-    return min_width
-
-
-def _draw_bgnd_box(
-    img: np.ndarray,
-    pt1: tuple,
-    pt2: tuple,
-) -> np.ndarray:
-    """Draws background box on image"""
-
-    box_img = img.copy()
-
-    # draw the rectangle
-    cv2.rectangle(box_img, pt1, pt2, BLACK, cv2.FILLED)
-
-    # apply the overlay
-    return cv2.addWeighted(box_img, BOX_OPACITY, img, 1 - BOX_OPACITY, 0, img)
-
-
-def _draw_text(img: np.ndarray, text: str, pos_info: tuple) -> np.ndarray:
-    """Draws text on the image"""
-
-    pos, pos_type = pos_info
-
-    img_copy = img.copy()
-
-    font_scale = _get_optimal_font_scale(
-        text, img.shape[1] / 3 - 10, img.shape[1] / 1920
-    )
-    thickness = int(font_scale / 0.5)
-
-    sentences = [""]
-    for word in text.split():
-        last_str = sentences[-1]
-        if last_str == "":
-            new_str = last_str + word
-        else:
-            new_str = last_str + " " + word
-
-        text_width = cv2.getTextSize(
-            text=new_str,
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=font_scale,
-            thickness=thickness,
-        )[0][0]
-        if text_width > img_copy.shape[1] / 3 - 10:
-            sentences.append(word)
-        else:
-            sentences[-1] = new_str
-
-    text_width = 0
-    text_height = cv2.getTextSize(
-        text=sentences[0],
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        fontScale=font_scale,
-        thickness=thickness,
-    )[0][1]
-
-    for sentence in sentences:
-        text_width = max(
-            text_width,
-            cv2.getTextSize(
-                text=sentence,
-                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=font_scale,
-                thickness=thickness,
-            )[0][0],
-        )
-
-    if pos_type == TOP_LEFT:
-        img_copy = _draw_bgnd_box(
-            img_copy,
-            (pos[0], pos[1]),
-            (pos[0] + text_width + 5, pos[1] + len(sentences) * (text_height + 5) + 5),
-        )
-
-        pos = (pos[0] + 5, pos[1] + text_height + 5)
-
-    elif pos_type == BOTTOM_LEFT:
-        img_copy = _draw_bgnd_box(
-            img_copy,
-            (pos[0], pos[1] - len(sentences) * (text_height + 5) - 5),
-            (pos[0] + text_width + 5, pos[1]),
-        )
-
-        pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(sentences) - 1) - 5)
-
-    for sentence in sentences:
-        img_copy = cv2.putText(
-            img=img_copy,
-            text=sentence,
-            org=pos,
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=font_scale,
-            color=CHAMPAGNE,
-            thickness=thickness,
-            lineType=cv2.LINE_AA,
-        )
-
-        pos = (pos[0], pos[1] + text_height + 5)
-
-    return img_copy
-
-
-def _draw_countdown(img: np.ndarray, num: int) -> np.ndarray:
-    """Draws a countdown in the center of the screen"""
-
-    img_copy = img.copy()
-    height, width = img_copy.shape[:2]
-
-    text = str(num)
-
-    font_scale = _get_optimal_font_scale(text, width / 8, width / 1920)
-    text_width, text_height = cv2.getTextSize(
-        text=text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness=2
-    )[0]
-
-    pos = (int(width / 2 - text_width / 2), int(height / 2 + text_height / 2))
-
-    cv2.putText(
-        img=img_copy,
-        text=text,
-        org=pos,
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        fontScale=font_scale,
-        color=BLACK,
-        thickness=10,
-        lineType=cv2.LINE_AA,
-    )
-
-    return cv2.putText(
-        img=img_copy,
-        text=text,
-        org=pos,
-        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-        fontScale=font_scale,
-        color=TOMATO,
-        thickness=8,
-        lineType=cv2.LINE_AA,
-    )
-
-
-def _draw_box(img: np.ndarray, start_point: tuple, end_point: tuple) -> np.ndarray:
-    """Draws rectangle on the image"""
-
-    img_copy = img.copy()
-
-    cv2.rectangle(
-        img=img_copy,
-        pt1=start_point,
-        pt2=end_point,
-        color=(0, 0, 0),
-        thickness=3,
-    )
-
-    return cv2.rectangle(
-        img=img_copy,
-        pt1=start_point,
-        pt2=end_point,
-        color=CHAMPAGNE,
-        thickness=1,
-    )
-
-
-def _check_corners_validity(
-    width: int, height: int, corners: np.ndarray, start_point: tuple, end_point: tuple
-) -> int:
-    """Checks whether the corners are large enough and fall within the box"""
-
-    min_w = width
-    min_h = height
-    max_w = 0
-    max_h = 0
-    for corner in corners:
-        min_w = min(min_w, corner[0][0])
-        max_w = max(max_w, corner[0][0])
-        min_h = min(min_h, corner[0][1])
-        max_h = max(max_h, corner[0][1])
-
-    area = (max_w - min_w) * (max_h - min_h)
-
-    if area < width * height / (6 * 4):
-        return IMAGE_TOO_SMALL
-
-    min_w_box = max(min_w, start_point[0])
-    max_w_box = min(max_w, end_point[0])
-    min_h_box = max(min_h, start_point[1])
-    max_h_box = min(max_h, end_point[1])
-
-    if max_w_box < min_w_box or max_h_box < min_h_box:
-        return NOT_IN_BOX
-
-    if (max_w_box - min_w_box) * (max_h_box - min_h_box) < 3 * area / 4:
-        return NOT_IN_BOX
-
-    return CORNERS_OK
+DEFAULT_TEXT = ["PLACE BOARD HERE"]
+TOO_SMALL = ["MOVE BOARD CLOSER"]
+DETECTION_SUCCESS = ["DETECTION SUCCESSFUL!", "PRESS ANY KEY TO CONTINUE."]
+DETECTION_COMPLETE = ["DETECTION COMPLETE!", "PRESS ANY KEY TO EXIT."]
+MAX_LEN_TEXT = "PRESS ANY KEY TO CONTINUE."
+BGND_BOX_OPACITY = 0.75
+NUM_PICTURES = 5
+BOX_WIDTH = 1 / 3  # relative to the window width
+BOX_HEIGHT = 1 / 2  # relative to the window height
+TEXT_PADDING = 5
+AREA_THRESHOLD = 3 / 4
 
 
 class Node(AbstractNode):
     """Calculates camera coefficients for `undistortion
     <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
 
-    To calculate your camera, first download the following image and print it
-    out in a suitable size, or display it on a sufficiently large device screen,
-    such as a computer or a tablet. For most use cases, an A4-sized checkerboard works
-    well, but depending on the position and distance of the camera, a bigger checkerboard
-    may be required.
+    To calculate your camera, first download the following checkerboard and print it
+    out in a suitable size and attached it to a hard surface, or display it on a sufficiently
+    large device screen, such as a computer or a tablet. For most use cases, an A4-sized
+    checkerboard works well, but depending on the position and distance of the camera, a
+    bigger checkerboard may be required.
 
     .. image:: /assets/api/checkerboard.png
         :width: 20 %
 
-    Next, edit ```pipeline_config.yml``` in your project folder as shown below:
+    Next, create an empty ``pipeline_config.yml`` in your project folder and modify it as follows:
 
     .. code-block:: yaml
         :linenos:
@@ -318,11 +78,13 @@ class Node(AbstractNode):
         - dabble.camera_calibration
         - output.screen
 
-    Run the above with the pipeline :greenbox:`peekingduck run`. |br|
+    Run the above pipeline with :greenbox:`peekingduck run`. If you are unfamiliar with the pipeline
+    file and running peekingduck, you may refer to the
+    :doc:`HelloCV tutorial </tutorials/01_hello_cv>`. |br|
     You should see a display of your camera with some instructions overlaid. Follow the instructions
-    to position the checkerboard at different positions in the camera. If the process is successful,
-    the camera coefficients will be calculated and written to a file and you can start using the
-    :mod:`augment.undistort` node.
+    to position the checkerboard at 5 different positions in the camera. If the process is
+    successful, the camera coefficients will be calculated and written to a file and you can start
+    using the :mod:`augment.undistort` node.
 
     Inputs:
         |img_data|
@@ -334,10 +96,13 @@ class Node(AbstractNode):
     Configs:
         num_corners (:obj:`List[int]`):
             **default = [10, 7]**. |br|
-            A list containing the number of internal corners
-            along the vertical and horizontal axes.
+            A list containing the number of internal corners along the vertical
+            and horizontal axes. For example, in the given image above, the
+            checkerboard is of size 11x8, so the number of internal corners is
+            10x7. If you are using the given checkerboard above, you do not need
+            to change this parameter.
         scale_factor (:obj:`int`):
-            **default = 4**. |br|
+            **default = 2**. |br|
             Factor to scale the image by when finding chessboard corners. For
             example, with a scale of 4, an image of size (1080 x 1920) will be
             scaled down to (270 x 480) when detecting the corners. Increasing this
@@ -363,79 +128,18 @@ class Node(AbstractNode):
 
         # prepare all object points, like (0, 0, 0), (1, 0, 0), etc.
         np_mgrid = np.mgrid[0:grid_height, 0:grid_width]
-        self.object_points_base = np.zeros((grid_height * grid_width, 3), np.float32)
-        self.object_points_base[:, :2] = np_mgrid.T.reshape(-1, 2)
+        object_points_base = np.zeros((grid_height * grid_width, 3), np.float32)
+        object_points_base[:, :2] = np_mgrid.T.reshape(-1, 2)
 
         # arrays to store object points and image points
-        self.object_points: List[np.ndarray] = []  # points in real world
+        # points in real world
+        self.object_points: List[np.ndarray] = [object_points_base] * NUM_PICTURES
         self.image_points: List[np.ndarray] = []  # points on image plane
 
         self.last_detection = time.time()
         self.num_detections = 0
 
-        self.num_pictures = 5
-
-    def _detect_corners(self, height: int, width: int, gray_img: np.ndarray) -> tuple:
-        """Detects corners in the image"""
-        # downscale
-        new_h = int(height / self.scale_factor)
-        new_w = int(width / self.scale_factor)
-
-        resized_img = cv2.resize(gray_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
-
-        # try to find chessboard corners
-        return cv2.findChessboardCorners(
-            image=resized_img, patternSize=self.num_corners, corners=None
-        )
-
-    def _calculate_coeffs(self, img_shape: tuple) -> None:
-        """Performs calculations with detected corners"""
-        (
-            calibration_success,
-            camera_matrix,
-            distortion_coeffs,
-            rotation_vec,
-            translation_vec,
-        ) = cv2.calibrateCamera(
-            objectPoints=self.object_points,
-            imagePoints=self.image_points,
-            imageSize=img_shape,
-            cameraMatrix=None,
-            distCoeffs=None,
-        )
-
-        if calibration_success:
-            self.logger.info("Calibration successful!")
-            self.logger.info(f"camera_matrix: {camera_matrix}")
-            self.logger.info(f"distortion_coeffs: {distortion_coeffs}")
-
-            file_data = {}
-            file_data["camera_matrix"] = camera_matrix.tolist()
-            file_data["distortion_coeffs"] = distortion_coeffs.tolist()
-
-            yaml.dump(file_data, open(self.file_path, "w"), default_flow_style=None)
-        else:
-            raise Exception("Calibration failed. Please try again.")
-
-        mean_error = 0
-        for i in range(len(self.object_points)):
-            projected_image_points, _ = cv2.projectPoints(
-                objectPoints=self.object_points[i],
-                rvec=rotation_vec[i],
-                tvec=translation_vec[i],
-                cameraMatrix=camera_matrix,
-                distCoeffs=distortion_coeffs,
-            )
-
-            error = cv2.norm(
-                src1=self.image_points[i],
-                src2=projected_image_points,
-                normType=cv2.NORM_L2,
-            )
-            error /= len(projected_image_points)
-            mean_error += error
-
-        self.logger.info(f"total eror: {mean_error / len(self.object_points)}")
+        self.display_scales = {}
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
         """This node calculates the camera distortion coefficients for undistortion.
@@ -455,16 +159,22 @@ class Node(AbstractNode):
 
         height, width = img.shape[:2]
 
+        if self.display_scales == {}:
+            # width of box - background box buffer - text buffer
+            self.display_scales["normal_font_scale"] = _get_optimal_font_scale(
+                MAX_LEN_TEXT, width * BOX_WIDTH - 4 * TEXT_PADDING
+            )
+            self.display_scales["countdown_font_scale"] = _get_optimal_font_scale(
+                "5", width / 8
+            )
+            self.display_scales["box_thickness"] = max(int(width / 640), 1)
+
         start_point, end_point, text_pos = _get_box_info(
             self.num_detections, width, height
         )
 
-        img_notext = _draw_box(img, start_point, end_point)
-        img = _draw_text(
-            img_notext,
-            f"{DEFAULT_TEXT} ({self.num_detections+1}/{self.num_pictures})",
-            text_pos,
-        )
+        _draw_box(img, start_point, end_point, self.display_scales["box_thickness"])
+        text_to_draw = [f"{DEFAULT_TEXT[0]} ({self.num_detections+1}/{NUM_PICTURES})"]
 
         # if sufficient time has passed
         if time.time() - self.last_detection >= 5:
@@ -481,14 +191,11 @@ class Node(AbstractNode):
                 width, height, corners, start_point, end_point
             )
 
-            if corners_valid != CORNERS_OK:
-                detect_corners_success = False
-                if corners_valid == IMAGE_TOO_SMALL:
-                    img = _draw_text(img_notext, TOO_SMALL, text_pos)
+            if corners_valid == IMAGE_TOO_SMALL:
+                text_to_draw = TOO_SMALL
 
-        if detect_corners_success:
+        if detect_corners_success and corners_valid == CORNERS_OK:
 
-            self.object_points.append(self.object_points_base)
             self.image_points.append(corners)
 
             # improve corner accuracy
@@ -502,32 +209,377 @@ class Node(AbstractNode):
 
             # draw corners and message on the image
             cv2.drawChessboardCorners(
-                image=img_notext,
+                image=img,
                 patternSize=self.num_corners,
                 corners=corners_accurate,
                 patternWasFound=detect_corners_success,
             )
 
             self.num_detections += 1
-
-            if self.num_detections != self.num_pictures:
-                img = _draw_text(img_notext, DETECTION_SUCCESS, text_pos)
-            else:
-                img = _draw_text(img_notext, DETECTION_COMPLETE, text_pos)
-
-            # display the image and wait for user to press a key
-            cv2.imshow("PeekingDuck", img)
-            cv2.waitKey(0)
-
             self.last_detection = time.time()
 
+            self._draw_text_and_corners(img, text_pos)
+
             # if we have sufficient images, calculate the coefficients and write to a file
-            if self.num_detections == self.num_pictures:
-                self._calculate_coeffs(img_shape=gray_img.shape[::-1])
+            if self.num_detections == NUM_PICTURES:
+                calibration_data = self._calculate_coeffs(
+                    img_shape=gray_img.shape[::-1]
+                )
+                self._calculate_error(calibration_data)
                 return {"pipeline_end": True}
+
+        self._draw_text_and_countdown(img, text_to_draw, text_pos)
+
+        return {"img": img}
+
+    def _detect_corners(self, height: int, width: int, gray_img: np.ndarray) -> tuple:
+        """Detects corners in the image"""
+        # downscale
+        new_h = int(height / self.scale_factor)
+        new_w = int(width / self.scale_factor)
+
+        resized_img = cv2.resize(gray_img, (new_w, new_h), interpolation=cv2.INTER_AREA)
+
+        # try to find chessboard corners
+        return cv2.findChessboardCorners(
+            image=resized_img, patternSize=self.num_corners, corners=None
+        )
+
+    def _calculate_coeffs(self, img_shape: tuple) -> None:
+        """Performs calculations with detected corners"""
+
+        calibration_data = cv2.calibrateCamera(
+            objectPoints=self.object_points,
+            imagePoints=self.image_points,
+            imageSize=img_shape,
+            cameraMatrix=None,
+            distCoeffs=None,
+        )
+
+        (
+            calibration_success,
+            camera_matrix,
+            distortion_coeffs,
+            _,
+            _,
+        ) = calibration_data
+
+        if calibration_success:
+            self.logger.info("Calibration successful!")
+            self.logger.info(f"Camera Matrix: {camera_matrix}")
+            self.logger.info(f"Distortion Coefficients: {distortion_coeffs}")
+
+            file_data = {}
+            file_data["camera_matrix"] = camera_matrix.tolist()
+            file_data["distortion_coeffs"] = distortion_coeffs.tolist()
+
+            yaml.dump(file_data, open(self.file_path, "w"), default_flow_style=None)
+        else:
+            raise Exception("Calibration failed. Please try again.")
+
+        return calibration_data
+
+    def _calculate_error(self, calibration_data: tuple) -> None:
+        """Calculates re-projection error"""
+
+        (
+            _,
+            camera_matrix,
+            distortion_coeffs,
+            rotation_vec,
+            translation_vec,
+        ) = calibration_data
+
+        mean_error = 0
+        for i in range(len(self.object_points)):
+            projected_image_points, _ = cv2.projectPoints(
+                objectPoints=self.object_points[i],
+                rvec=rotation_vec[i],
+                tvec=translation_vec[i],
+                cameraMatrix=camera_matrix,
+                distCoeffs=distortion_coeffs,
+            )
+
+            error = cv2.norm(
+                src1=self.image_points[i],
+                src2=projected_image_points,
+                normType=cv2.NORM_L2,
+            )
+            error /= len(projected_image_points)
+            mean_error += error
+
+        self.logger.info(f"Total eror: {mean_error / len(self.object_points)}")
+
+    def _draw_text_and_corners(self, img: np.ndarray, text_pos: tuple) -> None:
+        """Draws text and corners on image"""
+
+        if self.num_detections != NUM_PICTURES:
+            text_to_draw = DETECTION_SUCCESS
+        else:
+            text_to_draw = DETECTION_COMPLETE
+
+        _draw_text(
+            img, text_to_draw, text_pos, self.display_scales["normal_font_scale"]
+        )
+
+        # display the image and wait for user to press a key
+        cv2.imshow("PeekingDuck", img)
+        cv2.waitKey(0)
+
+    def _draw_text_and_countdown(
+        self, img: np.ndarray, text_to_draw: str, text_pos: tuple
+    ) -> None:
+        """Draws text and countdown on image"""
+
+        _draw_text(
+            img, text_to_draw, text_pos, self.display_scales["normal_font_scale"]
+        )
 
         time_to_next_detection = math.ceil(5 - time.time() + self.last_detection)
         if time_to_next_detection > 0:
-            img = _draw_countdown(img, time_to_next_detection)
+            _draw_countdown(
+                img, time_to_next_detection, self.display_scales["countdown_font_scale"]
+            )
 
-        return {"img": img}
+
+def _get_box_info(num: int, width: int, height: int) -> tuple:
+    """Returns start and end points of box, and position to put text"""
+    start_points = {
+        TOP_LEFT: (0, 0),
+        TOP_RIGHT: (int(width * (1 - BOX_WIDTH)), 0),
+        BOTTOM_LEFT: (0, int(height * (1 - BOX_HEIGHT))),
+        BOTTOM_RIGHT: (int(width * (1 - BOX_WIDTH)), int(height * (1 - BOX_HEIGHT))),
+        MIDDLE: (
+            int(width * (1 / 2 - BOX_WIDTH / 2)),
+            int(height * (1 / 2 - BOX_HEIGHT / 2)),
+        ),
+    }
+    end_points = {
+        TOP_LEFT: (int(width * BOX_WIDTH), int(height * BOX_HEIGHT)),
+        TOP_RIGHT: (width, int(height * BOX_HEIGHT)),
+        BOTTOM_LEFT: (int(width * BOX_WIDTH), height),
+        BOTTOM_RIGHT: (width, height),
+        MIDDLE: (
+            int(width * (1 / 2 + BOX_WIDTH / 2)),
+            int(height * (1 / 2 + BOX_HEIGHT / 2)),
+        ),
+    }
+    text_positions = {
+        TOP_LEFT: (TEXT_PADDING, int(height * BOX_HEIGHT) - TEXT_PADDING),
+        TOP_RIGHT: (
+            int(width * (1 - BOX_WIDTH)) + TEXT_PADDING,
+            int(height * BOX_HEIGHT) - TEXT_PADDING,
+        ),
+        BOTTOM_LEFT: (TEXT_PADDING, int(height * (1 - BOX_HEIGHT)) + TEXT_PADDING),
+        BOTTOM_RIGHT: (
+            int(width * (1 - BOX_WIDTH)) + TEXT_PADDING,
+            int(height * (1 - BOX_HEIGHT)) + TEXT_PADDING,
+        ),
+        MIDDLE: (
+            int(width * (1 / 2 - BOX_WIDTH / 2)) + TEXT_PADDING,
+            int(height * (1 / 2 + BOX_HEIGHT / 2)) - TEXT_PADDING,
+        ),
+    }
+    pos_types = {
+        TOP_LEFT: BOTTOM_LEFT,
+        TOP_RIGHT: BOTTOM_LEFT,
+        BOTTOM_LEFT: TOP_LEFT,
+        BOTTOM_RIGHT: TOP_LEFT,
+        MIDDLE: BOTTOM_LEFT,
+    }
+
+    return start_points[num], end_points[num], (text_positions[num], pos_types[num])
+
+
+def _get_optimal_font_scale(text: str, width: int) -> float:
+    """Calculate optimal font scale given text and width"""
+    for scale in range(250, 0, -1):
+        thickness = int((scale / 50) / 0.5)
+
+        text_size = cv2.getTextSize(
+            text=text,
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=scale / 50,
+            thickness=thickness,
+        )
+        new_width = text_size[0][0]
+        if new_width <= width:
+            return scale / 50
+    return 0.5
+
+
+def _draw_bgnd_box(
+    img: np.ndarray,
+    pt1: tuple,
+    pt2: tuple,
+) -> None:
+    """Draws background box on image"""
+
+    box_img = img.copy()
+
+    # draw the rectangle
+    cv2.rectangle(box_img, pt1, pt2, BLACK, cv2.FILLED)
+
+    # apply the overlay
+    cv2.addWeighted(box_img, BGND_BOX_OPACITY, img, 1 - BGND_BOX_OPACITY, 0, img)
+
+
+def _draw_text(
+    img: np.ndarray, texts: List[str], pos_info: tuple, font_scale: float
+) -> None:
+    """Draws text on the image"""
+
+    pos, pos_type = pos_info
+
+    thickness = int(font_scale / 0.5)
+
+    text_width = 0
+    text_height = cv2.getTextSize(
+        text=texts[0],
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=font_scale,
+        thickness=thickness,
+    )[0][1]
+
+    for text in texts:
+        text_width = max(
+            text_width,
+            cv2.getTextSize(
+                text=text,
+                fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+                fontScale=font_scale,
+                thickness=thickness,
+            )[0][0],
+        )
+
+    if pos_type == TOP_LEFT:
+        _draw_bgnd_box(
+            img,
+            (pos[0], pos[1]),
+            (pos[0] + text_width + 10, pos[1] + len(texts) * (text_height + 5) + 5),
+        )
+
+        pos = (pos[0] + 5, pos[1] + text_height + 5)
+
+    elif pos_type == BOTTOM_LEFT:
+        _draw_bgnd_box(
+            img,
+            (pos[0], pos[1] - len(texts) * (text_height + 5) - 5),
+            (pos[0] + text_width + 10, pos[1]),
+        )
+
+        pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(texts) - 1) - 5)
+
+    for text in texts:
+        cv2.putText(
+            img=img,
+            text=text,
+            org=pos,
+            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+            fontScale=font_scale,
+            color=CHAMPAGNE,
+            thickness=thickness,
+            lineType=cv2.LINE_AA,
+        )
+
+        pos = (pos[0], pos[1] + text_height + 5)
+
+
+def _draw_countdown(img: np.ndarray, num: int, font_scale: float) -> None:
+    """Draws a countdown in the center of the screen"""
+
+    height, width = img.shape[:2]
+
+    text = str(num)
+
+    text_width, text_height = cv2.getTextSize(
+        text=text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness=2
+    )[0]
+
+    pos = (int(width / 2 - text_width / 2), int(height / 2 + text_height / 2))
+
+    cv2.putText(
+        img=img,
+        text=text,
+        org=pos,
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=font_scale,
+        color=BLACK,
+        thickness=10,
+        lineType=cv2.LINE_AA,
+    )
+
+    cv2.putText(
+        img=img,
+        text=text,
+        org=pos,
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=font_scale,
+        color=TOMATO,
+        thickness=8,
+        lineType=cv2.LINE_AA,
+    )
+
+
+def _draw_box(
+    img: np.ndarray, start_point: tuple, end_point: tuple, box_thickness: int
+) -> None:
+    """Draws rectangle on the image"""
+
+    cv2.rectangle(
+        img=img,
+        pt1=start_point,
+        pt2=end_point,
+        color=(0, 0, 0),
+        thickness=3 * box_thickness,
+    )
+
+    cv2.rectangle(
+        img=img,
+        pt1=start_point,
+        pt2=end_point,
+        color=CHAMPAGNE,
+        thickness=box_thickness,
+    )
+
+
+def _check_corners_validity(
+    width: int, height: int, corners: np.ndarray, start_point: tuple, end_point: tuple
+) -> int:
+    """Checks whether the corners are large enough and fall within the box"""
+
+    min_w = width
+    min_h = height
+    max_w = 0
+    max_h = 0
+    for corner in corners:
+        min_w = min(min_w, corner[0][0])
+        max_w = max(max_w, corner[0][0])
+        min_h = min(min_h, corner[0][1])
+        max_h = max(max_h, corner[0][1])
+
+    area = (max_w - min_w) * (max_h - min_h)
+
+    # if area is less than 1/4 of the box size
+    if area < width * BOX_WIDTH * height * BOX_HEIGHT / 4:
+        return IMAGE_TOO_SMALL
+
+    # if the board is completely out of the box
+    if (
+        max_w < start_point[0]
+        or end_point[0] < min_w
+        or max_h < start_point[1]
+        or end_point[1] < min_h
+    ):
+        return NOT_IN_BOX
+
+    min_w_box = max(min_w, start_point[0])
+    max_w_box = min(max_w, end_point[0])
+    min_h_box = max(min_h, start_point[1])
+    max_h_box = min(max_h, end_point[1])
+
+    # check if at least 3 / 4 of the board area is within the box
+    if (max_w_box - min_w_box) * (max_h_box - min_h_box) < area * AREA_THRESHOLD:
+        return NOT_IN_BOX
+
+    return CORNERS_OK

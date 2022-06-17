@@ -24,20 +24,13 @@ from pathlib import Path
 from peekingduck.pipeline.nodes.augment.undistort import Node
 
 
-@pytest.fixture
-def undistort():
-    par_dir = Path(__file__).parent / "undistort" / "camera_calibration_coeffs.yml"
-    file_path = str(par_dir)
-
-    node = Node({"input": ["img"], "output": ["img"], "file_path": file_path})
-    return node
-
-
 class TestUndistort:
-    def test_undistort(self, undistort, undistort_before):
+    def test_undistort(self, undistort_before, camera_coefficients):
         before_img = cv2.imread(undistort_before)
+        file_path = str(camera_coefficients)
+        node = Node({"input": ["img"], "output": ["img"], "file_path": file_path})
 
-        outputs = undistort.run({"img": before_img})
+        outputs = node.run({"img": before_img})
         assert before_img.shape != outputs["img"].shape
 
     def test_file_io(self):
