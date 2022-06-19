@@ -290,7 +290,6 @@ class TestCli:
         print(f"\ntmp_dir={tmp_dir}")
         unit_test_run_dir = Path(__file__).parents[3]
         print(f"unit_test_run_dir={unit_test_run_dir}")
-        test_config_path = tmp_dir / "test_config.yml"
         nodes = {
             "nodes": [
                 {
@@ -300,11 +299,13 @@ class TestCli:
                 }
             ]
         }
+        os.chdir(unit_test_run_dir)
+        # test_config_path = tmp_dir / "test_config.yml"
+        test_config_path = "test_config.yml"
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)
 
         # run unit test
-        os.chdir(unit_test_run_dir)
         cmd = [
             "python",
             "PeekingDuck",
