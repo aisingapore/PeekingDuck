@@ -30,6 +30,7 @@ from click.testing import CliRunner
 from peekingduck import __version__
 from peekingduck.cli import cli
 from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
+from tests.conftest import assert_msg_in_logs
 
 UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for _ in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
@@ -67,26 +68,6 @@ YML = dict(
 
 PKD_DIR = Path(__file__).resolve().parents[2] / "peekingduck"
 PKD_CONFIG_DIR = PKD_DIR / "configs"
-
-
-def assert_msg_in_logs(msg: str, msg_logs) -> bool:
-    """Helper method to test if given message is in a list of logged messages.
-
-    Args:
-        msg (str): message to check for
-        msg_logs (List[LogRecord]): log of messages
-
-    Returns:
-        bool: True if msg in msgs, otherwise False
-    """
-    print(f"msg_to_check={msg}")
-    print(f"type={type(msg_logs)}")
-    for i, log in enumerate(msg_logs):
-        the_msg = log.getMessage()
-        print(f"{i} {the_msg}")
-        if msg == the_msg:
-            return True
-    return False
 
 
 def available_nodes_msg(type_name=None):
