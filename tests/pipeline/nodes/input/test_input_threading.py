@@ -128,7 +128,6 @@ def test_input_threading():
         while True:
             output = proc.stdout.readline()
             outstr = output.decode("utf-8")
-            print(outstr[:-1])
             if "Avg FPS" in outstr:
                 avg_fps = get_fps_number(outstr)
                 break
