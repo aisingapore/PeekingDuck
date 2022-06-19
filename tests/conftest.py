@@ -221,16 +221,12 @@ def assert_msg_in_logs(msg: str, msg_logs) -> bool:
 
     Args:
         msg (str): message to check for
-        msg_logs (List[LogRecord]): log of messages
+        msg_logs (List[LogRecord]): log records containing messages
 
     Returns:
         bool: True if msg in msgs, otherwise False
     """
-    print(f"msg_to_check={msg}")
-    print(f"type={type(msg_logs)}")
-    for i, log in enumerate(msg_logs):
-        the_msg = log.getMessage()
-        print(f"{i} {the_msg}")
-        if msg == the_msg:
+    for log_record in msg_logs:
+        if msg == log_record.getMessage():
             return True
     return False
