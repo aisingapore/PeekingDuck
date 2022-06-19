@@ -45,5 +45,7 @@ class TestUndistort:
             Node({"input": ["img"], "output": ["img"], "file_path": file_path})
         assert (
             str(excinfo.value)
-            == f"File {file_path} does not exist. Please run the camera calibration again."
+            ==  f"File {file_path} does not exist. Please run the camera calibration again "
+            "with the dabble.camera_calibation node. You may refer to this tutorial: "
+            "https://peekingduck.readthedocs.io/en/stable/nodes/dabble.camera_calibration.html"
         )

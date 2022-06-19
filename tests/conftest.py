@@ -187,7 +187,7 @@ def corner_data(request):
 
 
 @pytest.fixture(params=CAMERA_COEFFICIENTS)
-def corner_data(request):
+def camera_coefficients(request):
     yield str(TEST_DATA_DIR / "undistort" / request.param)
     K.clear_session()
     gc.collect()
