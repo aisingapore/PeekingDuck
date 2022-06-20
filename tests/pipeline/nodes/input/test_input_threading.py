@@ -118,7 +118,8 @@ def test_input_threading():
         avg_fps = 0
         # dotw technotes 2022-06-20:
         # previous `cmd = ["python", PKD_ROOT_DIR.name]` and `.Popen(... cwd=PKD_RUN_DIR, ...)`
-        # breaks when PeekingDuck changes current working directory via full config path
+        # breaks on Linux when PeekingDuck changes current working directory via full config path
+        # (but previous method works properly on macOS and Windows)
         cmd = ["python", "__main__.py"]
         proc = subprocess.Popen(
             cmd,
