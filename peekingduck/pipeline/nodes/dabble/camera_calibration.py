@@ -301,7 +301,7 @@ class Node(AbstractNode):
             error /= len(projected_image_points)
             mean_error += error
 
-        self.logger.info(f"Total eror: {mean_error / len(self.object_points)}")
+        self.logger.info(f"Total error: {mean_error / len(self.object_points)}")
 
     def _draw_text_and_corners(
         self,
