@@ -141,7 +141,12 @@ def test_input_threading():
         return avg_fps
 
     def run_url_test(the_url: str) -> bool:
+        # show test config
         print(f"url={the_url}")
+        print(f"PKD_ROOT_DIR={PKD_ROOT_DIR}")
+        print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
+        print(f"PKD_PIPELINE_ORIG_PATH={PKD_PIPELINE_ORIG_PATH}")
+
         print("Run test without threading")
         avg_fps_1 = run_rtsp_test(url=the_url, threading=False)
         print("Run test with threading")
