@@ -46,7 +46,11 @@ class Legend:
         self.legend_height = 0
 
     def draw(
-        self, inputs: Dict[str, Any], items: List[str], position: str
+        self,
+        inputs: Dict[str, Any],
+        items: List[str],
+        position: str,
+        box_opacity: float,
     ) -> np.ndarray:
         """Draw legends onto image
 
@@ -58,9 +62,10 @@ class Legend:
         self.frame = inputs["img"]
 
         self.legend_height = self._get_legend_height(inputs, items)
+        self.legend_width = self._get_legend_width(inputs, items)
         self._set_legend_variables(position)
 
-        self._draw_legend_box(self.frame)
+        self._draw_legend_box(self.frame, box_opacity)
         y_pos = self.legend_starting_y + 20
         for item in items:
             if item == "zone_count":
@@ -152,7 +157,7 @@ class Legend:
                 LINE_AA,
             )
 
-    def _draw_legend_box(self, frame: np.ndarray) -> None:
+    def _draw_legend_box(self, frame: np.ndarray, box_opacity: float) -> None:
         """draw pts of selected object onto frame
 
         Args:
@@ -165,12 +170,15 @@ class Legend:
         cv2.rectangle(
             overlay,
             (self.legend_left_x, self.legend_starting_y),
-            (self.legend_left_x + 150, self.legend_starting_y + self.legend_height),
+            (
+                self.legend_left_x + self.legend_width,
+                self.legend_starting_y + self.legend_height,
+            ),
             BLACK,
             FILLED,
         )
         # apply the overlay
-        cv2.addWeighted(overlay, 0.3, frame, 0.7, 0, frame)
+        cv2.addWeighted(overlay, box_opacity, frame, 1 - box_opacity, 0, frame)
 
     @staticmethod
     def _get_legend_height(inputs: Dict[str, Any], items: List[str]) -> int:
@@ -180,6 +188,51 @@ class Legend:
             # increase the number of items according to number of zones
             no_of_items += len(inputs["zone_count"])
         return 12 * no_of_items + 8 * (no_of_items - 1) + 20
+
+    @staticmethod
+    def _get_item_width(
+        item_name: str,
+        item_info: Union[int, float, str],
+    ) -> int:
+        """Get width of the text to be drawn. If item info is
+        of float type, it will be displayed in 2 decimal places.
+
+        Args:
+            item_name (str): name of the legend item
+            item_info: Union[int, float, str]: info contained by the legend item
+        """
+        if not isinstance(item_info, (int, float, str)):
+            raise TypeError(
+                f"With the exception of the 'zone_count' data type, "
+                f"the draw.legend node only draws values that are of type 'int', 'float' or 'str' "
+                f"within the legend box. The value: {item_info} from the data type: {item_name} "
+                f"is of type: {type(item_info)} and is unable to be drawn."
+            )
+
+        if isinstance(item_info, float):
+            text = f"{item_name.upper()}: {item_info:.2f}"
+        else:
+            text = f"{item_name.upper()}: {str(item_info)}"
+
+        text_size = cv2.getTextSize(
+            text,
+            FONT_HERSHEY_SIMPLEX,
+            SMALL_FONTSCALE,
+            THICK,
+        )
+
+        return text_size[0][0]
+
+    @staticmethod
+    def _get_legend_width(inputs: Dict[str, Any], items: List[str]) -> int:
+        """Get width of legened box needed to contain all items drawn"""
+        max_width = 0
+        for item in items:
+            if item != "zone_count":
+                max_width = max(max_width, Legend._get_item_width(item, inputs[item]))
+
+        # give an additional buffer of 20
+        return max_width + 20
 
     def _set_legend_variables(self, position: str) -> None:
         assert self.legend_height != 0
