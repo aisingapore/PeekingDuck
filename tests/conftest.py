@@ -172,27 +172,6 @@ def human_video(request):
     gc.collect()
 
 
-@pytest.fixture(params=UNDISTORT_BEFORE)
-def undistort_before(request):
-    yield str(TEST_IMAGES_DIR / request.param)
-    K.clear_session()
-    gc.collect()
-
-
-@pytest.fixture(params=CORNER_DATA)
-def corner_data(request):
-    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
-    K.clear_session()
-    gc.collect()
-
-
-@pytest.fixture(params=CAMERA_COEFFICIENTS)
-def camera_coefficients(request):
-    yield str(TEST_DATA_DIR / "undistort" / request.param)
-    K.clear_session()
-    gc.collect()
-
-
 @pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
 def human_video_sequence(request):
     """This actually returns a list of dictionaries each containing:
@@ -257,6 +236,27 @@ def human_video_sequence_with_empty_frames(request):
     # check for based on video content
     yield request.param, sequence
 
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=UNDISTORT_BEFORE)
+def undistort_before(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CORNER_DATA)
+def corner_data(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CAMERA_COEFFICIENTS)
+def camera_coefficients(request):
+    yield str(TEST_DATA_DIR / "undistort" / request.param)
     K.clear_session()
     gc.collect()
 
