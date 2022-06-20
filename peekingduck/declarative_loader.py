@@ -66,8 +66,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
-        parent_path = str(pipeline_path.parent)
-        if parent_path != Path.cwd() and parent_path[0] == "/":
+        if pipeline_path.parent != Path.cwd() and pipeline_path.is_absolute():
+            parent_path = str(pipeline_path.parent)
             self.logger.info(
                 f"{parent_path[0]}: changing working directory to {parent_path}"
             )
