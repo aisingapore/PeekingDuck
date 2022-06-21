@@ -30,6 +30,7 @@ def draw_legend_bottom():
             "output": ["img"],
             "show": ["fps", "count", "zone_count"],
             "position": "bottom",
+            "box_opacity": 0.3,
         }
     )
     return node
@@ -43,6 +44,7 @@ def draw_legend_top():
             "output": ["img"],
             "show": ["fps", "count", "zone_count"],
             "position": "top",
+            "box_opacity": 0.3,
         }
     )
     return node
