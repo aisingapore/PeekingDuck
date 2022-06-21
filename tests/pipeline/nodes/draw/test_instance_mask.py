@@ -23,7 +23,6 @@ import cv2 as cv
 import numpy as np
 import pytest
 import yaml
-from pytest_lazyfixture import lazy_fixture
 
 from peekingduck.pipeline.nodes.draw.instance_mask import Node
 from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
@@ -46,7 +45,7 @@ IMAGE_GAMMA_CORRECTION = ["draw_instance_mask_image-gamma-correction.jpg"]
 ###############################################################################
 # Remember to change the INPUTS_SUBDIR!
 ###############################################################################
-INPUTS_SUBDIR = "node_inputs"
+INPUTS_SUBDIR = "instance_mask"
 INPUTS_NPZ = "draw_instance_mask_inputs.npz"
 
 
@@ -219,13 +218,13 @@ class TestDrawInstanceMasks:
     @pytest.mark.parametrize(
         'pkd_node, ground_truth_image',
         [
-            (lazy_fixture(('draw_instance_mask_node', 'image_with_masks'))),
-            (lazy_fixture(('draw_instance_mask_node_with_contours', 'image_with_contoured_masks'))),
-            (lazy_fixture(('draw_instance_mask_node_with_blur_effect', 'image_with_blur_effect'))),
-            (lazy_fixture(('draw_instance_mask_node_with_mosaic_effect', 'image_with_mosaic_effect'))),
-            (lazy_fixture(('draw_instance_mask_node_with_blur_effect_unmasked_area', 'image_with_blur_effect_unmasked_area'))),
-            (lazy_fixture(('draw_instance_mask_node_adjust_contrast_brightness', 'image_adjusted_contrast_brightness'))),
-            (lazy_fixture(('draw_instance_mask_node_gamma_correction', 'image_gamma_correction'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node', 'image_with_masks'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_with_contours', 'image_with_contoured_masks'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_with_blur_effect', 'image_with_blur_effect'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_with_mosaic_effect', 'image_with_mosaic_effect'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_with_blur_effect_unmasked_area', 'image_with_blur_effect_unmasked_area'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_adjust_contrast_brightness', 'image_adjusted_contrast_brightness'))),
+            (pytest.lazy_fixture(('draw_instance_mask_node_gamma_correction', 'image_gamma_correction'))),
         ],
     )
     # fmt: on

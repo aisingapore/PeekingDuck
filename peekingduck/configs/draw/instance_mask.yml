@@ -3,7 +3,7 @@ output: ["img"]
 
 instance_color_scheme: hue_family
 
-effect: null
+effect: standard
 effect_area: masked
 
 gamma: 1.0
