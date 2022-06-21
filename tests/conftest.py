@@ -216,17 +216,16 @@ def not_raises(exception):
         raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
 
 
-def assert_msg_in_logs(msg: str, msg_logs) -> bool:
-    """Helper method to test if given message is in a list of logged messages.
+def assert_msg_in_logs(msg: str, msg_logs) -> None:
+    """Helper method to assert that given message is in a list of logged messages.
 
     Args:
         msg (str): message to check for
         msg_logs (List[LogRecord]): log records containing messages
-
-    Returns:
-        bool: True if msg in msgs, otherwise False
     """
+    res = False
     for log_record in msg_logs:
-        if msg == log_record.getMessage():
-            return True
-    return False
+        if msg in log_record.getMessage():
+            res = True
+            break
+    assert res
