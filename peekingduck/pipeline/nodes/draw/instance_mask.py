@@ -16,20 +16,20 @@
 Draws instance segmentation masks.
 """
 
-from typing import Any, Dict, Tuple
+import colorsys
+import logging
+from random import randint
+from typing import Any, Dict, Tuple, cast
 
 import cv2 as cv
 import numpy as np
-import colorsys
-from random import randint
-import logging
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.draw.utils.constants import (
     ALPHA,
-    DEFAULT_CLASS_COLOR,
     CLASS_COLORS,
+    DEFAULT_CLASS_COLOR,
 )
 
 
@@ -62,7 +62,7 @@ class Node(
 
         effect (:obj:`str`): **default = None**. |br|
             This defines the effect (if any) to apply to the masks. |br|
-            None: draws a 'standard' instance segmentation mask. |br|
+            "standard": draws a 'standard' instance segmentation mask. |br|
             "contrast_brightness": adjust contrast and brightness using 'alpha
             and 'beta' parameters. |br|
             "gamma_correction": adjust gamma using 'gamma' parameter. |br|
@@ -107,15 +107,17 @@ class Node(
 
         self.logger = logging.getLogger(__name__)
 
-        def _check_type(key: Any, type: Any) -> None:
-            if not isinstance(self.config[key], type):
-                raise ValueError(f"Config: '{key}' must be a {type.__name__} value.")
+        def _check_type(key: Any, var_type: Any) -> None:
+            if not isinstance(self.config[key], var_type):
+                raise ValueError(
+                    f"Config: '{key}' must be a {var_type.__name__} value."
+                )
 
-        self.class_instance_color_state = {}
+        self.class_instance_color_state: Dict[str, Tuple[int, int, int]] = {}
         self.check_valid_choice("instance_color_scheme", {"conventional", "hue_family"})
         self.check_valid_choice(
             "effect",
-            {None, "contrast_brightness", "gamma_correction", "blur", "mosaic"},
+            {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
         )
         self.check_valid_choice("effect_area", {"masked", "unmasked"})
         _check_type("alpha", float)
@@ -145,22 +147,21 @@ class Node(
         Returns:
             outputs (dict): Output in dictionary format with key "img".
         """
-        if self.config["effect"]:
-            output_img = self._mask_apply_effect(
-                inputs["img"],
-                inputs["masks"],
-            )
-        else:
+        if self.config["effect"] == "standard":
             output_img = self._draw_standard_masks(
                 inputs["img"],
                 inputs["masks"],
                 inputs["bbox_labels"],
                 inputs["bbox_scores"],
             )
-
+        else:
+            output_img = self._mask_apply_effect(
+                inputs["img"],
+                inputs["masks"],
+            )
         return {"img": output_img}
 
-    def _draw_standard_masks(
+    def _draw_standard_masks(  # pylint: disable-msg=too-many-locals
         self,
         image: np.ndarray,
         masks: np.ndarray,
@@ -240,7 +241,7 @@ class Node(
             color_hsv = (randint(0, 179), randint(100, 255), 255)
             color = self._hsv_to_rgb(color_hsv)
         elif self.config["instance_color_scheme"] == "hue_family":
-            color = self.class_instance_color_state.get(instance_class)
+            color = self.class_instance_color_state.get(instance_class)  # type: ignore
             if not color:
                 color = CLASS_COLORS.get(instance_class, DEFAULT_CLASS_COLOR)
             else:
@@ -367,7 +368,9 @@ class Node(
             (self.config["mosaic_level"], self.config["mosaic_level"]),
             interpolation=cv.INTER_LANCZOS4,
         )
-        ret_image = cv.resize(ret_image, (width, height), interpolation=cv.INTER_NEAREST)
+        ret_image = cv.resize(
+            ret_image, (width, height), interpolation=cv.INTER_NEAREST
+        )
 
         return ret_image
 
@@ -381,6 +384,6 @@ class Node(
     @staticmethod
     def _hsv_to_rgb(hsv: Tuple[int, int, int]) -> Tuple[int, int, int]:
         rgb_norm = colorsys.hsv_to_rgb(hsv[0] / 127, hsv[1] / 255, hsv[2] / 255)
-        rgb = tuple([int(x * 255) for x in rgb_norm])
+        rgb = cast(Tuple[int, int, int], tuple((int(x * 255) for x in rgb_norm)))
 
         return rgb

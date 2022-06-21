@@ -16,17 +16,17 @@
 Tests for draw instance mask node.
 """
 
-from pathlib import Path
 import tempfile
+from pathlib import Path
+
 import cv2 as cv
 import numpy as np
 import pytest
-from pytest_lazyfixture import lazy_fixture
 import yaml
+from pytest_lazyfixture import lazy_fixture
 
 from peekingduck.pipeline.nodes.draw.instance_mask import Node
 from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
-
 
 IMAGE_ORIGINAL = ["draw_instance_mask_original_image.jpg"]
 IMAGE_UNCHANGED_AFTER_PIPELINE = [

@@ -49,7 +49,8 @@ POINT_RADIUS = 5
 
 # constants for masks
 ALPHA = 0.5
-DEFAULT_CLASS_COLOR = (204,204,204)
+DEFAULT_CLASS_COLOR = (204, 204, 204)
+# fmt: off
 CLASS_COLORS = {
     'person': (245,127,23),
 
@@ -121,7 +122,7 @@ CLASS_COLORS = {
     "bed":          (1,87,155),
     "dining table": (1,87,155),
     "toilet":       (1,87,155),
-    
+
     "tv":           (191,54,12),
     "laptop":       (191,54,12),
     "mouse":        (191,54,12),
@@ -143,3 +144,4 @@ CLASS_COLORS = {
     "hair drier":   (62,39,35),
     "toothbrush":   (62,39,35),
 }
+# fmt: on
