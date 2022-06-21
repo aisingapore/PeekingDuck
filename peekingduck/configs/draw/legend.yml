@@ -2,4 +2,5 @@ input: ["all"]
 output: ["img"]
 
 position: "bottom"
+box_opacity: 0.3
 show: []

@@ -292,7 +292,7 @@ implement our custom node function.
       - input.visual:
           source: cat_and_computer.mp4
       - model.yolo:
-          detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+          detect: ["cup", "cat", "laptop", "keyboard", "mouse"]
       - draw.bbox:
           show_labels: True
       - custom_nodes.draw.score

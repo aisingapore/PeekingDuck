@@ -41,7 +41,7 @@ class YOLOFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
-        self.detect_ids = config["detect_ids"]
+        self.detect_ids = config["detect"]  # change "detect_ids" to "detect"
         self.detector = Detector(
             model_dir,
             class_names,
