@@ -21,6 +21,7 @@ import yaml
 from click.testing import CliRunner
 
 from peekingduck.cli import cli
+from tests.conftest import assert_msg_in_logs
 
 DEFAULT_NODES = ["input.visual", "model.yolo", "draw.bbox", "output.screen"]
 GOOD_SUBDIR = "custom_nodes"
@@ -451,27 +452,24 @@ class TestCliCreateNode:
             yaml.dump(data, outfile)
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
-            offset = 2  # First 2 message is about info about loading config
-            counter = 0
             for node_string in bad_paths:
-                assert (
+                assert_msg_in_logs(
                     f"{node_string} contains invalid formatting: 'Path cannot be "
-                    "absolute!'. Skipping..."
-                ) == captured.records[offset + counter].getMessage()
-                counter += 1
+                    "absolute!'. Skipping...",
+                    captured.records,
+                )
             for node_string in bad_types:
                 # Invalid type error message begins with a 'user_input' so we
                 # just check for the presence of the double single quote
-                assert (
-                    f"{node_string} contains invalid formatting: ''"
-                ) in captured.records[offset + counter].getMessage()
-                counter += 1
+                assert_msg_in_logs(
+                    f"{node_string} contains invalid formatting: ''", captured.records
+                )
             for node_string in bad_names:
-                assert (
+                assert_msg_in_logs(
                     f"{node_string} contains invalid formatting: 'Invalid node "
-                    "name!'. Skipping..."
-                ) == captured.records[offset + counter].getMessage()
-                counter += 1
+                    "name!'. Skipping...",
+                    captured.records,
+                )
 
     def test_create_nodes_from_config_success(self, cwd):
         """The custom nodes declared in the pipeline file only contains poor
@@ -499,11 +497,12 @@ class TestCliCreateNode:
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
             # First 2 message is about info about loading config
-            assert (
+            assert_msg_in_logs(
                 f"Creating files for {node_string}:\n\t"
                 f"Config file: {created_config_path}\n\t"
-                f"Script file: {created_script_path}"
-            ) == captured.records[2].getMessage()
+                f"Script file: {created_script_path}",
+                captured.records,
+            )
 
     def test_create_nodes_from_config_duplicate_node_name(self, cwd):
         """The custom nodes declared in the pipeline file only contains poor
@@ -529,7 +528,8 @@ class TestCliCreateNode:
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             CliRunner().invoke(cli, ["create-node", "--config_path", pipeline_file])
             # First 2 message is about info about loading config
-            assert (
+            assert_msg_in_logs(
                 f"{node_string} contains invalid formatting: 'Node name already "
-                "exists!'. Skipping..."
-            ) == captured.records[2].getMessage()
+                "exists!'. Skipping...",
+                captured.records,
+            )
