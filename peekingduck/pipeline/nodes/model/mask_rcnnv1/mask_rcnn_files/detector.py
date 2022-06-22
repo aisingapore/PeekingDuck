@@ -23,9 +23,11 @@ import cv2
 import numpy as np
 import torch
 import torchvision.transforms as T
-from torchvision.models import detection
-from torchvision.models.detection.mask_rcnn import MaskRCNN
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+    backbone_utils,
+    maskrcnn,
+)
 
 
 class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
@@ -102,14 +104,11 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         Returns:
             torch.nn.Module: An initialized model in PyTorch framework
         """
-        trainable_backbone_layers = 0
         backbone_name = self.model_name_map[self.model_type]
-        backbone = detection.backbone_utils.resnet_fpn_backbone(
+        backbone = backbone_utils.resnet_fpn_backbone(
             backbone_name=backbone_name,
-            pretrained=True,
-            trainable_layers=trainable_backbone_layers,
         )
-        model = MaskRCNN(
+        model = maskrcnn.MaskRCNN(
             backbone=backbone,
             num_classes=self.num_classes,
             box_nms_thresh=self.nms_iou_threshold,
