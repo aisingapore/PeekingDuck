@@ -252,3 +252,18 @@ def not_raises(exception):
         yield
     except exception:
         raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
+
+
+def assert_msg_in_logs(msg: str, msg_logs) -> None:
+    """Helper method to assert that given message is in a list of logged messages.
+
+    Args:
+        msg (str): message to check for
+        msg_logs (List[LogRecord]): log records containing messages
+    """
+    res = False
+    for log_record in msg_logs:
+        if msg in log_record.getMessage():
+            res = True
+            break
+    assert res
