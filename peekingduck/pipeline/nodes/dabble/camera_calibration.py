@@ -32,25 +32,42 @@ from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE, BLACK, TO
 # global constants
 # terminal criteria for subpixel finetuning
 TERMINATION_CRITERIA = (cv2.TERM_CRITERIA_EPS + cv2.TERM_CRITERIA_MAX_ITER, 30, 0.001)
+
+NUM_PICTURES = 5
+
+# constants for positioning of boxes and text
 TOP_LEFT = 0
 TOP_RIGHT = 1
 BOTTOM_LEFT = 2
 BOTTOM_RIGHT = 3
 MIDDLE = 4
+
+# constants for _check_corners_validity
+AREA_THRESHOLD = 3 / 4
 CORNERS_OK = 0
 IMAGE_TOO_SMALL = 1
 NOT_IN_BOX = 2
+
+# displayed messages
 DEFAULT_TEXT = ["PLACE BOARD HERE"]
 TOO_SMALL = ["MOVE BOARD CLOSER"]
-DETECTION_SUCCESS = ["DETECTION SUCCESSFUL!", "PRESS ANY KEY TO CONTINUE."]
-DETECTION_COMPLETE = ["DETECTION COMPLETE!", "PRESS ANY KEY TO EXIT."]
+DETECTION_SUCCESS = ["DETECTION SUCCESSFUL!", "PRESS SPACE TO CONTINUE."]
+DETECTION_COMPLETE = ["DETECTION COMPLETE!", "PRESS SPACE TO EXIT."]
 MAX_LEN_TEXT = "PRESS ANY KEY TO CONTINUE."
+
+# constants for drawing
 BGND_BOX_OPACITY = 0.75
-NUM_PICTURES = 5
-BOX_WIDTH = 1 / 3  # relative to the window width
-BOX_HEIGHT = 1 / 2  # relative to the window height
+BOX_WIDTH_RATIO = 1 / 3  # relative to the window width
+BOX_HEIGHT_RATIO = 1 / 2  # relative to the window height
 TEXT_PADDING = 5
-AREA_THRESHOLD = 3 / 4
+
+# constants for font drawing
+# 1280 is used as the reference point for the ratio
+BOX_THICKNESS_RATIO = 2 / 1280
+NORMAL_FONT_SCALE_RATIO = 0.84 / 1280
+COUNTDOWN_FONT_SCALE_RATIO = 10 / 1280
+NORMAL_FONT_THICKNESS_RATIO = 2 / 1280
+COUNTDOWN_FONT_THICKNESS_RATIO = 8 / 1280
 
 
 class Node(AbstractNode):
@@ -58,7 +75,7 @@ class Node(AbstractNode):
     <https://docs.opencv.org/4.x/dc/dbb/tutorial_py_calibration.html>`_.
 
     To calculate your camera, first download the following checkerboard and print it
-    out in a suitable size and attached it to a hard surface, or display it on a sufficiently
+    out in a suitable size and attach it to a hard surface, or display it on a sufficiently
     large device screen, such as a computer or a tablet. For most use cases, an A4-sized
     checkerboard works well, but depending on the position and distance of the camera, a
     bigger checkerboard may be required.
@@ -205,15 +222,16 @@ class Node(AbstractNode):
     def _initialise_display_scales(self, img_width: int) -> None:
         """Initalises display scales if it hasn't been initialised before"""
 
-        if self.display_scales == {}:
-            # width of box - background box buffer - text buffer
-            self.display_scales["normal_font_scale"] = _get_optimal_font_scale(
-                MAX_LEN_TEXT, int(img_width * BOX_WIDTH - 4 * TEXT_PADDING)
-            )
-            self.display_scales["countdown_font_scale"] = _get_optimal_font_scale(
-                "5", int(img_width / 8)
-            )
-            self.display_scales["box_thickness"] = max(int(img_width / 640), 1)
+        if not self.display_scales:
+            self.display_scales = {
+                "box_thickness": max(int(img_width * BOX_THICKNESS_RATIO), 1),
+                "normal_font_scale": img_width * NORMAL_FONT_SCALE_RATIO,
+                "countdown_font_scale": img_width * COUNTDOWN_FONT_SCALE_RATIO,
+                "normal_font_thickness": int(img_width * NORMAL_FONT_THICKNESS_RATIO),
+                "countdown_font_thickness": int(
+                    img_width * COUNTDOWN_FONT_THICKNESS_RATIO
+                ),
+            }
 
     def _detect_corners(self, height: int, width: int, gray_img: np.ndarray) -> tuple:
         """Detects corners in the image"""
@@ -335,7 +353,11 @@ class Node(AbstractNode):
             text_to_draw = DETECTION_COMPLETE
 
         _draw_text(
-            img, text_to_draw, text_pos, self.display_scales["normal_font_scale"]
+            img=img,
+            texts=text_to_draw,
+            pos_info=text_pos,
+            font_scale=self.display_scales["normal_font_scale"],
+            thickness=self.display_scales["normal_font_thickness"],
         )
 
         # display the image and wait for user to press a key
@@ -348,69 +370,65 @@ class Node(AbstractNode):
         """Draws text and countdown on image"""
 
         _draw_text(
-            img, text_to_draw, text_pos, self.display_scales["normal_font_scale"]
+            img=img,
+            texts=text_to_draw,
+            pos_info=text_pos,
+            font_scale=self.display_scales["normal_font_scale"],
+            thickness=self.display_scales["normal_font_thickness"],
         )
 
         time_to_next_detection = math.ceil(5 - time.time() + self.last_detection)
         if time_to_next_detection > 0:
             _draw_countdown(
-                img, time_to_next_detection, self.display_scales["countdown_font_scale"]
+                img=img,
+                num=time_to_next_detection,
+                font_scale=self.display_scales["countdown_font_scale"],
+                thickness=self.display_scales["countdown_font_thickness"],
             )
-
-
-def _get_optimal_font_scale(text: str, width: int) -> float:
-    """Calculate optimal font scale given text and width"""
-    for scale in range(250, 0, -1):
-        thickness = int((scale / 50) / 0.5)
-
-        text_size = cv2.getTextSize(
-            text=text,
-            fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-            fontScale=scale / 50,
-            thickness=thickness,
-        )
-        new_width = text_size[0][0]
-        if new_width <= width:
-            return scale / 50
-    return 0.5
 
 
 def _get_box_info(num: int, width: int, height: int) -> tuple:
     """Returns start and end points of box, and position to put text"""
     start_points = {
         TOP_LEFT: (0, 0),
-        TOP_RIGHT: (int(width * (1 - BOX_WIDTH)), 0),
-        BOTTOM_LEFT: (0, int(height * (1 - BOX_HEIGHT))),
-        BOTTOM_RIGHT: (int(width * (1 - BOX_WIDTH)), int(height * (1 - BOX_HEIGHT))),
+        TOP_RIGHT: (int(width * (1 - BOX_WIDTH_RATIO)), 0),
+        BOTTOM_LEFT: (0, int(height * (1 - BOX_HEIGHT_RATIO))),
+        BOTTOM_RIGHT: (
+            int(width * (1 - BOX_WIDTH_RATIO)),
+            int(height * (1 - BOX_HEIGHT_RATIO)),
+        ),
         MIDDLE: (
-            int(width * (1 / 2 - BOX_WIDTH / 2)),
-            int(height * (1 / 2 - BOX_HEIGHT / 2)),
+            int(width * (1 / 2 - BOX_WIDTH_RATIO / 2)),
+            int(height * (1 / 2 - BOX_HEIGHT_RATIO / 2)),
         ),
     }
     end_points = {
-        TOP_LEFT: (int(width * BOX_WIDTH), int(height * BOX_HEIGHT)),
-        TOP_RIGHT: (width, int(height * BOX_HEIGHT)),
-        BOTTOM_LEFT: (int(width * BOX_WIDTH), height),
+        TOP_LEFT: (int(width * BOX_WIDTH_RATIO), int(height * BOX_HEIGHT_RATIO)),
+        TOP_RIGHT: (width, int(height * BOX_HEIGHT_RATIO)),
+        BOTTOM_LEFT: (int(width * BOX_WIDTH_RATIO), height),
         BOTTOM_RIGHT: (width, height),
         MIDDLE: (
-            int(width * (1 / 2 + BOX_WIDTH / 2)),
-            int(height * (1 / 2 + BOX_HEIGHT / 2)),
+            int(width * (1 / 2 + BOX_WIDTH_RATIO / 2)),
+            int(height * (1 / 2 + BOX_HEIGHT_RATIO / 2)),
         ),
     }
     text_positions = {
-        TOP_LEFT: (TEXT_PADDING, int(height * BOX_HEIGHT) - TEXT_PADDING),
+        TOP_LEFT: (TEXT_PADDING, int(height * BOX_HEIGHT_RATIO) - TEXT_PADDING),
         TOP_RIGHT: (
-            int(width * (1 - BOX_WIDTH)) + TEXT_PADDING,
-            int(height * BOX_HEIGHT) - TEXT_PADDING,
+            int(width * (1 - BOX_WIDTH_RATIO)) + TEXT_PADDING,
+            int(height * BOX_HEIGHT_RATIO) - TEXT_PADDING,
         ),
-        BOTTOM_LEFT: (TEXT_PADDING, int(height * (1 - BOX_HEIGHT)) + TEXT_PADDING),
+        BOTTOM_LEFT: (
+            TEXT_PADDING,
+            int(height * (1 - BOX_HEIGHT_RATIO)) + TEXT_PADDING,
+        ),
         BOTTOM_RIGHT: (
-            int(width * (1 - BOX_WIDTH)) + TEXT_PADDING,
-            int(height * (1 - BOX_HEIGHT)) + TEXT_PADDING,
+            int(width * (1 - BOX_WIDTH_RATIO)) + TEXT_PADDING,
+            int(height * (1 - BOX_HEIGHT_RATIO)) + TEXT_PADDING,
         ),
         MIDDLE: (
-            int(width * (1 / 2 - BOX_WIDTH / 2)) + TEXT_PADDING,
-            int(height * (1 / 2 + BOX_HEIGHT / 2)) - TEXT_PADDING,
+            int(width * (1 / 2 - BOX_WIDTH_RATIO / 2)) + TEXT_PADDING,
+            int(height * (1 / 2 + BOX_HEIGHT_RATIO / 2)) - TEXT_PADDING,
         ),
     }
     pos_types = {
@@ -442,7 +460,7 @@ def _check_corners_validity(
     area = (max_w - min_w) * (max_h - min_h)
 
     # if area is less than 1/4 of the box size
-    if area < width * BOX_WIDTH * height * BOX_HEIGHT / 4:
+    if area < width * BOX_WIDTH_RATIO * height * BOX_HEIGHT_RATIO / 4:
         return IMAGE_TOO_SMALL
 
     # if the board is completely out of the box
@@ -505,21 +523,23 @@ def _draw_bgnd_box(
 
 
 def _draw_text(
-    img: np.ndarray, texts: List[str], pos_info: tuple, font_scale: float
+    img: np.ndarray,
+    texts: List[str],
+    pos_info: tuple,
+    font_scale: float,
+    thickness: int,
 ) -> None:
     """Draws text on the image"""
 
     pos, pos_type = pos_info
 
-    thickness = int(font_scale / 0.5)
-
     text_width = 0
-    text_height = cv2.getTextSize(
+    (_, text_height), baseline = cv2.getTextSize(
         text=texts[0],
         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
         fontScale=font_scale,
         thickness=thickness,
-    )[0][1]
+    )
 
     for text in texts:
         text_width = max(
@@ -532,23 +552,31 @@ def _draw_text(
             )[0][0],
         )
 
+    img_width = img.shape[1]
+    box_width = min(text_width + 10, img_width * BOX_WIDTH_RATIO - 10)
     if pos_type == TOP_LEFT:
         _draw_bgnd_box(
             img,
             (pos[0], pos[1]),
-            (pos[0] + text_width + 10, pos[1] + len(texts) * (text_height + 5) + 5),
+            (
+                pos[0] + box_width,
+                pos[1] + len(texts) * (text_height + baseline + 5) + baseline + 5,
+            ),
         )
 
-        pos = (pos[0] + 5, pos[1] + text_height + 5)
+        pos = (pos[0] + 5, pos[1] + text_height + baseline + 5)
 
     elif pos_type == BOTTOM_LEFT:
         _draw_bgnd_box(
             img,
-            (pos[0], pos[1] - len(texts) * (text_height + 5) - 5),
-            (pos[0] + text_width + 10, pos[1]),
+            (pos[0], pos[1] - len(texts) * (text_height + baseline + 5) - baseline - 5),
+            (pos[0] + box_width, pos[1]),
         )
 
-        pos = (pos[0] + 5, pos[1] - (text_height + 5) * (len(texts) - 1) - 5)
+        pos = (
+            pos[0] + 5,
+            pos[1] - (text_height + baseline + 5) * (len(texts) - 1) - baseline - 5,
+        )
 
     for text in texts:
         cv2.putText(
@@ -562,10 +590,12 @@ def _draw_text(
             lineType=cv2.LINE_AA,
         )
 
-        pos = (pos[0], pos[1] + text_height + 5)
+        pos = (pos[0], pos[1] + text_height + baseline + 5)
 
 
-def _draw_countdown(img: np.ndarray, num: int, font_scale: float) -> None:
+def _draw_countdown(
+    img: np.ndarray, num: int, font_scale: float, thickness: int
+) -> None:
     """Draws a countdown in the center of the screen"""
 
     height, width = img.shape[:2]
@@ -573,7 +603,10 @@ def _draw_countdown(img: np.ndarray, num: int, font_scale: float) -> None:
     text = str(num)
 
     text_width, text_height = cv2.getTextSize(
-        text=text, fontFace=cv2.FONT_HERSHEY_SIMPLEX, fontScale=font_scale, thickness=2
+        text=text,
+        fontFace=cv2.FONT_HERSHEY_SIMPLEX,
+        fontScale=font_scale,
+        thickness=thickness,
     )[0]
 
     pos = (int(width / 2 - text_width / 2), int(height / 2 + text_height / 2))
@@ -585,7 +618,7 @@ def _draw_countdown(img: np.ndarray, num: int, font_scale: float) -> None:
         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
         fontScale=font_scale,
         color=BLACK,
-        thickness=10,
+        thickness=thickness * 3,
         lineType=cv2.LINE_AA,
     )
 
@@ -596,6 +629,6 @@ def _draw_countdown(img: np.ndarray, num: int, font_scale: float) -> None:
         fontFace=cv2.FONT_HERSHEY_SIMPLEX,
         fontScale=font_scale,
         color=TOMATO,
-        thickness=8,
+        thickness=thickness,
         lineType=cv2.LINE_AA,
     )
