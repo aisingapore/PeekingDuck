@@ -30,6 +30,7 @@ from click.testing import CliRunner
 from peekingduck import __version__
 from peekingduck.cli import cli
 from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
+from tests.conftest import assert_msg_in_logs
 
 UNIQUE_SUFFIX = "".join(random.choice(string.ascii_lowercase) for _ in range(8))
 CUSTOM_FOLDER_NAME = f"custom_nodes_{UNIQUE_SUFFIX}"
@@ -198,9 +199,9 @@ class TestCli:
             result = CliRunner().invoke(cli, ["init"])
 
             assert result.exit_code == 0
-            assert (
-                captured.records[0].getMessage()
-                == f"Creating custom nodes folder in {cwd / 'src' / 'custom_nodes'}"
+            assert_msg_in_logs(
+                f"Creating custom nodes folder in {cwd / 'src' / 'custom_nodes'}",
+                captured.records,
             )
             assert (parent_dir / DEFAULT_NODE_DIR).exists()
             assert (parent_dir / DEFAULT_NODE_CONFIG_DIR).exists()
@@ -214,10 +215,11 @@ class TestCli:
             result = CliRunner().invoke(
                 cli, ["init", "--custom_folder_name", CUSTOM_FOLDER_NAME]
             )
+
             assert result.exit_code == 0
-            assert (
-                captured.records[0].getMessage()
-                == f"Creating custom nodes folder in {cwd / 'src' / CUSTOM_FOLDER_NAME}"
+            assert_msg_in_logs(
+                f"Creating custom nodes folder in {cwd / 'src' / CUSTOM_FOLDER_NAME}",
+                captured.records,
             )
             assert (parent_dir / CUSTOM_NODE_DIR).exists()
             assert (parent_dir / CUSTOM_NODE_CONFIG_DIR).exists()
@@ -229,11 +231,11 @@ class TestCli:
         setup()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = CliRunner().invoke(cli, ["run"])
-            assert (
-                captured.records[0].getMessage() == "Successfully loaded pipeline file."
-            )
-            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
-            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
+
+            assert_msg_in_logs("Successfully loaded pipeline file.", captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE), captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE_2), captured.records)
+
             assert result.exit_code == 0
 
     def test_run_custom_path(self):
@@ -242,11 +244,10 @@ class TestCli:
             result = CliRunner().invoke(
                 cli, ["run", "--config_path", CUSTOM_PIPELINE_PATH]
             )
-            assert (
-                captured.records[0].getMessage() == "Successfully loaded pipeline file."
-            )
-            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
-            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
+
+            assert_msg_in_logs("Successfully loaded pipeline file.", captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE), captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE_2), captured.records)
             assert result.exit_code == 0
 
     def test_run_custom_config(self):
@@ -260,15 +261,14 @@ class TestCli:
             result = CliRunner().invoke(
                 cli, ["run", "--node_config", config_update_cli]
             )
-            assert (
-                captured.records[0].getMessage() == "Successfully loaded pipeline file."
+
+            assert_msg_in_logs("Successfully loaded pipeline file.", captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE), captured.records)
+            assert_msg_in_logs(
+                f"Config for node {node_name} is updated to: {config_update_value}",
+                captured.records,
             )
-            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
-            assert (
-                captured.records[2].getMessage()
-                == f"Config for node {node_name} is updated to: {config_update_value}"
-            )
-            assert captured.records[3].getMessage() == init_msg(PKD_NODE_2)
+            assert_msg_in_logs(init_msg(PKD_NODE_2), captured.records)
             assert result.exit_code == 0
 
     def test_nodes_all(self):
@@ -288,18 +288,24 @@ class TestCli:
         # setup unit test env
         tmp_dir = Path.cwd()
         print(f"\ntmp_dir={tmp_dir}")
-        test_config_path = tmp_dir / "test_config.yml"
+        unit_test_run_dir = Path(__file__).parents[3]
+        print(f"unit_test_run_dir={unit_test_run_dir}")
         nodes = {
-            "nodes": [{"input.visual": {"source": "PeekingDuck/tests/data/images"}}]
+            "nodes": [
+                {
+                    "input.visual": {
+                        "source": f"{unit_test_run_dir}/PeekingDuck/tests/data/images"
+                    }
+                }
+            ]
         }
+        os.chdir(unit_test_run_dir)
+        # test_config_path = tmp_dir / "test_config.yml"
+        test_config_path = "test_config.yml"
         with open(test_config_path, "w") as outfile:
             yaml.dump(nodes, outfile, default_flow_style=False)
 
-        unit_test_run_dir = Path(__file__).parents[3]
-        print(f"unit_test_run_dir={unit_test_run_dir}")
-
         # run unit test
-        os.chdir(unit_test_run_dir)
         cmd = [
             "python",
             "PeekingDuck",
@@ -321,12 +327,9 @@ class TestCli:
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             n = 50  # run test for 50 iterations
             result = CliRunner().invoke(cli, ["run", "--num_iter", n])
-            assert (
-                captured.records[0].getMessage() == "Successfully loaded pipeline file."
-            )
-            assert captured.records[1].getMessage() == init_msg(PKD_NODE)
-            assert captured.records[2].getMessage() == init_msg(PKD_NODE_2)
-            assert (
-                captured.records[3].getMessage() == f"Run pipeline for {n} iterations"
-            )
+
+            assert_msg_in_logs("Successfully loaded pipeline file.", captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE), captured.records)
+            assert_msg_in_logs(init_msg(PKD_NODE_2), captured.records)
+            assert_msg_in_logs(f"Run pipeline for {n} iterations", captured.records)
             assert result.exit_code == 0
