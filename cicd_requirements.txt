@@ -5,6 +5,7 @@ mypy == 0.910
 pylint == 2.7.4
 pytest == 6.2.3
 pytest-lazy-fixture == 0.6.3    # can remove if/when https://docs.pytest.org/en/7.1.x/proposals/parametrize_with_fixtures.html gets implemented
+scikit-image == 0.19.3
 types-PyYAML == 5.4.3
 types-requests == 2.25.0
 types-setuptools == 57.4.2
