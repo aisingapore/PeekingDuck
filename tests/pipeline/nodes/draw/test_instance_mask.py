@@ -16,88 +16,82 @@
 Tests for draw instance mask node.
 """
 
-import tempfile
-from pathlib import Path
-
 import cv2 as cv
 import numpy as np
 import pytest
+from skimage.metrics import structural_similarity as ssim
 import yaml
 
 from peekingduck.pipeline.nodes.draw.instance_mask import Node
 from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
-IMAGE_ORIGINAL = ["draw_instance_mask_original_image.jpg"]
-IMAGE_UNCHANGED_AFTER_PIPELINE = [
-    "draw_instance_mask_image_unchanged_after_pipeline.jpg"
-]
-IMAGE_WITH_MASKS = ["draw_instance_mask_image_with_masks.jpg"]
-IMAGE_WITH_CONTOURED_MASKS = ["draw_instance_mask_image_with_contoured_masks.jpg"]
-IMAGE_WITH_BLUR_EFFECT = ["draw_instance_mask_image_with_blur_effect.jpg"]
-IMAGE_WITH_MOSAIC_EFFECT = ["draw_instance_mask_image_with_mosaic_effect.jpg"]
-IMAGE_WITH_BLUR_EFFECT_UNMMASKED_AREA = [
+IMAGE_ORIGINAL = "draw_instance_mask_original_image.jpg"
+IMAGE_UNCHANGED_AFTER_PIPELINE = "draw_instance_mask_image_unchanged_after_pipeline.jpg"
+IMAGE_WITH_MASKS = "draw_instance_mask_image_with_masks.jpg"
+IMAGE_WITH_CONTOURED_MASKS = "draw_instance_mask_image_with_contoured_masks.jpg"
+IMAGE_WITH_BLUR_EFFECT = "draw_instance_mask_image_with_blur_effect.jpg"
+IMAGE_WITH_MOSAIC_EFFECT = "draw_instance_mask_image_with_mosaic_effect.jpg"
+IMAGE_WITH_BLUR_EFFECT_UNMASKED_AREA = (
     "draw_instance_mask_image_with_blur_effect_unmasked_area.jpg"
-]
-IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS = [
+)
+IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS = (
     "draw_instance_mask_image-adjusted-contrast-brightness.jpg"
-]
-IMAGE_GAMMA_CORRECTION = ["draw_instance_mask_image-gamma-correction.jpg"]
-###############################################################################
-# Remember to change the INPUTS_SUBDIR!
-###############################################################################
-INPUTS_SUBDIR = "instance_mask"
+)
+IMAGE_GAMMA_CORRECTION = "draw_instance_mask_image-gamma-correction.jpg"
+TEST_DATA_SUBDIR = "instance_mask"
 INPUTS_NPZ = "draw_instance_mask_inputs.npz"
+SSIM_THRESHOLD = 0.97
 
 
-@pytest.fixture(params=IMAGE_ORIGINAL)
-def image_original(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_original():
+    return TEST_IMAGES_DIR / IMAGE_ORIGINAL
 
 
-@pytest.fixture(params=IMAGE_UNCHANGED_AFTER_PIPELINE)
-def image_unchanged_after_pipeline(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_unchanged_after_pipeline():
+    return TEST_IMAGES_DIR / IMAGE_UNCHANGED_AFTER_PIPELINE
 
 
-@pytest.fixture(params=IMAGE_WITH_MASKS)
-def image_with_masks(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_with_masks():
+    return TEST_IMAGES_DIR / IMAGE_WITH_MASKS
 
 
-@pytest.fixture(params=IMAGE_WITH_CONTOURED_MASKS)
-def image_with_contoured_masks(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_with_contoured_masks():
+    return TEST_IMAGES_DIR / IMAGE_WITH_CONTOURED_MASKS
 
 
-@pytest.fixture(params=IMAGE_WITH_BLUR_EFFECT)
-def image_with_blur_effect(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_with_blur_effect():
+    return TEST_IMAGES_DIR / IMAGE_WITH_BLUR_EFFECT
 
 
-@pytest.fixture(params=IMAGE_WITH_MOSAIC_EFFECT)
-def image_with_mosaic_effect(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_with_mosaic_effect():
+    return TEST_IMAGES_DIR / IMAGE_WITH_MOSAIC_EFFECT
 
 
-@pytest.fixture(params=IMAGE_WITH_BLUR_EFFECT_UNMMASKED_AREA)
-def image_with_blur_effect_unmasked_area(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_with_blur_effect_unmasked_area():
+    return TEST_IMAGES_DIR / IMAGE_WITH_BLUR_EFFECT_UNMASKED_AREA
 
 
-@pytest.fixture(params=IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS)
-def image_adjusted_contrast_brightness(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_adjusted_contrast_brightness():
+    return TEST_IMAGES_DIR / IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS
 
 
-@pytest.fixture(params=IMAGE_GAMMA_CORRECTION)
-def image_gamma_correction(request):
-    return TEST_IMAGES_DIR / request.param
+@pytest.fixture()
+def image_gamma_correction():
+    return TEST_IMAGES_DIR / IMAGE_GAMMA_CORRECTION
 
 
 @pytest.fixture()
 def draw_mask_inputs():
     """Returns dictionary of masks, bbox_labels, bbox_scores."""
-    inputs = dict(np.load(TEST_DATA_DIR / INPUTS_SUBDIR / INPUTS_NPZ))
+    inputs = dict(np.load(TEST_DATA_DIR / TEST_DATA_SUBDIR / INPUTS_NPZ))
 
     return inputs
 
@@ -216,7 +210,7 @@ class TestDrawInstanceMasks:
 
     # fmt: off
     @pytest.mark.parametrize(
-        'pkd_node, ground_truth_image',
+        'pkd_node, ground_truth_image_path',
         [
             (pytest.lazy_fixture(('draw_instance_mask_node', 'image_with_masks'))),
             (pytest.lazy_fixture(('draw_instance_mask_node_with_contours', 'image_with_contoured_masks'))),
@@ -233,7 +227,7 @@ class TestDrawInstanceMasks:
         pkd_node,
         draw_mask_inputs,
         image_original,
-        ground_truth_image,
+        ground_truth_image_path,
     ):
         original_img = cv.imread(str(image_original))
         inputs = draw_mask_inputs
@@ -241,18 +235,13 @@ class TestDrawInstanceMasks:
         outputs = pkd_node.run(inputs)
 
         assert TestDrawInstanceMasks._image_equal_with_ground_truth_jpeg(
-            outputs["img"], ground_truth_image
+            outputs["img"], ground_truth_image_path
         )
 
     @staticmethod
     def _image_equal_with_ground_truth_jpeg(
         output_image: np.ndarray, ground_truth_jpeg_path: str
     ) -> bool:
-        with tempfile.NamedTemporaryFile(suffix=".jpg") as fp:
-            cv.imwrite(fp.name, output_image)
+        ground_truth_image = cv.imread(str(ground_truth_jpeg_path))
 
-            return (
-                Path(fp.name).stat().st_size
-                == Path(ground_truth_jpeg_path).stat().st_size
-                and fp.read() == open(ground_truth_jpeg_path, "rb").read()
-            )
+        return ssim(output_image, ground_truth_image, channel_axis=2) > SSIM_THRESHOLD
