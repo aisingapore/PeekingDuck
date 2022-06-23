@@ -202,9 +202,12 @@ class Node(AbstractNode):
 
             self.image_points.append(corners)
             self.num_detections += 1
-            self.last_detection = time.time()
 
             self._draw_text_and_corners(img, gray_img, corners, text_pos)
+
+            # wait for user to press a key
+            cv2.waitKey(0)
+            self.last_detection = time.time()
 
             # if we have sufficient images, calculate the coefficients and write to a file
             if self.num_detections == NUM_PICTURES:
@@ -360,9 +363,8 @@ class Node(AbstractNode):
             thickness=self.display_scales["normal_font_thickness"],
         )
 
-        # display the image and wait for user to press a key
+        # display the image
         cv2.imshow("PeekingDuck", img)
-        cv2.waitKey(0)
 
     def _draw_text_and_countdown(
         self, img: np.ndarray, text_to_draw: List[str], text_pos: tuple
