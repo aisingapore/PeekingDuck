@@ -51,8 +51,8 @@ NOT_IN_BOX = 2
 # displayed messages
 DEFAULT_TEXT = ["PLACE BOARD HERE"]
 TOO_SMALL = ["MOVE BOARD CLOSER"]
-DETECTION_SUCCESS = ["DETECTION SUCCESSFUL!", "PRESS SPACE TO CONTINUE."]
-DETECTION_COMPLETE = ["DETECTION COMPLETE!", "PRESS SPACE TO EXIT."]
+DETECTION_SUCCESS = ["DETECTION SUCCESSFUL!", "PRESS ANY KEY TO CONTINUE."]
+DETECTION_COMPLETE = ["DETECTION COMPLETE!", "PRESS ANY KEY TO EXIT."]
 MAX_LEN_TEXT = "PRESS ANY KEY TO CONTINUE."
 
 # constants for drawing
@@ -553,7 +553,7 @@ def _draw_text(
         )
 
     img_width = img.shape[1]
-    box_width = min(text_width + 10, img_width * BOX_WIDTH_RATIO - 10)
+    box_width = min(text_width + 10, int(img_width * BOX_WIDTH_RATIO - 10))
     if pos_type == TOP_LEFT:
         _draw_bgnd_box(
             img,
