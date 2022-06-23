@@ -123,7 +123,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         lbl = tk.Label(header_frm, text="")
         lbl.grid(row=0, column=0)
         # header contents
-        self._img_logo = load_image(LOGO, resize_pct=0.15)  # prevent python GC
+        self._img_logo = load_image(LOGO, resize_pct=0.10)  # prevent python GC
         logo = tk.Label(header_frm, image=self._img_logo)
         logo.grid(row=1, column=0, sticky="nsew")
         for i in range(2):
