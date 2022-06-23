@@ -20,11 +20,27 @@ import cv2
 import numpy as np
 import pytest
 from pathlib import Path
+from contextlib import contextmanager
 
 from peekingduck.pipeline.nodes.dabble.camera_calibration import (
     Node,
     _check_corners_validity,
+    _get_box_info,
 )
+
+
+@pytest.fixture
+def camera_calibration_node():
+    node = Node(
+        {
+            "input": ["img"],
+            "output": ["img"],
+            "num_corners": [10, 7],
+            "scale_factor": 2,
+            "file_path": "PeekingDuck/data/camera_calibration_coeffs.yml",
+        }
+    )
+    return node
 
 
 class TestCameraCalibration:
@@ -56,3 +72,83 @@ class TestCameraCalibration:
             _check_corners_validity(width, height, corners, start_point, end_point)
             == expected_output
         )
+
+    def test_get_box_info(self):
+        for i in range(5):
+            start_points, end_points, (text_pos, pos_type) = _get_box_info(i, 1280, 720)
+            assert all(type(val) == int for val in start_points)
+            assert all(type(val) == int for val in end_points)
+            assert all(type(val) == int for val in text_pos)
+            assert type(pos_type) == int
+
+    def test_check_initialise_display_scales(self, camera_calibration_node):
+        camera_calibration_node._initialise_display_scales(1280)
+        assert camera_calibration_node.display_scales != {}
+
+    def test_checkerboard_detection(self, camera_calibration_node, checkerboard_images):
+        img = cv2.imread(checkerboard_images)
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        height, width = img.shape[:2]
+
+        success, corners = camera_calibration_node._detect_corners(
+            height, width, gray_img
+        )
+        assert success
+        assert corners.shape == (70, 1, 2)
+
+    def test_no_checkerboard_detection(
+        self, camera_calibration_node, no_checkerboard_images
+    ):
+        img = cv2.imread(no_checkerboard_images)
+        gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+        height, width = img.shape[:2]
+
+        success, corners = camera_calibration_node._detect_corners(
+            height, width, gray_img
+        )
+        assert not success
+
+    def test_calculate_coeffs(self, camera_calibration_node, detected_corners):
+        data = np.load(detected_corners)
+        camera_calibration_node.object_points = data["object_points"]
+        camera_calibration_node.image_points = data["image_points"]
+
+        calibration_data = camera_calibration_node._calculate_coeffs(data["img_shape"])
+        (
+            calibration_success,
+            camera_matrix,
+            distortion_coeffs,
+            _,
+            _,
+        ) = calibration_data
+        assert calibration_success
+        assert camera_matrix.shape == (3, 3)
+        assert distortion_coeffs.shape == (1, 5)
+
+    def test_calculate_error(
+        self, camera_calibration_node, detected_corners, calibration_data
+    ):
+        data = np.load(detected_corners)
+        camera_calibration_node.object_points = data["object_points"]
+        camera_calibration_node.image_points = data["image_points"]
+
+        calibration_data = np.load(calibration_data, allow_pickle=True)[
+            "calibration_data"
+        ]
+
+        with not_raises(Exception):
+            camera_calibration_node._calculate_error(calibration_data)
+
+    def test_run(self, camera_calibration_node, checkerboard_images):
+        img = cv2.imread(checkerboard_images)
+
+        with not_raises(Exception):
+            camera_calibration_node.run({"img": img})
+
+
+@contextmanager
+def not_raises(exception):
+    try:
+        yield
+    except exception:
+        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

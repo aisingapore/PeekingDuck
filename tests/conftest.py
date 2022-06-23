@@ -43,6 +43,10 @@ CROWD_IMAGES = ["crowd1.jpg", "crowd2.jpg"]
 UNDISTORT_BEFORE = ["undistort_before.jpg"]
 CORNER_DATA = ["corners_ok.npz", "image_too_small.npz", "not_in_box.npz"]
 CAMERA_COEFFICIENTS = ["camera_calibration_coeffs.yml"]
+CHECKERBOARD_IMAGES = ["checkerboard1.png", "checkerboard2.png"]
+NO_CHECKERBOARD_IMAGES = ["black.jpg"]
+DETECTED_CORNERS = ["detected_corners.npz"]
+CALIBRATION_DATA = ["calibration_data.npz"]
 
 # Paths
 PKD_DIR = Path(__file__).resolve().parents[1] / "peekingduck"
@@ -257,6 +261,34 @@ def corner_data(request):
 @pytest.fixture(params=CAMERA_COEFFICIENTS)
 def camera_coefficients(request):
     yield str(TEST_DATA_DIR / "undistort" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CHECKERBOARD_IMAGES)
+def checkerboard_images(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=NO_CHECKERBOARD_IMAGES)
+def no_checkerboard_images(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=DETECTED_CORNERS)
+def detected_corners(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CALIBRATION_DATA)
+def calibration_data(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
     K.clear_session()
     gc.collect()
 
