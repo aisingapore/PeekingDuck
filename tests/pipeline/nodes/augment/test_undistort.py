@@ -16,12 +16,32 @@
 Test for augment undistort node
 """
 
+import gc
 import cv2
 import numpy as np
 import pytest
 from pathlib import Path
+import tensorflow.keras.backend as K
+from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
 from peekingduck.pipeline.nodes.augment.undistort import Node
+
+UNDISTORT_BEFORE = ["undistort_before.jpg"]
+CAMERA_COEFFICIENTS = ["camera_calibration_coeffs.yml"]
+
+
+@pytest.fixture(params=UNDISTORT_BEFORE)
+def undistort_before(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CAMERA_COEFFICIENTS)
+def camera_coefficients(request):
+    yield str(TEST_DATA_DIR / "undistort" / request.param)
+    K.clear_session()
+    gc.collect()
 
 
 class TestUndistort:

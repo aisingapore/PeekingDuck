@@ -13,20 +13,29 @@
 # limitations under the License.
 
 """
-Test for augment undistort node
+Test for dabble camera calibration node
 """
 
+import gc
 import cv2
 import numpy as np
 import pytest
 from pathlib import Path
 from contextlib import contextmanager
+import tensorflow.keras.backend as K
+from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
 from peekingduck.pipeline.nodes.dabble.camera_calibration import (
     Node,
     _check_corners_validity,
     _get_box_info,
 )
+
+CORNER_DATA = ["corners_ok.npz", "image_too_small.npz", "not_in_box.npz"]
+CHECKERBOARD_IMAGES = ["checkerboard1.png", "checkerboard2.png"]
+NO_CHECKERBOARD_IMAGES = ["black.jpg"]
+DETECTED_CORNERS = ["detected_corners.npz"]
+CALIBRATION_DATA = ["calibration_data.npz"]
 
 
 @pytest.fixture
@@ -41,6 +50,41 @@ def camera_calibration_node():
         }
     )
     return node
+
+
+@pytest.fixture(params=CORNER_DATA)
+def corner_data(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CHECKERBOARD_IMAGES)
+def checkerboard_images(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=NO_CHECKERBOARD_IMAGES)
+def no_checkerboard_images(request):
+    yield str(TEST_IMAGES_DIR / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=DETECTED_CORNERS)
+def detected_corners(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
+
+
+@pytest.fixture(params=CALIBRATION_DATA)
+def calibration_data(request):
+    yield str(TEST_DATA_DIR / "camera_calibration" / request.param)
+    K.clear_session()
+    gc.collect()
 
 
 class TestCameraCalibration:
@@ -83,7 +127,7 @@ class TestCameraCalibration:
 
     def test_check_initialise_display_scales(self, camera_calibration_node):
         camera_calibration_node._initialise_display_scales(1280)
-        assert camera_calibration_node.display_scales != {}
+        assert camera_calibration_node.display_scales
 
     def test_checkerboard_detection(self, camera_calibration_node, checkerboard_images):
         img = cv2.imread(checkerboard_images)
