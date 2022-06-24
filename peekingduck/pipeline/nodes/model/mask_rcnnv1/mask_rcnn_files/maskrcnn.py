@@ -75,7 +75,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-"""Implements the Mask R-CNN model."""
+"""Implements the Mask R-CNN model.
+Modifications include:
+- Removed training related arguments for ROI_Heads and __init__:
+    - box_fg_iou_thresh
+    - box_bg_iou_thresh
+    - box_batch_size_per_image
+    - box_positive_fraction
+- Removed training related arguments for RegionProposalNetwork and __init__:
+    - fg_iou_thresh
+    - bg_iou_thresh
+    - batch_size_per_image
+    - positive_fraction
+    - rpn_pre_nms_top_n_train
+    - rpn_post_nms_top_n_train
+"""
 
 from collections import OrderedDict
 from torch import nn
@@ -91,18 +105,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
 
     The input to the model is expected to be a list of tensors, each of shape [C, H, W], one for each
     image, and should be in 0-1 range. Different images can have different sizes.
-
-    The behavior of the model changes depending if it is in training or evaluation mode.
-
-    During training, the model expects both the input tensors, as well as a targets (list of dictionary),
-    containing:
-        - boxes (``FloatTensor[N, 4]``): the ground-truth boxes in ``[x1, y1, x2, y2]`` format, with
-          ``0 <= x1 < x2 <= W`` and ``0 <= y1 < y2 <= H``.
-        - labels (Int64Tensor[N]): the class label for each ground-truth box
-        - masks (UInt8Tensor[N, H, W]): the segmentation binary masks for each instance
-
-    The model returns a Dict[Tensor] during training, containing the classification and regression
-    losses for both the RPN and the R-CNN, and the mask loss.
 
     During inference, the model requires only the input tensors, and returns the post-processed
     predictions as a List[Dict[Tensor]], one for each input image. The fields of the Dict are as
@@ -132,19 +134,9 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of feature
             maps.
         rpn_head (nn.Module): module that computes the objectness and regression deltas from the RPN
-        rpn_pre_nms_top_n_train (int): number of proposals to keep before applying NMS during training
         rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during testing
-        rpn_post_nms_top_n_train (int): number of proposals to keep after applying NMS during training
         rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during testing
         rpn_nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
-        rpn_fg_iou_thresh (float): minimum IoU between the anchor and the GT box so that they can be
-            considered as positive during training of the RPN.
-        rpn_bg_iou_thresh (float): maximum IoU between the anchor and the GT box so that they can be
-            considered as negative during training of the RPN.
-        rpn_batch_size_per_image (int): number of anchors that are sampled during training of the RPN
-            for computing the loss
-        rpn_positive_fraction (float): proportion of positive anchors in a mini-batch during training
-            of the RPN
         rpn_score_thresh (float): during inference, only return proposals with a classification score
             greater than rpn_score_thresh
         box_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
@@ -156,14 +148,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             greater than box_score_thresh
         box_nms_thresh (float): NMS threshold for the prediction head. Used during inference
         box_detections_per_img (int): maximum number of detections per image, for all classes.
-        box_fg_iou_thresh (float): minimum IoU between the proposals and the GT box so that they can be
-            considered as positive during training of the classification head
-        box_bg_iou_thresh (float): maximum IoU between the proposals and the GT box so that they can be
-            considered as negative during training of the classification head
-        box_batch_size_per_image (int): number of proposals that are sampled during training of the
-            classification head
-        box_positive_fraction (float): proportion of positive proposals in a mini-batch during training
-            of the classification head
         bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of the
             bounding boxes
         mask_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
@@ -185,15 +169,9 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         # RPN parameters
         rpn_anchor_generator=None,
         rpn_head=None,
-        rpn_pre_nms_top_n_train=2000,
         rpn_pre_nms_top_n_test=1000,
-        rpn_post_nms_top_n_train=2000,
         rpn_post_nms_top_n_test=1000,
         rpn_nms_thresh=0.7,
-        rpn_fg_iou_thresh=0.7,
-        rpn_bg_iou_thresh=0.3,
-        rpn_batch_size_per_image=256,
-        rpn_positive_fraction=0.5,
         rpn_score_thresh=0.0,
         # Box parameters
         box_roi_pool=None,
@@ -202,10 +180,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         box_score_thresh=0.05,
         box_nms_thresh=0.5,
         box_detections_per_img=100,
-        box_fg_iou_thresh=0.5,
-        box_bg_iou_thresh=0.5,
-        box_batch_size_per_image=512,
-        box_positive_fraction=0.25,
         bbox_reg_weights=None,
         # Mask parameters
         mask_roi_pool=None,
@@ -251,15 +225,9 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             # RPN-specific parameters
             rpn_anchor_generator,
             rpn_head,
-            rpn_pre_nms_top_n_train,
             rpn_pre_nms_top_n_test,
-            rpn_post_nms_top_n_train,
             rpn_post_nms_top_n_test,
             rpn_nms_thresh,
-            rpn_fg_iou_thresh,
-            rpn_bg_iou_thresh,
-            rpn_batch_size_per_image,
-            rpn_positive_fraction,
             rpn_score_thresh,
             # Box parameters
             box_roi_pool,
@@ -268,10 +236,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             box_score_thresh,
             box_nms_thresh,
             box_detections_per_img,
-            box_fg_iou_thresh,
-            box_bg_iou_thresh,
-            box_batch_size_per_image,
-            box_positive_fraction,
             bbox_reg_weights,
         )
 

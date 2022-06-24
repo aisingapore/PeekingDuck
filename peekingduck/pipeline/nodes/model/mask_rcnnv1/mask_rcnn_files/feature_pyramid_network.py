@@ -127,23 +127,6 @@ class FeaturePyramidNetwork(nn.Module):
             be performed. It is expected to take the fpn features, the original
             features and the names of the original features as input, and returns
             a new list of feature maps and their corresponding names
-
-    Examples::
-
-        >>> m = torchvision.ops.FeaturePyramidNetwork([10, 20, 30], 5)
-        >>> # get some dummy data
-        >>> x = OrderedDict()
-        >>> x['feat0'] = torch.rand(1, 10, 64, 64)
-        >>> x['feat2'] = torch.rand(1, 20, 16, 16)
-        >>> x['feat3'] = torch.rand(1, 30, 8, 8)
-        >>> # compute the FPN on top of x
-        >>> output = m(x)
-        >>> print([(k, v.shape) for k, v in output.items()])
-        >>> # returns
-        >>>   [('feat0', torch.Size([1, 5, 64, 64])),
-        >>>    ('feat2', torch.Size([1, 5, 16, 16])),
-        >>>    ('feat3', torch.Size([1, 5, 8, 8]))]
-
     """
 
     def __init__(

@@ -119,7 +119,6 @@ class AnchorGenerator(nn.Module):
         super(AnchorGenerator, self).__init__()
 
         if not isinstance(sizes[0], (list, tuple)):
-            # TODO change this
             sizes = tuple((s,) for s in sizes)
         if not isinstance(aspect_ratios[0], (list, tuple)):
             aspect_ratios = (aspect_ratios,) * len(sizes)
@@ -133,10 +132,6 @@ class AnchorGenerator(nn.Module):
             for size, aspect_ratio in zip(sizes, aspect_ratios)
         ]
 
-    # TODO: https://github.com/pytorch/pytorch/issues/26792
-    # For every (aspect_ratios, scales) combination, output a zero-centered anchor with those values.
-    # (scales, aspect_ratios) are usually an element of zip(self.scales, self.aspect_ratios)
-    # This method assumes aspect ratio = height / width for an anchor.
     def generate_anchors(
         self,
         scales: List[int],
