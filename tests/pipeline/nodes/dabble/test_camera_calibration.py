@@ -23,7 +23,7 @@ import pytest
 from pathlib import Path
 from contextlib import contextmanager
 import tensorflow.keras.backend as K
-from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
+from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR, not_raises
 
 from peekingduck.pipeline.nodes.dabble.camera_calibration import (
     Node,
@@ -188,11 +188,3 @@ class TestCameraCalibration:
 
         with not_raises(Exception):
             camera_calibration_node.run({"img": img})
-
-
-@contextmanager
-def not_raises(exception):
-    try:
-        yield
-    except exception:
-        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
