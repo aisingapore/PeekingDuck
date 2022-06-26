@@ -130,14 +130,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             res_arr = np.array(result)
             pred = get_last_2d(res_arr)
             prediction = torch.from_numpy(pred).to(self.device)
-
-            # image = image[np.newaxis, :]
-            # result = self.engine.run(image)
-            # # result[0].shape = (1, N, 85), only want (N, 85)
-            # pred = result[0][0]
-            # # self.logger.info(f"pred.shape={pred.shape}")
-            # prediction = torch.from_numpy(pred).to(self.device)
-            # self.logger.info(f"prediction.shape={prediction.shape}")
         elif model_format == "tensorrt":
             image = image[np.newaxis, :]
             res_arr = self.yolox(image)
@@ -240,20 +232,9 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 self.logger.info("creating onnx model on cpu")
                 model = onnxruntime.InferenceSession(str(self.model_path), None)
             return model
-
-            # import onnx
-            # import onnx_tensorrt.backend as backend
-
-            # self.logger.info("converting onnx model to trt engine")
-            # model = onnx.load(str(self.model_path))
-            # self.engine = backend.prepare(model, device="CUDA:0")
-            # return model
-
         elif model_format == "tensorrt":
             # pylint: disable=import-error, import-outside-toplevel
-            from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import (
-                TrtModel,
-            )
+            from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import TrtModel
 
             self.logger.info("creating tensorrt model")
             model = TrtModel(str(self.model_path))
