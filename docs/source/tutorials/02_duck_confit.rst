@@ -50,7 +50,7 @@ To perform object detection on the ``cat_and_computer.mp4`` file, edit the
    - input.visual:
        source: cat_and_computer.mp4
    - model.yolo:
-       detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+       detect: ["cup", "cat", "laptop", "keyboard", "mouse"]
    - draw.bbox:
        show_labels: True    # configure draw.bbox to display object labels
    - output.screen
@@ -79,7 +79,7 @@ The 30-second video will auto-close at the end, or you can press :greenbox:`q` t
 
        The YOLO model can detect 80 different :ref:`object classes
        <general-object-detection-ids>`. By default, it only detects the ``"person"`` class. Use
-       ``detect_ids: ["*"]`` in the ``pipeline_config.yml`` to configure the model to detect all 80
+       ``detect: ["*"]`` in the ``pipeline_config.yml`` to configure the model to detect all 80
        classes.
 
 
@@ -101,7 +101,7 @@ Edit ``pipeline_config.yml`` as shown below:
    - input.visual:
        source: cat_and_computer.mp4
    - model.yolo:
-       detect_ids: ["cup", "cat", "laptop", "keyboard", "mouse"]
+       detect: ["cup", "cat", "laptop", "keyboard", "mouse"]
    - draw.bbox:
        show_labels: True
    - dabble.fps                           # add new dabble node
@@ -166,7 +166,9 @@ Augmenting Images
 
 PeekingDuck has a class of :mod:`augment` nodes that can be used to perform preprocessing
 or postprocessing of images/videos.
-Augment currently lets you modify the brightness and contrast.
+Augment currently lets you modify the brightness and contrast, and remove distortion from a wide-angle camera
+image. For more details on image undistortion, refer to the documentation on :mod:`augment.undistort` and
+:mod:`dabble.camera_calibration`.
 
 The ``pipeline_config.yml`` below shows how to use the :mod:`augment.brightness` node
 within the pipeline:
@@ -195,4 +197,3 @@ The following figure shows the difference between the original vs the brightened
 
         | Royalty free video of cat and computer from: https://www.youtube.com/watch?v=-C1TEGZavko
         | Royalty free video of man waving hand from: https://www.youtube.com/watch?v=IKj_z2hgYUM
-

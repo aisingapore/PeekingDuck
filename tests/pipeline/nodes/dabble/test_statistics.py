@@ -23,6 +23,7 @@
 from contextlib import contextmanager
 import operator
 import pytest
+from tests.conftest import not_raises
 
 from peekingduck.pipeline.nodes.dabble.statistics import Node
 from peekingduck.pipeline.nodes.dabble.statisticsv1 import utils
@@ -341,11 +342,3 @@ class TestStatisticsCalcs:
         assert result["cum_avg"] == 5.0
         assert result["cum_max"] == 9.0
         assert result["cum_min"] == 1.0
-
-
-@contextmanager
-def not_raises(exception):
-    try:
-        yield
-    except exception:
-        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

@@ -130,7 +130,7 @@ class TestYOLOX:
         assert yolox.model.detect_ids == [0]
 
     def test_invalid_config_detect_ids(self, yolox_config):
-        yolox_config["detect_ids"] = 1
+        yolox_config["detect"] = 1
         with pytest.raises(TypeError):
             _ = Node(config=yolox_config)
 

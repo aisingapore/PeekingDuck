@@ -129,7 +129,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - input.visual:
        source: 0
    - model.yolo:
-       detect_ids: ["person"]
+       detect: ["person"]
    - dabble.bbox_to_btm_midpoint
    - dabble.zone_count:
        resolution: [1280, 720] # Adjust this to your camera's input resolution

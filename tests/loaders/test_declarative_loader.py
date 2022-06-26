@@ -263,51 +263,51 @@ class TestDeclarativeLoader:
     def test_obj_detection_label_to_id_all_int(self, declarativeloader):
         node_name = "model.yolo"
         orig_config = {
-            "detect_ids": [0],
+            "detect": [0],
         }
-        config_update = {"detect_ids": [0, 1, 2, 3, 5]}
-        ground_truth = {"detect_ids": [0, 1, 2, 3, 5]}
+        config_update = {"detect": [0, 1, 2, 3, 5]}
+        ground_truth = {"detect": [0, 1, 2, 3, 5]}
 
         test_config = declarativeloader._edit_config(
             orig_config, config_update, node_name
         )
-        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+        assert test_config["detect"] == ground_truth["detect"]
 
     def test_obj_detection_label_to_id_all_text(self, declarativeloader):
         node_name = "model.yolo"
         orig_config = {
-            "detect_ids": [0],
+            "detect": [0],
         }
-        config_update = {"detect_ids": ["person", "car", "bus", "cell phone", "oven"]}
-        ground_truth = {"detect_ids": [0, 2, 5, 67, 69]}
+        config_update = {"detect": ["person", "car", "bus", "cell phone", "oven"]}
+        ground_truth = {"detect": [0, 2, 5, 67, 69]}
 
         test_config = declarativeloader._edit_config(
             orig_config, config_update, node_name
         )
-        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+        assert test_config["detect"] == ground_truth["detect"]
 
     def test_obj_detection_label_to_id_mix_int_and_text(self, declarativeloader):
         node_name = "model.yolo"
         orig_config = {
-            "detect_ids": [0],
+            "detect": [0],
         }
-        config_update = {"detect_ids": [4, "bicycle", 10, "laptop", "teddy bear"]}
-        ground_truth = {"detect_ids": [1, 4, 10, 63, 77]}
+        config_update = {"detect": [4, "bicycle", 10, "laptop", "teddy bear"]}
+        ground_truth = {"detect": [1, 4, 10, 63, 77]}
 
         test_config = declarativeloader._edit_config(
             orig_config, config_update, node_name
         )
-        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+        assert test_config["detect"] == ground_truth["detect"]
 
     def test_obj_detection_label_to_id_mix_int_and_text_duplicates(
         self, declarativeloader
     ):
         node_name = "model.yolo"
         orig_config = {
-            "detect_ids": [0],
+            "detect": [0],
         }
         config_update = {
-            "detect_ids": [
+            "detect": [
                 4,
                 "bicycle",
                 10,
@@ -318,20 +318,20 @@ class TestDeclarativeLoader:
                 10,
             ]
         }
-        ground_truth = {"detect_ids": [1, 4, 10, 63, 77]}
+        ground_truth = {"detect": [1, 4, 10, 63, 77]}
 
         test_config = declarativeloader._edit_config(
             orig_config, config_update, node_name
         )
-        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+        assert test_config["detect"] == ground_truth["detect"]
 
     def test_obj_detection_label_to_id_mix_int_and_text_errors(self, declarativeloader):
         node_name = "model.yolo"
         orig_config = {
-            "detect_ids": [0],
+            "detect": [0],
         }
         config_update = {
-            "detect_ids": [
+            "detect": [
                 4,
                 "bicycle",
                 10,
@@ -344,12 +344,12 @@ class TestDeclarativeLoader:
                 "scary monster",
             ]
         }
-        ground_truth = {"detect_ids": [0, 1, 4, 10, 63, 77]}
+        ground_truth = {"detect": [0, 1, 4, 10, 63, 77]}
 
         test_config = declarativeloader._edit_config(
             orig_config, config_update, node_name
         )
-        assert test_config["detect_ids"] == ground_truth["detect_ids"]
+        assert test_config["detect"] == ground_truth["detect"]
 
     def test_get_pipeline(self, declarativeloader):
         with mock.patch(
