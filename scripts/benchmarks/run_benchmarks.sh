@@ -145,12 +145,14 @@ verify_data_files() {
 ####################
 
 # CMDS var stores the complete list of benchmarks to run
-#declare -a CMDS=( "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" "${SPL}" "${SPT}" \
-#                    "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" "${MPL}" )
-#NUM_RUNS=5      # set this to number of consecutive runs desired
+declare -a CMDS=( "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" "${SPL}" "${SPT}" \
+                  "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" "${MPL}" )
+NUM_RUNS=5      # set this to number of consecutive runs desired
 
 # Keep this single task, single run for debugging/testing script changes
 #declare -a CMDS=( "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" )
+#declare -a CMDS=( "${MPL}" "${SPL}" "${SPT}" )
+#NUM_RUNS=1
 
 # YoloX PyTorch
 #declare -a CMDS=( "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" \
@@ -164,9 +166,6 @@ verify_data_files() {
 #declare -a CMDS=( "${YXTM_T}" "${YXSM_T}" "${YXMM_T}" "${YXLM_T}" \
 #                  "${YXTS_T}" "${YXSS_T}" "${YXMS_T}" "${YXLS_T}" \
 #                  "${MPL_T}" "${SPL_T}" "${SPT_T}" )
-
-declare -a CMDS=( "${MPL}" "${SPL}" "${SPT}" )
-NUM_RUNS=1
 
 # Check we are in PeekingDuck's root folder
 if [[ `pwd` == *PeekingDuck ]]; then
