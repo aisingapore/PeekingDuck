@@ -51,9 +51,9 @@ YXSS=scripts/benchmarks/pytorch/run_yolox_small_single.yml
 YXTM=scripts/benchmarks/pytorch/run_yolox_tiny_multi.yml
 YXTS=scripts/benchmarks/pytorch/run_yolox_tiny_single.yml
 # Pose Estimation Models
-MPL=scripts/benchmarks/pytorch/run_multipose_lightning.yml
-SPL=scripts/benchmarks/pytorch/run_singlepose_lightning.yml
-SPT=scripts/benchmarks/pytorch/run_singlepose_thunder.yml
+MPL=scripts/benchmarks/tensorflow/run_multipose_lightning.yml
+SPL=scripts/benchmarks/tensorflow/run_singlepose_lightning.yml
+SPT=scripts/benchmarks/tensorflow/run_singlepose_thunder.yml
 
 #
 # Onnx
@@ -166,7 +166,7 @@ verify_data_files() {
 #                  "${MPL_T}" "${SPL_T}" "${SPT_T}" )
 
 declare -a CMDS=( "${MPL}" "${SPL}" "${SPT}" )
-NUM_RUNS=3
+NUM_RUNS=1
 
 # Check we are in PeekingDuck's root folder
 if [[ `pwd` == *PeekingDuck ]]; then
