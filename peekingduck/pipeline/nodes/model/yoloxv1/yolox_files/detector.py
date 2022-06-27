@@ -119,9 +119,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             image = torch.from_numpy(image).unsqueeze(0).to(self.device)
             image = image.half() if self.half else image.float()
             prediction = self.yolox(image)[0]
-            # self.logger.info(f"prediction.shape={prediction.shape}")
         elif model_format == "onnx":
-            # need to sync with loader code below
             # ignore type for self.yolox below as it is an Onnx InferenceSession class
             input_name = self.yolox.get_inputs()[0].name  # type: ignore
             output_name = self.yolox.get_outputs()[0].name  # type: ignore
@@ -220,7 +218,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                     model = fuse_model(model)
                 return model
         elif model_format == "onnx":
-            # need to sync with inference code above
             import onnxruntime  # pylint: disable=import-error, import-outside-toplevel
 
             if torch.cuda.is_available():
