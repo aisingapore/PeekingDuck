@@ -138,9 +138,9 @@ def concat_box_prediction_layers(box_cls, box_regression):
     # concatenate on the first dimension (representing the feature levels), to
     # take into account the way the labels were generated (with all feature maps
     # being concatenated as well)
-    box_cls = torch.cat(box_cls_flattened, dim=1).flatten(0, -2)
-    box_regression = torch.cat(box_regression_flattened, dim=1).reshape(-1, 4)
-    return box_cls, box_regression
+    box_cls_out = torch.cat(box_cls_flattened, dim=1).flatten(0, -2)
+    box_regression_out = torch.cat(box_regression_flattened, dim=1).reshape(-1, 4)
+    return box_cls_out, box_regression_out
 
 
 class RPNHead(nn.Module):
@@ -153,7 +153,7 @@ class RPNHead(nn.Module):
     """
 
     # pylint: disable=invalid-name
-    def __init__(self, in_channels, num_anchors):
+    def __init__(self, in_channels: int, num_anchors: int):
         super().__init__()
         self.conv = nn.Conv2d(
             in_channels, in_channels, kernel_size=3, stride=1, padding=1
@@ -164,8 +164,8 @@ class RPNHead(nn.Module):
         )
 
         for layer in self.children():
-            torch.nn.init.normal_(layer.weight, std=0.01)
-            torch.nn.init.constant_(layer.bias, 0)
+            torch.nn.init.normal_(layer.weight, std=0.01)  # type: ignore[arg-type]
+            torch.nn.init.constant_(layer.bias, 0)  # type: ignore[arg-type]
 
     def forward(self, x):
         # type: (List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
@@ -187,14 +187,14 @@ class RegionProposalNetwork(torch.nn.Module):
         anchor_generator (AnchorGenerator): module that generates the anchors for a set of feature
             maps.
         head (nn.Module): module that computes the objectness and regression deltas
-        pre_nms_top_n (Dict[int]): number of proposals to keep before applying NMS. It should
+        pre_nms_top_n (Dict[str, int]): number of proposals to keep before applying NMS. It should
             contain two fields: training and testing, to allow for different values depending
             on training or evaluation
-        post_nms_top_n (Dict[int]): number of proposals to keep after applying NMS. It should
+        post_nms_top_n (Dict[str, int]): number of proposals to keep after applying NMS. It should
             contain two fields: training and testing, to allow for different values depending
             on training or evaluation
         nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
-
+        score_thresh (float): Score threshold for filtering low scoring proposals
     """
 
     # pylint: disable=too-many-instance-attributes,invalid-name,too-many-locals,too-many-arguments
@@ -206,12 +206,12 @@ class RegionProposalNetwork(torch.nn.Module):
 
     def __init__(
         self,
-        anchor_generator,
-        head,
-        pre_nms_top_n,
-        post_nms_top_n,
-        nms_thresh,
-        score_thresh=0.0,
+        anchor_generator: nn.Module,
+        head: nn.Module,
+        pre_nms_top_n: Dict[str, int],
+        post_nms_top_n: Dict[str, int],
+        nms_thresh: float,
+        score_thresh: float = 0.0,
     ):
         super().__init__()
         self.anchor_generator = anchor_generator
@@ -225,11 +225,11 @@ class RegionProposalNetwork(torch.nn.Module):
         self.score_thresh = score_thresh
         self.min_size = 1e-3
 
-    def pre_nms_top_n(self):
+    def pre_nms_top_n(self) -> int:
         """Returns the number of proposals to keep before applying NMS"""
         return self._pre_nms_top_n["testing"]
 
-    def post_nms_top_n(self):
+    def post_nms_top_n(self) -> int:
         """Returns the number of proposals to keep after applying NMS"""
         return self._post_nms_top_n["testing"]
 
@@ -262,8 +262,8 @@ class RegionProposalNetwork(torch.nn.Module):
             torch.full((n,), idx, dtype=torch.int64, device=device)
             for idx, n in enumerate(num_anchors_per_level)
         ]
-        levels = torch.cat(levels, 0)
-        levels = levels.reshape(1, -1).expand_as(objectness)
+        levels_ = torch.cat(levels, 0)
+        levels_ = levels_.reshape(1, -1).expand_as(objectness)
 
         # select top_n boxes independently per level before applying nms
         top_n_idx = self._get_top_n_idx(objectness, num_anchors_per_level)
@@ -272,7 +272,7 @@ class RegionProposalNetwork(torch.nn.Module):
         batch_idx = image_range[:, None]
 
         objectness = objectness[batch_idx, top_n_idx]
-        levels = levels[batch_idx, top_n_idx]
+        levels_ = levels_[batch_idx, top_n_idx]
         proposals = proposals[batch_idx, top_n_idx]
 
         objectness_prob = torch.sigmoid(objectness)
@@ -322,9 +322,9 @@ class RegionProposalNetwork(torch.nn.Module):
                 image.
         """
         # RPN uses all feature maps that are available
-        features = list(features.values())
-        objectness, pred_bbox_deltas = self.head(features)
-        anchors = self.anchor_generator(images, features)
+        features_ = list(features.values())
+        objectness, pred_bbox_deltas = self.head(features_)
+        anchors = self.anchor_generator(images, features_)
 
         num_images = len(anchors)
         num_anchors_per_level_shape_tensors = [o[0].shape for o in objectness]

@@ -79,7 +79,7 @@
 
 """Anchor Generator class for Faster-RCNN model"""
 
-from typing import List
+from typing import List, Tuple, Union
 import torch
 from torch import nn, Tensor
 
@@ -105,8 +105,8 @@ class AnchorGenerator(nn.Module):
     per spatial location for feature map i.
 
     Args:
-        sizes (Tuple[Tuple[int]]):
-        aspect_ratios (Tuple[Tuple[float]]):
+        sizes (Tuple[Tuple[int, ...], ...]):
+        aspect_ratios (Tuple[Tuple[float, ...], ...]):
     """
 
     __annotations__ = {
@@ -115,15 +115,15 @@ class AnchorGenerator(nn.Module):
 
     def __init__(
         self,
-        sizes=((128, 256, 512),),
-        aspect_ratios=((0.5, 1.0, 2.0),),
+        sizes: Tuple[Tuple[int, ...], ...] = ((128, 256, 512),),
+        aspect_ratios: Tuple[Tuple[float, ...], ...] = ((0.5, 1.0, 2.0),),
     ):
         super().__init__()
 
         if not isinstance(sizes[0], (list, tuple)):
-            sizes = tuple((s,) for s in sizes)
+            sizes = tuple((s,) for s in sizes)  # type: ignore[assignment,misc]
         if not isinstance(aspect_ratios[0], (list, tuple)):
-            aspect_ratios = (aspect_ratios,) * len(sizes)
+            aspect_ratios = (aspect_ratios,) * len(sizes)  # type: ignore[assignment]
 
         assert len(sizes) == len(aspect_ratios)
 
@@ -137,31 +137,31 @@ class AnchorGenerator(nn.Module):
     # pylint: disable=no-self-use,invalid-name
     def generate_anchors(
         self,
-        scales: List[int],
-        aspect_ratios: List[float],
+        scales: Union[List[int], Tuple[int, ...]],
+        aspect_ratios: Union[List[float], Tuple[float, ...]],
         dtype: torch.dtype = torch.float32,
         device: torch.device = torch.device("cpu"),
-    ):
+    ) -> Tensor:
         """Method to generate anchors"""
-        scales = torch.as_tensor(scales, dtype=dtype, device=device)
-        aspect_ratios = torch.as_tensor(aspect_ratios, dtype=dtype, device=device)
-        h_ratios = torch.sqrt(aspect_ratios)
+        scales_ = torch.as_tensor(scales, dtype=dtype, device=device)
+        aspect_ratios_ = torch.as_tensor(aspect_ratios, dtype=dtype, device=device)
+        h_ratios = torch.sqrt(aspect_ratios_)
         w_ratios = 1 / h_ratios
 
-        ws = (w_ratios[:, None] * scales[None, :]).view(-1)
-        hs = (h_ratios[:, None] * scales[None, :]).view(-1)
+        ws = (w_ratios[:, None] * scales_[None, :]).view(-1)
+        hs = (h_ratios[:, None] * scales_[None, :]).view(-1)
 
         base_anchors = torch.stack([-ws, -hs, ws, hs], dim=1) / 2
         return base_anchors.round()
 
-    def set_cell_anchors(self, dtype: torch.dtype, device: torch.device):
+    def set_cell_anchors(self, dtype: torch.dtype, device: torch.device) -> None:
         """Set anchors to target device"""
         self.cell_anchors = [
             cell_anchor.to(dtype=dtype, device=device)
             for cell_anchor in self.cell_anchors
         ]
 
-    def num_anchors_per_location(self):
+    def num_anchors_per_location(self) -> List[int]:
         """Generate a list of number of anchors per location"""
         return [len(s) * len(a) for s, a in zip(self.sizes, self.aspect_ratios)]
 
@@ -229,9 +229,11 @@ class AnchorGenerator(nn.Module):
             for g in grid_sizes
         ]
         self.set_cell_anchors(dtype, device)
-        anchors_over_all_feature_maps = self.grid_anchors(grid_sizes, strides)
+        anchors_over_all_feature_maps = self.grid_anchors(
+            grid_sizes, strides  # type: ignore[arg-type]
+        )
         anchors: List[List[torch.Tensor]] = []
         for _ in range(len(image_list.image_sizes)):
             anchors.append(anchors_over_all_feature_maps)
-        anchors = [torch.cat(anchors_per_image) for anchors_per_image in anchors]
-        return anchors
+        anchors_out = [torch.cat(anchors_per_image) for anchors_per_image in anchors]
+        return anchors_out

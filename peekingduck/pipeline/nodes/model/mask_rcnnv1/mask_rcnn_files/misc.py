@@ -121,7 +121,7 @@ class FrozenBatchNorm2d(torch.nn.Module):
         missing_keys: List[str],
         unexpected_keys: List[str],
         error_msgs: List[str],
-    ):
+    ) -> None:
         # pylint: disable=missing-function-docstring
         num_batches_tracked_key = prefix + "num_batches_tracked"
         if num_batches_tracked_key in state_dict:
@@ -141,13 +141,14 @@ class FrozenBatchNorm2d(torch.nn.Module):
         # pylint: disable=missing-function-docstring
         # move reshapes to the beginning
         # to make it fuser-friendly
-        w = self.weight.reshape(1, -1, 1, 1)
-        b = self.bias.reshape(1, -1, 1, 1)
-        rv = self.running_var.reshape(1, -1, 1, 1)
-        rm = self.running_mean.reshape(1, -1, 1, 1)
+        w = self.weight.reshape(1, -1, 1, 1)  # type: ignore[operator]
+        b = self.bias.reshape(1, -1, 1, 1)  # type: ignore[operator]
+        rv = self.running_var.reshape(1, -1, 1, 1)  # type: ignore[operator]
+        rm = self.running_mean.reshape(1, -1, 1, 1)  # type: ignore[operator]
         scale = w * (rv + self.eps).rsqrt()
         bias = b - rm * scale
         return x * scale + bias
 
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({self.weight.shape[0]}, eps={self.eps})"
+        # pylint: disable=line-too-long
+        return f"{self.__class__.__name__}({self.weight.shape[0]}, eps={self.eps})"  # type: ignore[index]

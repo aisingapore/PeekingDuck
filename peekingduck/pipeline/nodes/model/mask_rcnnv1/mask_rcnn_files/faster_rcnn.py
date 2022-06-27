@@ -93,7 +93,8 @@ Modifications include:
     - rpn_post_nms_top_n_train
 """
 
-from torch import nn
+from typing import Optional, Tuple, Iterable
+from torch import nn, Tensor
 import torch.nn.functional as F
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
     anchor_utils,
@@ -129,16 +130,16 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             If box_predictor is specified, num_classes should be None.
         min_size (int): minimum size of the image to be rescaled before feeding it to the backbone
         max_size (int): maximum size of the image to be rescaled before feeding it to the backbone
-        image_mean (Tuple[float, float, float]): mean values used for input normalization.
+        image_mean (Optional[Iterable[float]]): mean values used for input normalization.
             They are generally the mean values of the dataset on which the backbone has been
             trained on
-        image_std (Tuple[float, float, float]): std values used for input normalization.
+        image_std (Optional[Iterable[float]]): std values used for input normalization.
             They are generally the std values of the dataset on which the backbone has been trained
             on
-        rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of
+        rpn_anchor_generator (Optional[nn.Module]): module that generates the anchors for a set of
             feature maps.
-        rpn_head (nn.Module): module that computes the objectness and regression deltas from the
-            RPN
+        rpn_head (Optional[nn.Module]): module that computes the objectness and regression deltas
+            from the RPN
         rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during
             testing
         rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during
@@ -146,44 +147,44 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
         rpn_nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
         rpn_score_thresh (float): during inference, only return proposals with a classification
             score greater than rpn_score_thresh
-        box_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
+        box_roi_pool (Optional[nn.Module]): the module which crops and resizes the feature maps in
             the locations indicated by the bounding boxes
-        box_head (nn.Module): module that takes the cropped feature maps as input
-        box_predictor (nn.Module): module that takes the output of box_head and returns the
-            classification logits and box regression deltas.
+        box_head (Optional[nn.Module]): module that takes the cropped feature maps as input
+        box_predictor (Optional[nn.Module]): module that takes the output of box_head and returns
+            the classification logits and box regression deltas.
         box_score_thresh (float): during inference, only return proposals with a classification
             score greater than box_score_thresh
         box_nms_thresh (float): NMS threshold for the prediction head. Used during inference
         box_detections_per_img (int): maximum number of detections per image, for all classes.
-        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of
-            the bounding boxes
+        bbox_reg_weights (Optional[Tuple[float, float, float, float]]): weights for the
+            encoding/decoding of the bounding boxes
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals
+    # pylint: disable=too-many-arguments,too-many-locals,line-too-long
     def __init__(
         self,
-        backbone,
-        num_classes=None,
+        backbone: nn.Module,
+        num_classes: Optional[int] = None,
         # transform parameters
-        min_size=800,
-        max_size=1333,
-        image_mean=None,
-        image_std=None,
+        min_size: int = 800,
+        max_size: int = 1333,
+        image_mean: Optional[Iterable[float]] = None,
+        image_std: Optional[Iterable[float]] = None,
         # RPN parameters
-        rpn_anchor_generator=None,
-        rpn_head=None,
-        rpn_pre_nms_top_n_test=1000,
-        rpn_post_nms_top_n_test=1000,
-        rpn_nms_thresh=0.7,
-        rpn_score_thresh=0.0,
+        rpn_anchor_generator: Optional[nn.Module] = None,
+        rpn_head: Optional[nn.Module] = None,
+        rpn_pre_nms_top_n_test: int = 1000,
+        rpn_post_nms_top_n_test: int = 1000,
+        rpn_nms_thresh: float = 0.7,
+        rpn_score_thresh: float = 0.0,
         # Box parameters
-        box_roi_pool=None,
-        box_head=None,
-        box_predictor=None,
-        box_score_thresh=0.05,
-        box_nms_thresh=0.5,
-        box_detections_per_img=100,
-        bbox_reg_weights=None,
+        box_roi_pool: Optional[nn.Module] = None,
+        box_head: Optional[nn.Module] = None,
+        box_predictor: Optional[nn.Module] = None,
+        box_score_thresh: float = 0.05,
+        box_nms_thresh: float = 0.5,
+        box_detections_per_img: int = 100,
+        bbox_reg_weights: Optional[Tuple[float, float, float, float]] = None,
     ):
 
         if not hasattr(backbone, "out_channels"):
@@ -220,7 +221,7 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             )
         if rpn_head is None:
             rpn_head = RPN.RPNHead(
-                out_channels, rpn_anchor_generator.num_anchors_per_location()[0]
+                out_channels, rpn_anchor_generator.num_anchors_per_location()[0]  # type: ignore[arg-type]
             )
 
         rpn_pre_nms_top_n = dict(testing=rpn_pre_nms_top_n_test)
@@ -243,11 +244,15 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
         if box_head is None:
             resolution = box_roi_pool.output_size[0]
             representation_size = 1024
-            box_head = TwoMLPHead(out_channels * resolution ** 2, representation_size)
+            box_head = TwoMLPHead(
+                out_channels * resolution ** 2, representation_size  # type: ignore[operator,arg-type]
+            )
 
         if box_predictor is None:
             representation_size = 1024
-            box_predictor = FastRCNNPredictor(representation_size, num_classes)
+            box_predictor = FastRCNNPredictor(
+                representation_size, num_classes  # type: ignore[arg-type]
+            )
 
         roi_heads = ROI_Heads.RoIHeads(
             # Box
@@ -281,13 +286,13 @@ class TwoMLPHead(nn.Module):
     """
 
     # pylint: disable=invalid-name
-    def __init__(self, in_channels, representation_size):
+    def __init__(self, in_channels: int, representation_size: int):
         super().__init__()
 
         self.fc6 = nn.Linear(in_channels, representation_size)
         self.fc7 = nn.Linear(representation_size, representation_size)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tensor:
         # pylint: disable=missing-function-docstring
         x = x.flatten(start_dim=1)
 
@@ -308,12 +313,12 @@ class FastRCNNPredictor(nn.Module):
     """
 
     # pylint: disable=invalid-name
-    def __init__(self, in_channels, num_classes):
+    def __init__(self, in_channels: int, num_classes: int):
         super().__init__()
         self.cls_score = nn.Linear(in_channels, num_classes)
         self.bbox_pred = nn.Linear(in_channels, num_classes * 4)
 
-    def forward(self, x):
+    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor]:
         # pylint: disable=missing-function-docstring
         if x.dim() == 4:
             assert list(x.shape[2:]) == [1, 1]

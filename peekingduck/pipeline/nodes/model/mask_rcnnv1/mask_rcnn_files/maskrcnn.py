@@ -93,6 +93,7 @@ Modifications include:
     - rpn_post_nms_top_n_train
 """
 
+from typing import Iterable, Optional, Tuple
 from collections import OrderedDict
 from torch import nn
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
@@ -128,12 +129,12 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             If box_predictor is specified, num_classes should be None.
         min_size (int): minimum size of the image to be rescaled before feeding it to the backbone
         max_size (int): maximum size of the image to be rescaled before feeding it to the backbone
-        image_mean (Tuple[float, float, float]): mean values used for input normalization.
+        image_mean (Optional[Iterable[float]]): mean values used for input normalization.
             They are generally the mean values of the dataset on which the backbone has been
-            trained on
-        image_std (Tuple[float, float, float]): std values used for input normalization.
+            trained on. Requires 3 floating point elements in the Iterable
+        image_std (Optional[Iterable[float]]): std values used for input normalization.
             They are generally the std values of the dataset on which the backbone has been trained
-            on
+            on. Requires 3 floating point elements in the Iterable
         rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of
             feature maps.
         rpn_head (nn.Module): module that computes the objectness and regression deltas from the
@@ -145,53 +146,53 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         rpn_nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
         rpn_score_thresh (float): during inference, only return proposals with a classification
             score greater than rpn_score_thresh
-        box_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
+        box_roi_pool (Optional[nn.Module]): the module which crops and resizes the feature maps in
             the locations indicated by the bounding boxes
-        box_head (nn.Module): module that takes the cropped feature maps as input
-        box_predictor (nn.Module): module that takes the output of box_head and returns the
-            classification logits and box regression deltas.
+        box_head (Optional[nn.Module]): module that takes the cropped feature maps as input
+        box_predictor (Optional[nn.Module]): module that takes the output of box_head and returns
+            the classification logits and box regression deltas.
         box_score_thresh (float): during inference, only return proposals with a classification
             score greater than box_score_thresh
         box_nms_thresh (float): NMS threshold for the prediction head. Used during inference
         box_detections_per_img (int): maximum number of detections per image, for all classes.
-        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of
-            the bounding boxes
-        mask_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
-             the locations indicated by the bounding boxes, which will be used for the mask head.
-        mask_head (nn.Module): module that takes the cropped feature maps as input
-        mask_predictor (nn.Module): module that takes the output of the mask_head and returns the
-            segmentation mask logits
+        bbox_reg_weights (Optional[Tuple[float, float, float, float]]): weights for the
+            encoding/decoding of the bounding boxes
+        mask_roi_pool (Optional[nn.Module]): the module which crops and resizes the feature maps in
+            the locations indicated by the bounding boxes, which will be used for the mask head.
+        mask_head (Optional[nn.Module]): module that takes the cropped feature maps as input
+        mask_predictor (Optional[nn.Module]): module that takes the output of the mask_head and
+            returns the segmentation mask logits
     """
 
     # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
         self,
-        backbone,
-        num_classes=None,
+        backbone: nn.Module,
+        num_classes: Optional[int] = None,
         # transform parameters
-        min_size=800,
-        max_size=1333,
-        image_mean=None,
-        image_std=None,
+        min_size: int = 800,
+        max_size: int = 1333,
+        image_mean: Optional[Iterable[float]] = None,
+        image_std: Optional[Iterable[float]] = None,
         # RPN parameters
-        rpn_anchor_generator=None,
-        rpn_head=None,
-        rpn_pre_nms_top_n_test=1000,
-        rpn_post_nms_top_n_test=1000,
-        rpn_nms_thresh=0.7,
-        rpn_score_thresh=0.0,
+        rpn_anchor_generator: Optional[nn.Module] = None,
+        rpn_head: Optional[nn.Module] = None,
+        rpn_pre_nms_top_n_test: int = 1000,
+        rpn_post_nms_top_n_test: int = 1000,
+        rpn_nms_thresh: float = 0.7,
+        rpn_score_thresh: float = 0.0,
         # Box parameters
-        box_roi_pool=None,
-        box_head=None,
-        box_predictor=None,
-        box_score_thresh=0.05,
-        box_nms_thresh=0.5,
-        box_detections_per_img=100,
-        bbox_reg_weights=None,
+        box_roi_pool: Optional[nn.Module] = None,
+        box_head: Optional[nn.Module] = None,
+        box_predictor: Optional[nn.Module] = None,
+        box_score_thresh: float = 0.05,
+        box_nms_thresh: float = 0.5,
+        box_detections_per_img: int = 100,
+        bbox_reg_weights: Optional[Tuple[float, float, float, float]] = None,
         # Mask parameters
-        mask_roi_pool=None,
-        mask_head=None,
-        mask_predictor=None,
+        mask_roi_pool: Optional[nn.Module] = None,
+        mask_head: Optional[nn.Module] = None,
+        mask_predictor: Optional[nn.Module] = None,
     ):
 
         assert isinstance(mask_roi_pool, (poolers.MultiScaleRoIAlign, type(None)))
@@ -212,13 +213,15 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         if mask_head is None:
             mask_layers = (256, 256, 256, 256)
             mask_dilation = 1
-            mask_head = MaskRCNNHeads(out_channels, mask_layers, mask_dilation)
+            mask_head = MaskRCNNHeads(
+                out_channels, mask_layers, mask_dilation  # type: ignore[arg-type]
+            )  # type: ignore[arg-type]
 
         if mask_predictor is None:
             mask_predictor_in_channels = 256  # == mask_layers[-1]
             mask_dim_reduced = 256
             mask_predictor = MaskRCNNPredictor(
-                mask_predictor_in_channels, mask_dim_reduced, num_classes
+                mask_predictor_in_channels, mask_dim_reduced, num_classes  # type: ignore[arg-type]
             )
 
         super().__init__(
@@ -255,11 +258,11 @@ class MaskRCNNHeads(nn.Sequential):
     """Implements the head for Mask R-CNN, a module that takes the cropped feature maps as input"""
 
     # pylint: disable=invalid-name
-    def __init__(self, in_channels, layers, dilation):
+    def __init__(self, in_channels: int, layers: Iterable[int], dilation: int):
         """
         Args:
             in_channels (int): number of input channels
-            layers (list): feature dimensions of each FCN layer
+            layers (Iterable[int]): feature dimensions of each FCN layer
             dilation (int): dilation rate of kernel
         """
         d = OrderedDict()
@@ -273,10 +276,10 @@ class MaskRCNNHeads(nn.Sequential):
                 padding=dilation,
                 dilation=dilation,
             )
-            d["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)
+            d["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)  # type: ignore[assignment]
             next_feature = layer_features
 
-        super().__init__(d)
+        super().__init__(d)  # type: ignore[arg-type]
         for name, param in self.named_parameters():
             if "weight" in name:
                 nn.init.kaiming_normal_(param, mode="fan_out", nonlinearity="relu")
@@ -288,7 +291,7 @@ class MaskRCNNPredictor(nn.Sequential):
     """A module that takes the output of the mask_head and returns the
     segmentation mask logits"""
 
-    def __init__(self, in_channels, dim_reduced, num_classes):
+    def __init__(self, in_channels: int, dim_reduced: int, num_classes: int):
         super().__init__(
             OrderedDict(
                 [

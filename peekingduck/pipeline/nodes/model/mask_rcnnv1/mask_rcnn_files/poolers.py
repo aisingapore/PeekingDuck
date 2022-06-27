@@ -82,7 +82,7 @@ Modifications include:
 - Removed tracing related codes
 """
 
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 import torch
 from torch import nn, Tensor
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
@@ -97,7 +97,7 @@ def initLevelMapper(
     canonical_scale: int = 224,
     canonical_level: int = 4,
     eps: float = 1e-6,
-):
+) -> Callable:
     # pylint: disable=invalid-name,too-few-public-methods
     """Initialize the LevelMapper object"""
     return LevelMapper(k_min, k_max, canonical_scale, canonical_level, eps)
@@ -183,10 +183,10 @@ class MultiScaleRoIAlign(nn.Module):
     ):
         super().__init__()
         if isinstance(output_size, int):
-            output_size = (output_size, output_size)
+            output_size = (output_size, output_size)  # type: ignore[assignment]
         self.featmap_names = featmap_names
         self.sampling_ratio = sampling_ratio
-        self.output_size = tuple(output_size)
+        self.output_size = tuple(output_size)  # type: ignore[arg-type]
         self.scales = None
         self.map_levels = None
         self.canonical_scale = canonical_scale
@@ -208,7 +208,7 @@ class MultiScaleRoIAlign(nn.Module):
         rois = torch.cat([ids, concat_boxes], dim=1)
         return rois
 
-    def infer_scale(self, feature: Tensor, original_size: List[int]) -> float:
+    def infer_scale(self, feature: Tensor, original_size: Iterable[int]) -> float:
         """Infer scale of feature from original input size"""
         # assumption: the scale is of the form 2 ** (-k), with k integer
         size = feature.shape[-2:]
@@ -239,8 +239,8 @@ class MultiScaleRoIAlign(nn.Module):
         # downsamples by a factor of 2 at each level.
         lvl_min = -torch.log2(torch.tensor(scales[0], dtype=torch.float32)).item()
         lvl_max = -torch.log2(torch.tensor(scales[-1], dtype=torch.float32)).item()
-        self.scales = scales
-        self.map_levels = initLevelMapper(
+        self.scales = scales # type: ignore[assignment]
+        self.map_levels = initLevelMapper( # type: ignore[assignment]
             int(lvl_min),
             int(lvl_max),
             canonical_scale=self.canonical_scale,

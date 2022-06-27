@@ -109,7 +109,17 @@ class BoxCoder:
 
     def decode(self, rel_codes, boxes):
         # type: (Tensor, List[Tensor]) -> Tensor
-        # pylint: disable=missing-function-docstring
+        """
+        From a list of original boxes and encoded relative box offsets,
+        get the decoded boxes.
+
+        Args:
+            rel_codes (Tensor): encoded boxes
+            boxes (List[Tensor]): List of reference boxes.
+
+        Returns:
+            Tensor: Decoded boxes
+        """
         assert isinstance(boxes, (list, tuple))
         assert isinstance(rel_codes, torch.Tensor)
         boxes_per_image = [b.size(0) for b in boxes]
@@ -125,14 +135,16 @@ class BoxCoder:
         return pred_boxes
 
     def decode_single(self, rel_codes, boxes):
+        # type: (Tensor, Tensor) -> Tensor
         # pylint: disable=too-many-locals,invalid-name
-        """
-        From a set of original boxes and encoded relative box offsets,
-        get the decoded boxes.
+        """Performs decoding operation for the boxes
 
         Args:
             rel_codes (Tensor): encoded boxes
-            boxes (Tensor): reference boxes.
+            boxes (Tensor): Reference boxes
+
+        Returns:
+            Tensor: Decoded boxes
         """
         boxes = boxes.to(rel_codes.dtype)
 

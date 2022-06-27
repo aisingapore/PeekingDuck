@@ -167,7 +167,7 @@ def convert_boxes_to_roi_format(boxes: List[Tensor]) -> Tensor:
     return rois
 
 
-def check_roi_boxes_shape(boxes: Union[Tensor, List[Tensor]]):
+def check_roi_boxes_shape(boxes: Union[Tensor, List[Tensor]]) -> None:
     # pylint: disable=missing-function-docstring
     if isinstance(boxes, (list, tuple)):
         for _tensor in boxes:

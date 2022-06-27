@@ -84,7 +84,7 @@ Modifications include:
 - Removed ONNX related code
 """
 
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import nn, Tensor
 import torch.nn.functional as F
@@ -117,12 +117,12 @@ def maskrcnn_inference(x, labels):
     # select masks corresponding to the predicted classes
     num_masks = x.shape[0]
     boxes_per_image = [label.shape[0] for label in labels]
-    labels = torch.cat(labels)
-    index = torch.arange(num_masks, device=labels.device)
-    mask_prob = mask_prob[index, labels][:, None]
-    mask_prob = mask_prob.split(boxes_per_image, dim=0)
+    labels_ = torch.cat(labels)
+    index = torch.arange(num_masks, device=labels_.device)
+    mask_prob = mask_prob[index, labels_][:, None]
+    mask_prob_out = mask_prob.split(boxes_per_image, dim=0)
 
-    return mask_prob
+    return mask_prob_out
 
 
 def expand_boxes(boxes, scale):
@@ -171,10 +171,10 @@ def paste_mask_in_image(mask, box, im_h, im_w):
     mask = mask[0][0]
 
     im_mask = torch.zeros((im_h, im_w), dtype=mask.dtype, device=mask.device)
-    x_0 = max(box[0], 0)
-    x_1 = min(box[2] + 1, im_w)
-    y_0 = max(box[1], 0)
-    y_1 = min(box[3] + 1, im_h)
+    x_0 = max(box[0], 0)  # type: ignore[call-overload]
+    x_1 = min(box[2] + 1, im_w)  # type: ignore[call-overload]
+    y_0 = max(box[1], 0)  # type: ignore[call-overload]
+    y_1 = min(box[3] + 1, im_h)  # type: ignore[call-overload]
 
     im_mask[y_0:y_1, x_0:x_1] = mask[
         (y_0 - box[1]) : (y_1 - box[1]), (x_0 - box[0]) : (x_1 - box[0])
@@ -198,7 +198,28 @@ def paste_masks_in_image(masks, boxes, img_shape, padding=1):
 
 
 class RoIHeads(nn.Module):
-    """A class for Region of Interest Head for Mask-RCNN"""
+    """A class for Region of Interest Head for Mask-RCNN
+
+    Args:
+        box_roi_pool (nn.Module): (MultiScaleRoIAlign): the module which crops and resizes the
+            feature maps in the locations indicated by the bounding boxes
+        box_head (nn.Module): module that takes the cropped feature maps as input
+        box_predictor (nn.Module): module that takes the output of box_head and returns the
+            classification logits and box regression deltas.
+        bbox_reg_weights (Tuple[float, float, float, float]): weights for the
+            encoding/decoding of the bounding boxes
+        score_thresh (float): during inference, only return proposals with a classification
+            score greater than box_score_thresh
+        nms_thresh (float): NMS threshold for the prediction head.
+        detections_per_img (int): maximum number of detections per image, for all classes.
+        mask_roi_pool (nn.Module, optional): the module which crops and resizes the
+            feature maps in the locations indicated by the bounding boxes, which will be used for
+            the mask head. Defaults to None.
+        mask_head (nn.Module, optional): module that takes the cropped feature maps as
+            input. Defaults to None.
+        mask_predictor (nn.Module, optional): module that takes the output of the
+            mask_head and returns the segmentation mask logits. Defaults to None.
+    """
 
     # pylint: disable=too-many-locals,too-many-instance-attributes,too-many-arguments,invalid-name
     __annotations__ = {
@@ -207,18 +228,18 @@ class RoIHeads(nn.Module):
 
     def __init__(
         self,
-        box_roi_pool,
-        box_head,
-        box_predictor,
-        bbox_reg_weights,
+        box_roi_pool: nn.Module,
+        box_head: nn.Module,
+        box_predictor: nn.Module,
+        bbox_reg_weights: Union[Tuple[float, float, float, float], None],
         # Faster R-CNN inference
-        score_thresh,
-        nms_thresh,
-        detections_per_img,
+        score_thresh: float,
+        nms_thresh: float,
+        detections_per_img: int,
         # Mask
-        mask_roi_pool=None,
-        mask_head=None,
-        mask_predictor=None,
+        mask_roi_pool: Optional[nn.Module] = None,
+        mask_head: Optional[nn.Module] = None,
+        mask_predictor: Optional[nn.Module] = None,
     ):
         super().__init__()
 
@@ -238,8 +259,12 @@ class RoIHeads(nn.Module):
         self.mask_head = mask_head
         self.mask_predictor = mask_predictor
 
-    def has_mask(self):
-        # pylint: disable=missing-function-docstring
+    def has_mask(self) -> bool:
+        """Checks whether the RoI heads have mask_roi_pool, mask_head and mask_predictor
+
+        Returns:
+            bool: _description_
+        """
         if self.mask_roi_pool is None:
             return False
         if self.mask_head is None:
@@ -351,8 +376,8 @@ class RoIHeads(nn.Module):
                 mask_features = self.mask_roi_pool(
                     features, mask_proposals, image_shapes
                 )
-                mask_features = self.mask_head(mask_features)
-                mask_logits = self.mask_predictor(mask_features)
+                mask_features = self.mask_head(mask_features)  # type: ignore[misc]
+                mask_logits = self.mask_predictor(mask_features)  # type: ignore[misc]
             else:
                 raise Exception("Expected mask_roi_pool to be not None")
 

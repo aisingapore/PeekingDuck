@@ -85,7 +85,7 @@ Modifications include:
 - Removed torch_choice method (unused)
 """
 
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, Iterable, List, Optional, Tuple, Union
 import math
 import torch
 from torch import nn, Tensor
@@ -114,14 +114,14 @@ class GeneralizedRCNNTransform(nn.Module):
         self,
         min_size: int,
         max_size: int,
-        image_mean: List[float],
-        image_std: List[float],
+        image_mean: Iterable[float],
+        image_std: Iterable[float],
         size_divisible: int = 32,
         fixed_size: Optional[Tuple[int, int]] = None,
     ):
         super().__init__()
         if not isinstance(min_size, (list, tuple)):
-            min_size = (min_size,)
+            min_size = (min_size,)  # type: ignore[assignment]
         self.min_size = min_size
         self.max_size = max_size
         self.image_mean = image_mean
@@ -129,11 +129,8 @@ class GeneralizedRCNNTransform(nn.Module):
         self.size_divisible = size_divisible
         self.fixed_size = fixed_size
 
-    def forward(
-        self, images: List[Tensor]
-    ) -> Tuple[
-        ImageList, Optional[List[Dict[str, Tensor]]]
-    ]:  # pylint: disable=missing-function-docstring
+    def forward(self, images: List[Tensor]) -> ImageList:
+        # pylint: disable=missing-function-docstring
         for i, image in enumerate(images):
 
             if image.dim() != 3:
@@ -146,13 +143,13 @@ class GeneralizedRCNNTransform(nn.Module):
             images[i] = image
 
         image_sizes = [img.shape[-2:] for img in images]
-        images = self.batch_images(images, size_divisible=self.size_divisible)
+        padded_images = self.batch_images(images, size_divisible=self.size_divisible)
         image_sizes_list: List[Tuple[int, int]] = []
         for image_size in image_sizes:
             assert len(image_size) == 2
             image_sizes_list.append((image_size[0], image_size[1]))
 
-        image_list = ImageList(images, image_sizes_list)
+        image_list = ImageList(padded_images, image_sizes_list)
         return image_list
 
     def normalize(self, image: Tensor) -> Tensor:
@@ -169,7 +166,8 @@ class GeneralizedRCNNTransform(nn.Module):
 
     def resize(self, image: Tensor) -> Tensor:
         """Resize image"""
-        size = float(self.min_size[-1])
+        # Note: min_size is either a list or tuple
+        size = float(self.min_size[-1])  # type: ignore[index]
         image = _resize_image_and_masks(
             image, size, float(self.max_size), self.fixed_size
         )
@@ -236,7 +234,9 @@ class GeneralizedRCNNTransform(nn.Module):
 
 
 def resize_boxes(
-    boxes: Tensor, original_size: List[int], new_size: List[int]
+    boxes: Tensor,
+    original_size: Union[List[int], Tuple[int, int]],
+    new_size: Union[List[int], Tuple[int, int]],
 ) -> Tensor:
     """Resize bounding boxes"""
     ratios = [
@@ -276,7 +276,7 @@ def _resize_image_and_masks(
         scale_factor = scale.item()
         recompute_scale_factor = True
 
-    image = torch.nn.functional.interpolate(
+    image = torch.nn.functional.interpolate(  # type: ignore[call-arg]
         image[None],
         size=size,
         scale_factor=scale_factor,

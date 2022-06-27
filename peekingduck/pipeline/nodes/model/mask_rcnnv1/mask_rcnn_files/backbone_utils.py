@@ -88,9 +88,9 @@ Modifications include:
         - norm_layer
 """
 
-from typing import Dict
+from typing import Dict, Optional, List
 from collections import OrderedDict
-from torch import nn
+from torch import nn, Tensor
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
     resnet,
     misc,
@@ -113,13 +113,23 @@ class BackboneWithFPN(nn.Module):
         in_channels_list (List[int]): number of channels for each feature map
             that is returned, in the order they are present in the OrderedDict
         out_channels (int): number of channels in the FPN.
+        extra_blocks (ExtraFPNBlock or None): if provided, extra operations will
+            be performed. It is expected to take the fpn features, the original
+            features and the names of the original features as input, and returns
+            a new list of feature maps and their corresponding names. By
+            default a ``LastLevelMaxPool`` is used.
     Attributes:
         out_channels (int): the number of channels in the FPN
     """
 
     # pylint: disable=too-many-arguments,invalid-name
     def __init__(
-        self, backbone, return_layers, in_channels_list, out_channels, extra_blocks=None
+        self,
+        backbone: nn.Module,
+        return_layers: Dict[str, str],
+        in_channels_list: List[int],
+        out_channels: int,
+        extra_blocks: Optional[FPN.ExtraFPNBlock] = None,
     ):
         super().__init__()
 
@@ -134,13 +144,14 @@ class BackboneWithFPN(nn.Module):
         )
         self.out_channels = out_channels
 
-    def forward(self, x):  # pylint: disable=missing-function-docstring
-        x = self.body(x)
-        x = self.fpn(x)
-        return x
+    def forward(self, x: Tensor) -> Dict[str, Tensor]:
+        # pylint: disable=missing-function-docstring
+        x_out = self.body(x)
+        x_out = self.fpn(x_out)
+        return x_out
 
 
-def resnet_fpn_backbone(backbone_name):
+def resnet_fpn_backbone(backbone_name: str) -> BackboneWithFPN:
     """
     Constructs a specified ResNet backbone with FPN on top. Freezes the specified number of
     layers in the backbone.
@@ -215,7 +226,8 @@ class IntermediateLayerGetter(nn.ModuleDict):
         super().__init__(layers)
         self.return_layers = orig_return_layers
 
-    def forward(self, x):  # pylint: disable=missing-function-docstring,invalid-name
+    def forward(self, x: Tensor) -> Dict[str, Tensor]:
+        # pylint: disable=missing-function-docstring,invalid-name
         out = OrderedDict()
         for name, module in self.items():
             x = module(x)

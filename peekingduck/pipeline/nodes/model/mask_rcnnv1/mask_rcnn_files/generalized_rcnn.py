@@ -102,7 +102,13 @@ class GeneralizedRCNN(nn.Module):
             the model
     """
 
-    def __init__(self, backbone, rpn, roi_heads, transform):
+    def __init__(
+        self,
+        backbone: nn.Module,
+        rpn: nn.Module,
+        roi_heads: nn.Module,
+        transform: nn.Module,
+    ):
         super().__init__()
         self.transform = transform
         self.backbone = backbone
@@ -139,6 +145,6 @@ class GeneralizedRCNN(nn.Module):
         detections = self.roi_heads(features, proposals, images.image_sizes)
         detections = self.transform.postprocess(
             detections, images.image_sizes, original_image_sizes
-        )
+        )  # type: ignore[operator]
 
         return detections
