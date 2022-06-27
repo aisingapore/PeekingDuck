@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -89,9 +91,9 @@ import torch
 from torch import Tensor
 
 
-class BoxCoder(object):
+class BoxCoder:
     """
-    This class encodes and decodes a set of bounding boxes into
+    This class decodes a set of bounding boxes into
     the representation used for training the regressors.
     """
 
@@ -107,6 +109,7 @@ class BoxCoder(object):
 
     def decode(self, rel_codes, boxes):
         # type: (Tensor, List[Tensor]) -> Tensor
+        # pylint: disable=missing-function-docstring
         assert isinstance(boxes, (list, tuple))
         assert isinstance(rel_codes, torch.Tensor)
         boxes_per_image = [b.size(0) for b in boxes]
@@ -122,6 +125,7 @@ class BoxCoder(object):
         return pred_boxes
 
     def decode_single(self, rel_codes, boxes):
+        # pylint: disable=too-many-locals,invalid-name
         """
         From a set of original boxes and encoded relative box offsets,
         get the decoded boxes.
@@ -130,7 +134,6 @@ class BoxCoder(object):
             rel_codes (Tensor): encoded boxes
             boxes (Tensor): reference boxes.
         """
-
         boxes = boxes.to(rel_codes.dtype)
 
         widths = boxes[:, 2] - boxes[:, 0]

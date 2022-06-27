@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -87,10 +89,9 @@ Modifications include:
     - progress option
 """
 
-import torch
-from torch import Tensor
-import torch.nn as nn
 from typing import Type, Any, Callable, Union, List, Optional
+import torch
+from torch import Tensor, nn
 
 
 __all__ = ["resnet50", "resnet101"]
@@ -118,8 +119,10 @@ def conv1x1(in_planes: int, out_planes: int, stride: int = 1) -> nn.Conv2d:
 
 
 class BasicBlock(nn.Module):
-    expansion: int = 1
+    """Basic Block for ResNet"""
 
+    expansion: int = 1
+    # pylint: disable=invalid-name,too-many-arguments
     def __init__(
         self,
         inplanes: int,
@@ -131,7 +134,7 @@ class BasicBlock(nn.Module):
         dilation: int = 1,
         norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
-        super(BasicBlock, self).__init__()
+        super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         if groups != 1 or base_width != 64:
@@ -148,6 +151,7 @@ class BasicBlock(nn.Module):
         self.stride = stride
 
     def forward(self, x: Tensor) -> Tensor:
+        # pylint: disable=missing-function-docstring
         identity = x
 
         out = self.conv1(x)
@@ -167,12 +171,14 @@ class BasicBlock(nn.Module):
 
 
 class Bottleneck(nn.Module):
-    # Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
-    # while original implementation places the stride at the first 1x1 convolution(self.conv1)
-    # according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
-    # This variant is also known as ResNet V1.5 and improves accuracy according to
-    # https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
+    """Bottleneck in torchvision places the stride for downsampling at 3x3 convolution(self.conv2)
+    while original implementation places the stride at the first 1x1 convolution(self.conv1)
+    according to "Deep residual learning for image recognition"https://arxiv.org/abs/1512.03385.
+    This variant is also known as ResNet V1.5 and improves accuracy according to
+    https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
+    """
 
+    # pylint: disable=too-many-arguments,invalid-name,too-many-instance-attributes
     expansion: int = 4
 
     def __init__(
@@ -186,7 +192,7 @@ class Bottleneck(nn.Module):
         dilation: int = 1,
         norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
-        super(Bottleneck, self).__init__()
+        super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         width = int(planes * (base_width / 64.0)) * groups
@@ -202,6 +208,7 @@ class Bottleneck(nn.Module):
         self.stride = stride
 
     def forward(self, x: Tensor) -> Tensor:
+        # pylint: disable=missing-function-docstring
         identity = x
 
         out = self.conv1(x)
@@ -225,6 +232,9 @@ class Bottleneck(nn.Module):
 
 
 class ResNet(nn.Module):
+    """Implements ResNet backbone"""
+
+    # pylint: disable=too-many-arguments,too-many-instance-attributes,invalid-name
     def __init__(
         self,
         block: Type[Union[BasicBlock, Bottleneck]],
@@ -236,7 +246,7 @@ class ResNet(nn.Module):
         replace_stride_with_dilation: Optional[List[bool]] = None,
         norm_layer: Optional[Callable[..., nn.Module]] = None,
     ) -> None:
-        super(ResNet, self).__init__()
+        super().__init__()
         if norm_layer is None:
             norm_layer = nn.BatchNorm2d
         self._norm_layer = norm_layer
@@ -280,8 +290,8 @@ class ResNet(nn.Module):
                 nn.init.constant_(m.weight, 1)
                 nn.init.constant_(m.bias, 0)
 
-        # Zero-initialize the last BN in each residual branch,
-        # so that the residual branch starts with zeros, and each residual block behaves like an identity.
+        # Zero-initialize the last BN in each residual branch, so that the residual
+        # branch starts with zeros, and each residual block behaves like an identity.
         # This improves the model by 0.2~0.3% according to https://arxiv.org/abs/1706.02677
         if zero_init_residual:
             for m in self.modules():
@@ -298,6 +308,7 @@ class ResNet(nn.Module):
         stride: int = 1,
         dilate: bool = False,
     ) -> nn.Sequential:
+        """Method to make layers for ResNet"""
         norm_layer = self._norm_layer
         downsample = None
         previous_dilation = self.dilation
@@ -339,6 +350,7 @@ class ResNet(nn.Module):
         return nn.Sequential(*layers)
 
     def _forward_impl(self, x: Tensor) -> Tensor:
+        # pylint: disable=missing-function-docstring
         # See note [TorchScript super()]
         x = self.conv1(x)
         x = self.bn1(x)
@@ -357,6 +369,7 @@ class ResNet(nn.Module):
         return x
 
     def forward(self, x: Tensor) -> Tensor:
+        # pylint: disable=missing-function-docstring
         return self._forward_impl(x)
 
 

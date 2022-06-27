@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -103,8 +105,8 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
     """
     Implements Mask R-CNN.
 
-    The input to the model is expected to be a list of tensors, each of shape [C, H, W], one for each
-    image, and should be in 0-1 range. Different images can have different sizes.
+    The input to the model is expected to be a list of tensors, each of shape [C, H, W], one for
+    each image, and should be in 0-1 range. Different images can have different sizes.
 
     During inference, the model requires only the input tensors, and returns the post-processed
     predictions as a List[Dict[Tensor]], one for each input image. The fields of the Dict are as
@@ -113,9 +115,9 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
           ``0 <= x1 < x2 <= W`` and ``0 <= y1 < y2 <= H``.
         - labels (Int64Tensor[N]): the predicted labels for each image
         - scores (Tensor[N]): the scores or each prediction
-        - masks (UInt8Tensor[N, 1, H, W]): the predicted masks for each instance, in 0-1 range. In order to
-          obtain the final segmentation masks, the soft masks can be thresholded, generally
-          with a value of 0.5 (mask >= 0.5)
+        - masks (UInt8Tensor[N, 1, H, W]): the predicted masks for each instance, in 0-1 range.
+          In order to obtain the final segmentation masks, the soft masks can be thresholded,
+          generally with a value of 0.5 (mask >= 0.5)
 
     Args:
         backbone (nn.Module): the network used to compute the features for the model.
@@ -127,29 +129,33 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         min_size (int): minimum size of the image to be rescaled before feeding it to the backbone
         max_size (int): maximum size of the image to be rescaled before feeding it to the backbone
         image_mean (Tuple[float, float, float]): mean values used for input normalization.
-            They are generally the mean values of the dataset on which the backbone has been trained
-            on
+            They are generally the mean values of the dataset on which the backbone has been
+            trained on
         image_std (Tuple[float, float, float]): std values used for input normalization.
-            They are generally the std values of the dataset on which the backbone has been trained on
-        rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of feature
-            maps.
-        rpn_head (nn.Module): module that computes the objectness and regression deltas from the RPN
-        rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during testing
-        rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during testing
+            They are generally the std values of the dataset on which the backbone has been trained
+            on
+        rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of
+            feature maps.
+        rpn_head (nn.Module): module that computes the objectness and regression deltas from the
+            RPN
+        rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during
+            testing
+        rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during
+            testing
         rpn_nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
-        rpn_score_thresh (float): during inference, only return proposals with a classification score
-            greater than rpn_score_thresh
+        rpn_score_thresh (float): during inference, only return proposals with a classification
+            score greater than rpn_score_thresh
         box_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
             the locations indicated by the bounding boxes
         box_head (nn.Module): module that takes the cropped feature maps as input
         box_predictor (nn.Module): module that takes the output of box_head and returns the
             classification logits and box regression deltas.
-        box_score_thresh (float): during inference, only return proposals with a classification score
-            greater than box_score_thresh
+        box_score_thresh (float): during inference, only return proposals with a classification
+            score greater than box_score_thresh
         box_nms_thresh (float): NMS threshold for the prediction head. Used during inference
         box_detections_per_img (int): maximum number of detections per image, for all classes.
-        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of the
-            bounding boxes
+        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of
+            the bounding boxes
         mask_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
              the locations indicated by the bounding boxes, which will be used for the mask head.
         mask_head (nn.Module): module that takes the cropped feature maps as input
@@ -157,6 +163,7 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             segmentation mask logits
     """
 
+    # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
         self,
         backbone,
@@ -214,7 +221,7 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
                 mask_predictor_in_channels, mask_dim_reduced, num_classes
             )
 
-        super(MaskRCNN, self).__init__(
+        super().__init__(
             backbone,
             num_classes,
             # transform parameters
@@ -245,6 +252,9 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
 
 
 class MaskRCNNHeads(nn.Sequential):
+    """Implements the head for Mask R-CNN, a module that takes the cropped feature maps as input"""
+
+    # pylint: disable=invalid-name
     def __init__(self, in_channels, layers, dilation):
         """
         Args:
@@ -266,7 +276,7 @@ class MaskRCNNHeads(nn.Sequential):
             d["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)
             next_feature = layer_features
 
-        super(MaskRCNNHeads, self).__init__(d)
+        super().__init__(d)
         for name, param in self.named_parameters():
             if "weight" in name:
                 nn.init.kaiming_normal_(param, mode="fan_out", nonlinearity="relu")
@@ -275,8 +285,11 @@ class MaskRCNNHeads(nn.Sequential):
 
 
 class MaskRCNNPredictor(nn.Sequential):
+    """A module that takes the output of the mask_head and returns the
+    segmentation mask logits"""
+
     def __init__(self, in_channels, dim_reduced, num_classes):
-        super(MaskRCNNPredictor, self).__init__(
+        super().__init__(
             OrderedDict(
                 [
                     (

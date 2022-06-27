@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -81,10 +83,10 @@ Modifications include:
 - Removed torch scripting related code
 """
 
+from typing import Tuple, List, Dict
 from collections import OrderedDict
 import torch
 from torch import nn, Tensor
-from typing import Tuple, List, Dict
 
 
 class GeneralizedRCNN(nn.Module):
@@ -101,7 +103,7 @@ class GeneralizedRCNN(nn.Module):
     """
 
     def __init__(self, backbone, rpn, roi_heads, transform):
-        super(GeneralizedRCNN, self).__init__()
+        super().__init__()
         self.transform = transform
         self.backbone = backbone
         self.rpn = rpn
@@ -109,13 +111,9 @@ class GeneralizedRCNN(nn.Module):
         # used only on torchscript mode
         self._has_warned = False
 
-    @torch.jit.unused
-    def eager_outputs(self, detections):
-        # type: (List[Dict[str, Tensor]]) -> List[Dict[str, Tensor]]
-        return detections
-
     def forward(self, images):
         # type: (List[Tensor]) -> List[Dict[str, Tensor]]
+        # pylint: disable=missing-function-docstring
         """
         Args:
             images (list[Tensor]): images to be processed
@@ -143,4 +141,4 @@ class GeneralizedRCNN(nn.Module):
             detections, images.image_sizes, original_image_sizes
         )
 
-        return self.eager_outputs(detections)
+        return detections

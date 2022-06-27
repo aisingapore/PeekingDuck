@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -89,6 +91,7 @@ class FrozenBatchNorm2d(torch.nn.Module):
     are fixed
     """
 
+    # pylint: disable=too-many-arguments,invalid-name
     def __init__(
         self,
         num_features: int,
@@ -102,7 +105,7 @@ class FrozenBatchNorm2d(torch.nn.Module):
                 DeprecationWarning,
             )
             num_features = n
-        super(FrozenBatchNorm2d, self).__init__()
+        super().__init__()
         self.eps = eps
         self.register_buffer("weight", torch.ones(num_features))
         self.register_buffer("bias", torch.zeros(num_features))
@@ -119,11 +122,12 @@ class FrozenBatchNorm2d(torch.nn.Module):
         unexpected_keys: List[str],
         error_msgs: List[str],
     ):
+        # pylint: disable=missing-function-docstring
         num_batches_tracked_key = prefix + "num_batches_tracked"
         if num_batches_tracked_key in state_dict:
             del state_dict[num_batches_tracked_key]
 
-        super(FrozenBatchNorm2d, self)._load_from_state_dict(
+        super()._load_from_state_dict(
             state_dict,
             prefix,
             local_metadata,
@@ -134,6 +138,7 @@ class FrozenBatchNorm2d(torch.nn.Module):
         )
 
     def forward(self, x: Tensor) -> Tensor:
+        # pylint: disable=missing-function-docstring
         # move reshapes to the beginning
         # to make it fuser-friendly
         w = self.weight.reshape(1, -1, 1, 1)

@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -87,29 +89,32 @@ from torchvision.extension import _assert_has_ops
 
 
 def roi_align(
-    input: Tensor,
+    inp: Tensor,
     boxes: Union[Tensor, List[Tensor]],
     output_size: BroadcastingList2[int],
     spatial_scale: float = 1.0,
     sampling_ratio: int = -1,
     aligned: bool = False,
 ) -> Tensor:
+    # pylint: disable=too-many-arguments
     """
-    Performs Region of Interest (RoI) Align operator with average pooling, as described in Mask R-CNN.
+    Performs Region of Interest (RoI) Align operator with average pooling, as described in
+    Mask R-CNN.
 
     Args:
-        input (Tensor[N, C, H, W]): The input tensor, i.e. a batch with ``N`` elements. Each element
-            contains ``C`` feature maps of dimensions ``H x W``.
+        inp (Tensor[N, C, H, W]): The input tensor, i.e. a batch with ``N`` elements. Each
+            element contains ``C`` feature maps of dimensions ``H x W``.
             If the tensor is quantized, we expect a batch size of ``N == 1``.
         boxes (Tensor[K, 5] or List[Tensor[L, 4]]): the box coordinates in (x1, y1, x2, y2)
             format where the regions will be taken from.
             The coordinate must satisfy ``0 <= x1 < x2`` and ``0 <= y1 < y2``.
             If a single Tensor is passed, then the first column should
-            contain the index of the corresponding element in the batch, i.e. a number in ``[0, N - 1]``.
-            If a list of Tensors is passed, then each Tensor will correspond to the boxes for an element i
-            in the batch.
-        output_size (int or Tuple[int, int]): the size of the output (in bins or pixels) after the pooling
-            is performed, as (height, width).
+            contain the index of the corresponding element in the batch, i.e. a number in
+            ``[0, N - 1]``.
+            If a list of Tensors is passed, then each Tensor will correspond to the boxes for an
+            element i in the batch.
+        output_size (int or Tuple[int, int]): the size of the output (in bins or pixels) after
+            the pooling is performed, as (height, width).
         spatial_scale (float): a scaling factor that maps the input coordinates to
             the box coordinates. Default: 1.0
         sampling_ratio (int): number of sampling points in the interpolation grid
@@ -131,7 +136,7 @@ def roi_align(
     if not isinstance(rois, torch.Tensor):
         rois = convert_boxes_to_roi_format(rois)
     return torch.ops.torchvision.roi_align(
-        input,
+        inp,
         rois,
         spatial_scale,
         output_size[0],
@@ -145,15 +150,15 @@ def _cat(tensors: List[Tensor], dim: int = 0) -> Tensor:
     """
     Efficient version of torch.cat that avoids a copy if there is only a single element in a list
     """
-    # TODO add back the assert
-    # assert isinstance(tensors, (list, tuple))
+    assert isinstance(tensors, (list, tuple))
     if len(tensors) == 1:
         return tensors[0]
     return torch.cat(tensors, dim)
 
 
 def convert_boxes_to_roi_format(boxes: List[Tensor]) -> Tensor:
-    concat_boxes = _cat([b for b in boxes], dim=0)
+    # pylint: disable=missing-function-docstring,invalid-name
+    concat_boxes = _cat(boxes, dim=0)
     temp = []
     for i, b in enumerate(boxes):
         temp.append(torch.full_like(b[:, :1], i))
@@ -163,6 +168,7 @@ def convert_boxes_to_roi_format(boxes: List[Tensor]) -> Tensor:
 
 
 def check_roi_boxes_shape(boxes: Union[Tensor, List[Tensor]]):
+    # pylint: disable=missing-function-docstring
     if isinstance(boxes, (list, tuple)):
         for _tensor in boxes:
             assert (
@@ -174,4 +180,3 @@ def check_roi_boxes_shape(boxes: Union[Tensor, List[Tensor]]):
         ), "The boxes tensor shape is not correct as Tensor[K, 5]"
     else:
         assert False, "boxes is expected to be a Tensor[L, 5] or a List[Tensor[K, 4]]"
-    return

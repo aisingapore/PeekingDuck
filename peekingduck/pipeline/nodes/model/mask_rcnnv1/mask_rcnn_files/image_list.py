@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -82,7 +84,7 @@ import torch
 from torch import Tensor
 
 
-class ImageList(object):
+class ImageList:
     """
     Structure that holds a list of images (of possibly
     varying sizes) as a single tensor.
@@ -90,6 +92,7 @@ class ImageList(object):
     and storing in a field the original sizes of each image
     """
 
+    # pylint: disable=invalid-name,too-few-public-methods
     def __init__(self, tensors: Tensor, image_sizes: List[Tuple[int, int]]):
         """
         Args:
@@ -100,5 +103,6 @@ class ImageList(object):
         self.image_sizes = image_sizes
 
     def to(self, device: torch.device) -> "ImageList":
+        """Transfer the images to target device"""
         cast_tensor = self.tensors.to(device)
         return ImageList(cast_tensor, self.image_sizes)

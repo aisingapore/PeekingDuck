@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -96,10 +98,12 @@ def initLevelMapper(
     canonical_level: int = 4,
     eps: float = 1e-6,
 ):
+    # pylint: disable=invalid-name,too-few-public-methods
+    """Initialize the LevelMapper object"""
     return LevelMapper(k_min, k_max, canonical_scale, canonical_level, eps)
 
 
-class LevelMapper(object):
+class LevelMapper:
     """Determine which FPN level each RoI in a set of RoIs should map to based
     on the heuristic in the FPN paper.
 
@@ -111,6 +115,7 @@ class LevelMapper(object):
         eps (float)
     """
 
+    # pylint: disable=invalid-name,too-many-arguments,too-few-public-methods
     def __init__(
         self,
         k_min: int,
@@ -166,6 +171,7 @@ class MultiScaleRoIAlign(nn.Module):
         "map_levels": Optional[LevelMapper],
     }
 
+    # pylint: disable=invalid-name,no-self-use,too-many-locals
     def __init__(
         self,
         featmap_names: List[str],
@@ -175,7 +181,7 @@ class MultiScaleRoIAlign(nn.Module):
         canonical_scale: int = 224,
         canonical_level: int = 4,
     ):
-        super(MultiScaleRoIAlign, self).__init__()
+        super().__init__()
         if isinstance(output_size, int):
             output_size = (output_size, output_size)
         self.featmap_names = featmap_names
@@ -187,6 +193,7 @@ class MultiScaleRoIAlign(nn.Module):
         self.canonical_level = canonical_level
 
     def convert_to_roi_format(self, boxes: List[Tensor]) -> Tensor:
+        """Convert boxes to ROI format and transfer to target device"""
         concat_boxes = torch.cat(boxes, dim=0)
         device, dtype = concat_boxes.device, concat_boxes.dtype
         ids = torch.cat(
@@ -202,6 +209,7 @@ class MultiScaleRoIAlign(nn.Module):
         return rois
 
     def infer_scale(self, feature: Tensor, original_size: List[int]) -> float:
+        """Infer scale of feature from original input size"""
         # assumption: the scale is of the form 2 ** (-k), with k integer
         size = feature.shape[-2:]
         possible_scales: List[float] = []
@@ -217,6 +225,7 @@ class MultiScaleRoIAlign(nn.Module):
         features: List[Tensor],
         image_shapes: List[Tuple[int, int]],
     ) -> None:
+        """Method to setuip scales for roialign function"""
         assert len(image_shapes) != 0
         max_x = 0
         max_y = 0
@@ -270,7 +279,7 @@ class MultiScaleRoIAlign(nn.Module):
         assert scales is not None
 
         if num_levels == 1:
-            return roi_align(
+            return roi_align.roi_align(
                 x_filtered[0],
                 rois,
                 output_size=self.output_size,

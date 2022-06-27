@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -115,10 +117,11 @@ class BackboneWithFPN(nn.Module):
         out_channels (int): the number of channels in the FPN
     """
 
+    # pylint: disable=too-many-arguments,invalid-name
     def __init__(
         self, backbone, return_layers, in_channels_list, out_channels, extra_blocks=None
     ):
-        super(BackboneWithFPN, self).__init__()
+        super().__init__()
 
         if extra_blocks is None:
             extra_blocks = FPN.LastLevelMaxPool()
@@ -131,7 +134,7 @@ class BackboneWithFPN(nn.Module):
         )
         self.out_channels = out_channels
 
-    def forward(self, x):
+    def forward(self, x):  # pylint: disable=missing-function-docstring
         x = self.body(x)
         x = self.fpn(x)
         return x
@@ -139,7 +142,8 @@ class BackboneWithFPN(nn.Module):
 
 def resnet_fpn_backbone(backbone_name):
     """
-    Constructs a specified ResNet backbone with FPN on top. Freezes the specified number of layers in the backbone.
+    Constructs a specified ResNet backbone with FPN on top. Freezes the specified number of
+    layers in the backbone.
 
     Args:
         backbone_name (string): resnet architecture. Possible values are 'resnet50', 'resnet101'
@@ -208,10 +212,10 @@ class IntermediateLayerGetter(nn.ModuleDict):
             if not return_layers:
                 break
 
-        super(IntermediateLayerGetter, self).__init__(layers)
+        super().__init__(layers)
         self.return_layers = orig_return_layers
 
-    def forward(self, x):
+    def forward(self, x):  # pylint: disable=missing-function-docstring,invalid-name
         out = OrderedDict()
         for name, module in self.items():
             x = module(x)

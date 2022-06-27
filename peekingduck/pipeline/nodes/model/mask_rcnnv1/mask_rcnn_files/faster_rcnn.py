@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -107,14 +109,14 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
     """
     Implements Faster R-CNN.
 
-    The input to the model is expected to be a list of tensors, each of shape [C, H, W], one for each
-    image, and should be in 0-1 range. Different images can have different sizes.
+    The input to the model is expected to be a list of tensors, each of shape [C, H, W], one
+    for each image, and should be in 0-1 range. Different images can have different sizes.
 
-    During inference, the model requires only the input tensors, and returns the post-processed
-    predictions as a List[Dict[Tensor]], one for each input image. The fields of the Dict are as
-    follows:
-        - boxes (``FloatTensor[N, 4]``): the predicted boxes in ``[x1, y1, x2, y2]`` format, with
-          ``0 <= x1 < x2 <= W`` and ``0 <= y1 < y2 <= H``.
+    During inference, the model requires only the input tensors, and returns the
+    post-processed predictions as a List[Dict[Tensor]], one for each input image. The fields
+    of the Dict are as follows:
+        - boxes (``FloatTensor[N, 4]``): the predicted boxes in ``[x1, y1, x2, y2]`` format,
+          with ``0 <= x1 < x2 <= W`` and ``0 <= y1 < y2 <= H``.
         - labels (Int64Tensor[N]): the predicted labels for each image
         - scores (Tensor[N]): the scores or each prediction
 
@@ -128,31 +130,36 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
         min_size (int): minimum size of the image to be rescaled before feeding it to the backbone
         max_size (int): maximum size of the image to be rescaled before feeding it to the backbone
         image_mean (Tuple[float, float, float]): mean values used for input normalization.
-            They are generally the mean values of the dataset on which the backbone has been trained
-            on
+            They are generally the mean values of the dataset on which the backbone has been
+            trained on
         image_std (Tuple[float, float, float]): std values used for input normalization.
-            They are generally the std values of the dataset on which the backbone has been trained on
-        rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of feature
-            maps.
-        rpn_head (nn.Module): module that computes the objectness and regression deltas from the RPN
-        rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during testing
-        rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during testing
+            They are generally the std values of the dataset on which the backbone has been trained
+            on
+        rpn_anchor_generator (AnchorGenerator): module that generates the anchors for a set of
+            feature maps.
+        rpn_head (nn.Module): module that computes the objectness and regression deltas from the
+            RPN
+        rpn_pre_nms_top_n_test (int): number of proposals to keep before applying NMS during
+            testing
+        rpn_post_nms_top_n_test (int): number of proposals to keep after applying NMS during
+            testing
         rpn_nms_thresh (float): NMS threshold used for postprocessing the RPN proposals
-        rpn_score_thresh (float): during inference, only return proposals with a classification score
-            greater than rpn_score_thresh
+        rpn_score_thresh (float): during inference, only return proposals with a classification
+            score greater than rpn_score_thresh
         box_roi_pool (MultiScaleRoIAlign): the module which crops and resizes the feature maps in
             the locations indicated by the bounding boxes
         box_head (nn.Module): module that takes the cropped feature maps as input
         box_predictor (nn.Module): module that takes the output of box_head and returns the
             classification logits and box regression deltas.
-        box_score_thresh (float): during inference, only return proposals with a classification score
-            greater than box_score_thresh
+        box_score_thresh (float): during inference, only return proposals with a classification
+            score greater than box_score_thresh
         box_nms_thresh (float): NMS threshold for the prediction head. Used during inference
         box_detections_per_img (int): maximum number of detections per image, for all classes.
-        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of the
-            bounding boxes
+        bbox_reg_weights (Tuple[float, float, float, float]): weights for the encoding/decoding of
+            the bounding boxes
     """
 
+    # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
         self,
         backbone,
@@ -261,7 +268,7 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             min_size, max_size, image_mean, image_std
         )
 
-        super(FasterRCNN, self).__init__(backbone, rpn, roi_heads, transform)
+        super().__init__(backbone, rpn, roi_heads, transform)
 
 
 class TwoMLPHead(nn.Module):
@@ -273,13 +280,15 @@ class TwoMLPHead(nn.Module):
         representation_size (int): size of the intermediate representation
     """
 
+    # pylint: disable=invalid-name
     def __init__(self, in_channels, representation_size):
-        super(TwoMLPHead, self).__init__()
+        super().__init__()
 
         self.fc6 = nn.Linear(in_channels, representation_size)
         self.fc7 = nn.Linear(representation_size, representation_size)
 
     def forward(self, x):
+        # pylint: disable=missing-function-docstring
         x = x.flatten(start_dim=1)
 
         x = F.relu(self.fc6(x))
@@ -298,12 +307,14 @@ class FastRCNNPredictor(nn.Module):
         num_classes (int): number of output classes (including background)
     """
 
+    # pylint: disable=invalid-name
     def __init__(self, in_channels, num_classes):
-        super(FastRCNNPredictor, self).__init__()
+        super().__init__()
         self.cls_score = nn.Linear(in_channels, num_classes)
         self.bbox_pred = nn.Linear(in_channels, num_classes * 4)
 
     def forward(self, x):
+        # pylint: disable=missing-function-docstring
         if x.dim() == 4:
             assert list(x.shape[2:]) == [1, 1]
         x = x.flatten(start_dim=1)

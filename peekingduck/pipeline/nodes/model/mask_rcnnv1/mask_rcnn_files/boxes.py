@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -80,6 +82,7 @@ Modifications include:
 - Removed unused functions from original script
     - _box_inter_union
     - box_iou
+- Removed tracing related code
 """
 
 from typing import Tuple
@@ -89,6 +92,7 @@ import torchvision
 from torchvision.extension import _assert_has_ops
 
 
+# pylint: disable=protected-access
 def nms(boxes: Tensor, scores: Tensor, iou_threshold: float) -> Tensor:
     """
     Performs non-maximum suppression (NMS) on the boxes according
@@ -135,22 +139,8 @@ def clip_boxes_to_image(boxes: Tensor, size: Tuple[int, int]) -> Tensor:
     boxes_y = boxes[..., 1::2]
     height, width = size
 
-    if torchvision._is_tracing():
-        boxes_x = torch.max(
-            boxes_x, torch.tensor(0, dtype=boxes.dtype, device=boxes.device)
-        )
-        boxes_x = torch.min(
-            boxes_x, torch.tensor(width, dtype=boxes.dtype, device=boxes.device)
-        )
-        boxes_y = torch.max(
-            boxes_y, torch.tensor(0, dtype=boxes.dtype, device=boxes.device)
-        )
-        boxes_y = torch.min(
-            boxes_y, torch.tensor(height, dtype=boxes.dtype, device=boxes.device)
-        )
-    else:
-        boxes_x = boxes_x.clamp(min=0, max=width)
-        boxes_y = boxes_y.clamp(min=0, max=height)
+    boxes_x = boxes_x.clamp(min=0, max=width)
+    boxes_y = boxes_y.clamp(min=0, max=height)
 
     clipped_boxes = torch.stack((boxes_x, boxes_y), dim=dim)
     return clipped_boxes.reshape(boxes.shape)
@@ -169,6 +159,7 @@ def remove_small_boxes(boxes: Tensor, min_size: float) -> Tensor:
         Tensor[K]: indices of the boxes that have both sides
         larger than min_size
     """
+    # pylint: disable=invalid-name
     ws, hs = boxes[:, 2] - boxes[:, 0], boxes[:, 3] - boxes[:, 1]
     keep = (ws >= min_size) & (hs >= min_size)
     keep = torch.where(keep)[0]
@@ -204,8 +195,8 @@ def batched_nms(
     # Ideally for GPU we'd use a higher threshold
     if boxes.numel() > 4_000 and not torchvision._is_tracing():
         return _batched_nms_vanilla(boxes, scores, idxs, iou_threshold)
-    else:
-        return _batched_nms_coordinate_trick(boxes, scores, idxs, iou_threshold)
+
+    return _batched_nms_coordinate_trick(boxes, scores, idxs, iou_threshold)
 
 
 @torch.jit._script_if_tracing
@@ -215,10 +206,10 @@ def _batched_nms_coordinate_trick(
     idxs: Tensor,
     iou_threshold: float,
 ) -> Tensor:
-    # strategy: in order to perform NMS independently per class,
-    # we add an offset to all the boxes. The offset is dependent
-    # only on the class idx, and is large enough so that boxes
-    # from different classes do not overlap
+    """strategy: in order to perform NMS independently per class,
+    we add an offset to all the boxes. The offset is dependent
+    only on the class idx, and is large enough so that boxes
+    from different classes do not overlap"""
     if boxes.numel() == 0:
         return torch.empty((0,), dtype=torch.int64, device=boxes.device)
     max_coordinate = boxes.max()
@@ -265,8 +256,10 @@ def box_area(boxes: Tensor) -> Tensor:
 
 
 def _upcast(t: Tensor) -> Tensor:
-    # Protects from numerical overflows in multiplications by upcasting to the equivalent higher type
+    """Protects from numerical overflows in multiplications by upcasting to the equivalent
+    higher type"""
+    # pylint: disable=invalid-name
     if t.is_floating_point():
         return t if t.dtype in (torch.float32, torch.float64) else t.float()
-    else:
-        return t if t.dtype in (torch.int32, torch.int64) else t.int()
+
+    return t if t.dtype in (torch.int32, torch.int64) else t.int()

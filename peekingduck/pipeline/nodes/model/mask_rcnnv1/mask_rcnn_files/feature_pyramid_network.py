@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -75,12 +77,12 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""Generate FPN for Mask-RCNN backbone"""
+
 from collections import OrderedDict
 from typing import Tuple, List, Dict, Optional
 import torch.nn.functional as F
 from torch import nn, Tensor
-
-"""Generate FPN for Mask-RCNN backbone"""
 
 
 class ExtraFPNBlock(nn.Module):
@@ -99,6 +101,7 @@ class ExtraFPNBlock(nn.Module):
         names (List[str]): the extended set of names for the results
     """
 
+    # pylint: disable=invalid-name,missing-function-docstring
     def forward(
         self,
         results: List[Tensor],
@@ -129,13 +132,14 @@ class FeaturePyramidNetwork(nn.Module):
             a new list of feature maps and their corresponding names
     """
 
+    # pylint: disable=invalid-name
     def __init__(
         self,
         in_channels_list: List[int],
         out_channels: int,
         extra_blocks: Optional[ExtraFPNBlock] = None,
     ):
-        super(FeaturePyramidNetwork, self).__init__()
+        super().__init__()
         self.inner_blocks = nn.ModuleList()
         self.layer_blocks = nn.ModuleList()
         for in_channels in in_channels_list:
@@ -218,7 +222,7 @@ class FeaturePyramidNetwork(nn.Module):
             results, names = self.extra_blocks(results, x, names)
 
         # make it back an OrderedDict
-        out = OrderedDict([(k, v) for k, v in zip(names, results)])
+        out = OrderedDict((k, v) for k, v in zip(names, results))
 
         return out
 
@@ -228,6 +232,7 @@ class LastLevelMaxPool(ExtraFPNBlock):
     Applies a max_pool2d on top of the last feature map
     """
 
+    # pylint: disable=arguments-differ,unused-argument
     def forward(
         self,
         x: List[Tensor],

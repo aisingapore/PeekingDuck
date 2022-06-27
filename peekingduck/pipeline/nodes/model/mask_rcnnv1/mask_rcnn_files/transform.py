@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -80,6 +82,7 @@ Modifications include:
 - Removed if conditions for keypoints detection
 - Removed training / target related code and parameters
 - Removed tracing related codes
+- Removed torch_choice method (unused)
 """
 
 from typing import Dict, List, Optional, Tuple
@@ -106,6 +109,7 @@ class GeneralizedRCNNTransform(nn.Module):
     It returns a ImageList for the inputs
     """
 
+    # pylint: disable=too-many-arguments, no-self-use
     def __init__(
         self,
         min_size: int,
@@ -115,7 +119,7 @@ class GeneralizedRCNNTransform(nn.Module):
         size_divisible: int = 32,
         fixed_size: Optional[Tuple[int, int]] = None,
     ):
-        super(GeneralizedRCNNTransform, self).__init__()
+        super().__init__()
         if not isinstance(min_size, (list, tuple)):
             min_size = (min_size,)
         self.min_size = min_size
@@ -127,10 +131,10 @@ class GeneralizedRCNNTransform(nn.Module):
 
     def forward(
         self, images: List[Tensor]
-    ) -> Tuple[ImageList, Optional[List[Dict[str, Tensor]]]]:
-        images = [img for img in images]
-        for i in range(len(images)):
-            image = images[i]
+    ) -> Tuple[
+        ImageList, Optional[List[Dict[str, Tensor]]]
+    ]:  # pylint: disable=missing-function-docstring
+        for i, image in enumerate(images):
 
             if image.dim() != 3:
                 raise ValueError(
@@ -152,6 +156,7 @@ class GeneralizedRCNNTransform(nn.Module):
         return image_list
 
     def normalize(self, image: Tensor) -> Tensor:
+        """Normalize image"""
         if not image.is_floating_point():
             raise TypeError(
                 f"Expected input images to be of floating type (in range [0, 1]), "
@@ -162,16 +167,8 @@ class GeneralizedRCNNTransform(nn.Module):
         std = torch.as_tensor(self.image_std, dtype=dtype, device=device)
         return (image - mean[:, None, None]) / std[:, None, None]
 
-    def torch_choice(self, k: List[int]) -> int:
-        """
-        Implements `random.choice` via torch ops so it can be compiled with
-        TorchScript. Remove if https://github.com/pytorch/pytorch/issues/25803
-        is fixed.
-        """
-        index = int(torch.empty(1).uniform_(0.0, float(len(k))).item())
-        return k[index]
-
     def resize(self, image: Tensor) -> Tensor:
+        """Resize image"""
         size = float(self.min_size[-1])
         image = _resize_image_and_masks(
             image, size, float(self.max_size), self.fixed_size
@@ -180,6 +177,7 @@ class GeneralizedRCNNTransform(nn.Module):
         return image
 
     def max_by_axis(self, the_list: List[List[int]]) -> List[int]:
+        """Find the maximum size for each axis in a batch of images"""
         maxes = the_list[0]
         for sublist in the_list[1:]:
             for index, item in enumerate(sublist):
@@ -187,6 +185,7 @@ class GeneralizedRCNNTransform(nn.Module):
         return maxes
 
     def batch_images(self, images: List[Tensor], size_divisible: int = 32) -> Tensor:
+        """Pad the images in a batch to the same size"""
         max_size = self.max_by_axis([list(img.shape) for img in images])
         stride = float(size_divisible)
         max_size = list(max_size)
@@ -207,6 +206,7 @@ class GeneralizedRCNNTransform(nn.Module):
         image_shapes: List[Tuple[int, int]],
         original_image_sizes: List[Tuple[int, int]],
     ) -> List[Dict[str, Tensor]]:
+        """Postprocess the result"""
         for i, (pred, im_s, o_im_s) in enumerate(
             zip(result, image_shapes, original_image_sizes)
         ):
@@ -238,6 +238,7 @@ class GeneralizedRCNNTransform(nn.Module):
 def resize_boxes(
     boxes: Tensor, original_size: List[int], new_size: List[int]
 ) -> Tensor:
+    """Resize bounding boxes"""
     ratios = [
         torch.tensor(s, dtype=torch.float32, device=boxes.device)
         / torch.tensor(s_orig, dtype=torch.float32, device=boxes.device)
@@ -259,6 +260,7 @@ def _resize_image_and_masks(
     self_max_size: float,
     fixed_size: Optional[Tuple[int, int]] = None,
 ) -> Tensor:
+    """Resize image and masks"""
     im_shape = torch.tensor(image.shape[-2:])
 
     size: Optional[List[int]] = None

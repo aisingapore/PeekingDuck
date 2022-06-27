@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -100,8 +102,10 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.image_list imp
 )
 
 
-def permute_and_flatten(layer, N, A, C, H, W):
-    # type: (Tensor, int, int, int, int, int) -> Tensor
+def permute_and_flatten(layer, N, C, H, W):
+    # type: (Tensor, int, int, int, int) -> Tensor
+    # pylint: disable=invalid-name
+    """Permutes a feature output to be the same format as the labels"""
     layer = layer.view(N, -1, C, H, W)
     layer = layer.permute(0, 3, 4, 1, 2)
     layer = layer.reshape(N, -1, C)
@@ -110,6 +114,9 @@ def permute_and_flatten(layer, N, A, C, H, W):
 
 def concat_box_prediction_layers(box_cls, box_regression):
     # type: (List[Tensor], List[Tensor]) -> Tuple[Tensor, Tensor]
+    # pylint: disable=invalid-name
+    """Permutes each feature level output to be the same format as labels and concatenates them on
+    the first dimension"""
     box_cls_flattened = []
     box_regression_flattened = []
     # for each feature level, permute the outputs to make them be in the
@@ -121,11 +128,11 @@ def concat_box_prediction_layers(box_cls, box_regression):
         Ax4 = box_regression_per_level.shape[1]
         A = Ax4 // 4
         C = AxC // A
-        box_cls_per_level = permute_and_flatten(box_cls_per_level, N, A, C, H, W)
+        box_cls_per_level = permute_and_flatten(box_cls_per_level, N, C, H, W)
         box_cls_flattened.append(box_cls_per_level)
 
         box_regression_per_level = permute_and_flatten(
-            box_regression_per_level, N, A, 4, H, W
+            box_regression_per_level, N, 4, H, W
         )
         box_regression_flattened.append(box_regression_per_level)
     # concatenate on the first dimension (representing the feature levels), to
@@ -145,8 +152,9 @@ class RPNHead(nn.Module):
         num_anchors (int): number of anchors to be predicted
     """
 
+    # pylint: disable=invalid-name
     def __init__(self, in_channels, num_anchors):
-        super(RPNHead, self).__init__()
+        super().__init__()
         self.conv = nn.Conv2d(
             in_channels, in_channels, kernel_size=3, stride=1, padding=1
         )
@@ -161,6 +169,7 @@ class RPNHead(nn.Module):
 
     def forward(self, x):
         # type: (List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
+        # pylint: disable=missing-function-docstring
         logits = []
         bbox_reg = []
         for feature in x:
@@ -188,6 +197,7 @@ class RegionProposalNetwork(torch.nn.Module):
 
     """
 
+    # pylint: disable=too-many-instance-attributes,invalid-name,too-many-locals,too-many-arguments
     __annotations__ = {
         "box_coder": det_utils.BoxCoder,
         "pre_nms_top_n": Dict[str, int],
@@ -203,7 +213,7 @@ class RegionProposalNetwork(torch.nn.Module):
         nms_thresh,
         score_thresh=0.0,
     ):
-        super(RegionProposalNetwork, self).__init__()
+        super().__init__()
         self.anchor_generator = anchor_generator
         self.head = head
         self.box_coder = det_utils.BoxCoder(weights=(1.0, 1.0, 1.0, 1.0))
@@ -216,13 +226,16 @@ class RegionProposalNetwork(torch.nn.Module):
         self.min_size = 1e-3
 
     def pre_nms_top_n(self):
+        """Returns the number of proposals to keep before applying NMS"""
         return self._pre_nms_top_n["testing"]
 
     def post_nms_top_n(self):
+        """Returns the number of proposals to keep after applying NMS"""
         return self._post_nms_top_n["testing"]
 
     def _get_top_n_idx(self, objectness, num_anchors_per_level):
         # type: (Tensor, List[int]) -> Tensor
+        """Get the top n number of proposals before applying NMS"""
         r = []
         offset = 0
         for ob in objectness.split(num_anchors_per_level, 1):
@@ -236,7 +249,9 @@ class RegionProposalNetwork(torch.nn.Module):
     def filter_proposals(
         self, proposals, objectness, image_shapes, num_anchors_per_level
     ):
+        # pylint: disable=line-too-long
         # type: (Tensor, Tensor, List[Tuple[int, int]], List[int]) -> Tuple[List[Tensor], List[Tensor]]
+        """Filters proposals through objectness thresholds, NMS, minimum size"""
         num_images = proposals.shape[0]
         device = proposals.device
         # do not backprop throught objectness
@@ -324,7 +339,7 @@ class RegionProposalNetwork(torch.nn.Module):
         # the proposals
         proposals = self.box_coder.decode(pred_bbox_deltas.detach(), anchors)
         proposals = proposals.view(num_images, -1, 4)
-        boxes, scores = self.filter_proposals(
+        boxes, _ = self.filter_proposals(
             proposals, objectness, images.image_sizes, num_anchors_per_level
         )
 

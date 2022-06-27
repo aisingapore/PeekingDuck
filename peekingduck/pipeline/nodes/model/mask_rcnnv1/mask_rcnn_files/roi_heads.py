@@ -20,9 +20,11 @@
 # Copyright (c) 2012-2014 Deepmind Technologies    (Koray Kavukcuoglu)
 # Copyright (c) 2011-2012 NEC Laboratories America (Koray Kavukcuoglu)
 # Copyright (c) 2011-2013 NYU                      (Clement Farabet)
-# Copyright (c) 2006-2010 NEC Laboratories America (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
+# Copyright (c) 2006-2010 NEC Laboratories America
+#           (Ronan Collobert, Leon Bottou, Iain Melvin, Jason Weston)
 # Copyright (c) 2006      Idiap Research Institute (Samy Bengio)
-# Copyright (c) 2001-2004 Idiap Research Institute (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
+# Copyright (c) 2001-2004 Idiap Research Institute
+#           (Ronan Collobert, Samy Bengio, Johnny Mariethoz)
 #
 # From Caffe2:
 #
@@ -94,6 +96,7 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
 
 def maskrcnn_inference(x, labels):
     # type: (Tensor, List[Tensor]) -> List[Tensor]
+    # pylint: disable=invalid-name
     """
     From the results of the CNN, post process the masks
     by taking the mask corresponding to the class with max
@@ -124,6 +127,7 @@ def maskrcnn_inference(x, labels):
 
 def expand_boxes(boxes, scale):
     # type: (Tensor, float) -> Tensor
+    """Enlarge boxes with the specified scale"""
     w_half = (boxes[:, 2] - boxes[:, 0]) * 0.5
     h_half = (boxes[:, 3] - boxes[:, 1]) * 0.5
     x_c = (boxes[:, 2] + boxes[:, 0]) * 0.5
@@ -142,6 +146,8 @@ def expand_boxes(boxes, scale):
 
 def expand_masks(mask, padding):
     # type: (Tensor, int) -> Tuple[Tensor, float]
+    # pylint: disable=invalid-name
+    """Enlarge masks with the specified padding and returns the resultant scale"""
     M = mask.shape[-1]
     scale = float(M + 2 * padding) / M
     padded_mask = F.pad(mask, (padding,) * 4)
@@ -150,9 +156,10 @@ def expand_masks(mask, padding):
 
 def paste_mask_in_image(mask, box, im_h, im_w):
     # type: (Tensor, Tensor, int, int) -> Tensor
-    TO_REMOVE = 1
-    w = int(box[2] - box[0] + TO_REMOVE)
-    h = int(box[3] - box[1] + TO_REMOVE)
+    # pylint: disable=missing-function-docstring,invalid-name
+    to_remove = 1
+    w = int(box[2] - box[0] + to_remove)
+    h = int(box[3] - box[1] + to_remove)
     w = max(w, 1)
     h = max(h, 1)
 
@@ -177,6 +184,7 @@ def paste_mask_in_image(mask, box, im_h, im_w):
 
 def paste_masks_in_image(masks, boxes, img_shape, padding=1):
     # type: (Tensor, Tensor, Tuple[int, int], int) -> Tensor
+    # pylint: disable=missing-function-docstring
     masks, scale = expand_masks(masks, padding=padding)
     boxes = expand_boxes(boxes, scale).to(dtype=torch.int64)
     im_h, im_w = img_shape
@@ -190,6 +198,9 @@ def paste_masks_in_image(masks, boxes, img_shape, padding=1):
 
 
 class RoIHeads(nn.Module):
+    """A class for Region of Interest Head for Mask-RCNN"""
+
+    # pylint: disable=too-many-locals,too-many-instance-attributes,too-many-arguments,invalid-name
     __annotations__ = {
         "box_coder": det_utils.BoxCoder,
     }
@@ -209,7 +220,7 @@ class RoIHeads(nn.Module):
         mask_head=None,
         mask_predictor=None,
     ):
-        super(RoIHeads, self).__init__()
+        super().__init__()
 
         if bbox_reg_weights is None:
             bbox_reg_weights = (10.0, 10.0, 5.0, 5.0)
@@ -228,6 +239,7 @@ class RoIHeads(nn.Module):
         self.mask_predictor = mask_predictor
 
     def has_mask(self):
+        # pylint: disable=missing-function-docstring
         if self.mask_roi_pool is None:
             return False
         if self.mask_head is None:
@@ -244,6 +256,7 @@ class RoIHeads(nn.Module):
         image_shapes,  # type: List[Tuple[int, int]]
     ):
         # type: (...) -> Tuple[List[Tensor], List[Tensor], List[Tensor]]
+        """Perform postprocessing for detection results"""
         device = class_logits.device
         num_classes = class_logits.shape[-1]
 
