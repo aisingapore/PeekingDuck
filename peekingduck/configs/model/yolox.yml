@@ -23,25 +23,6 @@ weights:
             yolox-l: yolox-l.pth,
           },
       },
-    onnx:
-      {
-        model_subdir: yolox,
-        blob_file:
-          {
-            yolox-tiny: yolox-tiny-onnx.zip,
-            yolox-s: yolox-s-onnx.zip,
-            yolox-m: yolox-m-onnx.zip,
-            yolox-l: yolox-l-onnx.zip,
-          },
-        classes_file: coco.names,
-        model_file:
-          {
-            yolox-tiny: yolox-tiny.onnx,
-            yolox-s: yolox-s.onnx,
-            yolox-m: yolox-m.onnx,
-            yolox-l: yolox-l.onnx,
-          },
-      },
     tensorrt:
       {
         model_subdir: yolox,
