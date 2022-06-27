@@ -112,16 +112,6 @@ The following test conditions were followed:
      estimation models for consistency
 
 
-Optimized Models
-================
-
-The MoveNet model is available in TensorRT format for deployment on Nvidia Jetson devices.
-
-The chart below shows the speed up obtainable using TensorRT models:
-
-.. figure:: /assets/charts/tensorrt_movenet_charts.png
-
-
 Keypoint IDs
 ============
 
