@@ -239,8 +239,8 @@ class MultiScaleRoIAlign(nn.Module):
         # downsamples by a factor of 2 at each level.
         lvl_min = -torch.log2(torch.tensor(scales[0], dtype=torch.float32)).item()
         lvl_max = -torch.log2(torch.tensor(scales[-1], dtype=torch.float32)).item()
-        self.scales = scales # type: ignore[assignment]
-        self.map_levels = initLevelMapper( # type: ignore[assignment]
+        self.scales = scales  # type: ignore[assignment]
+        self.map_levels = initLevelMapper(  # type: ignore[assignment]
             int(lvl_min),
             int(lvl_max),
             canonical_scale=self.canonical_scale,
