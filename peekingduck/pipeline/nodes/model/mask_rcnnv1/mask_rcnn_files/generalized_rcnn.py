@@ -143,8 +143,8 @@ class GeneralizedRCNN(nn.Module):
             features = OrderedDict([("0", features)])
         proposals = self.rpn(images, features)
         detections = self.roi_heads(features, proposals, images.image_sizes)
-        detections = self.transform.postprocess(
-            detections, images.image_sizes, original_image_sizes  # type: ignore[operator]
+        detections = self.transform.postprocess(  # type: ignore[operator]
+            detections, images.image_sizes, original_image_sizes
         )
 
         return detections
