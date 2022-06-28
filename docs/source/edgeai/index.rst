@@ -1,15 +1,18 @@
 :orphan:
 
+.. include:: /include/substitution.rst
+
 .. _edge_ai:
 
 *******
 Edge AI
 *******
 
-PeekingDuck supports running optimized TensorRT models on the Nvidia Jetson family of
-devices for Edge AI.
-Using the TensorRT model on a Jetson device provides a speed boost over the regular
+PeekingDuck supports running optimized TensorRT [1]_ models on devices with Nvidia GPUs.
+Using the TensorRT model on these devices provides a speed boost over the regular
 Tensorflow/PyTorch version.
+A potential use case is running PeekingDuck on an Nvidia Jetson device for Edge AI
+inference.
 
 Currently, PeekingDuck includes TensorRT versions of the following models:
 
@@ -76,13 +79,29 @@ Nvidia Jetson Xavier NX with 8GB RAM
 .. figure:: /assets/charts/tensorrt_nx_movenet_fps.png
 .. figure:: /assets/charts/tensorrt_nx_yolox_fps.png
 
+    Jetson Xavier NX specs used for testing: [2]_
+
+    ``CPU``: 6 cores (6MB L2 + 4MB L3) |br|
+    ``GPU``: 384-core Volta, 48 Tensor cores |br|
+    ``RAM``: 8 GB
+
 
 Nvidia Jetson Xavier AGX with 16GB RAM
 --------------------------------------
 
-This Jetson Xavier AGX device was loaned to us by 
-`Advantech Singapore <https://www.advantech.com>`__.
-
 .. figure:: /assets/charts/tensorrt_agx_movenet_fps.png
 .. figure:: /assets/charts/tensorrt_agx_yolox_fps.png
 
+    Jetson Xavier AGX specs used for testing: [3]_
+
+    ``CPU``: 8 cores (8MB L2 + 4MB L3) |br|
+    ``GPU``: 512-core Volta, 64 Tensor cores |br|
+    ``RAM``: 16 GB
+
+
+References
+==========
+
+.. [1] `Nvidia TensorRT Reference <https://developer.nvidia.com/tensorrt>`_
+.. [2] `Nvidia Jetson Xavier NX Tech Specs <https://developer.nvidia.com/embedded/jetson-xavier-nx-devkit>`_
+.. [3] `Nvidia Jetson Xavier AGX Tech Specs <https://developer.nvidia.com/embedded/jetson-agx-xavier-developer-kit>`_
