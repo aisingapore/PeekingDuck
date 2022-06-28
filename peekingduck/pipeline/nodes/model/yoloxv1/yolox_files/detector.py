@@ -104,13 +104,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of detection scores
         """
 
-        def get_last_2d(arr: np.ndarray) -> np.ndarray:
-            """Helper method to get last two dimensions of array"""
-            self.logger.info(f"arr shape={arr.shape}")
-            m_dim, n_dim = arr.shape[-2:]
-            a_2d = arr.flat[: m_dim * n_dim].reshape(m_dim, n_dim)
-            return a_2d
-
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
@@ -123,7 +116,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         elif model_format == "tensorrt":
             image = image[np.newaxis, :]
             res_arr = self.yolox(image)
-            pred = get_last_2d(res_arr)
+            pred = np.squeeze(res_arr)
             prediction = torch.from_numpy(pred).to(self.device)
         else:
             self.logger.error(f"Unknown model format: {model_format}")
