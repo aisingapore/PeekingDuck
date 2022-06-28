@@ -39,7 +39,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             T.ConvertImageDtype(torch.float32),
         ]
     )
-    model_name_map = {"r50-fpn": "resnet50"}
+    model_name_map = {"r50-fpn": "resnet50", "r101-fpn": "resnet101"}
 
     def __init__(  # pylint: disable=too-many-arguments
         self,

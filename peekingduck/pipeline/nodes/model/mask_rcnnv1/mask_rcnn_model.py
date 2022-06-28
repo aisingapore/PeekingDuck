@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Mask R-CNN model with backbone type: r50-fpn
+Mask R-CNN model with backbone type: r50-fpn and r101-fpn
 """
 
 import logging
@@ -31,7 +31,7 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detector impor
 
 
 class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
-    """Mask R-CNN model with ResNet 50 FPN backbone"""
+    """Mask R-CNN model with ResNet 50 / 101 FPN backbone"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config

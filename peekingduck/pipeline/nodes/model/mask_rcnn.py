@@ -26,8 +26,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     The Mask-RCNN node is capable detecting objects and their respective masks
     from 80 categories. The table of object categories can be found
     :ref:`here <general-instance-segmentation-ids>`. The ``"r50-fpn"`` backbone is
-    used by default, and different types of backbones would be available in
-    the future.
+    used by default, and the "r101-fpn" for the resnet 101 backbone variant can also
+    be chosen.
 
     Inputs:
         |img_data|
@@ -42,7 +42,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |masks_data|
 
     Configs:
-        model_type (:obj:`str`): **{"r50-fpn"}, default="r50-fpn"**. |br|
+        model_type (:obj:`str`): **{"r50-fpn", "r101-fpn"}, default="r50-fpn"**. |br|
             Defines the type of backbones to be used.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
