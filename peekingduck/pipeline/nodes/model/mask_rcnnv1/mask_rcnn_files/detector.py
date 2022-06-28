@@ -33,6 +33,14 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
 class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes
     """Detector class to handle detection of bboxes and masks for mask_rcnn"""
 
+    preprocess_transform = T.Compose(
+        [
+            T.ToTensor(),
+            T.ConvertImageDtype(torch.float32),
+        ]
+    )
+    model_name_map = {"r50-fpn": "resnet50"}
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
@@ -43,7 +51,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         model_file: Dict[str, str],
         min_size: int,
         max_size: int,
-        nms_iou_threshold: float,
+        iou_threshold: float,
         max_num_detections: int,
         score_threshold: float,
         mask_threshold: float,
@@ -52,8 +60,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.class_names = class_names
-        self.detect_ids = detect_ids
-        self.detect_ids_tensor = torch.tensor(
+        self.detect_ids = torch.tensor(
             detect_ids, dtype=torch.int64, device=self.device
         )
         self.model_type = model_type
@@ -61,19 +68,12 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.model_path = model_dir / model_file[self.model_type]
         self.min_size = min_size
         self.max_size = max_size
-        self.nms_iou_threshold = nms_iou_threshold
+        self.iou_threshold = iou_threshold
         self.max_num_detections = max_num_detections
         self.score_threshold = score_threshold
         self.mask_threshold = mask_threshold
-        self.model_name_map = {"r50-fpn": "resnet50"}
-        self.preprocess_transform = T.Compose(
-            [
-                T.ToTensor(),
-                T.ConvertImageDtype(torch.float32),
-            ]
-        )
         self.mask_rcnn = self._create_mask_rcnn_model()
-        self.filtered_output: Dict[str, torch.Tensor] = dict()
+        self.filtered_output: Dict[str, torch.Tensor] = {}
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
@@ -91,9 +91,9 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             masks (np.ndarray): array of detected masks
         """
         img_shape = image.shape[:2]
-        processed_image = self._preprocess(image)
+        processed_images = self._preprocess(image)
         # run network
-        network_output = self.mask_rcnn(processed_image)
+        network_output = self.mask_rcnn(processed_images)
         bboxes, labels, scores, masks = self._postprocess(network_output, img_shape)
 
         return bboxes, labels, scores, masks
@@ -104,14 +104,14 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         Returns:
             torch.nn.Module: An initialized model in PyTorch framework
         """
-        backbone_name = self.model_name_map[self.model_type]
+        backbone_name = Detector.model_name_map[self.model_type]
         backbone = backbone_utils.resnet_fpn_backbone(
             backbone_name=backbone_name,
         )
         model = maskrcnn.MaskRCNN(
             backbone=backbone,
             num_classes=self.num_classes,
-            box_nms_thresh=self.nms_iou_threshold,
+            box_nms_thresh=self.iou_threshold,
             box_score_thresh=self.score_threshold,
             box_detections_per_img=self.max_num_detections,
             min_size=self.min_size,
@@ -129,8 +129,8 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.logger.info(
             "Mask-RCNN model loaded with following configs:\n\t"
             f"Model type: {self.model_type}\n\t"
-            f"IDs being detected: {self.detect_ids}\n\t"
-            f"NMS IOU threshold: {self.nms_iou_threshold}\n\t"
+            f"IDs being detected: {self.detect_ids.tolist()}\n\t"
+            f"IOU threshold: {self.iou_threshold}\n\t"
             f"Maximum number of detections per image: {self.max_num_detections}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
             f"Maximum size of the image: {self.max_size}\n\t"
@@ -164,7 +164,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
             # Indices to filter out unwanted classes
             detect_filter = torch.where(
-                torch.isin(network_output[0]["labels"], self.detect_ids_tensor)
+                torch.isin(network_output[0]["labels"], self.detect_ids)
             )
 
             for output_key in network_output[0].keys():
@@ -199,4 +199,4 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             image (np.ndarray): The preprocessed image
         """
         image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        return [self.preprocess_transform(image_rgb).to(self.device)]
+        return [Detector.preprocess_transform(image_rgb).to(self.device)]

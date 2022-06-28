@@ -56,7 +56,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-instance-segmentation-ids>`.
-        nms_iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.
         max_num_detections: (:obj:`int`): **default=100**. |br|

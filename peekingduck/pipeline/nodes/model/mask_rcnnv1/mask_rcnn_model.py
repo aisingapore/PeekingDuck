@@ -38,7 +38,7 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.logger = logging.getLogger(__name__)
 
         self.check_bounds(
-            ["nms_iou_threshold", "score_threshold", "mask_threshold"], "[0, 1]"
+            ["iou_threshold", "score_threshold", "mask_threshold"], "[0, 1]"
         )
         self.check_bounds(["min_size", "max_size", "max_num_detections"], "[1 , +inf)")
 
@@ -59,7 +59,7 @@ class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.weights["model_file"],
             self.config["min_size"],
             self.config["max_size"],
-            self.config["nms_iou_threshold"],
+            self.config["iou_threshold"],
             self.config["max_num_detections"],
             self.config["score_threshold"],
             self.config["mask_threshold"],

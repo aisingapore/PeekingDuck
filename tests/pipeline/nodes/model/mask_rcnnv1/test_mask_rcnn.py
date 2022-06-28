@@ -36,7 +36,7 @@ def mask_rcnn_config():
     with open(PKD_DIR / "configs" / "model" / "mask_rcnn.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = Path.cwd()
-    node_config["nms_iou_threshold"] = 0.5
+    node_config["iou_threshold"] = 0.5
     node_config["score_threshold"] = 0.5
     node_config["mask_threshold"] = 0.5
 
@@ -49,8 +49,8 @@ def mask_rcnn_config():
         {"key": "score_threshold", "value": 1.5},
         {"key": "mask_threshold", "value": -0.5},
         {"key": "mask_threshold", "value": 1.5},
-        {"key": "nms_iou_threshold", "value": -0.5},
-        {"key": "nms_iou_threshold", "value": 1.5},
+        {"key": "iou_threshold", "value": -0.5},
+        {"key": "iou_threshold", "value": 1.5},
         {"key": "min_size", "value": 0},
         {"key": "max_size", "value": 0},
         {"key": "max_num_detections", "value": 0},
