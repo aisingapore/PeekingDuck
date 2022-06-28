@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module to convert Tensorflow Movenet models to TensorRT"""
+"""Module to convert TensorFlow MoveNet models to TensorRT"""
 
 from typing import Callable, Tuple
 import logging

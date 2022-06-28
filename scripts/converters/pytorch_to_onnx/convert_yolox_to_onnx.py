@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Module to convert PyTorch YoloX models to Onnx"""
+"""Module to convert PyTorch YOLOX models to ONNX"""
 
 import logging
 import numpy as np

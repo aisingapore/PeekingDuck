@@ -2,5 +2,6 @@ nodes:
 - input.visual:
     source: data/benchmark/single
 - model.movenet:
+    model_format: tensorflow
     model_type: singlepose_lightning
 - dabble.fps
