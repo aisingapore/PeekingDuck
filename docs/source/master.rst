@@ -15,7 +15,7 @@ Welcome to PeekingDuck's Documentation!
    getting_started/index
    tutorials/index
    resources/index
-   edgeai/index
+   edge_ai/index
    use_cases/index
    faq
    glossary
