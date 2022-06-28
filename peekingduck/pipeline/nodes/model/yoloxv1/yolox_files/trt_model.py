@@ -31,7 +31,7 @@ class HostDeviceMem:
         self.device = device_mem
 
     def __str__(self) -> str:
-        return "Host:\n" + str(self.host) + "\nDevice:\n" + str(self.device)
+        return f"Host:\n{self.host}\nDevice:\n{self.device}"
 
     def __repr__(self) -> str:
         return self.__str__()
@@ -42,7 +42,6 @@ class TrtModel:  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, engine_path: str, max_batch_size: int = 1):
         self.dtype = np.float32  # TensorRT support float32, not 64
-        self.logger = trt.Logger(trt.Logger.WARNING)
         self.engine_path = engine_path
         self.max_batch_size = max_batch_size
         self.engine = self.load_engine(self.engine_path)
@@ -66,9 +65,7 @@ class TrtModel:  # pylint: disable=too-many-instance-attributes
         engine = trt_runtime.deserialize_cuda_engine(engine_data)
         return engine
 
-    def allocate_buffers(
-        self,
-    ) -> Tuple[List[Any], List[Any], List[Any], Any]:
+    def allocate_buffers(self) -> Tuple[List[Any], List[Any], List[Any], Any]:
         """Allocate CUDA working memory buffers
 
         Returns:

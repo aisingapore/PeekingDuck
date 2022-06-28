@@ -106,6 +106,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         def get_last_2d(arr: np.ndarray) -> np.ndarray:
             """Helper method to get last two dimensions of array"""
+            self.logger.info(f"arr shape={arr.shape}")
             m_dim, n_dim = arr.shape[-2:]
             a_2d = arr.flat[: m_dim * n_dim].reshape(m_dim, n_dim)
             return a_2d
@@ -155,6 +156,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         self.logger.info(
             "YOLOX model loaded with the following configs:\n\t"
+            f"Model format: {self.model_format}\n\t"
             f"Model type: {self.model_type}\n\t"
             f"Input resolution: {self.input_size}\n\t"
             f"IDs being detected: {self.detect_ids.int().tolist()}\n\t"
