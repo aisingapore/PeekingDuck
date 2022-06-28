@@ -119,15 +119,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             image = torch.from_numpy(image).unsqueeze(0).to(self.device)
             image = image.half() if self.half else image.float()
             prediction = self.yolox(image)[0]
-        elif model_format == "onnx":
-            # ignore type for self.yolox below as it is an Onnx InferenceSession class
-            input_name = self.yolox.get_inputs()[0].name  # type: ignore
-            output_name = self.yolox.get_outputs()[0].name  # type: ignore
-            image = image[np.newaxis, :]
-            result = self.yolox.run([output_name], {input_name: image})  # type: ignore
-            res_arr = np.array(result)
-            pred = get_last_2d(res_arr)
-            prediction = torch.from_numpy(pred).to(self.device)
         elif model_format == "tensorrt":
             image = image[np.newaxis, :]
             res_arr = self.yolox(image)
@@ -217,18 +208,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 if self.fuse:
                     model = fuse_model(model)
                 return model
-        elif model_format == "onnx":
-            import onnxruntime  # pylint: disable=import-error, import-outside-toplevel
-
-            if torch.cuda.is_available():
-                self.logger.info("creating onnx model on cuda")
-                model = onnxruntime.InferenceSession(
-                    str(self.model_path), None, providers=["CUDAExecutionProvider"]
-                )
-            else:
-                self.logger.info("creating onnx model on cpu")
-                model = onnxruntime.InferenceSession(str(self.model_path), None)
-            return model
         elif model_format == "tensorrt":
             # pylint: disable=import-error, import-outside-toplevel
             from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import (

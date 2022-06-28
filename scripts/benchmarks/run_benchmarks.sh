@@ -56,18 +56,6 @@ SPL=scripts/benchmarks/tensorflow/run_singlepose_lightning.yml
 SPT=scripts/benchmarks/tensorflow/run_singlepose_thunder.yml
 
 #
-# Onnx
-#
-YXLM_O=scripts/benchmarks/onnx/run_yolox_large_multi.yml
-YXLS_O=scripts/benchmarks/onnx/run_yolox_large_single.yml
-YXMM_O=scripts/benchmarks/onnx/run_yolox_medium_multi.yml
-YXMS_O=scripts/benchmarks/onnx/run_yolox_medium_single.yml
-YXSM_O=scripts/benchmarks/onnx/run_yolox_small_multi.yml
-YXSS_O=scripts/benchmarks/onnx/run_yolox_small_single.yml
-YXTM_O=scripts/benchmarks/onnx/run_yolox_tiny_multi.yml
-YXTS_O=scripts/benchmarks/onnx/run_yolox_tiny_single.yml
-
-#
 # TensorRT
 #
 # Object Detection Models
@@ -157,10 +145,6 @@ NUM_RUNS=5      # set this to number of consecutive runs desired
 # YoloX PyTorch
 #declare -a CMDS=( "${YXTM}" "${YXSM}" "${YXMM}" "${YXLM}" \
 #                  "${YXTS}" "${YXSS}" "${YXMS}" "${YXLS}" )
-
-# YoloX Onnx
-#declare -a CMDS=( "${YXTM_O}" "${YXSM_O}" "${YXMM_O}" "${YXLM_O}" \
-#                  "${YXTS_O}" "${YXSS_O}" "${YXMS_O}" "${YXLS_O}" )
 
 # YoloX TensorRT
 #declare -a CMDS=( "${YXTM_T}" "${YXSM_T}" "${YXMM_T}" "${YXLM_T}" \
