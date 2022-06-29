@@ -179,25 +179,25 @@ def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
 def obj_det_change_class_name_to_id(
     node_name: str, key: str, value: List[Any]
 ) -> Tuple[str, List[int]]:
-    """Process object detection model node's detect_ids key and check for
+    """Process object detection model node's detect key and check for
     any class names to be converted to object IDs.
     E.g. person to 0, car to 2
 
     Args:
         node_name (str): to determine which object detection model is being used
                          because different models can use different object IDs.
-        key (str): expected to be "detect_ids"; error otherwise.
+        key (str): expected to be "detect"; error otherwise.
         value (List[Any]): list of class names or object IDs for detection.
                            If object IDs, do nothing.
                            If class names, convert to object IDs.
 
     Returns:
-        Tuple[str, List[int]]: "detect_ids", list of sorted object IDs.
+        Tuple[str, List[int]]: "detect", list of sorted object IDs.
     """
     class_id_map = obj_det_load_class_id_mapping(node_name)
 
     if not value:
-        logger.warning("detect_ids list is empty, defaulting to detect person")
+        logger.warning("detect list is empty, defaulting to detect person")
         value = ["person"]
     elif value == ["*"]:
         logger.info("Detecting all object classes")

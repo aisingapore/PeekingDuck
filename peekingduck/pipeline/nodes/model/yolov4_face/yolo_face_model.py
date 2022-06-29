@@ -35,13 +35,13 @@ class YOLOFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_bounds(["iou_threshold", "score_threshold"], (0, 1), "within")
+        self.check_bounds(["iou_threshold", "score_threshold"], "[0, 1]")
 
         model_dir = self.download_weights()
         with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
-        self.detect_ids = config["detect_ids"]
+        self.detect_ids = config["detect"]  # change "detect_ids" to "detect"
         self.detector = Detector(
             model_dir,
             class_names,

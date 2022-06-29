@@ -93,11 +93,11 @@ class TestYolo:
         assert yolo.model.detect_ids == [0, 1]
 
     def test_invalid_config_detect_ids(self, yolo_type):
-        yolo_type["detect_ids"] = 1
+        yolo_type["detect"] = 1
         with pytest.raises(TypeError):
             _ = Node(config=yolo_type)
 
     def test_invalid_config_value(self, yolo_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=yolo_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)

@@ -261,10 +261,20 @@ class TestJDE:
                 assert jde._frame_rate == pytest.approx(mot_metadata["frame_rate"])
                 prev_tags = output["obj_attrs"]["ids"]
 
+    def test_handle_empty_detections(
+        self, human_video_sequence_with_empty_frames, jde_config
+    ):
+        _, detections = human_video_sequence_with_empty_frames
+        jde = Node(jde_config)
+        for i, inputs in enumerate(detections):
+            output = jde.run(inputs)
+            if i > 1:
+                assert len(output["obj_attrs"]["ids"]) == len(inputs["bboxes"])
+
     def test_invalid_config_value(self, jde_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=jde_bad_config_value)
-        assert "_threshold must be between [0, 1]" in str(excinfo.value)
+        assert "_threshold must be between [0.0, 1.0]" in str(excinfo.value)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, jde_config):

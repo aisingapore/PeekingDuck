@@ -69,4 +69,4 @@ class TestCsrnet:
     def test_invalid_config_value(self, csrnet_bad_config_value):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=csrnet_bad_config_value)
-        assert "must be more than 0" in str(excinfo.value)
+        assert "must be between (0.0, inf]" in str(excinfo.value)

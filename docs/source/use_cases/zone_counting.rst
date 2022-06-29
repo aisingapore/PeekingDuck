@@ -28,7 +28,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: zone_counting.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/dev/use_cases/zone_counting.yml
+.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/zone_counting.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
@@ -129,7 +129,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - input.visual:
        source: 0
    - model.yolo:
-       detect_ids: ["person"]
+       detect: ["person"]
    - dabble.bbox_to_btm_midpoint
    - dabble.zone_count:
        resolution: [1280, 720] # Adjust this to your camera's input resolution
