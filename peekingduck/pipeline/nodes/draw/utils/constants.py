@@ -52,7 +52,7 @@ ALPHA = 0.5
 DEFAULT_CLASS_COLOR = (204, 204, 204)
 # fmt: off
 CLASS_COLORS = {
-    'person': (245,127,23),
+    "person": (245,127,23),
 
     "bicycle":      (49,27,146),
     "car":          (49,27,146),

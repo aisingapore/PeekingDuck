@@ -64,12 +64,12 @@ class Node(
         effect (:obj:`str`): **{"standard", "contrast_brightness",
             "gamma_correction", "blur", "mosaic"}, default = None**. |br|
             This defines the effect (if any) to apply to the masks. |br|
-            "standard": draws a 'standard' instance segmentation mask. |br|
-            "contrast_brightness": adjust contrast and brightness using 'alpha
-            and 'beta' parameters. |br|
-            "gamma_correction": adjust gamma using 'gamma' parameter. |br|
-            "blur": blur the masks using 'blur_kernel_size' parameter. |br|
-            "mosaic": mosaic the masks using 'mosaic_level' parameter. |br|
+            "standard": draws a "standard" instance segmentation mask. |br|
+            "contrast_brightness": adjust contrast and brightness using "alpha"
+            and "beta" parameters. |br|
+            "gamma_correction": adjust gamma using "gamma" parameter. |br|
+            "blur": blur the masks using "blur_kernel_size" parameter. |br|
+            "mosaic": mosaic the masks using "mosaic_level" parameter. |br|
 
         effect_area (:obj:`str`): **{"masked", "unmasked"}, 
             default = "masked"**. |br|

@@ -210,15 +210,15 @@ class TestDrawInstanceMasks:
 
     # fmt: off
     @pytest.mark.parametrize(
-        'pkd_node, ground_truth_image_path',
+        "pkd_node, ground_truth_image_path",
         [
-            (pytest.lazy_fixture(('draw_instance_mask_node', 'image_with_masks'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_with_contours', 'image_with_contoured_masks'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_with_blur_effect', 'image_with_blur_effect'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_with_mosaic_effect', 'image_with_mosaic_effect'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_with_blur_effect_unmasked_area', 'image_with_blur_effect_unmasked_area'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_adjust_contrast_brightness', 'image_adjusted_contrast_brightness'))),
-            (pytest.lazy_fixture(('draw_instance_mask_node_gamma_correction', 'image_gamma_correction'))),
+            (pytest.lazy_fixture(("draw_instance_mask_node", "image_with_masks"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_with_contours", "image_with_contoured_masks"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_with_blur_effect", "image_with_blur_effect"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_with_mosaic_effect", "image_with_mosaic_effect"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_with_blur_effect_unmasked_area", "image_with_blur_effect_unmasked_area"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_adjust_contrast_brightness", "image_adjusted_contrast_brightness"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_gamma_correction", "image_gamma_correction"))),
         ],
     )
     # fmt: on
