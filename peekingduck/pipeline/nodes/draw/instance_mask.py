@@ -63,7 +63,8 @@ class Node(
 
         effect (:obj:`str`): **{"standard", "contrast_brightness",
             "gamma_correction", "blur", "mosaic"}, default = None**. |br|
-            This defines the effect (if any) to apply to the masks. |br|
+            This defines the effect (if any) to apply to either the masked or
+            unmasked areas of the image. |br|
             "standard": draws a "standard" instance segmentation mask. |br|
             "contrast_brightness": adjust contrast and brightness using "alpha"
             and "beta" parameters. |br|
