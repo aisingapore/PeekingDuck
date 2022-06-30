@@ -112,31 +112,7 @@ class Node(
         self.logger = logging.getLogger(__name__)
 
         self.class_instance_color_state: Dict[str, Tuple[int, int, int]] = {}
-        self.check_valid_choice("instance_color_scheme", {"conventional", "hue_family"})
-        self.check_valid_choice(
-            "effect",
-            {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
-        )
-        self.check_valid_choice("effect_area", {"masked", "unmasked"})
-        self._check_type("alpha", float)
-        self.check_bounds("alpha", "[0, +inf]")
-        self._check_type("beta", int)
-        self.check_bounds("beta", "[-255, 255]")
-        self._check_type("gamma", float)
-        self.check_bounds("gamma", "[0, +inf]")
-        self._check_type("blur_kernel_size", int)
-        self.check_bounds("blur_kernel_size", "[1, +inf]")
-        self._check_type("mosaic_level", int)
-        self.check_bounds("mosaic_level", "[1, +inf]")
-        self._check_type("show_contours", bool)
-        self._check_type("contour_thickness", int)
-        self.check_bounds("contour_thickness", "[1, +inf]")
-
-    def _check_type(self, key: Any, var_type: Any) -> None:
-        if not isinstance(self.config[key], var_type):
-            raise ValueError(
-                f"Config: '{key}' must be a {var_type.__name__} value."
-            )
+        self._validate_configs()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads an input image and returns the image (1) with the instance
@@ -164,6 +140,33 @@ class Node(
                 inputs["masks"],
             )
         return {"img": output_img}
+
+    def _validate_configs(self):
+        self.check_valid_choice("instance_color_scheme", {"conventional", "hue_family"})
+        self.check_valid_choice(
+            "effect",
+            {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
+        )
+        self.check_valid_choice("effect_area", {"masked", "unmasked"})
+        self._check_type("alpha", float)
+        self.check_bounds("alpha", "[0, +inf]")
+        self._check_type("beta", int)
+        self.check_bounds("beta", "[-255, 255]")
+        self._check_type("gamma", float)
+        self.check_bounds("gamma", "[0, +inf]")
+        self._check_type("blur_kernel_size", int)
+        self.check_bounds("blur_kernel_size", "[1, +inf]")
+        self._check_type("mosaic_level", int)
+        self.check_bounds("mosaic_level", "[1, +inf]")
+        self._check_type("show_contours", bool)
+        self._check_type("contour_thickness", int)
+        self.check_bounds("contour_thickness", "[1, +inf]")
+
+    def _check_type(self, key: Any, var_type: Any) -> None:
+        if not isinstance(self.config[key], var_type):
+            raise ValueError(
+                f"Config: '{key}' must be a {var_type.__name__} value."
+            )
 
     def _draw_standard_masks(  # pylint: disable-msg=too-many-locals
         self,
