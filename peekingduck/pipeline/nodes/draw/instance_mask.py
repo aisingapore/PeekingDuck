@@ -111,12 +111,6 @@ class Node(
 
         self.logger = logging.getLogger(__name__)
 
-        def _check_type(key: Any, var_type: Any) -> None:
-            if not isinstance(self.config[key], var_type):
-                raise ValueError(
-                    f"Config: '{key}' must be a {var_type.__name__} value."
-                )
-
         self.class_instance_color_state: Dict[str, Tuple[int, int, int]] = {}
         self.check_valid_choice("instance_color_scheme", {"conventional", "hue_family"})
         self.check_valid_choice(
@@ -124,19 +118,25 @@ class Node(
             {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
         )
         self.check_valid_choice("effect_area", {"masked", "unmasked"})
-        _check_type("alpha", float)
+        self._check_type("alpha", float)
         self.check_bounds("alpha", "[0, +inf]")
-        _check_type("beta", int)
+        self._check_type("beta", int)
         self.check_bounds("beta", "[-255, 255]")
-        _check_type("gamma", float)
+        self._check_type("gamma", float)
         self.check_bounds("gamma", "[0, +inf]")
-        _check_type("blur_kernel_size", int)
+        self._check_type("blur_kernel_size", int)
         self.check_bounds("blur_kernel_size", "[1, +inf]")
-        _check_type("mosaic_level", int)
+        self._check_type("mosaic_level", int)
         self.check_bounds("mosaic_level", "[1, +inf]")
-        _check_type("show_contours", bool)
-        _check_type("contour_thickness", int)
+        self._check_type("show_contours", bool)
+        self._check_type("contour_thickness", int)
         self.check_bounds("contour_thickness", "[1, +inf]")
+
+    def _check_type(self, key: Any, var_type: Any) -> None:
+        if not isinstance(self.config[key], var_type):
+            raise ValueError(
+                f"Config: '{key}' must be a {var_type.__name__} value."
+            )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads an input image and returns the image (1) with the instance
