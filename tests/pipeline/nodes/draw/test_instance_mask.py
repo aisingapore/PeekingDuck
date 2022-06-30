@@ -16,7 +16,7 @@
 Tests for draw instance mask node.
 """
 
-import cv2 as cv
+import cv2
 import numpy as np
 import pytest
 from skimage.metrics import structural_similarity as ssim
@@ -198,7 +198,7 @@ class TestDrawInstanceMasks:
         image_original,
         image_unchanged_after_pipeline,
     ):
-        original_img = cv.imread(str(image_original))
+        original_img = cv2.imread(str(image_original))
         output_img = original_img.copy()
         draw_mask_inputs["img"] = output_img
         draw_mask_inputs["bbox_scores"] = []
@@ -229,7 +229,7 @@ class TestDrawInstanceMasks:
         image_original,
         ground_truth_image_path,
     ):
-        original_img = cv.imread(str(image_original))
+        original_img = cv2.imread(str(image_original))
         inputs = draw_mask_inputs
         inputs["img"] = original_img
         outputs = pkd_node.run(inputs)
@@ -242,6 +242,6 @@ class TestDrawInstanceMasks:
     def _image_equal_with_ground_truth_jpeg(
         output_image: np.ndarray, ground_truth_jpeg_path: str
     ) -> bool:
-        ground_truth_image = cv.imread(str(ground_truth_jpeg_path))
+        ground_truth_image = cv2.imread(str(ground_truth_jpeg_path))
 
         return ssim(output_image, ground_truth_image, channel_axis=2) > SSIM_THRESHOLD

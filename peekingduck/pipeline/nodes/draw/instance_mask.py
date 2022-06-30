@@ -21,7 +21,7 @@ import logging
 from random import randint
 from typing import Any, Dict, Tuple, cast
 
-import cv2 as cv
+import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
@@ -203,19 +203,19 @@ class Node(
             color_bgr = color[::-1]
             full_sized_canvas[:, :] = color_bgr
 
-            coloured_seg_mask = cv.bitwise_and(
+            coloured_seg_mask = cv2.bitwise_and(
                 full_sized_canvas, full_sized_canvas, mask=masks[index]
             )
-            masked_area = cv.bitwise_and(image, image, mask=masks[index])
-            masked_area_colored = cv.addWeighted(
+            masked_area = cv2.bitwise_and(image, image, mask=masks[index])
+            masked_area_colored = cv2.addWeighted(
                 coloured_seg_mask, ALPHA, masked_area, 1 - ALPHA, 0
             )
 
             # get the inverted mask i.e. image outside of the masked area
             mask_inv = 1 - masks[index]
             # remove masked area from image to be returned
-            ret_image = cv.bitwise_and(ret_image, ret_image, mask=mask_inv)
-            ret_image = cv.add(ret_image, masked_area_colored)
+            ret_image = cv2.bitwise_and(ret_image, ret_image, mask=mask_inv)
+            ret_image = cv2.add(ret_image, masked_area_colored)
 
             if self.config["show_contours"]:
                 ret_image = self._draw_contours_single_mask(
@@ -269,14 +269,14 @@ class Node(
     ) -> np.ndarray:
         """Draws the contour around a single instance segmentation mask."""
         ret_image = image.copy()
-        contour, _ = cv.findContours(masks[index], cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
+        contour, _ = cv2.findContours(masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # use a darker/lighter saturation of instance hue for the
         # contour so that it is more visible
         hsv = Node._rgb_to_hsv(instance_color)
         contour_color_hsv = (hsv[0], int((hsv[1] + 127) % 256), hsv[2])
         contour_color_rgb = Node._hsv_to_rgb(contour_color_hsv)
         contour_color_bgr = contour_color_rgb[::-1]
-        cv.drawContours(
+        cv2.drawContours(
             ret_image,
             contour,
             -1,
@@ -296,8 +296,8 @@ class Node(
         ret_image = image.copy()
         contour_color_bgr = contour_color[::-1]
         for i in range(masks.shape[0]):
-            contour, _ = cv.findContours(masks[i], cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
-            cv.drawContours(
+            contour, _ = cv2.findContours(masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            cv2.drawContours(
                 ret_image,
                 contour,
                 -1,
@@ -324,22 +324,22 @@ class Node(
         elif self.config["effect"] == "gamma_correction":
             full_image_with_effect = self._gamma_correction(image)
         elif self.config["effect"] == "blur":
-            full_image_with_effect = cv.blur(
+            full_image_with_effect = cv2.blur(
                 image,
                 (self.config["blur_kernel_size"], self.config["blur_kernel_size"]),
             )
         elif self.config["effect"] == "mosaic":
             full_image_with_effect = self._mosaic_image(image)
 
-        effect_area_with_effect = cv.bitwise_and(
+        effect_area_with_effect = cv2.bitwise_and(
             full_image_with_effect, full_image_with_effect, mask=effect_area
         )
         # get the inverted mask
         effect_area_inv = 1 - effect_area
         # remove effect area from original image
-        image_empty_effect_area = cv.bitwise_and(image, image, mask=effect_area_inv)
+        image_empty_effect_area = cv2.bitwise_and(image, image, mask=effect_area_inv)
         # add both images together
-        ret_image = cv.add(image_empty_effect_area, effect_area_with_effect)
+        ret_image = cv2.add(image_empty_effect_area, effect_area_with_effect)
 
         if self.config["show_contours"]:
             ret_image = self._draw_contours_all_masks(masks, ret_image)
@@ -347,7 +347,7 @@ class Node(
         return ret_image
 
     def _adjust_contrast_brightness(self, image: np.ndarray) -> np.ndarray:
-        adjusted_image = cv.convertScaleAbs(
+        adjusted_image = cv2.convertScaleAbs(
             image, alpha=self.config["alpha"], beta=self.config["beta"]
         )
 
@@ -360,19 +360,19 @@ class Node(
                 pow(i / 255.0, self.config["gamma"]) * 255.0, 0, 255
             )
 
-        image_gamma_corrected = cv.LUT(image, lookup_table)
+        image_gamma_corrected = cv2.LUT(image, lookup_table)
 
         return image_gamma_corrected
 
     def _mosaic_image(self, image: np.ndarray) -> np.ndarray:
         height, width = image.shape[:2]
-        ret_image = cv.resize(
+        ret_image = cv2.resize(
             image,
             (self.config["mosaic_level"], self.config["mosaic_level"]),
-            interpolation=cv.INTER_LANCZOS4,
+            interpolation=cv2.INTER_LANCZOS4,
         )
-        ret_image = cv.resize(
-            ret_image, (width, height), interpolation=cv.INTER_NEAREST
+        ret_image = cv2.resize(
+            ret_image, (width, height), interpolation=cv2.INTER_NEAREST
         )
 
         return ret_image
