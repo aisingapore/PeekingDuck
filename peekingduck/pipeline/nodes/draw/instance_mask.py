@@ -54,13 +54,15 @@ class Node(
         |img_data|
 
     Configs:
-        instance_color_scheme (:obj:`str`): **default = 'hue_family'**. |br|
+        instance_color_scheme (:obj:`str`): **{"conventional", "hue_family"}, 
+            default="hue_family"** |br|
             This defines what colors to use for the standard masks.
             "hue_family": use the same hue for each instance belonging to
             the same class, but with a slightly different saturation.
             "conventional": use a random color for all instances.
 
-        effect (:obj:`str`): **default = None**. |br|
+        effect (:obj:`str`): **{"standard", "contrast_brightness",
+            "gamma_correction", "blur", "mosaic"}, default = None**. |br|
             This defines the effect (if any) to apply to the masks. |br|
             "standard": draws a 'standard' instance segmentation mask. |br|
             "contrast_brightness": adjust contrast and brightness using 'alpha
@@ -69,7 +71,8 @@ class Node(
             "blur": blur the masks using 'blur_kernel_size' parameter. |br|
             "mosaic": mosaic the masks using 'mosaic_level' parameter. |br|
 
-        effect_area (:obj:`str`): **default = 'masked'**. |br|
+        effect_area (:obj:`str`): **{"masked", "unmasked"}, 
+            default = "masked"**. |br|
             This defines where the effect should be applied. |br|
             "masked": the effect is applied to the masked areas of the image. |br|
             "unmasked": the effect is applied to the unmasked areas of the image. |br|
