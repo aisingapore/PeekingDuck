@@ -339,9 +339,9 @@ class WeightsDownloaderMixin:
             self.logger.warning("No weights detected.")
             return False
         # dotw: temp code for onnx/tensorrt to guarantee success
-        if str(weights_path).endswith(("onnx", "trt", "fp16")):
-            # self.logger.info("temp code override: return True")
-            return True
+        # if str(weights_path).endswith(("onnx", "trt", "fp16")):
+        # self.logger.info("temp code override: return True")
+        # return True
         if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
             self.logger.warning("Weights file is corrupted/out-of-date.")
             return False
