@@ -27,6 +27,8 @@ import numpy as np
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.draw.utils.constants import (
+    SATURATION_STEPS,
+    SATURATION_MINIMUM,
     ALPHA,
     CLASS_COLORS,
     DEFAULT_CLASS_COLOR,
@@ -255,9 +257,9 @@ class Node(
                 color_hsv = self._rgb_to_hsv(color)
                 # we use a minimum saturation of 100 to avoid too light colors,
                 # thus we increment saturation by step size of (256-100)/8.
-                saturation = (color_hsv[1] + 156 / 8) % 256
-                if saturation < 100:
-                    saturation += 100
+                saturation = (color_hsv[1] + (256 - SATURATION_MINIMUM) / SATURATION_STEPS) % 256
+                if saturation < SATURATION_MINIMUM:
+                    saturation += SATURATION_MINIMUM
                 color_hsv = (color_hsv[0], int(saturation), color_hsv[2])
                 color = self._hsv_to_rgb(color_hsv)
             self.class_instance_color_state.update({instance_class: color})
