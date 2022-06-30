@@ -54,12 +54,12 @@ class Node(
         |img_data|
 
     Configs:
-        instance_color_scheme (:obj:`str`): **{"conventional", "hue_family"}, 
+        instance_color_scheme (:obj:`str`): **{"random", "hue_family"}, 
             default="hue_family"** |br|
             This defines what colors to use for the standard masks.
             "hue_family": use the same hue for each instance belonging to
             the same class, but with a slightly different saturation.
-            "conventional": use a random color for all instances.
+            "random": use a random color for all instances.
 
         effect (:obj:`str`): **{"standard", "contrast_brightness",
             "gamma_correction", "blur", "mosaic"}, default = None**. |br|
@@ -142,7 +142,7 @@ class Node(
         return {"img": output_img}
 
     def _validate_configs(self):
-        self.check_valid_choice("instance_color_scheme", {"conventional", "hue_family"})
+        self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
         self.check_valid_choice(
             "effect",
             {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
@@ -232,7 +232,7 @@ class Node(
         """Returns color to use for next segmentation instance, depending on
         chosen color scheme:
 
-        "conventional" - Random color.
+        "random" - Random color.
 
         "hue_family" - Each object class uses a certain pre-assigned hue. Then
             each new instance will use the same hue, but with a slightly
@@ -244,7 +244,7 @@ class Node(
         Returns:
             Tuple[int,int,int]: Color to use for next instance, in RGB.
         """
-        if self.config["instance_color_scheme"] == "conventional":
+        if self.config["instance_color_scheme"] == "random":
             color_hsv = (randint(0, 179), randint(100, 255), 255)
             color = self._hsv_to_rgb(color_hsv)
         elif self.config["instance_color_scheme"] == "hue_family":
