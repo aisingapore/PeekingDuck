@@ -20,6 +20,27 @@ Currently, PeekingDuck includes TensorRT versions of the following models:
 #. YOLOX model for object detection.
 
 
+Installing TensorRT
+===================
+
+The following packages are required to run PeekingDuck's TensorRT models:
+
+#. TensorFlow
+#. PyTorch
+#. PyCUDA
+
+As the actual installation steps vary greatly depending on the user's device, operating
+system, software environment, and pre-installed libraries/packages,
+we are unable to provide step-by-step installation instructions.
+
+The user may refer to `NVIDIA's TensorRT Documentation 
+<https://docs.nvidia.com/deeplearning/tensorrt/install-guide/index.html>`_ for detailed
+TensorRT installation information.
+
+
+
+
+
 Using TensorRT Models
 =====================
 
