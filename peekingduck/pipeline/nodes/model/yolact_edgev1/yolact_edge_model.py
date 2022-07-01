@@ -17,12 +17,15 @@
 import logging
 from typing import Any, Dict, List, Tuple
 import numpy as np
+import torch
 
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector import Detector
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import FastBaseTransform, postprocess
 
 class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """YolactEdge model with ResNet 101 FPN backbone"""
@@ -59,7 +62,25 @@ class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             raise TypeError("detect_ids has to be a list")
         self._detect_ids = ids
 
-    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def predict(
+        self, image: np.ndarray
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Predicts bboxes and masks from image.
+
+        Args:
+            image (np.ndarray): Input image frame.
+
+        Returns:
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
+            - An array of binarized masks
+
+        Raises:
+            TypeError: The provided `image` is not a numpy array.
+        """
         if not isinstance(image, np.ndarray):
             raise TypeError("Image must be a np.ndarray")
-        return self.predict_instance_mask_from_image(image)
+        return self.detector.predict_instance_mask_from_image(image)

@@ -25,7 +25,7 @@ import torch
 import torchvision
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
-
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import FastBaseTransform, postprocess
 
 class Detector:
     """Detector class to handle detection of bboxes and masks for yolact_edge
@@ -61,10 +61,12 @@ class Detector:
         self.score_threshold = score_threshold
 
         self.update_detect_ids(detect_ids)
+        self.yolact_edge = self._create_yolact_edge_model()
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
-        self, image: np.ndarray
+        self,
+        image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Predict instance masks from image
         
@@ -77,11 +79,32 @@ class Detector:
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
-        # TODO
-        # return bboxes, labels, scores, masks
+        model = YolactEdge()
+        model.load_weights(self.model_path)
+        model.eval()
 
-        return None
+        try:
+            frame = torch.from_numpy(image).cuda().float()
+        except:
+            frame = torch.from_numpy(image).float()
+        
+        preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
+        h, w, _ = image.shape
+        t = postprocess(preds, w, h, score_threshold=self.score_threshold)
+        
+        labels = t[0]
+        scores = t[1]
+        bboxes = t[2]
+        masks = t[3]
 
+        labels = labels.cpu().detach().numpy()
+        scores = scores.cpu().detach().numpy()
+        bboxes = bboxes.cpu().detach().numpy()
+
+        masks = masks.cpu().detach().numpy()
+        masks = masks.astype(np.uint8)
+
+        return bboxes, labels, scores, masks
 
     def update_detect_ids(self, ids: List[int]) -> None:
         """Updates list of selected object category IDs. When the list is
@@ -106,20 +129,9 @@ class Detector:
             f"Score threshold: {self.score_threshold}"
         )
 
-
-        # model = YolactEdge(
-        #     self.model_path,
-        #     self.num_classes,
-        #     self.input_size,
-        #     self.score_threshold,
-        #     self.device,
-        # )
-
-        # model.eval()
-        # return model
         return self._load_yolact_edge_weights()
 
-    def _get_model(self, model_size: Dict[str, float]) -> YolactEdge:
+    def _get_model(self) -> YolactEdge:
         """Constructs YolactEdge model based on parsed configuration
         
         Args:
@@ -128,13 +140,7 @@ class Detector:
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(
-            self.num_classes,
-            self.input_size,
-            self.score_threshold,
-            self.device,
-        )
-        
+        return YolactEdge()
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
@@ -149,12 +155,17 @@ class Detector:
         Raises:
             ValueError: `model_path` does not exist.
         """
-
         if self.model_path.is_file():
-            ckpt = torch.load(str(self.model_path), map_location="cpu")
-            model = self._get_model(self.model_size).to(self.device)
+            model = self._get_model().to(self.device)
+            model.load_weights(self.model_path)
             model.eval()
-            model.load_state_dict(ckpt["model"])
+            
+            if torch.cuda.is_available():
+                model = model.cuda()
+            
             return model
 
-    
+        raise ValueError(
+            f"Model file does not exist. Please check that {self.model_path} exists"
+        )
+
