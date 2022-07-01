@@ -20,12 +20,13 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import torch.nn.functional as F
 import numpy as np
 import torch
-import torchvision
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import FastBaseTransform, postprocess
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
+    FastBaseTransform)
 
 class Detector:
     """Detector class to handle detection of bboxes and masks for yolact_edge
@@ -38,7 +39,6 @@ class Detector:
             will be allocated.
         yolact_edge (YolactEdge): The YolactEdge model for performing inference.
     """
-
     def __init__(
         self,
         model_dir: Path,
@@ -79,31 +79,17 @@ class Detector:
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
-        model = YolactEdge()
-        model.load_weights(self.model_path)
-        model.eval()
-
-        try:
+        model = self.yolact_edge
+        if torch.cuda.is_available():
             frame = torch.from_numpy(image).cuda().float()
-        except:
+        else:
             frame = torch.from_numpy(image).float()
         
         preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
         h, w, _ = image.shape
-        t = postprocess(preds, w, h, score_threshold=self.score_threshold)
-        
-        labels = t[0]
-        scores = t[1]
-        bboxes = t[2]
-        masks = t[3]
 
-        labels = labels.cpu().detach().numpy()
-        scores = scores.cpu().detach().numpy()
-        bboxes = bboxes.cpu().detach().numpy()
-
-        masks = masks.cpu().detach().numpy()
-        masks = masks.astype(np.uint8)
-
+        labels, scores, bboxes, masks = postprocess(
+            preds, w, h, score_threshold=self.score_threshold)
         return bboxes, labels, scores, masks
 
     def update_detect_ids(self, ids: List[int]) -> None:
@@ -131,17 +117,6 @@ class Detector:
 
         return self._load_yolact_edge_weights()
 
-    def _get_model(self) -> YolactEdge:
-        """Constructs YolactEdge model based on parsed configuration
-        
-        Args:
-            model_size (Dict[str, float]): Depth and width of the model.
-        
-        Returns:
-            (YolactEdge): YolactEdge model.
-        """
-        return YolactEdge()
-
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
         
@@ -156,16 +131,49 @@ class Detector:
             ValueError: `model_path` does not exist.
         """
         if self.model_path.is_file():
-            model = self._get_model().to(self.device)
+            model = YolactEdge()
             model.load_weights(self.model_path)
             model.eval()
-            
             if torch.cuda.is_available():
                 model = model.cuda()
-            
             return model
 
         raise ValueError(
             f"Model file does not exist. Please check that {self.model_path} exists"
         )
 
+def postprocess(det_output, w, h, batch_idx=0, interpolation_mode='bilinear',
+                crop_masks=True, score_threshold=0):
+    dets = det_output[batch_idx]
+    if dets is None:
+        return [torch.Tensor()] * 4
+    if score_threshold > 0:
+        keep = dets['score'] > score_threshold
+        for k in dets:
+            if k != 'proto':
+                dets[k] = dets[k][keep]
+        if dets['score'].size(0) == 0:
+            return [torch.Tensor()] * 4
+
+    classes = dets['class']
+    boxes   = dets['box']
+    scores  = dets['score']
+    masks   = dets['mask']
+    proto_data = dets['proto']
+
+    masks = proto_data @ masks.t()
+    masks = torch.sigmoid(masks)
+
+    masks = masks.permute(2, 0, 1).contiguous()
+    masks = F.interpolate(masks.unsqueeze(0), (h, w), 
+        mode=interpolation_mode, align_corners=False).squeeze(0)
+    masks.gt_(0.5)
+
+    classes = classes.cpu().detach().numpy()
+    scores = scores.cpu().detach().numpy()
+    boxes = boxes.cpu().detach().numpy()
+
+    masks = masks.cpu().detach().numpy()
+    masks = masks.astype(np.uint8)
+
+    return classes, scores, boxes, masks

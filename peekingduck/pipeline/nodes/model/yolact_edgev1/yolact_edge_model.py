@@ -17,15 +17,12 @@
 import logging
 from typing import Any, Dict, List, Tuple
 import numpy as np
-import torch
 
 from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
 )
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector import Detector
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import FastBaseTransform, postprocess
 
 class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """YolactEdge model with ResNet 101 FPN backbone"""

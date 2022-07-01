@@ -97,13 +97,7 @@ from typing import Dict, List, Tuple, Any
 from torch import Tensor
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
-    make_net, jaccard, decode,
-    SELECTED_LAYERS,
-    SRC_CHANNELS,
-    NUM_DOWNSAMPLE,
-    FPN_NUM_FEATURES,
-    NUM_CLASSES,
-    MAX_NUM_DETECTIONS)
+    make_net, jaccard, decode, make_extra)
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
     construct_backbone)
 
@@ -114,106 +108,17 @@ except:
 
 ScriptModuleWrapper = torch.jit.ScriptModule
 
+SELECTED_LAYERS = list(range(1,4)) # ResNet 50/101 FPN backbone
+# SELECTED_LAYERS = [3, 4, 6] # MobileNetV2
 
-class Detection:
-    def __init__(
-        self, 
-        num_classes: int, 
-        bkg_label: int, 
-        top_k: int, 
-        conf_thresh: float, 
-        nms_thresh: float,
-    ) -> None:
-        self.logger = logging.getLogger(__name__)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+SRC_CHANNELS = [256, 512, 1024, 2048]
+SCORE_THRESHOLD = 0.1
+TOP_K = 15 # Change for top number of detections
 
-        self.num_classes = num_classes
-        self.background_label = bkg_label
-        self.top_k = top_k
-        self.nms_thresh = nms_thresh
-        self.conf_thresh = conf_thresh
-
-    def __call__(self, predictions):
-        loc_data   = predictions['loc']
-        conf_data  = predictions['conf']
-        mask_data  = predictions['mask']
-        prior_data = predictions['priors']
-        proto_data = predictions['proto'] if 'proto' in predictions else None
-        inst_data  = predictions['inst']  if 'inst'  in predictions else None
-
-        out = []
-        batch_size = loc_data.size(0)
-        num_priors = prior_data.size(0)
-        conf_preds = conf_data.view(
-            batch_size, num_priors, self.num_classes
-        ).transpose(2, 1).contiguous()
-
-        for batch_idx in range(batch_size):
-            decoded_boxes = decode(loc_data[batch_idx], prior_data)
-            result = self.detect(batch_idx, 
-                                 conf_preds, 
-                                 decoded_boxes, 
-                                 mask_data, 
-                                 inst_data)
-            if result is not None and proto_data is not None:
-                result['proto'] = proto_data[batch_idx]
-            out.append(result)
-
-        return out
-
-    def detect(self, batch_idx, conf_preds, decoded_boxes, mask_data, inst_data):
-        cur_scores = conf_preds[batch_idx, 1:, :]
-        conf_scores, _ = torch.max(cur_scores, dim=0)
-        keep = (conf_scores > self.conf_thresh)
-        scores = cur_scores[:, keep]
-        boxes = decoded_boxes[keep, :]
-        masks = mask_data[batch_idx, keep, :]
-        
-        if scores.size(1) == 0:
-            return None
-
-        boxes, masks, classes, scores = self.fast_nms(
-            boxes, masks, scores, self.nms_thresh, self.top_k
-        )
-
-        return {'box': boxes, 'mask': masks, 'class': classes, 'score': scores}
-
-    def fast_nms(
-        self, 
-        boxes: torch.Tensor, 
-        masks: torch.Tensor, 
-        scores: torch.Tensor, 
-        iou_threshold: float = 0.5, 
-        top_k: int = 200, 
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
-        scores, idx = scores.sort(1, descending=True)
-        idx = idx[:, :top_k].contiguous()
-        scores = scores[:, :top_k]
-        num_classes, num_dets = idx.size()
-        boxes = boxes[idx.view(-1), :].view(num_classes, num_dets, 4)
-        masks = masks[idx.view(-1), :].view(num_classes, num_dets, -1)
-
-        iou = jaccard(boxes, boxes)
-        iou.triu_(diagonal=1)
-        iou_max, _ = iou.max(dim=1)
-        keep = (iou_max <= iou_threshold)
-
-        classes = torch.arange(
-            num_classes, device=boxes.device)[:, None].expand_as(keep)
-        classes = classes[keep]
-
-        boxes = boxes[keep]
-        masks = masks[keep]
-        scores = scores[keep]
-
-        scores, idx = scores.sort(0, descending=True)
-        idx = idx[:MAX_NUM_DETECTIONS]
-        scores = scores[:MAX_NUM_DETECTIONS]
-        classes = classes[idx]
-        boxes = boxes[idx]
-        masks = masks[idx]
-
-        return boxes, masks, classes, scores
+NUM_DOWNSAMPLE = 2
+FPN_NUM_FEATURES = 256
+NUM_CLASSES = 81
+MAX_NUM_DETECTIONS = 100
 
 
 class YolactEdge(nn.Module):
@@ -260,7 +165,7 @@ class YolactEdge(nn.Module):
             src_channels[0], NUM_CLASSES-1, kernel_size=1
         )
 
-        self.detect = Detection(
+        self.detect = YolactEdgeHead(
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
 
@@ -360,9 +265,12 @@ class PredictionModule(nn.Module):
 
         if parent is None:
             self.upfeature, out_channels = make_net(in_channels, [(256, 3, {'padding': 1})])
-            self.bbox_layer = nn.Conv2d(out_channels, self.num_priors * 4, **head_layer_params)
-            self.conf_layer = nn.Conv2d(out_channels, self.num_priors * self.num_classes, **head_layer_params)
-            self.mask_layer = nn.Conv2d(out_channels, self.num_priors * self.mask_dim, **head_layer_params)
+            self.bbox_layer = nn.Conv2d(
+                out_channels, self.num_priors * 4, **head_layer_params)
+            self.conf_layer = nn.Conv2d(
+                out_channels, self.num_priors * self.num_classes, **head_layer_params)
+            self.mask_layer = nn.Conv2d(
+                out_channels, self.num_priors * self.mask_dim, **head_layer_params)
             self.bbox_extra, self.conf_extra, self.mask_extra = [make_extra(x) for x in (0, 0, 0)]
 
         self.aspect_ratios = aspect_ratios
@@ -493,10 +401,101 @@ class FPN_phase_2(ScriptModuleWrapper):
         return out
 
 
-def make_extra(num_layers):
-            if num_layers == 0:
-                return lambda x: x
-            else:
-                return nn.Sequential(*sum([[
-                    nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-                    nn.ReLU(inplace=True)] for _ in range(num_layers)], []))
+class YolactEdgeHead:
+    def __init__(
+        self, 
+        num_classes: int, 
+        bkg_label: int, 
+        top_k: int, 
+        conf_thresh: float, 
+        nms_thresh: float,
+    ) -> None:
+        self.logger = logging.getLogger(__name__)
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+        self.num_classes = num_classes
+        self.background_label = bkg_label
+        self.top_k = top_k
+        self.nms_thresh = nms_thresh
+        self.conf_thresh = conf_thresh
+
+    def __call__(self, predictions):
+        loc_data   = predictions['loc']
+        conf_data  = predictions['conf']
+        mask_data  = predictions['mask']
+        prior_data = predictions['priors']
+        proto_data = predictions['proto'] if 'proto' in predictions else None
+        inst_data  = predictions['inst']  if 'inst'  in predictions else None
+
+        out = []
+        batch_size = loc_data.size(0)
+        num_priors = prior_data.size(0)
+        conf_preds = conf_data.view(
+            batch_size, num_priors, self.num_classes
+        ).transpose(2, 1).contiguous()
+
+        for batch_idx in range(batch_size):
+            decoded_boxes = decode(loc_data[batch_idx], prior_data)
+            result = self.detect(batch_idx, 
+                                 conf_preds, 
+                                 decoded_boxes, 
+                                 mask_data, 
+                                 inst_data)
+            if result is not None and proto_data is not None:
+                result['proto'] = proto_data[batch_idx]
+            out.append(result)
+        return out
+
+    def detect(self, batch_idx, conf_preds, decoded_boxes, mask_data, inst_data):
+        cur_scores = conf_preds[batch_idx, 1:, :]
+        conf_scores, _ = torch.max(cur_scores, dim=0)
+        keep = (conf_scores > self.conf_thresh)
+        scores = cur_scores[:, keep]
+        boxes = decoded_boxes[keep, :]
+        masks = mask_data[batch_idx, keep, :]
+        
+        if scores.size(1) == 0:
+            return None
+
+        boxes, masks, classes, scores = self.fast_nms(
+            boxes, masks, scores, self.nms_thresh, self.top_k
+        )
+
+        return {'box': boxes, 'mask': masks, 'class': classes, 'score': scores}
+
+    def fast_nms(
+        self, 
+        boxes: torch.Tensor, 
+        masks: torch.Tensor, 
+        scores: torch.Tensor, 
+        iou_threshold: float = 0.5, 
+        top_k: int = 200, 
+    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        scores, idx = scores.sort(1, descending=True)
+        idx = idx[:, :top_k].contiguous()
+        scores = scores[:, :top_k]
+        num_classes, num_dets = idx.size()
+        boxes = boxes[idx.view(-1), :].view(num_classes, num_dets, 4)
+        masks = masks[idx.view(-1), :].view(num_classes, num_dets, -1)
+
+        iou = jaccard(boxes, boxes)
+        iou.triu_(diagonal=1)
+        iou_max, _ = iou.max(dim=1)
+        keep = (iou_max <= iou_threshold)
+
+        classes = torch.arange(
+            num_classes, device=boxes.device)[:, None].expand_as(keep)
+        classes = classes[keep]
+
+        boxes = boxes[keep]
+        masks = masks[keep]
+        scores = scores[keep]
+
+        scores, idx = scores.sort(0, descending=True)
+        idx = idx[:MAX_NUM_DETECTIONS]
+        scores = scores[:MAX_NUM_DETECTIONS]
+        classes = classes[idx]
+        boxes = boxes[idx]
+        masks = masks[idx]
+
+        return boxes, masks, classes, scores
