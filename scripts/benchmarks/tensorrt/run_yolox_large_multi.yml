@@ -2,5 +2,6 @@ nodes:
 - input.visual:
     source: data/benchmark/multi
 - model.yolox:
+    model_format: tensorrt
     model_type: yolox-l
 - dabble.fps
