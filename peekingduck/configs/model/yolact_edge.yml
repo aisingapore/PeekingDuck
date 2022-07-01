@@ -32,7 +32,7 @@ model_size:
 num_classes: 80
 
 model_format: pytorch
-model_type: r101-fpn # r50-fpn, r101-fpn, mobilevnet2
+model_type: r50-fpn
 input_size: 550
 detect: [0]
 score_threshold: 0.1

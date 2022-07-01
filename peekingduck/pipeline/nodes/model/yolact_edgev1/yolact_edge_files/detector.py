@@ -117,6 +117,17 @@ class Detector:
 
         return self._load_yolact_edge_weights()
 
+    def _get_model(self, model_type: str) -> YolactEdge:
+        """Constructs YolactEdge model based on parsed configuration.
+        Args:
+            model_size (Dict[str, float]): Depth and width of the model.
+        Returns:
+            (YolactEdge): YolactEdge model.
+        """
+        return YolactEdge(
+            self.model_type
+        )
+
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
         
@@ -131,7 +142,7 @@ class Detector:
             ValueError: `model_path` does not exist.
         """
         if self.model_path.is_file():
-            model = YolactEdge()
+            model = self._get_model(self.model_type)
             model.load_weights(self.model_path)
             model.eval()
             if torch.cuda.is_available():

@@ -35,9 +35,7 @@
 # SOFTWARE.
 
 """YolactEdge model with the feature pyramid network and prediction layer.
-
 Modifications include:
-
 - Yolact
     - Refactor configs
     - Removed unused conditions for ResNet and MobileNetV2 backbone
@@ -67,7 +65,6 @@ Modifications include:
         
 - PredictionModule
     - Removed unused make_priors function 
-
 - Removed unused Concat class
 - Removed unused PredictionModuleTRT class
 - Removed unused Cat class
@@ -93,13 +90,13 @@ import torch.nn.functional as F
 
 from itertools import product
 from math import sqrt
-from typing import Dict, List, Tuple, Any
+from typing import List, Tuple
 from torch import Tensor
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
     make_net, jaccard, decode, make_extra)
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
-    construct_backbone)
+    ResNetBackbone, MobileNetV2Backbone)
 
 try:
     torch.cuda.current_device()
@@ -111,7 +108,6 @@ ScriptModuleWrapper = torch.jit.ScriptModule
 SELECTED_LAYERS = list(range(1,4)) # ResNet 50/101 FPN backbone
 # SELECTED_LAYERS = [3, 4, 6] # MobileNetV2
 
-SRC_CHANNELS = [256, 512, 1024, 2048]
 SCORE_THRESHOLD = 0.1
 TOP_K = 15 # Change for top number of detections
 
@@ -124,30 +120,56 @@ MAX_NUM_DETECTIONS = 100
 class YolactEdge(nn.Module):
     """YolactEdge model module.
     """
-    def __init__(self) -> None:
+    def __init__(
+        self,
+        model_type: str
+    ) -> None:
         super().__init__()
-        self.backbone = construct_backbone()
+
+        if model_type[0] == "r": # Model is running on ResNet backbone
+            if model_type == "r101-fpn":
+                self.backbone = ResNetBackbone(([3, 4, 23, 3]))
+            elif model_type == "r50-fpn":
+                self.backbone = ResNetBackbone(([3, 4, 6, 3]))
+            num_layers = max(list(range(1, 4))) + 1
+            src_channels = [256, 512, 1024, 2048]
+            selected_layers = list(range(1,4))
+        elif model_type == "mobilenetv2":
+            self.backbone = MobileNetV2Backbone(1.0, [[1, 16, 1, 1], 
+                                                [6, 24, 2, 2],
+                                                [6, 32, 3, 2], 
+                                                [6, 64, 4, 2], 
+                                                [6, 96, 3, 1], 
+                                                [6, 160, 3, 2], 
+                                                [6, 320, 1, 1]], 8)
+            num_layers = max([3, 4, 6]) + 1
+            src_channels = [32, 16, 24, 32, 64, 96, 160, 320, 1280]
+            selected_layers = [3, 4, 6]
+        while len(self.backbone.layers) < num_layers:
+            self.backbone.add_layer()
+
+        # self.backbone = backbone
+
         self.num_grids = 0
         self.proto_src = 0
-        src_channels = SRC_CHANNELS
         mask_proto_net = [(256, 3, {'padding': 1})] * 3 + [(None, -2, {}), 
                           (256, 3, {'padding': 1})] + [(32, 1, {})]
         
         self.proto_net, _ = make_net(256, mask_proto_net, include_last_relu=False)
-        self.selected_layers = SELECTED_LAYERS
+        self.selected_layers = selected_layers
 
-        # src_channels = [32, 16, 24, 32, 64, 96, 160, 320, 1280] # MobileNetV2
         self.fpn_phase_1 = FPN_phase_1([src_channels[i] for i in self.selected_layers])
         self.fpn_phase_2 = FPN_phase_2([src_channels[i] for i in self.selected_layers])
         
-        self.selected_layers = list(
-            range(len(self.selected_layers) + NUM_DOWNSAMPLE)
-        ) # R50 / R101
+        if model_type[0] == "r": # Model is running on ResNet backbone
+            self.selected_layers = list(
+                range(len(self.selected_layers) + NUM_DOWNSAMPLE)
+            )
 
         self.pred_aspect_ratios = [[[1, 1/2, 2]]]*5
         self.pred_scales = [[24], [48], [96], [192], [384]]
+
         src_channels = [FPN_NUM_FEATURES] * len(self.selected_layers)
-        
         self.prediction_layers = nn.ModuleList()
 
         for idx, layer_idx in enumerate(self.selected_layers):
@@ -164,7 +186,6 @@ class YolactEdge(nn.Module):
         self.semantic_seg_conv = nn.Conv2d(
             src_channels[0], NUM_CLASSES-1, kernel_size=1
         )
-
         self.detect = YolactEdgeHead(
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
@@ -225,13 +246,11 @@ class PredictionModule(nn.Module):
     """
     The (c) prediction module adapted from DSSD:
     https://arxiv.org/pdf/1701.06659.pdf
-
     Note that this is slightly different to the module in the paper
     because the Bottleneck block actually has a 3x3 convolution in
     the middle instead of a 1x1 convolution. Though, I really can't
     be arsed to implement it myself, and, who knows, this might be
     better.
-
     Args:
         - in_channels:   The input feature size.
         - out_channels:  The output feature size (must be a multiple of 4).

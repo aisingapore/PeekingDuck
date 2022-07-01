@@ -307,24 +307,4 @@ class MobileNetV2Backbone(nn.Module):
 
     def add_layer(self, conv_channels=1280, t=1, c=1280, n=1, s=2):
         self._make_layer(conv_channels, 1.0, 8, t, c, n, s, InvertedResidual)
-
-# This function can be abstracted away since it is only called once
-def construct_backbone():
-    """Constructs a backbone given the respective backbone configuration."""
-    backbone = ResNetBackbone(([3, 4, 23, 3])) # R101
-    # backbone = ResNetBackbone(([3, 4, 6, 3])) # R50
-    num_layers = max(list(range(1, 4))) + 1
-
-    """MobileNetV2"""
-    # backbone = MobileNetV2Backbone(1.0, [[1, 16, 1, 1], 
-    #                                     [6, 24, 2, 2],
-    #                                     [6, 32, 3, 2], 
-    #                                     [6, 64, 4, 2], 
-    #                                     [6, 96, 3, 1], 
-    #                                     [6, 160, 3, 2], 
-    #                                     [6, 320, 1, 1]], 8) # MobileNetV2
-    # num_layers = max([3, 4, 6]) + 1 # MovileNetV2
-
-    while len(backbone.layers) < num_layers:
-        backbone.add_layer()
-    return backbone
+        
