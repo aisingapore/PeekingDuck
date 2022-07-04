@@ -135,11 +135,11 @@ class FrozenBatchNorm2d(nn.Module):
             error_msgs,
         )
 
-    def forward(self, x_in: Tensor) -> Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Forward propagation for 2D Batch Normalization
 
         Args:
-            x_in (Tensor): Batch input
+            inputs (Tensor): Batch input
 
         Returns:
             Tensor: Batch Normalized Tensor
@@ -151,7 +151,7 @@ class FrozenBatchNorm2d(nn.Module):
         running_mean = self.running_mean.reshape(1, -1, 1, 1)
         scale = weight * (running_var + self.eps).rsqrt()
         adjusted_bias = bias - running_mean * scale
-        return x_in * scale + adjusted_bias
+        return inputs * scale + adjusted_bias
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({self.weight.shape[0]}, eps={self.eps})"

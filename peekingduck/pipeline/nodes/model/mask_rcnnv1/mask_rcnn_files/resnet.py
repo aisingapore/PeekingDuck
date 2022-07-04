@@ -151,18 +151,18 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x_in: Tensor) -> Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Forward propagation for BasicBlock of ResNet
 
         Args:
-            x_in (Tensor): Input Tensor
+            inputs (Tensor): Input Tensor
 
         Returns:
             Tensor: Output Tensor
         """
-        identity = x_in
+        identity = inputs
 
-        out = self.conv1(x_in)
+        out = self.conv1(inputs)
         out = self.bn1(out)
         out = self.relu(out)
 
@@ -170,7 +170,7 @@ class BasicBlock(nn.Module):
         out = self.bn2(out)
 
         if self.downsample is not None:
-            identity = self.downsample(x_in)
+            identity = self.downsample(inputs)
 
         out += identity
         out = self.relu(out)
@@ -215,18 +215,18 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x_in: Tensor) -> Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Forward propagation of the Bottleneck blocks of ResNet
 
         Args:
-            x_in (Tensor): Input Tensor
+            inputs (Tensor): Input Tensor
 
         Returns:
             Tensor: Output Tensor
         """
-        identity = x_in
+        identity = inputs
 
-        out = self.conv1(x_in)
+        out = self.conv1(inputs)
         out = self.bn1(out)
         out = self.relu(out)
 
@@ -238,7 +238,7 @@ class Bottleneck(nn.Module):
         out = self.bn3(out)
 
         if self.downsample is not None:
-            identity = self.downsample(x_in)
+            identity = self.downsample(inputs)
 
         out += identity
         out = self.relu(out)
@@ -364,28 +364,28 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def forward(self, x_in: Tensor) -> Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Forward propagation of the main ResNet model
 
         Args:
-            x_in (Tensor): Input Tensor
+            inputs (Tensor): Input Tensor
 
         Returns:
             Tensor: Output
         """
-        x_in = self.conv1(x_in)
-        x_in = self.bn1(x_in)
-        x_in = self.relu(x_in)
-        x_in = self.maxpool(x_in)
+        inputs = self.conv1(inputs)
+        inputs = self.bn1(inputs)
+        inputs = self.relu(inputs)
+        inputs = self.maxpool(inputs)
 
-        x_in = self.layer1(x_in)
-        x_in = self.layer2(x_in)
-        x_in = self.layer3(x_in)
-        x_in = self.layer4(x_in)
+        inputs = self.layer1(inputs)
+        inputs = self.layer2(inputs)
+        inputs = self.layer3(inputs)
+        inputs = self.layer4(inputs)
 
-        x_in = self.avgpool(x_in)
-        x_in = torch.flatten(x_in, 1)
-        return self.fully_connected(x_in)
+        inputs = self.avgpool(inputs)
+        inputs = torch.flatten(inputs, 1)
+        return self.fully_connected(inputs)
 
 
 def resnet50(**kwargs: Any) -> ResNet:

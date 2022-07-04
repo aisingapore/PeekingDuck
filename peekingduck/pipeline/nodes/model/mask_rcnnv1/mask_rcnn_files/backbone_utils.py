@@ -144,20 +144,20 @@ class BackboneWithFPN(nn.Module):
         )
         self.out_channels = out_channels
 
-    def forward(self, x_in: Tensor) -> Dict[str, Tensor]:
+    def forward(self, inputs: Tensor) -> Dict[str, Tensor]:
         """Takes the input tensor and pass it through the intermediate layers of the model.
         Then, the output from the intermediate layers will be passed to the FPN before returning
         the final output.
 
         Args:
-            x_in (Tensor): Input feature
+            inputs (Tensor): Input feature
 
         Returns:
             Dict[str, Tensor]: An output dictionary. The keys are the names of the returned
                 activations of the backbone, and the values are the output features from the FPN
                 layers ordered from highest resolution first.
         """
-        x_out = self.body(x_in)
+        x_out = self.body(inputs)
         x_out = self.fpn(x_out)
         return x_out
 
@@ -241,12 +241,12 @@ class IntermediateLayerGetter(nn.ModuleDict):
         super().__init__(layers)
         self.return_layers = orig_return_layers
 
-    def forward(self, x_in: Tensor) -> Dict[str, Tensor]:
+    def forward(self, inputs: Tensor) -> Dict[str, Tensor]:
         """Takes in a Tensor and obtain the outputs from the respective layers specified in
         self.return_layers.
 
         Args:
-            x_in (Tensor): Input tensor
+            inputs (Tensor): Input tensor
 
         Returns:
             Dict[str, Tensor]: A dictionary with keys equal to the enumerated numbers of the
@@ -255,8 +255,8 @@ class IntermediateLayerGetter(nn.ModuleDict):
         """
         out = OrderedDict()
         for name, module in self.items():
-            x_in = module(x_in)
+            inputs = module(inputs)
             if name in self.return_layers:
                 out_name = self.return_layers[name]
-                out[out_name] = x_in
+                out[out_name] = inputs
         return out

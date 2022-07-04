@@ -293,20 +293,20 @@ class TwoMLPHead(nn.Module):
         self.fc6 = nn.Linear(in_channels, representation_size)
         self.fc7 = nn.Linear(representation_size, representation_size)
 
-    def forward(self, x_in: Tensor) -> Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Takes in input and perform forward propagation through 2 layers of fully-connected
         layers.
 
         Args:
-            x_in (Tensor): Input Tensor
+            inputs (Tensor): Input Tensor
 
         Returns:
             Tensor: Output Tensor
         """
-        x_in = x_in.flatten(start_dim=1)
+        inputs = inputs.flatten(start_dim=1)
 
-        x_in = F.relu(self.fc6(x_in))
-        x_out = F.relu(self.fc7(x_in))
+        inputs = F.relu(self.fc6(inputs))
+        x_out = F.relu(self.fc7(inputs))
 
         return x_out
 
@@ -326,20 +326,20 @@ class FastRCNNPredictor(nn.Module):
         self.cls_score = nn.Linear(in_channels, num_classes)
         self.bbox_pred = nn.Linear(in_channels, num_classes * 4)
 
-    def forward(self, x_in: Tensor) -> Tuple[Tensor, Tensor]:
+    def forward(self, inputs: Tensor) -> Tuple[Tensor, Tensor]:
         """Takes the input Tensor and pass through two separate single layer fully connected layers
             to obtain the classification logits and box regression deltas respectively.
 
         Args:
-            x_in (Tensor): Input Tensor
+            inputs (Tensor): Input Tensor
 
         Returns:
             Tuple[Tensor, Tensor]: The classification logits and box regression deltas
         """
-        if x_in.dim() == 4:
-            assert list(x_in.shape[2:]) == [1, 1]
-        x_in = x_in.flatten(start_dim=1)
-        scores = self.cls_score(x_in)
-        bbox_deltas = self.bbox_pred(x_in)
+        if inputs.dim() == 4:
+            assert list(inputs.shape[2:]) == [1, 1]
+        inputs = inputs.flatten(start_dim=1)
+        scores = self.cls_score(inputs)
+        bbox_deltas = self.bbox_pred(inputs)
 
         return scores, bbox_deltas

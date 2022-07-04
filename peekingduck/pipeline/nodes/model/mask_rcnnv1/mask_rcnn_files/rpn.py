@@ -168,12 +168,12 @@ class RPNHead(nn.Module):
             nn.init.normal_(layer.weight, std=0.01)  # type: ignore[arg-type]
             nn.init.constant_(layer.bias, 0)  # type: ignore[arg-type]
 
-    def forward(self, x_in: List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]:
+    def forward(self, inputs: List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]:
         """Forward propagation for computing the objectness and bboxes' offsets from the anchor
         boxes regressions obtained from RPN
 
         Args:
-            x_in (List[Tensor]): Input Tensor. length of x_in is the number of feature levels
+            inputs (List[Tensor]): Input Tensor. length of inputs is the number of feature levels
 
         Returns:
             Tuple[List[Tensor], List[Tensor]]:
@@ -196,7 +196,7 @@ class RPNHead(nn.Module):
         """
         logits = []
         bbox_reg = []
-        for feature in x_in:
+        for feature in inputs:
             transformed_feature = F.relu(self.conv(feature))
             logits.append(self.cls_logits(transformed_feature))
             bbox_reg.append(self.bbox_pred(transformed_feature))
