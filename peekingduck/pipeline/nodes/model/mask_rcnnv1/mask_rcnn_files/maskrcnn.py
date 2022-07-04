@@ -115,7 +115,7 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         - boxes (``FloatTensor[N, 4]``): the predicted boxes in ``[x1, y1, x2, y2]`` format, with
           ``0 <= x1 < x2 <= W`` and ``0 <= y1 < y2 <= H``.
         - labels (Int64Tensor[N]): the predicted labels for each image
-        - scores (Tensor[N]): the scores or each prediction
+        - scores (Tensor[N]): the scores of each prediction
         - masks (UInt8Tensor[N, 1, H, W]): the predicted masks for each instance, in 0-1 range.
           In order to obtain the final segmentation masks, the soft masks can be thresholded,
           generally with a value of 0.5 (mask >= 0.5)
@@ -215,7 +215,7 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
             mask_dilation = 1
             mask_head = MaskRCNNHeads(
                 out_channels, mask_layers, mask_dilation  # type: ignore[arg-type]
-            )  # type: ignore[arg-type]
+            )
 
         if mask_predictor is None:
             mask_predictor_in_channels = 256  # == mask_layers[-1]
@@ -257,7 +257,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
 class MaskRCNNHeads(nn.Sequential):
     """Implements the head for Mask R-CNN, a module that takes the cropped feature maps as input"""
 
-    # pylint: disable=invalid-name
     def __init__(self, in_channels: int, layers: Iterable[int], dilation: int):
         """
         Args:
@@ -265,10 +264,10 @@ class MaskRCNNHeads(nn.Sequential):
             layers (Iterable[int]): feature dimensions of each FCN layer
             dilation (int): dilation rate of kernel
         """
-        d = OrderedDict()
+        layers_dict: "OrderedDict[str, nn.Module]" = OrderedDict()
         next_feature = in_channels
         for layer_idx, layer_features in enumerate(layers, 1):
-            d["mask_fcn{}".format(layer_idx)] = nn.Conv2d(
+            layers_dict["mask_fcn{}".format(layer_idx)] = nn.Conv2d(
                 next_feature,
                 layer_features,
                 kernel_size=3,
@@ -276,15 +275,13 @@ class MaskRCNNHeads(nn.Sequential):
                 padding=dilation,
                 dilation=dilation,
             )
-            d["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)  # type: ignore[assignment]
+            layers_dict["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)
             next_feature = layer_features
 
-        super().__init__(d)  # type: ignore[arg-type]
+        super().__init__(layers_dict)
         for name, param in self.named_parameters():
             if "weight" in name:
                 nn.init.kaiming_normal_(param, mode="fan_out", nonlinearity="relu")
-            # elif "bias" in name:
-            #     nn.init.constant_(param, 0)
 
 
 class MaskRCNNPredictor(nn.Sequential):
@@ -308,5 +305,3 @@ class MaskRCNNPredictor(nn.Sequential):
         for name, param in self.named_parameters():
             if "weight" in name:
                 nn.init.kaiming_normal_(param, mode="fan_out", nonlinearity="relu")
-            # elif "bias" in name:
-            #     nn.init.constant_(param, 0)

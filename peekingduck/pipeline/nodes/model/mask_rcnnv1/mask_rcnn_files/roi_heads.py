@@ -94,9 +94,7 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
 )
 
 
-def maskrcnn_inference(x, labels):
-    # type: (Tensor, List[Tensor]) -> List[Tensor]
-    # pylint: disable=invalid-name
+def maskrcnn_inference(mask_logits: Tensor, labels: List[Tensor]) -> List[Tensor]:
     """
     From the results of the CNN, post process the masks
     by taking the mask corresponding to the class with max
@@ -104,18 +102,18 @@ def maskrcnn_inference(x, labels):
     by the CNN) and return the masks in the mask field of the BoxList.
 
     Args:
-        x (Tensor): the mask logits
+        mask_logits (Tensor): The mask logits
         labels (list[BoxList]): bounding boxes that are used as
-            reference, one for ech image
+            reference, one for each image
 
     Returns:
         results (list[BoxList]): one BoxList for each image, containing
             the extra field mask
     """
-    mask_prob = x.sigmoid()
+    mask_prob = mask_logits.sigmoid()
 
     # select masks corresponding to the predicted classes
-    num_masks = x.shape[0]
+    num_masks = mask_logits.shape[0]
     boxes_per_image = [label.shape[0] for label in labels]
     labels_ = torch.cat(labels)
     index = torch.arange(num_masks, device=labels_.device)
@@ -125,8 +123,7 @@ def maskrcnn_inference(x, labels):
     return mask_prob_out
 
 
-def expand_boxes(boxes, scale):
-    # type: (Tensor, float) -> Tensor
+def expand_boxes(boxes: Tensor, scale: float) -> Tensor:
     """Enlarge boxes with the specified scale"""
     w_half = (boxes[:, 2] - boxes[:, 0]) * 0.5
     h_half = (boxes[:, 3] - boxes[:, 1]) * 0.5
@@ -144,30 +141,29 @@ def expand_boxes(boxes, scale):
     return boxes_exp
 
 
-def expand_masks(mask, padding):
-    # type: (Tensor, int) -> Tuple[Tensor, float]
-    # pylint: disable=invalid-name
+def expand_masks(mask: Tensor, padding: int) -> Tuple[Tensor, float]:
     """Enlarge masks with the specified padding and returns the resultant scale"""
-    M = mask.shape[-1]
-    scale = float(M + 2 * padding) / M
+    mask_width = mask.shape[-1]
+    scale = float(mask_width + 2 * padding) / mask_width
     padded_mask = F.pad(mask, (padding,) * 4)
     return padded_mask, scale
 
 
-def paste_mask_in_image(mask, box, im_h, im_w):
-    # type: (Tensor, Tensor, int, int) -> Tensor
-    # pylint: disable=missing-function-docstring,invalid-name
+def paste_mask_in_image(mask: Tensor, box: Tensor, im_h: int, im_w: int) -> Tensor:
+    # pylint: disable=missing-function-docstring
     to_remove = 1
-    w = int(box[2] - box[0] + to_remove)
-    h = int(box[3] - box[1] + to_remove)
-    w = max(w, 1)
-    h = max(h, 1)
+    width = int(box[2] - box[0] + to_remove)
+    height = int(box[3] - box[1] + to_remove)
+    width = max(width, 1)
+    height = max(height, 1)
 
     # Set shape to [batchxCxHxW]
     mask = mask.expand((1, 1, -1, -1))
 
     # Resize mask
-    mask = F.interpolate(mask, size=(h, w), mode="bilinear", align_corners=False)
+    mask = F.interpolate(
+        mask, size=(height, width), mode="bilinear", align_corners=False
+    )
     mask = mask[0][0]
 
     im_mask = torch.zeros((im_h, im_w), dtype=mask.dtype, device=mask.device)
@@ -182,8 +178,9 @@ def paste_mask_in_image(mask, box, im_h, im_w):
     return im_mask
 
 
-def paste_masks_in_image(masks, boxes, img_shape, padding=1):
-    # type: (Tensor, Tensor, Tuple[int, int], int) -> Tensor
+def paste_masks_in_image(
+    masks: Tensor, boxes: Tensor, img_shape: Tuple[int, int], padding: int = 1
+) -> Tensor:
     # pylint: disable=missing-function-docstring
     masks, scale = expand_masks(masks, padding=padding)
     boxes = expand_boxes(boxes, scale).to(dtype=torch.int64)
@@ -221,11 +218,7 @@ class RoIHeads(nn.Module):
             mask_head and returns the segmentation mask logits. Defaults to None.
     """
 
-    # pylint: disable=too-many-locals,too-many-instance-attributes,too-many-arguments,invalid-name
-    __annotations__ = {
-        "box_coder": det_utils.BoxCoder,
-    }
-
+    # pylint: disable=too-many-locals,too-many-instance-attributes,too-many-arguments
     def __init__(
         self,
         box_roi_pool: nn.Module,
@@ -263,7 +256,7 @@ class RoIHeads(nn.Module):
         """Checks whether the RoI heads have mask_roi_pool, mask_head and mask_predictor
 
         Returns:
-            bool: _description_
+            bool: True if the RoI heads have mask_roi_pool, mask_head and mask_predictor
         """
         if self.mask_roi_pool is None:
             return False
@@ -275,12 +268,11 @@ class RoIHeads(nn.Module):
 
     def postprocess_detections(
         self,
-        class_logits,  # type: Tensor
-        box_regression,  # type: Tensor
-        proposals,  # type: List[Tensor]
-        image_shapes,  # type: List[Tuple[int, int]]
-    ):
-        # type: (...) -> Tuple[List[Tensor], List[Tensor], List[Tensor]]
+        class_logits: Tensor,
+        box_regression: Tensor,
+        proposals: List[Tensor],
+        image_shapes: List[Tuple[int, int]],
+    ) -> Tuple[List[Tensor], List[Tensor], List[Tensor]]:
         """Perform postprocessing for detection results"""
         device = class_logits.device
         num_classes = class_logits.shape[-1]
@@ -337,31 +329,45 @@ class RoIHeads(nn.Module):
 
     def forward(
         self,
-        features,  # type: Dict[str, Tensor]
-        proposals,  # type: List[Tensor]
-        image_shapes,  # type: List[Tuple[int, int]]
-    ):
-        # type: (...) -> List[Dict[str, Tensor]]
-        """
-        Args:
-            features (List[Tensor])
-            proposals (List[Tensor[N, 4]])
-            image_shapes (List[Tuple[H, W]])
-        """
+        features: Dict[str, Tensor],
+        proposals: List[Tensor],
+        image_shapes: List[Tuple[int, int]],
+    ) -> List[Dict[str, Tensor]]:
+        """Forward propagation for the RoIHead.
+        Takes the feature and proposals, and predicts the bounding boxes, labels, scores and
+        predicts the masks if there are any mask_roi_pool, mask_head and mask_predictor present.
 
+        Args:
+            features (Dict[str, Tensor]): Features from the backbone
+            proposals (List[Tensor]): Proposals from the RPN
+            image_shapes (List[Tuple[int, int]]): Original sizes of the input images
+
+        Raises:
+            Exception: If mask_roi_pool is not present even after has_mask() return True
+
+        Returns:
+            List[Dict[str, Tensor]]: A list of dictionary of prediction outputs. The keys in the
+                dictionary are:
+                - boxes (FloatTensor[N, 4]): the predicted boxes in [x1, y1, x2, y2] format, with
+                    0 <= x1 < x2 <= W and 0 <= y1 < y2 <= H.
+                - labels (Int64Tensor[N]): the predicted labels for each image
+                - scores (Tensor[N]): the scores of each prediction
+                - masks (FloatTensor[N, 1, H, W]): the predicted masks for each instance with
+                    probability values [0, 1]
+        """
         labels = None
 
         box_features = self.box_roi_pool(features, proposals, image_shapes)
         box_features = self.box_head(box_features)
         class_logits, box_regression = self.box_predictor(box_features)
 
-        result: List[Dict[str, torch.Tensor]] = []
+        results: List[Dict[str, torch.Tensor]] = []
         boxes, scores, labels = self.postprocess_detections(
             class_logits, box_regression, proposals, image_shapes
         )
         num_images = len(boxes)
         for i in range(num_images):
-            result.append(
+            results.append(
                 {
                     "boxes": boxes[i],
                     "labels": labels[i],
@@ -370,7 +376,7 @@ class RoIHeads(nn.Module):
             )
 
         if self.has_mask():
-            mask_proposals = [p["boxes"] for p in result]
+            mask_proposals = [result["boxes"] for result in results]
 
             if self.mask_roi_pool is not None:
                 mask_features = self.mask_roi_pool(
@@ -381,9 +387,9 @@ class RoIHeads(nn.Module):
             else:
                 raise Exception("Expected mask_roi_pool to be not None")
 
-            labels = [r["labels"] for r in result]
+            labels = [result["labels"] for result in results]
             masks_probs = maskrcnn_inference(mask_logits, labels)
-            for mask_prob, r in zip(masks_probs, result):
-                r["masks"] = mask_prob
+            for mask_prob, result in zip(masks_probs, results):
+                result["masks"] = mask_prob
 
-        return result
+        return results

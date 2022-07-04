@@ -85,7 +85,6 @@ Modifications include:
 
 from typing import Tuple, List, Dict
 from collections import OrderedDict
-import torch
 from torch import nn, Tensor
 
 
@@ -117,9 +116,7 @@ class GeneralizedRCNN(nn.Module):
         # used only on torchscript mode
         self._has_warned = False
 
-    def forward(self, images):
-        # type: (List[Tensor]) -> List[Dict[str, Tensor]]
-        # pylint: disable=missing-function-docstring
+    def forward(self, images: List[Tensor]) -> List[Dict[str, Tensor]]:
         """
         Args:
             images (list[Tensor]): images to be processed
@@ -128,7 +125,6 @@ class GeneralizedRCNN(nn.Module):
             result (list[BoxList] or dict[Tensor]): the output from the model.
                 During testing, it returns list[BoxList] contains additional fields
                 like `scores`, `labels` and `mask` (for Mask R-CNN models).
-
         """
         original_image_sizes: List[Tuple[int, int]] = []
         for img in images:
@@ -139,7 +135,7 @@ class GeneralizedRCNN(nn.Module):
         images = self.transform(images)
 
         features = self.backbone(images.tensors)
-        if isinstance(features, torch.Tensor):
+        if isinstance(features, Tensor):
             features = OrderedDict([("0", features)])
         proposals = self.rpn(images, features)
         detections = self.roi_heads(features, proposals, images.image_sizes)

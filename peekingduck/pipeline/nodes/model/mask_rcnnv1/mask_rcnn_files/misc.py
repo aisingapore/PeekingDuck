@@ -79,34 +79,29 @@
 
 """Implements the FrozenBatchNorm2d module."""
 
-import warnings
-from typing import List, Optional
+from typing import List
 import torch
-from torch import Tensor
+from torch import nn, Tensor
 
 
-class FrozenBatchNorm2d(torch.nn.Module):
+class FrozenBatchNorm2d(nn.Module):
     """
     BatchNorm2d where the batch statistics and the affine parameters
     are fixed
     """
 
-    # pylint: disable=too-many-arguments,invalid-name
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         num_features: int,
         eps: float = 1e-5,
-        n: Optional[int] = None,
     ):
-        # n=None for backward-compatibility
-        if n is not None:
-            warnings.warn(
-                "`n` argument is deprecated and has been renamed `num_features`",
-                DeprecationWarning,
-            )
-            num_features = n
         super().__init__()
         self.eps = eps
+        self.weight: Tensor
+        self.bias: Tensor
+        self.running_var: Tensor
+        self.running_mean: Tensor
         self.register_buffer("weight", torch.ones(num_features))
         self.register_buffer("bias", torch.zeros(num_features))
         self.register_buffer("running_mean", torch.zeros(num_features))
@@ -122,7 +117,10 @@ class FrozenBatchNorm2d(torch.nn.Module):
         unexpected_keys: List[str],
         error_msgs: List[str],
     ) -> None:
-        # pylint: disable=missing-function-docstring
+        """Overrides _load_from_state_dict method from nn.Module parent class.
+        Removes parameters with names prefix + "num_batches_tracked" (related to FrozenBatchNorm2d)
+        from state_dict before loading it into the model
+        """
         num_batches_tracked_key = prefix + "num_batches_tracked"
         if num_batches_tracked_key in state_dict:
             del state_dict[num_batches_tracked_key]
@@ -137,18 +135,23 @@ class FrozenBatchNorm2d(torch.nn.Module):
             error_msgs,
         )
 
-    def forward(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        # move reshapes to the beginning
-        # to make it fuser-friendly
-        w = self.weight.reshape(1, -1, 1, 1)  # type: ignore[operator]
-        b = self.bias.reshape(1, -1, 1, 1)  # type: ignore[operator]
-        rv = self.running_var.reshape(1, -1, 1, 1)  # type: ignore[operator]
-        rm = self.running_mean.reshape(1, -1, 1, 1)  # type: ignore[operator]
-        scale = w * (rv + self.eps).rsqrt()
-        bias = b - rm * scale
-        return x * scale + bias
+    def forward(self, x_in: Tensor) -> Tensor:
+        """Forward propagation for 2D Batch Normalization
+
+        Args:
+            x_in (Tensor): Batch input
+
+        Returns:
+            Tensor: Batch Normalized Tensor
+        """
+        # move reshapes to the beginning to make it user-friendly
+        weight = self.weight.reshape(1, -1, 1, 1)
+        bias = self.bias.reshape(1, -1, 1, 1)
+        running_var = self.running_var.reshape(1, -1, 1, 1)
+        running_mean = self.running_mean.reshape(1, -1, 1, 1)
+        scale = weight * (running_var + self.eps).rsqrt()
+        adjusted_bias = bias - running_mean * scale
+        return x_in * scale + adjusted_bias
 
     def __repr__(self) -> str:
-        # pylint: disable=line-too-long
-        return f"{self.__class__.__name__}({self.weight.shape[0]}, eps={self.eps})"  # type: ignore[index]
+        return f"{self.__class__.__name__}({self.weight.shape[0]}, eps={self.eps})"

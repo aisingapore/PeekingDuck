@@ -92,17 +92,17 @@ class ImageList:
     and storing in a field the original sizes of each image
     """
 
-    # pylint: disable=invalid-name,too-few-public-methods
+    # pylint: disable=too-few-public-methods
     def __init__(self, tensors: Tensor, image_sizes: List[Tuple[int, int]]):
         """
         Args:
-            tensors (tensor)
+            tensors (Tensor)
             image_sizes (list[tuple[int, int]])
         """
         self.tensors = tensors
         self.image_sizes = image_sizes
 
-    def to(self, device: torch.device) -> "ImageList":
+    def to(self, device: torch.device) -> "ImageList":  # pylint: disable=invalid-name
         """Transfer the images to target device"""
         cast_tensor = self.tensors.to(device)
         return ImageList(cast_tensor, self.image_sizes)

@@ -99,14 +99,14 @@ import torch.nn.functional as F
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
     anchor_utils,
     poolers,
-    generalized_rcnn as GRCNN,
-    rpn as RPN,
-    roi_heads as ROI_Heads,
-    transform as GRCNNTransform,
+    rpn,
+    roi_heads,
+    generalized_rcnn as g_rnn,
+    transform as g_rcnn_transform,
 )
 
 
-class FasterRCNN(GRCNN.GeneralizedRCNN):
+class FasterRCNN(g_rnn.GeneralizedRCNN):
     """
     Implements Faster R-CNN.
 
@@ -160,7 +160,7 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             encoding/decoding of the bounding boxes
     """
 
-    # pylint: disable=too-many-arguments,too-many-locals,line-too-long
+    # pylint: disable=too-many-arguments,too-many-locals
     def __init__(
         self,
         backbone: nn.Module,
@@ -220,14 +220,15 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
                 anchor_sizes, aspect_ratios
             )
         if rpn_head is None:
-            rpn_head = RPN.RPNHead(
-                out_channels, rpn_anchor_generator.num_anchors_per_location()[0]  # type: ignore[arg-type]
+            rpn_head = rpn.RPNHead(
+                out_channels,  # type: ignore[arg-type]
+                rpn_anchor_generator.num_anchors_per_location()[0],
             )
 
         rpn_pre_nms_top_n = dict(testing=rpn_pre_nms_top_n_test)
         rpn_post_nms_top_n = dict(testing=rpn_post_nms_top_n_test)
 
-        rpn = RPN.RegionProposalNetwork(
+        rpn_obj = rpn.RegionProposalNetwork(
             rpn_anchor_generator,
             rpn_head,
             rpn_pre_nms_top_n,
@@ -245,7 +246,8 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             resolution = box_roi_pool.output_size[0]
             representation_size = 1024
             box_head = TwoMLPHead(
-                out_channels * resolution ** 2, representation_size  # type: ignore[operator,arg-type]
+                out_channels * resolution ** 2,  # type: ignore[operator,arg-type]
+                representation_size,
             )
 
         if box_predictor is None:
@@ -254,7 +256,7 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
                 representation_size, num_classes  # type: ignore[arg-type]
             )
 
-        roi_heads = ROI_Heads.RoIHeads(
+        roi_heads_obj = roi_heads.RoIHeads(
             # Box
             box_roi_pool,
             box_head,
@@ -269,37 +271,44 @@ class FasterRCNN(GRCNN.GeneralizedRCNN):
             image_mean = [0.485, 0.456, 0.406]
         if image_std is None:
             image_std = [0.229, 0.224, 0.225]
-        transform = GRCNNTransform.GeneralizedRCNNTransform(
+        transform = g_rcnn_transform.GeneralizedRCNNTransform(
             min_size, max_size, image_mean, image_std
         )
 
-        super().__init__(backbone, rpn, roi_heads, transform)
+        super().__init__(backbone, rpn_obj, roi_heads_obj, transform)
 
 
 class TwoMLPHead(nn.Module):
-    """
-    Standard heads for FPN-based models
+    """Standard heads for FPN-based models. Mainly used to perform transformation on the cropped
+    features from the RoI pooling function
 
     Args:
         in_channels (int): number of input channels
         representation_size (int): size of the intermediate representation
     """
 
-    # pylint: disable=invalid-name
     def __init__(self, in_channels: int, representation_size: int):
         super().__init__()
 
         self.fc6 = nn.Linear(in_channels, representation_size)
         self.fc7 = nn.Linear(representation_size, representation_size)
 
-    def forward(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        x = x.flatten(start_dim=1)
+    def forward(self, x_in: Tensor) -> Tensor:
+        """Takes in input and perform forward propagation through 2 layers of fully-connected
+        layers.
 
-        x = F.relu(self.fc6(x))
-        x = F.relu(self.fc7(x))
+        Args:
+            x_in (Tensor): Input Tensor
 
-        return x
+        Returns:
+            Tensor: Output Tensor
+        """
+        x_in = x_in.flatten(start_dim=1)
+
+        x_in = F.relu(self.fc6(x_in))
+        x_out = F.relu(self.fc7(x_in))
+
+        return x_out
 
 
 class FastRCNNPredictor(nn.Module):
@@ -312,18 +321,25 @@ class FastRCNNPredictor(nn.Module):
         num_classes (int): number of output classes (including background)
     """
 
-    # pylint: disable=invalid-name
     def __init__(self, in_channels: int, num_classes: int):
         super().__init__()
         self.cls_score = nn.Linear(in_channels, num_classes)
         self.bbox_pred = nn.Linear(in_channels, num_classes * 4)
 
-    def forward(self, x: Tensor) -> Tuple[Tensor, Tensor]:
-        # pylint: disable=missing-function-docstring
-        if x.dim() == 4:
-            assert list(x.shape[2:]) == [1, 1]
-        x = x.flatten(start_dim=1)
-        scores = self.cls_score(x)
-        bbox_deltas = self.bbox_pred(x)
+    def forward(self, x_in: Tensor) -> Tuple[Tensor, Tensor]:
+        """Takes the input Tensor and pass through two separate single layer fully connected layers
+            to obtain the classification logits and box regression deltas respectively.
+
+        Args:
+            x_in (Tensor): Input Tensor
+
+        Returns:
+            Tuple[Tensor, Tensor]: The classification logits and box regression deltas
+        """
+        if x_in.dim() == 4:
+            assert list(x_in.shape[2:]) == [1, 1]
+        x_in = x_in.flatten(start_dim=1)
+        scores = self.cls_score(x_in)
+        bbox_deltas = self.bbox_pred(x_in)
 
         return scores, bbox_deltas
