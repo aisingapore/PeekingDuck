@@ -67,18 +67,18 @@ class Node(
             "gamma_correction", "blur", "mosaic"}**. |br|
             This defines the effect (if any) to apply to either the masked or
             unmasked areas of the image. |br|
-            "standard_mask" (:obj:`bool`): draws a "standard" instance
+            "standard_mask" (:obj:`bool`): Draws a "standard" instance
             segmentation mask. |br|
-            "contrast" (:obj:`float`): **[0, 3], default = 1**. Adjust contrast
-            using this value as the "alpha" parameter. |br|
-            "brightness" (:obj:`int`): **[-100, 100], default = 0**. Adjust
+            "contrast" (:obj:`float`): **[0, 3], default = 1**. Adjusts
+            contrast using this value as the "alpha" parameter. |br|
+            "brightness" (:obj:`int`): **[-100, 100], default = 0**. Adjusts
             brightness using this value as the "beta" parameter. |br|
-            "gamma_correction" (:obj:`float`): adjust gamma using this value
+            "gamma_correction" (:obj:`float`): Adjusts gamma using this value
             as the "gamma" parameter. |br|
-            "blur" (:obj:`int`): blur the masks using this value as the
+            "blur" (:obj:`int`): Blurs the masks using this value as the
             "blur_kernel_size" parameter. Larger values gives more intense
             blurring. |br|
-            "mosaic" (:obj:`int`): mosaic the masks using this value as the
+            "mosaic" (:obj:`int`): Mosaics the masks using this value as the
             resolution of a mosaic filter (width |times| height). The number
             corresponds to the number of rows and columns used to create a
             mosaic. For example, the setting (``mosaic: 25``) creates a
