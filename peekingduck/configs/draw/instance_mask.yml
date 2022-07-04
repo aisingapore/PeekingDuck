@@ -3,14 +3,17 @@ output: ["img"]
 
 instance_color_scheme: hue_family
 
-effect: standard
+effect: {
+  standard_mask: True,
+  brightness: None,
+  contrast: None,
+  gamma_correction: None,
+  blur: None,
+  mosaic: None
+}
 effect_area: masked
 
-gamma: 1.0
-alpha: 1.0
-beta: 0
-blur_kernel_size: 50
-mosaic_level: 25
-
-show_contours: False
-contour_thickness: 2
+contours: {
+    show: False,
+    thickness: 2
+}

@@ -19,7 +19,7 @@ Draws instance segmentation masks.
 import colorsys
 import logging
 from random import randint
-from typing import Any, Dict, Tuple, cast
+from typing import Any, Dict, List, Tuple, Union, cast
 
 import cv2
 import numpy as np
@@ -63,16 +63,27 @@ class Node(
             the same class, but with a slightly different saturation.
             "random": use a random color for all instances.
 
-        effect (:obj:`str`): **{"standard", "contrast_brightness",
-            "gamma_correction", "blur", "mosaic"}, default = None**. |br|
+        effect (:obj:`dict`): **{"standard_mask", "contrast", "brightness",
+            "gamma_correction", "blur", "mosaic"}**. |br|
             This defines the effect (if any) to apply to either the masked or
             unmasked areas of the image. |br|
-            "standard": draws a "standard" instance segmentation mask. |br|
-            "contrast_brightness": adjust contrast and brightness using "alpha"
-            and "beta" parameters. |br|
-            "gamma_correction": adjust gamma using "gamma" parameter. |br|
-            "blur": blur the masks using "blur_kernel_size" parameter. |br|
-            "mosaic": mosaic the masks using "mosaic_level" parameter. |br|
+            "standard_mask" (:obj:`bool`): draws a "standard" instance
+            segmentation mask. |br|
+            "contrast" (:obj:`float`): adjust contrast using this value as the
+            "alpha" parameter. |br|
+            "brightness" (:obj:`int`): adjust brightness using this value as
+            the "beta" parameter. |br|
+            "gamma_correction" (:obj:`float`): adjust gamma using this value
+            as the "gamma" parameter. |br|
+            "blur" (:obj:`int`): blur the masks using this value as the
+            "blur_kernel_size" parameter. Larger values gives more intense
+            blurring. |br|
+            "mosaic" (:obj:`int`): mosaic the masks using this value as the
+            resolution of a mosaic filter (width |times| height). The number
+            corresponds to the number of rows and columns used to create a
+            mosaic. For example, the setting (``mosaic: 25``) creates a
+            :math:`25 \\times 25` mosaic filter. Increasing the number
+            increases the intensity of pixelization over an area. |br|
 
         effect_area (:obj:`str`): **{"masked", "unmasked"}, 
             default = "masked"**. |br|
@@ -80,32 +91,11 @@ class Node(
             "masked": the effect is applied to the masked areas of the image. |br|
             "unmasked": the effect is applied to the unmasked areas of the image. |br|
 
-        gamma (:obj:`float`): **default = 1.0**. |br|
-            This defines the gamma correction to apply to the image.
-
-        alpha (:obj:`float`): **default = 1.0**. |br|
-            This defines the alpha value to use for the contrast adjustment.
-
-        beta (:obj:`int`): **default = 0**. |br|
-            This defines the beta value to use for the brightness adjustment.
-
-        blur_kernel_size (:obj:`int`): **default = 50**. |br|
-            This defines the kernel size used in the blur filter. Larger values
-            of ``blur_kernel_size`` gives more intense blurring.
-
-        mosaic_level (:obj:`int`): **default = 25**. |br|
-            Defines the resolution of a mosaic filter (width |times| height).
-            The number corresponds to the number of rows and columns used to
-            create a mosaic. For example, the default setting
-            (``mosaic_level = 25``) creates a :math:`25 \\times 25` mosaic filter.
-            Increasing the number increases the intensity of pixelization over
-            an area.
-
-        show_contours (:obj:`bool`): **default = False**. |br|
-            This determines whether to show the contours of the masks.
-
-        contour_thickness (:obj:`int`): **default = 3**. |br|
-            This defines the thickness of the contours.
+        contours (:obj:`dict`): **{"show", "thickness"}**. |br|
+            "show" (:obj:`bool`): **default = False**. |br|
+                This determines whether to show the contours of the masks.
+            "thickness" (:obj:`int`): **default = 3**. |br|
+                This defines the thickness of the contours.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -129,46 +119,68 @@ class Node(
         Returns:
             outputs (dict): Output in dictionary format with key "img".
         """
-        if self.config["effect"] == "standard":
-            output_img = self._draw_standard_masks(
-                inputs["img"],
-                inputs["masks"],
-                inputs["bbox_labels"],
-                inputs["bbox_scores"],
-            )
-        else:
-            output_img = self._mask_apply_effect(
-                inputs["img"],
-                inputs["masks"],
-            )
+        for effect in self.config["effect"]:
+            if self.config['effect'][effect] is not None:
+                if effect == "standard_mask":
+                    output_img = self._draw_standard_masks(
+                        inputs["img"],
+                        inputs["masks"],
+                        inputs["bbox_labels"],
+                        inputs["bbox_scores"],
+                    )
+                else:
+                    output_img = self._mask_apply_effect(
+                        inputs["img"],
+                        inputs["masks"],
+                        effect,
+                    )
+                break   # only apply the first effect
+
         return {"img": output_img}
 
     def _validate_configs(self):
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
-        self.check_valid_choice(
-            "effect",
-            {"standard", "contrast_brightness", "gamma_correction", "blur", "mosaic"},
-        )
-        self.check_valid_choice("effect_area", {"masked", "unmasked"})
-        self._check_type("alpha", float)
-        self.check_bounds("alpha", "[0, +inf]")
-        self._check_type("beta", int)
-        self.check_bounds("beta", "[-255, 255]")
-        self._check_type("gamma", float)
-        self.check_bounds("gamma", "[0, +inf]")
-        self._check_type("blur_kernel_size", int)
-        self.check_bounds("blur_kernel_size", "[1, +inf]")
-        self._check_type("mosaic_level", int)
-        self.check_bounds("mosaic_level", "[1, +inf]")
-        self._check_type("show_contours", bool)
-        self._check_type("contour_thickness", int)
-        self.check_bounds("contour_thickness", "[1, +inf]")
 
-    def _check_type(self, key: Any, var_type: Any) -> None:
-        if not isinstance(self.config[key], var_type):
+        effects = ("standard_mask", "contrast", "brightness", "gamma_correction", "blur", "mosaic")
+        has_effect = False
+        for k, v in self.config["effect"].items():
+            if k not in effects:
+                raise ValueError(f"{k} must be one of {effects}")
+            if v:
+                has_effect = True
+
+        if not has_effect:
+            raise ValueError("At least one effect must be enabled in the config.")
+
+        self.check_valid_choice("effect_area", {"masked", "unmasked"})
+
+        self._check_type(self.config["effect"]["contrast"], float)
+        self._check_number_range(self.config["effect"]["contrast"], "[0, +inf]")
+        self._check_type(self.config["effect"]["brightness"], int)
+        self._check_number_range(self.config["effect"]["brightness"], "[-255, 255]")
+        self._check_type(self.config["effect"]["gamma_correction"], float)
+        self._check_number_range(self.config["effect"]["gamma_correction"], "[0, +inf]")
+        self._check_type(self.config["effect"]["blur"], int)
+        self._check_number_range(self.config["effect"]["blur"], "[1, +inf]")
+        self._check_type(self.config["effect"]["mosaic"], int)
+        self._check_number_range(self.config["effect"]["mosaic"], "[1, +inf]")
+        self._check_type(self.config["contours"]["show"], bool)
+        self._check_type(self.config["contours"]["thickness"], int)
+        self._check_number_range(self.config["contours"]["thickness"], "[1, +inf]")
+
+    def _check_type(self, var: Any, var_type: Any) -> None:
+        if var is not None and not isinstance(var, var_type):
             raise ValueError(
-                f"Config: '{key}' must be a {var_type.__name__} value."
+                f"Config: '{var}' must be a {var_type.__name__} value."
             )
+
+    def _check_number_range(self, var: Any, number_range: List[Union[str, int]]) -> None:
+        if var is not None:
+            lower, upper = [float(value.strip()) for value in number_range[1:-1].split(",")]
+            if not lower <= var <= upper:
+                raise ValueError(
+                    f"Config: '{var}' must be within the range of {number_range}."
+                )
 
     def _draw_standard_masks(  # pylint: disable-msg=too-many-locals
         self,
@@ -223,7 +235,7 @@ class Node(
             ret_image = cv2.bitwise_and(ret_image, ret_image, mask=mask_inv)
             ret_image = cv2.add(ret_image, masked_area_colored)
 
-            if self.config["show_contours"]:
+            if self.config["contours"]["show"]:
                 ret_image = self._draw_contours_single_mask(
                     masks, index, ret_image, color
                 )
@@ -287,7 +299,7 @@ class Node(
             contour,
             -1,
             contour_color_bgr,
-            self.config["contour_thickness"],
+            self.config["contours"]["thickness"],
         )
 
         return ret_image
@@ -308,12 +320,12 @@ class Node(
                 contour,
                 -1,
                 contour_color_bgr,
-                self.config["contour_thickness"],
+                self.config["contours"]["thickness"],
             )
 
         return ret_image
 
-    def _mask_apply_effect(self, image: np.ndarray, masks: np.ndarray) -> np.ndarray:
+    def _mask_apply_effect(self, image: np.ndarray, masks: np.ndarray, effect: str) -> np.ndarray:
         """Applies the chosen effect to the image and masks."""
         combined_masks = np.zeros(image.shape[:2], dtype="uint8")
         # combine all the individual masks
@@ -325,16 +337,16 @@ class Node(
         else:  # effect_area == "unmasked"
             effect_area = 1 - combined_masks
 
-        if self.config["effect"] == "contrast_brightness":
-            full_image_with_effect = self._adjust_contrast_brightness(image)
-        elif self.config["effect"] == "gamma_correction":
+        if effect in ["contrast", "brightness"]:
+            full_image_with_effect = self._adjust_contrast_brightness(image, effect)
+        elif effect == "gamma_correction":
             full_image_with_effect = self._gamma_correction(image)
-        elif self.config["effect"] == "blur":
+        elif effect == "blur":
             full_image_with_effect = cv2.blur(
                 image,
-                (self.config["blur_kernel_size"], self.config["blur_kernel_size"]),
+                (self.config["effect"]["blur"], self.config["effect"]["blur"]),
             )
-        elif self.config["effect"] == "mosaic":
+        elif effect == "mosaic":
             full_image_with_effect = self._mosaic_image(image)
 
         effect_area_with_effect = cv2.bitwise_and(
@@ -347,23 +359,28 @@ class Node(
         # add both images together
         ret_image = cv2.add(image_empty_effect_area, effect_area_with_effect)
 
-        if self.config["show_contours"]:
+        if self.config["contours"]["show"]:
             ret_image = self._draw_contours_all_masks(masks, ret_image)
 
         return ret_image
 
-    def _adjust_contrast_brightness(self, image: np.ndarray) -> np.ndarray:
-        adjusted_image = cv2.convertScaleAbs(
-            image, alpha=self.config["alpha"], beta=self.config["beta"]
-        )
+    def _adjust_contrast_brightness(self, image: np.ndarray, effect: str) -> np.ndarray:
+        if effect == "contrast":
+            alpha = self.config["effect"]["contrast"]
+            beta = 0
+        else:    # i.e. effect == "brightness"
+            alpha = 1
+            beta = self.config["effect"]["brightness"]
 
-        return adjusted_image
+        return cv2.convertScaleAbs(
+                image, alpha=alpha, beta=beta
+            )
 
     def _gamma_correction(self, image: np.ndarray) -> np.ndarray:
         lookup_table = np.empty((1, 256), np.uint8)
         for i in range(256):
             lookup_table[0, i] = np.clip(
-                pow(i / 255.0, self.config["gamma"]) * 255.0, 0, 255
+                pow(i / 255.0, self.config["effect"]["gamma_correction"]) * 255.0, 0, 255
             )
 
         image_gamma_corrected = cv2.LUT(image, lookup_table)
@@ -374,7 +391,7 @@ class Node(
         height, width = image.shape[:2]
         ret_image = cv2.resize(
             image,
-            (self.config["mosaic_level"], self.config["mosaic_level"]),
+            (self.config["effect"]["mosaic"], self.config["effect"]["mosaic"]),
             interpolation=cv2.INTER_LANCZOS4,
         )
         ret_image = cv2.resize(
