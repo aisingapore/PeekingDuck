@@ -17,21 +17,22 @@
 from PIL import ImageTk, Image
 
 
-def load_image(image_path: str, resize_pct: float = 0.25) -> ImageTk.PhotoImage:
-    """Load and resize an image, 'coz plain vanilla Tkinter doesn't support JPG, PNG
+def get_keyboard_char(char: str, keysym: str) -> str:
+    """Get keyboard character
 
     Args:
-        resize_pct (float, optional): percentage to resize. Defaults to 0.25.
+        char (str): Tk keypress event character
+        keysym (str): Tk keypress event key symbol
 
     Returns:
-        ImageTk.PhotoImage: the loaded image
+        str: keyboard character
     """
-    img = Image.open(image_path)
-    width = int(resize_pct * img.size[0])
-    height = int(resize_pct * img.size[1])
-    resized_img = img.resize((width, height))
-    the_img = ImageTk.PhotoImage(resized_img)
-    return the_img
+    res = char if char else keysym
+    if keysym == "minus":
+        res = "-"
+    if keysym == "plus":
+        res = "+"
+    return res
 
 
 def get_keyboard_modifier(state: int) -> str:
@@ -65,23 +66,25 @@ def get_keyboard_modifier(state: int) -> str:
     alt = (state & 0x8) != 0 or (state & 0x80) != 0
     shift = (state & 0x1) != 0
     res = f"{'ctrl' if ctrl else ''}{'-alt' if alt else ''}{'-shift' if shift else ''}"
-    # print(f"res={type(res)} {len(res)} '{res}'")
     return "" if len(res) == 0 else res[1:] if res[0] == "-" else res
 
 
-def get_keyboard_char(char: str, keysym: str) -> str:
-    """Get keyboard character
+def load_image(image_path: str, resize_pct: float = 1.0) -> ImageTk.PhotoImage:
+    """Load and resize an image, 'coz plain vanilla Tkinter doesn't support JPG, PNG
 
     Args:
-        char (str): Tk keypress event character
-        keysym (str): Tk keypress event key symbol
+        resize_pct (float, optional): percentage to resize.
+                                      Defaults to original size 1.0.
 
     Returns:
-        str: keyboard character
+        ImageTk.PhotoImage: the loaded image
     """
-    res = char if char else keysym
-    if keysym == "minus":
-        res = "-"
-    if keysym == "plus":
-        res = "+"
-    return res
+    img = Image.open(image_path)
+    if resize_pct != 1.0:
+        width = int(resize_pct * img.size[0])
+        height = int(resize_pct * img.size[1])
+        resized_img = img.resize((width, height))
+    else:
+        resized_img = img
+    the_img = ImageTk.PhotoImage(resized_img)
+    return the_img
