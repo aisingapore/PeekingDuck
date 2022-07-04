@@ -119,20 +119,21 @@ class Node(
         """
         for effect in self.config["effect"]:
             if self.config['effect'][effect] is not None:
-                if effect == "standard_mask":
+                if effect == "standard_mask" and self.config['effect'][effect]:
                     output_img = self._draw_standard_masks(
                         inputs["img"],
                         inputs["masks"],
                         inputs["bbox_labels"],
                         inputs["bbox_scores"],
                     )
-                else:
+                    break   # only apply the first effect
+                elif effect != "standard_mask":
                     output_img = self._mask_apply_effect(
                         inputs["img"],
                         inputs["masks"],
                         effect,
                     )
-                break   # only apply the first effect
+                    break   # only apply the first effect
 
         return {"img": output_img}
 
