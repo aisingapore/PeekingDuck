@@ -101,8 +101,6 @@ class Node(
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.logger = logging.getLogger(__name__)
-
         self.class_instance_color_state: Dict[str, Tuple[int, int, int]] = {}
         self._validate_configs()
 
