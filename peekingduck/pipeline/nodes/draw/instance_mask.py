@@ -30,6 +30,7 @@ from peekingduck.pipeline.nodes.draw.utils.constants import (
     SATURATION_STEPS,
     SATURATION_MINIMUM,
     ALPHA,
+    CONTOUR_COLOR,
     CLASS_COLORS,
     DEFAULT_CLASS_COLOR,
 )
@@ -287,17 +288,11 @@ class Node(
         """Draws the contour around a single instance segmentation mask."""
         ret_image = image
         contour, _ = cv2.findContours(masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-        # use a darker/lighter saturation of instance hue for the
-        # contour so that it is more visible
-        hsv = Node._rgb_to_hsv(instance_color)
-        contour_color_hsv = (hsv[0], int((hsv[1] + 127) % 256), hsv[2])
-        contour_color_rgb = Node._hsv_to_rgb(contour_color_hsv)
-        contour_color_bgr = contour_color_rgb[::-1]
         cv2.drawContours(
             ret_image,
             contour,
             -1,
-            contour_color_bgr,
+            CONTOUR_COLOR,
             self.config["contours"]["thickness"],
         )
 
@@ -307,18 +302,16 @@ class Node(
         self,
         masks: np.ndarray,
         image: np.ndarray,
-        contour_color: Tuple[int, int, int] = (128, 128, 128),
     ) -> np.ndarray:
         """Draws contours around all instance segmentation masks."""
         ret_image = image
-        contour_color_bgr = contour_color[::-1]
         for i in range(masks.shape[0]):
             contour, _ = cv2.findContours(masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
             cv2.drawContours(
                 ret_image,
                 contour,
                 -1,
-                contour_color_bgr,
+                CONTOUR_COLOR,
                 self.config["contours"]["thickness"],
             )
 
