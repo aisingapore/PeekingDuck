@@ -69,10 +69,10 @@ class Node(
             unmasked areas of the image. |br|
             "standard_mask" (:obj:`bool`): draws a "standard" instance
             segmentation mask. |br|
-            "contrast" (:obj:`float`): adjust contrast using this value as the
-            "alpha" parameter. |br|
-            "brightness" (:obj:`int`): adjust brightness using this value as
-            the "beta" parameter. |br|
+            "contrast" (:obj:`float`): **[0, 3], default = 1**. Adjust contrast
+            using this value as the "alpha" parameter. |br|
+            "brightness" (:obj:`int`): **[-100, 100], default = 0**. Adjust
+            brightness using this value as the "beta" parameter. |br|
             "gamma_correction" (:obj:`float`): adjust gamma using this value
             as the "gamma" parameter. |br|
             "blur" (:obj:`int`): blur the masks using this value as the
@@ -155,9 +155,9 @@ class Node(
         self.check_valid_choice("effect_area", {"masked", "unmasked"})
 
         self._check_type(self.config["effect"]["contrast"], float)
-        self._check_number_range(self.config["effect"]["contrast"], "[0, +inf]")
+        self._check_number_range(self.config["effect"]["contrast"], "[0, 3]")
         self._check_type(self.config["effect"]["brightness"], int)
-        self._check_number_range(self.config["effect"]["brightness"], "[-255, 255]")
+        self._check_number_range(self.config["effect"]["brightness"], "[-100, 100]")
         self._check_type(self.config["effect"]["gamma_correction"], float)
         self._check_number_range(self.config["effect"]["gamma_correction"], "[0, +inf]")
         self._check_type(self.config["effect"]["blur"], int)
