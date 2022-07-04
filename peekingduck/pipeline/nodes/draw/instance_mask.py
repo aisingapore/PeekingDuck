@@ -204,7 +204,7 @@ class Node(
                 applied to it.
         """
         full_sized_canvas = np.zeros(image.shape, image.dtype)
-        ret_image = image.copy()
+        ret_image = image
 
         # draw masks in ascending order of confidence scores, on the
         # assumption that objects with higher scores are positioned nearer to
@@ -284,7 +284,7 @@ class Node(
         instance_color: Tuple[int, int, int],
     ) -> np.ndarray:
         """Draws the contour around a single instance segmentation mask."""
-        ret_image = image.copy()
+        ret_image = image
         contour, _ = cv2.findContours(masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         # use a darker/lighter saturation of instance hue for the
         # contour so that it is more visible
@@ -309,7 +309,7 @@ class Node(
         contour_color: Tuple[int, int, int] = (128, 128, 128),
     ) -> np.ndarray:
         """Draws contours around all instance segmentation masks."""
-        ret_image = image.copy()
+        ret_image = image
         contour_color_bgr = contour_color[::-1]
         for i in range(masks.shape[0]):
             contour, _ = cv2.findContours(masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
