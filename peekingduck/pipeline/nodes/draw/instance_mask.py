@@ -85,11 +85,11 @@ class Node(
             :math:`25 \\times 25` mosaic filter. Increasing the number
             increases the intensity of pixelization over an area. |br|
 
-        effect_area (:obj:`str`): **{"masked", "unmasked"}, 
-            default = "masked"**. |br|
+        effect_area (:obj:`str`): **{"objects", "background"}, 
+            default = "objects"**. |br|
             This defines where the effect should be applied. |br|
-            "masked": the effect is applied to the masked areas of the image. |br|
-            "unmasked": the effect is applied to the unmasked areas of the image. |br|
+            "objects": the effect is applied to the masked areas of the image. |br|
+            "background": the effect is applied to the unmasked areas of the image. |br|
 
         contours (:obj:`dict`): **{"show", "thickness"}**. |br|
             "show" (:obj:`bool`): **default = False**. |br|
@@ -152,7 +152,7 @@ class Node(
         if not has_effect:
             raise ValueError("At least one effect must be enabled in the config.")
 
-        self.check_valid_choice("effect_area", {"masked", "unmasked"})
+        self.check_valid_choice("effect_area", {"objects", "background"})
 
         self._check_type(self.config["effect"]["contrast"], float)
         self._check_number_range(self.config["effect"]["contrast"], "[0, 3]")
@@ -332,9 +332,9 @@ class Node(
         for mask in masks:
             np.putmask(combined_masks, mask, 1)
 
-        if self.config["effect_area"] == "masked":
+        if self.config["effect_area"] == "objects":
             effect_area = combined_masks
-        else:  # effect_area == "unmasked"
+        else:  # effect_area == "background"
             effect_area = 1 - combined_masks
 
         if effect in ["contrast", "brightness"]:
