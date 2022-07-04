@@ -109,7 +109,7 @@ class GeneralizedRCNNTransform(nn.Module):
     It returns a ImageList for the inputs
     """
 
-    # pylint: disable=too-many-arguments, no-self-use
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         min_size: int,
@@ -130,13 +130,25 @@ class GeneralizedRCNNTransform(nn.Module):
         self.fixed_size = fixed_size
 
     def forward(self, images: List[Tensor]) -> ImageList:
-        # pylint: disable=missing-function-docstring
+        """Normalizes and resizes the images, follow by padding the images to the same size and
+        putting the images into the ImageList object that contains the padded images and the
+        original image sizes
+
+        Args:
+            images (List[Tensor]): Input images
+
+        Raises:
+            ValueError: Raise error ig the image does not have the shape [C, H, W]
+
+        Returns:
+            ImageList: An object containing padded images and the original image sizes
+        """
         for i, image in enumerate(images):
 
             if image.dim() != 3:
                 raise ValueError(
                     "images is expected to be a list of 3d tensors "
-                    "of shape [C, H, W], got {}".format(image.shape)
+                    f"of shape [C, H, W], got {image.shape}"
                 )
             image = self.normalize(image)
             image = self.resize(image)
@@ -156,7 +168,7 @@ class GeneralizedRCNNTransform(nn.Module):
         """Normalize image"""
         if not image.is_floating_point():
             raise TypeError(
-                f"Expected input images to be of floating type (in range [0, 1]), "
+                "Expected input images to be of floating type (in range [0, 1]), "
                 f"but found type {image.dtype} instead"
             )
         dtype, device = image.dtype, image.device
@@ -174,14 +186,6 @@ class GeneralizedRCNNTransform(nn.Module):
 
         return image
 
-    def max_by_axis(self, the_list: List[List[int]]) -> List[int]:
-        """Find the maximum size for each axis in a batch of images"""
-        maxes = the_list[0]
-        for sublist in the_list[1:]:
-            for index, item in enumerate(sublist):
-                maxes[index] = max(maxes[index], item)
-        return maxes
-
     def batch_images(self, images: List[Tensor], size_divisible: int = 32) -> Tensor:
         """Pad the images in a batch to the same size"""
         max_size = self.max_by_axis([list(img.shape) for img in images])
@@ -198,8 +202,17 @@ class GeneralizedRCNNTransform(nn.Module):
 
         return batched_imgs
 
+    @staticmethod
+    def max_by_axis(the_list: List[List[int]]) -> List[int]:
+        """Find the maximum size for each axis in a batch of images"""
+        maxes = the_list[0]
+        for sublist in the_list[1:]:
+            for index, item in enumerate(sublist):
+                maxes[index] = max(maxes[index], item)
+        return maxes
+
+    @staticmethod
     def postprocess(
-        self,
         result: List[Dict[str, Tensor]],
         image_shapes: List[Tuple[int, int]],
         original_image_sizes: List[Tuple[int, int]],
@@ -220,14 +233,13 @@ class GeneralizedRCNNTransform(nn.Module):
 
     def __repr__(self) -> str:
         format_string = self.__class__.__name__ + "("
-        _indent = "\n    "
-        format_string += "{0}Normalize(mean={1}, std={2})".format(
-            _indent, self.image_mean, self.image_std
+        indent = "\n    "
+        format_string += (
+            f"{indent}Normalize(mean={self.image_mean}, std={self.image_std})"
         )
         format_string += (
-            "{0}Resize(min_size={1}, max_size={2}, mode='bilinear')".format(
-                _indent, self.min_size, self.max_size
-            )
+            f"{indent}Resize(min_size={self.min_size}, "
+            f"max_size={self.max_size}, mode='bilinear')"
         )
         format_string += "\n)"
         return format_string
@@ -276,7 +288,7 @@ def _resize_image_and_masks(
         scale_factor = scale.item()
         recompute_scale_factor = True
 
-    image = torch.nn.functional.interpolate(  # type: ignore[call-arg]
+    image = nn.functional.interpolate(  # type: ignore[call-arg]
         image[None],
         size=size,
         scale_factor=scale_factor,

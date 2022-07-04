@@ -94,15 +94,15 @@ from torch import nn, Tensor
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
     resnet,
     misc,
-    feature_pyramid_network as FPN,
+    feature_pyramid_network as fpn,
 )
 
 
 class BackboneWithFPN(nn.Module):
     """
     Adds a FPN on top of a model.
-    Internally, it uses torchvision.models._utils.IntermediateLayerGetter to
-    extract a submodel that returns the feature maps specified in return_layers.
+    Internally, it uses IntermediateLayerGetter to extract a submodel that returns
+    the feature maps specified in return_layers.
     The same limitations of IntermediateLayerGetter apply here.
     Args:
         backbone (nn.Module)
@@ -122,31 +122,42 @@ class BackboneWithFPN(nn.Module):
         out_channels (int): the number of channels in the FPN
     """
 
-    # pylint: disable=too-many-arguments,invalid-name
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         backbone: nn.Module,
         return_layers: Dict[str, str],
         in_channels_list: List[int],
         out_channels: int,
-        extra_blocks: Optional[FPN.ExtraFPNBlock] = None,
+        extra_blocks: Optional[fpn.ExtraFPNBlock] = None,
     ):
         super().__init__()
 
         if extra_blocks is None:
-            extra_blocks = FPN.LastLevelMaxPool()
+            extra_blocks = fpn.LastLevelMaxPool()
 
         self.body = IntermediateLayerGetter(backbone, return_layers=return_layers)
-        self.fpn = FPN.FeaturePyramidNetwork(
+        self.fpn = fpn.FeaturePyramidNetwork(
             in_channels_list=in_channels_list,
             out_channels=out_channels,
             extra_blocks=extra_blocks,
         )
         self.out_channels = out_channels
 
-    def forward(self, x: Tensor) -> Dict[str, Tensor]:
-        # pylint: disable=missing-function-docstring
-        x_out = self.body(x)
+    def forward(self, inputs: Tensor) -> Dict[str, Tensor]:
+        """Takes the input tensor and pass it through the intermediate layers of the model.
+        Then, the output from the intermediate layers will be passed to the FPN before returning
+        the final output.
+
+        Args:
+            inputs (Tensor): Input feature
+
+        Returns:
+            Dict[str, Tensor]: An output dictionary. The keys are the names of the returned
+                activations of the backbone, and the values are the output features from the FPN
+                layers ordered from highest resolution first.
+        """
+        x_out = self.body(inputs)
         x_out = self.fpn(x_out)
         return x_out
 
@@ -158,6 +169,9 @@ def resnet_fpn_backbone(backbone_name: str) -> BackboneWithFPN:
 
     Args:
         backbone_name (string): resnet architecture. Possible values are 'resnet50', 'resnet101'
+
+    Returns:
+        BackboneWithFPN: An object of the backbone with the FPN attached
     """
     backbone = resnet.__dict__[backbone_name](norm_layer=misc.FrozenBatchNorm2d)
 
@@ -165,11 +179,17 @@ def resnet_fpn_backbone(backbone_name: str) -> BackboneWithFPN:
     for _, parameter in backbone.named_parameters():
         parameter.requires_grad_(False)
 
-    extra_blocks = FPN.LastLevelMaxPool()
+    extra_blocks = fpn.LastLevelMaxPool()
 
     returned_layers = [1, 2, 3, 4]
     return_layers = {f"layer{k}": str(v) for v, k in enumerate(returned_layers)}
 
+    # backbone.inplanes will be equal to the final output feature channels (2048 for both r50
+    # and r101), and dividing by 8 will be equal to the number of output channels at the conv2_x
+    # layer (layer 1) (256 for both r50 and r101). The elements in the in_channels_list (list of
+    # number of input channels for the FPN) should be equal to the number of output channels for
+    # the respective layers in the returned_layers, which is increased by a factor of 2 for every
+    # subsequent layers (e.g. layer 1 to 4 --> [256, 512, 1024, 2048] for R-50 and R-101).
     in_channels_stage2 = backbone.inplanes // 8
     in_channels_list = [in_channels_stage2 * 2 ** (i - 1) for i in returned_layers]
     out_channels = 256
@@ -203,11 +223,6 @@ class IntermediateLayerGetter(nn.ModuleDict):
             of the returned activation (which the user can specify).
     """
 
-    _version = 2
-    __annotations__ = {
-        "return_layers": Dict[str, str],
-    }
-
     def __init__(self, model: nn.Module, return_layers: Dict[str, str]) -> None:
         if not set(return_layers).issubset(
             [name for name, _ in model.named_children()]
@@ -226,12 +241,22 @@ class IntermediateLayerGetter(nn.ModuleDict):
         super().__init__(layers)
         self.return_layers = orig_return_layers
 
-    def forward(self, x: Tensor) -> Dict[str, Tensor]:
-        # pylint: disable=missing-function-docstring,invalid-name
+    def forward(self, inputs: Tensor) -> Dict[str, Tensor]:
+        """Takes in a Tensor and obtain the outputs from the respective layers specified in
+        self.return_layers.
+
+        Args:
+            inputs (Tensor): Input tensor
+
+        Returns:
+            Dict[str, Tensor]: A dictionary with keys equal to the enumerated numbers of the
+                `return_layers`, and the value is the output features from the respective
+                intermediate layers specified in self.return_layers
+        """
         out = OrderedDict()
         for name, module in self.items():
-            x = module(x)
+            inputs = module(inputs)
             if name in self.return_layers:
                 out_name = self.return_layers[name]
-                out[out_name] = x
+                out[out_name] = inputs
         return out

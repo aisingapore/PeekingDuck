@@ -84,6 +84,7 @@ Modifications include:
     - load_state_dict_from_url
     - Other ResNet variants that are not used in Mask-RCNN.
     - _resnet is subsumed into resnet50 and resnet101.
+    - _forward_impl is subsumed into forward method for the ResNet class
 - Removed unused arguments.
     - pretrained option
     - progress option
@@ -122,7 +123,7 @@ class BasicBlock(nn.Module):
     """Basic Block for ResNet"""
 
     expansion: int = 1
-    # pylint: disable=invalid-name,too-many-arguments
+    # pylint: disable=too-many-arguments
     def __init__(
         self,
         inplanes: int,
@@ -150,11 +151,18 @@ class BasicBlock(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        identity = x
+    def forward(self, inputs: Tensor) -> Tensor:
+        """Forward propagation for BasicBlock of ResNet
 
-        out = self.conv1(x)
+        Args:
+            inputs (Tensor): Input Tensor
+
+        Returns:
+            Tensor: Output Tensor
+        """
+        identity = inputs
+
+        out = self.conv1(inputs)
         out = self.bn1(out)
         out = self.relu(out)
 
@@ -162,7 +170,7 @@ class BasicBlock(nn.Module):
         out = self.bn2(out)
 
         if self.downsample is not None:
-            identity = self.downsample(x)
+            identity = self.downsample(inputs)
 
         out += identity
         out = self.relu(out)
@@ -178,7 +186,7 @@ class Bottleneck(nn.Module):
     https://ngc.nvidia.com/catalog/model-scripts/nvidia:resnet_50_v1_5_for_pytorch.
     """
 
-    # pylint: disable=too-many-arguments,invalid-name,too-many-instance-attributes
+    # pylint: disable=too-many-arguments,too-many-instance-attributes
     expansion: int = 4
 
     def __init__(
@@ -207,11 +215,18 @@ class Bottleneck(nn.Module):
         self.downsample = downsample
         self.stride = stride
 
-    def forward(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        identity = x
+    def forward(self, inputs: Tensor) -> Tensor:
+        """Forward propagation of the Bottleneck blocks of ResNet
 
-        out = self.conv1(x)
+        Args:
+            inputs (Tensor): Input Tensor
+
+        Returns:
+            Tensor: Output Tensor
+        """
+        identity = inputs
+
+        out = self.conv1(inputs)
         out = self.bn1(out)
         out = self.relu(out)
 
@@ -223,7 +238,7 @@ class Bottleneck(nn.Module):
         out = self.bn3(out)
 
         if self.downsample is not None:
-            identity = self.downsample(x)
+            identity = self.downsample(inputs)
 
         out += identity
         out = self.relu(out)
@@ -234,7 +249,7 @@ class Bottleneck(nn.Module):
 class ResNet(nn.Module):
     """Implements ResNet backbone"""
 
-    # pylint: disable=too-many-arguments,too-many-instance-attributes,invalid-name
+    # pylint: disable=too-many-arguments,too-many-instance-attributes
     def __init__(
         self,
         block: Type[Union[BasicBlock, Bottleneck]],
@@ -281,24 +296,24 @@ class ResNet(nn.Module):
             block, 512, layers[3], stride=2, dilate=replace_stride_with_dilation[2]
         )
         self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
+        self.fully_connected = nn.Linear(512 * block.expansion, num_classes)
 
-        for m in self.modules():
-            if isinstance(m, nn.Conv2d):
-                nn.init.kaiming_normal_(m.weight, mode="fan_out", nonlinearity="relu")
-            elif isinstance(m, (nn.BatchNorm2d, nn.GroupNorm)):
-                nn.init.constant_(m.weight, 1)
-                nn.init.constant_(m.bias, 0)
+        for mod in self.modules():
+            if isinstance(mod, nn.Conv2d):
+                nn.init.kaiming_normal_(mod.weight, mode="fan_out", nonlinearity="relu")
+            elif isinstance(mod, (nn.BatchNorm2d, nn.GroupNorm)):
+                nn.init.constant_(mod.weight, 1)
+                nn.init.constant_(mod.bias, 0)
 
         # Zero-initialize the last BN in each residual branch, so that the residual
         # branch starts with zeros, and each residual block behaves like an identity.
         # This improves the model by 0.2~0.3% according to https://arxiv.org/abs/1706.02677
         if zero_init_residual:
-            for m in self.modules():
-                if isinstance(m, Bottleneck):
-                    nn.init.constant_(m.bn3.weight, 0)  # type: ignore[arg-type]
-                elif isinstance(m, BasicBlock):
-                    nn.init.constant_(m.bn2.weight, 0)  # type: ignore[arg-type]
+            for mod in self.modules():
+                if isinstance(mod, Bottleneck):
+                    nn.init.constant_(mod.bn3.weight, 0)  # type: ignore[arg-type]
+                elif isinstance(mod, BasicBlock):
+                    nn.init.constant_(mod.bn2.weight, 0)  # type: ignore[arg-type]
 
     def _make_layer(
         self,
@@ -349,28 +364,28 @@ class ResNet(nn.Module):
 
         return nn.Sequential(*layers)
 
-    def _forward_impl(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        # See note [TorchScript super()]
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        x = self.maxpool(x)
+    def forward(self, inputs: Tensor) -> Tensor:
+        """Forward propagation of the main ResNet model
 
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
+        Args:
+            inputs (Tensor): Input Tensor
 
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc(x)
+        Returns:
+            Tensor: Output
+        """
+        inputs = self.conv1(inputs)
+        inputs = self.bn1(inputs)
+        inputs = self.relu(inputs)
+        inputs = self.maxpool(inputs)
 
-        return x
+        inputs = self.layer1(inputs)
+        inputs = self.layer2(inputs)
+        inputs = self.layer3(inputs)
+        inputs = self.layer4(inputs)
 
-    def forward(self, x: Tensor) -> Tensor:
-        # pylint: disable=missing-function-docstring
-        return self._forward_impl(x)
+        inputs = self.avgpool(inputs)
+        inputs = torch.flatten(inputs, 1)
+        return self.fully_connected(inputs)
 
 
 def resnet50(**kwargs: Any) -> ResNet:

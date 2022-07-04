@@ -102,19 +102,19 @@ from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.image_list imp
 )
 
 
-def permute_and_flatten(layer, N, C, H, W):
-    # type: (Tensor, int, int, int, int) -> Tensor
-    # pylint: disable=invalid-name
+def permute_and_flatten(
+    layer: Tensor, num_instance: int, channels: int, height: int, width: int
+) -> Tensor:
     """Permutes a feature output to be the same format as the labels"""
-    layer = layer.view(N, -1, C, H, W)
+    layer = layer.view(num_instance, -1, channels, height, width)
     layer = layer.permute(0, 3, 4, 1, 2)
-    layer = layer.reshape(N, -1, C)
+    layer = layer.reshape(num_instance, -1, channels)
     return layer
 
 
-def concat_box_prediction_layers(box_cls, box_regression):
-    # type: (List[Tensor], List[Tensor]) -> Tuple[Tensor, Tensor]
-    # pylint: disable=invalid-name
+def concat_box_prediction_layers(
+    box_cls: List[Tensor], box_regression: List[Tensor]
+) -> Tuple[Tensor, Tensor]:
     """Permutes each feature level output to be the same format as labels and concatenates them on
     the first dimension"""
     box_cls_flattened = []
@@ -124,15 +124,17 @@ def concat_box_prediction_layers(box_cls, box_regression):
     # all feature levels concatenated, so we keep the same representation
     # for the objectness and the box_regression
     for box_cls_per_level, box_regression_per_level in zip(box_cls, box_regression):
-        N, AxC, H, W = box_cls_per_level.shape
-        Ax4 = box_regression_per_level.shape[1]
-        A = Ax4 // 4
-        C = AxC // A
-        box_cls_per_level = permute_and_flatten(box_cls_per_level, N, C, H, W)
+        num_instance, anchors_x_channels, height, width = box_cls_per_level.shape
+        anchors_x_4 = box_regression_per_level.shape[1]
+        anchors = anchors_x_4 // 4
+        channels = anchors_x_channels // anchors
+        box_cls_per_level = permute_and_flatten(
+            box_cls_per_level, num_instance, channels, height, width
+        )
         box_cls_flattened.append(box_cls_per_level)
 
         box_regression_per_level = permute_and_flatten(
-            box_regression_per_level, N, 4, H, W
+            box_regression_per_level, num_instance, 4, height, width
         )
         box_regression_flattened.append(box_regression_per_level)
     # concatenate on the first dimension (representing the feature levels), to
@@ -152,7 +154,6 @@ class RPNHead(nn.Module):
         num_anchors (int): number of anchors to be predicted
     """
 
-    # pylint: disable=invalid-name
     def __init__(self, in_channels: int, num_anchors: int):
         super().__init__()
         self.conv = nn.Conv2d(
@@ -164,22 +165,45 @@ class RPNHead(nn.Module):
         )
 
         for layer in self.children():
-            torch.nn.init.normal_(layer.weight, std=0.01)  # type: ignore[arg-type]
-            torch.nn.init.constant_(layer.bias, 0)  # type: ignore[arg-type]
+            nn.init.normal_(layer.weight, std=0.01)  # type: ignore[arg-type]
+            nn.init.constant_(layer.bias, 0)  # type: ignore[arg-type]
 
-    def forward(self, x):
-        # type: (List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]
-        # pylint: disable=missing-function-docstring
+    def forward(self, inputs: List[Tensor]) -> Tuple[List[Tensor], List[Tensor]]:
+        """Forward propagation for computing the objectness and bboxes' offsets from the anchor
+        boxes regressions obtained from RPN
+
+        Args:
+            inputs (List[Tensor]): Input Tensor. length of inputs is the number of feature levels
+
+        Returns:
+            Tuple[List[Tensor], List[Tensor]]:
+                - objectness logits. Length of list correponds to the number of feature levels.
+                    Each tensor element in the list has a shape of:
+                    [
+                        batch_size,
+                        num_of_anchor_boxes_per_feature_level_per_location,
+                        feature_height,
+                        feature_width
+                    ]
+                - Bbox deltas regressions. Length of list correponds to the number of feature
+                    levels. Each tensor element in the list has a shape of:
+                    [
+                        batch_size,
+                        num_of_anchor_boxes_per_feature_level_per_location x 4 corners of bbox,
+                        feature_height,
+                        feature_width
+                    ]
+        """
         logits = []
         bbox_reg = []
-        for feature in x:
-            t = F.relu(self.conv(feature))
-            logits.append(self.cls_logits(t))
-            bbox_reg.append(self.bbox_pred(t))
+        for feature in inputs:
+            transformed_feature = F.relu(self.conv(feature))
+            logits.append(self.cls_logits(transformed_feature))
+            bbox_reg.append(self.bbox_pred(transformed_feature))
         return logits, bbox_reg
 
 
-class RegionProposalNetwork(torch.nn.Module):
+class RegionProposalNetwork(nn.Module):
     """
     Implements Region Proposal Network (RPN).
 
@@ -197,13 +221,7 @@ class RegionProposalNetwork(torch.nn.Module):
         score_thresh (float): Score threshold for filtering low scoring proposals
     """
 
-    # pylint: disable=too-many-instance-attributes,invalid-name,too-many-locals,too-many-arguments
-    __annotations__ = {
-        "box_coder": det_utils.BoxCoder,
-        "pre_nms_top_n": Dict[str, int],
-        "post_nms_top_n": Dict[str, int],
-    }
-
+    # pylint: disable=too-many-instance-attributes,too-many-locals,too-many-arguments
     def __init__(
         self,
         anchor_generator: nn.Module,
@@ -233,24 +251,27 @@ class RegionProposalNetwork(torch.nn.Module):
         """Returns the number of proposals to keep after applying NMS"""
         return self._post_nms_top_n["testing"]
 
-    def _get_top_n_idx(self, objectness, num_anchors_per_level):
-        # type: (Tensor, List[int]) -> Tensor
+    def _get_top_n_idx(
+        self, objectness: Tensor, num_anchors_per_level: List[int]
+    ) -> Tensor:
         """Get the top n number of proposals before applying NMS"""
-        r = []
+        results = []
         offset = 0
-        for ob in objectness.split(num_anchors_per_level, 1):
-            num_anchors = ob.shape[1]
+        for objectness_per_level in objectness.split(num_anchors_per_level, 1):
+            num_anchors = objectness_per_level.shape[1]
             pre_nms_top_n = min(self.pre_nms_top_n(), num_anchors)
-            _, top_n_idx = ob.topk(pre_nms_top_n, dim=1)
-            r.append(top_n_idx + offset)
+            _, top_n_idx = objectness_per_level.topk(pre_nms_top_n, dim=1)
+            results.append(top_n_idx + offset)
             offset += num_anchors
-        return torch.cat(r, dim=1)
+        return torch.cat(results, dim=1)
 
     def filter_proposals(
-        self, proposals, objectness, image_shapes, num_anchors_per_level
-    ):
-        # pylint: disable=line-too-long
-        # type: (Tensor, Tensor, List[Tuple[int, int]], List[int]) -> Tuple[List[Tensor], List[Tensor]]
+        self,
+        proposals: Tensor,
+        objectness: Tensor,
+        image_shapes: List[Tuple[int, int]],
+        num_anchors_per_level: List[int],
+    ) -> Tuple[List[Tensor], List[Tensor]]:
         """Filters proposals through objectness thresholds, NMS, minimum size"""
         num_images = proposals.shape[0]
         device = proposals.device
@@ -262,8 +283,8 @@ class RegionProposalNetwork(torch.nn.Module):
             torch.full((n,), idx, dtype=torch.int64, device=device)
             for idx, n in enumerate(num_anchors_per_level)
         ]
-        levels_ = torch.cat(levels, 0)
-        levels_ = levels_.reshape(1, -1).expand_as(objectness)
+        levels_tensor = torch.cat(levels, 0)
+        levels_tensor = levels_tensor.reshape(1, -1).expand_as(objectness)
 
         # select top_n boxes independently per level before applying nms
         top_n_idx = self._get_top_n_idx(objectness, num_anchors_per_level)
@@ -272,7 +293,7 @@ class RegionProposalNetwork(torch.nn.Module):
         batch_idx = image_range[:, None]
 
         objectness = objectness[batch_idx, top_n_idx]
-        levels_ = levels_[batch_idx, top_n_idx]
+        levels_tensor = levels_tensor[batch_idx, top_n_idx]
         proposals = proposals[batch_idx, top_n_idx]
 
         objectness_prob = torch.sigmoid(objectness)
@@ -306,30 +327,31 @@ class RegionProposalNetwork(torch.nn.Module):
 
     def forward(
         self,
-        images,  # type: ImageList
-        features,  # type: Dict[str, Tensor]
-    ):
-        # type: (...) -> List[Tensor]
+        images: ImageList,
+        features: Dict[str, Tensor],
+    ) -> List[Tensor]:
         """
         Args:
             images (ImageList): images for which we want to compute the predictions
-            features (OrderedDict[Tensor]): features computed from the images that are
-                used for computing the predictions. Each tensor in the list
-                correspond to different feature levels
+            features (OrderedDict[Tensor]): features computed from the images that are used for
+                computing the predictions. Each tensor in the list correspond to different feature
+                levels
 
         Returns:
-            boxes (List[Tensor]): the predicted boxes from the RPN, one Tensor per
-                image.
+            boxes (List[Tensor]): the predicted boxes from the RPN, one Tensor per image.
         """
         # RPN uses all feature maps that are available
-        features_ = list(features.values())
-        objectness, pred_bbox_deltas = self.head(features_)
-        anchors = self.anchor_generator(images, features_)
+        features_list = list(features.values())
+        objectness, pred_bbox_deltas = self.head(features_list)
+        anchors = self.anchor_generator(images, features_list)
 
         num_images = len(anchors)
-        num_anchors_per_level_shape_tensors = [o[0].shape for o in objectness]
+        num_anchors_per_level_shape_tensors = [
+            obj_per_lvl[0].shape for obj_per_lvl in objectness
+        ]
         num_anchors_per_level = [
-            s[0] * s[1] * s[2] for s in num_anchors_per_level_shape_tensors
+            shape[0] * shape[1] * shape[2]
+            for shape in num_anchors_per_level_shape_tensors
         ]
         objectness, pred_bbox_deltas = concat_box_prediction_layers(
             objectness, pred_bbox_deltas

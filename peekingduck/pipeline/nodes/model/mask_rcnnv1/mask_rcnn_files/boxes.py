@@ -159,9 +159,8 @@ def remove_small_boxes(boxes: Tensor, min_size: float) -> Tensor:
         Tensor[K]: indices of the boxes that have both sides
         larger than min_size
     """
-    # pylint: disable=invalid-name
-    ws, hs = boxes[:, 2] - boxes[:, 0], boxes[:, 3] - boxes[:, 1]
-    keep = (ws >= min_size) & (hs >= min_size)
+    widths, heights = boxes[:, 2] - boxes[:, 0], boxes[:, 3] - boxes[:, 1]
+    keep = (widths >= min_size) & (heights >= min_size)
     keep = torch.where(keep)[0]
     return keep
 
@@ -193,7 +192,7 @@ def batched_nms(
     # Benchmarks that drove the following thresholds are at
     # https://github.com/pytorch/vision/issues/1311#issuecomment-781329339
     # Ideally for GPU we'd use a higher threshold
-    if boxes.numel() > 4_000 and not torchvision._is_tracing():
+    if boxes.numel() > 4000 and not torchvision._is_tracing():
         return _batched_nms_vanilla(boxes, scores, idxs, iou_threshold)
 
     return _batched_nms_coordinate_trick(boxes, scores, idxs, iou_threshold)
@@ -255,11 +254,18 @@ def box_area(boxes: Tensor) -> Tensor:
     return (boxes[:, 2] - boxes[:, 0]) * (boxes[:, 3] - boxes[:, 1])
 
 
-def _upcast(t: Tensor) -> Tensor:
+def _upcast(input_tensor: Tensor) -> Tensor:
     """Protects from numerical overflows in multiplications by upcasting to the equivalent
     higher type"""
-    # pylint: disable=invalid-name
-    if t.is_floating_point():
-        return t if t.dtype in (torch.float32, torch.float64) else t.float()
+    if input_tensor.is_floating_point():
+        return (
+            input_tensor
+            if input_tensor.dtype in (torch.float32, torch.float64)
+            else input_tensor.float()
+        )
 
-    return t if t.dtype in (torch.int32, torch.int64) else t.int()
+    return (
+        input_tensor
+        if input_tensor.dtype in (torch.int32, torch.int64)
+        else input_tensor.int()
+    )

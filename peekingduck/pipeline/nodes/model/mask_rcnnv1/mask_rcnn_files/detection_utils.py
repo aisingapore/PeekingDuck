@@ -97,31 +97,38 @@ class BoxCoder:
     the representation used for training the regressors.
     """
 
-    def __init__(self, weights, bbox_xform_clip=math.log(1000.0 / 16)):
-        # type: (Tuple[float, float, float, float], float) -> None
+    def __init__(
+        self,
+        weights: Tuple[float, float, float, float],
+        bbox_xform_clip: float = math.log(1000.0 / 16),
+    ) -> None:
         """
         Args:
-            weights (4-element tuple)
-            bbox_xform_clip (float)
+            weights (4-element tuple): Each element correponds to the weights that the raw
+                regressed offsets (dx, dy, dw, dh) will be divided by. (i.e. the higher the weight,
+                the less effect the regressed offsets have on the boxes)
+            bbox_xform_clip (float): The log of maximum allowable width or height scale offset.
+                E.g. if maxiumum allowable width and height offset is 3 times of original width or
+                height, the bbox_xform_clip will be log(3). It is also to prevent sending too large
+                an input to torch.exp() when calculating the predicted width and height.
         """
         self.weights = weights
         self.bbox_xform_clip = bbox_xform_clip
 
-    def decode(self, rel_codes, boxes):
-        # type: (Tensor, List[Tensor]) -> Tensor
+    def decode(self, rel_codes: Tensor, boxes: List[Tensor]) -> Tensor:
         """
         From a list of original boxes and encoded relative box offsets,
         get the decoded boxes.
 
         Args:
-            rel_codes (Tensor): encoded boxes
+            rel_codes (Tensor): encoded boxes offsets regressions
             boxes (List[Tensor]): List of reference boxes.
 
         Returns:
             Tensor: Decoded boxes
         """
         assert isinstance(boxes, (list, tuple))
-        assert isinstance(rel_codes, torch.Tensor)
+        assert isinstance(rel_codes, Tensor)
         boxes_per_image = [b.size(0) for b in boxes]
         concat_boxes = torch.cat(boxes, dim=0)
         box_sum = 0
@@ -134,13 +141,12 @@ class BoxCoder:
             pred_boxes = pred_boxes.reshape(box_sum, -1, 4)
         return pred_boxes
 
-    def decode_single(self, rel_codes, boxes):
-        # type: (Tensor, Tensor) -> Tensor
-        # pylint: disable=too-many-locals,invalid-name
+    def decode_single(self, rel_codes: Tensor, boxes: Tensor) -> Tensor:
+        # pylint: disable=too-many-locals
         """Performs decoding operation for the boxes
 
         Args:
-            rel_codes (Tensor): encoded boxes
+            rel_codes (Tensor): encoded boxes offsets regressions
             boxes (Tensor): Reference boxes
 
         Returns:
@@ -153,20 +159,20 @@ class BoxCoder:
         ctr_x = boxes[:, 0] + 0.5 * widths
         ctr_y = boxes[:, 1] + 0.5 * heights
 
-        wx, wy, ww, wh = self.weights
-        dx = rel_codes[:, 0::4] / wx
-        dy = rel_codes[:, 1::4] / wy
-        dw = rel_codes[:, 2::4] / ww
-        dh = rel_codes[:, 3::4] / wh
+        weight_x, weight_y, weight_w, weight_h = self.weights
+        del_x = rel_codes[:, 0::4] / weight_x
+        del_y = rel_codes[:, 1::4] / weight_y
+        del_w = rel_codes[:, 2::4] / weight_w
+        del_h = rel_codes[:, 3::4] / weight_h
 
         # Prevent sending too large values into torch.exp()
-        dw = torch.clamp(dw, max=self.bbox_xform_clip)
-        dh = torch.clamp(dh, max=self.bbox_xform_clip)
+        del_w = torch.clamp(del_w, max=self.bbox_xform_clip)
+        del_h = torch.clamp(del_h, max=self.bbox_xform_clip)
 
-        pred_ctr_x = dx * widths[:, None] + ctr_x[:, None]
-        pred_ctr_y = dy * heights[:, None] + ctr_y[:, None]
-        pred_w = torch.exp(dw) * widths[:, None]
-        pred_h = torch.exp(dh) * heights[:, None]
+        pred_ctr_x = del_x * widths[:, None] + ctr_x[:, None]
+        pred_ctr_y = del_y * heights[:, None] + ctr_y[:, None]
+        pred_w = torch.exp(del_w) * widths[:, None]
+        pred_h = torch.exp(del_h) * heights[:, None]
 
         # Distance from center to box's corner.
         c_to_c_h = (

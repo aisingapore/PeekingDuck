@@ -18,10 +18,11 @@ Detector class to handle detection of bboxes and masks for mask_rcnn
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Any
+from typing import Dict, List, Tuple
 import cv2
 import numpy as np
 import torch
+from torch import nn, Tensor
 import torchvision.transforms as T
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
@@ -73,7 +74,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.score_threshold = score_threshold
         self.mask_threshold = mask_threshold
         self.mask_rcnn = self._create_mask_rcnn_model()
-        self.filtered_output: Dict[str, torch.Tensor] = {}
+        self.filtered_output: Dict[str, Tensor] = {}
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
@@ -92,17 +93,17 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         """
         img_shape = image.shape[:2]
         processed_images = self._preprocess(image)
-        # run network
-        network_output = self.mask_rcnn(processed_images)
+        # run network, assumes batch size of 1 for peekingduck inference
+        network_output = self.mask_rcnn(processed_images)[0]
         bboxes, labels, scores, masks = self._postprocess(network_output, img_shape)
 
         return bboxes, labels, scores, masks
 
-    def _create_mask_rcnn_model(self) -> torch.nn.Module:
+    def _create_mask_rcnn_model(self) -> nn.Module:
         """Initialize the Mask R-CNN model with the config settings and pretrained weights
 
         Returns:
-            torch.nn.Module: An initialized model in PyTorch framework
+            nn.Module: An initialized and loaded model in PyTorch framework
         """
         backbone_name = Detector.model_name_map[self.model_type]
         backbone = backbone_utils.resnet_fpn_backbone(
@@ -117,6 +118,18 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             min_size=self.min_size,
             max_size=self.max_size,
         )
+
+        return self._load_mask_rcnn_model(model)
+
+    def _load_mask_rcnn_model(self, model: nn.Module) -> nn.Module:
+        """Loads Mask-RCNN model weights
+
+        Args:
+            model (nn.Module): Mask-RCNN model
+
+        Returns:
+            nn.Module: Mask-RCNN model loaded with weights
+        """
         if self.model_path.is_file():
             state_dict = torch.load(self.model_path, map_location=self.device)
         else:
@@ -136,18 +149,20 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             f"Maximum size of the image: {self.max_size}\n\t"
             f"Minimum size of the image: {self.min_size}"
         )
+
         return model
 
     def _postprocess(
         self,
-        network_output: List[Dict[str, Any]],
+        network_output: Dict[str, Tensor],
         img_shape: Tuple[int, int],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for mask_rcnn
 
         Args:
-            network_output (list): list of boxes, scores and labels from network
-            img_shape (Tuple[int, int]): height of original image
+            network_output (Dict[str, Tensor]): A dictionary from the first element of the
+                Mask-RCNN output. The keys are should have "labels", "boxes", "scores" and "masks"
+            img_shape (Tuple[int, int]): height and width of original image
 
         Returns:
             boxes (np.ndarray): postprocessed array of detected bboxes
@@ -159,16 +174,16 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         scores = np.empty((0), dtype=np.float32)
         labels = np.empty((0))
         bboxes = np.empty((0, 4), dtype=np.float32)
-        if len(network_output[0]["labels"]) > 0:
-            network_output[0]["labels"] -= 1
+        if len(network_output["labels"]) > 0:
+            network_output["labels"] -= 1
 
             # Indices to filter out unwanted classes
             detect_filter = torch.where(
-                torch.isin(network_output[0]["labels"], self.detect_ids)
+                torch.isin(network_output["labels"], self.detect_ids)
             )
 
-            for output_key in network_output[0].keys():
-                self.filtered_output[output_key] = network_output[0][output_key][
+            for output_key in network_output.keys():
+                self.filtered_output[output_key] = network_output[output_key][
                     detect_filter
                 ]
 
