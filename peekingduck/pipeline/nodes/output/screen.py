@@ -46,7 +46,7 @@ class Node(AbstractNode):
 
     **See Also:**
 
-    :ref:`PeekingDuck Viewer<tutorial_viewer>`: a graphical viewer for viewing
+    :ref:`PeekingDuck Viewer<pkd_viewer>`: a graphical viewer for viewing
     and studying the output of a PeekingDuck pipeline.
     """
 
