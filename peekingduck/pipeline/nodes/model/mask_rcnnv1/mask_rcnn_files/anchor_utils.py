@@ -141,8 +141,10 @@ class AnchorGenerator(nn.Module):
     ) -> Tensor:
         """Method to generate anchors"""
         scales_tensor = torch.as_tensor(scales, dtype=dtype, device=device)
-        aspect_ratios_ = torch.as_tensor(aspect_ratios, dtype=dtype, device=device)
-        height_ratios = torch.sqrt(aspect_ratios_)
+        aspect_ratios_tensor = torch.as_tensor(
+            aspect_ratios, dtype=dtype, device=device
+        )
+        height_ratios = torch.sqrt(aspect_ratios_tensor)
         width_ratios = 1 / height_ratios
 
         width_scales = (width_ratios[:, None] * scales_tensor[None, :]).view(-1)

@@ -117,7 +117,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             f"Minimum size of the image: {self.min_size}"
         )
 
-        return self._load_mask_rcnn_model()
+        return self._load_mask_rcnn_weights()
 
     def _get_model(self) -> maskrcnn.MaskRCNN:
         """Constructs Mask-RCNN model based on parsed configuration.
@@ -139,7 +139,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             max_size=self.max_size,
         )
 
-    def _load_mask_rcnn_model(self) -> maskrcnn.MaskRCNN:
+    def _load_mask_rcnn_weights(self) -> maskrcnn.MaskRCNN:
         """Loads Mask-RCNN model weights
 
         Raises:
