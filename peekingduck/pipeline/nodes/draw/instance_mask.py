@@ -127,7 +127,7 @@ class Node(
                         inputs["bbox_scores"],
                     )
                     break   # only apply the first effect
-                elif effect != "standard_mask":
+                if effect != "standard_mask":
                     output_img = self._mask_apply_effect(
                         inputs["img"],
                         inputs["masks"],
@@ -150,7 +150,7 @@ class Node(
 
         if effects_count == 0:
             raise ValueError("At least one effect must be enabled in the config.")
-        elif effects_count > 1:
+        if effects_count > 1:
             raise ValueError("Only one effect can be enabled at a time.")
 
         self.check_valid_choice("effect_area", {"objects", "background"})
