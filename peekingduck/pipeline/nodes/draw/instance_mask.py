@@ -17,7 +17,6 @@ Draws instance segmentation masks.
 """
 
 import colorsys
-import logging
 from random import randint
 from typing import Any, Dict, List, Tuple, Union, cast
 
