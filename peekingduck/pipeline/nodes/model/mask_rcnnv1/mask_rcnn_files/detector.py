@@ -143,7 +143,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         """Loads Mask-RCNN model weights
 
         Raises:
-            FileNotFoundError: Raise when model file does not exist
+            FileNotFoundError: Raise error when model path does not exist
 
         Returns:
             (MaskRCNN): Mask-RCNN model loaded with weights
