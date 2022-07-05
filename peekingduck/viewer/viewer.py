@@ -52,6 +52,8 @@ WIN_WIDTH = 1024
 ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
 ZOOM_DEFAULT_IDX = 2
 ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
+EMOJI_PLAY = "\u25B6"
+EMOJI_STOP = "\u25FD"  # white medium-small square
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
@@ -84,11 +86,11 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         }
         # forward type hinting of internal working vars
         self._frames: List[np.ndarray] = []
-        self._frame_idx: int = 0
-        self.zoom_idx: int = 0
+        self._frame_idx: int = -1
+        self.zoom_idx: int = ZOOM_DEFAULT_IDX
         self.is_output_playback: bool = False
         self.is_pipeline_running: bool = False
-        self.state: str = ""
+        self.state: str = "play"
 
     def run(self) -> None:
         """Main method to setup Viewer and run Tk event loop"""
@@ -578,9 +580,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
     def set_viewer_state_to_play(self) -> None:
         """Set self state to play for either 1) pipeline execution or 2) playback"""
         self.state = "play"
-        self.tk_btn_play["text"] = "Stop"
+        self.tk_btn_play["text"] = EMOJI_STOP
 
     def set_viewer_state_to_stop(self) -> None:
         """Set self state to stop"""
         self.state = "stop"
-        self.tk_btn_play["text"] = "Play"
+        self.tk_btn_play["text"] = EMOJI_PLAY
