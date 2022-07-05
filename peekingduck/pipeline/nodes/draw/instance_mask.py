@@ -102,7 +102,7 @@ class Node(
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.class_instance_color_state: Dict[str, Tuple[int, int, int]] = {}
+        self.class_instance_colors: Dict[str, List[Tuple[int, int, int]]] = {}
         self._validate_configs()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -207,6 +207,8 @@ class Node(
             numpy.ndarray: Input image with instance segmentation masks
                 applied to it.
         """
+        self.class_instance_counts: Dict[str, int] = {}
+
         full_sized_canvas = np.zeros(image.shape, image.dtype)
         ret_image = image
 
@@ -243,8 +245,38 @@ class Node(
         return ret_image
 
     def _get_instance_color(self, instance_class: str) -> Tuple[int, int, int]:
-        """Returns color to use for next segmentation instance, depending on
-        chosen color scheme:
+        """Returns color to use for next segmentation instance according to the
+        chosen instance color scheme.
+
+        Args:
+            instance_class (str): Class of detected object.
+
+        Returns:
+            Tuple[int,int,int]: Color to use for next instance, in BGR.
+        """
+        self.class_instance_counts[instance_class] = (
+            self.class_instance_counts.get(instance_class, 0) + 1
+        )
+
+        if self.class_instance_counts[instance_class] > len(self.class_instance_colors.setdefault(instance_class, [])):
+            # get new color
+            color = self._get_new_instance_color(instance_class)
+            # append new assigned color to instance_colors
+            self.class_instance_colors[instance_class].append(color)
+        else:
+            # get color already assigned to this instance number
+            color = self.class_instance_colors[instance_class][self.class_instance_counts[instance_class] - 1]
+
+        return color
+
+    def _get_new_instance_color(self, instance_class: str) -> Tuple[int, int, int]:
+        """Returns color to use for a new segmentation instance. When we
+        encounter an instance that is one more than the count of instances of
+        a particular class, the instance has not been assigned a color yet
+        (from previous frames) and we need to get a new color.
+
+        Depending on the chosen instance color scheme, this is how we determine
+        the color:
 
         "random" - Random color.
 
@@ -262,10 +294,10 @@ class Node(
             color_hsv = (randint(0, 179), randint(100, 255), 255)
             color = self._hsv_to_bgr(color_hsv)
         elif self.config["instance_color_scheme"] == "hue_family":
-            color = self.class_instance_color_state.get(instance_class)  # type: ignore
-            if not color:
+            if not self.class_instance_colors.get(instance_class):
                 color = CLASS_COLORS.get(instance_class, DEFAULT_CLASS_COLOR)
             else:
+                color = self.class_instance_colors.get(instance_class)[-1]
                 color_hsv = self._bgr_to_hsv(color)
                 # we use a minimum saturation of 100 to avoid too light colors,
                 # thus we increment saturation by step size of (256-100)/8.
@@ -274,7 +306,6 @@ class Node(
                     saturation += SATURATION_MINIMUM
                 color_hsv = (color_hsv[0], int(saturation), color_hsv[2])
                 color = self._hsv_to_bgr(color_hsv)
-            self.class_instance_color_state.update({instance_class: color})
 
         return color
 
