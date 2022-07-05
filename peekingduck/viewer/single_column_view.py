@@ -24,9 +24,8 @@ from peekingduck.viewer.playlist import PipelineStats, PlayList
 DOWN_ARROW = "\u2B07"
 UP_ARROW = "\u2B06"
 RED_CROSS = "\u274C"
-
-# Supported GUI operations
-OP_LIST = ["add", "delete", "play"]
+OP_LIST = ["add", "delete", "play"]  # Supported GUI operations
+PLAYLIST_WIDTH = 200
 
 
 class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
@@ -71,24 +70,25 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         # info panel
         info_frm = ttk.Frame(master=self.root, name="playlist_info")
         info_frm.pack(side=tk.BOTTOM, fill=tk.X)
+
         lbl = tk.Label(info_frm, text="Pipeline Information:")
-        lbl.pack(side=tk.TOP)
+        lbl.grid(row=0, column=0, columnspan=2)
+        lbl = tk.Label(info_frm, text="Name:", anchor=tk.E)
+        lbl.grid(row=1, column=0, sticky="ne")
+        lbl = tk.Label(info_frm, text="Modified:", anchor=tk.E)
+        lbl.grid(row=2, column=0, sticky="ne")
+        lbl = tk.Label(info_frm, text="Path:", anchor=tk.E)
+        lbl.grid(row=3, column=0, sticky="ne")
+        self._info_name = tk.Message(info_frm, text="name", width=PLAYLIST_WIDTH)
+        self._info_name.grid(row=1, column=1, sticky="nw")
+        self._info_datetime = tk.Label(info_frm, text="datetime", anchor=tk.W)
+        self._info_datetime.grid(row=2, column=1, sticky="nw")
+        self._info_path = tk.Message(info_frm, text="path", width=PLAYLIST_WIDTH)
+        self._info_path.grid(row=3, column=1, sticky="nw")
 
-        info_labels = ttk.Frame(master=info_frm)
-        info_labels.pack(side=tk.LEFT, anchor=tk.N)
-        lbl = tk.Label(info_labels, text="Name:")
-        lbl = tk.Label(info_labels, text="Modified:")
-        lbl = tk.Label(info_labels, text="Path:")
-        for child in info_labels.winfo_children():
-            child.pack(side=tk.TOP, anchor=tk.E)  # pack above 4 labels
-
-        info_details = ttk.Frame(master=info_frm)
-        info_details.pack(side=tk.RIGHT, anchor=tk.N, fill=tk.X, expand=True)
-        self._info_name = tk.Label(info_details, text="name")
-        self._info_datetime = tk.Label(info_details, text="datetime")
-        self._info_path = tk.Message(info_details, text="path", width=200)
-        for child in info_details.winfo_children():
-            child.pack(side=tk.TOP, anchor=tk.W)  # pack above 4 labels
+        num_col, _ = info_frm.grid_size()  # config column sizes
+        for i in range(num_col):
+            info_frm.grid_columnconfigure(i, weight=1)
 
         # listbox
         playlist_listbox = tk.Listbox(
@@ -153,6 +153,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
     def show_selected_pipeline(self) -> None:
         """Show current selected pipeline by highlighting it in the listbox"""
         if self._selected:
+            self.tk_listbox.selection_clear(0, tk.END)
             i = self._pipeline_to_index_map[self._selected]
             self.tk_listbox.select_set(i)
             self.update_pipeline_info(i)
