@@ -142,10 +142,10 @@ class Node(
 
         effects = ("standard_mask", "contrast", "brightness", "gamma_correction", "blur", "mosaic")
         effects_count = 0
-        for k, v in self.config["effect"].items():
-            if k not in effects:
-                raise ValueError(f"{k} must be one of {effects}")
-            if v:
+        for effect, setting in self.config["effect"].items():
+            if effect not in effects:
+                raise ValueError(f"{effect} must be one of {effects}")
+            if setting:
                 effects_count += 1
 
         if effects_count == 0:
