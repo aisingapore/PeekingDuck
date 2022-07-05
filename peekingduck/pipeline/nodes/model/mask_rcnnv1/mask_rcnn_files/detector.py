@@ -25,9 +25,11 @@ import torch
 from torch import Tensor
 import torchvision.transforms as T
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
-    backbone_utils,
-    maskrcnn,
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.backbone_utils import (
+    resnet_fpn_backbone,
+)
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.mask_rcnn import (
+    MaskRCNN,
 )
 
 
@@ -99,7 +101,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         return bboxes, labels, scores, masks
 
-    def _create_mask_rcnn_model(self) -> maskrcnn.MaskRCNN:
+    def _create_mask_rcnn_model(self) -> MaskRCNN:
         """Creates a Mask-RCNN model and loads its weights. It also logs model configurations.
 
         Returns:
@@ -119,17 +121,17 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         return self._load_mask_rcnn_weights()
 
-    def _get_model(self) -> maskrcnn.MaskRCNN:
+    def _get_model(self) -> MaskRCNN:
         """Constructs Mask-RCNN model based on parsed configuration.
 
         Returns:
             (MaskRCNN): Mask-RCNN model.
         """
         backbone_name = Detector.model_name_map[self.model_type]
-        backbone = backbone_utils.resnet_fpn_backbone(
+        backbone = resnet_fpn_backbone(
             backbone_name=backbone_name,
         )
-        return maskrcnn.MaskRCNN(
+        return MaskRCNN(
             backbone=backbone,
             num_classes=self.num_classes,
             box_nms_thresh=self.iou_threshold,
@@ -139,7 +141,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             max_size=self.max_size,
         )
 
-    def _load_mask_rcnn_weights(self) -> maskrcnn.MaskRCNN:
+    def _load_mask_rcnn_weights(self) -> MaskRCNN:
         """Loads Mask-RCNN model weights
 
         Raises:

@@ -96,9 +96,9 @@ Modifications include:
 from typing import Iterable, Optional, Tuple
 from collections import OrderedDict
 from torch import nn
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     faster_rcnn,
-    poolers,
 )
 
 

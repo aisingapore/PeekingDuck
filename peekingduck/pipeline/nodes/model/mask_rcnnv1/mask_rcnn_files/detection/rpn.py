@@ -93,12 +93,12 @@ from typing import Dict, List, Tuple
 import torch
 from torch import nn, Tensor
 from torch.nn import functional as F
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import (
     boxes as box_ops,
-    detection_utils as det_utils,
 )
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.image_list import (
-    ImageList,
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
+    image_list,
+    detection_utils as det_utils,
 )
 
 
@@ -328,7 +328,7 @@ class RegionProposalNetwork(nn.Module):
 
     def forward(
         self,
-        images: ImageList,
+        images: image_list.ImageList,
         features: Dict[str, Tensor],
     ) -> List[Tensor]:
         """

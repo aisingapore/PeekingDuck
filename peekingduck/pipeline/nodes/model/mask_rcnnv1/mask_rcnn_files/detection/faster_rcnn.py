@@ -96,9 +96,9 @@ Modifications include:
 from typing import Optional, Tuple, Iterable
 from torch import nn, Tensor
 import torch.nn.functional as F
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     anchor_utils,
-    poolers,
     rpn,
     roi_heads,
     generalized_rcnn as g_rnn,

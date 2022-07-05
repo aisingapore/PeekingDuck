@@ -86,7 +86,7 @@ Modifications include:
 from typing import Callable, Dict, Iterable, List, Optional, Tuple, Union
 import torch
 from torch import nn, Tensor
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import (
     roi_align,
     boxes as box_ops,
 )

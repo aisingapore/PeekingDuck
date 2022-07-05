@@ -88,8 +88,10 @@ from typing import Dict, List, Optional, Tuple, Union
 import torch
 from torch import nn, Tensor
 import torch.nn.functional as F
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     detection_utils as det_utils,
+)
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import (
     boxes as box_ops,
 )
 

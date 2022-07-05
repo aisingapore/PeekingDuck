@@ -86,8 +86,7 @@ Modifications include:
 from typing import List, Tuple, Union
 import torch
 from torch import nn, Size, Tensor  # pylint: disable=no-name-in-module
-
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.image_list import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.image_list import (
     ImageList,
 )
 

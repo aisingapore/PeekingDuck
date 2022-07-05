@@ -89,10 +89,10 @@ from typing import Dict, Iterable, List, Optional, Tuple, Union
 import math
 import torch
 from torch import nn, Tensor
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.roi_heads import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.roi_heads import (
     paste_masks_in_image,
 )
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.image_list import (
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.image_list import (
     ImageList,
 )
 

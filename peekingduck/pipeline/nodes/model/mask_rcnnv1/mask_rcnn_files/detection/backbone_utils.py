@@ -91,10 +91,12 @@ Modifications include:
 from typing import Dict, Optional, List
 from collections import OrderedDict
 from torch import nn, Tensor
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
-    resnet,
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import (
     misc,
     feature_pyramid_network as fpn,
+)
+from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.backbones import (
+    resnet,
 )
 
 
