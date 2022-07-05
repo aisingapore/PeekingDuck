@@ -90,7 +90,6 @@ class FrozenBatchNorm2d(nn.Module):
     are fixed
     """
 
-    # pylint: disable=too-many-arguments
     def __init__(
         self,
         num_features: int,
@@ -117,6 +116,7 @@ class FrozenBatchNorm2d(nn.Module):
         unexpected_keys: List[str],
         error_msgs: List[str],
     ) -> None:
+        # pylint: disable=too-many-arguments
         """Overrides _load_from_state_dict method from nn.Module parent class.
         Removes parameters with names prefix + "num_batches_tracked" (related to FrozenBatchNorm2d)
         from state_dict before loading it into the model

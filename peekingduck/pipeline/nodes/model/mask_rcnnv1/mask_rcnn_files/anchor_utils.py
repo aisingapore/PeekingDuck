@@ -140,17 +140,17 @@ class AnchorGenerator(nn.Module):
         device: torch.device = torch.device("cpu"),
     ) -> Tensor:
         """Method to generate anchors"""
-        scales_ = torch.as_tensor(scales, dtype=dtype, device=device)
+        scales_tensor = torch.as_tensor(scales, dtype=dtype, device=device)
         aspect_ratios_ = torch.as_tensor(aspect_ratios, dtype=dtype, device=device)
         height_ratios = torch.sqrt(aspect_ratios_)
         width_ratios = 1 / height_ratios
 
-        width_scaled = (width_ratios[:, None] * scales_[None, :]).view(-1)
-        height_scaled = (height_ratios[:, None] * scales_[None, :]).view(-1)
+        width_scales = (width_ratios[:, None] * scales_tensor[None, :]).view(-1)
+        height_scales = (height_ratios[:, None] * scales_tensor[None, :]).view(-1)
 
         base_anchors = (
             torch.stack(
-                [-width_scaled, -height_scaled, width_scaled, height_scaled], dim=1
+                [-width_scales, -height_scales, width_scales, height_scales], dim=1
             )
             / 2
         )
@@ -167,10 +167,10 @@ class AnchorGenerator(nn.Module):
         """Generate a list of number of anchors per location"""
         return [len(s) * len(a) for s, a in zip(self.sizes, self.aspect_ratios)]
 
-    # pylint: disable=too-many-locals
     def grid_anchors(
         self, grid_sizes: List[Size], strides: List[List[Tensor]]
     ) -> List[Tensor]:
+        # pylint: disable=too-many-locals
         """For every combination of (a, (g, s), i) in (self.cell_anchors,
         zip(grid_sizes, strides), 0:2), output g[i] anchors that are s[i] distance
         apart in direction i, with the same dimensions as a.

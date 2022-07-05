@@ -22,7 +22,7 @@ from typing import Dict, List, Tuple
 import cv2
 import numpy as np
 import torch
-from torch import nn, Tensor
+from torch import Tensor
 import torchvision.transforms as T
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files import (
@@ -99,17 +99,37 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
 
         return bboxes, labels, scores, masks
 
-    def _create_mask_rcnn_model(self) -> nn.Module:
-        """Initialize the Mask R-CNN model with the config settings and pretrained weights
+    def _create_mask_rcnn_model(self) -> maskrcnn.MaskRCNN:
+        """Creates a Mask-RCNN model and loads its weights. It also logs model configurations.
 
         Returns:
-            nn.Module: An initialized and loaded model in PyTorch framework
+            (MaskRCNN): An initialized and loaded model in PyTorch framework
+        """
+        self.logger.info(
+            "Mask-RCNN model loaded with following configs:\n\t"
+            f"Model type: {self.model_type}\n\t"
+            f"IDs being detected: {self.detect_ids.tolist()}\n\t"
+            f"IOU threshold: {self.iou_threshold}\n\t"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Mask threshold: {self.mask_threshold}\n\t"
+            f"Maximum number of detections per image: {self.max_num_detections}\n\t"
+            f"Maximum size of the image: {self.max_size}\n\t"
+            f"Minimum size of the image: {self.min_size}"
+        )
+
+        return self._load_mask_rcnn_model()
+
+    def _get_model(self) -> maskrcnn.MaskRCNN:
+        """Constructs Mask-RCNN model based on parsed configuration.
+
+        Returns:
+            (MaskRCNN): Mask-RCNN model.
         """
         backbone_name = Detector.model_name_map[self.model_type]
         backbone = backbone_utils.resnet_fpn_backbone(
             backbone_name=backbone_name,
         )
-        model = maskrcnn.MaskRCNN(
+        return maskrcnn.MaskRCNN(
             backbone=backbone,
             num_classes=self.num_classes,
             box_nms_thresh=self.iou_threshold,
@@ -119,38 +139,25 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             max_size=self.max_size,
         )
 
-        return self._load_mask_rcnn_model(model)
-
-    def _load_mask_rcnn_model(self, model: nn.Module) -> nn.Module:
+    def _load_mask_rcnn_model(self) -> maskrcnn.MaskRCNN:
         """Loads Mask-RCNN model weights
 
-        Args:
-            model (nn.Module): Mask-RCNN model
+        Raises:
+            FileNotFoundError: Raise when model file does not exist
 
         Returns:
-            nn.Module: Mask-RCNN model loaded with weights
+            (MaskRCNN): Mask-RCNN model loaded with weights
         """
         if self.model_path.is_file():
             state_dict = torch.load(self.model_path, map_location=self.device)
-        else:
-            raise FileNotFoundError(
-                f"Model file does not exist. Please check that {self.model_path} exists."
-            )
+            model = self._get_model()
+            model.load_state_dict(state_dict)
+            model.eval().to(self.device)
+            return model
 
-        model.load_state_dict(state_dict)
-        model.eval().to(self.device)
-        self.logger.info(
-            "Mask-RCNN model loaded with following configs:\n\t"
-            f"Model type: {self.model_type}\n\t"
-            f"IDs being detected: {self.detect_ids.tolist()}\n\t"
-            f"IOU threshold: {self.iou_threshold}\n\t"
-            f"Maximum number of detections per image: {self.max_num_detections}\n\t"
-            f"Score threshold: {self.score_threshold}\n\t"
-            f"Maximum size of the image: {self.max_size}\n\t"
-            f"Minimum size of the image: {self.min_size}"
+        raise FileNotFoundError(
+            f"Model file does not exist. Please check that {self.model_path} exists."
         )
-
-        return model
 
     def _postprocess(
         self,

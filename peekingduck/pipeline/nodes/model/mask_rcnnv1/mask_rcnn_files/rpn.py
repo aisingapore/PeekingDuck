@@ -177,7 +177,7 @@ class RPNHead(nn.Module):
 
         Returns:
             Tuple[List[Tensor], List[Tensor]]:
-                - objectness logits. Length of list correponds to the number of feature levels.
+                - objectness logits. Length of list corresponds to the number of feature levels.
                     Each tensor element in the list has a shape of:
                     [
                         batch_size,
@@ -185,7 +185,7 @@ class RPNHead(nn.Module):
                         feature_height,
                         feature_width
                     ]
-                - Bbox deltas regressions. Length of list correponds to the number of feature
+                - Bbox deltas regressions. Length of list corresponds to the number of feature
                     levels. Each tensor element in the list has a shape of:
                     [
                         batch_size,
@@ -221,7 +221,7 @@ class RegionProposalNetwork(nn.Module):
         score_thresh (float): Score threshold for filtering low scoring proposals
     """
 
-    # pylint: disable=too-many-instance-attributes,too-many-locals,too-many-arguments
+    # pylint: disable=too-many-instance-attributes,too-many-arguments
     def __init__(
         self,
         anchor_generator: nn.Module,
@@ -272,10 +272,11 @@ class RegionProposalNetwork(nn.Module):
         image_shapes: List[Tuple[int, int]],
         num_anchors_per_level: List[int],
     ) -> Tuple[List[Tensor], List[Tensor]]:
+        # pylint: disable=too-many-locals
         """Filters proposals through objectness thresholds, NMS, minimum size"""
         num_images = proposals.shape[0]
         device = proposals.device
-        # do not backprop throught objectness
+        # do not backprop through objectness
         objectness = objectness.detach()
         objectness = objectness.reshape(num_images, -1)
 

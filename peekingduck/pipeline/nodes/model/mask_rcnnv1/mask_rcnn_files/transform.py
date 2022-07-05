@@ -138,7 +138,7 @@ class GeneralizedRCNNTransform(nn.Module):
             images (List[Tensor]): Input images
 
         Raises:
-            ValueError: Raise error ig the image does not have the shape [C, H, W]
+            ValueError: Raise error if the image does not have the shape [C, H, W]
 
         Returns:
             ImageList: An object containing padded images and the original image sizes
