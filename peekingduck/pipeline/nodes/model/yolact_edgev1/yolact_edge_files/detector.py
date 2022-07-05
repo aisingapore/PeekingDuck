@@ -20,6 +20,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+from torch import Tensor
 import torch.nn.functional as F
 import numpy as np
 import torch
@@ -79,17 +80,18 @@ class Detector:
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
+        img_shape = image.shape[:2]
         model = self.yolact_edge
+        
         if torch.cuda.is_available():
             frame = torch.from_numpy(image).cuda().float()
         else:
             frame = torch.from_numpy(image).float()
         
         preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
-        h, w, _ = image.shape
 
-        labels, scores, bboxes, masks = postprocess(
-            preds, w, h, score_threshold=self.score_threshold)
+        labels, scores, bboxes, masks = self._postprocess(
+            preds[0], img_shape, score_threshold=self.score_threshold)
         return bboxes, labels, scores, masks
 
     def update_detect_ids(self, ids: List[int]) -> None:
@@ -102,7 +104,9 @@ class Detector:
         self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
 
     def _create_yolact_edge_model(self) -> YolactEdge:
-        """Creates YolactEdge model
+        """Creates YolactEdge model and loads its weights.
+
+        Creates `detect_ids` as a `torch.Tensor`. Logs model configurations.
         
         Returns:
             YolactEdge: YolactEdge model
@@ -153,38 +157,49 @@ class Detector:
             f"Model file does not exist. Please check that {self.model_path} exists"
         )
 
-def postprocess(det_output, w, h, batch_idx=0, interpolation_mode='bilinear',
-                crop_masks=True, score_threshold=0):
-    dets = det_output[batch_idx]
-    if dets is None:
-        return [torch.Tensor()] * 4
-    if score_threshold > 0:
-        keep = dets['score'] > score_threshold
-        for k in dets:
-            if k != 'proto':
-                dets[k] = dets[k][keep]
-        if dets['score'].size(0) == 0:
+    def _postprocess(
+            self, 
+            network_output: Dict[str, Tensor], 
+            img_shape: Tuple[int, int],
+            score_threshold: float
+        ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        """Postprocessing of detected bboxes and masks for YolactEdge
+
+        Args:
+            network_output (Dict[str, Tensor]): A dictionary from the first 
+                element of the YolactEdge output. The keys are "class", "box", 
+                "score", "mask", and "proto"
+            img_shape (Tuple[int, int]): height and width of original image
+
+        Returns:
+            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): 
+            Returned tuple contains:
+            - An array of detection boxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
+            - An array of masks
+        """
+        if network_output is None:
             return [torch.Tensor()] * 4
 
-    classes = dets['class']
-    boxes   = dets['box']
-    scores  = dets['score']
-    masks   = dets['mask']
-    proto_data = dets['proto']
+        if score_threshold > 0:
+            keep = network_output['score'] > score_threshold
+            for k in network_output:
+                if k != 'proto':
+                    network_output[k] = network_output[k][keep]
+            if network_output['score'].size(0) == 0:
+                return [torch.Tensor()] * 4
 
-    masks = proto_data @ masks.t()
-    masks = torch.sigmoid(masks)
+        classes = network_output['class'].cpu().numpy()
+        boxes   = network_output['box'].cpu().numpy()
+        scores  = network_output['score'].cpu().numpy()
+        masks   = network_output['mask']
+        proto_data = network_output['proto']
 
-    masks = masks.permute(2, 0, 1).contiguous()
-    masks = F.interpolate(masks.unsqueeze(0), (h, w), 
-        mode=interpolation_mode, align_corners=False).squeeze(0)
-    masks.gt_(0.5)
+        masks = proto_data @ masks.t()
+        masks = torch.sigmoid(masks).permute(2, 0, 1).contiguous()
+        masks = F.interpolate(masks.unsqueeze(0), (img_shape[0], img_shape[1]), 
+            mode='bilinear', align_corners=False).squeeze(0).gt_(0.5)
+        masks = masks.cpu().numpy().astype(np.uint8)
 
-    classes = classes.cpu().detach().numpy()
-    scores = scores.cpu().detach().numpy()
-    boxes = boxes.cpu().detach().numpy()
-
-    masks = masks.cpu().detach().numpy()
-    masks = masks.astype(np.uint8)
-
-    return classes, scores, boxes, masks
+        return classes, scores, boxes, masks
