@@ -142,15 +142,17 @@ class Node(
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
 
         effects = ("standard_mask", "contrast", "brightness", "gamma_correction", "blur", "mosaic")
-        has_effect = False
+        effects_count = 0
         for k, v in self.config["effect"].items():
             if k not in effects:
                 raise ValueError(f"{k} must be one of {effects}")
             if v:
-                has_effect = True
+                effects_count += 1
 
-        if not has_effect:
+        if effects_count == 0:
             raise ValueError("At least one effect must be enabled in the config.")
+        elif effects_count > 1:
+            raise ValueError("Only one effect can be enabled at a time.")
 
         self.check_valid_choice("effect_area", {"objects", "background"})
 
