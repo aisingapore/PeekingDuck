@@ -314,7 +314,6 @@ class Node(
         masks: np.ndarray,
         index: int,
         image: np.ndarray,
-        instance_color: Tuple[int, int, int],
     ) -> np.ndarray:
         """Draws the contour around a single instance segmentation mask."""
         ret_image = image
