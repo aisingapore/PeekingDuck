@@ -155,27 +155,29 @@ class Node(
 
         self.check_valid_choice("effect_area", {"objects", "background"})
 
-        self._check_type(self.config["effect"]["contrast"], float)
-        self._check_number_range(self.config["effect"]["contrast"], "[0, 3]")
-        self._check_type(self.config["effect"]["brightness"], int)
-        self._check_number_range(self.config["effect"]["brightness"], "[-100, 100]")
-        self._check_type(self.config["effect"]["gamma_correction"], float)
-        self._check_number_range(self.config["effect"]["gamma_correction"], "[0, +inf]")
-        self._check_type(self.config["effect"]["blur"], int)
-        self._check_number_range(self.config["effect"]["blur"], "[1, +inf]")
-        self._check_type(self.config["effect"]["mosaic"], int)
-        self._check_number_range(self.config["effect"]["mosaic"], "[1, +inf]")
-        self._check_type(self.config["contours"]["show"], bool)
-        self._check_type(self.config["contours"]["thickness"], int)
-        self._check_number_range(self.config["contours"]["thickness"], "[1, +inf]")
+        Node._check_type(self.config["effect"]["contrast"], float)
+        Node._check_number_range(self.config["effect"]["contrast"], "[0, 3]")
+        Node._check_type(self.config["effect"]["brightness"], int)
+        Node._check_number_range(self.config["effect"]["brightness"], "[-100, 100]")
+        Node._check_type(self.config["effect"]["gamma_correction"], float)
+        Node._check_number_range(self.config["effect"]["gamma_correction"], "[0, +inf]")
+        Node._check_type(self.config["effect"]["blur"], int)
+        Node._check_number_range(self.config["effect"]["blur"], "[1, +inf]")
+        Node._check_type(self.config["effect"]["mosaic"], int)
+        Node._check_number_range(self.config["effect"]["mosaic"], "[1, +inf]")
+        Node._check_type(self.config["contours"]["show"], bool)
+        Node._check_type(self.config["contours"]["thickness"], int)
+        Node._check_number_range(self.config["contours"]["thickness"], "[1, +inf]")
 
-    def _check_type(self, var: Any, var_type: Any) -> None:
+    @staticmethod
+    def _check_type(var: Any, var_type: Any) -> None:
         if var is not None and not isinstance(var, var_type):
             raise ValueError(
                 f"Config: '{var}' must be a {var_type.__name__} value."
             )
 
-    def _check_number_range(self, var: Any, number_range: List[Union[str, int]]) -> None:
+    @staticmethod
+    def _check_number_range(var: Any, number_range: List[Union[str, int]]) -> None:
         if var is not None:
             lower, upper = [float(value.strip()) for value in number_range[1:-1].split(",")]
             if not lower <= var <= upper:
