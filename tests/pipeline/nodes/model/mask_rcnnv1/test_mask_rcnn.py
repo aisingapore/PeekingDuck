@@ -61,7 +61,7 @@ def mask_rcnn_bad_config_value(request, mask_rcnn_config):
     return mask_rcnn_config
 
 
-@pytest.fixture(params=["r50-fpn"])
+@pytest.fixture(params=["r50-fpn", "r101-fpn"])
 def mask_rcnn_type(request, mask_rcnn_config):
     mask_rcnn_config["model_type"] = request.param
     return mask_rcnn_config
@@ -101,7 +101,7 @@ class TestMaskRCNN:
         model_type = mask_rcnn.config["model_type"]
         image_name = Path(human_image).stem
         expected = GT_RESULTS[model_type][image_name]
-        expected_mask = NP_FILE[image_name]
+        expected_mask = NP_FILE[f"{model_type}_{image_name}"]
         npt.assert_allclose(output["bboxes"], expected["bboxes"], atol=1e-3)
         npt.assert_equal(output["bbox_labels"], expected["bbox_labels"])
         npt.assert_allclose(output["bbox_scores"], expected["bbox_scores"], atol=1e-2)
@@ -134,23 +134,22 @@ class TestMaskRCNN:
 
         # boxes: [x1, y1, x2, y2] where 0 <= x1 < x2 <= W and 0 <= y1 < y2 <= H
         # 3.2 in [0.0, 1.0, 1.0, 3.2] is to test for clipping
-        network_output = [
-            {
-                "boxes": torch.tensor(
-                    [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]],
-                    dtype=torch.float32,
-                    device=device,
-                ),
-                "labels": torch.tensor([1, 35], dtype=torch.int64, device=device),
-                "scores": torch.tensor([0.9, 0.2], dtype=torch.float32, device=device),
-                "masks": torch.rand(
-                    (2, 1, img_shape[0], img_shape[1]),
-                    dtype=torch.float32,
-                    device=device,
-                ),
-            }
-        ]
-        expected_masks = network_output[0]["masks"][0].clone()
+        network_output = {
+            "boxes": torch.tensor(
+                [[0.0, 1.0, 1.0, 3.2], [1.0, 0.0, 2.0, 2.0]],
+                dtype=torch.float32,
+                device=device,
+            ),
+            "labels": torch.tensor([1, 35], dtype=torch.int64, device=device),
+            "scores": torch.tensor([0.9, 0.2], dtype=torch.float32, device=device),
+            "masks": torch.rand(
+                (2, 1, img_shape[0], img_shape[1]),
+                dtype=torch.float32,
+                device=device,
+            ),
+        }
+
+        expected_masks = network_output["masks"][0].clone()
 
         mask_rcnn = Node(config=mask_rcnn_config)
         boxes, labels, scores, masks = mask_rcnn.model.detector._postprocess(
