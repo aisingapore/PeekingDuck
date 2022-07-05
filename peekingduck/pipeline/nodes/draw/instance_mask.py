@@ -238,7 +238,7 @@ class Node(
 
             if self.config["contours"]["show"]:
                 ret_image = self._draw_contours_single_mask(
-                    masks, index, ret_image, color
+                    masks, index, ret_image
                 )
 
         return ret_image
