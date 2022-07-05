@@ -150,7 +150,9 @@ def expand_masks(mask: Tensor, padding: int) -> Tuple[Tensor, float]:
 
 
 def paste_mask_in_image(mask: Tensor, box: Tensor, im_h: int, im_w: int) -> Tensor:
-    # pylint: disable=missing-function-docstring
+    """Resize mask to same size as the bounding box and paste onto an image-size frame that is
+    initialized to zero. The location of the mask on the frame follows the location of the bounding
+    box"""
     to_remove = 1
     width = int(box[2] - box[0] + to_remove)
     height = int(box[3] - box[1] + to_remove)
@@ -181,7 +183,9 @@ def paste_mask_in_image(mask: Tensor, box: Tensor, im_h: int, im_w: int) -> Tens
 def paste_masks_in_image(
     masks: Tensor, boxes: Tensor, img_shape: Tuple[int, int], padding: int = 1
 ) -> Tensor:
-    # pylint: disable=missing-function-docstring
+    """Expands masks and bounding boxes based on the padding size and paste masks onto a
+    zero-initialized frame and a location based on the bounding boxes using the
+    `paste_mask_in_image()` function"""
     masks, scale = expand_masks(masks, padding=padding)
     boxes = expand_boxes(boxes, scale).to(dtype=torch.int64)
     im_h, im_w = img_shape
@@ -218,7 +222,7 @@ class RoIHeads(nn.Module):
             mask_head and returns the segmentation mask logits. Defaults to None.
     """
 
-    # pylint: disable=too-many-locals,too-many-instance-attributes,too-many-arguments
+    # pylint: disable=too-many-instance-attributes,too-many-arguments
     def __init__(
         self,
         box_roi_pool: nn.Module,
@@ -273,6 +277,7 @@ class RoIHeads(nn.Module):
         proposals: List[Tensor],
         image_shapes: List[Tuple[int, int]],
     ) -> Tuple[List[Tensor], List[Tensor], List[Tensor]]:
+        # pylint: disable=too-many-locals
         """Perform postprocessing for detection results"""
         device = class_logits.device
         num_classes = class_logits.shape[-1]
@@ -333,6 +338,7 @@ class RoIHeads(nn.Module):
         proposals: List[Tensor],
         image_shapes: List[Tuple[int, int]],
     ) -> List[Dict[str, Tensor]]:
+        # pylint: disable=too-many-locals
         """Forward propagation for the RoIHead.
         Takes the feature and proposals, and predicts the bounding boxes, labels, scores and
         predicts the masks if there are any mask_roi_pool, mask_head and mask_predictor present.

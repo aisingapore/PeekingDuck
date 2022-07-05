@@ -104,11 +104,11 @@ class BoxCoder:
     ) -> None:
         """
         Args:
-            weights (4-element tuple): Each element correponds to the weights that the raw
+            weights (4-element tuple): Each element corresponds to the weights that the raw
                 regressed offsets (dx, dy, dw, dh) will be divided by. (i.e. the higher the weight,
                 the less effect the regressed offsets have on the boxes)
             bbox_xform_clip (float): The log of maximum allowable width or height scale offset.
-                E.g. if maxiumum allowable width and height offset is 3 times of original width or
+                E.g. if maximum allowable width and height offset is 3 times of original width or
                 height, the bbox_xform_clip will be log(3). It is also to prevent sending too large
                 an input to torch.exp() when calculating the predicted width and height.
         """
