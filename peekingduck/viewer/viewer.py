@@ -44,14 +44,9 @@ BUTTON_DELAY: int = 250  # milliseconds (0.25 of a second)
 BUTTON_REPEAT: int = int(1000 / 60)  # milliseconds (60 fps)
 CHANGE_PIPELINE_DELAY: float = 1.0  # seconds before switching pipelines
 FPS_60: int = int(1000 / 60)  # milliseconds per iteration
-LOGO = "peekingduck/viewer/PeekingDuckLogo.png"
-MIN_HEIGHT = 600
-MIN_WIDTH = 800
-WIN_HEIGHT = 768
-WIN_WIDTH = 1024
-ZOOM_TEXT = ["0.5x", "0.75x", "1x", "1.25x", "1.5x", "2x", "2.5x", "3x"]
-ZOOM_DEFAULT_IDX = 2
-ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
+ZOOM_TEXT: List[str] = ["50%", "75%", "100%", "125%", "150%", "200%", "250%", "300%"]
+ZOOM_DEFAULT_IDX: int = 2
+ZOOMS: List[float] = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
 EMOJI_PLAY = "\u25B6"
 EMOJI_STOP = "\u25FD"  # white medium-small square
 

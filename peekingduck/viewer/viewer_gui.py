@@ -31,6 +31,7 @@ WIN_HEIGHT: int = 960
 WIN_WIDTH: int = 1280
 MAGNIFYING_GLASS_EMOJI = "\U0001F50D"
 BLANK_EMOJI = "\u2800"
+BTN_WIDTH_SPAN = 1
 
 
 def create_window(viewer) -> None:  # type: ignore
@@ -210,7 +211,7 @@ def _create_controls(viewer, ctrl_frm: ttk.Frame) -> None:  # type: ignore
         to=100,
         command=viewer.sync_slider_to_frame,
     )
-    slider.grid(row=0, column=0, columnspan=9, sticky="nsew")
+    slider.grid(row=0, column=0, columnspan=95, sticky="nsew")
     viewer.tk_scale = slider
     slider.bind("<Button-1>", viewer.slider_set_value)
     slider.grid_remove()  # hide it first
@@ -223,41 +224,41 @@ def _create_controls(viewer, ctrl_frm: ttk.Frame) -> None:  # type: ignore
         value=0,
         maximum=100,
     )
-    progress_bar.grid(row=0, column=0, columnspan=9, sticky="nsew")
+    progress_bar.grid(row=0, column=0, columnspan=95, sticky="nsew")
     viewer.tk_progress = progress_bar
     # frame number
     lbl = tk.Label(ctrl_frm, text="0", anchor=tk.W)
-    lbl.grid(row=0, column=9, sticky="nsew")
+    lbl.grid(row=0, column=95, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_lbl_frame_num = lbl
     #
     # row 1: buttons
     #
     btn_play = ttk.Button(ctrl_frm, text="Play", command=viewer.btn_play_stop_press)
-    btn_play.grid(row=1, column=0, sticky="nsew")
+    btn_play.grid(row=1, column=0, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_btn_play = btn_play
     btn_zoom_out = ttk.Button(ctrl_frm, text="-", command=viewer.btn_zoom_out_press)
-    btn_zoom_out.grid(row=1, column=6, sticky="nsew")
+    btn_zoom_out.grid(row=1, column=92, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_btn_zoom_out = btn_zoom_out
     lbl = tk.Label(ctrl_frm, text=f"{MAGNIFYING_GLASS_EMOJI} 100%")
-    lbl.grid(row=1, column=7, sticky="nsew")
+    lbl.grid(row=1, column=93, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_lbl_zoom = lbl
     btn_zoom_in = ttk.Button(ctrl_frm, text="+", command=viewer.btn_zoom_in_press)
-    btn_zoom_in.grid(row=1, column=8, sticky="nsew")
+    btn_zoom_in.grid(row=1, column=94, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_btn_zoom_in = btn_zoom_in
     # spacer: without this, GUI will resize and flicker when frame number is updated
     lbl = tk.Label(ctrl_frm, text="          ")
-    lbl.grid(row=1, column=9, sticky="nsew")
+    lbl.grid(row=1, column=95, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     #
     # row 2: playlist button
     #
     btn_playlist = ttk.Button(
         ctrl_frm, text="Playlist", command=viewer.btn_hide_show_playlist_press
     )
-    btn_playlist.grid(row=2, column=8, sticky="nsew")
+    btn_playlist.grid(row=2, column=94, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_btn_playlist = btn_playlist
     # spacer: without this, GUI will resize and flicker when frame number is updated
     lbl = tk.Label(ctrl_frm, text="          ")
-    lbl.grid(row=2, column=9, sticky="nsew")
+    lbl.grid(row=2, column=95, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
 
     num_col, _ = ctrl_frm.grid_size()  # config column sizes
     for i in range(num_col):
