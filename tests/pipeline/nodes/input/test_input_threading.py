@@ -122,7 +122,7 @@ def test_input_threading():
         cmd = ["python", "__main__.py"]
         proc = subprocess.Popen(
             cmd,
-            cwd=PKD_RUN_DIR,
+            cwd=PKD_ROOT_DIR,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
             bufsize=1,
