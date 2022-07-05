@@ -14,6 +14,9 @@
 
 """
 PeekingDuck Viewer GUI Creation Code
+
+dotw technotes: Did not import Viewer from peekingduck.viewer.viewer due to pylint 2.7
+                complaining about circular import.
 """
 
 import tkinter as tk
@@ -31,18 +34,20 @@ BLANK_EMOJI = "\u2800"
 
 
 def create_window(viewer) -> None:  # type: ignore
-    """Create PeekingDuck Viewer window with the following components:
-        +---------------------------+
-        | Logo       Name           |
-        +---------------------------+
-        |                           |
-        |     Image     Playlist    |
-        |                           |
-        |          Controls         |
-        |                           |
-        +---------------------------+
-        |         Status bar        |
-        +---------------------------+
+    """Create PeekingDuck Viewer window with the following structure:
+        +-+-------------------------------+-+
+        | |  Logo       Name              | |
+        | +-------------------------------+ |
+        | |                               | |
+        | |                               | |
+        | |     Video               Play  | |
+        | |     image               list  | |
+        | |                               | |
+        | |                               | |
+        | +-------------------------------+ |
+        | |           Controls            | |
+        | |           StatusBar           | |
+        +-+-------------------------------+-+
 
     Args:
         viewer (Viewer): PeekingDuck Viewer object
@@ -67,6 +72,7 @@ def create_window(viewer) -> None:  # type: ignore
     viewer.root = root  # save main window
     # dotw technotes: Need to create footer before body to ensure footer controls
     #                 do not get covered when image is zoomed in
+    create_side_margins(viewer)
     create_header(viewer)
     create_footer(viewer)
     create_body(viewer)
@@ -82,47 +88,71 @@ def create_header(viewer) -> None:  # type: ignore
     header_frm = ttk.Frame(viewer.root, name="header_frm")
     header_frm.pack(side=tk.TOP, fill=tk.X)
     viewer.tk_header_frm = header_frm
-    lbl = tk.Label(header_frm)  # row spacer
-    lbl.grid(row=0, column=0)
-    viewer.img_logo = load_image(LOGO, resize_pct=0.10)
-    logo = tk.Label(header_frm, image=viewer.img_logo)
-    logo.grid(row=1, column=0, columnspan=2, sticky="nsew")
-    viewer.tk_logo = logo
-    lbl = tk.Label(
-        header_frm, text="PeekingDuck Viewer Header", font=("arial 20")
-    )
-    lbl.grid(row=1, column=3, columnspan=4, sticky="nsew")
+    # row 0: viewer header text (span 5 columns)
+    lbl = tk.Label(header_frm, text="Viewer Header", font=("arial 20"))
+    lbl.grid(row=0, column=0, columnspan=5, sticky="nsew")
     viewer.tk_header = lbl
-    lbl = tk.Label(header_frm)  # column spacer
-    lbl.grid(row=1, column=9)
-    lbl = tk.Label(header_frm)  # row spacer
-    lbl.grid(row=2, column=0)
+    # row 0: logo (left)
+    viewer.img_logo = load_image(LOGO, resize_pct=0.10)
+    logo = tk.Label(header_frm, image=viewer.img_logo, anchor=tk.W)
+    logo.grid(row=0, column=0, sticky="nsew")
+    viewer.tk_logo = logo
     num_col, _ = header_frm.grid_size()  # config column sizes
     for i in range(num_col):
         header_frm.grid_columnconfigure(i, weight=1)
 
 
 def create_footer(viewer) -> None:  # type: ignore
+    """Create footer with controls and status bar
+
+    Args:
+        viewer (Viewer): PeekingDuck Viewer object
+    """
     footer_frm = ttk.Frame(viewer.root, name="footer_frm")
     footer_frm.pack(side=tk.BOTTOM, fill=tk.X)
     viewer.tk_footer_frm = footer_frm
+    # row 0: spacer
     lbl = tk.Label(footer_frm)  # row spacer
     lbl.grid(row=0, column=0)
-    lbl = tk.Label(footer_frm)  # col spacer
-    lbl.grid(row=1, column=0)
-    lbl = tk.Label(footer_frm, anchor=tk.W, text="Status bar text")
-    lbl.grid(row=1, column=2, columnspan=6, sticky="ew")
+    # row 1: controls
+    ctrl_frm = ttk.Frame(footer_frm, name="ctrl_frm")
+    ctrl_frm.grid(row=1, column=0, sticky="ew")
+    _create_controls(viewer, ctrl_frm)
+    # row 2: status bar
+    lbl = tk.Label(footer_frm, anchor=tk.CENTER, text="Status bar text")
+    lbl.grid(row=2, column=0, sticky="ew")
     viewer.tk_status_bar = lbl
-    lbl = tk.Label(footer_frm)  # col spacer
-    lbl.grid(row=1, column=9)
+    # row 3: spacer
     lbl = tk.Label(footer_frm)  # row spacer
-    lbl.grid(row=2, column=0)
+    lbl.grid(row=3, column=0)
+
     num_col, _ = footer_frm.grid_size()  # config column sizes
     for i in range(num_col):
         footer_frm.grid_columnconfigure(i, weight=1)
 
 
+def create_side_margins(viewer) -> None:  # type: ignore
+    """Create left and right side margins
+
+    Args:
+        viewer (Viewer): PeekingDuck Viewer object
+    """
+    left_margin_frm = ttk.Frame(
+        viewer.root, name="left_margin_frm", width=50, height=100
+    )
+    left_margin_frm.pack(side=tk.LEFT, fill=tk.NONE, expand=False)
+    right_margin_frm = ttk.Frame(
+        viewer.root, name="right_margin_frm", width=50, height=100
+    )
+    right_margin_frm.pack(side=tk.RIGHT, fill=tk.NONE, expand=False)
+
+
 def create_body(viewer) -> None:  # type: ignore
+    """Create body with video image and playlist in side panel
+
+    Args:
+        viewer (Viewer): PeekingDuck Viewer object
+    """
     body_frm = ttk.Frame(viewer.root, name="body_frm")
     body_frm.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     viewer.tk_body_frm = body_frm
@@ -132,8 +162,13 @@ def create_body(viewer) -> None:  # type: ignore
     panel_frm = ttk.Frame(body_frm, name="panel_frm")
     panel_frm.pack(side=tk.RIGHT, fill=tk.Y)
     viewer.tk_panel_frm = panel_frm
-    lbl = tk.Label(panel_frm)  # panel col spacer
+    # playlist top/bottom spacers:
+    # need these for video image to center properly after hiding playlist
+    lbl = tk.Label(panel_frm)
+    lbl.pack(side=tk.TOP)
+    lbl = tk.Label(panel_frm)
     lbl.pack(side=tk.BOTTOM)
+    # playlist
     playlist_frm = ttk.Frame(
         panel_frm, name="playlist_frm", relief=tk.RIDGE, borderwidth=1
     )
@@ -148,15 +183,24 @@ def create_body(viewer) -> None:  # type: ignore
     playlist_view.register_callback("play", viewer.on_play_pipeline)
     viewer.playlist_show = True
 
-    #####
+    # video image
+    image_frm = ttk.Frame(body_frm, name="image_frm")
+    image_frm.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
+    viewer.tk_image_frm = image_frm
+    output_image = tk.Label(image_frm)
+    output_image.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+    viewer.tk_output_image = output_image
+
+
+def _create_controls(viewer, ctrl_frm: ttk.Frame) -> None:  # type: ignore
+    """Create 3 rows of controls: slider/progress bar/buttons
+
+    Args:
+        viewer (Viewer): PeekingDuck Viewer object
+        body_frm (ttk.Frame): container frame for controls
+    """
     #
-    # bottom frame for controls
-    #
-    #####
-    ctrl_frm = ttk.Frame(body_frm, name="ctrl_frm")
-    ctrl_frm.pack(side=tk.BOTTOM, fill=tk.X)
-    #
-    # row 1: info controls
+    # row 0: info controls
     #
     # slider
     slider = ttk.Scale(
@@ -164,9 +208,9 @@ def create_body(viewer) -> None:  # type: ignore
         orient=tk.HORIZONTAL,
         from_=1,
         to=100,
-        command=viewer._sync_slider_to_frame,
+        command=viewer.sync_slider_to_frame,
     )
-    slider.grid(row=0, column=2, columnspan=6, sticky="nsew")
+    slider.grid(row=0, column=0, columnspan=9, sticky="nsew")
     viewer.tk_scale = slider
     slider.bind("<Button-1>", viewer.slider_set_value)
     slider.grid_remove()  # hide it first
@@ -179,61 +223,42 @@ def create_body(viewer) -> None:  # type: ignore
         value=0,
         maximum=100,
     )
-    progress_bar.grid(row=0, column=2, columnspan=6, sticky="nsew")
+    progress_bar.grid(row=0, column=0, columnspan=9, sticky="nsew")
     viewer.tk_progress = progress_bar
     # frame number
     lbl = tk.Label(ctrl_frm, text="0", anchor=tk.W)
-    lbl.grid(row=0, column=8, sticky="nsew")
+    lbl.grid(row=0, column=9, sticky="nsew")
     viewer.tk_lbl_frame_num = lbl
     #
-    # row 2: buttons
+    # row 1: buttons
     #
-    btn_play = ttk.Button(
-        ctrl_frm, text="Play", command=viewer.btn_play_stop_press
-    )
-    btn_play.grid(row=1, column=2, sticky="nsew")
+    btn_play = ttk.Button(ctrl_frm, text="Play", command=viewer.btn_play_stop_press)
+    btn_play.grid(row=1, column=0, sticky="nsew")
     viewer.tk_btn_play = btn_play
-    btn_zoom_out = ttk.Button(
-        ctrl_frm, text="-", command=viewer.btn_zoom_out_press
-    )
-    btn_zoom_out.grid(row=1, column=5, sticky="nsew")
+    btn_zoom_out = ttk.Button(ctrl_frm, text="-", command=viewer.btn_zoom_out_press)
+    btn_zoom_out.grid(row=1, column=6, sticky="nsew")
     viewer.tk_btn_zoom_out = btn_zoom_out
     lbl = tk.Label(ctrl_frm, text=f"{MAGNIFYING_GLASS_EMOJI} 100%")
-    lbl.grid(row=1, column=6, sticky="nsew")
+    lbl.grid(row=1, column=7, sticky="nsew")
     viewer.tk_lbl_zoom = lbl
-    btn_zoom_in = ttk.Button(
-        ctrl_frm, text="+", command=viewer.btn_zoom_in_press
-    )
-    btn_zoom_in.grid(row=1, column=7, sticky="nsew")
+    btn_zoom_in = ttk.Button(ctrl_frm, text="+", command=viewer.btn_zoom_in_press)
+    btn_zoom_in.grid(row=1, column=8, sticky="nsew")
     viewer.tk_btn_zoom_in = btn_zoom_in
-    lbl = tk.Label(
-        ctrl_frm,
-        # text=f"{BLANK_EMOJI} {BLANK_EMOJI} {BLANK_EMOJI} {BLANK_EMOJI}",
-        text=f"{BLANK_EMOJI}",
-    )  # spacer to stablise GUI flickering when resizing
-    lbl.grid(row=1, column=8, sticky="nsew")
+    # spacer: without this, GUI will resize and flicker when frame number is updated
+    lbl = tk.Label(ctrl_frm, text="          ")
+    lbl.grid(row=1, column=9, sticky="nsew")
     #
-    # row 3: playlist button
+    # row 2: playlist button
     #
     btn_playlist = ttk.Button(
         ctrl_frm, text="Playlist", command=viewer.btn_hide_show_playlist_press
     )
-    btn_playlist.grid(row=2, column=7, sticky="nsew")
+    btn_playlist.grid(row=2, column=8, sticky="nsew")
     viewer.tk_btn_playlist = btn_playlist
-    lbl = tk.Label(
-        ctrl_frm,
-        # text=f"{BLANK_EMOJI} {BLANK_EMOJI} {BLANK_EMOJI} {BLANK_EMOJI}",
-        text=f"{BLANK_EMOJI}",
-    )  # spacer to stablise GUI flickering when resizing
-    lbl.grid(row=2, column=8, sticky="nsew")
+    # spacer: without this, GUI will resize and flicker when frame number is updated
+    lbl = tk.Label(ctrl_frm, text="          ")
+    lbl.grid(row=2, column=9, sticky="nsew")
 
     num_col, _ = ctrl_frm.grid_size()  # config column sizes
     for i in range(num_col):
         ctrl_frm.grid_columnconfigure(i, weight=1)
-
-    image_frm = ttk.Frame(body_frm, name="image_frm")
-    image_frm.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
-    viewer.tk_image_frm = image_frm
-    output_image = tk.Label(image_frm)
-    output_image.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-    viewer.tk_output_image = output_image
