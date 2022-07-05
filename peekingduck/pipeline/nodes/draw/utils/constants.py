@@ -133,11 +133,11 @@ CLASS_COLORS = {
     "keyboard":     VIOLET_BLUE,
     "cell phone":   VIOLET_BLUE,
 
-    "microwave":    (0,111,255),
-    "oven":         (0,111,255),
-    "toaster":      (0,111,255),
-    "sink":         (0,111,255),
-    "refrigerator": (0,111,255),
+    "microwave":    (12,54,191),
+    "oven":         (12,54,191),
+    "toaster":      (12,54,191),
+    "sink":         (12,54,191),
+    "refrigerator": (12,54,191),
 
     "book":         (35,39,62),
     "clock":        (35,39,62),
