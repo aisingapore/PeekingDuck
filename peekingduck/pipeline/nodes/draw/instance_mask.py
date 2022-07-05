@@ -217,9 +217,7 @@ class Node(
         for _, index in scores_with_indexes:
             color = self._get_instance_color(bbox_labels[index])
 
-            # convert colorspace from RGB to BGR to use in OpenCV
-            color_bgr = color[::-1]
-            full_sized_canvas[:, :] = color_bgr
+            full_sized_canvas[:, :] = color
 
             coloured_seg_mask = cv2.bitwise_and(
                 full_sized_canvas, full_sized_canvas, mask=masks[index]
@@ -256,24 +254,24 @@ class Node(
             instance_class (str): Class of detected object.
 
         Returns:
-            Tuple[int,int,int]: Color to use for next instance, in RGB.
+            Tuple[int,int,int]: Color to use for next instance, in BGR.
         """
         if self.config["instance_color_scheme"] == "random":
             color_hsv = (randint(0, 179), randint(100, 255), 255)
-            color = self._hsv_to_rgb(color_hsv)
+            color = self._hsv_to_bgr(color_hsv)
         elif self.config["instance_color_scheme"] == "hue_family":
             color = self.class_instance_color_state.get(instance_class)  # type: ignore
             if not color:
                 color = CLASS_COLORS.get(instance_class, DEFAULT_CLASS_COLOR)
             else:
-                color_hsv = self._rgb_to_hsv(color)
+                color_hsv = self._bgr_to_hsv(color)
                 # we use a minimum saturation of 100 to avoid too light colors,
                 # thus we increment saturation by step size of (256-100)/8.
                 saturation = (color_hsv[1] + (256 - SATURATION_MINIMUM) / SATURATION_STEPS) % 256
                 if saturation < SATURATION_MINIMUM:
                     saturation += SATURATION_MINIMUM
                 color_hsv = (color_hsv[0], int(saturation), color_hsv[2])
-                color = self._hsv_to_rgb(color_hsv)
+                color = self._hsv_to_bgr(color_hsv)
             self.class_instance_color_state.update({instance_class: color})
 
         return color
@@ -393,15 +391,16 @@ class Node(
         return ret_image
 
     @staticmethod
-    def _rgb_to_hsv(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
-        hsv_norm = colorsys.rgb_to_hsv(*[x / 255 for x in rgb])
+    def _bgr_to_hsv(bgr: Tuple[int, int, int]) -> Tuple[int, int, int]:
+        hsv_norm = colorsys.rgb_to_hsv(bgr[2] / 255, bgr[1] / 255, bgr[0] / 255)
         hsv = (int(hsv_norm[0] * 127), int(hsv_norm[1] * 255), int(hsv_norm[2] * 255))
 
         return hsv
 
     @staticmethod
-    def _hsv_to_rgb(hsv: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    def _hsv_to_bgr(hsv: Tuple[int, int, int]) -> Tuple[int, int, int]:
         rgb_norm = colorsys.hsv_to_rgb(hsv[0] / 127, hsv[1] / 255, hsv[2] / 255)
-        rgb = cast(Tuple[int, int, int], tuple((int(x * 255) for x in rgb_norm)))
+        rgb = [int(x * 255) for x in rgb_norm]
+        bgr = cast(Tuple[int, int, int], tuple(rgb[::-1]))
 
-        return rgb
+        return bgr
