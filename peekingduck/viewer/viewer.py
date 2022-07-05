@@ -16,7 +16,7 @@
 Implement PeekingDuck Viewer
 """
 
-from typing import List, Union
+from typing import List
 from pathlib import Path
 import logging
 import platform
@@ -54,7 +54,7 @@ ZOOM_DEFAULT_IDX = 2
 ZOOMS = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
 
 
-class Viewer:  # pylint: disable=too-many-instance-attributes
+class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
     """Implement PeekingDuck Viewer class"""
 
     def __init__(
@@ -82,6 +82,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             "+": self._zoom_in,
             "-": self._zoom_out,
         }
+        # forward type hinting of internal working vars
+        self._frames: List[np.ndarray] = []
+        self._frame_idx: int = 0
+        self.zoom_idx: int = 0
+        self.is_output_playback: bool = False
+        self.is_pipeline_running: bool = False
+        self.state: str = ""
 
     def run(self) -> None:
         """Main method to setup Viewer and run Tk event loop"""
@@ -94,7 +101,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             self.logger.info("binding macOS cmd-Q")
             self.root.createcommand("::tk::mac::Quit", self.on_exit)
         # activate internal timer function and start Tkinter event loop
-        self._timer_function()
+        self.timer_function()
         self.root.mainloop()
 
     ####################
@@ -127,60 +134,14 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
 
     def btn_play_stop_press(self) -> None:
         """Handle Play/Stop button"""
-        self.logger.debug(
-            f"btn_play_stop_press start: self.state={self.state}"
-        )
+        self.logger.debug(f"btn_play_stop_press start: self.state={self.state}")
         if self.is_pipeline_running:
-            self._stop_running_pipeline()
+            self.stop_running_pipeline()
         elif self.is_output_playback:
-            self._stop_playback()
+            self.stop_playback()
         else:
-            self._start_playback()
+            self.start_playback()
         self.logger.debug(f"btn_play_stop_press end: self.state={self.state}")
-
-    def btn_first_frame_press(self) -> None:
-        """Goto first frame"""
-        if (
-            self.is_pipeline_running
-            or self.is_output_playback
-            or self._frames is None
-        ):
-            return
-        self.logger.debug("btn_first_frame_press")
-        self._frame_idx = 0
-        self._update_slider_and_show_frame()
-
-    def btn_last_frame_press(self) -> None:
-        """Goto last frame"""
-        if (
-            self.is_pipeline_running
-            or self.is_output_playback
-            or self._frames is None
-        ):
-            return
-        self.logger.debug("btn_last_frame_press")
-        self._frame_idx = len(self._frames) - 1
-        self._update_slider_and_show_frame()
-
-    def btn_forward_press(self) -> None:
-        """Forward one frame"""
-        if (
-            self.is_pipeline_running
-            or self.is_output_playback
-            or self._frames is None
-        ):
-            return
-        self._forward_one_frame()
-
-    def btn_backward_press(self) -> None:
-        """Back one frame"""
-        if (
-            self.is_pipeline_running
-            or self.is_output_playback
-            or self._frames is None
-        ):
-            return
-        self._backward_one_frame()
 
     def btn_zoom_in_press(self) -> None:
         """Zoom in: make image larger"""
@@ -191,6 +152,14 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         """Zoom out: make image smaller"""
         self.logger.info("btn_zoom_out_press")
         self._zoom_out()
+
+    def on_exit(self) -> None:
+        """Handle viewer quit event"""
+        self.logger.debug("saving playlist")
+        self.playlist.save_playlist_file()
+        self.logger.info("quitting viewer")
+        self.cancel_timer_function()
+        self.root.destroy()
 
     def on_keypress(self, event: tk.Event) -> None:
         """Handle all keydown events.
@@ -211,12 +180,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             if key in self._keyboard_shortcuts:
                 self._keyboard_shortcuts[key]()
 
-    def on_exit(self) -> None:
-        """Handle quit viewer event"""
-        self.logger.info("quitting viewer")
-        self._cancel_timer_function()
-        self.root.destroy()
-
     def on_resize(self, event: tk.Event) -> None:
         """Handle window resize event.
 
@@ -228,33 +191,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             self.logger.debug(
                 f"on_resize: widget={event.widget}, h={event.height}, w={event.width}"
             )
-
-    #
-    # Background "Event Loop"
-    #
-    def _timer_function(self) -> None:
-        """Function to do background processing in Tkinter's way"""
-        if self.state == "play":
-            # Only two states: 1) playing back video or 2) executing pipeline
-            if self.is_output_playback:
-                self._do_playback()
-            else:
-                # Executing pipeline: check which execution state we are in
-                if not self.is_pipeline_running:
-                    self._run_pipeline_start()
-                elif self._pipeline.terminate:
-                    self._run_pipeline_end()
-                else:
-                    self._run_pipeline_one_iteration()
-
-        self.root.update()  # wake up GUI
-        self._bkgd_job = self.tk_header.after(FPS_60, self._timer_function)
-
-    def _cancel_timer_function(self) -> None:
-        """Cancel the background timer function"""
-        if self._bkgd_job:
-            self.tk_header.after_cancel(self._bkgd_job)
-            self._bkgd_job = None
 
     def on_add_pipeline(self) -> bool:
         """Add pipeline to playlist
@@ -320,9 +256,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         # double check status variables
         self.logger.debug(f"self.state={self.state}")
         self.logger.debug(f"self.is_output_playback={self.is_output_playback}")
-        self.logger.debug(
-            f"self.is_pipeline_running={self.is_pipeline_running}"
-        )
+        self.logger.debug(f"self.is_pipeline_running={self.is_pipeline_running}")
         assert self.state != "play"
         assert not self.is_output_playback
         assert not self.is_pipeline_running
@@ -332,9 +266,38 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.init_pipeline(Path(pipeline))
         self.timer_function()
 
+    ##################
+    #
+    # Background Timer
+    #
+    ##################
+    def timer_function(self) -> None:
+        """Function to do background processing in Tkinter's way"""
+        if self.state == "play":
+            # Only two states: 1) playing back video or 2) executing pipeline
+            if self.is_output_playback:
+                self.do_playback()
+            else:
+                # Executing pipeline: check which execution state we are in
+                if not self.is_pipeline_running:
+                    self.run_pipeline_start()
+                elif self._pipeline.terminate:
+                    self.run_pipeline_end()
+                else:
+                    self.run_pipeline_one_iteration()
+
+        self.root.update()  # wake up GUI
+        self._bkgd_job = self.tk_header.after(FPS_60, self.timer_function)
+
+    def cancel_timer_function(self) -> None:
+        """Cancel the background timer function"""
+        if self._bkgd_job:
+            self.tk_header.after_cancel(self._bkgd_job)
+            self._bkgd_job = None
+
     ####################
     #
-    # Internal Methods for Display Management
+    # Display Management
     #
     ####################
     def _backward_one_frame(self) -> bool:
@@ -374,18 +337,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         Returns:
             np.ndarray: the zoomed image
         """
-        # logger.debug(f"zoom_idx={self.zoom_idx}")
         if self.zoom_idx != ZOOM_DEFAULT_IDX:
-            # zoom image
             zoom = ZOOMS[self.zoom_idx]
-            # logger.debug(f"img.shape = {img.shape}, zoom = {zoom}")
             new_size = (
                 int(frame.shape[0] * zoom),
                 int(frame.shape[1] * zoom),
                 frame.shape[2],
             )
-            # logger.debug(f"zoom image to {new_size}")
-            # note: opencv is faster than scikit-image!
             frame = cv2.resize(frame, (new_size[1], new_size[0]))
         return frame
 
@@ -432,7 +390,29 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         self.tk_lbl_frame_num["text"] = frame_num
         self._show_frame()
 
-    def _sync_slider_to_frame(self, val: str) -> None:
+    def _enable_progress(self) -> None:
+        """Show progress bar and hide slider"""
+        self.logger.debug("enable progress")
+        self.tk_scale.grid_remove()  # hide slider
+        self.tk_progress.grid()  # show progress bar
+
+    def _enable_slider(self) -> None:
+        """Show slider and hide progress bar"""
+        self.logger.debug("enable slider")
+        self.tk_progress.grid_remove()  # hide progress bar
+        self.tk_scale.grid()  # show slider
+        self.tk_scale.configure(to=len(self._frames))
+        self.sync_slider_to_frame(self.tk_scale.get())
+
+    def _set_status_text(self, text: str) -> None:
+        """Set the status bar text to given text string.
+
+        Args:
+            text (str): the status bar text
+        """
+        self.tk_status_bar["text"] = text
+
+    def sync_slider_to_frame(self, val: str) -> None:
         """Update frame index based on slider value change
 
         Args:
@@ -452,23 +432,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         """
         self.tk_scale.event_generate("<Button-3>", x=event.x, y=event.y)
 
-    def _enable_progress(self) -> None:
-        """Show progress bar and hide slider"""
-        self.logger.debug("enable progress")
-        self.tk_scale.grid_remove()  # hide slider
-        self.tk_progress.grid()  # show progress bar
-
-    def _enable_slider(self) -> None:
-        """Show slider and hide progress bar"""
-        self.logger.debug("enable slider")
-        self.tk_progress.grid_remove()  # hide progress bar
-        self.tk_scale.grid()  # show slider
-        self.tk_scale.configure(to=len(self._frames))
-        self._sync_slider_to_frame(self.tk_scale.get())
-
     ####################
     #
-    # Pipeline Execution Methods
+    # Pipeline Execution
     #
     ####################
     def init_pipeline(self, pipeline_path: Path) -> None:
@@ -490,24 +456,18 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         else:
             self.pipeline_full_path = pipeline_path
         # set custom nodes path accordingly
-        self.custom_nodes_parent_path = str(
-            self.pipeline_full_path.parent / "src"
-        )
-        self.logger.info(
-            f"custom nodes parent: {type(self.custom_nodes_parent_path)}"
-        )
+        self.custom_nodes_parent_path = str(self.pipeline_full_path.parent / "src")
+        self.logger.info(f"custom nodes parent: {type(self.custom_nodes_parent_path)}")
         # init internal working vars
-        self._frames: List[np.ndarray] = []
-        self._frame_idx: int = -1
-        self.zoom_idx: int = ZOOM_DEFAULT_IDX
-        self.is_output_playback: bool = False
-        self.is_pipeline_running: bool = False
-        self.state: str = (
-            "play"  # activate auto play (cf. self.timer_function)
-        )
+        self._frames = []
+        self._frame_idx = -1
+        self.zoom_idx = ZOOM_DEFAULT_IDX
+        self.is_output_playback = False
+        self.is_pipeline_running = False
+        self.state = "play"  # activate auto play (cf. self.timer_function)
         self.bkgd_job = None
 
-    def _run_pipeline_end(self) -> None:
+    def run_pipeline_end(self) -> None:
         """Called when pipeline execution is completed.
         To perform clean-up/housekeeping tasks to ensure system consistency"""
         self.logger.debug("run pipeline end")
@@ -516,12 +476,11 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
                 node.release_resources()  # clean up nodes with threads
         self.is_pipeline_running = False
         self._enable_slider()
-        self._set_viewer_state_to_stop()
+        self.set_viewer_state_to_stop()
         self._set_header_stop()
 
-    def _run_pipeline_one_iteration(
-        self,
-    ) -> None:  # pylint: disable=too-many-branches
+    def run_pipeline_one_iteration(self) -> None:  # pylint: disable=too-many-branches
+        """Run one pipeline iteration"""
         self.is_pipeline_running = True
         for node in self._pipeline.nodes:
             if self._pipeline.data.get("pipeline_end", False):
@@ -544,9 +503,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
             if node.name.endswith("output.screen"):
                 # intercept screen output to Tkinter
                 img = self._pipeline.data["img"]
-                frame = cv2.cvtColor(
-                    img, cv2.COLOR_BGR2RGB
-                )  # BGR -> RGB for Tkinter
+                frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR -> RGB for Tkinter
                 self._frames.append(frame)  # save frame for playback
                 self._frame_idx += 1
                 self._show_frame()
@@ -562,16 +519,14 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
                     self.tk_progress["mode"] = "indeterminate"
             # check if need to stop after fixed number of iterations
             if self.num_iter and self._frame_idx + 1 >= self.num_iter:
-                self.logger.info(
-                    f"Stopping pipeline after {self.num_iter} iterations"
-                )
-                self._stop_running_pipeline()
+                self.logger.info(f"Stopping pipeline after {self.num_iter} iterations")
+                self.stop_running_pipeline()
         # update progress bar after each iteration
         self.tk_progress["value"] = self._frame_idx
         self.tk_lbl_frame_num["text"] = self._frame_idx + 1
 
-    def _run_pipeline_start(self) -> None:
-        """Init PeekingDuck's pipeline"""
+    def run_pipeline_start(self) -> None:
+        """Start PeekingDuck's pipeline"""
         self.logger.debug("run pipeline start")
         self.logger.debug(f"pipeline path: {self.pipeline_path}")
         self.logger.debug(f"custom_nodes: {self.custom_nodes_parent_path}")
@@ -582,48 +537,50 @@ class Viewer:  # pylint: disable=too-many-instance-attributes
         )
         self._pipeline: Pipeline = self._node_loader.get_pipeline()
         self._set_header_running()
-        self._set_viewer_state_to_play()
+        self.set_viewer_state_to_play()
+        self._set_status_text(f"Pipeline: {self.pipeline_full_path}")
         self.is_pipeline_running = True
+        self._enable_progress()
 
-    def _stop_running_pipeline(self) -> None:
+    def stop_running_pipeline(self) -> None:
         """Signal pipeline execution to be stopped"""
         self._pipeline.terminate = True
 
-    ####################
+    ###################
     #
-    # Pipeline Playback Methods
+    # Pipeline Playback
     #
-    ####################
-    def _start_playback(self) -> None:
+    ###################
+    def start_playback(self) -> None:
         """Start output playback process"""
         self.is_output_playback = True
         # auto-rewind if at last frame
         if self._frame_idx + 1 >= len(self._frames):
             self._frame_idx = 0
             self._update_slider_and_show_frame()
-        self._set_viewer_state_to_play()
+        self.set_viewer_state_to_play()
         self._set_header_playing()
-        self._do_playback()
+        self.do_playback()
 
-    def _do_playback(self) -> None:
+    def do_playback(self) -> None:
         """Playback saved video frames: to be called continuously"""
         if self._forward_one_frame():
             self.tk_scale.set(self._frame_idx + 1)
         else:
-            self._stop_playback()
+            self.stop_playback()
 
-    def _stop_playback(self) -> None:
+    def stop_playback(self) -> None:
         """Stop output playback"""
         self.is_output_playback = False
-        self._set_viewer_state_to_stop()
+        self.set_viewer_state_to_stop()
         self._set_header_stop()
 
-    def _set_viewer_state_to_play(self) -> None:
+    def set_viewer_state_to_play(self) -> None:
         """Set self state to play for either 1) pipeline execution or 2) playback"""
         self.state = "play"
         self.tk_btn_play["text"] = "Stop"
 
-    def _set_viewer_state_to_stop(self) -> None:
+    def set_viewer_state_to_stop(self) -> None:
         """Set self state to stop"""
         self.state = "stop"
         self.tk_btn_play["text"] = "Play"
