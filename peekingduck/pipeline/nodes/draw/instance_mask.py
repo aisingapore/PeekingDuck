@@ -151,7 +151,7 @@ class Node(
         if effects_count == 0:
             raise ValueError("At least one effect must be enabled in the config.")
         if effects_count > 1:
-            raise ValueError("Only one effect can be enabled at a time.")
+            raise ValueError("Only one effect must be enabled at a time.")
 
         self.check_valid_choice("effect_area", {"objects", "background"})
 

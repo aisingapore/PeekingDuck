@@ -31,13 +31,12 @@ IMAGE_WITH_MASKS = "draw_instance_mask_image_with_masks.jpg"
 IMAGE_WITH_CONTOURED_MASKS = "draw_instance_mask_image_with_contoured_masks.jpg"
 IMAGE_WITH_BLUR_EFFECT = "draw_instance_mask_image_with_blur_effect.jpg"
 IMAGE_WITH_MOSAIC_EFFECT = "draw_instance_mask_image_with_mosaic_effect.jpg"
-IMAGE_WITH_BLUR_EFFECT_UNMASKED_AREA = (
-    "draw_instance_mask_image_with_blur_effect_unmasked_area.jpg"
+IMAGE_WITH_BLUR_EFFECT_BACKGROUND_AREA = (
+    "draw_instance_mask_image_with_blur_effect_background_area.jpg"
 )
-IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS = (
-    "draw_instance_mask_image-adjusted-contrast-brightness.jpg"
-)
-IMAGE_GAMMA_CORRECTION = "draw_instance_mask_image-gamma-correction.jpg"
+IMAGE_ADJUSTED_CONTRAST = "draw_instance_mask_image_adjusted_contrast.jpg"
+IMAGE_ADJUSTED_BRIGHTNESS = "draw_instance_mask_image_adjusted_brightness.jpg"
+IMAGE_GAMMA_CORRECTION = "draw_instance_mask_image_gamma_correction.jpg"
 TEST_DATA_SUBDIR = "instance_mask"
 INPUTS_NPZ = "draw_instance_mask_inputs.npz"
 SSIM_THRESHOLD = 0.97
@@ -74,13 +73,18 @@ def image_with_mosaic_effect():
 
 
 @pytest.fixture()
-def image_with_blur_effect_unmasked_area():
-    return TEST_IMAGES_DIR / IMAGE_WITH_BLUR_EFFECT_UNMASKED_AREA
+def image_with_blur_effect_background_area():
+    return TEST_IMAGES_DIR / IMAGE_WITH_BLUR_EFFECT_BACKGROUND_AREA
 
 
 @pytest.fixture()
-def image_adjusted_contrast_brightness():
-    return TEST_IMAGES_DIR / IMAGE_ADJUSTED_CONTRAST_BRIGHTNESS
+def image_adjusted_contrast():
+    return TEST_IMAGES_DIR / IMAGE_ADJUSTED_CONTRAST
+
+
+@pytest.fixture()
+def image_adjusted_brightness():
+    return TEST_IMAGES_DIR / IMAGE_ADJUSTED_BRIGHTNESS
 
 
 @pytest.fixture()
@@ -107,93 +111,224 @@ def draw_instance_mask_config():
 @pytest.fixture(
     params=[
         {"key": "instance_color_scheme", "value": "no_such_scheme"},
-        {"key": "effect", "value": "no_such_effect"},
         {"key": "effect_area", "value": "no_such_effect_area"},
-        {"key": "gamma", "value": -0.5},
-        {"key": "gamma", "value": "-"},
-        {"key": "alpha", "value": -0.5},
-        {"key": "alpha", "value": "-"},
-        {"key": "beta", "value": 0.5},
-        {"key": "beta", "value": 256},
-        {"key": "beta", "value": "-"},
-        {"key": "blur_kernel_size", "value": 0.5},
-        {"key": "blur_kernel_size", "value": "-"},
-        {"key": "mosaic_level", "value": 0.5},
-        {"key": "mosaic_level", "value": "-"},
-        {"key": "show_contours", "value": "yes"},
-        {"key": "contour_thickness", "value": 0.5},
-        {"key": "contour_thickness", "value": "-"},
     ],
 )
-def draw_instance_mask_bad_config_value(request, draw_instance_mask_config):
+def draw_instance_mask_bad_config_values(request, draw_instance_mask_config):
     draw_instance_mask_config[request.param["key"]] = request.param["value"]
     return draw_instance_mask_config
 
 
+@pytest.fixture(
+    params=[
+        {"key": "effect", "value": {}},
+        {
+            "key": "effect",
+            "value": {
+                "standard_mask": None,
+                "contrast": None,
+                "brightness": None,
+                "gamma_correction": None,
+                "blur": None,
+                "mosaic": None,
+            },
+        },
+        {
+            "key": "effect",
+            "value": {
+                "standard_mask": False,
+                "contrast": None,
+                "brightness": None,
+                "gamma_correction": None,
+                "blur": None,
+                "mosaic": None,
+            },
+        },
+        {
+            "key": "effect",
+            "value": {
+                "standard_mask": True,
+                "contrast": None,
+                "brightness": None,
+                "gamma_correction": None,
+                "blur": 50,
+                "mosaic": None,
+            },
+        },
+    ],
+)
+def draw_instance_mask_bad_number_of_config_values(request, draw_instance_mask_config):
+    draw_instance_mask_config[request.param["key"]] = request.param["value"]
+    return draw_instance_mask_config
+
+
+@pytest.fixture(
+    params=[
+        {
+            "key": "contrast",
+            "value": "yes",
+        },
+        {
+            "key": "contrast",
+            "value": -0.1,
+        },
+        {
+            "key": "contrast",
+            "value": 3.1,
+        },
+        {
+            "key": "brightness",
+            "value": "yes",
+        },
+        {
+            "key": "brightness",
+            "value": -100.1,
+        },
+        {
+            "key": "brightness",
+            "value": 100.1,
+        },
+        {
+            "key": "gamma_correction",
+            "value": "yes",
+        },
+        {
+            "key": "gamma_correction",
+            "value": -0.1,
+        },
+        {
+            "key": "blur",
+            "value": "yes",
+        },
+        {
+            "key": "blur",
+            "value": 0,
+        },
+        {
+            "key": "mosaic",
+            "value": "yes",
+        },
+        {
+            "key": "mosaic",
+            "value": 0,
+        },
+    ],
+)
+def draw_instance_mask_bad_effect_config_values(request, draw_instance_mask_config):
+    draw_instance_mask_config["effect"][request.param["key"]] = request.param["value"]
+    return draw_instance_mask_config
+
+
+@pytest.fixture(
+    params=[
+        {
+            "key": "show",
+            "value": "yes",
+        },
+        {
+            "key": "thickness",
+            "value": "yes",
+        },
+        {
+            "key": "thickness",
+            "value": 0.9,
+        },
+    ],
+)
+def draw_instance_mask_bad_contours_config_values(request, draw_instance_mask_config):
+    draw_instance_mask_config["contours"][request.param["key"]] = request.param["value"]
+    return draw_instance_mask_config
+
+
 @pytest.fixture
-def draw_instance_mask_node(draw_instance_mask_config):
+def draw_standard_instance_mask_node(draw_instance_mask_config):
+    draw_instance_mask_config["effect"]["standard_mask"] = True
+
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
-def draw_instance_mask_node_with_contours(draw_instance_mask_config):
-    draw_instance_mask_config["show_contours"] = True
-    draw_instance_mask_config["contour_thickness"] = 3
+def draw_standard_instance_mask_node_with_contours(draw_instance_mask_config):
+    draw_instance_mask_config["effect"]["standard_mask"] = True
+    draw_instance_mask_config["contours"]["show"] = True
+    draw_instance_mask_config["contours"]["thickness"] = 2
 
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
 def draw_instance_mask_node_with_blur_effect(draw_instance_mask_config):
-    draw_instance_mask_config["effect"] = "blur"
-    draw_instance_mask_config["blur_kernel_size"] = 50
+    draw_instance_mask_config["effect"]["blur"] = 50
 
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
 def draw_instance_mask_node_with_mosaic_effect(draw_instance_mask_config):
-    draw_instance_mask_config["effect"] = "mosaic"
-    draw_instance_mask_config["mosaic_level"] = 25
+    draw_instance_mask_config["effect"]["mosaic"] = 25
 
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
-def draw_instance_mask_node_with_blur_effect_unmasked_area(draw_instance_mask_config):
-    draw_instance_mask_config["effect"] = "blur"
-    draw_instance_mask_config["effect_area"] = "unmasked"
-    draw_instance_mask_config["blur_kernel_size"] = 50
+def draw_instance_mask_node_with_blur_effect_background_area(draw_instance_mask_config):
+    draw_instance_mask_config["effect"]["blur"] = 50
+    draw_instance_mask_config["effect_area"] = "background"
 
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
-def draw_instance_mask_node_adjust_contrast_brightness(draw_instance_mask_config):
-    draw_instance_mask_config["effect"] = "contrast_brightness"
-    draw_instance_mask_config["alpha"] = 1.2
-    draw_instance_mask_config["beta"] = 20
+def draw_instance_mask_node_adjust_contrast(draw_instance_mask_config):
+    draw_instance_mask_config["effect"]["contrast"] = 1.2
+
+    return Node(draw_instance_mask_config)
+
+
+@pytest.fixture
+def draw_instance_mask_node_adjust_brightness(draw_instance_mask_config):
+    draw_instance_mask_config["effect"]["brightness"] = 20
 
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
 def draw_instance_mask_node_gamma_correction(draw_instance_mask_config):
-    draw_instance_mask_config["effect"] = "gamma_correction"
-    draw_instance_mask_config["gamma"] = 0.8
+    draw_instance_mask_config["effect"]["gamma_correction"] = 0.8
 
     return Node(draw_instance_mask_config)
 
 
 class TestDrawInstanceMasks:
-    def test_invalid_config_value(self, draw_instance_mask_bad_config_value):
+    def test_invalid_config_values(self, draw_instance_mask_bad_config_values):
         with pytest.raises(ValueError) as excinfo:
-            _ = Node(config=draw_instance_mask_bad_config_value)
+            _ = Node(config=draw_instance_mask_bad_config_values)
+        assert "must be" in str(excinfo.value)
+
+    def test_invalid_number_of_effect_config_values(
+        self, draw_instance_mask_bad_number_of_config_values
+    ):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=draw_instance_mask_bad_number_of_config_values)
+        assert "must be" in str(excinfo.value)
+
+    def test_invalid_effect_config_values(
+        self, draw_instance_mask_bad_effect_config_values
+    ):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=draw_instance_mask_bad_effect_config_values)
+        assert "must be" in str(excinfo.value)
+
+    def test_invalid_contours_config_values(
+        self, draw_instance_mask_bad_contours_config_values
+    ):
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(config=draw_instance_mask_bad_contours_config_values)
         assert "must be" in str(excinfo.value)
 
     def test_no_scores(
         self,
-        draw_instance_mask_node,
+        draw_standard_instance_mask_node,
         draw_mask_inputs,
         image_original,
         image_unchanged_after_pipeline,
@@ -202,7 +337,7 @@ class TestDrawInstanceMasks:
         output_img = original_img.copy()
         draw_mask_inputs["img"] = output_img
         draw_mask_inputs["bbox_scores"] = []
-        outputs = draw_instance_mask_node.run(draw_mask_inputs)
+        outputs = draw_standard_instance_mask_node.run(draw_mask_inputs)
 
         assert TestDrawInstanceMasks._image_equal_with_ground_truth_jpeg(
             outputs["img"], image_unchanged_after_pipeline
@@ -212,12 +347,13 @@ class TestDrawInstanceMasks:
     @pytest.mark.parametrize(
         "pkd_node, ground_truth_image_path",
         [
-            (pytest.lazy_fixture(("draw_instance_mask_node", "image_with_masks"))),
-            (pytest.lazy_fixture(("draw_instance_mask_node_with_contours", "image_with_contoured_masks"))),
+            (pytest.lazy_fixture(("draw_standard_instance_mask_node", "image_with_masks"))),
+            (pytest.lazy_fixture(("draw_standard_instance_mask_node_with_contours", "image_with_contoured_masks"))),
             (pytest.lazy_fixture(("draw_instance_mask_node_with_blur_effect", "image_with_blur_effect"))),
             (pytest.lazy_fixture(("draw_instance_mask_node_with_mosaic_effect", "image_with_mosaic_effect"))),
-            (pytest.lazy_fixture(("draw_instance_mask_node_with_blur_effect_unmasked_area", "image_with_blur_effect_unmasked_area"))),
-            (pytest.lazy_fixture(("draw_instance_mask_node_adjust_contrast_brightness", "image_adjusted_contrast_brightness"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_with_blur_effect_background_area", "image_with_blur_effect_background_area"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_adjust_contrast", "image_adjusted_contrast"))),
+            (pytest.lazy_fixture(("draw_instance_mask_node_adjust_brightness", "image_adjusted_brightness"))),
             (pytest.lazy_fixture(("draw_instance_mask_node_gamma_correction", "image_gamma_correction"))),
         ],
     )

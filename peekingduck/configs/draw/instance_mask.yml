@@ -4,14 +4,14 @@ output: ["img"]
 instance_color_scheme: hue_family
 
 effect: {
-  standard_mask: True,
-  brightness: None,
-  contrast: None,
-  gamma_correction: None,
-  blur: None,
-  mosaic: None
+  standard_mask: null,
+  contrast: null,
+  brightness: null,
+  gamma_correction: null,
+  blur: null,
+  mosaic: null
 }
-effect_area: masked
+effect_area: objects
 
 contours: {
     show: False,
