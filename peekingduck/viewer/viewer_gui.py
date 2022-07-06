@@ -19,6 +19,14 @@ dotw technotes: Did not import Viewer from peekingduck.viewer.viewer due to pyli
                 complaining about circular import.
 """
 
+# technotes:
+#   using __future__ and TYPE_CHECKING works with pylint 2.10.x but fails with 2.7.x
+#
+# from __future__ import annotations
+# from typing import TYPE_CHECKING
+# if TYPE_CHECKING:
+#     from peekingduck.player.viewer import Viewer
+
 import tkinter as tk
 from tkinter import ttk
 from peekingduck.viewer.viewer_utils import load_image
