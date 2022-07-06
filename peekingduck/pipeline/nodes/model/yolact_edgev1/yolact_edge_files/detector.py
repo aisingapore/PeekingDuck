@@ -182,13 +182,12 @@ class Detector:
         if network_output is None:
             return [torch.Tensor()] * 4
 
-        if score_threshold > 0:
-            keep = network_output['score'] > score_threshold
-            for k in network_output:
-                if k != 'proto':
-                    network_output[k] = network_output[k][keep]
-            if network_output['score'].size(0) == 0:
-                return [torch.Tensor()] * 4
+        keep = network_output['score'] > score_threshold
+        for k in network_output:
+            if k != 'proto':
+                network_output[k] = network_output[k][keep]
+        if network_output['score'].size(0) == 0:
+            return [torch.Tensor()] * 4
 
         classes = network_output['class'].cpu().numpy()
         boxes   = network_output['box'].cpu().numpy()
