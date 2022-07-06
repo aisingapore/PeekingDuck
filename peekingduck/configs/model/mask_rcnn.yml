@@ -1,0 +1,27 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores", "masks"]
+
+weights_parent_dir: null
+weights:
+  {
+    pytorch:
+      {
+        model_subdir: mask_rcnn,
+        blob_file:
+          { r50-fpn: mask-rcnn-r50-fpn.zip, r101-fpn: mask-rcnn-r101-fpn.zip },
+        classes_file: coco_90.json,
+        model_file:
+          { r50-fpn: mask-rcnn-r50-fpn.pth, r101-fpn: mask-rcnn-r101-fpn.pth },
+      },
+  }
+min_size: 800
+max_size: 1333
+num_classes: 91
+
+model_format: pytorch
+model_type: r50-fpn
+detect: [0]
+iou_threshold: 0.5
+max_num_detections: 100
+score_threshold: 0.5
+mask_threshold: 0.5
