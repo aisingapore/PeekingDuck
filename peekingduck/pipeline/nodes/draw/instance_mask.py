@@ -97,6 +97,7 @@ class Node(
             "thickness" (:obj:`int`): **default = 3**. |br|
                 This defines the thickness of the contours.
     """
+
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
