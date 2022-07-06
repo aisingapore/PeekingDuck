@@ -83,7 +83,7 @@ class Node(
             corresponds to the number of rows and columns used to create a
             mosaic. For example, the setting (``mosaic: 25``) creates a
             :math:`25 \\times 25` mosaic filter. Increasing the number
-            increases the intensity of pixelization over an area. |br|
+            increases the intensity of pixelation over an area. |br|
 
         effect_area (:obj:`str`): **{"objects", "background"}, 
             default = "objects"**. |br|
