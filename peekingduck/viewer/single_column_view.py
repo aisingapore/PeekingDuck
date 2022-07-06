@@ -44,6 +44,11 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
 
     def create_tk_widgets(self) -> None:
         """Create Tk widgets for the GUI view"""
+        left_margin_frm = ttk.Frame(
+            self.root, name="left_margin_frm", width=50, height=100
+        )
+        left_margin_frm.pack(side=tk.LEFT, fill=tk.NONE, expand=False)
+
         lbl = tk.Label(self.root, text="Pipelines:")
         lbl.pack(side=tk.TOP)
         lbl.bind("<Button-1>", self.header_press)
@@ -56,7 +61,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         self._btn_add = ttk.Button(playlist_ctrl_frm, text="Add")
         self._btn_delete = ttk.Button(playlist_ctrl_frm, text="Delete")
         self._btn_play = ttk.Button(playlist_ctrl_frm, text="Run")
-        # dotw technotes:
+        # Tk technotes:
         # - if bind to Button (mouse down) event,
         #   the Play button will be "stuck" and show button down style (blue on macOS)
         #   when it is clicked on.
@@ -161,7 +166,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
     def update_pipeline_info(self, i: int) -> None:
         """Update pipeline info panel details"""
         stats = self._index_to_stats_map[i]
-        self.logger.info(f"show stats[{i}]: {stats.name}")
+        self.logger.debug(f"show stats[{i}]: {stats.name}")
         self._info_name["text"] = stats.name
         if stats.datetime:
             display_datetime = f"{stats.datetime}"
@@ -179,7 +184,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         Args:
             event (tk.Event): Tk event object
         """
-        self.logger.info("btn_add_press")
+        self.logger.debug("btn_add_press")
         if self._callback["add"]():
             self.redraw_view()
 
@@ -193,7 +198,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         """
         i = self.get_selected_index()
         stats = self._index_to_stats_map[i]
-        self.logger.info(f"btn_delete_press: {stats.pipeline}")
+        self.logger.debug(f"btn_delete_press: {stats.pipeline}")
         if self._callback["delete"](pipeline=stats.pipeline):
             self.redraw_view()
 
@@ -207,7 +212,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         """
         i = self.get_selected_index()
         stats = self._index_to_stats_map[i]
-        self.logger.info(f"btn_play_press: {stats.pipeline}")
+        self.logger.debug(f"btn_play_press: {stats.pipeline}")
         self._callback["play"](pipeline=stats.pipeline)
 
     def header_press(self, event: tk.Event) -> None:  # pylint: disable=unused-argument

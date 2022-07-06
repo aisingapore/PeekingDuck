@@ -14,18 +14,18 @@
 
 """
 PeekingDuck Viewer GUI Creation Code
-
-dotw technotes: Did not import Viewer from peekingduck.viewer.viewer due to pylint 2.7
-                complaining about circular import.
 """
 
-# technotes:
+# Technotes:
 #   using __future__ and TYPE_CHECKING works with pylint 2.10.x but fails with 2.7.x
 #
 # from __future__ import annotations
 # from typing import TYPE_CHECKING
 # if TYPE_CHECKING:
 #     from peekingduck.player.viewer import Viewer
+#
+# Did not import Viewer from peekingduck.viewer.viewer due to pylint 2.7 complaining
+# about circular import.
 
 import tkinter as tk
 from tkinter import ttk
@@ -78,8 +78,8 @@ def create_window(viewer) -> None:  # type: ignore
     root.minsize(MIN_WIDTH, MIN_HEIGHT)
     root.update()  # force update before mainloop() to get correct size
     viewer.root = root  # save main window
-    # dotw technotes: Need to create footer before body to ensure footer controls
-    #                 do not get covered when image is zoomed in
+    # Tk technotes: Need to create footer before body to ensure footer controls do not
+    #               get covered when image is zoomed in
     create_side_margins(viewer)
     create_header(viewer)
     create_footer(viewer)
@@ -97,7 +97,7 @@ def create_header(viewer) -> None:  # type: ignore
     header_frm.pack(side=tk.TOP, fill=tk.X)
     viewer.tk_header_frm = header_frm
     # row 0: viewer header text (span 5 columns)
-    lbl = tk.Label(header_frm, text="Viewer Header", font=("arial 20"))
+    lbl = tk.Label(header_frm, text="Viewer Header", font=("TkFixedFont 18"))
     lbl.grid(row=0, column=0, columnspan=5, sticky="nsew")
     viewer.tk_header = lbl
     # row 0: logo (left)
@@ -177,9 +177,7 @@ def create_body(viewer) -> None:  # type: ignore
     lbl = tk.Label(panel_frm)
     lbl.pack(side=tk.BOTTOM)
     # playlist
-    playlist_frm = ttk.Frame(
-        panel_frm, name="playlist_frm", relief=tk.RIDGE, borderwidth=1
-    )
+    playlist_frm = ttk.Frame(panel_frm, name="playlist_frm")
     playlist_frm.pack(side=tk.TOP, fill=tk.BOTH, expand=True)
     viewer.tk_playlist_frm = playlist_frm
     playlist_view = SingleColumnPlayListView(

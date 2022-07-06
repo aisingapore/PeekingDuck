@@ -90,7 +90,7 @@ class PlayList:
         self._playlist_dir = home_path / PKD_CONFIG_DIR
         self._playlist_dir.mkdir(exist_ok=True)
         self._playlist_path = self._playlist_dir / PKD_PLAYLIST_FILE
-        self.logger.info(f"playlist_path={self._playlist_path}")
+        self.logger.debug(f"playlist_path={self._playlist_path}")
         self.load_playlist_file()
 
     def __iter__(self) -> "PlayList":
@@ -129,7 +129,7 @@ class PlayList:
             List[str]: contents of playlist file, a list of pipelines
         """
         if not Path.exists(self._playlist_path):
-            self.logger.info(f"{self._playlist_path} not found")
+            self.logger.debug(f"{self._playlist_path} not found")
             return []
 
         with open(self._playlist_path, "r", encoding="utf-8") as file:
@@ -181,7 +181,7 @@ class PlayList:
         # construct playlist contents with full pathnames
         playlist = [str(stats) for stats in self.pipeline_stats]
         playlist_dict = {"playlist": playlist}
-        self.logger.info(f"playlist_dict={playlist_dict}")
+        self.logger.debug(f"playlist_dict={playlist_dict}")
 
         with open(self._playlist_path, "w", encoding="utf8") as file:
             yaml.dump(playlist_dict, file)

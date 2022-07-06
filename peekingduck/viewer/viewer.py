@@ -48,7 +48,9 @@ ZOOM_TEXT: List[str] = ["50%", "75%", "100%", "125%", "150%", "200%", "250%", "3
 ZOOM_DEFAULT_IDX: int = 2
 ZOOMS: List[float] = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
 EMOJI_PLAY = "\u25B6"
-EMOJI_STOP = "\u25FD"  # white medium-small square
+EMOJI_STOP = "\u23F9"
+# EMOJI_STOP = "\u25FD"  # white medium-small square
+# EMOJI_STOP = "\u25FE"  # black medium-small square
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
@@ -89,13 +91,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
 
     def run(self) -> None:
         """Main method to setup Viewer and run Tk event loop"""
-        self.logger.info(f"cwd={Path.cwd()}")
-        self.logger.info(f"pipeline={self.pipeline_path}")
+        self.logger.debug(f"cwd={Path.cwd()}")
+        self.logger.debug(f"pipeline={self.pipeline_path}")
         # create Tkinter window and frames
         create_window(self)
         # trap macOS Cmd-Q keystroke
         if platform.system() == "Darwin":
-            self.logger.info("binding macOS cmd-Q")
+            self.logger.debug("binding macOS cmd-Q")
             self.root.createcommand("::tk::mac::Quit", self.on_exit)
         # activate internal timer function and start Tkinter event loop
         self.timer_function()
@@ -109,7 +111,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
     def btn_hide_show_playlist_press(self) -> None:
         """Handle Hide/Show Playlist button
 
-        dotw technotes:
+        Tk technotes:
             - Behavior:
                 Playlist on right is fixed width.  When image is expanded, it should not
                 cover playlist.  But when playlist is hidden and revealed, the expanding
@@ -122,11 +124,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         if self.playlist_show:
             self.tk_playlist_frm.pack_forget()
         else:
-            # self.image_frm.pack_forget()
             self.tk_playlist_frm.pack(side=tk.RIGHT, fill=tk.Y)
             self.tk_playlist_view.reset()
             self.tk_playlist_view.select(str(self.pipeline_full_path))
-            # self.image_frm.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
         self.playlist_show = not self.playlist_show
 
     def btn_play_stop_press(self) -> None:
@@ -142,12 +142,10 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
 
     def btn_zoom_in_press(self) -> None:
         """Zoom in: make image larger"""
-        self.logger.info("btn_zoom_in_press")
         self._zoom_in()
 
     def btn_zoom_out_press(self) -> None:
         """Zoom out: make image smaller"""
-        self.logger.info("btn_zoom_out_press")
         self._zoom_out()
 
     def on_exit(self) -> None:
@@ -165,13 +163,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         Args:
             event (tk.Event): the key down event
         """
-        self.logger.info(
+        self.logger.debug(
             f"keypressed: char={event.char}, keysym={event.keysym}, state={event.state}"
         )
         key_state: int = int(event.state)
         mod = get_keyboard_modifier(key_state)
         key = get_keyboard_char(event.char, event.keysym)
-        self.logger.info(f"mod={mod}, key={key}")
+        self.logger.debug(f"mod={mod}, key={key}")
         # handle supported keyboard shortcuts here
         if mod.startswith("ctrl"):
             if key in self._keyboard_shortcuts:
@@ -195,16 +193,14 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         Returns:
             bool: True if pipeline added, False otherwise
         """
-        self.logger.info("on add pipeline")
         filetypes = (("Pipeline files", "*.yml"), ("All files", "*.*"))
         pipeline_filepath = filedialog.askopenfilename(
             title="Open a pipeline file (*.yml)",
             initialdir=self.home_path,
             filetypes=filetypes,
         )
-        self.logger.info(f"filepath={pipeline_filepath}")
+        self.logger.debug(f"on add pipeline: filepath={pipeline_filepath}")
         if pipeline_filepath:
-            self.logger.info("to add to playlist")
             self.playlist.add_pipeline(pipeline_filepath)
             return True
         return False
@@ -215,7 +211,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         Args:
             pipeline (str): Pipeline to delete
         """
-        self.logger.info(f"on delete pipeline {pipeline}")
+        self.logger.debug(f"on delete pipeline {pipeline}")
         answer = askyesno(
             title="Confirm delete pipeline file",
             message=f"Are you sure you want to delete {pipeline}?",
@@ -231,22 +227,20 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         Args:
             pipeline (str): Pipeline to execute
         """
-        self.logger.info(f"on play pipeline {pipeline}")
+        self.logger.debug(f"on play pipeline {pipeline}")
         if pipeline == str(self.pipeline_full_path):
             self.logger.info("already running, do nothing")
             return
 
         # run new pipeline
-        self.logger.info("switch to new pipeline")
+        self.logger.debug("switch to new pipeline")
         if self.is_pipeline_running:
-            self.logger.info("stop current run")
             self.run_pipeline_end()
         elif self.is_output_playback:
-            self.logger.info("stop current playback")
             self.stop_playback()
 
         # add non-blocking wait to let background task clean up properly
-        self.logger.info(f"wait {CHANGE_PIPELINE_DELAY} sec")
+        self.logger.debug(f"wait {CHANGE_PIPELINE_DELAY} sec")
         wait_event = threading.Event()
         wait_event.wait(CHANGE_PIPELINE_DELAY)
 
@@ -364,7 +358,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
     def _update_zoom_and_show_frame(self) -> None:
         """Update zoom widget and refresh current frame"""
         glyph = ZOOM_TEXT[self.zoom_idx]
-        self.logger.info(f"Zoom: {glyph}")
         self.tk_lbl_zoom["text"] = f"{glyph}"
         self._show_frame()
 
@@ -442,19 +435,19 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         """
         self.pipeline_path = pipeline_path
         is_abs = pipeline_path.is_absolute()
-        self.logger.info(
+        self.logger.debug(
             f"init pipeline: pipeline_path={pipeline_path}, is_abs={is_abs}"
         )
         # expand pipeline path if required
         if not is_abs:
             full_path = pipeline_path.resolve()
-            self.logger.info(f"full path: {full_path}")
+            self.logger.debug(f"full path: {full_path}")
             self.pipeline_full_path = full_path
         else:
             self.pipeline_full_path = pipeline_path
         # set custom nodes path accordingly
         self.custom_nodes_parent_path = str(self.pipeline_full_path.parent / "src")
-        self.logger.info(f"custom nodes parent: {type(self.custom_nodes_parent_path)}")
+        self.logger.debug(f"custom nodes parent: {type(self.custom_nodes_parent_path)}")
         # init internal working vars
         self._frames = []
         self._frame_idx = -1

@@ -116,7 +116,7 @@ def test_input_threading():
         # run input live test
         num_sec = 60  # to run test for 60 seconds max
         avg_fps = 0
-        # dotw technotes 2022-06-20:
+        # Technotes 2022-06-20:
         # previous `cmd = ["python", PKD_ROOT_DIR.name]` and `.Popen(... cwd=PKD_RUN_DIR, ...)`
         # breaks on Linux when PeekingDuck changes current working directory via full config path
         cmd = ["python", "__main__.py"]
