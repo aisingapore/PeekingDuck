@@ -44,10 +44,17 @@ class Node(AbstractNode):
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
 
-    **See Also:**
+    .. note::
 
-    :ref:`PeekingDuck Viewer<pkd_viewer>`: a graphical viewer for viewing
-    and studying the output of a PeekingDuck pipeline.
+        **See Also:**
+
+        :ref:`PeekingDuck Viewer<pkd_viewer>`: a GUI for running PeekingDuck pipelines.
+
+        .. figure:: /assets/diagrams/viewer_cat_computer.png
+
+        The PeekingDuck Viewer offers a GUI to view and analyze pipeline output.
+        It has controls to re-play output video, scrub to a frame of interest,
+        zoom video, and a playlist for managing multiple pipelines.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
