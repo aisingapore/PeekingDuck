@@ -29,6 +29,8 @@ class Node(AbstractNode):
     Inputs:
         |img_data|
 
+        |filename_data|
+
     Outputs:
         |pipeline_end_data|
 
@@ -55,7 +57,7 @@ class Node(AbstractNode):
                 self.window_name, self.window_size["width"], self.window_size["height"]
             )
         else:
-            self.window_size_init = False
+            self.current_filename = None
 
         cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
@@ -65,10 +67,10 @@ class Node(AbstractNode):
         img = inputs["img"]
         if not self.window_size["do_resizing"]:
             img_height, img_width, _ = img.shape
-            if not self.window_size_init:
-                # Initialize the window size
+            if inputs["filename"] is not self.current_filename:
+                # Initialize the window size for every new video
                 cv2.resizeWindow(self.window_name, img_width, img_height)
-                self.window_size_init = True
+                self.current_filename = inputs["filename"]
             else:
                 # Check the current window size, resize it if aspect ratio is not the same as image
                 aspect_ratio = img_width / img_height
