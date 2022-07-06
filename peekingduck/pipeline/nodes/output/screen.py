@@ -48,16 +48,35 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+        self.aspect_ratio_thres = 5e-3
+        if self.window_size["do_resizing"]:
+            # Make sure the window size is initialized to preset settings, if do_resizing is True
+            cv2.resizeWindow(
+                self.window_name, self.window_size["width"], self.window_size["height"]
+            )
+        else:
+            self.window_size_init = False
+
         cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
 
         img = inputs["img"]
-        if self.window_size["do_resizing"]:
-            img = cv2.resize(
-                img, (self.window_size["width"], self.window_size["height"])
-            )
+        if not self.window_size["do_resizing"]:
+            img_height, img_width, _ = img.shape
+            if not self.window_size_init:
+                # Initialize the window size
+                cv2.resizeWindow(self.window_name, img_width, img_height)
+                self.window_size_init = True
+            else:
+                # Check the current window size, resize it if aspect ratio is not the same as image
+                aspect_ratio = img_width / img_height
+                _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
+                if abs(win_width / win_height - aspect_ratio) > self.aspect_ratio_thres:
+                    win_height = int(win_width // aspect_ratio)
+                    cv2.resizeWindow(self.window_name, win_width, win_height)
+
         cv2.imshow(self.window_name, img)
 
         if cv2.waitKey(1) & 0xFF == ord("q"):
