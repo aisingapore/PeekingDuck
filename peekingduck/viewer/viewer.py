@@ -31,7 +31,7 @@ from PIL import Image, ImageTk
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.viewer.playlist import PlayList
-from peekingduck.viewer.viewer_gui import create_window, MAGNIFYING_GLASS_EMOJI
+from peekingduck.viewer.viewer_gui import create_window
 from peekingduck.viewer.viewer_utils import (
     get_keyboard_char,
     get_keyboard_modifier,
@@ -365,7 +365,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         """Update zoom widget and refresh current frame"""
         glyph = ZOOM_TEXT[self.zoom_idx]
         self.logger.info(f"Zoom: {glyph}")
-        self.tk_lbl_zoom["text"] = f"{MAGNIFYING_GLASS_EMOJI} {glyph}"
+        self.tk_lbl_zoom["text"] = f"{glyph}"
         self._show_frame()
 
     def _set_header_playing(self) -> None:

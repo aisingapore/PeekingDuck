@@ -37,7 +37,6 @@ MIN_HEIGHT: int = 768
 MIN_WIDTH: int = 1024
 WIN_HEIGHT: int = 960
 WIN_WIDTH: int = 1280
-MAGNIFYING_GLASS_EMOJI = "\U0001F50D"
 BLANK_EMOJI = "\u2800"
 BTN_WIDTH_SPAN = 1
 
@@ -247,7 +246,7 @@ def _create_controls(viewer, ctrl_frm: ttk.Frame) -> None:  # type: ignore
     btn_zoom_out = ttk.Button(ctrl_frm, text="-", command=viewer.btn_zoom_out_press)
     btn_zoom_out.grid(row=1, column=92, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_btn_zoom_out = btn_zoom_out
-    lbl = tk.Label(ctrl_frm, text=f"{MAGNIFYING_GLASS_EMOJI} 100%")
+    lbl = tk.Label(ctrl_frm, text="100%")
     lbl.grid(row=1, column=93, columnspan=BTN_WIDTH_SPAN, sticky="nsew")
     viewer.tk_lbl_zoom = lbl
     btn_zoom_in = ttk.Button(ctrl_frm, text="+", command=viewer.btn_zoom_in_press)
