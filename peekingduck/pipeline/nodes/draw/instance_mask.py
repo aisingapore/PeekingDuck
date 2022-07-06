@@ -137,7 +137,7 @@ class Node(
 
         return {"img": output_img}
 
-    def _validate_configs(self):
+    def _validate_configs(self) -> None:
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
 
         effects = (
@@ -182,7 +182,7 @@ class Node(
             raise ValueError(f"Config: '{var}' must be a {var_type.__name__} value.")
 
     @staticmethod
-    def _check_number_range(var: Any, number_range: List[Union[str, int]]) -> None:
+    def _check_number_range(var: Any, number_range: str) -> None:
         if var is not None:
             lower, upper = [
                 float(value.strip()) for value in number_range[1:-1].split(",")
@@ -307,7 +307,7 @@ class Node(
             if not self.class_instance_colors.get(instance_class):
                 color = CLASS_COLORS.get(instance_class, DEFAULT_CLASS_COLOR)
             else:
-                color = self.class_instance_colors.get(instance_class)[-1]
+                color = self.class_instance_colors.get(instance_class)[-1]  # type: ignore
                 color_hsv = self._bgr_to_hsv(color)
                 # we use a minimum saturation of 100 to avoid too light colors,
                 # thus we increment saturation by step size of (256-100)/8.
