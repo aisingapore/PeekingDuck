@@ -56,7 +56,7 @@ class Node(
         |img_data|
 
     Configs:
-        instance_color_scheme (:obj:`str`): **{"random", "hue_family"}, 
+        instance_color_scheme (:obj:`str`): **{"random", "hue_family"},
             default="hue_family"** |br|
             This defines what colors to use for the standard masks.
             "hue_family": use the same hue for each instance belonging to
@@ -85,7 +85,7 @@ class Node(
             :math:`25 \\times 25` mosaic filter. Increasing the number
             increases the intensity of pixelation over an area. |br|
 
-        effect_area (:obj:`str`): **{"objects", "background"}, 
+        effect_area (:obj:`str`): **{"objects", "background"},
             default = "objects"**. |br|
             This defines where the effect should be applied. |br|
             "objects": the effect is applied to the masked areas of the image. |br|
@@ -97,7 +97,6 @@ class Node(
             "thickness" (:obj:`int`): **default = 3**. |br|
                 This defines the thickness of the contours.
     """
-
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
@@ -118,29 +117,36 @@ class Node(
             outputs (dict): Output in dictionary format with key "img".
         """
         for effect in self.config["effect"]:
-            if self.config['effect'][effect] is not None:
-                if effect == "standard_mask" and self.config['effect'][effect]:
+            if self.config["effect"][effect] is not None:
+                if effect == "standard_mask" and self.config["effect"][effect]:
                     output_img = self._draw_standard_masks(
                         inputs["img"],
                         inputs["masks"],
                         inputs["bbox_labels"],
                         inputs["bbox_scores"],
                     )
-                    break   # only apply the first effect
+                    break  # only apply the first effect
                 if effect != "standard_mask":
                     output_img = self._mask_apply_effect(
                         inputs["img"],
                         inputs["masks"],
                         effect,
                     )
-                    break   # only apply the first effect
+                    break  # only apply the first effect
 
         return {"img": output_img}
 
     def _validate_configs(self):
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
 
-        effects = ("standard_mask", "contrast", "brightness", "gamma_correction", "blur", "mosaic")
+        effects = (
+            "standard_mask",
+            "contrast",
+            "brightness",
+            "gamma_correction",
+            "blur",
+            "mosaic",
+        )
         effects_count = 0
         for effect, setting in self.config["effect"].items():
             if effect not in effects:
@@ -172,14 +178,14 @@ class Node(
     @staticmethod
     def _check_type(var: Any, var_type: Any) -> None:
         if var is not None and not isinstance(var, var_type):
-            raise ValueError(
-                f"Config: '{var}' must be a {var_type.__name__} value."
-            )
+            raise ValueError(f"Config: '{var}' must be a {var_type.__name__} value.")
 
     @staticmethod
     def _check_number_range(var: Any, number_range: List[Union[str, int]]) -> None:
         if var is not None:
-            lower, upper = [float(value.strip()) for value in number_range[1:-1].split(",")]
+            lower, upper = [
+                float(value.strip()) for value in number_range[1:-1].split(",")
+            ]
             if not lower <= var <= upper:
                 raise ValueError(
                     f"Config: '{var}' must be within the range of {number_range}."
@@ -239,9 +245,7 @@ class Node(
             ret_image = cv2.add(ret_image, masked_area_colored)
 
             if self.config["contours"]["show"]:
-                ret_image = self._draw_contours_single_mask(
-                    masks, index, ret_image
-                )
+                ret_image = self._draw_contours_single_mask(masks, index, ret_image)
 
         return ret_image
 
@@ -259,14 +263,18 @@ class Node(
             self.class_instance_counts.get(instance_class, 0) + 1
         )
 
-        if self.class_instance_counts[instance_class] > len(self.class_instance_colors.setdefault(instance_class, [])):
+        if self.class_instance_counts[instance_class] > len(
+            self.class_instance_colors.setdefault(instance_class, [])
+        ):
             # get new color
             color = self._get_new_instance_color(instance_class)
             # append new assigned color to instance_colors
             self.class_instance_colors[instance_class].append(color)
         else:
             # get color already assigned to this instance number
-            color = self.class_instance_colors[instance_class][self.class_instance_counts[instance_class] - 1]
+            color = self.class_instance_colors[instance_class][
+                self.class_instance_counts[instance_class] - 1
+            ]
 
         return color
 
@@ -302,7 +310,9 @@ class Node(
                 color_hsv = self._bgr_to_hsv(color)
                 # we use a minimum saturation of 100 to avoid too light colors,
                 # thus we increment saturation by step size of (256-100)/8.
-                saturation = (color_hsv[1] + (256 - SATURATION_MINIMUM) / SATURATION_STEPS) % 256
+                saturation = (
+                    color_hsv[1] + (256 - SATURATION_MINIMUM) / SATURATION_STEPS
+                ) % 256
                 if saturation < SATURATION_MINIMUM:
                     saturation += SATURATION_MINIMUM
                 color_hsv = (color_hsv[0], int(saturation), color_hsv[2])
@@ -318,7 +328,9 @@ class Node(
     ) -> np.ndarray:
         """Draws the contour around a single instance segmentation mask."""
         ret_image = image
-        contour, _ = cv2.findContours(masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        contour, _ = cv2.findContours(
+            masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+        )
         cv2.drawContours(
             ret_image,
             contour,
@@ -337,7 +349,9 @@ class Node(
         """Draws contours around all instance segmentation masks."""
         ret_image = image
         for i in range(masks.shape[0]):
-            contour, _ = cv2.findContours(masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+            contour, _ = cv2.findContours(
+                masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
+            )
             cv2.drawContours(
                 ret_image,
                 contour,
@@ -348,7 +362,9 @@ class Node(
 
         return ret_image
 
-    def _mask_apply_effect(self, image: np.ndarray, masks: np.ndarray, effect: str) -> np.ndarray:
+    def _mask_apply_effect(
+        self, image: np.ndarray, masks: np.ndarray, effect: str
+    ) -> np.ndarray:
         """Applies the chosen effect to the image and masks."""
         combined_masks = np.zeros(image.shape[:2], dtype="uint8")
         # combine all the individual masks
@@ -391,19 +407,19 @@ class Node(
         if effect == "contrast":
             alpha = self.config["effect"]["contrast"]
             beta = 0
-        else:    # i.e. effect == "brightness"
+        else:  # i.e. effect == "brightness"
             alpha = 1
             beta = self.config["effect"]["brightness"]
 
-        return cv2.convertScaleAbs(
-                image, alpha=alpha, beta=beta
-            )
+        return cv2.convertScaleAbs(image, alpha=alpha, beta=beta)
 
     def _gamma_correction(self, image: np.ndarray) -> np.ndarray:
         lookup_table = np.empty((1, 256), np.uint8)
         for i in range(256):
             lookup_table[0, i] = np.clip(
-                pow(i / 255.0, self.config["effect"]["gamma_correction"]) * 255.0, 0, 255
+                pow(i / 255.0, self.config["effect"]["gamma_correction"]) * 255.0,
+                0,
+                255,
             )
 
         image_gamma_corrected = cv2.LUT(image, lookup_table)
