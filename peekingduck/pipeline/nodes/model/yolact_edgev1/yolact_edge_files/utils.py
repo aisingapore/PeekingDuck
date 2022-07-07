@@ -74,13 +74,13 @@ class FastBaseTransform(torch.nn.Module):
 
 
 class InterpolateModule(nn.Module):
-	def __init__(self, *args, **kwdargs):
-		super().__init__()
-		self.args = args
-		self.kwdargs = kwdargs
-
-	def forward(self, x):
-		return F.interpolate(x, *self.args, **self.kwdargs)
+    def __init__(self, *args, **kwdargs):
+        super().__init__()
+        self.args = args
+        self.kwdargs = kwdargs
+    
+    def forward(self, x):
+        return F.interpolate(x, *self.args, **self.kwdargs)
 
 def make_net(in_channels, conf, include_last_relu=True):
     def make_layer(layer_config):
@@ -92,15 +92,15 @@ def make_net(in_channels, conf, include_last_relu=True):
                 in_channels, num_channels, kernel_size, **layer_config[2])
         else:
             if num_channels is None:
-                layer = InterpolateModule(scale_factor=-kernel_size, 
-                                          mode='bilinear', 
-                                          align_corners=False, 
+                layer = InterpolateModule(scale_factor=-kernel_size,
+                                          mode='bilinear',
+                                          align_corners=False,
                                           **layer_config[2])
             else:
                 layer = nn.ConvTranspose2d(
-                    in_channels, 
-                    num_channels, 
-                    -kernel_size, 
+                    in_channels,
+                    num_channels,
+                    -kernel_size,
                     **layer_config[2]
                 )
 
@@ -113,12 +113,12 @@ def make_net(in_channels, conf, include_last_relu=True):
     return nn.Sequential(*(net)), in_channels
 
 def make_extra(num_layers):
-            if num_layers == 0:
-                return lambda x: x
-            else:
-                return nn.Sequential(*sum([[
-                    nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-                    nn.ReLU(inplace=True)] for _ in range(num_layers)], []))
+    if num_layers == 0:
+        return lambda x: x
+    else:
+        return nn.Sequential(*sum([[
+            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+            nn.ReLU(inplace=True)] for _ in range(num_layers)], []))
 
 def jaccard(box_a, box_b, iscrowd=False):
     use_batch = True
@@ -161,7 +161,7 @@ def decode(loc, priors, use_yolo_regressors:bool=False):
         ), 1)
         boxes = point_form(boxes)
     else:
-        variances = [0.1, 0.2] 
+        variances = [0.1, 0.2]
         boxes = torch.cat((
             priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
             priors[:, 2:] * torch.exp(loc[:, 2:] * variances[1])), 1)
