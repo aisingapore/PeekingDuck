@@ -8,18 +8,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt update && \
     apt install -y \
-    build-essential \
-    bzip2 \
     curl \
-    gcc \
     ffmpeg \
-    libfreetype6-dev \
-    libhdf5-serial-dev \
-    libsm6 \
-    libxext6 \
-    libxrender-dev \
-    libzmq3-dev \
-    pkg-config \
     rsync \
     software-properties-common \
     ssh \
