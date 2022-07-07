@@ -52,24 +52,33 @@ from functools import partial
 
 class Bottleneck(nn.Module):
     expansion = 4
+
     def __init__(
-        self, 
-        inplanes: int, 
-        planes: int, 
-        stride: int = 1, 
+        self,
+        inplanes: int,
+        planes: int,
+        stride: int = 1,
         downsample: nn.Module = None,
-        norm_layer=nn.BatchNorm2d, 
-        dilation: int=1
+        norm_layer=nn.BatchNorm2d,
+        dilation: int = 1,
     ) -> None:
         super(Bottleneck, self).__init__()
         self.conv1 = nn.Conv2d(
             inplanes, planes, kernel_size=1, bias=False, dilation=dilation
         )
         self.bn1 = norm_layer(planes)
-        self.conv2 = nn.Conv2d(planes, planes, kernel_size=3, stride=stride,
-                               padding=dilation, bias=False, dilation=dilation)
 
+        self.conv2 = nn.Conv2d(
+            planes,
+            planes,
+            kernel_size=3,
+            stride=stride,
+            padding=dilation,
+            bias=False,
+            dilation=dilation,
+        )
         self.bn2 = norm_layer(planes)
+
         self.conv3 = nn.Conv2d(
             planes, planes * 4, kernel_size=1, bias=False, dilation=dilation
         )
@@ -80,7 +89,6 @@ class Bottleneck(nn.Module):
             self.downsample = downsample
         else:
             self.downsample = nn.Sequential()
-
         self.stride = stride
 
     def forward(self, x):
@@ -102,11 +110,13 @@ class Bottleneck(nn.Module):
 
 
 class ResNetBackbone(nn.Module):
-    def __init__(self, 
-                 layers: List[int], 
-                 atrous_layers: List[int] = [], 
-                 block = Bottleneck, 
-                 norm_layer = nn.BatchNorm2d):
+    def __init__(
+        self,
+        layers: List[int],
+        atrous_layers: List[int] = [],
+        block=Bottleneck,
+        norm_layer=nn.BatchNorm2d,
+    ):
         super().__init__()
         self.num_base_layers = len(layers)
         self.layers = nn.ModuleList()
@@ -121,35 +131,44 @@ class ResNetBackbone(nn.Module):
         self.bn1 = norm_layer(64)
         self.relu = nn.ReLU(inplace=True)
         self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-        
+
         self._make_layer(block, 64, layers[0])
         self._make_layer(block, 128, layers[1], stride=2)
         self._make_layer(block, 256, layers[2], stride=2)
         self._make_layer(block, 512, layers[3], stride=2)
 
         self.backbone_modules = [m for m in self.modules() if isinstance(m, nn.Conv2d)]
-    
+
     def _make_layer(self, block, planes, blocks, stride=1):
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             if len(self.layers) in self.atrous_layers:
                 self.dilation += 1
                 stride = 1
-            
+
             downsample = nn.Sequential(
-                nn.Conv2d(self.inplanes, planes * block.expansion,
-                          kernel_size=1, stride=stride, bias=False,
-                          dilation=self.dilation),
+                nn.Conv2d(
+                    self.inplanes,
+                    planes * block.expansion,
+                    kernel_size=1,
+                    stride=stride,
+                    bias=False,
+                    dilation=self.dilation,
+                ),
                 self.norm_layer(planes * block.expansion),
             )
 
         layers = []
-        layers.append(block(self.inplanes, 
-                            planes, 
-                            stride, 
-                            downsample,
-                            self.norm_layer, 
-                            self.dilation))
+        layers.append(
+            block(
+                self.inplanes,
+                planes,
+                stride,
+                downsample,
+                self.norm_layer,
+                self.dilation,
+            )
+        )
         self.inplanes = planes * block.expansion
         for i in range(1, blocks):
             layers.append(block(self.inplanes, planes, norm_layer=self.norm_layer))
@@ -157,10 +176,9 @@ class ResNetBackbone(nn.Module):
         layer = nn.Sequential(*layers)
         self.channels.append(planes * block.expansion)
         self.layers.append(layer)
-
         return layer
 
-    def forward(self, x, partial:bool=False):
+    def forward(self, x, partial: bool = False):
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
@@ -176,38 +194,36 @@ class ResNetBackbone(nn.Module):
         return outs
 
     def add_layer(self, conv_channels=1024, downsample=2, depth=1, block=Bottleneck):
-        self._make_layer(block, conv_channels // block.expansion, blocks=depth, stride=downsample)
-
-# This function is necessary for MobileNetV2 implementation                
-def _make_divisible(v, divisor, min_value=None):
-    """
-    Adapted from torchvision.models.mobilenet._make_divisable
-    """
-    if min_value is None:
-        min_value = divisor
-    new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
-    if new_v < 0.9 * v:
-        new_v += divisor
-    return new_v
+        self._make_layer(
+            block, conv_channels // block.expansion, blocks=depth, stride=downsample
+        )
 
 
 class ConvBNAct(nn.Sequential):
     def __init__(
-        self, 
-        in_planes: int, 
-        out_planes: int, 
-        kernel_size: int = 3, 
-        stride=1, 
-        groups=1, 
-        activation=nn.ReLU6(inplace=True)
+        self,
+        in_planes: int,
+        out_planes: int,
+        kernel_size: int = 3,
+        stride=1,
+        groups=1,
+        activation=nn.ReLU6(inplace=True),
     ) -> None:
         padding = (kernel_size - 1) // 2
         super(ConvBNAct, self).__init__(
-            nn.Conv2d(in_planes, out_planes, kernel_size, stride, padding, 
-                groups=groups, bias=False),
+            nn.Conv2d(
+                in_planes,
+                out_planes,
+                kernel_size,
+                stride,
+                padding,
+                groups=groups,
+                bias=False,
+            ),
             nn.BatchNorm2d(out_planes),
-            activation
+            activation,
         )
+
 
 ConvBNReLU = partial(ConvBNAct)
 
@@ -216,13 +232,8 @@ class InvertedResidual(nn.Module):
     """
     Adapted from torchvision.models.mobilenet.InvertedResidual
     """
-    def __init__(
-        self, 
-        inp: int, 
-        oup: int, 
-        stride: int, 
-        expand_ratio
-    ) -> None:
+
+    def __init__(self, inp: int, oup: int, stride: int, expand_ratio) -> None:
         super(InvertedResidual, self).__init__()
         self.stride = stride
         assert stride in [1, 2]
@@ -234,11 +245,13 @@ class InvertedResidual(nn.Module):
         if expand_ratio != 1:
             layers.append(ConvBNReLU(inp, hidden_dim, kernel_size=1))
 
-        layers.extend([
-            ConvBNReLU(hidden_dim, hidden_dim, stride=stride, groups=hidden_dim),
-            nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
-            nn.BatchNorm2d(oup),
-        ])
+        layers.extend(
+            [
+                ConvBNReLU(hidden_dim, hidden_dim, stride=stride, groups=hidden_dim),
+                nn.Conv2d(hidden_dim, oup, 1, 1, 0, bias=False),
+                nn.BatchNorm2d(oup),
+            ]
+        )
         self.conv = nn.Sequential(*layers)
 
     def forward(self, x):
@@ -252,11 +265,14 @@ class MobileNetV2Backbone(nn.Module):
     """
     Adapted from torchvision.models.mobilenet.MobileNetV2
     """
-    def __init__(self,
-                 width_mult=1.0,
-                 inverted_residual_setting=None,
-                 round_nearest=8,
-                 block=InvertedResidual):
+
+    def __init__(
+        self,
+        width_mult=1.0,
+        inverted_residual_setting=None,
+        round_nearest=8,
+        block=InvertedResidual,
+    ):
         super(MobileNetV2Backbone, self).__init__()
 
         input_channel = 32
@@ -265,19 +281,31 @@ class MobileNetV2Backbone(nn.Module):
         self.layers = nn.ModuleList()
 
         if inverted_residual_setting is None:
-            raise ValueError("Must provide inverted_residual_setting where each element is a list "
-                             "that represents the MobileNetV2 t,c,n,s values for that layer.")
-        if len(inverted_residual_setting) == 0 or len(inverted_residual_setting[0]) != 4:
-            raise ValueError("inverted_residual_setting should be non-empty "
-                             "or a 4-element list, got {}".format(inverted_residual_setting))
+            raise ValueError(
+                "Must provide inverted_residual_setting where each "
+                "element is a list that represents the "
+                "MobileNetV2 t,c,n,s values for that layer."
+            )
+        if (
+            len(inverted_residual_setting) == 0
+            or len(inverted_residual_setting[0]) != 4
+        ):
+            raise ValueError(
+                "inverted_residual_setting should be non-empty "
+                "or a 4-element list, got {}".format(inverted_residual_setting)
+            )
 
-        input_channel = _make_divisible(input_channel * width_mult, round_nearest)
-        self.last_channel = _make_divisible(last_channel * max(1.0, width_mult), round_nearest)
+        input_channel = self._make_divisible(input_channel * width_mult, round_nearest)
+        self.last_channel = self._make_divisible(
+            last_channel * max(1.0, width_mult), round_nearest
+        )
         self.layers.append(ConvBNReLU(3, input_channel, stride=2))
         self.channels.append(input_channel)
 
         for t, c, n, s in inverted_residual_setting:
-            input_channel = self._make_layer(input_channel, width_mult, round_nearest, t, c, n, s, block)
+            input_channel = self._make_layer(
+                input_channel, width_mult, round_nearest, t, c, n, s, block
+            )
             self.channels.append(input_channel)
 
         self.layers.append(ConvBNReLU(input_channel, self.last_channel, kernel_size=1))
@@ -286,7 +314,7 @@ class MobileNetV2Backbone(nn.Module):
 
     def _make_layer(self, input_channel, width_mult, round_nearest, t, c, n, s, block):
         layers = []
-        output_channel = _make_divisible(c * width_mult, round_nearest)
+        output_channel = self._make_divisible(c * width_mult, round_nearest)
 
         for i in range(n):
             stride = s if i == 0 else 1
@@ -302,9 +330,19 @@ class MobileNetV2Backbone(nn.Module):
         for idx, layer in enumerate(self.layers):
             x = layer(x)
             outs.append(x)
-        
+
         return tuple(outs)
 
     def add_layer(self, conv_channels=1280, t=1, c=1280, n=1, s=2):
         self._make_layer(conv_channels, 1.0, 8, t, c, n, s, InvertedResidual)
-        
+
+    def _make_divisible(self, v, divisor, min_value=None):
+        """
+        Adapted from torchvision.models.mobilenet._make_divisable
+        """
+        if min_value is None:
+            min_value = divisor
+        new_v = max(min_value, int(v + divisor / 2) // divisor * divisor)
+        if new_v < 0.9 * v:
+            new_v += divisor
+        return new_v

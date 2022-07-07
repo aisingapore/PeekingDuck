@@ -22,16 +22,19 @@ from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
 )
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector import Detector
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector import (
+    Detector,
+)
+
 
 class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     """YolactEdge model with ResNet 101 FPN backbone"""
 
-    def __init__(self, config:Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        model_dir = self.download_weights() 
+        model_dir = self.download_weights()
 
         with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
@@ -45,6 +48,7 @@ class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["num_classes"],
             self.weights["model_file"],
             self.config["input_size"],
+            self.config["max_num_detections"],
             self.config["score_threshold"],
         )
 

@@ -19,6 +19,7 @@ from typing import Any, Dict
 from peekingduck.pipeline.nodes.model.yolact_edgev1 import yolact_edge_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
+
 class Node(AbstractNode):
     """Initializes and uses YolactEdge to infer from an image frame
 
@@ -52,7 +53,7 @@ class Node(AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default = 0.25**. |br|
             Bounding boxes with confidence score (product of objectness score
             and classification score) below the threshold will be discarded.
-        
+
 
     References:
         YolactEdge: Real-time Instance Segmentation on the Edge
@@ -66,7 +67,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = yolact_edge_model.YolactEdgeModel(self.config)
 
-    def run(self, inputs:Dict[str, Any]) -> Dict[str, Any]:
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads `img` from `inputs` and return the bboxes and masks of the detect
         objects.
 
@@ -83,12 +84,10 @@ class Node(AbstractNode):
         bboxes, labels, scores, masks = self.model.predict(inputs["img"])
 
         outputs = {
-            "bboxes": bboxes, 
-            "bbox_labels": labels, 
-            "bbox_scores": scores, 
-            "masks": masks
+            "bboxes": bboxes,
+            "bbox_labels": labels,
+            "bbox_scores": scores,
+            "masks": masks,
         }
 
         return outputs
-
-

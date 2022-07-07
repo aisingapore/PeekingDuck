@@ -20,18 +20,23 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
+import torch.backends.cudnn as cudnn
 from torch import Tensor
 import torch.nn.functional as F
 import numpy as np
 import torch
 
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
+    YolactEdge,
+)
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
-    FastBaseTransform)
+    FastBaseTransform,
+)
+
 
 class Detector:
     """Detector class to handle detection of bboxes and masks for yolact_edge
-    
+
     Attributes:
         logger (logging.Logger): Events logger.
         config (Dict[str, Any]): YolactEdge node configuration.
@@ -40,6 +45,7 @@ class Detector:
             will be allocated.
         yolact_edge (YolactEdge): The YolactEdge model for performing inference.
     """
+
     def __init__(
         self,
         model_dir: Path,
@@ -49,6 +55,7 @@ class Detector:
         num_classes: int,
         model_file: Dict[str, str],
         input_size: int,
+        max_num_detections: int,
         score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
@@ -59,6 +66,7 @@ class Detector:
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
         self.input_size = (input_size, input_size)
+        self.max_num_detections = max_num_detections
         self.score_threshold = score_threshold
 
         self.update_detect_ids(detect_ids)
@@ -66,32 +74,50 @@ class Detector:
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
-        self,
-        image: np.ndarray
+        self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Predict instance masks from image
-        
+
         Args:
             image (np.ndarray): image in numpy array.
-        
+
         Returns:
             bboxes (np.ndarray): array of detected bboxes
             labels (np.ndarray): array of labels
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
+        with torch.no_grad():
+            if torch.cuda.is_available():
+                cudnn.benchmark = True
+                cudnn.fastest = True
+                cudnn.deterministic = True
+                torch.set_default_tensor_type("torch.cuda.FloatTensor")
+            else:
+                torch.set_default_tensor_type("torch.FloatTensor")
+
         img_shape = image.shape[:2]
         model = self.yolact_edge
-        
+
         if torch.cuda.is_available():
             frame = torch.from_numpy(image).cuda().float()
         else:
             frame = torch.from_numpy(image).float()
-        
+
         preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
 
-        labels, scores, bboxes, masks = self._postprocess(
-            preds[0], img_shape, score_threshold=self.score_threshold)
+        t = self._postprocess(preds[0], img_shape, score_threshold=self.score_threshold)
+
+        try:
+            torch.cuda.synchronize()
+        except:
+            pass
+
+        masks = t[3][: self.max_num_detections].cpu().numpy().astype(np.uint8)
+        labels, scores, bboxes = [
+            x[: self.max_num_detections].cpu().numpy() for x in t[:3]
+        ]
+
         return bboxes, labels, scores, masks
 
     def update_detect_ids(self, ids: List[int]) -> None:
@@ -107,7 +133,7 @@ class Detector:
         """Creates YolactEdge model and loads its weights.
 
         Creates `detect_ids` as a `torch.Tensor`. Logs model configurations.
-        
+
         Returns:
             YolactEdge: YolactEdge model
         """
@@ -128,20 +154,18 @@ class Detector:
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(
-            self.model_type
-        )
+        return YolactEdge(self.model_type)
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
-        
+
         Args:
             model_path (Path): Path to model weights file.
             model_settings (Dict[str, float): Depth and width of the model.
 
         Returns:
             (YolactEdge): YolactEdge model.
-        
+
         Raises:
             ValueError: `model_path` does not exist.
         """
@@ -158,21 +182,21 @@ class Detector:
         )
 
     def _postprocess(
-            self, 
-            network_output: Dict[str, Tensor], 
-            img_shape: Tuple[int, int],
-            score_threshold: float
-        ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        self,
+        network_output: Dict[str, Tensor],
+        img_shape: Tuple[int, int],
+        score_threshold: float,
+    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for YolactEdge
 
         Args:
-            network_output (Dict[str, Tensor]): A dictionary from the first 
-                element of the YolactEdge output. The keys are "class", "box", 
+            network_output (Dict[str, Tensor]): A dictionary from the first
+                element of the YolactEdge output. The keys are "class", "box",
                 "score", "mask", and "proto"
             img_shape (Tuple[int, int]): height and width of original image
 
         Returns:
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): 
+            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
             Returned tuple contains:
             - An array of detection boxes
             - An array of human-friendly detection class names
@@ -182,23 +206,30 @@ class Detector:
         if network_output is None:
             return [torch.Tensor()] * 4
 
-        keep = network_output['score'] > score_threshold
+        keep = network_output["score"] > score_threshold
         for k in network_output:
-            if k != 'proto':
+            if k != "proto":
                 network_output[k] = network_output[k][keep]
-        if network_output['score'].size(0) == 0:
+        if network_output["score"].size(0) == 0:
             return [torch.Tensor()] * 4
 
-        classes = network_output['class'].cpu().numpy()
-        boxes   = network_output['box'].cpu().numpy()
-        scores  = network_output['score'].cpu().numpy()
-        masks   = network_output['mask']
-        proto_data = network_output['proto']
+        classes = network_output["class"]
+        boxes = network_output["box"]
+        scores = network_output["score"]
+        masks = network_output["mask"]
+        proto_data = network_output["proto"]
 
         masks = proto_data @ masks.t()
         masks = torch.sigmoid(masks).permute(2, 0, 1).contiguous()
-        masks = F.interpolate(masks.unsqueeze(0), (img_shape[0], img_shape[1]), 
-            mode='bilinear', align_corners=False).squeeze(0).gt_(0.5)
-        masks = masks.cpu().numpy().astype(np.uint8)
+        masks = (
+            F.interpolate(
+                masks.unsqueeze(0),
+                (img_shape[0], img_shape[1]),
+                mode="bilinear",
+                align_corners=False,
+            )
+            .squeeze(0)
+            .gt_(0.5)
+        )
 
         return classes, scores, boxes, masks
