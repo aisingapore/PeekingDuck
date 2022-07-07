@@ -47,10 +47,12 @@ FPS_60: int = int(1000 / 60)  # milliseconds per iteration
 ZOOM_TEXT: List[str] = ["50%", "75%", "100%", "125%", "150%", "200%", "250%", "300%"]
 ZOOM_DEFAULT_IDX: int = 2
 ZOOMS: List[float] = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
-EMOJI_PLAY = "\u25B6"
-EMOJI_STOP = "\u23F9"
-# EMOJI_STOP = "\u25FD"  # white medium-small square
-# EMOJI_STOP = "\u25FE"  # black medium-small square
+# PLAY_BUTTON_TEXT = "\u25B6"
+# STOP_BUTTON_TEXT = "\u23F9"
+# technotes: emoji-cons above don't render consistently on all OS'es, and/or play well
+# with some platforms (like Nvidia Jetsons)
+PLAY_BUTTON_TEXT = "Play"
+STOP_BUTTON_TEXT = "Stop"
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
@@ -568,9 +570,9 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
     def set_viewer_state_to_play(self) -> None:
         """Set self state to play for either 1) pipeline execution or 2) playback"""
         self.state = "play"
-        self.tk_btn_play["text"] = EMOJI_STOP
+        self.tk_btn_play["text"] = STOP_BUTTON_TEXT
 
     def set_viewer_state_to_stop(self) -> None:
         """Set self state to stop"""
         self.state = "stop"
-        self.tk_btn_play["text"] = EMOJI_PLAY
+        self.tk_btn_play["text"] = PLAY_BUTTON_TEXT
