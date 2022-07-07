@@ -46,14 +46,17 @@ Modifications include:
 """
 
 from typing import List
-import torch.nn as nn
 from functools import partial
+import torch.nn as nn
 
 
 class Bottleneck(nn.Module):
+    """
+    Bottleneck layer for YolactEdge.
+    """
     expansion = 4
 
-    def __init__(
+    def __init__( # pylint: disable=too-many-instance-attributes
         self,
         inplanes: int,
         planes: int,
@@ -110,6 +113,9 @@ class Bottleneck(nn.Module):
 
 
 class ResNetBackbone(nn.Module):
+    """
+    Adapted from torchvision.models.resnet.ResNet
+    """
     def __init__(
         self,
         layers: List[int],
@@ -200,6 +206,9 @@ class ResNetBackbone(nn.Module):
 
 
 class ConvBNAct(nn.Sequential):
+    """
+    Convolutional layer with batch normalization and activation with ReLU6.
+    """
     def __init__(
         self,
         in_planes: int,
@@ -257,8 +266,7 @@ class InvertedResidual(nn.Module):
     def forward(self, x):
         if self.use_res_connect:
             return x + self.conv(x)
-        else:
-            return self.conv(x)
+        return self.conv(x)
 
 
 class MobileNetV2Backbone(nn.Module):

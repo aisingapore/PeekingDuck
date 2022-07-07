@@ -41,6 +41,7 @@ Modifications include:
 - Removed unused utility functions from the original repository
 - Merged utility functions from the layers folder
 - Refactored config file parsing
+- Modified docstrings
 """
 
 import torch
@@ -48,6 +49,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 
 class FastBaseTransform(torch.nn.Module):
+    """
+    Transform that does all operations on the GPU for improved speed.
+    This doesn't suppport a lot of configs and should only be used for production.
+    Maintain this as necessary.
+    """
     def __init__(self):
         super().__init__()
         try:
@@ -78,7 +84,7 @@ class InterpolateModule(nn.Module):
         super().__init__()
         self.args = args
         self.kwdargs = kwdargs
-    
+
     def forward(self, x):
         return F.interpolate(x, *self.args, **self.kwdargs)
 
@@ -121,6 +127,9 @@ def make_extra(num_layers):
             nn.ReLU(inplace=True)] for _ in range(num_layers)], []))
 
 def jaccard(box_a, box_b, iscrowd=False):
+    """
+    Compute the jaccard overlap of two sets of boxes.
+    """
     use_batch = True
     if box_a.dim() == 2:
         use_batch = False
@@ -142,6 +151,9 @@ def point_form(boxes):
 
 @torch.jit.script
 def intersect(box_a, box_b):
+    """
+    Compute intersection between two sets of boxes.
+    """
     n = box_a.size(0)
     A = box_a.size(1)
     B = box_b.size(1)
@@ -154,6 +166,9 @@ def intersect(box_a, box_b):
 
 @torch.jit.script
 def decode(loc, priors, use_yolo_regressors:bool=False):
+    """
+    Decode predicted bbox locations from locations and priors.
+    """
     if use_yolo_regressors:
         boxes = torch.cat((
             loc[:, :2] + priors[:, :2],
@@ -171,6 +186,9 @@ def decode(loc, priors, use_yolo_regressors:bool=False):
 
 @torch.jit.script
 def sanitize_coordinates(_x1, _x2, img_size:int, padding:int=0, cast:bool=True):
+    """
+    Sanitize the coordinates to be within [0, img_size-1].
+    """
     _x1 = _x1 * img_size
     _x2 = _x2 * img_size
     if cast:

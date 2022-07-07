@@ -40,7 +40,7 @@ Modifications include:
     - Refactor configs
     - Removed unused conditions for ResNet and MobileNetV2 backbone
         - use_jit boolean value
-        - 
+
     - Removed unused functions for ResNet and MobileNetV2 backbone
         - save_weights()
         - init_weights()
@@ -62,9 +62,9 @@ Modifications include:
         - to_tensorrt_prediction_head()
         - to_tensorrt_spa()
         - to_tensorrt_flow_net()
-        
+
 - PredictionModule
-    - Removed unused make_priors function 
+    - Removed unused make_priors function
 - Removed unused Concat class
 - Removed unused PredictionModuleTRT class
 - Removed unused Cat class
@@ -84,13 +84,13 @@ Modifications include:
 """
 
 import logging
+from math import sqrt
+from itertools import product
+from typing import List, Tuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-
-from itertools import product
-from math import sqrt
-from typing import List, Tuple
 from torch import Tensor
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
@@ -104,10 +104,10 @@ from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.backbone i
     MobileNetV2Backbone,
 )
 
-try:
+if torch.cuda.is_available():
     torch.cuda.current_device()
-except:
-    pass
+
+
 
 ScriptModuleWrapper = torch.jit.ScriptModule
 
@@ -382,6 +382,7 @@ class PredictionModule(nn.Module):
 
 
 class FPN_phase_1(ScriptModuleWrapper):
+    """First phase of the feature pyramid network"""
     __constants__ = ["interpolation_mode"]
 
     def __init__(self, in_channels):
@@ -434,6 +435,7 @@ class FPN_phase_1(ScriptModuleWrapper):
 
 
 class FPN_phase_2(ScriptModuleWrapper):
+    """Second phase of the feature pyramid network"""
     __constants__ = ["num_downsample"]
 
     def __init__(self, in_channels):
@@ -482,6 +484,12 @@ class FPN_phase_2(ScriptModuleWrapper):
 
 
 class YolactEdgeHead:
+    """
+    At test time, this is the final layer of SSD. Decode location preds, apply
+    non-maximum suppression to location predictions based on conf scores and
+    threshold to a top_k number output predictions for both confidence scores
+    and locations, as the predicted masks.
+    """
     def __init__(
         self,
         num_classes: int,

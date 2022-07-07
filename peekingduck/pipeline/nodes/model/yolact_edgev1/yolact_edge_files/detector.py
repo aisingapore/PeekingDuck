@@ -108,10 +108,8 @@ class Detector:
 
         t = self._postprocess(preds[0], img_shape, score_threshold=self.score_threshold)
 
-        try:
+        if torch.cuda.is_available():
             torch.cuda.synchronize()
-        except:
-            pass
 
         masks = t[3][: self.max_num_detections].cpu().numpy().astype(np.uint8)
         labels, scores, bboxes = [
