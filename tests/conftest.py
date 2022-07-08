@@ -198,6 +198,44 @@ def human_video_sequence(request):
     gc.collect()
 
 
+@pytest.fixture(params=HUMAN_VIDEO_SEQUENCES)
+def human_video_sequence_with_empty_frames(request):
+    """This actually returns a list of dictionaries each containing:
+    - A video frame
+    - Bounding boxes
+
+    Yielding bounding box allows us to test dabble.tracking without having to
+    attach a object detector before it.
+
+    Yielding a list of frames instead of a video file allows for better control
+    of test data and frame specific manipulations to trigger certain code
+    branches.
+
+    Additionally, we overwrite frames 0 and 5 to be blank frames to test if the
+    trackers can handle no detections.
+    """
+    sequence_dir = TEST_DATA_DIR / "video_sequences" / request.param
+    with open(sequence_dir / "detections.yml") as infile:
+        detections = yaml.safe_load(infile.read())
+    sequence = [
+        {
+            "img": cv2.imread(str(sequence_dir / f"{key}.jpg")),
+            "bboxes": np.array(val["bboxes"]),
+        }
+        for key, val in detections.items()
+    ]
+    sequence[0]["img"] = np.zeros_like(sequence[0]["img"])
+    sequence[0]["bboxes"] = np.empty((0, 4))
+    sequence[5]["img"] = np.zeros_like(sequence[5]["img"])
+    sequence[5]["bboxes"] = np.empty((0, 4))
+    # Yielding video sequence name as well in case there are specific things to
+    # check for based on video content
+    yield request.param, sequence
+
+    K.clear_session()
+    gc.collect()
+
+
 def do_nothing(*_):
     """Does nothing. For use with ``mock.patch``."""
 
@@ -214,3 +252,18 @@ def not_raises(exception):
         yield
     except exception:
         raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
+
+
+def assert_msg_in_logs(msg: str, msg_logs) -> None:
+    """Helper method to assert that given message is in a list of logged messages.
+
+    Args:
+        msg (str): message to check for
+        msg_logs (List[LogRecord]): log records containing messages
+    """
+    res = False
+    for log_record in msg_logs:
+        if msg in log_record.getMessage():
+            res = True
+            break
+    assert res
