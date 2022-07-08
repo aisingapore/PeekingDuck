@@ -54,7 +54,7 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
-        self.current_filename = None
+        self.current_filename = ""
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
