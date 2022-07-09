@@ -141,18 +141,8 @@ class Node(
     def _validate_configs(self) -> None:
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
 
-        effects = (
-            "standard_mask",
-            "contrast",
-            "brightness",
-            "gamma_correction",
-            "blur",
-            "mosaic",
-        )
         effects_count = 0
-        for effect, setting in self.config["effect"].items():
-            if effect not in effects:
-                raise ValueError(f"{effect} must be one of {effects}")
+        for setting in self.config["effect"].values():
             if setting:
                 effects_count += 1
 
