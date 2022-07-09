@@ -18,7 +18,8 @@ Draws instance segmentation masks.
 
 import colorsys
 from random import randint
-from typing import Any, Dict, List, Tuple, cast
+from pydoc import locate
+from typing import Any, Callable, Dict, List, Tuple, cast
 
 import cv2
 import numpy as np
@@ -162,35 +163,101 @@ class Node(
 
         self.check_valid_choice("effect_area", {"objects", "background"})
 
-        Node._check_type(self.config["effect"]["contrast"], float)
-        Node._check_number_range(self.config["effect"]["contrast"], "[0, 3]")
-        Node._check_type(self.config["effect"]["brightness"], int)
-        Node._check_number_range(self.config["effect"]["brightness"], "[-100, 100]")
-        Node._check_type(self.config["effect"]["gamma_correction"], float)
-        Node._check_number_range(self.config["effect"]["gamma_correction"], "[0, +inf]")
-        Node._check_type(self.config["effect"]["blur"], int)
-        Node._check_number_range(self.config["effect"]["blur"], "[1, +inf]")
-        Node._check_type(self.config["effect"]["mosaic"], int)
-        Node._check_number_range(self.config["effect"]["mosaic"], "[1, +inf]")
-        Node._check_type(self.config["contours"]["show"], bool)
-        Node._check_type(self.config["contours"]["thickness"], int)
-        Node._check_number_range(self.config["contours"]["thickness"], "[1, +inf]")
+        valid_types = [
+            "effect|contrast, float",
+            "effect|brightness, int",
+            "effect|gamma_correction, float",
+            "effect|blur, int",
+            "effect|mosaic, int",
+            "contours|thickness, int",
+        ]
+
+        valid_ranges = [
+            "effect|contrast, [0, 3]",
+            "effect|brightness, [-100, 100]",
+            "effect|gamma_correction, [0, +inf]",
+            "effect|blur, [1, +inf]",
+            "effect|mosaic, [1, +inf]",
+            "contours|thickness, [1, +inf]",
+        ]
+
+        self._check_configs(valid_types, criteria="type")
+        self._check_configs(valid_ranges, criteria="range")
 
     @staticmethod
-    def _check_type(var: Any, var_type: Any) -> None:
-        if var is not None and not isinstance(var, var_type):
-            raise ValueError(f"Config: '{var}' must be a {var_type.__name__} value.")
+    def _check_type(var_name: str, var: Any, var_type: Any) -> None:
+        if var is not None and not isinstance(var, locate(var_type)):  # type: ignore
+            raise ValueError(f"Config: {var_name} must be a {var_type} value.")
 
     @staticmethod
-    def _check_number_range(var: Any, number_range: str) -> None:
+    def _check_range(var_name: str, var: Any, number_range: str) -> None:
         if var is not None:
             lower, upper = [
                 float(value.strip()) for value in number_range[1:-1].split(",")
             ]
             if not lower <= var <= upper:
                 raise ValueError(
-                    f"Config: '{var}' must be within the range of {number_range}."
+                    f"Config: {var_name} must be within the range of {number_range}."
                 )
+
+    def _check_configs(self, valid_settings: List[str], criteria: str) -> None:
+        """Checks the configs for valid data types and that the values are
+        within the correct ranges. The criteria parameter determines whether
+        the configs are checked for type or range. The valid_settings can
+        handle nested configs, with names of each level separated by a
+        pipe (|). The format for the number range is "[lower, upper]".
+
+        Example to illustrate format of 'valid_settings' parameter:
+        config = {
+            "not_nested": 10,
+            "single_level_dict": {
+                "contrast": 50.0,
+                "text_setting": "sample string",
+            },
+            "nested_dict": {
+                "effect": {
+                    "blur": 50,
+                }
+            },
+        }
+
+        valid_settings_for_types = [
+            "not_nested, int",
+            "single_level_dict|contrast, float",
+            "single_level_dict|contrast, str",
+            "nested_dict|effect|blur, int",
+        ]
+
+        valid_settings_for_ranges = [
+            "not_nested, [1, 10]",
+            "single_level_dict|contrast, [-100, 100]",
+            "nested_dict|effect|blur, [-100, 100]",
+        ]
+        """
+        if criteria == "type":
+            checker: Callable = Node._check_type
+        elif criteria == "range":
+            checker = Node._check_range
+        else:
+            raise ValueError(f"{criteria} must be either 'type' or 'range'.")
+
+        for valid_setting in valid_settings:
+            criteria_input_list = valid_setting.split(",", maxsplit=1)
+            var_location, var_criteria = (
+                criteria_input_list[0],
+                criteria_input_list[1].strip(),
+            )
+            variables = var_location.split("|")
+
+            var_name = "config"
+            dict_name = self.config
+            while len(variables) > 1:
+                var_name += f'["{variables[0]}"]'
+                dict_name = dict_name.get(variables.pop(0))  # type: ignore
+
+            var_name += f'["{variables[0]}"]'
+
+            checker(var_name, dict_name[variables[0]], var_criteria)
 
     def _draw_standard_masks(  # pylint: disable-msg=too-many-locals
         self,
