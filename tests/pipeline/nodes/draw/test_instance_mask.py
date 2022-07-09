@@ -121,38 +121,14 @@ def draw_instance_mask_bad_config_values(request, draw_instance_mask_config):
 
 @pytest.fixture(
     params=[
-        {"key": "effect", "value": {}},
         {
             "key": "effect",
             "value": {
-                "standard_mask": None,
-                "contrast": None,
-                "brightness": None,
-                "gamma_correction": None,
-                "blur": None,
-                "mosaic": None,
-            },
-        },
-        {
-            "key": "effect",
-            "value": {
-                "standard_mask": False,
-                "contrast": None,
-                "brightness": None,
-                "gamma_correction": None,
-                "blur": None,
-                "mosaic": None,
-            },
-        },
-        {
-            "key": "effect",
-            "value": {
-                "standard_mask": True,
                 "contrast": None,
                 "brightness": None,
                 "gamma_correction": None,
                 "blur": 50,
-                "mosaic": None,
+                "mosaic": 25,
             },
         },
     ],
@@ -242,14 +218,11 @@ def draw_instance_mask_bad_contours_config_values(request, draw_instance_mask_co
 
 @pytest.fixture
 def draw_standard_instance_mask_node(draw_instance_mask_config):
-    draw_instance_mask_config["effect"]["standard_mask"] = True
-
     return Node(draw_instance_mask_config)
 
 
 @pytest.fixture
 def draw_standard_instance_mask_node_with_contours(draw_instance_mask_config):
-    draw_instance_mask_config["effect"]["standard_mask"] = True
     draw_instance_mask_config["contours"]["show"] = True
     draw_instance_mask_config["contours"]["thickness"] = 2
 
@@ -310,7 +283,7 @@ class TestDrawInstanceMasks:
     ):
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=draw_instance_mask_bad_number_of_config_values)
-        assert "must be" in str(excinfo.value)
+        assert "can be" in str(excinfo.value)
 
     def test_invalid_effect_config_values(
         self, draw_instance_mask_bad_effect_config_values

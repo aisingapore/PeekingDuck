@@ -118,23 +118,19 @@ class Node(
         Returns:
             outputs (dict): Output in dictionary format with key "img".
         """
-        for effect in self.config["effect"]:
-            if self.config["effect"][effect] is not None:
-                if effect == "standard_mask" and self.config["effect"][effect]:
-                    output_img = self._draw_standard_masks(
-                        inputs["img"],
-                        inputs["masks"],
-                        inputs["bbox_labels"],
-                        inputs["bbox_scores"],
-                    )
-                    break  # only apply the first effect
-                if effect != "standard_mask":
-                    output_img = self._mask_apply_effect(
-                        inputs["img"],
-                        inputs["masks"],
-                        effect,
-                    )
-                    break  # only apply the first effect
+        if self.effect is None:
+            output_img = self._draw_standard_masks(
+                inputs["img"],
+                inputs["masks"],
+                inputs["bbox_labels"],
+                inputs["bbox_scores"],
+            )
+        else:
+            output_img = self._mask_apply_effect(
+                inputs["img"],
+                inputs["masks"],
+                self.effect,
+            )
 
         return {"img": output_img}
 
@@ -142,14 +138,14 @@ class Node(
         self.check_valid_choice("instance_color_scheme", {"random", "hue_family"})
 
         effects_count = 0
-        for setting in self.config["effect"].values():
+        self.effect = None
+        for effect, setting in self.config["effect"].items():
             if setting:
                 effects_count += 1
+                self.effect = effect
 
-        if effects_count == 0:
-            raise ValueError("At least one effect must be enabled in the config.")
         if effects_count > 1:
-            raise ValueError("Only one effect must be enabled at a time.")
+            raise ValueError("A maximum of one effect can be enabled at a time.")
 
         self.check_valid_choice("effect_area", {"objects", "background"})
 

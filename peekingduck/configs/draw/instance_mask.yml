@@ -4,7 +4,6 @@ output: ["img"]
 instance_color_scheme: hue_family
 
 effect: {
-  standard_mask: null,
   contrast: null,
   brightness: null,
   gamma_correction: null,
