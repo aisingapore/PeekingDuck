@@ -155,6 +155,7 @@ class Node(
             "effect|gamma_correction, float",
             "effect|blur, int",
             "effect|mosaic, int",
+            "contours|show, bool",
             "contours|thickness, int",
         ]
 
