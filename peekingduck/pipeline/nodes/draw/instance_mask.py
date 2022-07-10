@@ -171,28 +171,38 @@ class Node(
         self._check_configs(valid_types, criteria="type")
         self._check_configs(valid_ranges, criteria="range")
 
-    @staticmethod
-    def _check_type(var_name: str, var: Any, var_type: Any) -> None:
-        if var is not None and not isinstance(var, locate(var_type)):  # type: ignore
-            raise ValueError(f"Config: {var_name} must be a {var_type} value.")
+    def _check_configs(self, valid_settings: List[str], criteria: str) -> None:
+        if criteria == "type":
+            self._check_config_values(valid_settings, Node._type_checker)
+        elif criteria == "range":
+            self._check_config_values(valid_settings, Node._range_checker)
+        else:
+            raise ValueError("'criteria' parameter must be either 'type' or 'range'.")
 
     @staticmethod
-    def _check_range(var_name: str, var: Any, number_range: str) -> None:
-        if var is not None:
+    def _type_checker(var_name: str, value: Any, var_type: str) -> None:
+        """Checks if the value is of the correct type."""
+        if value is not None and not isinstance(value, locate(var_type)):  # type: ignore
+            raise ValueError(f"{var_name} must be a {var_type} value.")
+
+    @staticmethod
+    def _range_checker(var_name: str, value: Any, number_range: str) -> None:
+        """Checks if a value is within a range.  The format for the number
+        range is "[lower, upper]"."""
+        if value is not None:
             lower, upper = [
                 float(value.strip()) for value in number_range[1:-1].split(",")
             ]
-            if not lower <= var <= upper:
+            if not lower <= value <= upper:
                 raise ValueError(
-                    f"Config: {var_name} must be within the range of {number_range}."
+                    f"{var_name} must be within the range of {number_range}."
                 )
 
-    def _check_configs(self, valid_settings: List[str], criteria: str) -> None:
-        """Checks the configs for valid data types and that the values are
-        within the correct ranges. The criteria parameter determines whether
-        the configs are checked for type or range. The valid_settings can
-        handle nested configs, with names of each level separated by a
-        pipe (|). The format for the number range is "[lower, upper]".
+    def _check_config_values(self, valid_settings: List[str], checker: Callable) -> None:
+        """Checks the configs for valid data. The checker parameter determines
+        the criteria that the config values are checked against. The
+        valid_settings can handle nested configs, with names of different
+        levels separated by a pipe (|).
 
         Example to illustrate format of 'valid_settings' parameter:
         config = {
@@ -211,23 +221,16 @@ class Node(
         valid_settings_for_types = [
             "not_nested, int",
             "single_level_dict|contrast, float",
-            "single_level_dict|contrast, str",
+            "single_level_dict|text_setting, str",
             "nested_dict|effect|blur, int",
         ]
 
         valid_settings_for_ranges = [
             "not_nested, [1, 10]",
-            "single_level_dict|contrast, [-100, 100]",
-            "nested_dict|effect|blur, [-100, 100]",
+            "single_level_dict|contrast, [0, 3]",
+            "nested_dict|effect|blur, [1, +inf]",
         ]
         """
-        if criteria == "type":
-            checker: Callable = Node._check_type
-        elif criteria == "range":
-            checker = Node._check_range
-        else:
-            raise ValueError(f"{criteria} must be either 'type' or 'range'.")
-
         for valid_setting in valid_settings:
             criteria_input_list = valid_setting.split(",", maxsplit=1)
             var_location, var_criteria = (
