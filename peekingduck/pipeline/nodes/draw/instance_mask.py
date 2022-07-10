@@ -78,13 +78,13 @@ class Node(
     +------------------+------------------------------------+-----------+-------------+
     | Effect           | Description                        | Data Type | Range       |
     +------------------+------------------------------------+-----------+-------------+
-    | contrast         | Adjusts contrast using this value  | float     | [0, 3]      |
+    | contrast         | Adjusts contrast using this value  | float     | [0.0, 3.0]  |
     |                  | as the "alpha" parameter.          |           |             |
     +------------------+------------------------------------+-----------+-------------+
     | brightness       | Adjusts brightness using this      | int       | [-100, 100] |
     |                  | value as the "beta" parameter.     |           |             |
     +------------------+------------------------------------+-----------+-------------+
-    | gamma_correction | Adjusts gamma using this value as  | float     | [0, +inf]   |
+    | gamma_correction | Adjusts gamma using this value as  | float     | [0.0, +inf] |
     |                  | the "gamma" parameter.             |           |             |
     +------------------+------------------------------------+-----------+-------------+
     | blur             | Blurs the area using this value as | int       | [1, +inf]   |
@@ -181,9 +181,9 @@ class Node(
         ]
 
         valid_ranges = [
-            "effect|contrast, [0, 3]",
+            "effect|contrast, [0.0, 3.0]",
             "effect|brightness, [-100, 100]",
-            "effect|gamma_correction, [0, +inf]",
+            "effect|gamma_correction, [0.0, +inf]",
             "effect|blur, [1, +inf]",
             "effect|mosaic, [1, +inf]",
             "contours|thickness, [1, +inf]",
