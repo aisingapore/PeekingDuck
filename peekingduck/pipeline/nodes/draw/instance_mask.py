@@ -58,45 +58,66 @@ class Node(
 
     Configs:
         instance_color_scheme (:obj:`str`): **{"random", "hue_family"},
-            default="hue_family"** |br|
-            This defines what colors to use for the standard masks.
+            default = "hue_family"** |br|
+            This defines what colors to use for the standard masks. |br|
             "hue_family": use the same hue for each instance belonging to
-            the same class, but with a slightly different saturation.
+            the same class, but with a slightly different saturation. |br|
             "random": use a random color for all instances.
 
-        effect (:obj:`dict`): **{"standard_mask", "contrast", "brightness",
-            "gamma_correction", "blur", "mosaic"}**. |br|
-            This defines the effect (if any) to apply to either the masked or
-            unmasked areas of the image. |br|
-            "standard_mask" (:obj:`bool`): Draws a "standard" instance
-            segmentation mask. |br|
-            "contrast" (:obj:`float`): **[0, 3], default = 1**. Adjusts
-            contrast using this value as the "alpha" parameter. |br|
-            "brightness" (:obj:`int`): **[-100, 100], default = 0**. Adjusts
-            brightness using this value as the "beta" parameter. |br|
-            "gamma_correction" (:obj:`float`): Adjusts gamma using this value
-            as the "gamma" parameter. |br|
-            "blur" (:obj:`int`): Blurs the masks using this value as the
-            "blur_kernel_size" parameter. Larger values gives more intense
-            blurring. |br|
-            "mosaic" (:obj:`int`): Mosaics the masks using this value as the
-            resolution of a mosaic filter (width |times| height). The number
-            corresponds to the number of rows and columns used to create a
-            mosaic. For example, the setting (``mosaic: 25``) creates a
-            :math:`25 \\times 25` mosaic filter. Increasing the number
-            increases the intensity of pixelation over an area. |br|
+        effect (:obj:`dict`): **{contrast: null, brightness: null,
+            gamma_correction: null, blur: null, mosaic: null}** |br|
+            This defines the effect (if any) to apply to either the masked
+            (objects) or unmasked (background) areas of the image. If no effect
+            is selected, a "standard" instance segmentation mask will be drawn
+            and colored according to the instance_color_scheme. |br|
+            Note that at most one effect can be enabled at a time. |br|
+            Example: To apply the contrast effect to the objects in the
+            image, set the following config in pipeline_config.yml: |br|
+            effect : {contrast: 1.2}
 
-        effect_area (:obj:`str`): **{"objects", "background"},
-            default = "objects"**. |br|
+    +------------------+------------------------------------+-----------+-------------+
+    | Effect           | Description                        | Data Type | Range       |
+    +------------------+------------------------------------+-----------+-------------+
+    | contrast         | Adjusts contrast using this value  | float     | [0, 3]      |
+    |                  | as the "alpha" parameter.          |           |             |
+    +------------------+------------------------------------+-----------+-------------+
+    | brightness       | Adjusts brightness using this      | int       | [-100, 100] |
+    |                  | value as the "beta" parameter.     |           |             |
+    +------------------+------------------------------------+-----------+-------------+
+    | gamma_correction | Adjusts gamma using this value as  | float     | [0, +inf]   |
+    |                  | the "gamma" parameter.             |           |             |
+    +------------------+------------------------------------+-----------+-------------+
+    | blur             | Blurs the area using this value as | int       | [1, +inf]   |
+    |                  | the "blur_kernel_size" parameter.  |           |             |
+    |                  | Larger values gives more intense   |           |             |
+    |                  | blurring.                          |           |             |
+    +------------------+------------------------------------+-----------+-------------+
+    | mosaic           | Mosaics the area using this value  | int       | [1, +inf]   |
+    |                  | as the resolution of a mosaic      |           |             |
+    |                  | filter (width |times| height). The |           |             |
+    |                  | number corresponds to the number   |           |             |
+    |                  | of rows and columns used to create |           |             |
+    |                  | a mosaic. For example, the setting |           |             |
+    |                  | (``mosaic: 25``) creates a         |           |             |
+    |                  | :math:`25 \\times 25` mosaic       |           |             |
+    |                  | filter. Increasing the number      |           |             |
+    |                  | increases the intensity of         |           |             |
+    |                  | pixelation over an area.           |           |             |
+    +------------------+------------------------------------+-----------+-------------+
+
+        effect_area (:obj:`str`): **{"objects", "background"}, default =
+        "objects"** |br|
             This defines where the effect should be applied. |br|
-            "objects": the effect is applied to the masked areas of the image. |br|
-            "background": the effect is applied to the unmasked areas of the image. |br|
+            "objects": the effect is applied to the masked areas of the
+            image. |br|
+            "background": the effect is applied to the unmasked areas of the
+            image.
 
-        contours (:obj:`dict`): **{"show", "thickness"}**. |br|
-            "show" (:obj:`bool`): **default = False**. |br|
-                This determines whether to show the contours of the masks.
-            "thickness" (:obj:`int`): **default = 3**. |br|
-                This defines the thickness of the contours.
+        contours (:obj:`dict`): **{show: False, thickness: 2}** |br|
+            "show" (:obj:`bool`): |br|
+            This determines whether to show the contours of the masks.
+            "thickness" (:obj:`int`): **[1, +inf]** |br|
+            This defines the thickness of the contours.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
