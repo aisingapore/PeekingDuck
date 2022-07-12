@@ -228,31 +228,32 @@ class Node(
         levels separated by a pipe (|).
 
         Example to illustrate format of 'valid_settings' parameter:
-        config = {
-            "not_nested": 10,
-            "single_level_dict": {
-                "contrast": 50.0,
-                "text_setting": "sample string",
-            },
-            "nested_dict": {
-                "effect": {
-                    "blur": 50,
-                }
-            },
-        }
 
-        valid_settings_for_types = [
-            "not_nested, int",
-            "single_level_dict|contrast, float",
-            "single_level_dict|text_setting, str",
-            "nested_dict|effect|blur, int",
-        ]
+            config = {
+                "not_nested": 10,
+                "single_level_dict": {
+                    "contrast": 50.0,
+                    "text_setting": "sample string",
+                },
+                "nested_dict": {
+                    "effect": {
+                        "blur": 50,
+                    }
+                },
+            }
 
-        valid_settings_for_ranges = [
-            "not_nested, [1, 10]",
-            "single_level_dict|contrast, [0, 3]",
-            "nested_dict|effect|blur, [1, +inf]",
-        ]
+            valid_settings_for_types = [
+                "not_nested, int",
+                "single_level_dict|contrast, float",
+                "single_level_dict|text_setting, str",
+                "nested_dict|effect|blur, int",
+            ]
+
+            valid_settings_for_ranges = [
+                "not_nested, [1, 10]",
+                "single_level_dict|contrast, [0, 3]",
+                "nested_dict|effect|blur, [1, +inf]",
+            ]
         """
         for valid_setting in valid_settings:
             criteria_input_list = valid_setting.split(",", maxsplit=1)
