@@ -36,10 +36,9 @@ from peekingduck.pipeline.nodes.draw.utils.constants import (
 )
 
 
-class Node(
-    AbstractNode, ThresholdCheckerMixin
-):  # pylint: disable=too-few-public-methods
-    """Draws instance segmentation masks on image.
+class Node(AbstractNode, ThresholdCheckerMixin):
+    """# pylint: disable=line-too-long
+    Draws instance segmentation masks on image.
 
     The :mod:`draw.mask` node draws instance segmentation masks onto the
     detected object instances.
@@ -63,61 +62,65 @@ class Node(
             "hue_family": use the same hue for each instance belonging to
             the same class, but with a slightly different saturation. |br|
             "random": use a random color for all instances.
-
         effect (:obj:`dict`): **{contrast: null, brightness: null,
             gamma_correction: null, blur: null, mosaic: null}** |br|
             This defines the effect (if any) to apply to either the masked
             (objects) or unmasked (background) areas of the image. If no effect
             is selected, a "standard" instance segmentation mask will be drawn
             and colored according to the instance_color_scheme. |br|
-            Note that at most one effect can be enabled at a time. |br|
-            Example: To apply the contrast effect to the objects in the
-            image, set the following config in pipeline_config.yml: |br|
-            effect : {contrast: 1.2}
+            For example, to apply the contrast effect to the objects in the
+            image, set the following config in pipeline_config.yml:
 
-    +------------------+------------------------------------+-----------+-------------+
-    | Effect           | Description                        | Data Type | Range       |
-    +------------------+------------------------------------+-----------+-------------+
-    | contrast         | Adjusts contrast using this value  | float     | [0.0, 3.0]  |
-    |                  | as the "alpha" parameter.          |           |             |
-    +------------------+------------------------------------+-----------+-------------+
-    | brightness       | Adjusts brightness using this      | int       | [-100, 100] |
-    |                  | value as the "beta" parameter.     |           |             |
-    +------------------+------------------------------------+-----------+-------------+
-    | gamma_correction | Adjusts gamma using this value as  | float     | [0.0, +inf] |
-    |                  | the "gamma" parameter.             |           |             |
-    +------------------+------------------------------------+-----------+-------------+
-    | blur             | Blurs the area using this value as | int       | [1, +inf]   |
-    |                  | the "blur_kernel_size" parameter.  |           |             |
-    |                  | Larger values gives more intense   |           |             |
-    |                  | blurring.                          |           |             |
-    +------------------+------------------------------------+-----------+-------------+
-    | mosaic           | Mosaics the area using this value  | int       | [1, +inf]   |
-    |                  | as the resolution of a mosaic      |           |             |
-    |                  | filter (width |times| height). The |           |             |
-    |                  | number corresponds to the number   |           |             |
-    |                  | of rows and columns used to create |           |             |
-    |                  | a mosaic. For example, the setting |           |             |
-    |                  | (``mosaic: 25``) creates a         |           |             |
-    |                  | :math:`25 \\times 25` mosaic       |           |             |
-    |                  | filter. Increasing the number      |           |             |
-    |                  | increases the intensity of         |           |             |
-    |                  | pixelation over an area.           |           |             |
-    +------------------+------------------------------------+-----------+-------------+
+                effect : {contrast: 1.2}
+
+            Note that at most one effect can be enabled at a time.
+
+            +------------------+---------------------------------------+-----------+-------------+
+            | Effect           | Description                           | Data Type | Range       |
+            +------------------+---------------------------------------+-----------+-------------+
+            | contrast         | Adjusts contrast using this value     | float     | [0.0, 3.0]  |
+            |                  | as the "alpha" parameter.             |           |             |
+            +------------------+---------------------------------------+-----------+-------------+
+            | brightness       | Adjusts brightness using this         | int       | [-100, 100] |
+            |                  | value as the "beta" parameter.        |           |             |
+            +------------------+---------------------------------------+-----------+-------------+
+            | gamma_correction | Adjusts gamma using this value as     | float     | [0.0, +inf] |
+            |                  | the "gamma" parameter.                |           |             |
+            +------------------+---------------------------------------+-----------+-------------+
+            | blur             | Blurs the area using this value as    | int       | [1, +inf]   |
+            |                  | the "blur_kernel_size" parameter. |br||           |             |
+            |                  | Larger values gives more intense      |           |             |
+            |                  | blurring.                             |           |             |
+            +------------------+---------------------------------------+-----------+-------------+
+            | mosaic           | Mosaics the area using this value     | int       | [1, +inf]   |
+            |                  | as the resolution of a mosaic         |           |             |
+            |                  | filter |br| (width |times| height).   |           |             |
+            |                  | The number corresponds to the number  |           |             |
+            |                  | of rows |br| and columns used to      |           |             |
+            |                  | create a mosaic. For example, the     |           |             |
+            |                  | setting |br| (``mosaic: 25``) creates |           |             |
+            |                  | a :math:`25 \\times 25` mosaic         |           |             |
+            |                  | filter. Increasing |br| the number    |           |             |
+            |                  | increases the intensity of            |           |             |
+            |                  | pixelation over an area.              |           |             |
+            +------------------+---------------------------------------+-----------+-------------+
 
         effect_area (:obj:`str`): **{"objects", "background"}, default =
-        "objects"** |br|
+            "objects"** |br|
             This defines where the effect should be applied. |br|
             "objects": the effect is applied to the masked areas of the
             image. |br|
             "background": the effect is applied to the unmasked areas of the
             image.
-
         contours (:obj:`dict`): **{show: False, thickness: 2}** |br|
-            "show" (:obj:`bool`): |br|
-            This determines whether to show the contours of the masks.
-            "thickness" (:obj:`int`): **[1, +inf]** |br|
-            This defines the thickness of the contours.
+
+            +-----------+------------------------------------------------------------+-----------+-----------+
+            | Contours  | Description                                                | Data Type | Range     |
+            +-----------+------------------------------------------------------------+-----------+-----------+
+            | show      | This determines whether to show the contours of the masks. | bool      | N.A.      |
+            +-----------+------------------------------------------------------------+-----------+-----------+
+            | thickness | This defines the thickness of the contours.                | int       | [1, +inf] |
+            +-----------+------------------------------------------------------------+-----------+-----------+
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
