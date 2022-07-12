@@ -324,7 +324,7 @@ class Node(
             ret_image = cv2.add(ret_image, masked_area_colored)
 
             if self.config["contours"]["show"]:
-                ret_image = self._draw_contours_single_mask(masks, index, ret_image)
+                ret_image = self._draw_contours(masks, ret_image, index)
 
         return ret_image
 
@@ -399,35 +399,17 @@ class Node(
 
         return color
 
-    def _draw_contours_single_mask(
-        self,
-        masks: np.ndarray,
-        index: int,
-        image: np.ndarray,
-    ) -> np.ndarray:
-        """Draws the contour around a single instance segmentation mask."""
-        ret_image = image
-        contour, _ = cv2.findContours(
-            masks[index], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
-        )
-        cv2.drawContours(
-            ret_image,
-            contour,
-            -1,
-            CONTOUR_COLOR,
-            self.config["contours"]["thickness"],
-        )
-
-        return ret_image
-
-    def _draw_contours_all_masks(
+    def _draw_contours(
         self,
         masks: np.ndarray,
         image: np.ndarray,
+        index: int = None,
     ) -> np.ndarray:
-        """Draws contours around all instance segmentation masks."""
+        """Draws contours around instance segmentation masks. If 'index' is
+        given, only the contour of the mask with the given index is drawn."""
         ret_image = image
-        for i in range(masks.shape[0]):
+        masks_to_process = [index] if index else range(masks.shape[0])
+        for i in masks_to_process:
             contour, _ = cv2.findContours(
                 masks[i], cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE
             )
@@ -478,7 +460,7 @@ class Node(
         ret_image = cv2.add(image_empty_effect_area, effect_area_with_effect)
 
         if self.config["contours"]["show"]:
-            ret_image = self._draw_contours_all_masks(masks, ret_image)
+            ret_image = self._draw_contours(masks, ret_image)
 
         return ret_image
 
