@@ -219,7 +219,9 @@ class Node(
                     f"{var_name} must be within the range of {number_range}."
                 )
 
-    def _check_config_values(self, valid_settings: List[str], checker: Callable) -> None:
+    def _check_config_values(
+        self, valid_settings: List[str], checker: Callable
+    ) -> None:
         """Checks the configs for valid data. The checker parameter determines
         the criteria that the config values are checked against. The
         valid_settings can handle nested configs, with names of different
