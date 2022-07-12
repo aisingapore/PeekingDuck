@@ -47,14 +47,15 @@ class Node(AbstractNode):
             with reference from the top left corner of the screen, in pixels.
     """
 
-    ASPECT_RATIO_THRESHOLD = 5e-3
     MIN_SIZE = 120
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
-        self.current_filename = ""
+        self.previous_filename = ""
+        self.previous_width = 0
+        self.previous_height = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
@@ -67,57 +68,51 @@ class Node(AbstractNode):
 
         return {"pipeline_end": False}
 
-    def _set_window_size(self, input_filename: str, img: np.ndarray) -> None:
+    def _set_window_size(self, current_filename: str, img: np.ndarray) -> None:
         """If `do_resizing` option is False, window size will be initialized to the image or
-        video's frame default size. When the user changes the window's size, the aspect ratio
-        will be kept unchanged.
+        video's frame default size for every new video or image.
 
         If `do_resizing` option is True, window size will be initialized to the config setting's
-        width and height for every new video or image. The aspect ratio will not be kept constant
-        when the user changes the size of the display window.
+        width and height for every new video or image.
+
+        The length of either sides of the display window will be clamped to a lower bound of
+        `self.MIN_SIZE`
 
         Args:
-            input_filename (str): The filename from the `inputs` dictionary
+            current_filename (str): The filename from the `inputs` dictionary
             img (np.ndarray): The current image. The image will not be changed in this function.
         """
-        if not self.window_size["do_resizing"]:
-            img_height, img_width, _ = img.shape
-            if input_filename != self.current_filename:
-                # Initialize the window size for every new video
-                cv2.resizeWindow(self.window_name, img_width, img_height)
-                self.current_filename = input_filename
+        if current_filename != self.previous_filename:
+            # Initialize the window size for every new video
+            if self.window_size["do_resizing"]:
+                # Clamp the sides fo the window_size to have a minimum of self.MIN_SIZE
+                self.window_size["width"] = max(
+                    self.window_size["width"], self.MIN_SIZE
+                )
+                self.window_size["height"] = max(
+                    self.window_size["height"], self.MIN_SIZE
+                )
+                cv2.resizeWindow(
+                    self.window_name,
+                    self.window_size["width"],
+                    self.window_size["height"],
+                )
+                self.previous_width = self.window_size["width"]
+                self.previous_height = self.window_size["height"]
             else:
-                # Check the current window size, resize it if aspect ratio is not the same as image
-                aspect_ratio = img_width / img_height
-                _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
-                if (
-                    abs(win_width / win_height - aspect_ratio)
-                    > self.ASPECT_RATIO_THRESHOLD
-                ):
-                    # Make sure window height and width is above lower bound
-                    win_width = (
-                        win_width if win_width > self.MIN_SIZE else self.MIN_SIZE
-                    )
-                    win_height = int(win_width / aspect_ratio)
-                    if win_height < self.MIN_SIZE:
-                        win_height = self.MIN_SIZE
-                        win_width = int(aspect_ratio * win_height)
-                    cv2.resizeWindow(self.window_name, win_width, win_height)
-        elif input_filename != self.current_filename:
-            # Initialize to config's width and height settings if `do_resizing` is True
-            cv2.resizeWindow(
-                self.window_name, self.window_size["width"], self.window_size["height"]
-            )
-            self.current_filename = input_filename
+                img_height, img_width, _ = img.shape
+                cv2.resizeWindow(self.window_name, img_width, img_height)
+                self.previous_width = img_width
+                self.previous_height = img_height
+            self.previous_filename = current_filename
         else:
-            # Check to make sure window size do not go below lower bound when `do_resizing` is True
+            below_threshold = False
             _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
-            resize_window = False
             if win_width < self.MIN_SIZE:
+                below_threshold = True
                 win_width = self.MIN_SIZE
-                resize_window = True
-            if win_height < self.MIN_SIZE:
+            elif win_height < self.MIN_SIZE:
+                below_threshold = True
                 win_height = self.MIN_SIZE
-                resize_window = True
-            if resize_window:
+            if below_threshold:
                 cv2.resizeWindow(self.window_name, win_width, win_height)
