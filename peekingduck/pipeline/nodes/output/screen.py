@@ -54,8 +54,6 @@ class Node(AbstractNode):
         cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
         cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
         self.previous_filename = ""
-        self.previous_width = 0
-        self.previous_height = 0
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
@@ -86,24 +84,11 @@ class Node(AbstractNode):
             # Initialize the window size for every new video
             if self.window_size["do_resizing"]:
                 # Clamp the sides fo the window_size to have a minimum of MIN_DISPLAY_SIZE
-                self.window_size["width"] = max(
-                    self.window_size["width"], MIN_DISPLAY_SIZE
-                )
-                self.window_size["height"] = max(
-                    self.window_size["height"], MIN_DISPLAY_SIZE
-                )
-                cv2.resizeWindow(
-                    self.window_name,
-                    self.window_size["width"],
-                    self.window_size["height"],
-                )
-                self.previous_width = self.window_size["width"]
-                self.previous_height = self.window_size["height"]
+                img_width = max(self.window_size["width"], MIN_DISPLAY_SIZE)
+                img_height = max(self.window_size["height"], MIN_DISPLAY_SIZE)
             else:
                 img_height, img_width, _ = img.shape
-                cv2.resizeWindow(self.window_name, img_width, img_height)
-                self.previous_width = img_width
-                self.previous_height = img_height
+            cv2.resizeWindow(self.window_name, img_width, img_height)
             self.previous_filename = current_filename
         else:
             below_threshold = False
