@@ -137,16 +137,18 @@ def get_config_and_script_paths(
 def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
     """Loads class name to object ID mapping from the file
     peekingduck/pipeline/nodes/model/master_map.yml
-    for object detection models only.
+    for object detection and instance segmentation models only.
 
     Tech Notes
         master_map.yml comprises two documents:
-        1. model mapping: tells which mapping system a particular object detection model uses
+        1. model mapping: tells which mapping system a particular object detection or
+        instance segmentation model uses
         2. class name to ID mapping: maps class name to ID, supports multiple mapping systems
 
     Args:
         node_name (str): Tells function which mapping to load,
-                            Possible values = { model.efficientdet, model.yolo, model.yolox }.
+                            Possible values = { model.efficientdet, model.yolo, model.yolox,
+                                                model.mask_rcnn }.
 
     Returns:
         Dict[str, int]: Mapping of class names to object IDs relevant to given node_name
@@ -179,13 +181,14 @@ def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
 def obj_det_change_class_name_to_id(
     node_name: str, key: str, value: List[Any]
 ) -> Tuple[str, List[int]]:
-    """Process object detection model node's detect key and check for
-    any class names to be converted to object IDs.
+    """Process object detection or instance segmentation model node's detect key and
+    check for any class names to be converted to object IDs.
     E.g. person to 0, car to 2
 
     Args:
-        node_name (str): to determine which object detection model is being used
-                         because different models can use different object IDs.
+        node_name (str): to determine which object detection or instance segmentation
+                         model is being used because different models can use different
+                         object IDs.
         key (str): expected to be "detect"; error otherwise.
         value (List[Any]): list of class names or object IDs for detection.
                            If object IDs, do nothing.
