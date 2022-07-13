@@ -38,7 +38,6 @@ from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils impo
 
 class Detector:  # pylint: disable=too-many-instance-attributes
     """Detector class to handle detection of bboxes and masks for yolact_edge
-
     Attributes:
         logger (logging.Logger): Events logger.
         config (Dict[str, Any]): YolactEdge node configuration.
@@ -79,10 +78,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Predict instance masks from image
-
         Args:
             image (np.ndarray): image in numpy array.
-
         Returns:
             bboxes (np.ndarray): array of detected bboxes
             labels (np.ndarray): array of labels
@@ -122,7 +119,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
     def update_detect_ids(self, ids: List[int]) -> None:
         """Updates list of selected object category IDs. When the list is
         empty, all available object category IDs are detected.
-
         Args:
             ids: List of selected object category IDs
         """
@@ -130,9 +126,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
     def _create_yolact_edge_model(self) -> YolactEdge:
         """Creates YolactEdge model and loads its weights.
-
         Creates `detect_ids` as a `torch.Tensor`. Logs model configurations.
-
         Returns:
             YolactEdge: YolactEdge model
         """
@@ -146,30 +140,27 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         return self._load_yolact_edge_weights()
 
-    def _get_model(self, model_type: str) -> YolactEdge:
+    def _get_model(self) -> YolactEdge:
         """Constructs YolactEdge model based on parsed configuration.
         Args:
             model_size (Dict[str, float]): Depth and width of the model.
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(model_type)
+        return YolactEdge(self.model_type)
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
-
         Args:
             model_path (Path): Path to model weights file.
             model_settings (Dict[str, float): Depth and width of the model.
-
         Returns:
             (YolactEdge): YolactEdge model.
-
         Raises:
             ValueError: `model_path` does not exist.
         """
         if self.model_path.is_file():
-            model = self._get_model(self.model_type)
+            model = self._get_model()
             model.load_weights(self.model_path)
             model.eval()
             if torch.cuda.is_available():
@@ -186,13 +177,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         img_shape: Tuple[int, int],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for YolactEdge
-
         Args:
             network_output (Dict[str, Tensor]): A dictionary from the first
                 element of the YolactEdge output. The keys are "class", "box",
                 "score", "mask", and "proto"
             img_shape (Tuple[int, int]): height and width of original image
-
         Returns:
             (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
             Returned tuple contains:

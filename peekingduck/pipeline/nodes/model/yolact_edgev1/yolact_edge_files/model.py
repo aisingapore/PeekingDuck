@@ -40,7 +40,6 @@ Modifications include:
     - Refactor configs
     - Removed unused conditions for ResNet and MobileNetV2 backbone
         - use_jit boolean value
-
     - Removed unused functions for ResNet and MobileNetV2 backbone
         - save_weights()
         - init_weights()
@@ -62,7 +61,6 @@ Modifications include:
         - to_tensorrt_prediction_head()
         - to_tensorrt_spa()
         - to_tensorrt_flow_net()
-
 - PredictionModule
     - Removed unused make_priors function
 - Removed unused Concat class
@@ -331,7 +329,6 @@ class PredictionModule(nn.Module):
         Args:
             - inputs: The convOut from a layer in the backbone network
                  Size: [batch_size, in_channels, conv_h, conv_w])
-
         Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
             - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
             - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
@@ -547,7 +544,6 @@ class YolactEdgeHead:
                 Shape: [num_priors, 4]
             proto_data: (tensor) If using mask_type.lincomb, the prototype masks
                 Shape: [batch, mask_h, mask_w, mask_dim]
-
         Returns:
             output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
             These outputs are in the order: class idx, confidence, bbox coords, and mask.
@@ -595,7 +591,7 @@ class YolactEdgeHead:
             boxes, masks, scores, self.nms_thresh, self.top_k
         )
 
-        return {"box": boxes, "maAsk": masks, "class": classes, "score": scores}
+        return {"box": boxes, "mask": masks, "class": classes, "score": scores}
 
     def fast_nms(
         self,

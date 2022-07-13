@@ -35,7 +35,6 @@
 # SOFTWARE.
 
 """A collection of utility functions used by YolactEdge
-
 Modifications include:
 - Removed unused python scripts in the original utils folder
 - Removed unused utility functions from the original repository
@@ -74,6 +73,14 @@ class FastBaseTransform(torch.nn.Module):
             self.std = torch.Tensor((57.38, 57.12, 58.40)).float()[None, :, None, None]
 
     def forward(self, img):
+        """
+        Args:
+            img (torch.Tensor): input image of shape (N, H, W, C)
+
+        Returns:
+            img (torch.Tensor): transformed image of shape (N, C, H, W) where
+                H == W
+        """
         self.mean = self.mean.to(img.device)
         self.std = self.std.to(img.device)
 
@@ -97,6 +104,12 @@ class InterpolateModule(nn.Module):
         self.kwdargs = kwdargs
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        """
+        Args:
+            inputs: A tensor of shape (N, C, H, W)
+        Returns:
+            A tensor of shape (N, C, H', W')
+        """
         return F.interpolate(inputs, *self.args, **self.kwdargs)
 
 
@@ -118,7 +131,7 @@ def make_net(in_channels, conf, include_last_relu=True):
                     scale_factor=-kernel_size,
                     mode="bilinear",
                     align_corners=False,
-                    **layer_config[2]
+                    **layer_config[2],
                 )
             else:
                 layer = nn.ConvTranspose2d(
@@ -135,10 +148,15 @@ def make_net(in_channels, conf, include_last_relu=True):
 
 
 def make_extra(num_layers, out_channels):
+    """
+    Lambda function that creates an array of num_layers alternating conv-relu if
+    the num_layers is not 0.
+    """
     if num_layers == 0:
-        return lambda x: x
+        out = lambda x: x
+
     else:
-        return nn.Sequential(
+        out = nn.Sequential(
             *sum(
                 [
                     [
@@ -150,6 +168,7 @@ def make_extra(num_layers, out_channels):
                 [],
             )
         )
+    return out
 
 
 def jaccard(box_a, box_b, iscrowd=False):
@@ -178,6 +197,15 @@ def jaccard(box_a, box_b, iscrowd=False):
 
 
 def point_form(boxes):
+    """Convert prior_boxes to (xmin, ymin, xmax, ymax)
+    representation for comparison to point form ground truth data.
+
+    Args:
+        boxes: (tensor) center-size default boxes from priorbox layers.
+
+    Return:
+        boxes: (tensor) Converted xmin, ymin, xmax, ymax form of boxes.
+    """
     return torch.cat(
         (
             boxes[:, :2] - boxes[:, 2:] / 2,  # xmin, ymin
@@ -192,16 +220,16 @@ def intersect(box_a, box_b):
     Compute intersection between two sets of boxes.
     """
     num = box_a.size(0)
-    set_A = box_a.size(1)
-    set_B = box_b.size(1)
+    set_a = box_a.size(1)
+    set_b = box_b.size(1)
 
     max_xy = torch.min(
-        box_a[:, :, 2:].unsqueeze(2).expand(num, set_A, set_B, 2),
-        box_b[:, :, 2:].unsqueeze(1).expand(num, set_A, set_B, 2),
+        box_a[:, :, 2:].unsqueeze(2).expand(num, set_a, set_b, 2),
+        box_b[:, :, 2:].unsqueeze(1).expand(num, set_a, set_b, 2),
     )
     min_xy = torch.max(
-        box_a[:, :, :2].unsqueeze(2).expand(num, set_A, set_B, 2),
-        box_b[:, :, :2].unsqueeze(1).expand(num, set_A, set_B, 2),
+        box_a[:, :, :2].unsqueeze(2).expand(num, set_a, set_b, 2),
+        box_b[:, :, :2].unsqueeze(1).expand(num, set_a, set_b, 2),
     )
     inter = torch.clamp((max_xy - min_xy), min=0)
     return inter[:, :, :, 0] * inter[:, :, :, 1]
