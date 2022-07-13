@@ -84,7 +84,7 @@ Modifications include:
 import logging
 from math import sqrt
 from itertools import product
-from typing import List, Tuple
+from typing import List, Tuple, Dict, Any
 
 import torch
 import torch.nn as nn
@@ -120,12 +120,10 @@ NUM_CLASSES = 81
 MAX_NUM_DETECTIONS = 100
 
 
-class YolactEdge(nn.Module):
+class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attribute
     """YolactEdge model module."""
 
-    def __init__(
-        self, model_type: str
-    ) -> None:  # pylint: disable=too-many-instance-attributes
+    def __init__(self, model_type: str) -> None:
         super().__init__()
 
         if model_type[0] == "r":
@@ -169,8 +167,8 @@ class YolactEdge(nn.Module):
         self.proto_net, _ = make_net(256, mask_proto_net, include_last_relu=False)
         self.selected_layers = selected_layers
 
-        self.fpn_phase_1 = FPN_phase_1([src_channels[i] for i in self.selected_layers])
-        self.fpn_phase_2 = FPN_phase_2([src_channels[i] for i in self.selected_layers])
+        self.fpn_phase_1 = FPNPhase1([src_channels[i] for i in self.selected_layers])
+        self.fpn_phase_2 = FPNPhase2([src_channels[i] for i in self.selected_layers])
 
         if model_type[0] == "r":  # Model is running on ResNet backbone
             self.selected_layers = list(
@@ -204,7 +202,7 @@ class YolactEdge(nn.Module):
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
 
-    def forward(self, inputs, extras=None):
+    def forward(self, inputs):
         """The input should be of size [batch_size, 3, img_h, img_w]"""
         outs_wrapper = {}
         outs = self.backbone(inputs)
@@ -259,7 +257,7 @@ class YolactEdge(nn.Module):
         self.load_state_dict(state_dict)
 
 
-class PredictionModule(nn.Module):
+class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attributes
     """
     The (c) prediction module adapted from DSSD:
     https://arxiv.org/pdf/1701.06659.pdf
@@ -283,7 +281,7 @@ class PredictionModule(nn.Module):
                          all the layers from parent instead of from this module.
     """
 
-    def __init__(  # pylint: disable=too-many-instance-attributes
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         in_channels,
         out_channels=1024,
@@ -339,10 +337,7 @@ class PredictionModule(nn.Module):
         conv_h = inputs.size(2)
         conv_w = inputs.size(3)
 
-        try:
-            inputs = src.upfeature(inputs)
-        except:
-            pass
+        inputs = src.upfeature(inputs)
 
         bbox_x = src.bbox_extra(inputs)
         conf_x = src.conf_extra(inputs)
@@ -391,7 +386,7 @@ class PredictionModule(nn.Module):
         return self.priors
 
 
-class FPN_phase_1(ScriptModuleWrapper):
+class FPNPhase1(ScriptModuleWrapper):
     """First phase of the feature pyramid network"""
 
     __constants__ = ["interpolation_mode"]
@@ -407,7 +402,7 @@ class FPN_phase_1(ScriptModuleWrapper):
         )
         self.interpolation_mode = "bilinear"
 
-    def forward(
+    def forward(  # pylint: disable=too-many-arguments
         self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
     ) -> List[Tensor]:
         """
@@ -451,7 +446,7 @@ class FPN_phase_1(ScriptModuleWrapper):
         return out
 
 
-class FPN_phase_2(ScriptModuleWrapper):
+class FPNPhase2(ScriptModuleWrapper):
     """Second phase of the feature pyramid network"""
 
     __constants__ = ["num_downsample"]
@@ -479,14 +474,16 @@ class FPN_phase_2(ScriptModuleWrapper):
             ]
         )
 
-    def forward(
+    def forward(  # pylint: disable=too-many-arguments
         self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
     ) -> List[Tensor]:
         """
         Args:
-            - convouts (list): A list of convouts for the corresponding layers in in_channels.
+            - convouts (list): A list of convouts for the corresponding layers
+                in in_channels.
         Returns:
-            - A list of FPN convouts in the same order as x with extra downsample layers if requested.
+            - A list of FPN convouts in the same order as x with extra downsample
+                layers if requested.
         """
         out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         out = []
@@ -515,7 +512,7 @@ class YolactEdgeHead:
     and locations, as the predicted masks.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         num_classes: int,
         bkg_label: int,
@@ -534,7 +531,7 @@ class YolactEdgeHead:
     def __call__(self, predictions):
         """
         Args:
-             loc_data: (tensor) Loc preds from loc layers
+            loc_data: (tensor) Loc preds from loc layers
                 Shape: [batch, num_priors, 4]
             conf_data: (tensor) Shape: Conf preds from conf layers
                 Shape: [batch, num_priors, num_classes]
@@ -554,7 +551,6 @@ class YolactEdgeHead:
         mask_data = predictions["mask"]
         prior_data = predictions["priors"]
         proto_data = predictions["proto"] if "proto" in predictions else None
-        inst_data = predictions["inst"] if "inst" in predictions else None
 
         out = []
         batch_size = loc_data.size(0)
@@ -567,15 +563,15 @@ class YolactEdgeHead:
 
         for batch_idx in range(batch_size):
             decoded_boxes = decode(loc_data[batch_idx], prior_data)
-            result = self.detect(
-                batch_idx, conf_preds, decoded_boxes, mask_data, inst_data
-            )
+            result = self.detect(batch_idx, conf_preds, decoded_boxes, mask_data)
             if result is not None and proto_data is not None:
                 result["proto"] = proto_data[batch_idx]
             out.append(result)
         return out
 
-    def detect(self, batch_idx, conf_preds, decoded_boxes, mask_data, inst_data):
+    def detect(  # pylint: disable=too-many-arguments
+        self, batch_idx, conf_preds, decoded_boxes, mask_data
+    ) -> Dict[str, Any]:
         """Perform nms for only the max scoring class that isn't background (class 0)"""
         cur_scores = conf_preds[batch_idx, 1:, :]
         conf_scores, _ = torch.max(cur_scores, dim=0)
@@ -593,7 +589,8 @@ class YolactEdgeHead:
 
         return {"box": boxes, "mask": masks, "class": classes, "score": scores}
 
-    def fast_nms(
+    @classmethod
+    def fast_nms(  # pylint: disable=too-many-arguments
         self,
         boxes: torch.Tensor,
         masks: torch.Tensor,
@@ -601,6 +598,7 @@ class YolactEdgeHead:
         iou_threshold: float = 0.5,
         top_k: int = 200,
     ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Non-maximum Suppression"""
         scores, idx = scores.sort(1, descending=True)
         idx = idx[:, :top_k].contiguous()
         scores = scores[:, :top_k]

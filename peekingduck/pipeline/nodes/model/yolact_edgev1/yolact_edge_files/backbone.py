@@ -124,7 +124,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         layers: List[int],
-        atrous_layers: List[int] = None,
+        atrous_layers: List[int] = [],
         block=Bottleneck,
         norm_layer=nn.BatchNorm2d,
     ):
@@ -134,7 +134,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.channels = []
         self.norm_layer = norm_layer
         self.dilation = 1
-        self.atrous_layers = []
+        self.atrous_layers = atrous_layers
 
         self.inplanes = 64
 
@@ -218,7 +218,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
 class ConvBNAct(nn.Sequential):
     """Adapted from torchvision.models.mobilenet.ConvBNReLU"""
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         in_planes: int,
         out_planes: int,
@@ -337,7 +337,7 @@ class MobileNetV2Backbone(nn.Module):
         self.channels.append(self.last_channel)
         self.backbone_modules = [m for m in self.modules() if isinstance(m, nn.Conv2d)]
 
-    def _make_layer(
+    def _make_layer(  # pylint: disable=too-many-arguments
         self,
         input_channel,
         width_mult,
