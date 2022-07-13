@@ -26,7 +26,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     The Mask-RCNN node is capable detecting objects and their respective masks
     from 80 categories. The table of object categories can be found
     :ref:`here <general-instance-segmentation-ids>`. The ``"r50-fpn"`` backbone is
-    used by default, and the "r101-fpn" for the resnet 101 backbone variant can also
+    used by default, and the ``"r101-fpn"`` for the resnet 101 backbone variant can also
     be chosen.
 
     Inputs:
@@ -73,8 +73,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         https://arxiv.org/abs/1703.06870
 
         Inference code adapted from:
-        https://pytorch.org/vision/stable/_modules/torchvision/models/detection/mask_rcnn.html
-        Model weights adapted from:
+        https://pytorch.org/vision/0.11/_modules/torchvision/models/detection/mask_rcnn.html
+        The weights for Mask-RCNN Model with ResNet50 FPN backbone were adapted from:
         https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
     """
 
