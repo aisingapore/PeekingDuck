@@ -48,31 +48,37 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
 class FastBaseTransform(torch.nn.Module):
     """
     Transform that does all operations on the GPU for improved speed.
     This doesn't suppport a lot of configs and should only be used for production.
     Maintain this as necessary.
     """
+
     def __init__(self):
         super().__init__()
-        try:
-            self.mean = torch.Tensor(
-                (103.94, 116.78, 123.68)).float().cuda()[None, :, None, None]
-            self.std  = torch.Tensor(
-                (57.38, 57.12, 58.40)).float().cuda()[None, :, None, None]
-        except:
-            self.mean = torch.Tensor(
-                (103.94, 116.78, 123.68)).float()[None, :, None, None]
-            self.std  = torch.Tensor(
-                (57.38, 57.12, 58.40)).float()[None, :, None, None]
+        if torch.cuda.is_available():
+            self.mean = (
+                torch.Tensor((103.94, 116.78, 123.68))
+                .float()
+                .cuda()[None, :, None, None]
+            )
+            self.std = (
+                torch.Tensor((57.38, 57.12, 58.40)).float().cuda()[None, :, None, None]
+            )
+        else:
+            self.mean = torch.Tensor((103.94, 116.78, 123.68)).float()[
+                None, :, None, None
+            ]
+            self.std = torch.Tensor((57.38, 57.12, 58.40)).float()[None, :, None, None]
 
     def forward(self, img):
         self.mean = self.mean.to(img.device)
-        self.std  = self.std.to(img.device)
+        self.std = self.std.to(img.device)
 
         img = img.permute(0, 3, 1, 2).contiguous()
-        img = F.interpolate(img, (550, 550), mode='bilinear', align_corners=False)
+        img = F.interpolate(img, (550, 550), mode="bilinear", align_corners=False)
 
         img = (img - self.mean) / self.std
         img = img[:, (2, 1, 0), :, :].contiguous()
@@ -80,34 +86,43 @@ class FastBaseTransform(torch.nn.Module):
 
 
 class InterpolateModule(nn.Module):
+    """
+    This is a module version of F.interpolate.
+    Any arguments you give it just get passed along for the ride.
+    """
+
     def __init__(self, *args, **kwdargs):
         super().__init__()
         self.args = args
         self.kwdargs = kwdargs
 
-    def forward(self, x):
-        return F.interpolate(x, *self.args, **self.kwdargs)
+    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+        return F.interpolate(inputs, *self.args, **self.kwdargs)
+
 
 def make_net(in_channels, conf, include_last_relu=True):
+    """
+    A helper function to take a config setting and turn it into a network.
+    Used by protonet and extrahead. Returns (network, out_channels)
+    """
+
     def make_layer(layer_config):
         nonlocal in_channels
         num_channels = layer_config[0]
         kernel_size = layer_config[1]
         if kernel_size > 0:
-            layer = nn.Conv2d(
-                in_channels, num_channels, kernel_size, **layer_config[2])
+            layer = nn.Conv2d(in_channels, num_channels, kernel_size, **layer_config[2])
         else:
             if num_channels is None:
-                layer = InterpolateModule(scale_factor=-kernel_size,
-                                          mode='bilinear',
-                                          align_corners=False,
-                                          **layer_config[2])
+                layer = InterpolateModule(
+                    scale_factor=-kernel_size,
+                    mode="bilinear",
+                    align_corners=False,
+                    **layer_config[2]
+                )
             else:
                 layer = nn.ConvTranspose2d(
-                    in_channels,
-                    num_channels,
-                    -kernel_size,
-                    **layer_config[2]
+                    in_channels, num_channels, -kernel_size, **layer_config[2]
                 )
 
         in_channels = num_channels if num_channels is not None else in_channels
@@ -118,13 +133,24 @@ def make_net(in_channels, conf, include_last_relu=True):
         net = net[:-1]
     return nn.Sequential(*(net)), in_channels
 
-def make_extra(num_layers):
+
+def make_extra(num_layers, out_channels):
     if num_layers == 0:
         return lambda x: x
     else:
-        return nn.Sequential(*sum([[
-            nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-            nn.ReLU(inplace=True)] for _ in range(num_layers)], []))
+        return nn.Sequential(
+            *sum(
+                [
+                    [
+                        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+                        nn.ReLU(inplace=True),
+                    ]
+                    for _ in range(num_layers)
+                ],
+                [],
+            )
+        )
+
 
 def jaccard(box_a, box_b, iscrowd=False):
     """
@@ -136,56 +162,75 @@ def jaccard(box_a, box_b, iscrowd=False):
         box_a = box_a[None, ...]
         box_b = box_b[None, ...]
     inter = intersect(box_a, box_b)
-    area_a = ((box_a[:, :, 2]-box_a[:, :, 0]) *
-              (box_a[:, :, 3]-box_a[:, :, 1])).unsqueeze(2).expand_as(inter)
-    area_b = ((box_b[:, :, 2]-box_b[:, :, 0]) *
-              (box_b[:, :, 3]-box_b[:, :, 1])).unsqueeze(1).expand_as(inter)
+    area_a = (
+        ((box_a[:, :, 2] - box_a[:, :, 0]) * (box_a[:, :, 3] - box_a[:, :, 1]))
+        .unsqueeze(2)
+        .expand_as(inter)
+    )
+    area_b = (
+        ((box_b[:, :, 2] - box_b[:, :, 0]) * (box_b[:, :, 3] - box_b[:, :, 1]))
+        .unsqueeze(1)
+        .expand_as(inter)
+    )
     union = area_a + area_b - inter
     out = inter / area_a if iscrowd else inter / union
     return out if use_batch else out.squeeze(0)
 
-@torch.jit.script
-def point_form(boxes):
-    return torch.cat((boxes[:, :2] - boxes[:, 2:]/2,     # xmin, ymin
-                     boxes[:, :2] + boxes[:, 2:]/2), 1)  # xmax, ymax
 
-@torch.jit.script
+def point_form(boxes):
+    return torch.cat(
+        (
+            boxes[:, :2] - boxes[:, 2:] / 2,  # xmin, ymin
+            boxes[:, :2] + boxes[:, 2:] / 2,
+        ),
+        1,
+    )  # xmax, ymax
+
+
 def intersect(box_a, box_b):
     """
     Compute intersection between two sets of boxes.
     """
-    n = box_a.size(0)
-    A = box_a.size(1)
-    B = box_b.size(1)
-    max_xy = torch.min(box_a[:, :, 2:].unsqueeze(2).expand(n, A, B, 2),
-                       box_b[:, :, 2:].unsqueeze(1).expand(n, A, B, 2))
-    min_xy = torch.max(box_a[:, :, :2].unsqueeze(2).expand(n, A, B, 2),
-                       box_b[:, :, :2].unsqueeze(1).expand(n, A, B, 2))
+    num = box_a.size(0)
+    set_A = box_a.size(1)
+    set_B = box_b.size(1)
+
+    max_xy = torch.min(
+        box_a[:, :, 2:].unsqueeze(2).expand(num, set_A, set_B, 2),
+        box_b[:, :, 2:].unsqueeze(1).expand(num, set_A, set_B, 2),
+    )
+    min_xy = torch.max(
+        box_a[:, :, :2].unsqueeze(2).expand(num, set_A, set_B, 2),
+        box_b[:, :, :2].unsqueeze(1).expand(num, set_A, set_B, 2),
+    )
     inter = torch.clamp((max_xy - min_xy), min=0)
     return inter[:, :, :, 0] * inter[:, :, :, 1]
 
-@torch.jit.script
-def decode(loc, priors, use_yolo_regressors:bool=False):
+
+def decode(loc, priors, use_yolo_regressors: bool = False):
     """
     Decode predicted bbox locations from locations and priors.
     """
     if use_yolo_regressors:
-        boxes = torch.cat((
-            loc[:, :2] + priors[:, :2],
-            priors[:, 2:] * torch.exp(loc[:, 2:])
-        ), 1)
+        boxes = torch.cat(
+            (loc[:, :2] + priors[:, :2], priors[:, 2:] * torch.exp(loc[:, 2:])), 1
+        )
         boxes = point_form(boxes)
     else:
         variances = [0.1, 0.2]
-        boxes = torch.cat((
-            priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
-            priors[:, 2:] * torch.exp(loc[:, 2:] * variances[1])), 1)
+        boxes = torch.cat(
+            (
+                priors[:, :2] + loc[:, :2] * variances[0] * priors[:, 2:],
+                priors[:, 2:] * torch.exp(loc[:, 2:] * variances[1]),
+            ),
+            1,
+        )
         boxes[:, :2] -= boxes[:, 2:] / 2
         boxes[:, 2:] += boxes[:, :2]
     return boxes
 
-@torch.jit.script
-def sanitize_coordinates(_x1, _x2, img_size:int, padding:int=0, cast:bool=True):
+
+def sanitize_coordinates(_x1, _x2, img_size: int, padding: int = 0, cast: bool = True):
     """
     Sanitize the coordinates to be within [0, img_size-1].
     """
@@ -194,8 +239,8 @@ def sanitize_coordinates(_x1, _x2, img_size:int, padding:int=0, cast:bool=True):
     if cast:
         _x1 = _x1.long()
         _x2 = _x2.long()
-    x1 = torch.min(_x1, _x2)
-    x2 = torch.max(_x1, _x2)
-    x1 = torch.clamp(x1-padding, min=0)
-    x2 = torch.clamp(x2+padding, max=img_size)
-    return x1, x2
+    x_1 = torch.min(_x1, _x2)
+    x_2 = torch.max(_x1, _x2)
+    x_1 = torch.clamp(x_1 - padding, min=0)
+    x_2 = torch.clamp(x_2 + padding, max=img_size)
+    return x_1, x_2

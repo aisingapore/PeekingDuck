@@ -108,7 +108,6 @@ if torch.cuda.is_available():
     torch.cuda.current_device()
 
 
-
 ScriptModuleWrapper = torch.jit.ScriptModule
 
 SELECTED_LAYERS = list(range(1, 4))  # ResNet 50/101 FPN backbone
@@ -126,7 +125,9 @@ MAX_NUM_DETECTIONS = 100
 class YolactEdge(nn.Module):
     """YolactEdge model module."""
 
-    def __init__(self, model_type: str) -> None:
+    def __init__(
+        self, model_type: str
+    ) -> None:  # pylint: disable=too-many-instance-attributes
         super().__init__()
 
         if model_type[0] == "r":
@@ -205,10 +206,10 @@ class YolactEdge(nn.Module):
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
 
-    def forward(self, x, extras=None):
+    def forward(self, inputs, extras=None):
         """The input should be of size [batch_size, 3, img_h, img_w]"""
         outs_wrapper = {}
-        outs = self.backbone(x)
+        outs = self.backbone(inputs)
         outs = [outs[i] for i in SELECTED_LAYERS]
         outs_fpn_phase_1_wrapper = self.fpn_phase_1(*outs)
         outs_phase_1, _ = (
@@ -220,7 +221,7 @@ class YolactEdge(nn.Module):
         outs_wrapper["outs_phase_2"] = [out.detach() for out in outs]
 
         proto_out = None
-        proto_x = x if self.proto_src is None else outs[self.proto_src]
+        proto_x = inputs if self.proto_src is None else outs[self.proto_src]
         proto_out = self.proto_net(proto_x)
         proto_out = torch.nn.functional.relu(proto_out, inplace=True)
         proto_out = proto_out.permute(0, 2, 3, 1).contiguous()
@@ -228,12 +229,11 @@ class YolactEdge(nn.Module):
 
         for idx, pred_layer in zip(self.selected_layers, self.prediction_layers):
             pred_x = outs[idx]
-            p = pred_layer(pred_x)
-            for k, v in p.items():
-                pred_outs[k].append(v)
+            for key, val in pred_layer(pred_x).items():
+                pred_outs[key].append(val)
 
-        for k, v in pred_outs.items():
-            pred_outs[k] = torch.cat(v, -2)
+        for key, val in pred_outs.items():
+            pred_outs[key] = torch.cat(val, -2)
 
         pred_outs["proto"] = proto_out
         pred_outs["conf"] = F.softmax(pred_outs["conf"], -1)
@@ -242,6 +242,7 @@ class YolactEdge(nn.Module):
         return outs_wrapper
 
     def load_weights(self, path):
+        """Loads weights from a compressed save file."""
         state_dict = torch.load(path, map_location="cpu")
         for key in list(state_dict.keys()):
             if key.startswith("backbone.layer") and not key.startswith(
@@ -284,7 +285,7 @@ class PredictionModule(nn.Module):
                          all the layers from parent instead of from this module.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-instance-attributes
         self,
         in_channels,
         out_channels=1024,
@@ -317,7 +318,7 @@ class PredictionModule(nn.Module):
                 out_channels, self.num_priors * self.mask_dim, **head_layer_params
             )
             self.bbox_extra, self.conf_extra, self.mask_extra = [
-                make_extra(x) for x in (0, 0, 0)
+                make_extra(x, out_channels) for x in (0, 0, 0)
             ]
 
         self.aspect_ratios = aspect_ratios
@@ -325,37 +326,48 @@ class PredictionModule(nn.Module):
         self.priors = None
         self.last_conv_size = None
 
-    def forward(self, x):
+    def forward(self, inputs):
+        """
+        Args:
+            - inputs: The convOut from a layer in the backbone network
+                 Size: [batch_size, in_channels, conv_h, conv_w])
+
+        Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
+            - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
+            - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
+            - mask_output: [batch_size, conv_h*conv_w*num_priors, mask_dim]
+            - prior_boxes: [conv_h*conv_w*num_priors, 4]
+        """
         src = self if self.parent[0] is None else self.parent[0]
-        conv_h = x.size(2)
-        conv_w = x.size(3)
+        conv_h = inputs.size(2)
+        conv_w = inputs.size(3)
 
         try:
-            x = src.upfeature(x)
+            inputs = src.upfeature(inputs)
         except:
             pass
 
-        bbox_x = src.bbox_extra(x)
-        conf_x = src.conf_extra(x)
-        mask_x = src.mask_extra(x)
+        bbox_x = src.bbox_extra(inputs)
+        conf_x = src.conf_extra(inputs)
+        mask_x = src.mask_extra(inputs)
 
         bbox = (
             src.bbox_layer(bbox_x)
             .permute(0, 2, 3, 1)
             .contiguous()
-            .view(x.size(0), -1, 4)
+            .view(inputs.size(0), -1, 4)
         )
         conf = (
             src.conf_layer(conf_x)
             .permute(0, 2, 3, 1)
             .contiguous()
-            .view(x.size(0), -1, self.num_classes)
+            .view(inputs.size(0), -1, self.num_classes)
         )
         mask = (
             src.mask_layer(mask_x)
             .permute(0, 2, 3, 1)
             .contiguous()
-            .view(x.size(0), -1, self.mask_dim)
+            .view(inputs.size(0), -1, self.mask_dim)
         )
 
         mask = torch.tanh(mask)
@@ -365,6 +377,7 @@ class PredictionModule(nn.Module):
         return preds
 
     def make_priors(self, conv_h, conv_w):
+        """Priors are [x, y, width, height] where (x, y) is the center of the box."""
         if self.last_conv_size != (conv_w, conv_h):
             prior_data = []
             for j, i in product(range(conv_h), range(conv_w)):
@@ -383,6 +396,7 @@ class PredictionModule(nn.Module):
 
 class FPN_phase_1(ScriptModuleWrapper):
     """First phase of the feature pyramid network"""
+
     __constants__ = ["interpolation_mode"]
 
     def __init__(self, in_channels):
@@ -397,9 +411,15 @@ class FPN_phase_1(ScriptModuleWrapper):
         self.interpolation_mode = "bilinear"
 
     def forward(
-        self, x1=None, x2=None, x3=None, x4=None, x5=None, x6=None, x7=None
+        self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
     ) -> List[Tensor]:
-        convouts_ = [x1, x2, x3, x4, x5, x6, x7]
+        """
+        Args:
+            - convouts (list): A list of convouts for the corresponding layers in in_channels.
+        Returns:
+            - A list of FPN convouts in the same order as x with extra downsample layers if requested.
+        """
+        convouts_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         convouts = []
         j = 0
         while j < len(convouts_):
@@ -436,6 +456,7 @@ class FPN_phase_1(ScriptModuleWrapper):
 
 class FPN_phase_2(ScriptModuleWrapper):
     """Second phase of the feature pyramid network"""
+
     __constants__ = ["num_downsample"]
 
     def __init__(self, in_channels):
@@ -462,9 +483,15 @@ class FPN_phase_2(ScriptModuleWrapper):
         )
 
     def forward(
-        self, x1=None, x2=None, x3=None, x4=None, x5=None, x6=None, x7=None
+        self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
     ) -> List[Tensor]:
-        out_ = [x1, x2, x3, x4, x5, x6, x7]
+        """
+        Args:
+            - convouts (list): A list of convouts for the corresponding layers in in_channels.
+        Returns:
+            - A list of FPN convouts in the same order as x with extra downsample layers if requested.
+        """
+        out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         out = []
         j = 0
         while j < len(out_):
@@ -485,11 +512,12 @@ class FPN_phase_2(ScriptModuleWrapper):
 
 class YolactEdgeHead:
     """
-    At test time, this is the final layer of SSD. Decode location preds, apply
-    non-maximum suppression to location predictions based on conf scores and
+    This is the final layer of Single Shot Detection (SSD). Decode location preds,
+    apply non-maximum suppression to location predictions based on conf scores and
     threshold to a top_k number output predictions for both confidence scores
     and locations, as the predicted masks.
     """
+
     def __init__(
         self,
         num_classes: int,
@@ -507,6 +535,24 @@ class YolactEdgeHead:
         self.conf_thresh = conf_thresh
 
     def __call__(self, predictions):
+        """
+        Args:
+             loc_data: (tensor) Loc preds from loc layers
+                Shape: [batch, num_priors, 4]
+            conf_data: (tensor) Shape: Conf preds from conf layers
+                Shape: [batch, num_priors, num_classes]
+            mask_data: (tensor) Mask preds from mask layers
+                Shape: [batch, num_priors, mask_dim]
+            prior_data: (tensor) Prior boxes and variances from priorbox layers
+                Shape: [num_priors, 4]
+            proto_data: (tensor) If using mask_type.lincomb, the prototype masks
+                Shape: [batch, mask_h, mask_w, mask_dim]
+
+        Returns:
+            output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
+            These outputs are in the order: class idx, confidence, bbox coords, and mask.
+            Note that the outputs are sorted only if cross_class_nms is False
+        """
         loc_data = predictions["loc"]
         conf_data = predictions["conf"]
         mask_data = predictions["mask"]
@@ -534,6 +580,7 @@ class YolactEdgeHead:
         return out
 
     def detect(self, batch_idx, conf_preds, decoded_boxes, mask_data, inst_data):
+        """Perform nms for only the max scoring class that isn't background (class 0)"""
         cur_scores = conf_preds[batch_idx, 1:, :]
         conf_scores, _ = torch.max(cur_scores, dim=0)
         keep = conf_scores > self.conf_thresh
@@ -548,7 +595,7 @@ class YolactEdgeHead:
             boxes, masks, scores, self.nms_thresh, self.top_k
         )
 
-        return {"box": boxes, "mask": masks, "class": classes, "score": scores}
+        return {"box": boxes, "maAsk": masks, "class": classes, "score": scores}
 
     def fast_nms(
         self,

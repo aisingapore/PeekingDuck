@@ -23,8 +23,10 @@ from typing import Dict, List, Tuple
 import torch.backends.cudnn as cudnn
 from torch import Tensor
 import torch.nn.functional as F
-import numpy as np
 import torch
+
+import numpy as np
+
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
     YolactEdge,
@@ -34,7 +36,7 @@ from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils impo
 )
 
 
-class Detector:
+class Detector:  # pylint: disable=too-many-instance-attributes
     """Detector class to handle detection of bboxes and masks for yolact_edge
 
     Attributes:
@@ -46,7 +48,7 @@ class Detector:
         yolact_edge (YolactEdge): The YolactEdge model for performing inference.
     """
 
-    def __init__(
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
         class_names: List[str],
@@ -105,15 +107,14 @@ class Detector:
             frame = torch.from_numpy(image).float()
 
         preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
-
-        t = self._postprocess(preds[0], img_shape, score_threshold=self.score_threshold)
+        preds_pp = self._postprocess(preds[0], img_shape)
 
         if torch.cuda.is_available():
             torch.cuda.synchronize()
 
-        masks = t[3][: self.max_num_detections].cpu().numpy().astype(np.uint8)
+        masks = preds_pp[3][: self.max_num_detections].cpu().numpy().astype(np.uint8)
         labels, scores, bboxes = [
-            x[: self.max_num_detections].cpu().numpy() for x in t[:3]
+            x[: self.max_num_detections].cpu().numpy() for x in preds_pp[:3]
         ]
 
         return bboxes, labels, scores, masks
@@ -152,7 +153,7 @@ class Detector:
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(self.model_type)
+        return YolactEdge(model_type)
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
@@ -183,7 +184,6 @@ class Detector:
         self,
         network_output: Dict[str, Tensor],
         img_shape: Tuple[int, int],
-        score_threshold: float,
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for YolactEdge
 
@@ -204,7 +204,7 @@ class Detector:
         if network_output is None:
             return [torch.Tensor()] * 4
 
-        keep = network_output["score"] > score_threshold
+        keep = network_output["score"] > self.score_threshold
         for k in network_output:
             if k != "proto":
                 network_output[k] = network_output[k][keep]
