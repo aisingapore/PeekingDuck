@@ -72,7 +72,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - node.two
    - node.three
    
-**1. The First Node**
+**1. Instance Segmentation Node**
 
 <content>
 
@@ -82,7 +82,4 @@ Some common node behaviors that you might want to adjust are:
 
 * ``param_1``: Definition
 * ``param_2``: Definition
-
-Counting People (Present) with Privacy Protection
-=================================================
 
