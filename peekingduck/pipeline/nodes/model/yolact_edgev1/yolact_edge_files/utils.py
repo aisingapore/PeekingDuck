@@ -43,7 +43,7 @@ Modifications include:
 - Modified docstrings
 """
 
-from typing import Callable, Tuple
+from typing import Any, Callable, Tuple, List
 
 import torch
 import torch.nn as nn
@@ -100,7 +100,7 @@ class InterpolateModule(nn.Module):
     Any arguments you give it just get passed along for the ride.
     """
 
-    def __init__(self, *args, **kwdargs) -> None:
+    def __init__(self, *args: Any, **kwdargs: Any) -> None:
         super().__init__()
         self.args = args
         self.kwdargs = kwdargs
@@ -117,13 +117,13 @@ class InterpolateModule(nn.Module):
 
 def make_net(
     in_channels: int, conf: float, include_last_relu: bool = True
-) -> Tuple[int, int]:
+) -> Tuple[nn.Sequential, int]:
     """
     A helper function to take a config setting and turn it into a network.
     Used by protonet and extrahead. Returns (network, out_channels)
     """
 
-    def make_layer(layer_config):
+    def make_layer(layer_config: Tuple[int, int, dict]) -> List[Callable]:
         nonlocal in_channels
         num_channels = layer_config[0]
         kernel_size = layer_config[1]
@@ -137,15 +137,11 @@ def make_net(
                     align_corners=False,
                     **layer_config[2],
                 )
-            else:
-                layer = nn.ConvTranspose2d(
-                    in_channels, num_channels, -kernel_size, **layer_config[2]
-                )
 
         in_channels = num_channels if num_channels is not None else in_channels
         return [layer, nn.ReLU(inplace=True)]
 
-    net = sum([make_layer(x) for x in conf], [])
+    net: List[Any] = sum([make_layer(x) for x in conf], [])
     if not include_last_relu:
         net = net[:-1]
 

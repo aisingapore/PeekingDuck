@@ -18,7 +18,7 @@ Detector class to handle detection of bboxes and masks for mask_rcnn
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Union
 
 import torch.backends.cudnn as cudnn
 from torch import Tensor
@@ -174,8 +174,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
     def _postprocess(
         self,
         network_output: Dict[str, Tensor],
-        img_shape: Tuple[int, int],
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+        img_shape: Tuple[int, ...],
+    ) -> Union[
+        Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor],
+        List[torch.Tensor],
+    ]:
         """Postprocessing of detected bboxes and masks for YolactEdge
         Args:
             network_output (Dict[str, Tensor]): A dictionary from the first
