@@ -1,4 +1,4 @@
-input: ["img", "masks", "bbox_labels", "bbox_scores"]
+input: ["img", "masks", "bbox_labels"]
 output: ["img"]
 
 instance_color_scheme: hue_family
