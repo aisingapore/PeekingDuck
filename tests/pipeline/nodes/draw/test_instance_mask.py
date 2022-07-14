@@ -299,7 +299,7 @@ class TestDrawInstanceMasks:
             _ = Node(config=draw_instance_mask_bad_contours_config_values)
         assert "must be" in str(excinfo.value)
 
-    def test_no_scores(
+    def test_no_labels(
         self,
         draw_standard_instance_mask_node,
         draw_mask_inputs,
@@ -309,7 +309,7 @@ class TestDrawInstanceMasks:
         original_img = cv2.imread(str(image_original))
         output_img = original_img.copy()
         draw_mask_inputs["img"] = output_img
-        draw_mask_inputs["bbox_scores"] = []
+        draw_mask_inputs["bbox_labels"] = []
         outputs = draw_standard_instance_mask_node.run(draw_mask_inputs)
 
         assert TestDrawInstanceMasks._image_equal_with_ground_truth_jpeg(
