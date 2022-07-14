@@ -44,7 +44,7 @@ Modifications include:
 - Refactor and formatting
 """
 
-from typing import Callable, List, Any, Optional, Tuple, Union
+from typing import Callable, List, Any, Tuple, Union
 from functools import partial
 import torch.nn as nn
 import torch
@@ -379,14 +379,14 @@ class MobileNetV2Backbone(nn.Module):
 
         return tuple(outs)
 
-    def add_layer(
+    def add_layer(  # pylint: disable=too-many-arguments
         self,
         conv_channels: int = 1280,
         t_val: int = 1,
         c_val: int = 1280,
         n_val: int = 1,
         s_val: int = 2,
-    ) -> None:  # pylint: disable=too-many-arguments
+    ) -> None:
         """
         Args:
             conv_channels: number of channels in the convout of the previous layer
@@ -399,6 +399,7 @@ class MobileNetV2Backbone(nn.Module):
             conv_channels, 1.0, 8, t_val, c_val, n_val, s_val, InvertedResidual
         )
 
+    @classmethod
     def _make_divisible(self, value: float, divisor: int, min_value: Any = None) -> int:
         """Adapted from torchvision.models.mobilenet._make_divisable"""
         if min_value is None:
