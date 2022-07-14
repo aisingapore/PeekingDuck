@@ -124,7 +124,6 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
     def __init__(
         self,
         layers: List[int],
-        atrous_layers: List[int] = [],
         block=Bottleneck,
         norm_layer=nn.BatchNorm2d,
     ):
@@ -134,7 +133,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.channels = []
         self.norm_layer = norm_layer
         self.dilation = 1
-        self.atrous_layers = atrous_layers
+        self.atrous_layers = []
 
         self.inplanes = 64
 

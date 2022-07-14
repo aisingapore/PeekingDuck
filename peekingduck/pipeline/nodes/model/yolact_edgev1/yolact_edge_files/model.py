@@ -404,7 +404,7 @@ class FPNPhase1(ScriptModuleWrapper):
         )
         self.interpolation_mode = "bilinear"
 
-    def forward(  # pylint: disable=too-many-arguments
+    def forward(  # pylint: disable=too-many-arguments, too-many-locals
         self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
     ) -> List[Tensor]:
         """
@@ -496,8 +496,7 @@ class FPNPhase2(ScriptModuleWrapper):
             if out_[count] is not None:
                 out.append(out_[count])
 
-        len_convouts = len(out)
-        j = len_convouts
+        j = len(out)
         for pred_layer in self.pred_layers:
             j -= 1
             out[j] = F.relu(pred_layer(out[j]))
@@ -592,7 +591,7 @@ class YolactEdgeHead:
         return {"box": boxes, "mask": masks, "class": classes, "score": scores}
 
     @classmethod
-    def fast_nms(  # pylint: disable=too-many-arguments
+    def fast_nms(  # pylint: disable=too-many-arguments, bad-classmethod-argument
         self,
         boxes: torch.Tensor,
         masks: torch.Tensor,
