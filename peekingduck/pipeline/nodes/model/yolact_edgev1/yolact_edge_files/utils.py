@@ -43,6 +43,8 @@ Modifications include:
 - Modified docstrings
 """
 
+from typing import Callable, Tuple
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -55,7 +57,7 @@ class FastBaseTransform(torch.nn.Module):
     Maintain this as necessary.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         if torch.cuda.is_available():
             self.mean = (
@@ -72,7 +74,7 @@ class FastBaseTransform(torch.nn.Module):
             ]
             self.std = torch.Tensor((57.38, 57.12, 58.40)).float()[None, :, None, None]
 
-    def forward(self, img):
+    def forward(self, img: torch.Tensor) -> torch.Tensor:
         """
         Args:
             img (torch.Tensor): input image of shape (N, H, W, C)
@@ -98,7 +100,7 @@ class InterpolateModule(nn.Module):
     Any arguments you give it just get passed along for the ride.
     """
 
-    def __init__(self, *args, **kwdargs):
+    def __init__(self, *args, **kwdargs) -> None:
         super().__init__()
         self.args = args
         self.kwdargs = kwdargs
@@ -113,7 +115,9 @@ class InterpolateModule(nn.Module):
         return F.interpolate(inputs, *self.args, **self.kwdargs)
 
 
-def make_net(in_channels, conf, include_last_relu=True):
+def make_net(
+    in_channels: int, conf: float, include_last_relu: bool = True
+) -> Tuple[int, int]:
     """
     A helper function to take a config setting and turn it into a network.
     Used by protonet and extrahead. Returns (network, out_channels)
@@ -144,17 +148,17 @@ def make_net(in_channels, conf, include_last_relu=True):
     net = sum([make_layer(x) for x in conf], [])
     if not include_last_relu:
         net = net[:-1]
+
     return nn.Sequential(*(net)), in_channels
 
 
-def make_extra(num_layers, out_channels):
+def make_extra(num_layers: int, out_channels: int) -> Callable:
     """
     Lambda function that creates an array of num_layers alternating conv-relu if
     the num_layers is not 0.
     """
     if num_layers == 0:
         out = lambda x: x
-
     else:
         out = nn.Sequential(
             *sum(
@@ -171,9 +175,19 @@ def make_extra(num_layers, out_channels):
     return out
 
 
-def jaccard(box_a, box_b, iscrowd=False):
-    """
-    Compute the jaccard overlap of two sets of boxes.
+def jaccard(
+    box_a: torch.Tensor, box_b: torch.Tensor, iscrowd: bool = False
+) -> torch.Tensor:
+    """Compute the jaccard overlap of two sets of boxes.  The jaccard overlap
+    is simply the intersection over union of two boxes.  Here we operate on
+    ground truth boxes and default boxes. If iscrowd=True, put the crowd in box_b.
+    E.g.:
+        A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
+    Args:
+        box_a: (tensor) Ground truth bounding boxes, Shape: [num_objects,4]
+        box_b: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
+    Return:
+        jaccard overlap: (tensor) Shape: [box_a.size(0), box_b.size(0)]
     """
     use_batch = True
     if box_a.dim() == 2:
@@ -196,7 +210,7 @@ def jaccard(box_a, box_b, iscrowd=False):
     return out if use_batch else out.squeeze(0)
 
 
-def point_form(boxes):
+def point_form(boxes: torch.Tensor) -> torch.Tensor:
     """Convert prior_boxes to (xmin, ymin, xmax, ymax)
     representation for comparison to point form ground truth data.
 
@@ -215,9 +229,16 @@ def point_form(boxes):
     )  # xmax, ymax
 
 
-def intersect(box_a, box_b):
-    """
-    Compute intersection between two sets of boxes.
+def intersect(box_a: torch.Tensor, box_b: torch.Tensor) -> torch.Tensor:
+    """We resize both tensors to [A,B,2] without new malloc:
+    [A,2] -> [A,1,2] -> [A,B,2]
+    [B,2] -> [1,B,2] -> [A,B,2]
+    Then we compute the area of intersect between box_a and box_b.
+    Args:
+      box_a: (tensor) bounding boxes, Shape: [n,A,4].
+      box_b: (tensor) bounding boxes, Shape: [n,B,4].
+    Return:
+      (tensor) intersection area, Shape: [n,A,B].
     """
     num = box_a.size(0)
     set_a = box_a.size(1)
@@ -235,9 +256,32 @@ def intersect(box_a, box_b):
     return inter[:, :, :, 0] * inter[:, :, :, 1]
 
 
-def decode(loc, priors, use_yolo_regressors: bool = False):
+def decode(
+    loc: torch.Tensor, priors: torch.Tensor, use_yolo_regressors: bool = False
+) -> torch.Tensor:
     """
-    Decode predicted bbox locations from locations and priors.
+    Decode predicted bbox coordinates using the same scheme
+    employed by Yolov2: https://arxiv.org/pdf/1612.08242.pdf
+        b_x = (sigmoid(pred_x) - .5) / conv_w + prior_x
+        b_y = (sigmoid(pred_y) - .5) / conv_h + prior_y
+        b_w = prior_w * exp(loc_w)
+        b_h = prior_h * exp(loc_h)
+
+    Note that loc is inputed as [(s(x)-.5)/conv_w, (s(y)-.5)/conv_h, w, h]
+    while priors are inputed as [x, y, w, h] where each coordinate
+    is relative to size of the image (even sigmoid(x)). We do this
+    in the network by dividing by the 'cell size', which is just
+    the size of the convouts.
+
+    Also note that prior_x and prior_y are center coordinates which
+    is why we have to subtract .5 from sigmoid(pred_x and pred_y).
+
+    Args:
+        - loc:    The predicted bounding boxes of size [num_priors, 4]
+        - priors: The priorbox coords with size [num_priors, 4]
+
+    Returns: A tensor of decoded relative coordinates in point form
+             form with size [num_priors, 4]
     """
     if use_yolo_regressors:
         boxes = torch.cat(
@@ -255,20 +299,5 @@ def decode(loc, priors, use_yolo_regressors: bool = False):
         )
         boxes[:, :2] -= boxes[:, 2:] / 2
         boxes[:, 2:] += boxes[:, :2]
+
     return boxes
-
-
-def sanitize_coordinates(_x1, _x2, img_size: int, padding: int = 0, cast: bool = True):
-    """
-    Sanitize the coordinates to be within [0, img_size-1].
-    """
-    _x1 = _x1 * img_size
-    _x2 = _x2 * img_size
-    if cast:
-        _x1 = _x1.long()
-        _x2 = _x2.long()
-    x_1 = torch.min(_x1, _x2)
-    x_2 = torch.max(_x1, _x2)
-    x_1 = torch.clamp(x_1 - padding, min=0)
-    x_2 = torch.clamp(x_2 + padding, max=img_size)
-    return x_1, x_2
