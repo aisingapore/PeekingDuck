@@ -26,7 +26,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     The Mask-RCNN node is capable detecting objects and their respective masks
     from 80 categories. The table of object categories can be found
     :ref:`here <general-instance-segmentation-ids>`. The ``"r50-fpn"`` backbone is
-    used by default, and the ``"r101-fpn"`` for the resnet 101 backbone variant can also
+    used by default, and the ``"r101-fpn"`` for the ResNet 101 backbone variant can also
     be chosen.
 
     Inputs:
@@ -56,11 +56,11 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-instance-segmentation-ids>`.
+        max_num_detections: (:obj:`int`): **default=100**. |br|
+            Maximum number of detections per image, for all classes.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Overlapping bounding boxes with Intersection over Union (IoU) above
             the threshold will be discarded.
-        max_num_detections: (:obj:`int`): **default=100**. |br|
-            Maximum number of detections per image, for all classes.
         score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Bounding boxes with classification score below the threshold will be discarded.
         mask_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
@@ -74,6 +74,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
 
         Inference code adapted from:
         https://pytorch.org/vision/0.11/_modules/torchvision/models/detection/mask_rcnn.html
+
         The weights for Mask-RCNN Model with ResNet50 FPN backbone were adapted from:
         https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
     """
