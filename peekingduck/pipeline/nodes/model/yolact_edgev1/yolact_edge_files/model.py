@@ -285,8 +285,8 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self,
         in_channels,
         out_channels=1024,
-        aspect_ratios=[[1]],
-        scales=[1],
+        aspect_ratios=None,
+        scales=None,
         parent=None,
         index=0,
     ):
@@ -418,9 +418,9 @@ class FPNPhase1(ScriptModuleWrapper):
         convouts_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         convouts = []
 
-        for i in range(len(convouts_)):
-            if convouts_[i] is not None:
-                convouts.append(convouts_[i])
+        for count, _ in enumerate(convouts_):
+            if convouts_[count] is not None:
+                convouts.append(convouts_[count])
 
         out = []
         lat_feats = []
@@ -430,21 +430,21 @@ class FPNPhase1(ScriptModuleWrapper):
             out.append(x_0)
             lat_feats.append(x_0)
 
-        iter = len(convouts)
+        count = len(convouts)
         for lat_layer in self.lat_layers:
-            iter -= 1
-            if iter < len(convouts) - 1:
-                _, _, height, weight = convouts[iter].size()
+            count -= 1
+            if count < len(convouts) - 1:
+                _, _, height, weight = convouts[count].size()
                 x_0 = F.interpolate(
                     x_0,
                     size=(height, weight),
                     mode=self.interpolation_mode,
                     align_corners=False,
                 )
-            lat_iter = lat_layer(convouts[iter])
-            lat_feats[iter] = lat_iter
+            lat_iter = lat_layer(convouts[count])
+            lat_feats[count] = lat_iter
             x_0 = x_0 + lat_iter
-            out[iter] = x_0
+            out[count] = x_0
 
         for i in range(len(convouts)):
             out.append(lat_feats[i])
@@ -492,9 +492,9 @@ class FPNPhase2(ScriptModuleWrapper):
         """
         out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         out = []
-        for i in range(len(out_)):
-            if out_[i] is not None:
-                out.append(out_[i])
+        for count, _ in enumerate(out_):
+            if out_[count] is not None:
+                out.append(out_[count])
 
         len_convouts = len(out)
         j = len_convouts
