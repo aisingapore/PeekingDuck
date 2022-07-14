@@ -50,8 +50,6 @@ class Node(AbstractNode, ThresholdCheckerMixin):
 
         |bbox_labels_data|
 
-        |bbox_scores_data|
-
     Outputs:
         |img_data|
 
@@ -137,7 +135,7 @@ class Node(AbstractNode, ThresholdCheckerMixin):
 
         Args:
             inputs (dict): Dictionary of inputs with keys "img", "masks,
-            "bbox_labels", "bbox_scores".
+            "bbox_labels".
 
         Returns:
             outputs (dict): Output in dictionary format with key "img".
@@ -147,7 +145,6 @@ class Node(AbstractNode, ThresholdCheckerMixin):
                 inputs["img"],
                 inputs["masks"],
                 inputs["bbox_labels"],
-                inputs["bbox_scores"],
             )
         else:
             output_img = self._mask_apply_effect(
@@ -281,7 +278,6 @@ class Node(AbstractNode, ThresholdCheckerMixin):
         image: np.ndarray,
         masks: np.ndarray,
         bbox_labels: np.ndarray,
-        bbox_scores: np.ndarray,
     ) -> np.ndarray:
         """Draws instance segmentation masks over detected objects.
 
@@ -292,8 +288,6 @@ class Node(AbstractNode, ThresholdCheckerMixin):
             bbox_labels (numpy.ndarray): NumPy array of strings representing
                 the labels of detected objects. The order corresponds to
                 ``masks``.
-            bbox_scores (numpy.ndarray): Mask confidence scores. The order
-                corresponds to ``masks``.
 
         Returns:
             numpy.ndarray: Input image with instance segmentation masks
@@ -304,13 +298,7 @@ class Node(AbstractNode, ThresholdCheckerMixin):
         full_sized_canvas = np.zeros(image.shape, image.dtype)
         ret_image = image
 
-        # draw masks in ascending order of confidence scores, on the
-        # assumption that objects with higher scores are positioned nearer to
-        # the camera c.f. objects with lower scores
-        scores_with_indexes = [(score, i) for i, score in enumerate(bbox_scores)]
-        scores_with_indexes.sort(key=lambda x: x[0])
-
-        for _, index in scores_with_indexes:
+        for index, _ in enumerate(bbox_labels):
             color = self._get_instance_color(bbox_labels[index])
 
             full_sized_canvas[:, :] = color
