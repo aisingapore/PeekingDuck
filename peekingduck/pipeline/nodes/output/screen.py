@@ -91,13 +91,8 @@ class Node(AbstractNode):
             cv2.resizeWindow(self.window_name, img_width, img_height)
             self.previous_filename = current_filename
         else:
-            below_threshold = False
             _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
-            if win_width < MIN_DISPLAY_SIZE:
-                below_threshold = True
-                win_width = MIN_DISPLAY_SIZE
-            elif win_height < MIN_DISPLAY_SIZE:
-                below_threshold = True
-                win_height = MIN_DISPLAY_SIZE
-            if below_threshold:
+            if win_width < MIN_DISPLAY_SIZE or win_height < MIN_DISPLAY_SIZE:
+                win_width = max(win_width, MIN_DISPLAY_SIZE)
+                win_height = max(win_height, MIN_DISPLAY_SIZE)
                 cv2.resizeWindow(self.window_name, win_width, win_height)
