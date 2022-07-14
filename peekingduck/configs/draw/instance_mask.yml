@@ -2,7 +2,6 @@ input: ["img", "masks", "bbox_labels"]
 output: ["img"]
 
 instance_color_scheme: hue_family
-
 effect: {
   contrast: null,
   brightness: null,
@@ -11,7 +10,6 @@ effect: {
   mosaic: null
 }
 effect_area: objects
-
 contours: {
     show: False,
     thickness: 2
