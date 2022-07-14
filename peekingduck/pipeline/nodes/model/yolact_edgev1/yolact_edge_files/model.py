@@ -84,7 +84,8 @@ Modifications include:
 import logging
 from math import sqrt
 from itertools import product
-from typing import List, Tuple, Dict, Any
+from pathlib import Path
+from typing import List, Tuple, Dict, Any, Union, Optional, Callable
 
 import torch
 import torch.nn as nn
@@ -125,6 +126,8 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     def __init__(self, model_type: str) -> None:
         super().__init__()
+
+        self.backbone: Union[ResNetBackbone, MobileNetV2Backbone]
 
         if model_type[0] == "r":
             if model_type == "r101-fpn":
@@ -202,7 +205,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
 
-    def forward(self, inputs):
+    def forward(self, inputs: torch.Tensor) -> Dict:
         """The input should be of size [batch_size, 3, img_h, img_w]"""
         outs_wrapper = {}
         outs = self.backbone(inputs)
@@ -221,6 +224,8 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         proto_out = self.proto_net(proto_x)
         proto_out = torch.nn.functional.relu(proto_out, inplace=True)
         proto_out = proto_out.permute(0, 2, 3, 1).contiguous()
+
+        pred_outs: Dict[List]
         pred_outs = {"loc": [], "conf": [], "mask": [], "priors": []}
 
         for idx, pred_layer in zip(self.selected_layers, self.prediction_layers):
@@ -234,10 +239,9 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         pred_outs["proto"] = proto_out
         pred_outs["conf"] = F.softmax(pred_outs["conf"], -1)
         outs_wrapper["pred_outs"] = self.detect(pred_outs)
-
         return outs_wrapper
 
-    def load_weights(self, path):
+    def load_weights(self, path: Path) -> None:
         """Loads weights from a compressed save file."""
         state_dict = torch.load(path, map_location="cpu")
         for key in list(state_dict.keys()):
@@ -283,13 +287,13 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        in_channels,
-        out_channels=1024,
-        aspect_ratios=None,
-        scales=None,
-        parent=None,
-        index=0,
-    ):
+        in_channels: int,
+        out_channels: int = 1024,
+        aspect_ratios: Optional[List] = None,
+        scales: Optional[List] = None,  # List[Int]
+        parent: Optional[Callable] = None,  # PredictionModule
+        index: int = 0,
+    ) -> None:
 
         super().__init__()
         self.params = [in_channels, out_channels, aspect_ratios, scales, parent, index]
@@ -322,7 +326,7 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self.priors = None
         self.last_conv_size = None
 
-    def forward(self, inputs):
+    def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
         """
         Args:
             - inputs: The convOut from a layer in the backbone network
@@ -393,7 +397,7 @@ class FPNPhase1(ScriptModuleWrapper):
 
     __constants__ = ["interpolation_mode"]
 
-    def __init__(self, in_channels):
+    def __init__(self, in_channels: int) -> None:
         super().__init__()
         self.src_channels = in_channels
         self.lat_layers = nn.ModuleList(
@@ -405,7 +409,14 @@ class FPNPhase1(ScriptModuleWrapper):
         self.interpolation_mode = "bilinear"
 
     def forward(  # pylint: disable=too-many-arguments, too-many-locals
-        self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
+        self,
+        x_1: Optional[List] = None,
+        x_2: Optional[List] = None,
+        x_3: Optional[List] = None,
+        x_4: Optional[List] = None,
+        x_5: Optional[List] = None,
+        x_6: Optional[List] = None,
+        x_7: Optional[List] = None,
     ) -> List[Tensor]:
         """
         Args:
@@ -456,7 +467,7 @@ class FPNPhase2(ScriptModuleWrapper):
 
     __constants__ = ["num_downsample"]
 
-    def __init__(self, in_channels):
+    def __init__(self, in_channels: int) -> None:
         super().__init__()
         self.src_channels = in_channels
         self.pred_layers = nn.ModuleList(
@@ -480,7 +491,14 @@ class FPNPhase2(ScriptModuleWrapper):
         )
 
     def forward(  # pylint: disable=too-many-arguments
-        self, x_1=None, x_2=None, x_3=None, x_4=None, x_5=None, x_6=None, x_7=None
+        self,
+        x_1: Optional[List] = None,
+        x_2: Optional[List] = None,
+        x_3: Optional[List] = None,
+        x_4: Optional[List] = None,
+        x_5: Optional[List] = None,
+        x_6: Optional[List] = None,
+        x_7: Optional[List] = None,
     ) -> List[Tensor]:
         """
         Args:
@@ -529,7 +547,7 @@ class YolactEdgeHead:
         self.nms_thresh = nms_thresh
         self.conf_thresh = conf_thresh
 
-    def __call__(self, predictions):
+    def __call__(self, predictions: Dict[str, torch.Tensor]) -> List[Any]:
         """
         Args:
             loc_data: (tensor) Loc preds from loc layers
@@ -571,8 +589,12 @@ class YolactEdgeHead:
         return out
 
     def detect(  # pylint: disable=too-many-arguments
-        self, batch_idx, conf_preds, decoded_boxes, mask_data
-    ) -> Dict[str, Any]:
+        self,
+        batch_idx: int,
+        conf_preds: torch.Tensor,
+        decoded_boxes: torch.Tensor,
+        mask_data: torch.Tensor,
+    ) -> Optional[Dict[str, Any]]:
         """Perform nms for only the max scoring class that isn't background (class 0)"""
         cur_scores = conf_preds[batch_idx, 1:, :]
         conf_scores, _ = torch.max(cur_scores, dim=0)
