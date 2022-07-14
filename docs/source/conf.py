@@ -88,6 +88,7 @@ autosummary_mock_imports = [
     "model.fairmotv1",
     "model.hrnetv1",
     "model.jdev1",
+    "model.mask_rcnnv1",
     "model.mtcnnv1",
     "model.posenetv1",
     "model.movenetv1",
