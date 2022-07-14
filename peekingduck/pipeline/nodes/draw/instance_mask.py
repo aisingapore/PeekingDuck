@@ -134,7 +134,7 @@ class Node(AbstractNode, ThresholdCheckerMixin):
         applied to the masked areas of the image or to the unmasked areas.
 
         Args:
-            inputs (dict): Dictionary of inputs with keys "img", "masks,
+            inputs (dict): Dictionary of inputs with keys "img", "masks",
             "bbox_labels".
 
         Returns:
