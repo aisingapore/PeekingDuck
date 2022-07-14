@@ -120,7 +120,7 @@ NUM_CLASSES = 81
 MAX_NUM_DETECTIONS = 100
 
 
-class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attribute
+class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
     """YolactEdge model module."""
 
     def __init__(self, model_type: str) -> None:
@@ -369,18 +369,20 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         return preds
 
     def make_priors(self, conv_h, conv_w):
-        """Priors are [x, y, width, height] where (x, y) is the center of the box."""
+        """Priors are [center-x, center-y, width, height] where center-x and
+        center-y are the center coordinates of the box."""
         if self.last_conv_size != (conv_w, conv_h):
             prior_data = []
             for j, i in product(range(conv_h), range(conv_w)):
-                x = (i + 0.5) / conv_w
-                y = (j + 0.5) / conv_h
-                for scale, ars in zip(self.scales, self.aspect_ratios):
-                    for ar in ars:
-                        ar = sqrt(ar)
-                        w = scale * ar / 550
-                        h = w
-                        prior_data += [x, y, w, h]
+                # +0.5 because priors are in center-size notation
+                center_x = (i + 0.5) / conv_w
+                center_y = (j + 0.5) / conv_h
+                for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):
+                    for aspect_ratio in aspect_ratios:
+                        aspect_ratio = sqrt(aspect_ratio)
+                        width = scale * aspect_ratio / 550
+                        height = width
+                        prior_data += [center_x, center_y, width, height]
             self.priors = torch.Tensor(prior_data).view(-1, 4)
             self.last_conv_size = (conv_w, conv_h)
         return self.priors
@@ -407,39 +409,42 @@ class FPNPhase1(ScriptModuleWrapper):
     ) -> List[Tensor]:
         """
         Args:
-            - convouts (list): A list of convouts for the corresponding layers in in_channels.
+            - convouts (list): A list of convouts for the corresponding layers
+                in in_channels.
         Returns:
-            - A list of FPN convouts in the same order as x with extra downsample layers if requested.
+            - A list of FPN convouts in the same order as x with extra downsample
+                layers if requested.
         """
         convouts_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         convouts = []
-        j = 0
-        while j < len(convouts_):
-            t = convouts_[j]
-            if t is not None:
-                convouts.append(t)
-            j += 1
+
+        for i in range(len(convouts_)):
+            if convouts_[i] is not None:
+                convouts.append(convouts_[i])
 
         out = []
         lat_feats = []
-        x = torch.zeros(1, device=convouts[0].device)
+        x_0 = torch.zeros(1, device=convouts[0].device)
 
         for i in range(len(convouts)):
-            out.append(x)
-            lat_feats.append(x)
+            out.append(x_0)
+            lat_feats.append(x_0)
 
-        j = len(convouts)
+        iter = len(convouts)
         for lat_layer in self.lat_layers:
-            j -= 1
-            if j < len(convouts) - 1:
-                _, _, h, w = convouts[j].size()
-                x = F.interpolate(
-                    x, size=(h, w), mode=self.interpolation_mode, align_corners=False
+            iter -= 1
+            if iter < len(convouts) - 1:
+                _, _, height, weight = convouts[iter].size()
+                x_0 = F.interpolate(
+                    x_0,
+                    size=(height, weight),
+                    mode=self.interpolation_mode,
+                    align_corners=False,
                 )
-            lat_j = lat_layer(convouts[j])
-            lat_feats[j] = lat_j
-            x = x + lat_j
-            out[j] = x
+            lat_iter = lat_layer(convouts[iter])
+            lat_feats[iter] = lat_iter
+            x_0 = x_0 + lat_iter
+            out[iter] = x_0
 
         for i in range(len(convouts)):
             out.append(lat_feats[i])
@@ -487,12 +492,9 @@ class FPNPhase2(ScriptModuleWrapper):
         """
         out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         out = []
-        j = 0
-        while j < len(out_):
-            t = out_[j]
-            if t is not None:
-                out.append(t)
-            j += 1
+        for i in range(len(out_)):
+            if out_[i] is not None:
+                out.append(out_[i])
 
         len_convouts = len(out)
         j = len_convouts
