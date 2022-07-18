@@ -1,4 +1,4 @@
-input: ["img"]
+input: ["img", "filename"]
 output: ["pipeline_end"]
 
 window_name: "PeekingDuck"
