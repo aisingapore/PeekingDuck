@@ -37,7 +37,7 @@ from peekingduck.utils.deprecation import deprecate
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
 
 
-class DeclarativeLoader:  # pylint: disable=too-few-public-methods
+class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
     """A helper class to create
     :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>`.
 
