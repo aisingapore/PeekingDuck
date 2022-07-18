@@ -59,7 +59,8 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        if not config["pkd_viewer"]:
+        pkd_viewer = config["pkd_viewer"] if config is not None else False
+        if not pkd_viewer:
             cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
             cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
