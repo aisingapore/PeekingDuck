@@ -493,12 +493,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                     if key in self._pipeline.data:
                         inputs[key] = self._pipeline.data[key]
             if node.name.endswith("output.screen"):
-                # intercept screen output to Tkinter
-                img = self._pipeline.data["img"]
-                frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR -> RGB for Tkinter
-                self._frames.append(frame)  # save frame for playback
-                self._frame_idx += 1
-                self._show_frame()
+                pass  # disable duplicate video from output.screen
             else:
                 outputs = node.run(inputs)
                 self._pipeline.data.update(outputs)
@@ -513,6 +508,15 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
             if self.num_iter and self._frame_idx + 1 >= self.num_iter:
                 self.logger.info(f"Stopping pipeline after {self.num_iter} iterations")
                 self.stop_running_pipeline()
+
+        # render img into screen output to Tkinter
+        img = self._pipeline.data["img"]
+        if img is not None:
+            frame = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # BGR -> RGB for Tkinter
+            self._frames.append(frame)  # save frame for playback
+            self._frame_idx += 1
+            self._show_frame()
+
         # update progress bar after each iteration
         self.tk_progress["value"] = self._frame_idx
         self.tk_lbl_frame_num["text"] = self._frame_idx + 1
@@ -526,6 +530,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
             self.pipeline_path,
             self.config_updates_cli,
             self.custom_nodes_parent_path,
+            pkd_viewer=True,
         )
         self._pipeline: Pipeline = self._node_loader.get_pipeline()
         self._set_header_running()
