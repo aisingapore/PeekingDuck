@@ -116,7 +116,9 @@ class InterpolateModule(nn.Module):
 
 
 def make_net(
-    in_channels: int, conf: float, include_last_relu: bool = True
+    in_channels: int,
+    conf: List[Any],
+    include_last_relu: bool = True,
 ) -> Tuple[nn.Sequential, int]:
     """
     A helper function to take a config setting and turn it into a network.

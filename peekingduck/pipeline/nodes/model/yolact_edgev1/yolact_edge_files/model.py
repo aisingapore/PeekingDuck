@@ -85,7 +85,7 @@ import logging
 from math import sqrt
 from itertools import product
 from pathlib import Path
-from typing import List, Tuple, Dict, Any, Union, Optional, Callable
+from typing import Iterable, List, Tuple, Dict, Any, Union, Optional, Callable
 
 import torch
 import torch.nn as nn
@@ -163,7 +163,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.proto_src = 0
         mask_proto_net = (
             [(256, 3, {"padding": 1})] * 3
-            + [(None, -2, {}), (256, 3, {"padding": 1})]
+            + [(None, -2, {}), (256, 3, {"padding": 1})]  # type: ignore
             + [(32, 1, {})]
         )
 
@@ -192,7 +192,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
                 src_channels[layer_idx],
                 src_channels[layer_idx],
                 aspect_ratios=self.pred_aspect_ratios[idx],
-                scales=self.pred_scales[idx],
+                scales=self.pred_scales[idx],  # type: ignore
                 parent=parent,
                 index=idx,
             )
@@ -225,7 +225,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         proto_out = torch.nn.functional.relu(proto_out, inplace=True)
         proto_out = proto_out.permute(0, 2, 3, 1).contiguous()
 
-        pred_outs: Dict[List]
+        pred_outs: Dict[str, Any]
         pred_outs = {"loc": [], "conf": [], "mask": [], "priors": []}
 
         for idx, pred_layer in zip(self.selected_layers, self.prediction_layers):
@@ -289,8 +289,8 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self,
         in_channels: int,
         out_channels: int = 1024,
-        aspect_ratios: Optional[List] = None,
-        scales: Optional[List] = None,  # List[Int]
+        aspect_ratios: Iterable[Any] = None,
+        scales: Iterable[List[Any]] = None,  # List[Int]
         parent: Optional[Callable] = None,  # PredictionModule
         index: int = 0,
     ) -> None:
@@ -299,10 +299,10 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self.params = [in_channels, out_channels, aspect_ratios, scales, parent, index]
         self.num_classes = NUM_CLASSES
         self.mask_dim = 32
-        self.num_priors = sum(len(x) for x in aspect_ratios)
+        self.num_priors = sum(len(x) for x in aspect_ratios)  # type: ignore
         self.parent = [parent]
         self.index = index
-        head_layer_params = {"kernel_size": 3, "padding": 1}
+        head_layer_params: Dict[Any, Any] = {"kernel_size": 3, "padding": 1}
 
         if parent is None:
             self.upfeature, out_channels = make_net(
@@ -323,8 +323,8 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
 
         self.aspect_ratios = aspect_ratios
         self.scales = scales
-        self.priors = None
-        self.last_conv_size = None
+        self.priors: Union[None, torch.Tensor] = None
+        self.last_conv_size = (0, 0)
 
     def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
         """
@@ -372,7 +372,7 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         preds = {"loc": bbox, "conf": conf, "mask": mask, "priors": priors}
         return preds
 
-    def make_priors(self, conv_h, conv_w):
+    def make_priors(self, conv_h: int, conv_w: int) -> Optional[torch.Tensor]:
         """Priors are [center-x, center-y, width, height] where center-x and
         center-y are the center coordinates of the box."""
         if self.last_conv_size != (conv_w, conv_h):
@@ -381,7 +381,7 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
                 # +0.5 because priors are in center-size notation
                 center_x = (i + 0.5) / conv_w
                 center_y = (j + 0.5) / conv_h
-                for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):
+                for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):  # type: ignore
                     for aspect_ratio in aspect_ratios:
                         aspect_ratio = sqrt(aspect_ratio)
                         width = scale * aspect_ratio / 550
@@ -397,7 +397,7 @@ class FPNPhase1(ScriptModuleWrapper):
 
     __constants__ = ["interpolation_mode"]
 
-    def __init__(self, in_channels: int) -> None:
+    def __init__(self, in_channels: List[int]) -> None:
         super().__init__()
         self.src_channels = in_channels
         self.lat_layers = nn.ModuleList(
@@ -410,13 +410,13 @@ class FPNPhase1(ScriptModuleWrapper):
 
     def forward(  # pylint: disable=too-many-arguments, too-many-locals
         self,
-        x_1: Optional[List] = None,
-        x_2: Optional[List] = None,
-        x_3: Optional[List] = None,
-        x_4: Optional[List] = None,
-        x_5: Optional[List] = None,
-        x_6: Optional[List] = None,
-        x_7: Optional[List] = None,
+        x_1: Optional[torch.Tensor] = None,
+        x_2: Optional[torch.Tensor] = None,
+        x_3: Optional[torch.Tensor] = None,
+        x_4: Optional[torch.Tensor] = None,
+        x_5: Optional[torch.Tensor] = None,
+        x_6: Optional[torch.Tensor] = None,
+        x_7: Optional[torch.Tensor] = None,
     ) -> List[Tensor]:
         """
         Args:
@@ -435,7 +435,7 @@ class FPNPhase1(ScriptModuleWrapper):
 
         out = []
         lat_feats = []
-        x_0 = torch.zeros(1, device=convouts[0].device)
+        x_0 = torch.zeros(1)
 
         for i in range(len(convouts)):
             out.append(x_0)
@@ -445,7 +445,7 @@ class FPNPhase1(ScriptModuleWrapper):
         for lat_layer in self.lat_layers:
             count -= 1
             if count < len(convouts) - 1:
-                _, _, height, weight = convouts[count].size()
+                _, _, height, weight = convouts[count].size()  # type: ignore
                 x_0 = F.interpolate(
                     x_0,
                     size=(height, weight),
@@ -467,7 +467,7 @@ class FPNPhase2(ScriptModuleWrapper):
 
     __constants__ = ["num_downsample"]
 
-    def __init__(self, in_channels: int) -> None:
+    def __init__(self, in_channels: List[int]) -> None:
         super().__init__()
         self.src_channels = in_channels
         self.pred_layers = nn.ModuleList(
@@ -499,7 +499,7 @@ class FPNPhase2(ScriptModuleWrapper):
         x_5: Optional[List] = None,
         x_6: Optional[List] = None,
         x_7: Optional[List] = None,
-    ) -> List[Tensor]:
+    ) -> List[Optional[List[Any]]]:
         """
         Args:
             - convouts (list): A list of convouts for the corresponding layers
@@ -517,7 +517,7 @@ class FPNPhase2(ScriptModuleWrapper):
         j = len(out)
         for pred_layer in self.pred_layers:
             j -= 1
-            out[j] = F.relu(pred_layer(out[j]))
+            out[j] = F.relu(pred_layer(out[j]))  # type: ignore
         for downsample_layer in self.downsample_layers:
             out.append(downsample_layer(out[-1]))
         return out
