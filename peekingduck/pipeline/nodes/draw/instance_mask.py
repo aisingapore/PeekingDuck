@@ -37,8 +37,8 @@ from peekingduck.pipeline.nodes.draw.utils.constants import (
 
 
 class Node(AbstractNode, ThresholdCheckerMixin):
-    """# pylint: disable=line-too-long
-    Draws instance segmentation masks on image.
+    # pylint: disable=line-too-long
+    """Draws instance segmentation masks on image.
 
     The :mod:`draw.mask` node draws instance segmentation masks onto the
     detected object instances.
