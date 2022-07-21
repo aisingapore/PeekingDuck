@@ -205,8 +205,13 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
             NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
         )
 
-    def forward(self, inputs: torch.Tensor) -> Dict:
-        """The input should be of size [batch_size, 3, img_h, img_w]"""
+    def forward(self, inputs: Tensor) -> Dict[str, List]:
+        """The input should be of size [batch_size, 3, img_h, img_w]
+        Args:
+
+        Returns:
+            outs_wrapper (Dict)
+        """
         outs_wrapper = {}
         outs = self.backbone(inputs)
         outs = [outs[i] for i in SELECTED_LAYERS]
@@ -632,6 +637,8 @@ class YolactEdgeHead:
         iou = jaccard(boxes, boxes)
         iou.triu_(diagonal=1)
         iou_max, _ = iou.max(dim=1)
+
+        # Filter out the ones that are higher that the threshold
         keep = iou_max <= iou_threshold
 
         classes = torch.arange(num_classes, device=boxes.device)[:, None].expand_as(

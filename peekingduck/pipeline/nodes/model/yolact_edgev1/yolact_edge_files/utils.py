@@ -48,6 +48,7 @@ from typing import Any, Callable, Tuple, List
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch import Tensor
 
 
 class FastBaseTransform(torch.nn.Module):
@@ -61,26 +62,20 @@ class FastBaseTransform(torch.nn.Module):
         super().__init__()
         if torch.cuda.is_available():
             self.mean = (
-                torch.Tensor((103.94, 116.78, 123.68))
-                .float()
-                .cuda()[None, :, None, None]
+                Tensor((103.94, 116.78, 123.68)).float().cuda()[None, :, None, None]
             )
-            self.std = (
-                torch.Tensor((57.38, 57.12, 58.40)).float().cuda()[None, :, None, None]
-            )
+            self.std = Tensor((57.38, 57.12, 58.40)).float().cuda()[None, :, None, None]
         else:
-            self.mean = torch.Tensor((103.94, 116.78, 123.68)).float()[
-                None, :, None, None
-            ]
-            self.std = torch.Tensor((57.38, 57.12, 58.40)).float()[None, :, None, None]
+            self.mean = Tensor((103.94, 116.78, 123.68)).float()[None, :, None, None]
+            self.std = Tensor((57.38, 57.12, 58.40)).float()[None, :, None, None]
 
-    def forward(self, img: torch.Tensor) -> torch.Tensor:
+    def forward(self, img: Tensor) -> Tensor:
         """
         Args:
-            img (torch.Tensor): input image of shape (N, H, W, C)
+            img (Tensor): input image of shape (N, H, W, C)
 
         Returns:
-            img (torch.Tensor): transformed image of shape (N, C, H, W) where
+            img (Tensor): transformed image of shape (N, C, H, W) where
                 H == W
         """
         self.mean = self.mean.to(img.device)
@@ -105,10 +100,11 @@ class InterpolateModule(nn.Module):
         self.args = args
         self.kwdargs = kwdargs
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """
         Args:
             inputs: A tensor of shape (N, C, H, W)
+
         Returns:
             A tensor of shape (N, C, H', W')
         """
@@ -123,6 +119,13 @@ def make_net(
     """
     A helper function to take a config setting and turn it into a network.
     Used by protonet and extrahead. Returns (network, out_channels)
+
+    Args:
+        in_channels (int): number of channels in the input
+        conf (List[Any]): a list of configs to create the network
+
+    Returns:
+
     """
 
     def make_layer(layer_config: Tuple[int, int, dict]) -> List[Callable]:
@@ -154,6 +157,13 @@ def make_extra(num_layers: int, out_channels: int) -> Callable:
     """
     Lambda function that creates an array of num_layers alternating conv-relu if
     the num_layers is not 0.
+
+    Args:
+        num_layers (int): number of layers to create
+        out_channels (int): number of channels in the output
+
+    Returns:
+        out (Callable): #TODO
     """
     if num_layers == 0:
         out = lambda x: x
@@ -173,19 +183,19 @@ def make_extra(num_layers: int, out_channels: int) -> Callable:
     return out
 
 
-def jaccard(
-    box_a: torch.Tensor, box_b: torch.Tensor, iscrowd: bool = False
-) -> torch.Tensor:
+def jaccard(box_a: Tensor, box_b: Tensor, iscrowd: bool = False) -> Tensor:
     """Compute the jaccard overlap of two sets of boxes.  The jaccard overlap
     is simply the intersection over union of two boxes.  Here we operate on
     ground truth boxes and default boxes. If iscrowd=True, put the crowd in box_b.
     E.g.:
         A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
+
     Args:
-        box_a: (tensor) Ground truth bounding boxes, Shape: [num_objects,4]
-        box_b: (tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
+        box_a: (Tensor) Ground truth bounding boxes, Shape: [num_objects,4]
+        box_b: (Tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
+
     Return:
-        jaccard overlap: (tensor) Shape: [box_a.size(0), box_b.size(0)]
+        out: (Tensor) Shape: [box_a.size(0), box_b.size(0)]
     """
     use_batch = True
     if box_a.dim() == 2:
@@ -208,15 +218,15 @@ def jaccard(
     return out if use_batch else out.squeeze(0)
 
 
-def point_form(boxes: torch.Tensor) -> torch.Tensor:
+def point_form(boxes: Tensor) -> Tensor:
     """Convert prior_boxes to (xmin, ymin, xmax, ymax)
     representation for comparison to point form ground truth data.
 
     Args:
-        boxes: (tensor) center-size default boxes from priorbox layers.
+        boxes: (Tensor) center-size default boxes from priorbox layers.
 
-    Return:
-        boxes: (tensor) Converted xmin, ymin, xmax, ymax form of boxes.
+    Returns:
+        boxes: (Tensor) Converted xmin, ymin, xmax, ymax form of boxes.
     """
     return torch.cat(
         (
@@ -227,16 +237,18 @@ def point_form(boxes: torch.Tensor) -> torch.Tensor:
     )  # xmax, ymax
 
 
-def intersect(box_a: torch.Tensor, box_b: torch.Tensor) -> torch.Tensor:
-    """We resize both tensors to [A,B,2] without new malloc:
+def intersect(box_a: Tensor, box_b: Tensor) -> Tensor:
+    """Resize both tensors to [A,B,2] without new malloc:
     [A,2] -> [A,1,2] -> [A,B,2]
     [B,2] -> [1,B,2] -> [A,B,2]
     Then we compute the area of intersect between box_a and box_b.
+
     Args:
-      box_a: (tensor) bounding boxes, Shape: [n,A,4].
-      box_b: (tensor) bounding boxes, Shape: [n,B,4].
-    Return:
-      (tensor) intersection area, Shape: [n,A,B].
+        box_a: (Tensor) bounding boxes, Shape: [n,A,4].
+        box_b: (Tensor) bounding boxes, Shape: [n,B,4].
+
+    Returns:
+        (Tensor) intersection area, Shape: [n,A,B].
     """
     num = box_a.size(0)
     set_a = box_a.size(1)
@@ -254,9 +266,7 @@ def intersect(box_a: torch.Tensor, box_b: torch.Tensor) -> torch.Tensor:
     return inter[:, :, :, 0] * inter[:, :, :, 1]
 
 
-def decode(
-    loc: torch.Tensor, priors: torch.Tensor, use_yolo_regressors: bool = False
-) -> torch.Tensor:
+def decode(loc: Tensor, priors: Tensor, use_yolo_regressors: bool = False) -> Tensor:
     """
     Decode predicted bbox coordinates using the same scheme
     employed by Yolov2: https://arxiv.org/pdf/1612.08242.pdf
@@ -275,11 +285,12 @@ def decode(
     is why we have to subtract .5 from sigmoid(pred_x and pred_y).
 
     Args:
-        - loc:    The predicted bounding boxes of size [num_priors, 4]
-        - priors: The priorbox coords with size [num_priors, 4]
+        loc (Tensor): The predicted bounding boxes of size [num_priors, 4]
+        priors (Tensor): The priorbox coords with size [num_priors, 4]
 
-    Returns: A tensor of decoded relative coordinates in point form
-             form with size [num_priors, 4]
+    Returns:
+        boxes (Tensor): A tensor of decoded relative coordinates in point form
+            form with size [num_priors, 4]
     """
     if use_yolo_regressors:
         boxes = torch.cat(

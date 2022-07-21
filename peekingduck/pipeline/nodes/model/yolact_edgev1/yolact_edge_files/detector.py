@@ -20,7 +20,7 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple, Union
 
-import torch.backends.cudnn as cudnn
+import torch.backends as cudnn
 from torch import Tensor
 import torch.nn.functional as F
 import torch
@@ -42,7 +42,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         logger (logging.Logger): Events logger.
         config (Dict[str, Any]): YolactEdge node configuration.
         model_dir (pathlib.Path): Path to directory of model weights files.
-        device (torch.device): Represents the device on which the torch.Tensor
+        device (torch.device): Represents the device on which the Tensor
             will be allocated.
         yolact_edge (YolactEdge): The YolactEdge model for performing inference.
     """
@@ -114,19 +114,22 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             x[: self.max_num_detections].cpu().numpy() for x in preds_pp[:3]
         ]
 
+        labels = np.array([self.class_names[i] for i in labels])
         return bboxes, labels, scores, masks
 
     def update_detect_ids(self, ids: List[int]) -> None:
         """Updates list of selected object category IDs. When the list is
         empty, all available object category IDs are detected.
+
         Args:
             ids: List of selected object category IDs
         """
-        self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
+        self.detect_ids = Tensor(ids).to(self.device)  # type: ignore
 
     def _create_yolact_edge_model(self) -> YolactEdge:
         """Creates YolactEdge model and loads its weights.
         Creates `detect_ids` as a `torch.Tensor`. Logs model configurations.
+
         Returns:
             YolactEdge: YolactEdge model
         """
@@ -142,8 +145,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
     def _get_model(self) -> YolactEdge:
         """Constructs YolactEdge model based on parsed configuration.
-        Args:
-            model_size (Dict[str, float]): Depth and width of the model.
+
         Returns:
             (YolactEdge): YolactEdge model.
         """
@@ -151,11 +153,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
-        Args:
-            model_path (Path): Path to model weights file.
-            model_settings (Dict[str, float): Depth and width of the model.
+
         Returns:
             (YolactEdge): YolactEdge model.
+
         Raises:
             ValueError: `model_path` does not exist.
         """
@@ -175,16 +176,15 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self,
         network_output: Dict[str, Tensor],
         img_shape: Tuple[int, ...],
-    ) -> Union[
-        Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor],
-        List[torch.Tensor],
-    ]:
+    ) -> Union[Tuple[Tensor, Tensor, Tensor, Tensor], List[Tensor],]:
         """Postprocessing of detected bboxes and masks for YolactEdge
+
         Args:
             network_output (Dict[str, Tensor]): A dictionary from the first
                 element of the YolactEdge output. The keys are "class", "box",
                 "score", "mask", and "proto"
             img_shape (Tuple[int, int]): height and width of original image
+
         Returns:
             (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
             Returned tuple contains:
@@ -194,14 +194,14 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of masks
         """
         if network_output is None:
-            return [torch.Tensor()] * 4
+            return [Tensor()] * 4
 
         keep = network_output["score"] > self.score_threshold
         for k in network_output:
             if k != "proto":
                 network_output[k] = network_output[k][keep]
         if network_output["score"].size(0) == 0:
-            return [torch.Tensor()] * 4
+            return [Tensor()] * 4
 
         classes = network_output["class"]
         boxes = network_output["box"]

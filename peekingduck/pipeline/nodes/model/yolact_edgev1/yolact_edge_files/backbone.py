@@ -46,8 +46,8 @@ Modifications include:
 
 from typing import Callable, List, Any, Tuple, Union
 from functools import partial
-import torch.nn as nn
-import torch
+from torch import nn
+from torch import Tensor
 
 
 class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
@@ -93,12 +93,14 @@ class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
             self.downsample = nn.Sequential()
         self.stride = stride
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """
+    def forward(self, inputs: Tensor) -> Tensor:
+        """Forward propagation of the Bottleneck blocks of ResNet.
+
         Args:
-            inputs (torch.Tensor): Input tensor
+            inputs (Tensor): Input tensor
+
         Returns:
-            outputs (torch.Tensor): Output tensor
+            out (Tensor): Output tensor
         """
         out = self.conv1(inputs)
         out = self.bn1(out)
@@ -119,7 +121,7 @@ class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
 
 
 class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
-    """Adapted from torchvision.models.resnet"""
+    """Implements ResNet backbone, adapted from torchvision.models.resnet"""
 
     def __init__(
         self,
@@ -152,7 +154,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
     def _make_layer(
         self, block: Callable, planes: int, blocks: int, stride: int = 1
     ) -> Callable:
-        """Here one layer means a string of n Bottleneck blocks."""
+        """Method to make layers for ResNet"""
         downsample = None
         if stride != 1 or self.inplanes != planes * block.expansion:
             if len(self.layers) in self.atrous_layers:
@@ -191,9 +193,7 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.layers.append(layer)
         return layer
 
-    def forward(
-        self, inputs: torch.Tensor, partial_bn: bool = False
-    ) -> List[torch.Tensor]:
+    def forward(self, inputs: Tensor, partial_bn: bool = False) -> List[Tensor]:
         """Returns a list of convouts for each layer."""
         inputs = self.conv1(inputs)
         inputs = self.bn1(inputs)
@@ -277,7 +277,7 @@ class InvertedResidual(nn.Module):
         )
         self.conv = nn.Sequential(*layers)
 
-    def forward(self, inputs: torch.Tensor) -> torch.Tensor:
+    def forward(self, inputs: Tensor) -> Tensor:
         """Returns a convout for the inverted residual block."""
         if self.use_res_connect:
             return inputs + self.conv(inputs)
@@ -369,7 +369,7 @@ class MobileNetV2Backbone(nn.Module):
         self.layers.append(nn.Sequential(*layers))
         return input_channel
 
-    def forward(self, inputs: torch.Tensor) -> Tuple[torch.Tensor, ...]:
+    def forward(self, inputs: Tensor) -> Tuple[Tensor, ...]:
         """Returns a list of convouts for each layer."""
         outs = []
 
