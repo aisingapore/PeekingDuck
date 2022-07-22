@@ -58,6 +58,8 @@ To move frame-by-frame forward/backward, click the *left* mouse button anywhere 
 right/left of the current slider position.
 
 The ``+`` (zoom in) and ``-`` (zoom out) buttons allow you to adjust the video size. 
+You may also use keyboard shortcuts to adjust the zoom: ``CTRL`` - ``-`` zoom out,
+``CTRL`` - ``+`` zoom in, ``CTRL`` - ``=`` reset zoom
 
 
 Using the Pipeline Playlist
@@ -88,10 +90,10 @@ added to your playlist.
 The ``Delete`` button will remove the currently selected pipeline from the playlist, after 
 you have confirmed the deletion. 
 
-A red ``X`` beside the pipeline indicates that the pipeline YAML file is missing. 
+If the pipeline in the playlist is red, it means the pipeline YAML file is missing. 
 This could mean the pipeline had been added earlier, but its YAML file had since been 
 deleted or moved to another folder. 
-Delete the ``X`` pipeline entry to remove it from the playlist.
+Delete the missing pipeline entry to remove it from the playlist.
 
 The list of pipelines can be sorted in reverse order by clicking the playlist header.
 

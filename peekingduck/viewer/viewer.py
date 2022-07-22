@@ -94,7 +94,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.playlist.add_pipeline(self.pipeline_full_path)
         # configure keyboard shortcuts map
         self._keyboard_shortcuts = {
-            "z": self._zoom_reset,
+            "=": self._zoom_reset,
             "+": self._zoom_in,
             "-": self._zoom_out,
         }

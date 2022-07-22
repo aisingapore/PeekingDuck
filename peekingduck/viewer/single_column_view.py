@@ -35,6 +35,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         self._callback: Dict[str, Callable] = {}
         self._selected: Union[None, str] = None
         self._sort_desc = False
+        self._tk_fg_system = ""  # different for diff platforms
         self.create_tk_widgets()
         self.redraw_view()
 
@@ -117,6 +118,10 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
             self._pipeline_to_index_map[stats.pipeline] = i
             self._index_to_stats_map[i] = stats
             self.tk_listbox.insert(i, stats.name)
+            if len(self._tk_fg_system) == 0:
+                # save platform specific foreground color
+                self._tk_fg_system = self.tk_listbox["fg"]
+                self.logger.debug(f"saving system foreground='{self._tk_fg_system}'")
             if len(stats.datetime) == 0:
                 self.tk_listbox.itemconfig(i, {"fg": "red"})  # mark as error
         self.header["text"] = f"Pipelines: {'v' if self._sort_desc else '^'}"
@@ -171,7 +176,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         self._info_name["text"] = stats.name
         if stats.datetime:
             display_datetime = f"{stats.datetime}"
-            self._info_datetime["foreground"] = "systemTextColor"
+            self._info_datetime["foreground"] = self._tk_fg_system
         else:
             display_datetime = "missing file"
             self._info_datetime["foreground"] = "red"
