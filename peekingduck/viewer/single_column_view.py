@@ -77,6 +77,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         info_frm.pack(side=tk.BOTTOM, fill=tk.X)
 
         lbl = tk.Label(info_frm, text="Pipeline Information:")
+        # info labels
         lbl.grid(row=0, column=0, columnspan=2)
         lbl = tk.Label(info_frm, text="Name:", anchor=tk.E)
         lbl.grid(row=1, column=0, sticky="ne")
@@ -84,6 +85,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         lbl.grid(row=2, column=0, sticky="ne")
         lbl = tk.Label(info_frm, text="Path:", anchor=tk.E)
         lbl.grid(row=3, column=0, sticky="ne")
+        # playlist info
         self._info_name = tk.Message(
             info_frm, text="name", width=PLAYLIST_WIDTH, anchor=tk.W
         )
@@ -118,13 +120,10 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         for i, stats in enumerate(self.sorted_playlist):
             self._pipeline_to_index_map[stats.pipeline] = i
             self._index_to_stats_map[i] = stats
-            display_name = (
-                f"{stats.name}" if stats.datetime else f"{stats.name} {RED_CROSS}"
-            )
-            self.tk_listbox.insert(i, display_name)
-        self.header[
-            "text"
-        ] = f"Pipelines: {DOWN_ARROW if self._sort_desc else UP_ARROW}"
+            self.tk_listbox.insert(i, stats.name)
+            if len(stats.datetime) == 0:
+                self.tk_listbox.itemconfig(i, {"fg": "red"})  # mark as error
+        self.header["text"] = f"Pipelines: {'v' if self._sort_desc else '^'}"
 
     def get_selected_index(self) -> int:
         """Return index of selected listbox entry
@@ -176,8 +175,10 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         self._info_name["text"] = stats.name
         if stats.datetime:
             display_datetime = f"{stats.datetime}"
+            self._info_datetime["foreground"] = "systemTextColor"
         else:
-            display_datetime = f"{RED_CROSS}"
+            display_datetime = "missing file"
+            self._info_datetime["foreground"] = "red"
         self._info_datetime["text"] = display_datetime
         self._info_path["text"] = stats.pipeline
 
