@@ -413,7 +413,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.logger.debug("enable slider")
         self.tk_progress.grid_remove()  # hide progress bar
         self.tk_scale.grid()  # show slider
-        self.tk_scale.configure(to=len(self._frames))
+        self.tk_scale.configure(from_=1, to=len(self._frames))
         self.sync_slider_to_frame(self.tk_scale.get())
 
     def _set_status_text(self, text: str) -> None:
@@ -431,18 +431,15 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
             val (str): slider value
         """
         self.logger.debug(f"sync slider to frame: {val} {type(val)}")
-        self._frame_idx = round(float(val)) - 1
-        self.tk_lbl_frame_num["text"] = self._frame_idx + 1
+        idx = int(self.tk_scale.get())
+        idx_start = self.tk_scale["from"]
+        idx_end = self.tk_scale["to"]
+        self.logger.debug(f"idx={idx}, from:{idx_start}, to:{idx_end})")
+        if idx >= len(self._frames):
+            idx = len(self._frames)
+        self._frame_idx = idx - 1
+        self.tk_lbl_frame_num["text"] = idx
         self._show_frame()
-
-    def slider_set_value(self, event: tk.Event) -> None:
-        """Generate right click event for slider to make it "jump" to current
-        left click mouse position.
-
-        Args:
-            event (tk.Event): The mouse left click event.
-        """
-        self.tk_scale.event_generate("<Button-3>", x=event.x, y=event.y)
 
     ####################
     #

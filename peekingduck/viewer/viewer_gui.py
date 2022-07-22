@@ -218,7 +218,6 @@ def _create_controls(viewer, ctrl_frm: ttk.Frame) -> None:  # type: ignore
     )
     slider.grid(row=0, column=0, columnspan=95, sticky="nsew")
     viewer.tk_scale = slider
-    slider.bind("<Button-1>", viewer.slider_set_value)
     slider.grid_remove()  # hide it first
     # progress bar
     progress_bar = ttk.Progressbar(

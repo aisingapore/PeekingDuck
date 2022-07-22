@@ -52,6 +52,10 @@ You may also scrub through the video using the slider to go directly to the fram
 of interest.
 The current video frame number is shown to the right of the slider, serving as a
 position indicator.
+To "jump" to a particular position on the slider, click the *right* mouse button on that
+position.
+To move frame-by-frame forward/backward, click the *left* mouse button anywhere to the
+right/left of the current slider position.
 
 The ``+`` (zoom in) and ``-`` (zoom out) buttons allow you to adjust the video size. 
 
