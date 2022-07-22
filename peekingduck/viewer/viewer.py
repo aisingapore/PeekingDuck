@@ -16,11 +16,11 @@
 Implement PeekingDuck Viewer
 """
 
-import traceback
 from typing import List
 from contextlib import redirect_stderr
 from pathlib import Path
 import logging
+from io import StringIO
 import os
 import platform
 import traceback
@@ -31,7 +31,6 @@ import threading
 import copy
 import cv2
 import numpy as np
-from io import StringIO
 from PIL import Image, ImageTk
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
@@ -215,7 +214,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         Returns:
             bool: True if pipeline added, False otherwise
         """
-        filetypes = (("Pipeline files", "*.yml"), ("All files", "*.*"))
+        # filetypes = (("Pipeline files", "*.yml"), ("All files", "*.*"))
+        filetypes = [("Pipeline files", "*.yml")]
         pipeline_filepath = filedialog.askopenfilename(
             title="Open a pipeline file (*.yml)",
             initialdir=self.home_path,
@@ -235,8 +235,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         """
         self.logger.debug(f"on delete pipeline {pipeline}")
         answer = askyesno(
-            title="Confirm delete pipeline file",
-            message=f"Are you sure you want to delete {pipeline}?",
+            title="Confirm Delete Pipeline from Playlist",
+            message=f"Are you sure you want to delete {pipeline} from playlist?",
         )
         if answer:
             self.playlist.delete_pipeline(pipeline)

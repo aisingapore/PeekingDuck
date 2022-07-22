@@ -23,7 +23,7 @@ import yaml
 
 # Globals
 PKD_CONFIG_DIR = ".peekingduck"
-PKD_PLAYLIST_FILE = "playlist.yaml"
+PKD_PLAYLIST_FILE = "playlist.yml"
 
 
 class PipelineStats:

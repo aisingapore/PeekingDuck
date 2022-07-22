@@ -66,7 +66,7 @@ Clicking the ``Playlist`` button will show/hide the playlist.
 
       PeekingDuck Viewer with playlist shown.
 
-The above screen shot shows the playlist on the right. 
+The above screenshot shows the playlist on the right. 
 The playlist is a collection of pipeline files that can be run with PeekingDuck. 
 The current pipeline is automatically added to the playlist. 
 This playlist is specific to you and is saved across different PeekingDuck Viewer runs.
@@ -93,7 +93,7 @@ The list of pipelines can be sorted in reverse order by clicking the playlist he
 
 .. note::
 
-   The playlist is saved in `~/.peekingduck/playlist.yaml`, where `~` is the user's home folder.
+   The playlist is saved in `~/.peekingduck/playlist.yml`, where `~` is the user's home folder.
 
 
 Exiting the Viewer
