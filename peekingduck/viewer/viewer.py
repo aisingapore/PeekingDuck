@@ -508,10 +508,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                     self.tk_progress["maximum"] = num_frames
                 else:
                     self.tk_progress["mode"] = "indeterminate"
-            # check if need to stop after fixed number of iterations
-            if self.num_iter and self._frame_idx + 1 >= self.num_iter:
-                self.logger.info(f"Stopping pipeline after {self.num_iter} iterations")
-                self.stop_running_pipeline()
 
         # render img into screen output to Tkinter
         img = self._pipeline.data["img"]
@@ -524,6 +520,11 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         # update progress bar after each iteration
         self.tk_progress["value"] = self._frame_idx
         self.tk_lbl_frame_num["text"] = self._frame_idx + 1
+
+        # check if need to stop after fixed number of iterations
+        if self.num_iter and self._frame_idx + 1 >= self.num_iter:
+            self.logger.info(f"Stopping pipeline after {self.num_iter} iterations")
+            self.stop_running_pipeline()
 
     def run_pipeline_start(self) -> None:
         """Start PeekingDuck's pipeline"""
