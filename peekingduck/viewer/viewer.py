@@ -250,9 +250,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.logger.debug(f"self.state={self.state}")
         self.logger.debug(f"self.is_output_playback={self.is_output_playback}")
         self.logger.debug(f"self.is_pipeline_running={self.is_pipeline_running}")
-        assert self.state != "play"
-        assert not self.is_output_playback
-        assert not self.is_pipeline_running
+        if self.state == "play" or self.is_output_playback or self.is_pipeline_running:
+            self.logger.warning(
+                "Inconsistent internal self states:\n"
+                f"  state={self.state} - expect !play"
+                f"  is_output_playback={self.is_output_playback} - expect False"
+                f"  is_pipeline_running={self.is_pipeline_running} - expect False"
+            )
 
         # start new pipeline here
         self.cancel_timer_function()
