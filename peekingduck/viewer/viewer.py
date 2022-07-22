@@ -16,10 +16,14 @@
 Implement PeekingDuck Viewer
 """
 
+import traceback
 from typing import List
+from contextlib import redirect_stderr
 from pathlib import Path
 import logging
+import os
 import platform
+import traceback
 import tkinter as tk
 from tkinter import filedialog
 from tkinter.messagebox import askyesno
@@ -27,6 +31,7 @@ import threading
 import copy
 import cv2
 import numpy as np
+from io import StringIO
 from PIL import Image, ImageTk
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
@@ -53,6 +58,21 @@ ZOOMS: List[float] = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is s
 # with some platforms (like Nvidia Jetsons)
 PLAY_BUTTON_TEXT = "Play"
 STOP_BUTTON_TEXT = "Stop"
+
+
+def parse_streams(io_stream: StringIO) -> str:
+    """Helper method to parse I/O streams.
+    Used to capture errors/exceptions from PeekingDuck.
+
+    Args:
+        io_stream (StringIO): the I/O stream to parse
+
+    Returns:
+        str: parsed stream
+    """
+    msg = io_stream.getvalue()
+    msg = os.linesep.join([s for s in msg.splitlines() if s])
+    return msg
 
 
 class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-methods
@@ -478,36 +498,56 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
     def run_pipeline_one_iteration(self) -> None:  # pylint: disable=too-many-branches
         """Run one pipeline iteration"""
         self.is_pipeline_running = True
-        for node in self._pipeline.nodes:
-            if self._pipeline.data.get("pipeline_end", False):
-                self._pipeline.terminate = True
-                if "pipeline_end" not in node.inputs:
-                    continue
-            if "all" in node.inputs:
-                inputs = copy.deepcopy(self._pipeline.data)
-            else:
-                inputs = {
-                    key: self._pipeline.data[key]
-                    for key in node.inputs
-                    if key in self._pipeline.data
-                }
-            if hasattr(node, "optional_inputs"):
-                # Nodes won't receive inputs with optional key if not found upstream
-                for key in node.optional_inputs:
-                    if key in self._pipeline.data:
-                        inputs[key] = self._pipeline.data[key]
-            if node.name.endswith("output.screen"):
-                pass  # disable duplicate video from output.screen
-            else:
-                outputs = node.run(inputs)
-                self._pipeline.data.update(outputs)
-            # check for FPS on first iteration
-            if self._frame_idx == 0 and node.name.endswith("input.visual"):
-                num_frames = node.total_frame_count
-                if num_frames > 0:
-                    self.tk_progress["maximum"] = num_frames
-                else:
-                    self.tk_progress["mode"] = "indeterminate"
+        err_runtime = False
+        exc_msg = ""
+        err_stream = StringIO()
+        # technote: Detect runtime exception with flag as exception object holds ref to
+        # error stack frame, preventing further objects from being freed.
+        with redirect_stderr(err_stream):
+            try:
+                for node in self._pipeline.nodes:
+                    if self._pipeline.data.get("pipeline_end", False):
+                        self._pipeline.terminate = True
+                        if "pipeline_end" not in node.inputs:
+                            continue
+                    if "all" in node.inputs:
+                        inputs = copy.deepcopy(self._pipeline.data)
+                    else:
+                        inputs = {
+                            key: self._pipeline.data[key]
+                            for key in node.inputs
+                            if key in self._pipeline.data
+                        }
+                    if hasattr(node, "optional_inputs"):
+                        # Nodes won't receive inputs with optional key if not found upstream
+                        for key in node.optional_inputs:
+                            if key in self._pipeline.data:
+                                inputs[key] = self._pipeline.data[key]
+                    if node.name.endswith("output.screen"):
+                        pass  # disable duplicate video from output.screen
+                    else:
+                        outputs = node.run(inputs)
+                        self._pipeline.data.update(outputs)
+                    # check for FPS on first iteration
+                    if self._frame_idx == 0 and node.name.endswith("input.visual"):
+                        num_frames = node.total_frame_count
+                        if num_frames > 0:
+                            self.tk_progress["maximum"] = num_frames
+                        else:
+                            self.tk_progress["mode"] = "indeterminate"
+            except RuntimeError:
+                err_runtime = True
+                exc_msg = traceback.format_exc()
+
+        # handle pipeline runtime error
+        if err_runtime:
+            self.logger.error("Runtime error when running pipeline:")
+            self.logger.error(f"Exception msg: {exc_msg}")
+            err_msg = parse_streams(err_stream)
+            self.logger.error(f"Error msg: {err_msg}")
+            # possible todo: detect OOM keywords in error stream/msg and purge memory
+            self.run_pipeline_end()
+            return
 
         # render img into screen output to Tkinter
         img = self._pipeline.data["img"]
@@ -531,18 +571,38 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.logger.debug("run pipeline start")
         self.logger.debug(f"pipeline path: {self.pipeline_path}")
         self.logger.debug(f"custom_nodes: {self.custom_nodes_parent_path}")
-        self._node_loader = DeclarativeLoader(
-            self.pipeline_path,
-            self.config_updates_cli,
-            self.custom_nodes_parent_path,
-            pkd_viewer=True,
-        )
-        self._pipeline: Pipeline = self._node_loader.get_pipeline()
-        self._set_header_running()
-        self.set_viewer_state_to_play()
-        self._set_status_text(f"Pipeline: {self.pipeline_full_path}")
-        self.is_pipeline_running = True
-        self._enable_progress()
+        # technotes: node __init__() is called in get_pipeline() below.
+        #            Detect runtime exception with flag and handle it outside as
+        #            exception object holds reference to stack frame where error was
+        #            raised, preventing memory from being freed.
+        err_runtime = False
+        exc_msg = ""
+        err_stream = StringIO()
+        with redirect_stderr(err_stream):
+            try:
+                self._node_loader = DeclarativeLoader(
+                    self.pipeline_path,
+                    self.config_updates_cli,
+                    self.custom_nodes_parent_path,
+                    pkd_viewer=True,
+                )
+                self._pipeline: Pipeline = self._node_loader.get_pipeline()
+            except RuntimeError:
+                err_runtime = True
+                exc_msg = traceback.format_exc()
+
+        # handle pipeline runtime error
+        if err_runtime:
+            self.logger.error("Runtime error when initialising pipeline:")
+            self.logger.error(f"Exception msg: {exc_msg}")
+            err_msg = parse_streams(err_stream)
+            self.logger.error(f"Error msg: {err_msg}")
+        else:
+            self._set_header_running()
+            self.set_viewer_state_to_play()
+            self._set_status_text(f"Pipeline: {self.pipeline_full_path}")
+            self.is_pipeline_running = True
+            self._enable_progress()
 
     def stop_running_pipeline(self) -> None:
         """Signal pipeline execution to be stopped"""
