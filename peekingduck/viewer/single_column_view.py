@@ -84,11 +84,17 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         lbl.grid(row=2, column=0, sticky="ne")
         lbl = tk.Label(info_frm, text="Path:", anchor=tk.E)
         lbl.grid(row=3, column=0, sticky="ne")
-        self._info_name = tk.Message(info_frm, text="name", width=PLAYLIST_WIDTH)
+        self._info_name = tk.Message(
+            info_frm, text="name", width=PLAYLIST_WIDTH, anchor=tk.W
+        )
         self._info_name.grid(row=1, column=1, sticky="nw")
-        self._info_datetime = tk.Label(info_frm, text="datetime", anchor=tk.W)
+        self._info_datetime = tk.Message(
+            info_frm, text="datetime", width=PLAYLIST_WIDTH, anchor=tk.W
+        )
         self._info_datetime.grid(row=2, column=1, sticky="nw")
-        self._info_path = tk.Message(info_frm, text="path", width=PLAYLIST_WIDTH)
+        self._info_path = tk.Message(
+            info_frm, text="path", width=PLAYLIST_WIDTH, anchor=tk.W
+        )
         self._info_path.grid(row=3, column=1, sticky="nw")
 
         num_col, _ = info_frm.grid_size()  # config column sizes
