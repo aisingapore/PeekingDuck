@@ -26,7 +26,7 @@ import platform
 import traceback
 import tkinter as tk
 from tkinter import filedialog
-from tkinter.messagebox import askyesno
+from tkinter.messagebox import askyesno, showerror
 import threading
 import copy
 import cv2
@@ -51,10 +51,6 @@ FPS_60: int = int(1000 / 60)  # milliseconds per iteration
 ZOOM_TEXT: List[str] = ["50%", "75%", "100%", "125%", "150%", "200%", "250%", "300%"]
 ZOOM_DEFAULT_IDX: int = 2
 ZOOMS: List[float] = [0.5, 0.75, 1.0, 1.25, 1.50, 2.00, 2.50, 3.00]  # > 3x is slow!
-# PLAY_BUTTON_TEXT = "\u25B6"
-# STOP_BUTTON_TEXT = "\u23F9"
-# technotes: emoji-cons above don't render consistently on all OS'es, and/or play well
-# with some platforms (like Nvidia Jetsons)
 PLAY_BUTTON_TEXT = "Play"
 STOP_BUTTON_TEXT = "Stop"
 
@@ -236,7 +232,7 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.logger.debug(f"on delete pipeline {pipeline}")
         answer = askyesno(
             title="Confirm Delete Pipeline from Playlist",
-            message=f"Are you sure you want to delete {pipeline} from playlist?",
+            message=f"Are you sure you want to delete\n\n{pipeline}\n\nfrom playlist?",
         )
         if answer:
             self.playlist.delete_pipeline(pipeline)
@@ -483,6 +479,25 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
         self.state = "play"  # activate auto play (cf. self.timer_function)
         self.bkgd_job = None
 
+    def pipeline_error(self, exc_msg: str, err_stream: StringIO) -> None:
+        """Helper method to handle pipeline error conditions
+
+        Args:
+            exc_msg (str): message from exception object
+            err_stream (StringIO): error I/O stream
+        """
+        self.logger.error("Error when running pipeline:")
+        self.logger.error(f"Exception msg: {exc_msg}")
+        err_msg = parse_streams(err_stream)
+        self.logger.error(f"Error msg: {err_msg}")
+        self.run_pipeline_end()
+        self.set_viewer_state_to_stop()
+        if "FileNotFoundError" in exc_msg:
+            showerror(
+                "Pipeline Runtime Error",
+                f"Missing pipeline file:\n\n{self.pipeline_path}",
+            )
+
     def run_pipeline_end(self) -> None:
         """Called when pipeline execution is completed.
         To perform clean-up/housekeeping tasks to ensure system consistency"""
@@ -535,18 +550,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                             self.tk_progress["maximum"] = num_frames
                         else:
                             self.tk_progress["mode"] = "indeterminate"
-            except RuntimeError:
+            except Exception:  # pylint: disable=broad-except
                 err_runtime = True
                 exc_msg = traceback.format_exc()
 
         # handle pipeline runtime error
         if err_runtime:
-            self.logger.error("Runtime error when running pipeline:")
-            self.logger.error(f"Exception msg: {exc_msg}")
-            err_msg = parse_streams(err_stream)
-            self.logger.error(f"Error msg: {err_msg}")
-            # possible todo: detect OOM keywords in error stream/msg and purge memory
-            self.run_pipeline_end()
+            self.pipeline_error(exc_msg, err_stream)
             return
 
         # render img into screen output to Tkinter
@@ -587,16 +597,13 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                     pkd_viewer=True,
                 )
                 self._pipeline: Pipeline = self._node_loader.get_pipeline()
-            except RuntimeError:
+            except Exception:  # pylint: disable=broad-except
                 err_runtime = True
                 exc_msg = traceback.format_exc()
 
         # handle pipeline runtime error
         if err_runtime:
-            self.logger.error("Runtime error when initialising pipeline:")
-            self.logger.error(f"Exception msg: {exc_msg}")
-            err_msg = parse_streams(err_stream)
-            self.logger.error(f"Error msg: {err_msg}")
+            self.pipeline_error(exc_msg, err_stream)
         else:
             self._set_header_running()
             self.set_viewer_state_to_play()

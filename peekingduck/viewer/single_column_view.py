@@ -20,10 +20,6 @@ import tkinter as tk
 from tkinter import ttk
 from peekingduck.viewer.playlist import PipelineStats, PlayList
 
-# Emoji's
-DOWN_ARROW = "\u2B07"
-UP_ARROW = "\u2B06"
-RED_CROSS = "\u274C"
 OP_LIST = ["add", "delete", "play"]  # Supported GUI operations
 PLAYLIST_WIDTH = 200
 
