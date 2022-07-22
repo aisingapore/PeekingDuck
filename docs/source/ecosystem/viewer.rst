@@ -53,7 +53,7 @@ of interest.
 The current video frame number is shown to the right of the slider, serving as a
 position indicator.
 
-The ``Zoom In`` and ``Zoom Out`` buttons allow you to adjust the video size. 
+The ``+`` (zoom in) and ``-`` (zoom out) buttons allow you to adjust the video size. 
 
 
 Using the Pipeline Playlist
