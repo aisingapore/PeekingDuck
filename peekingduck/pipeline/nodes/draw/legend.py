@@ -50,15 +50,22 @@ class Node(AbstractNode):
         |img_data|
 
     Configs:
+        box_opacity (:obj:`float`): **default = 0.3**. |br|
+            Opacity of legend box. A value of 0.0 causes the legend box to be fully transparent,
+            while a value of 1.0 causes it to be fully opaque.
+        font (:obj:`Dict`): **default = {size: 0.7, thickness: 2}.** |br|
+            Size and thickness of font within legend box. Examples of visually acceptable options
+            are: |br|
+            720p video: {size: 0.7, thickness: 2} |br|
+            1080p video: {size: 1.0, thickness: 3}
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
-            Position to draw legend box. "top" draws it at the top-left
-            position while "bottom" draws it at bottom-left.
+            Position to draw legend box. "top" draws it at the top-left position while "bottom"
+            draws it at bottom-left.
         show (:obj:`List[str]`): **default = []**. |br|
-            Include in this list the desired data type(s) to be drawn within
-            the legend box, such as ``["fps", "count", "cum_avg"]`` in the
-            example screenshot. Custom data types produced by custom nodes are
-            also supported. If no data types are included, an error will be
-            produced.
+            Include in this list the desired data type(s) to be drawn within the legend box, such
+            as ``["fps", "count", "cum_avg"]`` in the example screenshot. Custom data types
+            produced by custom nodes are also supported. If no data types are included, an error
+            will be produced.
 
     .. versionchanged:: 1.2.0
         Merged previous ``all_legend_items`` and ``include`` configs into a
