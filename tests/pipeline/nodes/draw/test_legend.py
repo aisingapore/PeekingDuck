@@ -61,6 +61,8 @@ class TestLegend:
                     "output": ["img"],
                     "show": [],
                     "position": "bottom",
+                    "box_opacity": 0.3,
+                    "font": {"size": 0.7, "thickness": 2},
                 }
             )
         assert (
