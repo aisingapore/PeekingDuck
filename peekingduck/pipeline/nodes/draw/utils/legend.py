@@ -27,52 +27,65 @@ from peekingduck.pipeline.nodes.draw.utils.constants import (
     FILLED,
     PRIMARY_PALETTE,
     PRIMARY_PALETTE_LENGTH,
-    SMALL_FONTSCALE,
-    THICK,
     WHITE,
 )
 from peekingduck.pipeline.nodes.draw.utils.general import get_image_size
 
+ZONE_COUNTS_HEADING = "-ZONE COUNTS-"
 
-class Legend:
+
+class Legend:  # pylint: disable=too-many-instance-attributes
     """Legend class that uses available info to draw legend box on frame"""
 
-    def __init__(self) -> None:
-        self.legend_left_x = 15
+    def __init__(
+        self,
+        items: List[str],
+        position: str,
+        box_opacity: float,
+        font: Dict[str, Union[float, int]],
+    ) -> None:
+        self.items = items  # list of items to be drawn in legend box
+        self.position = position
+        self.box_opacity = box_opacity
+        self.font_size = font["size"]
+        self.font_thickness = font["thickness"]
 
         self.frame = None
+        self.legend_left_x = 15
         self.legend_starting_y = 0
         self.delta_y = 0
         self.legend_height = 0
+        self.item_height = cv2.getTextSize(
+            "",
+            FONT_HERSHEY_SIMPLEX,
+            self.font_size,
+            self.font_thickness,
+        )[0][1]
+        self.item_padding = self.item_height // 2
 
     def draw(
         self,
         inputs: Dict[str, Any],
-        items: List[str],
-        position: str,
-        box_opacity: float,
     ) -> np.ndarray:
         """Draw legends onto image
 
         Args:
             inputs (dict): dictionary of all available inputs for drawing the legend
-            items (list): list of items to be drawn in legend
-            position (str): used to control whether legend box is drawn on top or bottom
         """
         self.frame = inputs["img"]
 
-        self.legend_height = self._get_legend_height(inputs, items)
-        self.legend_width = self._get_legend_width(inputs, items)
-        self._set_legend_variables(position)
+        self.legend_height = self._get_legend_height(inputs)
+        self.legend_width = self._get_legend_width(inputs)
+        self._set_legend_variables()
 
-        self._draw_legend_box(self.frame, box_opacity)
-        y_pos = self.legend_starting_y + 20
-        for item in items:
+        self._draw_legend_box(self.frame)
+        y_pos = self.legend_starting_y + self.item_height
+        for item in self.items:
             if item == "zone_count":
                 self._draw_zone_count(self.frame, y_pos, inputs[item])
             else:
                 self.draw_item_info(self.frame, y_pos, item, inputs[item])
-            y_pos += 20
+            y_pos += self.item_height + self.item_padding
 
     def draw_item_info(
         self,
@@ -107,11 +120,11 @@ class Legend:
         cv2.putText(
             frame,
             text,
-            (self.legend_left_x + 10, y_pos),
+            (self.legend_left_x + self.item_padding, y_pos),
             FONT_HERSHEY_SIMPLEX,
-            SMALL_FONTSCALE,
+            self.font_size,
             WHITE,
-            THICK,
+            self.font_thickness,
             LINE_AA,
         )
 
@@ -125,23 +138,25 @@ class Legend:
             y_pos (int): y position to draw the count info text
             counts (list): list of zone counts
         """
-        text = "-ZONE COUNTS-"
         cv2.putText(
             frame,
-            text,
-            (self.legend_left_x + 10, y_pos),
+            ZONE_COUNTS_HEADING,
+            (self.legend_left_x + self.item_padding, y_pos),
             FONT_HERSHEY_SIMPLEX,
-            SMALL_FONTSCALE,
+            self.font_size,
             WHITE,
-            THICK,
+            self.font_thickness,
             LINE_AA,
         )
         for i, count in enumerate(counts):
-            y_pos += 20
+            y_pos += self.item_height + self.item_padding
             cv2.rectangle(
                 frame,
-                (self.legend_left_x + 10, y_pos - 14),
-                (self.legend_left_x + 30, y_pos + 5),
+                (self.legend_left_x + self.item_padding, y_pos),
+                (
+                    self.legend_left_x + self.item_padding + self.item_height,
+                    y_pos - self.item_height,
+                ),
                 PRIMARY_PALETTE[(i + 1) % PRIMARY_PALETTE_LENGTH],
                 FILLED,
             )
@@ -149,27 +164,25 @@ class Legend:
             cv2.putText(
                 frame,
                 text,
-                (40, y_pos),
+                (self.legend_left_x + self.item_padding + self.item_height, y_pos),
                 FONT_HERSHEY_SIMPLEX,
-                SMALL_FONTSCALE,
+                self.font_size,
                 WHITE,
-                THICK,
+                self.font_thickness,
                 LINE_AA,
             )
 
-    def _draw_legend_box(self, frame: np.ndarray, box_opacity: float) -> None:
+    def _draw_legend_box(self, frame: np.ndarray) -> None:
         """draw pts of selected object onto frame
 
         Args:
             frame (np.array): image of current frame
-            zone_count (List[float]): object count, likely people, of each zone used
-            in the zone analytics
         """
         assert self.legend_height is not None
         overlay = frame.copy()
         cv2.rectangle(
             overlay,
-            (self.legend_left_x, self.legend_starting_y),
+            (self.legend_left_x, self.legend_starting_y - self.item_padding),
             (
                 self.legend_left_x + self.legend_width,
                 self.legend_starting_y + self.legend_height,
@@ -178,19 +191,20 @@ class Legend:
             FILLED,
         )
         # apply the overlay
-        cv2.addWeighted(overlay, box_opacity, frame, 1 - box_opacity, 0, frame)
+        cv2.addWeighted(
+            overlay, self.box_opacity, frame, 1 - self.box_opacity, 0, frame
+        )
 
-    @staticmethod
-    def _get_legend_height(inputs: Dict[str, Any], items: List[str]) -> int:
+    def _get_legend_height(self, inputs: Dict[str, Any]) -> int:
         """Get height of legend box needed to contain all items drawn"""
-        no_of_items = len(items)
-        if "zone_count" in items:
+        no_of_items = len(self.items)
+        if "zone_count" in self.items:
             # increase the number of items according to number of zones
             no_of_items += len(inputs["zone_count"])
-        return 12 * no_of_items + 8 * (no_of_items - 1) + 20
+        return (self.item_height + self.item_padding) * no_of_items
 
-    @staticmethod
     def _get_item_width(
+        self,
         item_name: str,
         item_info: Union[int, float, str],
     ) -> int:
@@ -217,27 +231,34 @@ class Legend:
         text_size = cv2.getTextSize(
             text,
             FONT_HERSHEY_SIMPLEX,
-            SMALL_FONTSCALE,
-            THICK,
+            self.font_size,
+            self.font_thickness,
         )
 
         return text_size[0][0]
 
-    @staticmethod
-    def _get_legend_width(inputs: Dict[str, Any], items: List[str]) -> int:
+    def _get_legend_width(self, inputs: Dict[str, Any]) -> int:
         """Get width of legened box needed to contain all items drawn"""
         max_width = 0
-        for item in items:
+        for item in self.items:
             if item != "zone_count":
-                max_width = max(max_width, Legend._get_item_width(item, inputs[item]))
+                max_width = max(max_width, self._get_item_width(item, inputs[item]))
+            else:
+                max_width = cv2.getTextSize(
+                    ZONE_COUNTS_HEADING,
+                    FONT_HERSHEY_SIMPLEX,
+                    self.font_size,
+                    self.font_thickness,
+                )[0][0]
 
-        # give an additional buffer of 20
-        return max_width + 20
+        return max_width + 2 * self.item_padding
 
-    def _set_legend_variables(self, position: str) -> None:
+    def _set_legend_variables(self) -> None:
         assert self.legend_height != 0
-        if position == "top":
-            self.legend_starting_y = 10
+        if self.position == "top":
+            self.legend_starting_y = self.item_padding
         else:
             _, image_height = get_image_size(self.frame)
-            self.legend_starting_y = image_height - 10 - self.legend_height
+            self.legend_starting_y = (
+                image_height - self.item_padding - self.legend_height
+            )

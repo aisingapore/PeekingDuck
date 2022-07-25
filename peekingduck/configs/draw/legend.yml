@@ -4,3 +4,7 @@ output: ["img"]
 position: "bottom"
 box_opacity: 0.3
 show: []
+font: {
+  size: 0.5,
+  thickness: 2
+}

@@ -85,7 +85,8 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "none".
         """
         _check_data_type(inputs, self.show)
-        Legend().draw(inputs, self.show, self.position, self.box_opacity)
+        legend = Legend(self.show, self.position, self.box_opacity, self.font)
+        legend.draw(inputs)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
