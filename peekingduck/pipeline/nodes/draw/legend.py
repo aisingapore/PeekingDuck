@@ -51,8 +51,8 @@ class Node(AbstractNode):
 
     Configs:
         box_opacity (:obj:`float`): **default = 0.3**. |br|
-            Opacity of legend box. A value of 0.0 causes the legend box to be fully transparent,
-            while a value of 1.0 causes it to be fully opaque.
+            Opacity of legend box background. A value of 0.0 causes the legend box background to be
+            fully transparent, while a value of 1.0 causes it to be fully opaque.
         font (:obj:`Dict`): **default = {size: 0.7, thickness: 2}.** |br|
             Size and thickness of font within legend box. Examples of visually acceptable options
             are: |br|
@@ -76,6 +76,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.legend = Legend(self.show, self.position, self.box_opacity, self.font)
         if not self.show:
             raise KeyError(
                 "To display information in the legend box, at least one data type must be "
@@ -92,8 +93,7 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "none".
         """
         _check_data_type(inputs, self.show)
-        legend = Legend(self.show, self.position, self.box_opacity, self.font)
-        legend.draw(inputs)
+        self.legend.draw(inputs)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
