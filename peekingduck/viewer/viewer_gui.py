@@ -96,15 +96,15 @@ def create_header(viewer) -> None:  # type: ignore
     header_frm = ttk.Frame(viewer.root, name="header_frm")
     header_frm.pack(side=tk.TOP, fill=tk.X)
     viewer.tk_header_frm = header_frm
-    # row 0: viewer header text (span 5 columns)
-    lbl = tk.Label(header_frm, text="Viewer Header", font=("TkFixedFont 18"))
-    lbl.grid(row=0, column=0, columnspan=5, sticky="nsew")
-    viewer.tk_header = lbl
     # row 0: logo (left)
     viewer.img_logo = load_image(LOGO, resize_pct=0.10)
     logo = tk.Label(header_frm, image=viewer.img_logo, anchor=tk.W)
-    logo.grid(row=0, column=0, sticky="nsew")
+    logo.grid(row=0, column=0, sticky="nw")
     viewer.tk_logo = logo
+    # row 1: viewer header text (center)
+    lbl = tk.Label(header_frm, text="Viewer Header", font=("TkFixedFont 16"))
+    lbl.grid(row=1, column=0, sticky="nsew")
+    viewer.tk_header = lbl
     num_col, _ = header_frm.grid_size()  # config column sizes
     for i in range(num_col):
         header_frm.grid_columnconfigure(i, weight=1)
