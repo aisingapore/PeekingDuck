@@ -194,7 +194,7 @@ class VideoNoThread:
         self.mirror = mirror_image
 
     def __del__(self) -> None:
-        # dotw: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
+        # Note: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
         #       but does not crash on Intel MacBook Pro Ubuntu 20.04 python 3.7
         # self.logger.debug("VideoNoThread.__del__")
         self.stream.release()

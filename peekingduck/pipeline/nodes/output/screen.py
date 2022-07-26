@@ -43,16 +43,29 @@ class Node(AbstractNode):
         window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
+
+    .. note::
+
+        **See Also:**
+
+        :ref:`PeekingDuck Viewer<pkd_viewer>`: a GUI for running PeekingDuck pipelines.
+
+        .. figure:: /assets/diagrams/viewer_cat_computer.png
+
+        The PeekingDuck Viewer offers a GUI to view and analyze pipeline output.
+        It has controls to re-play output video, scrub to a frame of interest,
+        zoom video, and a playlist for managing multiple pipelines.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-        cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
+        pkd_viewer = config["pkd_viewer"] if config is not None else False
+        if not pkd_viewer:
+            cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+            cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
-
         img = inputs["img"]
         if self.window_size["do_resizing"]:
             img = cv2.resize(
