@@ -98,7 +98,7 @@ def create_header(viewer) -> None:  # type: ignore
     viewer.tk_header_frm = header_frm
     # row 0: logo (left)
     logo_path = Path(__file__).parent / LOGO
-    viewer.img_logo = load_image(logo_path, resize_pct=0.10)
+    viewer.img_logo = load_image(str(logo_path), resize_pct=0.10)
     logo = tk.Label(header_frm, image=viewer.img_logo, anchor=tk.W)
     logo.grid(row=0, column=0, sticky="nw")
     viewer.tk_logo = logo
