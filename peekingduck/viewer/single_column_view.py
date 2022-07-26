@@ -20,7 +20,7 @@ import tkinter as tk
 from tkinter import ttk
 from peekingduck.viewer.playlist import PipelineStats, PlayList
 
-OP_LIST = ["add", "delete", "play"]  # Supported GUI operations
+OP_LIST = ["add", "delete", "run"]  # Supported GUI operations
 PLAYLIST_WIDTH = 200
 
 
@@ -65,7 +65,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         # - binding to ButtonRelease (mouse up) event solves above issue
         self._btn_add.bind("<ButtonRelease-1>", self.btn_add_press)
         self._btn_delete.bind("<ButtonRelease-1>", self.btn_delete_press)
-        self._btn_play.bind("<ButtonRelease-1>", self.btn_play_press)
+        self._btn_play.bind("<ButtonRelease-1>", self.btn_run_press)
         for child in playlist_ctrl_frm.winfo_children():
             child.pack(side=tk.LEFT)  # pack above buttons
 
@@ -140,7 +140,7 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         """Register callback function in Player to be called when playlist events are generated
 
         Args:
-            operation (str): One of [ "add", "delete", "play" ]
+            operation (str): One of [ "add", "delete", "run" ]
             player_callback (Callable): The hook to the Player
         """
         if operation in OP_LIST:
@@ -210,18 +210,16 @@ class SingleColumnPlayListView:  # pylint: disable=too-few-public-methods, too-m
         if self._callback["delete"](pipeline=stats.pipeline):
             self.redraw_view()
 
-    def btn_play_press(
-        self, event: tk.Event  # pylint: disable=unused-argument
-    ) -> None:
-        """Callback to handle "Play" button
+    def btn_run_press(self, event: tk.Event) -> None:  # pylint: disable=unused-argument
+        """Callback to handle "Run" button
 
         Args:
             event (tk.Event): Tk event object
         """
         i = self.get_selected_index()
         stats = self._index_to_stats_map[i]
-        self.logger.debug(f"btn_play_press: {stats.pipeline}")
-        self._callback["play"](pipeline=stats.pipeline)
+        self.logger.debug(f"btn_run_press: {stats.pipeline}")
+        self._callback["run"](pipeline=stats.pipeline)
 
     def header_press(self, event: tk.Event) -> None:  # pylint: disable=unused-argument
         """Callback when header is clicked, changes sort order

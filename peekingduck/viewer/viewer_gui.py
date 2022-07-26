@@ -186,7 +186,7 @@ def create_body(viewer) -> None:  # type: ignore
     viewer.tk_playlist_view = playlist_view
     playlist_view.register_callback("add", viewer.on_add_pipeline)
     playlist_view.register_callback("delete", viewer.on_delete_pipeline)
-    playlist_view.register_callback("play", viewer.on_play_pipeline)
+    playlist_view.register_callback("run", viewer.on_run_pipeline)
     viewer.playlist_show = True
 
     # video image

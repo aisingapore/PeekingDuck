@@ -46,7 +46,7 @@ from peekingduck.viewer.viewer_utils import (
 ####################
 BUTTON_DELAY: int = 250  # milliseconds (0.25 of a second)
 BUTTON_REPEAT: int = int(1000 / 60)  # milliseconds (60 fps)
-CHANGE_PIPELINE_DELAY: float = 1.0  # seconds before switching pipelines
+STOP_PIPELINE_DELAY: float = 2.0  # seconds before switching pipelines
 FPS_60: int = int(1000 / 60)  # milliseconds per iteration
 ZOOM_TEXT: List[str] = ["50%", "75%", "100%", "125%", "150%", "200%", "250%", "300%"]
 ZOOM_DEFAULT_IDX: int = 2
@@ -167,10 +167,23 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
 
     def on_exit(self) -> None:
         """Handle viewer quit event"""
+        self.logger.info("quitting viewer")
+
+        if self.is_pipeline_running or self.is_output_playback:
+            self.logger.debug("stopping current pipeline")
+            if self.is_pipeline_running:
+                self.run_pipeline_end()
+            elif self.is_output_playback:
+                self.stop_playback()
+
+            # add non-blocking wait to let background task clean up properly
+            self.logger.debug(f"wait {STOP_PIPELINE_DELAY} sec")
+            wait_event = threading.Event()
+            wait_event.wait(STOP_PIPELINE_DELAY)
+
+        self.cancel_timer_function()
         self.logger.debug("saving playlist")
         self.playlist.save_playlist_file()
-        self.logger.info("quitting viewer")
-        self.cancel_timer_function()
         self.root.destroy()
 
     def on_keypress(self, event: tk.Event) -> None:
@@ -239,28 +252,23 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
             return True
         return False
 
-    def on_play_pipeline(self, pipeline: str) -> None:
-        """Callback function for Play pipeline
+    def on_run_pipeline(self, pipeline: str) -> None:
+        """Callback function for Run pipeline
 
         Args:
             pipeline (str): Pipeline to execute
         """
-        self.logger.debug(f"on play pipeline {pipeline}")
-        if pipeline == str(self.pipeline_full_path):
-            self.logger.info("already running, do nothing")
-            return
-
         # run new pipeline
-        self.logger.debug("switch to new pipeline")
+        self.logger.debug(f"on run pipeline {pipeline}")
         if self.is_pipeline_running:
             self.run_pipeline_end()
         elif self.is_output_playback:
             self.stop_playback()
 
         # add non-blocking wait to let background task clean up properly
-        self.logger.debug(f"wait {CHANGE_PIPELINE_DELAY} sec")
+        self.logger.debug(f"wait {STOP_PIPELINE_DELAY} sec")
         wait_event = threading.Event()
-        wait_event.wait(CHANGE_PIPELINE_DELAY)
+        wait_event.wait(STOP_PIPELINE_DELAY)
 
         # double check status variables
         self.logger.debug(f"self.state={self.state}")
