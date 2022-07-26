@@ -28,18 +28,18 @@ from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector i
 
 
 class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
-    """YolactEdge model with ResNet 101 FPN backbone"""
+    """YolactEdge model with ResNet 50 FPN backbone"""
 
     def __init__(self, config: Dict[str, Any]) -> None:
         self.config = config
         self.logger = logging.getLogger(__name__)
-
+        self.logger.info("YolactEdgeModel() initialized.")
         model_dir = self.download_weights()
 
         with open(model_dir / self.weights["classes_file"]) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
-        self.detect_ids = self.config["detect"]  # change "detect_ids" to "detect"
+        self.detect_ids = self.config["detect"]
         self.detector = Detector(
             model_dir,
             class_names,

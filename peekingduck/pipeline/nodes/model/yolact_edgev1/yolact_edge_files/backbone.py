@@ -46,7 +46,7 @@ Modifications include:
 
 from typing import Callable, List, Any, Tuple, Union
 from functools import partial
-from torch import nn
+import torch.nn as nn
 from torch import Tensor
 
 
@@ -69,7 +69,6 @@ class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
             inplanes, planes, kernel_size=1, bias=False, dilation=dilation
         )
         self.bn1 = norm_layer(planes)
-
         self.conv2 = nn.Conv2d(
             planes,
             planes,
@@ -80,17 +79,12 @@ class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
             dilation=dilation,
         )
         self.bn2 = norm_layer(planes)
-
         self.conv3 = nn.Conv2d(
             planes, planes * 4, kernel_size=1, bias=False, dilation=dilation
         )
         self.bn3 = norm_layer(planes * 4)
         self.relu = nn.ReLU(inplace=True)
-
-        if downsample is not None:
-            self.downsample = downsample
-        else:
-            self.downsample = nn.Sequential()
+        self.downsample = nn.Sequential() if downsample is None else downsample
         self.stride = stride
 
     def forward(self, inputs: Tensor) -> Tensor:
@@ -323,10 +317,6 @@ class MobileNetV2Backbone(nn.Module):
         self.layers.append(ConvBNReLU(3, input_channel, stride=2))
         self.channels.append(input_channel)
 
-        # t_val: expansion factor
-        # c_val: output channels
-        # n_val: number of repetitions
-        # s_val: stride of the first layer of each sequence
         for t_val, c_val, n_val, s_val in inverted_residual_setting:
             input_channel = self._make_layer(
                 input_channel,
@@ -355,7 +345,19 @@ class MobileNetV2Backbone(nn.Module):
         s_val: int,
         block: Callable,
     ) -> int:
-        """A layer is a combination of inverted residual blocks"""
+        """A layer is a combination of inverted residual blocks
+        Args:
+            input_channel (int): The number of input channels to the first block.
+            width_mult (float): The width multiplier for the model.
+            round_nearest (int): The multiple to round the number of channels to.
+            t_val (int): expansion factor
+            c_val (int): output channels
+            n_val (int): number of repetitions
+            s_val (int): stride of the first layer of each sequence
+
+        Returns:
+            input_channel (int)
+        """
         layers = []
         output_channel = self._make_divisible(c_val * width_mult, round_nearest)
 

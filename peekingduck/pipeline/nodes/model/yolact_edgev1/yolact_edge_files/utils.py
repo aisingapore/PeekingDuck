@@ -54,12 +54,12 @@ from torch import Tensor
 class FastBaseTransform(torch.nn.Module):
     """
     Transform that does all operations on the GPU for improved speed.
-    This doesn't suppport a lot of configs and should only be used for production.
     Maintain this as necessary.
     """
 
-    def __init__(self) -> None:
+    def __init__(self, input_size: Tuple[int, int]) -> None:
         super().__init__()
+        self.input_size = input_size
         if torch.cuda.is_available():
             self.mean = (
                 Tensor((103.94, 116.78, 123.68)).float().cuda()[None, :, None, None]
@@ -82,7 +82,7 @@ class FastBaseTransform(torch.nn.Module):
         self.std = self.std.to(img.device)
 
         img = img.permute(0, 3, 1, 2).contiguous()
-        img = F.interpolate(img, (550, 550), mode="bilinear", align_corners=False)
+        img = F.interpolate(img, self.input_size, mode="bilinear", align_corners=False)
 
         img = (img - self.mean) / self.std
         img = img[:, (2, 1, 0), :, :].contiguous()
@@ -95,10 +95,10 @@ class InterpolateModule(nn.Module):
     Any arguments you give it just get passed along for the ride.
     """
 
-    def __init__(self, *args: Any, **kwdargs: Any) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__()
         self.args = args
-        self.kwdargs = kwdargs
+        self.kwargs = kwargs
 
     def forward(self, inputs: Tensor) -> Tensor:
         """
@@ -108,7 +108,7 @@ class InterpolateModule(nn.Module):
         Returns:
             A tensor of shape (N, C, H', W')
         """
-        return F.interpolate(inputs, *self.args, **self.kwdargs)
+        return F.interpolate(inputs, *self.args, **self.kwargs)
 
 
 def make_net(
@@ -123,9 +123,6 @@ def make_net(
     Args:
         in_channels (int): number of channels in the input
         conf (List[Any]): a list of configs to create the network
-
-    Returns:
-
     """
 
     def make_layer(layer_config: Tuple[int, int, dict]) -> List[Callable]:
@@ -183,7 +180,7 @@ def make_extra(num_layers: int, out_channels: int) -> Callable:
     return out
 
 
-def jaccard(box_a: Tensor, box_b: Tensor, iscrowd: bool = False) -> Tensor:
+def jaccard(box_a: Tensor, box_b: Tensor, is_crowd: bool = False) -> Tensor:
     """Compute the jaccard overlap of two sets of boxes.  The jaccard overlap
     is simply the intersection over union of two boxes.  Here we operate on
     ground truth boxes and default boxes. If iscrowd=True, put the crowd in box_b.
@@ -191,11 +188,11 @@ def jaccard(box_a: Tensor, box_b: Tensor, iscrowd: bool = False) -> Tensor:
         A ∩ B / A ∪ B = A ∩ B / (area(A) + area(B) - A ∩ B)
 
     Args:
-        box_a: (Tensor) Ground truth bounding boxes, Shape: [num_objects,4]
-        box_b: (Tensor) Prior boxes from priorbox layers, Shape: [num_priors,4]
+        box_a (Tensor): Ground truth bounding boxes, Shape: [num_objects,4]
+        box_b (Tensor): Prior boxes from priorbox layers, Shape: [num_priors,4]
 
     Return:
-        out: (Tensor) Shape: [box_a.size(0), box_b.size(0)]
+        out (Tensor): Shape: [box_a.size(0), box_b.size(0)]
     """
     use_batch = True
     if box_a.dim() == 2:
@@ -214,7 +211,7 @@ def jaccard(box_a: Tensor, box_b: Tensor, iscrowd: bool = False) -> Tensor:
         .expand_as(inter)
     )
     union = area_a + area_b - inter
-    out = inter / area_a if iscrowd else inter / union
+    out = inter / area_a if is_crowd else inter / union
     return out if use_batch else out.squeeze(0)
 
 
@@ -310,3 +307,76 @@ def decode(loc: Tensor, priors: Tensor, use_yolo_regressors: bool = False) -> Te
         boxes[:, 2:] += boxes[:, :2]
 
     return boxes
+
+
+def sanitize_coordinates(
+    _x1: Tensor, _x2: Tensor, img_size: int, padding: int = 0, cast: bool = True
+) -> Tuple[Tensor, Tensor]:
+    """Sanitizes the input coordinates so that x1 < x2, x1 != x2, x1 >= 0,
+    and x2 <= image_size. Also converts from relative to absolute coordinates and
+    casts the results to long tensors. If cast is false, the result won't be cast
+    to longs.
+
+    Args:
+        _x1 (Tensor): input coordinate of x1
+        _x2 (Tensor): input coordinate of x2
+        img_size (int): _description_
+        padding (int, optional): Padding value. Defaults to 0.
+        cast (bool, optional): Cast the results to long tensors. Defaults to True.
+
+    Returns:
+        _type_: _description_
+    """
+    _x1 = _x1 * img_size
+    _x2 = _x2 * img_size
+    if cast:
+        _x1 = _x1.long()
+        _x2 = _x2.long()
+    x_1 = torch.min(_x1, _x2)
+    x_2 = torch.max(_x1, _x2)
+    x_1 = torch.clamp(x_1 - padding, min=0)
+    x_2 = torch.clamp(x_2 + padding, max=img_size)
+    return x_1, x_2
+
+
+def crop(  # pylint: disable=too-many-locals
+    masks: Tensor, boxes: Tensor, padding: int = 1
+) -> Tensor:
+    """ "Crop" predicted masks by zeroing out everything not in the predicted bbox.
+    Vectorized by Chong Zhou.
+
+    Args:
+        masks (Tensor): Uncropped mask tensor values in uint8
+        boxes (Tensor): x1, y1, x2, y2 values of the bounding box detection
+        padding (int, optional):  Defaults to 1.
+
+    Returns:
+        out (Tensor): cropped mask tensor
+    """
+    height, width, batch = masks.size()
+    x_1, x_2 = sanitize_coordinates(
+        boxes[:, 0], boxes[:, 2], width, padding, cast=False
+    )
+    y_1, y_2 = sanitize_coordinates(
+        boxes[:, 1], boxes[:, 3], height, padding, cast=False
+    )
+
+    rows = (
+        torch.arange(width, device=masks.device, dtype=x_1.dtype)
+        .view(1, -1, 1)
+        .expand(height, width, batch)
+    )
+
+    cols = (
+        torch.arange(height, device=masks.device, dtype=x_1.dtype)
+        .view(-1, 1, 1)
+        .expand(height, width, batch)
+    )
+
+    masks_left = rows >= x_1.view(1, 1, -1)
+    masks_right = rows < x_2.view(1, 1, -1)
+    masks_up = cols >= y_1.view(1, 1, -1)
+    masks_down = cols < y_2.view(1, 1, -1)
+    crop_mask = masks_left * masks_right * masks_up * masks_down
+    out = masks * crop_mask.float()
+    return out

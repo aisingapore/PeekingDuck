@@ -68,7 +68,7 @@ class Node(AbstractNode):
         self.model = yolact_edge_model.YolactEdgeModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Reads `img` from `inputs` and return the bboxes and masks of the detect
+        """Reads `img` from `inputs` and return the bboxes and masks of the detected
         objects.
 
         The classes of objects to be detected can be specified through the

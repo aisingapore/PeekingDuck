@@ -27,17 +27,18 @@ import torch
 
 import numpy as np
 
-
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
     YolactEdge,
 )
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
     FastBaseTransform,
+    crop,
 )
 
 
 class Detector:  # pylint: disable=too-many-instance-attributes
-    """Detector class to handle detection of bboxes and masks for yolact_edge
+    """Detector class to handle detection of bboxes and masks for YolactEdge
+
     Attributes:
         logger (logging.Logger): Events logger.
         config (Dict[str, Any]): YolactEdge node configuration.
@@ -63,6 +64,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.class_names = class_names
+        self.detect_ids = detect_ids
+        self.detect_ids_tensor = torch.tensor(
+            detect_ids, dtype=torch.int64, device=self.device
+        )
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
@@ -72,14 +77,17 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.update_detect_ids(detect_ids)
         self.yolact_edge = self._create_yolact_edge_model()
+        self.filtered_output: Dict[str, torch.Tensor] = dict()
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
         self, image: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """Predict instance masks from image
+        """YolactEdge masks and bboxes prediction function
+
         Args:
             image (np.ndarray): image in numpy array.
+
         Returns:
             bboxes (np.ndarray): array of detected bboxes
             labels (np.ndarray): array of labels
@@ -94,16 +102,16 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 torch.set_default_tensor_type("torch.cuda.FloatTensor")
             else:
                 torch.set_default_tensor_type("torch.FloatTensor")
-
         img_shape = image.shape[:2]
         model = self.yolact_edge
-
         if torch.cuda.is_available():
             frame = torch.from_numpy(image).cuda().float()
         else:
             frame = torch.from_numpy(image).float()
 
-        preds = model(FastBaseTransform()(frame.unsqueeze(0)))["pred_outs"]
+        preds = model(FastBaseTransform(self.input_size)(frame.unsqueeze(0)))[
+            "pred_outs"
+        ]
         preds_pp = self._postprocess(preds[0], img_shape)
 
         if torch.cuda.is_available():
@@ -149,7 +157,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(self.model_type)
+        return YolactEdge(self.model_type, self.input_size[0])
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
@@ -193,15 +201,19 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of detection scores
             - An array of masks
         """
-        if network_output is None:
-            return [Tensor()] * 4
-
         keep = network_output["score"] > self.score_threshold
         for k in network_output:
             if k != "proto":
                 network_output[k] = network_output[k][keep]
-        if network_output["score"].size(0) == 0:
+        if network_output["score"].size(0) == 0 or network_output is None:
             return [Tensor()] * 4
+
+        detect_filter = torch.where(
+            torch.isin(network_output["class"], self.detect_ids_tensor)
+        )
+
+        for output_key in network_output.keys():
+            self.filtered_output[output_key] = network_output[output_key][detect_filter]
 
         classes = network_output["class"]
         boxes = network_output["box"]
@@ -210,7 +222,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         proto_data = network_output["proto"]
 
         masks = proto_data @ masks.t()
-        masks = torch.sigmoid(masks).permute(2, 0, 1).contiguous()
+        masks = torch.sigmoid(masks)
+
+        masks = crop(masks, boxes)
+
+        masks = masks.permute(2, 0, 1).contiguous()
         masks = (
             F.interpolate(
                 masks.unsqueeze(0),
@@ -221,5 +237,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             .squeeze(0)
             .gt_(0.5)
         )
+
+        classes = classes[detect_filter]
+        boxes = boxes[detect_filter]
+        scores = scores[detect_filter]
+        masks = masks[detect_filter]
 
         return classes, scores, boxes, masks

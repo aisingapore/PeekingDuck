@@ -79,6 +79,7 @@ Modifications include:
 - Removed unused FlowNetMiniTRT class
 - Removed unused SPA class
 - Removed unused FPN class
+- Removed traditional NMS
 """
 
 import logging
@@ -112,9 +113,6 @@ ScriptModuleWrapper = torch.jit.ScriptModule
 SELECTED_LAYERS = list(range(1, 4))  # ResNet 50/101 FPN backbone
 # SELECTED_LAYERS = [3, 4, 6] # MobileNetV2
 
-SCORE_THRESHOLD = 0.1
-TOP_K = 15  # Change for top number of detections
-
 NUM_DOWNSAMPLE = 2
 FPN_NUM_FEATURES = 256
 NUM_CLASSES = 81
@@ -124,7 +122,7 @@ MAX_NUM_DETECTIONS = 100
 class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
     """YolactEdge model module."""
 
-    def __init__(self, model_type: str) -> None:
+    def __init__(self, model_type: str, input_size: int) -> None:
         super().__init__()
 
         self.backbone: Union[ResNetBackbone, MobileNetV2Backbone]
@@ -156,8 +154,6 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
             selected_layers = [3, 4, 6]
         while len(self.backbone.layers) < num_layers:
             self.backbone.add_layer()
-
-        # self.backbone = backbone
 
         self.num_grids = 0
         self.proto_src = 0
@@ -195,6 +191,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
                 scales=self.pred_scales[idx],  # type: ignore
                 parent=parent,
                 index=idx,
+                input_size=input_size,
             )
             self.prediction_layers.append(pred)
 
@@ -208,7 +205,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
     def forward(self, inputs: Tensor) -> Dict[str, List]:
         """The input should be of size [batch_size, 3, img_h, img_w]
         Args:
-
+            inputs (Tensor): The input tensor
         Returns:
             outs_wrapper (Dict)
         """
@@ -224,7 +221,6 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         outs = self.fpn_phase_2(*outs_phase_1)
         outs_wrapper["outs_phase_2"] = [out.detach() for out in outs]
 
-        proto_out = None
         proto_x = inputs if self.proto_src is None else outs[self.proto_src]
         proto_out = self.proto_net(proto_x)
         proto_out = torch.nn.functional.relu(proto_out, inplace=True)
@@ -247,9 +243,17 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         return outs_wrapper
 
     def load_weights(self, path: Path) -> None:
-        """Loads weights from a compressed save file."""
+        """Loads weights from a compressed save file.
+
+        Args:
+            path (Path): Path to the model weights file.
+
+        Returns:
+            YolactEdge model
+        """
         state_dict = torch.load(path, map_location="cpu")
         for key in list(state_dict.keys()):
+            # For backward compatability, the new variable is called layers
             if key.startswith("backbone.layer") and not key.startswith(
                 "backbone.layers"
             ):
@@ -295,9 +299,10 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         in_channels: int,
         out_channels: int = 1024,
         aspect_ratios: Iterable[Any] = None,
-        scales: Iterable[List[Any]] = None,  # List[Int]
+        scales: Iterable[List[int]] = None,
         parent: Optional[Callable] = None,  # PredictionModule
         index: int = 0,
+        input_size: int = None,
     ) -> None:
 
         super().__init__()
@@ -330,12 +335,14 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self.scales = scales
         self.priors: Union[None, torch.Tensor] = None
         self.last_conv_size = (0, 0)
+        self.input_size = input_size
 
     def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
         """
         Args:
             - inputs: The convOut from a layer in the backbone network
                  Size: [batch_size, in_channels, conv_h, conv_w])
+
         Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
             - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
             - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
@@ -377,9 +384,17 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         preds = {"loc": bbox, "conf": conf, "mask": mask, "priors": priors}
         return preds
 
-    def make_priors(self, conv_h: int, conv_w: int) -> Optional[torch.Tensor]:
+    def make_priors(self, conv_h: int, conv_w: int) -> Optional[Tensor]:
         """Priors are [center-x, center-y, width, height] where center-x and
-        center-y are the center coordinates of the box."""
+        center-y are the center coordinates of the box.
+
+        Args:
+            - conv_h: The height of the convolutional output.
+            - conv_w: The width of the convolutional output.
+
+        Returns:
+            self.priors (Tensor): [conv_h*conv_w*num_priors, 4]
+        """
         if self.last_conv_size != (conv_w, conv_h):
             prior_data = []
             for j, i in product(range(conv_h), range(conv_w)):
@@ -389,10 +404,10 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
                 for scale, aspect_ratios in zip(self.scales, self.aspect_ratios):  # type: ignore
                     for aspect_ratio in aspect_ratios:
                         aspect_ratio = sqrt(aspect_ratio)
-                        width = scale * aspect_ratio / 550
+                        width = scale * aspect_ratio / self.input_size
                         height = width
                         prior_data += [center_x, center_y, width, height]
-            self.priors = torch.Tensor(prior_data).view(-1, 4)
+            self.priors = Tensor(prior_data).view(-1, 4)
             self.last_conv_size = (conv_w, conv_h)
         return self.priors
 
@@ -459,7 +474,9 @@ class FPNPhase1(ScriptModuleWrapper):
                 )
             lat_iter = lat_layer(convouts[count])
             lat_feats[count] = lat_iter
+
             x_0 = x_0 + lat_iter
+
             out[count] = x_0
 
         for i in range(len(convouts)):
@@ -565,6 +582,7 @@ class YolactEdgeHead:
                 Shape: [num_priors, 4]
             proto_data: (tensor) If using mask_type.lincomb, the prototype masks
                 Shape: [batch, mask_h, mask_w, mask_dim]
+
         Returns:
             output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
             These outputs are in the order: class idx, confidence, bbox coords, and mask.
@@ -596,9 +614,9 @@ class YolactEdgeHead:
     def detect(  # pylint: disable=too-many-arguments
         self,
         batch_idx: int,
-        conf_preds: torch.Tensor,
-        decoded_boxes: torch.Tensor,
-        mask_data: torch.Tensor,
+        conf_preds: Tensor,
+        decoded_boxes: Tensor,
+        mask_data: Tensor,
     ) -> Optional[Dict[str, Any]]:
         """Perform nms for only the max scoring class that isn't background (class 0)"""
         cur_scores = conf_preds[batch_idx, 1:, :]
@@ -620,12 +638,12 @@ class YolactEdgeHead:
     @classmethod
     def fast_nms(  # pylint: disable=too-many-arguments, bad-classmethod-argument
         self,
-        boxes: torch.Tensor,
-        masks: torch.Tensor,
-        scores: torch.Tensor,
-        iou_threshold: float = 0.5,
-        top_k: int = 200,
-    ) -> Tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        boxes: Tensor,
+        masks: Tensor,
+        scores: Tensor,
+        iou_threshold: float,
+        top_k: int,
+    ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Non-maximum Suppression"""
         scores, idx = scores.sort(1, descending=True)
         idx = idx[:, :top_k].contiguous()
