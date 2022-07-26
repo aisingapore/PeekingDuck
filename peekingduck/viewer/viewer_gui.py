@@ -27,17 +27,17 @@ PeekingDuck Viewer GUI Creation Code
 # Did not import Viewer from peekingduck.viewer.viewer due to pylint 2.7 complaining
 # about circular import.
 
+from pathlib import Path
 import tkinter as tk
 from tkinter import ttk
 from peekingduck.viewer.viewer_utils import load_image
 from peekingduck.viewer.single_column_view import SingleColumnPlayListView
 
-LOGO: str = "peekingduck/viewer/PeekingDuckLogo.png"
+LOGO: str = "PeekingDuckLogo.png"
 MIN_HEIGHT: int = 768
 MIN_WIDTH: int = 1024
 WIN_HEIGHT: int = 960
 WIN_WIDTH: int = 1280
-BLANK_EMOJI = "\u2800"
 BTN_WIDTH_SPAN = 1
 
 
@@ -97,7 +97,8 @@ def create_header(viewer) -> None:  # type: ignore
     header_frm.pack(side=tk.TOP, fill=tk.X)
     viewer.tk_header_frm = header_frm
     # row 0: logo (left)
-    viewer.img_logo = load_image(LOGO, resize_pct=0.10)
+    logo_path = Path(__file__).parent / LOGO
+    viewer.img_logo = load_image(logo_path, resize_pct=0.10)
     logo = tk.Label(header_frm, image=viewer.img_logo, anchor=tk.W)
     logo.grid(row=0, column=0, sticky="nw")
     viewer.tk_logo = logo
