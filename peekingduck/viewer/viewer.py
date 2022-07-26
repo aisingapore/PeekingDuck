@@ -502,6 +502,8 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                 "Pipeline Runtime Error",
                 f"Missing pipeline file:\n\n{self.pipeline_path}",
             )
+        if "CUDA" in exc_msg:
+            showerror("CUDA Runtime Error", "Please see logs for more details")
 
     def run_pipeline_end(self) -> None:
         """Called when pipeline execution is completed.
