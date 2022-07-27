@@ -35,7 +35,7 @@ ZONE_COUNTS_HEADING = "-ZONE COUNTS-"
 LEGEND_LEFT_X = 15
 
 
-class Legend:  # pylint: disable=too-many-instance-attributes
+class Legend:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
     """Legend class that uses available info to draw legend box on frame"""
 
     def __init__(
