@@ -60,6 +60,8 @@ class FastBaseTransform(torch.nn.Module):
     def __init__(self, input_size: Tuple[int, int]) -> None:
         super().__init__()
         self.input_size = input_size
+        # The tensor values are in BGR and are the means and standard deviation
+        # values for ImageNet respectively
         if torch.cuda.is_available():
             self.mean = (
                 Tensor((103.94, 116.78, 123.68)).float().cuda()[None, :, None, None]
@@ -160,24 +162,23 @@ def make_extra(num_layers: int, out_channels: int) -> Callable:
         out_channels (int): number of channels in the output
 
     Returns:
-        out (Callable): #TODO
+        An array of alternating convolutional relu layers if there is at least
+        one layer.
     """
     if num_layers == 0:
-        out = lambda x: x
-    else:
-        out = nn.Sequential(
-            *sum(
+        return lambda x: x
+    return nn.Sequential(
+        *sum(
+            [
                 [
-                    [
-                        nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
-                        nn.ReLU(inplace=True),
-                    ]
-                    for _ in range(num_layers)
-                ],
-                [],
-            )
+                    nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1),
+                    nn.ReLU(inplace=True),
+                ]
+                for _ in range(num_layers)
+            ],
+            [],
         )
-    return out
+    )
 
 
 def jaccard(box_a: Tensor, box_b: Tensor, is_crowd: bool = False) -> Tensor:
@@ -318,14 +319,14 @@ def sanitize_coordinates(
     to longs.
 
     Args:
-        _x1 (Tensor): input coordinate of x1
-        _x2 (Tensor): input coordinate of x2
-        img_size (int): _description_
+        _x1 (Tensor): input coordinate of x1.
+        _x2 (Tensor): input coordinate of x2.
+        img_size (int): the dimensions of the image.
         padding (int, optional): Padding value. Defaults to 0.
         cast (bool, optional): Cast the results to long tensors. Defaults to True.
 
     Returns:
-        _type_: _description_
+        x_1, x_2: The sanitized input coordinates of _x1 and _x2 respectively.
     """
     _x1 = _x1 * img_size
     _x2 = _x2 * img_size

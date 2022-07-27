@@ -110,9 +110,6 @@ if torch.cuda.is_available():
 
 ScriptModuleWrapper = torch.jit.ScriptModule
 
-SELECTED_LAYERS = list(range(1, 4))  # ResNet 50/101 FPN backbone
-# SELECTED_LAYERS = [3, 4, 6] # MobileNetV2
-
 NUM_DOWNSAMPLE = 2
 FPN_NUM_FEATURES = 256
 NUM_CLASSES = 81
@@ -134,7 +131,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
                 self.backbone = ResNetBackbone(([3, 4, 6, 3]))
             num_layers = max(list(range(1, 4))) + 1
             src_channels = [256, 512, 1024, 2048]
-            selected_layers = list(range(1, 4))
+            self.layers = list(range(1, 4))
         elif model_type == "mobilenetv2":
             self.backbone = MobileNetV2Backbone(
                 1.0,
@@ -151,7 +148,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
             )
             num_layers = max([3, 4, 6]) + 1
             src_channels = [32, 16, 24, 32, 64, 96, 160, 320, 1280]
-            selected_layers = [3, 4, 6]
+            self.layers = [3, 4, 6]
         while len(self.backbone.layers) < num_layers:
             self.backbone.add_layer()
 
@@ -164,15 +161,11 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         )
 
         self.proto_net, _ = make_net(256, mask_proto_net, include_last_relu=False)
-        self.selected_layers = selected_layers
 
-        self.fpn_phase_1 = FPNPhase1([src_channels[i] for i in self.selected_layers])
-        self.fpn_phase_2 = FPNPhase2([src_channels[i] for i in self.selected_layers])
+        self.fpn_phase_1 = FPNPhase1([src_channels[i] for i in self.layers])
+        self.fpn_phase_2 = FPNPhase2([src_channels[i] for i in self.layers])
 
-        if model_type[0] == "r":  # Model is running on ResNet backbone
-            self.selected_layers = list(
-                range(len(self.selected_layers) + NUM_DOWNSAMPLE)
-            )
+        self.selected_layers = list(range(len(self.layers) + NUM_DOWNSAMPLE))
 
         self.pred_aspect_ratios = [[[1, 1 / 2, 2]]] * 5
         self.pred_scales = [[24], [48], [96], [192], [384]]
@@ -211,7 +204,7 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         """
         outs_wrapper = {}
         outs = self.backbone(inputs)
-        outs = [outs[i] for i in SELECTED_LAYERS]
+        outs = [outs[i] for i in self.layers]
         outs_fpn_phase_1_wrapper = self.fpn_phase_1(*outs)
         outs_phase_1, _ = (
             outs_fpn_phase_1_wrapper[: len(outs)],
@@ -244,10 +237,8 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     def load_weights(self, path: Path) -> None:
         """Loads weights from a compressed save file.
-
         Args:
             path (Path): Path to the model weights file.
-
         Returns:
             YolactEdge model
         """
@@ -342,7 +333,6 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         Args:
             - inputs: The convOut from a layer in the backbone network
                  Size: [batch_size, in_channels, conv_h, conv_w])
-
         Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
             - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
             - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
@@ -440,11 +430,11 @@ class FPNPhase1(ScriptModuleWrapper):
     ) -> List[Tensor]:
         """
         Args:
-            - convouts (list): A list of convouts for the corresponding layers
+            - convouts (List): A list of convouts for the corresponding layers
                 in in_channels.
         Returns:
-            - A list of FPN convouts in the same order as x with extra downsample
-                layers if requested.
+            - out (List(Tensor)): A list of FPN convouts in the same order as x
+                with extra downsample layers if requested.
         """
         convouts_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         convouts = []
@@ -582,7 +572,6 @@ class YolactEdgeHead:
                 Shape: [num_priors, 4]
             proto_data: (tensor) If using mask_type.lincomb, the prototype masks
                 Shape: [batch, mask_h, mask_w, mask_dim]
-
         Returns:
             output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
             These outputs are in the order: class idx, confidence, bbox coords, and mask.
@@ -618,7 +607,21 @@ class YolactEdgeHead:
         decoded_boxes: Tensor,
         mask_data: Tensor,
     ) -> Optional[Dict[str, Any]]:
-        """Perform nms for only the max scoring class that isn't background (class 0)"""
+        """Perform nms for only the max scoring class that isn't background (class 0)
+
+        Args:
+            batch_idx: (int) The batch index
+            conf_preds: (Tensor) Confidence predictions for each prior
+            decoded_boxes: (Tensor) Decoded boxes for each prior
+            mask_data: (Tensor) Mask predictions for each prior
+
+        Returns:
+            A dictionary containing the following keys:
+                box (Tensor): The bounding box values for each detection (0 to 1)
+                mask (Tensor): The segmentation mask for each detection (-1 to 1)
+                class (Tensor): Class ID for each detection (0 to 80)
+                score (Tensor): Confidence score for each detection (0 to 1)
+        """
         cur_scores = conf_preds[batch_idx, 1:, :]
         conf_scores, _ = torch.max(cur_scores, dim=0)
         keep = conf_scores > self.conf_thresh
@@ -644,7 +647,18 @@ class YolactEdgeHead:
         iou_threshold: float,
         top_k: int,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
-        """Non-maximum Suppression"""
+        """Non-maximum Suppression
+
+        Args:
+            boxes (Tensor): Bounding boxes for each object
+            masks (Tensor): Masks for each object
+            scores (Tensor): Confidence scores for each object
+            iou_threshold (float): IoU threshold for NMS
+            top_k (int): Maximum number of objects to return
+
+        Returns:
+            Tuple[Tensor, Tensor, Tensor, Tensor]:
+        """
         scores, idx = scores.sort(1, descending=True)
         idx = idx[:, :top_k].contiguous()
         scores = scores[:, :top_k]

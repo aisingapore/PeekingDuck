@@ -100,14 +100,12 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 cudnn.fastest = True
                 cudnn.deterministic = True
                 torch.set_default_tensor_type("torch.cuda.FloatTensor")
+                frame = torch.from_numpy(image).cuda().float()
             else:
                 torch.set_default_tensor_type("torch.FloatTensor")
+                frame = torch.from_numpy(image).float()
         img_shape = image.shape[:2]
         model = self.yolact_edge
-        if torch.cuda.is_available():
-            frame = torch.from_numpy(image).cuda().float()
-        else:
-            frame = torch.from_numpy(image).float()
 
         preds = model(FastBaseTransform(self.input_size)(frame.unsqueeze(0)))[
             "pred_outs"
@@ -223,9 +221,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         masks = proto_data @ masks.t()
         masks = torch.sigmoid(masks)
-
         masks = crop(masks, boxes)
-
         masks = masks.permute(2, 0, 1).contiguous()
         masks = (
             F.interpolate(
@@ -238,6 +234,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             .gt_(0.5)
         )
 
+        # Filters the detections to the IDs being detected as specified in the config
         classes = classes[detect_filter]
         boxes = boxes[detect_filter]
         scores = scores[detect_filter]

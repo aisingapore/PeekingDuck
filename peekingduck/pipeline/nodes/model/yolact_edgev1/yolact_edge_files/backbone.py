@@ -51,7 +51,13 @@ from torch import Tensor
 
 
 class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
-    """Adapted from torchvision.models.resnet"""
+    """Bottleneck in torchvision places the stride for downsampling at 3x3
+    convolution(self.conv2) while original implementation places the stride at
+    the first 1x1 convolution(self.conv1) according to "Deep residual learning
+    for image recognition"https://arxiv.org/abs/1512.03385.
+
+    Adapted from torchvision.models.resnet
+    """
 
     expansion = 4
 
@@ -60,7 +66,7 @@ class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
         inplanes: int,
         planes: int,
         stride: int = 1,
-        downsample: Callable = None,
+        downsample: Callable = nn.Sequential(),
         norm_layer: Callable = nn.BatchNorm2d,
         dilation: int = 1,
     ) -> None:
@@ -188,7 +194,15 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
         return layer
 
     def forward(self, inputs: Tensor, partial_bn: bool = False) -> List[Tensor]:
-        """Returns a list of convouts for each layer."""
+        """Forward propoagation of the main ResNet model that returns a list of
+        convouts for each layer.
+
+        Args:
+            inputs (Tensor): Input Tensor
+
+        Returns:
+            outs (Tensor): Output Tensor
+        """
         inputs = self.conv1(inputs)
         inputs = self.bn1(inputs)
         inputs = self.relu(inputs)
@@ -210,7 +224,14 @@ class ResNetBackbone(nn.Module):  # pylint: disable=too-many-instance-attributes
         depth: int = 1,
         block: Callable = Bottleneck,
     ) -> None:
-        """Add a downsample layer to the backbone as per what SSD does."""
+        """Add a downsample layer to the backbone as per what SSD does.
+
+        Args:
+            conv_channels (int): Number of channels in the convolution.
+            downsample (int): Number of downsampling layers.
+            depth (int): Number of blocks in the downsample layer.
+            block: Block to use for the downsample layer.
+        """
         self._make_layer(
             block, conv_channels // block.expansion, blocks=depth, stride=downsample
         )
@@ -248,7 +269,9 @@ ConvBNReLU = partial(ConvBNAct)
 
 
 class InvertedResidual(nn.Module):
-    """Adapted from torchvision.models.mobilenet.InvertedResidual"""
+    """Residual block that uses an inverted structure for efficiency for
+    mobile-optimized CNNs as specified in the <https://arxiv.org/abs/1801.04381>
+    paper, adapted from torchvision.models.mobilenet.InvertedResidual"""
 
     def __init__(self, inp: int, oup: int, stride: int, expand_ratio: int) -> None:
         super().__init__()
@@ -272,14 +295,32 @@ class InvertedResidual(nn.Module):
         self.conv = nn.Sequential(*layers)
 
     def forward(self, inputs: Tensor) -> Tensor:
-        """Returns a convout for the inverted residual block."""
+        """Returns a convout for the inverted residual block.
+
+        Args:
+            inputs (Tensor): Input Tensor
+
+        Returns:
+            Tensor: Convout for the inverted residual block
+        """
         if self.use_res_connect:
             return inputs + self.conv(inputs)
         return self.conv(inputs)
 
 
 class MobileNetV2Backbone(nn.Module):
-    """Adapted from torchvision.models.mobilenet.MobileNetV2"""
+    """MobileNet V2 main class adapted from torchvision.models.mobilenet.MobileNetV2
+    from the `MobileNetV2: Inverted Residuals and Linear Bottlenecks
+    <https://arxiv.org/abs/1801.04381>` paper.
+
+    Args:
+        width_mult (float): Width multiplier - adjusts number of channels in each
+            layer by this amount inverted_residual_setting: Network structure
+        inverted_residual_setting: Network structure
+        round_nearest (int): Round the number of channels in each layer to be a
+            multiple of this number. Set to 1 to turn off rounding.
+        block: Module specifying inverted residual builing block for mobilenet
+    """
 
     def __init__(
         self,
@@ -346,17 +387,22 @@ class MobileNetV2Backbone(nn.Module):
         block: Callable,
     ) -> int:
         """A layer is a combination of inverted residual blocks
+
         Args:
             input_channel (int): The number of input channels to the first block.
-            width_mult (float): The width multiplier for the model.
-            round_nearest (int): The multiple to round the number of channels to.
+            width_mult (float): The width multiplier for the model. Adjusts number
+                of channels in each layer by this amount.
+            round_nearest (int): Round the number of channels in each layer to be
+                a multiple of this number. Set to 1 to turn off rounding
             t_val (int): expansion factor
             c_val (int): output channels
             n_val (int): number of repetitions
             s_val (int): stride of the first layer of each sequence
+            block (Callable): Module specifying inverted residual building block
+                for MobileNetV2
 
         Returns:
-            input_channel (int)
+            input_channel (int): The number of input channels to the next block.
         """
         layers = []
         output_channel = self._make_divisible(c_val * width_mult, round_nearest)
@@ -372,7 +418,15 @@ class MobileNetV2Backbone(nn.Module):
         return input_channel
 
     def forward(self, inputs: Tensor) -> Tuple[Tensor, ...]:
-        """Returns a list of convouts for each layer."""
+        """Forward propoagation of the MobileNet V2 model that returns a Tuple of
+        convouts for each layer.
+
+        Args:
+            inputs (Tensor): Input Tensor
+
+        Returns:
+            outs (Tuple[Tensor, ...]): Output Tensor
+        """
         outs = []
 
         for _, layer in enumerate(self.layers):
@@ -391,11 +445,12 @@ class MobileNetV2Backbone(nn.Module):
     ) -> None:
         """
         Args:
-            conv_channels: number of channels in the convout of the previous layer
-            t_val: expansion factor
-            c_val: output channels
-            n_val: number of repetitions
-            s_val: stride of the first layer of each sequence
+            conv_channels (int): number of channels in the convout of the previous layer
+            t_val (int): expansion factor
+            c_val (int): output channels
+            n_val (int): number of repetitions
+            s_val (int): stride of the first layer of each sequence. All others
+                use a stride of 1
         """
         self._make_layer(
             conv_channels, 1.0, 8, t_val, c_val, n_val, s_val, InvertedResidual
