@@ -46,9 +46,10 @@ def nodes(type_name: str = None) -> None:
         click.secho("nodes:", bold=True)
 
         node_names = [path.stem for path in (config_dir / node_type).glob("*.yml")]
-        max_length = _len_enumerate(max(enumerate(node_names), key=_len_enumerate))
-        for num, node_name in enumerate(node_names):
-            idx = num + 1
+        idx_and_node_names = list(enumerate(node_names, start=1))
+
+        max_length = _len_enumerate(max(idx_and_node_names, key=_len_enumerate))
+        for idx, node_name in idx_and_node_names:
             url = _get_node_url(node_type, node_name)
             node_name_width = max_length + 1 - _num_digits(idx)
 
@@ -89,7 +90,7 @@ def _len_enumerate(item: Tuple) -> int:
         (int): Sum of length of ``element`` and the number of digits of its
             index.
     """
-    return _num_digits(item[0] + 1) + len(item[1])
+    return _num_digits(item[0]) + len(item[1])
 
 
 def _num_digits(number: int) -> int:
@@ -101,4 +102,4 @@ def _num_digits(number: int) -> int:
     Returns:
         (int): Number of digits in the given number.
     """
-    return int(math.log10(number))
+    return int(math.log10(number) + 1)

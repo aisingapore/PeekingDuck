@@ -27,7 +27,7 @@ PKD_CONFIG_DIR = PKD_DIR / "configs"
 
 def available_nodes_msg(type_name=None):
     def len_enumerate(item):
-        return int(math.log10(item[0] + 1)) + len(item[1])
+        return int(math.log10(item[0]) + 1) + len(item[1])
 
     output = io.StringIO()
     if type_name is None:
@@ -39,13 +39,13 @@ def available_nodes_msg(type_name=None):
     url_postfix = ".html#module-"
     for node_type in node_types:
         node_names = [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")]
-        max_length = len_enumerate(max(enumerate(node_names), key=len_enumerate))
+        idx_and_node_names = list(enumerate(node_names, start=1))
+        max_length = len_enumerate(max(idx_and_node_names, key=len_enumerate))
         print(f"\nPeekingDuck has the following {node_type} nodes:", file=output)
-        for num, node_name in enumerate(node_names):
-            idx = num + 1
+        for idx, node_name in idx_and_node_names:
             node_path = f"{node_type}.{node_name}"
             url = f"{url_prefix}{node_path}{url_postfix}{node_path}"
-            node_width = max_length + 1 - int(math.log10(idx))
+            node_width = max_length + 1 - int(math.log10(idx) + 1)
             print(f"{idx}:{node_name: <{node_width}}Info: {url}", file=output)
     print("\n", file=output)
     content = output.getvalue()
