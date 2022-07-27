@@ -53,7 +53,7 @@ class Node(AbstractNode):
         box_opacity (:obj:`float`): **default = 0.3**. |br|
             Opacity of legend box background. A value of 0.0 causes the legend box background to be
             fully transparent, while a value of 1.0 causes it to be fully opaque.
-        font (:obj:`Dict`): **default = {size: 0.7, thickness: 2}.** |br|
+        font (:obj:`Dict[str, Union[float, int]]`): **default = {size: 0.7, thickness: 2}.** |br|
             Size and thickness of font within legend box. Examples of visually acceptable options
             are: |br|
             720p video: {size: 0.7, thickness: 2} |br|
