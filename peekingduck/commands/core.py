@@ -102,12 +102,15 @@ def run(  # pylint: disable=too-many-arguments
 
     if viewer:
         logger.info("Launching PeekingDuck Viewer")
+        start_time = perf_counter()
         pkd_viewer = Viewer(
             pipeline_path=pipeline_config_path,
             config_updates_cli=node_config,
             custom_nodes_parent_subdir=nodes_parent_dir,
             num_iter=num_iter,
         )
+        end_time = perf_counter()
+        logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
         pkd_viewer.run()
     else:
         start_time = perf_counter()
