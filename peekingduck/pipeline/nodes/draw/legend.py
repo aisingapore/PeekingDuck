@@ -50,15 +50,22 @@ class Node(AbstractNode):
         |img_data|
 
     Configs:
+        box_opacity (:obj:`float`): **default = 0.3**. |br|
+            Opacity of legend box background. A value of 0.0 causes the legend box background to be
+            fully transparent, while a value of 1.0 causes it to be fully opaque.
+        font (:obj:`Dict[str, Union[float, int]]`): **default = {size: 0.7, thickness: 2}.** |br|
+            Size and thickness of font within legend box. Examples of visually acceptable options
+            are: |br|
+            720p video: {size: 0.7, thickness: 2} |br|
+            1080p video: {size: 1.0, thickness: 3}
         position (:obj:`str`): **{"top", "bottom"}, default = "bottom"**. |br|
-            Position to draw legend box. "top" draws it at the top-left
-            position while "bottom" draws it at bottom-left.
+            Position to draw legend box. "top" draws it at the top-left position while "bottom"
+            draws it at bottom-left.
         show (:obj:`List[str]`): **default = []**. |br|
-            Include in this list the desired data type(s) to be drawn within
-            the legend box, such as ``["fps", "count", "cum_avg"]`` in the
-            example screenshot. Custom data types produced by custom nodes are
-            also supported. If no data types are included, an error will be
-            produced.
+            Include in this list the desired data type(s) to be drawn within the legend box, such
+            as ``["fps", "count", "cum_avg"]`` in the example screenshot. Custom data types
+            produced by custom nodes are also supported. If no data types are included, an error
+            will be produced.
 
     .. versionchanged:: 1.2.0
         Merged previous ``all_legend_items`` and ``include`` configs into a
@@ -69,6 +76,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.legend = Legend(self.show, self.position, self.box_opacity, self.font)
         if not self.show:
             raise KeyError(
                 "To display information in the legend box, at least one data type must be "
@@ -85,7 +93,7 @@ class Node(AbstractNode):
             outputs (dict): Dictionary with keys "none".
         """
         _check_data_type(inputs, self.show)
-        Legend().draw(inputs, self.show, self.position, self.box_opacity)
+        self.legend.draw(inputs)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
 
