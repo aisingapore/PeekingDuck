@@ -85,7 +85,7 @@ def run(  # pylint: disable=too-many-arguments
     LoggerSetup.set_log_level(log_level)
 
     if config_path is None:
-        curr_dir = _get_cwd()
+        curr_dir = Path.cwd()
         if (curr_dir / "pipeline_config.yml").is_file():
             config_path = curr_dir / "pipeline_config.yml"
         elif (curr_dir / "run_config.yml").is_file():
@@ -164,7 +164,7 @@ def _create_custom_folder(custom_folder_name: str) -> None:
     Args:
         custom_folder_name (:obj:`str`): Name of the custom nodes folder.
     """
-    curr_dir = _get_cwd()
+    curr_dir = Path.cwd()
     custom_nodes_dir = curr_dir / "src" / custom_folder_name
     custom_nodes_config_dir = custom_nodes_dir / "configs"
 
@@ -201,7 +201,3 @@ def _create_pipeline_config_yml(
 
     with open(default_path, "w") as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
-
-
-def _get_cwd() -> Path:
-    return Path.cwd()
