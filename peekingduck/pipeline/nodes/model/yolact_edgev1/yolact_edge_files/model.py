@@ -119,7 +119,7 @@ MAX_NUM_DETECTIONS = 100
 class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
     """YolactEdge model module."""
 
-    def __init__(self, model_type: str, input_size: int) -> None:
+    def __init__(self, model_type: str, input_size: int, iou_threshold: float) -> None:
         super().__init__()
 
         self.backbone: Union[ResNetBackbone, MobileNetV2Backbone]
@@ -192,7 +192,11 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
             src_channels[0], NUM_CLASSES - 1, kernel_size=1
         )
         self.detect = YolactEdgeHead(
-            NUM_CLASSES, bkg_label=0, top_k=200, conf_thresh=0.05, nms_thresh=0.5
+            NUM_CLASSES,
+            bkg_label=0,
+            top_k=200,
+            conf_thresh=0.05,
+            iou_threshold=iou_threshold,
         )
 
     def forward(self, inputs: Tensor) -> Dict[str, List]:
@@ -549,14 +553,14 @@ class YolactEdgeHead:
         bkg_label: int,
         top_k: int,
         conf_thresh: float,
-        nms_thresh: float,
+        iou_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.num_classes = num_classes
         self.background_label = bkg_label
         self.top_k = top_k
-        self.nms_thresh = nms_thresh
+        self.iou_threshold = iou_threshold
         self.conf_thresh = conf_thresh
 
     def __call__(self, predictions: Dict[str, torch.Tensor]) -> List[Any]:
@@ -633,7 +637,7 @@ class YolactEdgeHead:
             return None
 
         boxes, masks, classes, scores = self.fast_nms(
-            boxes, masks, scores, self.nms_thresh, self.top_k
+            boxes, masks, scores, self.iou_threshold, self.top_k
         )
 
         return {"box": boxes, "mask": masks, "class": classes, "score": scores}
@@ -644,7 +648,7 @@ class YolactEdgeHead:
         boxes: Tensor,
         masks: Tensor,
         scores: Tensor,
-        iou_threshold: float,
+        nms_threshold: float,
         top_k: int,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Non-maximum Suppression
@@ -671,7 +675,7 @@ class YolactEdgeHead:
         iou_max, _ = iou.max(dim=1)
 
         # Filter out the ones that are higher that the threshold
-        keep = iou_max <= iou_threshold
+        keep = iou_max <= nms_threshold
 
         classes = torch.arange(num_classes, device=boxes.device)[:, None].expand_as(
             keep
