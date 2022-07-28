@@ -18,7 +18,7 @@ Detector class to handle detection of bboxes and masks for mask_rcnn
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple, Type
+from typing import Dict, List, Tuple
 
 import torch.backends as cudnn
 from torch import Tensor
