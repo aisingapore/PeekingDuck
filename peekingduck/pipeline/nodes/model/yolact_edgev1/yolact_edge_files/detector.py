@@ -173,7 +173,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             f"Model file does not exist. Please check that {self.model_path} exists"
         )
 
-    def _postprocess( # pylint: disable=too-many-locals
+    def _postprocess(  # pylint: disable=too-many-locals
         self,
         network_output: Dict[str, Tensor],
         img_shape: Tuple[int, ...],
