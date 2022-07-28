@@ -2,9 +2,9 @@
 # This document maps models to master mapping
 # * DO NOT MODIFY *
 efficientdet: map_effdet
+mask_rcnn: map_effdet
 yolo: map_yolo
 yolox: map_yolo
-mask_rcnn: map_effdet
 yolact_edge: map_yolo
 ...
 ---
