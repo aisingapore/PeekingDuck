@@ -18,7 +18,7 @@ Detector class to handle detection of bboxes and masks for mask_rcnn
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Type
 
 import torch.backends as cudnn
 from torch import Tensor
@@ -238,6 +238,14 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             masks = np.array(mask[detect_filter].cpu()).astype(np.uint8)
 
         except TypeError:
+            return (
+                np.empty((0)),
+                np.empty((0), dtype=np.float32),
+                np.empty((0, 4), dtype=np.float32),
+                np.empty((0, 0, 0), dtype=np.uint8),
+            )
+
+        except RuntimeError:
             return (
                 np.empty((0)),
                 np.empty((0), dtype=np.float32),
