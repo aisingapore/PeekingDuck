@@ -187,12 +187,10 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             img_shape (Tuple[int, int]): height and width of original image
 
         Returns:
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]):
-            Returned tuple contains:
-            - An array of human-friendly detection class names
-            - An array of detection scores
-            - An array of detection boxes
-            - An array of masks
+            labels (ndarray): An array of human-friendly detection class names
+            scores (ndarray): An array of confidence scores of the detections
+            boxes (ndarray): An array of detection boxes of x1, y1, x2, y2 coords
+            masks (ndarray): An array of masks in uint8
         """
         try:
             keep = network_output["score"] > self.score_threshold

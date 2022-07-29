@@ -201,10 +201,12 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     def forward(self, inputs: Tensor) -> Dict[str, List]:
         """The input should be of size [batch_size, 3, img_h, img_w]
+
         Args:
             inputs (Tensor): The input tensor
+
         Returns:
-            outs_wrapper (Dict)
+            outs_wrapper (Dict): Prediction output for YolactEdge
         """
         outs_wrapper = {}
         outs = self.backbone(inputs)
@@ -337,6 +339,7 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         Args:
             - inputs: The convOut from a layer in the backbone network
                  Size: [batch_size, in_channels, conv_h, conv_w])
+
         Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
             - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
             - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
@@ -387,7 +390,7 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
             - conv_w: The width of the convolutional output.
 
         Returns:
-            self.priors (Tensor): [conv_h*conv_w*num_priors, 4]
+            self.priors (Tensor): [conv_h * conv_w * num_priors, 4]
         """
         if self.last_conv_size != (conv_w, conv_h):
             prior_data = []
@@ -520,8 +523,9 @@ class FPNPhase2(ScriptModuleWrapper):
         Args:
             - convouts (list): A list of convouts for the corresponding layers
                 in in_channels.
+
         Returns:
-            - A list of FPN convouts in the same order as x with extra downsample
+            - out (list): A list of FPN convouts in the same order as x with extra downsample
                 layers if requested.
         """
         out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
@@ -576,10 +580,11 @@ class YolactEdgeHead:
                 Shape: [num_priors, 4]
             proto_data: (tensor) If using mask_type.lincomb, the prototype masks
                 Shape: [batch, mask_h, mask_w, mask_dim]
+                
         Returns:
-            output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
-            These outputs are in the order: class idx, confidence, bbox coords, and mask.
-            Note that the outputs are sorted only if cross_class_nms is False
+            out (list): output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
+                These outputs are in the order: class idx, confidence, bbox coords, 
+                and mask.
         """
         loc_data = predictions["loc"]
         conf_data = predictions["conf"]
@@ -661,7 +666,11 @@ class YolactEdgeHead:
             top_k (int): Maximum number of objects to return
 
         Returns:
-            Tuple[Tensor, Tensor, Tensor, Tensor]:
+            boxes (np.ndarray): array of detected bboxes
+            masks (np.ndarray): array of detected masks
+            classes (np.ndarray): array of class labels
+            scores (np.ndarray): array of detection confidence scores
+            
         """
         scores, idx = scores.sort(1, descending=True)
         idx = idx[:, :top_k].contiguous()

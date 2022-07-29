@@ -192,7 +192,7 @@ def jaccard(box_a: Tensor, box_b: Tensor, is_crowd: bool = False) -> Tensor:
         box_a (Tensor): Ground truth bounding boxes, Shape: [num_objects,4]
         box_b (Tensor): Prior boxes from priorbox layers, Shape: [num_priors,4]
 
-    Return:
+    Returns:
         out (Tensor): Shape: [box_a.size(0), box_b.size(0)]
     """
     use_batch = True
