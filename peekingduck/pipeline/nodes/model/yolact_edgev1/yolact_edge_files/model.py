@@ -580,10 +580,10 @@ class YolactEdgeHead:
                 Shape: [num_priors, 4]
             proto_data: (tensor) If using mask_type.lincomb, the prototype masks
                 Shape: [batch, mask_h, mask_w, mask_dim]
-                
+
         Returns:
             out (list): output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
-                These outputs are in the order: class idx, confidence, bbox coords, 
+                These outputs are in the order: class idx, confidence, bbox coords,
                 and mask.
         """
         loc_data = predictions["loc"]
@@ -670,7 +670,6 @@ class YolactEdgeHead:
             masks (np.ndarray): array of detected masks
             classes (np.ndarray): array of class labels
             scores (np.ndarray): array of detection confidence scores
-            
         """
         scores, idx = scores.sort(1, descending=True)
         idx = idx[:, :top_k].contiguous()
