@@ -457,9 +457,7 @@ class MobileNetV2Backbone(nn.Module):
         )
 
     @classmethod
-    def _make_divisible(  # pylint: disable=bad-classmethod-argument
-        self, value: float, divisor: int, min_value: Any = None
-    ) -> int:
+    def _make_divisible(cls, value: float, divisor: int, min_value: Any = None) -> int:
         """Adapted from torchvision.models.mobilenet._make_divisable"""
         if min_value is None:
             min_value = divisor

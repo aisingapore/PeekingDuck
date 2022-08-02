@@ -112,14 +112,24 @@ ScriptModuleWrapper = torch.jit.ScriptModule
 
 NUM_DOWNSAMPLE = 2
 FPN_NUM_FEATURES = 256
-NUM_CLASSES = 81
-MAX_NUM_DETECTIONS = 100
+NUM_CLASSES = 81  # For COCO classes
 
 
 class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
-    """YolactEdge model module."""
+    """YolactEdge model module.
 
-    def __init__(self, model_type: str, input_size: int, iou_threshold: float) -> None:
+    Values for the selected backbone layers, channels, prediction aspect ratios,
+    and scales are taken from the configuration file in the original repository:
+    https://github.com/haotian-liu/yolact_edge/blob/master/yolact_edge/data/config.py
+    """
+
+    def __init__(
+        self,
+        model_type: str,
+        input_size: int,
+        iou_threshold: float,
+        max_num_detections: int,
+    ) -> None:
         super().__init__()
 
         self.backbone: Union[ResNetBackbone, MobileNetV2Backbone]
@@ -129,13 +139,12 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
                 self.backbone = ResNetBackbone(([3, 4, 23, 3]))
             elif model_type == "r50-fpn":
                 self.backbone = ResNetBackbone(([3, 4, 6, 3]))
-            num_layers = max(list(range(1, 4))) + 1
-            src_channels = [256, 512, 1024, 2048]
             self.layers = list(range(1, 4))
+            src_channels = [256, 512, 1024, 2048]
         elif model_type == "mobilenetv2":
             self.backbone = MobileNetV2Backbone(
                 1.0,
-                [
+                [  # Based on MobileNetV2 paper's bottleneck values for t,c,n,s
                     [1, 16, 1, 1],
                     [6, 24, 2, 2],
                     [6, 32, 3, 2],
@@ -146,9 +155,10 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
                 ],
                 8,
             )
-            num_layers = max([3, 4, 6]) + 1
-            src_channels = [32, 16, 24, 32, 64, 96, 160, 320, 1280]
             self.layers = [3, 4, 6]
+            src_channels = [32, 16, 24, 32, 64, 96, 160, 320, 1280]
+
+        num_layers = max(self.layers) + 1
         while len(self.backbone.layers) < num_layers:
             self.backbone.add_layer()
 
@@ -167,6 +177,8 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
 
         self.selected_layers = list(range(len(self.layers) + NUM_DOWNSAMPLE))
 
+        # The following values work for ResNet and MobileNetV2 backbones. Other
+        # backbones may require different values.
         self.pred_aspect_ratios = [[[1, 1 / 2, 2]]] * 5
         self.pred_scales = [[24], [48], [96], [192], [384]]
 
@@ -194,9 +206,9 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         self.detect = YolactEdgeHead(
             NUM_CLASSES,
             bkg_label=0,
-            top_k=200,
             conf_thresh=0.05,
-            iou_threshold=iou_threshold,
+            iou_threshold=iou_threshold,  # This is the same as nms_thresh
+            max_num_detections=max_num_detections,
         )
 
     def forward(self, inputs: Tensor) -> Dict[str, List]:
@@ -250,11 +262,12 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         """
         state_dict = torch.load(path, map_location="cpu")
         for key in list(state_dict.keys()):
-            # For backward compatability, the new variable is called layers
-            if key.startswith("backbone.layer") and not key.startswith(
-                "backbone.layers"
-            ):
-                del state_dict[key]
+            # For backward compatibility, the new variable is called layers
+            # This has been commented out because
+            # if key.startswith("backbone.layer") and not key.startswith(
+            #     "backbone.layers"
+            # ):
+            #     del state_dict[key]
             if key.startswith("fpn.downsample_layers."):
                 if int(key.split(".")[2]) >= NUM_DOWNSAMPLE:
                     del state_dict[key]
@@ -495,7 +508,7 @@ class FPNPhase2(ScriptModuleWrapper):
                 for _ in in_channels
             ]
         )
-        self.num_downsample = 2
+        self.num_downsample = NUM_DOWNSAMPLE
         self.downsample_layers = nn.ModuleList(
             [
                 nn.Conv2d(
@@ -547,7 +560,7 @@ class YolactEdgeHead:
     """
     This is the final layer of Single Shot Detection (SSD). Decode location preds,
     apply non-maximum suppression to location predictions based on conf scores and
-    threshold to a top_k number output predictions for both confidence scores
+    threshold to a top maximum number output predictions for both confidence scores
     and locations, as the predicted masks.
     """
 
@@ -555,17 +568,17 @@ class YolactEdgeHead:
         self,
         num_classes: int,
         bkg_label: int,
-        top_k: int,
         conf_thresh: float,
         iou_threshold: float,
+        max_num_detections: int,
     ) -> None:
         self.logger = logging.getLogger(__name__)
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.num_classes = num_classes
         self.background_label = bkg_label
-        self.top_k = top_k
         self.iou_threshold = iou_threshold
         self.conf_thresh = conf_thresh
+        self.max_num_detections = max_num_detections
 
     def __call__(self, predictions: Dict[str, torch.Tensor]) -> List[Any]:
         """
@@ -582,7 +595,7 @@ class YolactEdgeHead:
                 Shape: [batch, mask_h, mask_w, mask_dim]
 
         Returns:
-            out (list): output of shape (batch_size, top_k, 1 + 1 + 4 + mask_dim)
+            out (list): output of shape (batch_size, max_num_detections, 1 + 1 + 4 + mask_dim)
                 These outputs are in the order: class idx, confidence, bbox coords,
                 and mask.
         """
@@ -642,19 +655,23 @@ class YolactEdgeHead:
             return None
 
         boxes, masks, classes, scores = self.fast_nms(
-            boxes, masks, scores, self.iou_threshold, self.top_k
+            boxes,
+            masks,
+            scores,
+            self.iou_threshold,
+            self.max_num_detections,
         )
 
         return {"box": boxes, "mask": masks, "class": classes, "score": scores}
 
     @classmethod
-    def fast_nms(  # pylint: disable=too-many-arguments, bad-classmethod-argument
-        self,
+    def fast_nms(  # pylint: disable=too-many-arguments
+        cls,
         boxes: Tensor,
         masks: Tensor,
         scores: Tensor,
-        nms_threshold: float,
-        top_k: int,
+        iou_threshold: float,
+        max_num_detections: int,
     ) -> Tuple[Tensor, Tensor, Tensor, Tensor]:
         """Non-maximum Suppression
 
@@ -663,7 +680,7 @@ class YolactEdgeHead:
             masks (Tensor): Masks for each object
             scores (Tensor): Confidence scores for each object
             iou_threshold (float): IoU threshold for NMS
-            top_k (int): Maximum number of objects to return
+            max_num_detections (int): Maximum number of detections
 
         Returns:
             boxes (np.ndarray): array of detected bboxes
@@ -672,8 +689,8 @@ class YolactEdgeHead:
             scores (np.ndarray): array of detection confidence scores
         """
         scores, idx = scores.sort(1, descending=True)
-        idx = idx[:, :top_k].contiguous()
-        scores = scores[:, :top_k]
+        idx = idx[:, :max_num_detections].contiguous()
+        scores = scores[:, :max_num_detections]
         num_classes, num_dets = idx.size()
         boxes = boxes[idx.view(-1), :].view(num_classes, num_dets, 4)
         masks = masks[idx.view(-1), :].view(num_classes, num_dets, -1)
@@ -682,8 +699,8 @@ class YolactEdgeHead:
         iou.triu_(diagonal=1)
         iou_max, _ = iou.max(dim=1)
 
-        # Filter out the ones that are higher that the threshold
-        keep = iou_max <= nms_threshold
+        # Filter out the ones that are higher that the IoU threshold
+        keep = iou_max <= iou_threshold
 
         classes = torch.arange(num_classes, device=boxes.device)[:, None].expand_as(
             keep
@@ -695,8 +712,8 @@ class YolactEdgeHead:
         scores = scores[keep]
 
         scores, idx = scores.sort(0, descending=True)
-        idx = idx[:MAX_NUM_DETECTIONS]
-        scores = scores[:MAX_NUM_DETECTIONS]
+        idx = idx[:max_num_detections]
+        scores = scores[:max_num_detections]
         classes = classes[idx]
         boxes = boxes[idx]
         masks = masks[idx]

@@ -62,8 +62,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         iou_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         self.device_is_cuda: bool = torch.cuda.is_available()
+        self.device = torch.device("cuda" if self.device_is_cuda else "cpu")
         self.class_names = class_names
         self.detect_ids = detect_ids
         self.detect_ids_tensor = torch.tensor(
@@ -122,7 +122,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         empty, all available object category IDs are detected.
 
         Args:
-            ids: List of selected object category IDs
+            ids (List[int]): List of selected object category IDs
         """
         self.detect_ids = Tensor(ids).to(self.device)  # type: ignore
 
@@ -131,7 +131,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Creates `detect_ids` as a `torch.Tensor`. Logs model configurations.
 
         Returns:
-            YolactEdge: YolactEdge model
+            (YolactEdge): YolactEdge model
         """
         self.logger.info(
             "YolactEdge model loaded with the following configs:\n\t"
@@ -150,7 +150,12 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Returns:
             (YolactEdge): YolactEdge model.
         """
-        return YolactEdge(self.model_type, self.input_size[0], self.iou_threshold)
+        return YolactEdge(
+            self.model_type,
+            self.input_size[0],
+            self.iou_threshold,
+            self.max_num_detections,
+        )
 
     def _load_yolact_edge_weights(self) -> YolactEdge:
         """Loads YolactEdge model weights.
