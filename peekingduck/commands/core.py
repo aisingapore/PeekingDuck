@@ -122,15 +122,15 @@ def run(  # pylint: disable=too-many-arguments
         pkd_viewer.run()
     elif server:
         logger.info("Launching PeekingDuck Server")
-        start_time = perf_counter()
+        # start_time = perf_counter()
         pkd_server = Server(
             pipeline_path=pipeline_config_path,
             config_updates_cli=node_config,
             custom_nodes_parent_subdir=nodes_parent_dir,
             num_iter=num_iter,
         )
-        end_time = perf_counter()
-        logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
+        # end_time = perf_counter()
+        # logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
         pkd_server.run()
     else:
         start_time = perf_counter()

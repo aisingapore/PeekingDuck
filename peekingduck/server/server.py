@@ -2,13 +2,26 @@ import copy
 import logging
 import sys
 from pathlib import Path
-from time import perf_counter
+
+# from time import perf_counter
 from typing import List
+
+from fastapi import FastAPI
+from pydantic import BaseModel
+import uvicorn
 
 from peekingduck.declarative_loader import DeclarativeLoader, NodeList
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.requirement_checker import RequirementChecker
+
+
+app = FastAPI()
+
+
+class Item(BaseModel):
+    name: str
+    image: str
 
 
 class Server:
@@ -55,12 +68,15 @@ class Server:
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
-        num_iter = 0
-        while not self.pipeline.terminate:
+        # num_iter = 0
+
+        # while not self.pipeline.terminate:
+        @app.post("/image")
+        async def image(item: Item):
             for node in self.pipeline.nodes:
-                if num_iter == 0:  # report node setup times at first iteration
-                    self.logger.debug(f"First iteration: setup {node.name}...")
-                    node_start_time = perf_counter()
+                # if num_iter == 0:  # report node setup times at first iteration
+                #     self.logger.debug(f"First iteration: setup {node.name}...")
+                #     node_start_time = perf_counter()
                 if self.pipeline.data.get("pipeline_end", False):
                     self.pipeline.terminate = True
                     if "pipeline_end" not in node.inputs:
@@ -83,15 +99,21 @@ class Server:
 
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
-                if num_iter == 0:
-                    node_end_time = perf_counter()
-                    self.logger.debug(
-                        f"{node.name} setup time = {node_end_time - node_start_time:.2f} sec"
-                    )
-            num_iter += 1
-            if self.num_iter > 0 and num_iter >= self.num_iter:
-                self.logger.info(f"Stopping pipeline after {num_iter} iterations")
-                break
+            #     if num_iter == 0:
+            #         node_end_time = perf_counter()
+            #         self.logger.debug(
+            #             f"{node.name} setup time = {node_end_time - node_start_time:.2f} sec"
+            #         )
+            # num_iter += 1
+            # if self.num_iter > 0 and num_iter >= self.num_iter:
+            #     self.logger.info(f"Stopping pipeline after {num_iter} iterations")
+            #     break
+            return item.name
+
+        # https://www.uvicorn.org/deployment/#running-programmatically
+        # This doesn't work:
+        # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
+        uvicorn.run(app, host="127.0.0.1", port=5000, log_level="info")
 
         # clean up nodes with threads
         for node in self.pipeline.nodes:
