@@ -16,7 +16,7 @@
 Preprocessing functions for PoseNet
 """
 
-from typing import Tuple
+from typing import Tuple, Union
 
 import cv2
 import numpy as np
@@ -29,9 +29,9 @@ from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
 def rescale_image(
     source_img: np.ndarray,
     input_res: Tuple[int, int],
-    scale_factor: float = 1.0,
-    output_stride: int = 16,
-    model_type: str = "mobilenet",
+    scale_factor: float,
+    output_stride: int,
+    model_type: Union[int, str],
 ) -> Tuple[np.ndarray, np.ndarray]:
     """Rescale the image by a scale factor while ensuring it has a valid output
     stride
@@ -74,7 +74,10 @@ def _get_valid_resolution(
 
 
 def _rescale_image(
-    source_img: np.ndarray, target_width: int, target_height: int, model_type: str
+    source_img: np.ndarray,
+    target_width: int,
+    target_height: int,
+    model_type: Union[int, str],
 ) -> np.ndarray:
     """Apply different preprocessing depending on model type - mobilenet or resnet
 
