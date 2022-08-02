@@ -51,6 +51,12 @@ from peekingduck.cli import cli, run
     is_flag=True,
     help="Launch PeekingDuck viewer",
 )
+@click.option(
+    "--server",
+    default=False,
+    is_flag=True,
+    help="Launch PeekingDuck server",
+)
 @click.pass_context
 def main(
     context: click.Context,
@@ -58,6 +64,7 @@ def main(
     log_level: str,
     num_iter: int,
     viewer: bool,
+    server: bool,
 ) -> None:
     """Invokes the run() CLI command with some different defaults for
     ``node_config`` and ``nodes_parent_dir``.
@@ -85,6 +92,7 @@ def main(
         num_iter=num_iter,
         nodes_parent_dir=nodes_parent_dir,
         viewer=viewer,
+        server=server,
     )
 
 

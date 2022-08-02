@@ -27,6 +27,7 @@ from peekingduck.commands import LOGGER_NAME
 from peekingduck.runner import Runner
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
+from peekingduck.server import Server
 from peekingduck.viewer import Viewer
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -73,12 +74,19 @@ def init(custom_folder_name: str) -> None:
     is_flag=True,
     help="Launch PeekingDuck viewer",
 )
+@click.option(
+    "--server",
+    default=False,
+    is_flag=True,
+    help="Launch PeekingDuck server",
+)
 def run(  # pylint: disable=too-many-arguments
     config_path: str,
     log_level: str,
     node_config: str,
     num_iter: int,
     viewer: bool,
+    server: bool,
     nodes_parent_dir: str = "src",
 ) -> None:
     """Runs PeekingDuck"""
@@ -112,6 +120,18 @@ def run(  # pylint: disable=too-many-arguments
         end_time = perf_counter()
         logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
         pkd_viewer.run()
+    elif server:
+        logger.info("Launching PeekingDuck Server")
+        start_time = perf_counter()
+        pkd_server = Server(
+            pipeline_path=pipeline_config_path,
+            config_updates_cli=node_config,
+            custom_nodes_parent_subdir=nodes_parent_dir,
+            num_iter=num_iter,
+        )
+        end_time = perf_counter()
+        logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
+        pkd_server.run()
     else:
         start_time = perf_counter()
         runner = Runner(
