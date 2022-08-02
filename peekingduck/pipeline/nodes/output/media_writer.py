@@ -86,6 +86,7 @@ class Node(AbstractNode):
 
     def _write(self, img: np.ndarray) -> None:
         if self._image_type == "image":
+            print("saving image: ", self._file_path_with_timestamp)
             cv2.imwrite(self._file_path_with_timestamp, img)
         else:
             self.writer.write(img)
@@ -112,13 +113,17 @@ class Node(AbstractNode):
         output_dir.mkdir(parents=True, exist_ok=True)
 
     def _append_datetime_filename(self, filename: str) -> str:
+        # WIP: This function no longer adds timestamp all the time
         self._file_name = filename
-        current_time = datetime.datetime.now()
-        # output as 'YYYYMMDD_hhmmss'
-        time_str = current_time.strftime("%y%m%d_%H%M%S")
+        if self.add_timestamp:
+            current_time = datetime.datetime.now()
+            # output as 'YYYYMMDD_hhmmss'
+            time_str = current_time.strftime("%y%m%d_%H%M%S_%f")
 
-        # append timestamp to filename before extension Format: filename_timestamp.extension
-        filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
-        file_path_with_timestamp = self.output_dir / filename_with_timestamp
+            # append timestamp to filename before extension Format: filename_timestamp.extension
+            filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
+            file_path_with_timestamp = self.output_dir / filename_with_timestamp
+        else:
+            file_path_with_timestamp = self.output_dir / filename
 
         return str(file_path_with_timestamp)

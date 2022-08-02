@@ -18,10 +18,11 @@ from peekingduck.utils.requirement_checker import RequirementChecker
 
 app = FastAPI()
 
-
+# This needs to be flexible
 class Item(BaseModel):
     name: str
     image: str
+    timestamp: str
 
 
 class Server:
@@ -84,6 +85,8 @@ class Server:
 
                 if "all" in node.inputs:
                     inputs = copy.deepcopy(self.pipeline.data)
+                elif "request" in node.inputs:
+                    inputs = {"request": item}
                 else:
                     inputs = {
                         key: self.pipeline.data[key]
@@ -113,6 +116,8 @@ class Server:
         # https://www.uvicorn.org/deployment/#running-programmatically
         # This doesn't work:
         # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
+        # multiple workers probably not a good idea with PKD - e.g. media_writer needs to combine
+        # correctly, weights downloading will have issues, etc
         uvicorn.run(app, host="127.0.0.1", port=5000, log_level="info")
 
         # clean up nodes with threads

@@ -1,0 +1,2 @@
+input: ["request"]
+output: ["img", "filename", "pipeline_end", "saved_video_fps"]
