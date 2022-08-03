@@ -18,7 +18,7 @@ Predictor class to handle detection of poses for posenet
 
 import logging
 from pathlib import Path
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple, Union
 
 import numpy as np
 import tensorflow as tf
@@ -47,8 +47,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
-        model_type: str,
-        model_file: Dict[str, str],
+        model_type: Union[int, str],
+        model_file: Dict[Union[int, str], str],
         model_nodes: Dict[str, Dict[str, List[str]]],
         resolution: Dict[str, int],
         max_pose_detection: int,
@@ -196,7 +196,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         output_stride: int,
         frame: np.ndarray,
         input_res: Tuple[int, int],
-        model_type: str,
+        model_type: Union[int, str],
     ) -> Tuple[tf.Tensor, np.ndarray, List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
