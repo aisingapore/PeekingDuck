@@ -37,7 +37,7 @@
 """YolactEdge model with the feature pyramid network and prediction layer.
 Modifications include:
 - Yolact
-    - Refactor configs
+    - Refactor necessary configs from yolact_edge/data/config.py
     - Removed unused conditions for ResNet and MobileNetV2 backbone
         - use_jit boolean value
     - Removed unused functions for ResNet and MobileNetV2 backbone
@@ -255,8 +255,10 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
 
     def load_weights(self, path: Path) -> None:
         """Loads weights from a compressed save file.
+
         Args:
             path (Path): Path to the model weights file.
+
         Returns:
             YolactEdge model
         """
@@ -289,19 +291,20 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
     the middle instead of a 1x1 convolution. Though, I really can't
     be arsed to implement it myself, and, who knows, this might be
     better.
+
     Args:
-        - in_channels:   The input feature size.
-        - out_channels:  The output feature size (must be a multiple of 4).
-        - aspect_ratios: A list of lists of priorbox aspect ratios (one list per
-                         scale).
-        - scales:        A list of priorbox scales relative to this layer's convsize.
-                         For instance: If this layer has convouts of size 30x30 for
-                         an image of size 600x600, the 'default' (scale of 1) for
-                         this layer would produce bounding boxes with an area of
-                         20x20px. If the scale is .5 on the other hand, this layer
-                         would consider bounding boxes with area 10x10px, etc.
-        - parent:        If parent is a PredictionModule, this module will use
-                         all the layers from parent instead of from this module.
+        in_channels (int): The input feature size.
+        out_channels (int): The output feature size (must be a multiple of 4).
+        aspect_ratios (List[List]): A list of lists of priorbox aspect ratios
+            (one list per scale).
+        scales (List[int]): A list of priorbox scales relative to this layer's convsize.
+            For instance: If this layer has convouts of size 30x30 for an image
+            of size 600x600, the 'default' (scale of 1) for this layer would
+            produce bounding boxes with an area of 20x20px. If the scale is .5
+            on the other hand, this layer would consider bounding boxes with area
+            10x10px, etc.
+        parent (PredictionModule): If parent is a PredictionModule, this module
+            will use all the layers from parent instead of from this module.
     """
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -343,21 +346,21 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
 
         self.aspect_ratios = aspect_ratios
         self.scales = scales
-        self.priors: Union[None, torch.Tensor] = None
+        self.priors: Union[None, Tensor] = None
         self.last_conv_size = (0, 0)
         self.input_size = input_size
 
-    def forward(self, inputs: torch.Tensor) -> Dict[str, torch.Tensor]:
+    def forward(self, inputs: Tensor) -> Dict[str, Tensor]:
         """
         Args:
-            - inputs: The convOut from a layer in the backbone network
-                 Size: [batch_size, in_channels, conv_h, conv_w])
+            inputs (Tensor): The convout from a layer in the backbone network of
+                size: [batch_size, in_channels, conv_h, conv_w])
 
-        Returns a tuple (bbox_coords, class_confs, mask_output, prior_boxes) with sizes
-            - bbox_coords: [batch_size, conv_h*conv_w*num_priors, 4]
-            - class_confs: [batch_size, conv_h*conv_w*num_priors, num_classes]
-            - mask_output: [batch_size, conv_h*conv_w*num_priors, mask_dim]
-            - prior_boxes: [conv_h*conv_w*num_priors, 4]
+        Returns a dictionary of Tensors with the following sizes:
+            bbox_coords (Tensor): [batch_size, conv_h*conv_w*num_priors, 4]
+            class_confs (Tensor): [batch_size, conv_h*conv_w*num_priors, num_classes]
+            mask_output (Tensor): [batch_size, conv_h*conv_w*num_priors, mask_dim]
+            prior_boxes (Tensor): [conv_h*conv_w*num_priors, 4]
         """
         src = self if self.parent[0] is None else self.parent[0]
         conv_h = inputs.size(2)
@@ -399,8 +402,8 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         center-y are the center coordinates of the box.
 
         Args:
-            - conv_h: The height of the convolutional output.
-            - conv_w: The width of the convolutional output.
+            conv_h (int): The height of the convolutional output.
+            conv_w (int): The width of the convolutional output.
 
         Returns:
             self.priors (Tensor): [conv_h * conv_w * num_priors, 4]
@@ -534,12 +537,12 @@ class FPNPhase2(ScriptModuleWrapper):
     ) -> List[Optional[List[Any]]]:
         """
         Args:
-            - convouts (list): A list of convouts for the corresponding layers
-                in in_channels.
+            x_1, x_2, x_3, x_4, x_5, x_6 (List): A list of convouts for the
+                corresponding layers in in_channels.
 
         Returns:
-            - out (list): A list of FPN convouts in the same order as x with extra downsample
-                layers if requested.
+            out (List): A list of FPN convouts in the same order as x with extra
+                downsample layers if requested.
         """
         out_ = [x_1, x_2, x_3, x_4, x_5, x_6, x_7]
         out = []
@@ -595,7 +598,7 @@ class YolactEdgeHead:
                 Shape: [batch, mask_h, mask_w, mask_dim]
 
         Returns:
-            out (list): output of shape (batch_size, max_num_detections, 1 + 1 + 4 + mask_dim)
+            out (List): output of shape (batch_size, max_num_detections, 1 + 1 + 4 + mask_dim)
                 These outputs are in the order: class idx, confidence, bbox coords,
                 and mask.
         """

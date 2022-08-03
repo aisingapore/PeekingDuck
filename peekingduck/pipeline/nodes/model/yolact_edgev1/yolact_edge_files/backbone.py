@@ -44,7 +44,7 @@ Modifications include:
 - Refactor and formatting
 """
 
-from typing import Callable, List, Any, Tuple, Union
+from typing import Callable, List, Any, Tuple, Union, Optional
 from functools import partial
 import torch.nn as nn
 from torch import Tensor
@@ -386,7 +386,8 @@ class MobileNetV2Backbone(nn.Module):
         s_val: int,
         block: Callable,
     ) -> int:
-        """A layer is a combination of inverted residual blocks
+        """A layer is a combination of stacked InvertedResidual blocks to build
+        a layer for MobileNetV2.
 
         Args:
             input_channel (int): The number of input channels to the first block.
@@ -457,8 +458,21 @@ class MobileNetV2Backbone(nn.Module):
         )
 
     @classmethod
-    def _make_divisible(cls, value: float, divisor: int, min_value: Any = None) -> int:
-        """Adapted from torchvision.models.mobilenet._make_divisable"""
+    def _make_divisible(
+        cls, value: float, divisor: int, min_value: Optional[int] = None
+    ) -> int:
+        """Adapted from torchvision.models.mobilenet._make_divisable
+        This function  is taken from the original tf repo. It ensures that all
+        layers have a channel number that is divisible by 8
+
+        Args:
+            value (float): The input number to make it divisible by 8
+            divisor (int): The divisor to use
+            min_value (Any): The minimum value to use
+
+        Returns:
+            new_value (int): The new value that is divisible by 8
+        """
         if min_value is None:
             min_value = divisor
         new_value = max(min_value, int(value + divisor / 2) // divisor * divisor)

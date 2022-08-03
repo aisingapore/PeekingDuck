@@ -162,7 +162,7 @@ def make_extra(num_layers: int, out_channels: int) -> Callable:
         out_channels (int): number of channels in the output
 
     Returns:
-        An array of alternating convolutional relu layers if there is at least
+        An array of alternating convolutional ReLU layers if there is at least
         one layer.
     """
     if num_layers == 0:
@@ -224,7 +224,7 @@ def point_form(boxes: Tensor) -> Tensor:
         boxes: (Tensor) center-size default boxes from priorbox layers.
 
     Returns:
-        boxes: (Tensor) Converted xmin, ymin, xmax, ymax form of boxes.
+        (Tensor) Converted xmin, ymin, xmax, ymax form of boxes.
     """
     return torch.cat(
         (
@@ -285,6 +285,7 @@ def decode(loc: Tensor, priors: Tensor, use_yolo_regressors: bool = False) -> Te
     Args:
         loc (Tensor): The predicted bounding boxes of size [num_priors, 4]
         priors (Tensor): The priorbox coords with size [num_priors, 4]
+        use_yolo_regressors (bool): Whether or not to use the YOLO regressors.
 
     Returns:
         boxes (Tensor): A tensor of decoded relative coordinates in point form
@@ -349,7 +350,7 @@ def crop(  # pylint: disable=too-many-locals
     Args:
         masks (Tensor): Uncropped mask tensor values in uint8
         boxes (Tensor): x1, y1, x2, y2 values of the bounding box detection
-        padding (int, optional):  Defaults to 1.
+        padding (int, optional): Padding value. Defaults to 1.
 
     Returns:
         out (Tensor): cropped mask tensor
