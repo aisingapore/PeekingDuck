@@ -264,8 +264,9 @@ class YolactEdge(nn.Module):  # pylint: disable=too-many-instance-attributes
         """
         state_dict = torch.load(path, map_location="cpu")
         for key in list(state_dict.keys()):
-            # For backward compatibility, the new variable is called layers
-            # This has been commented out because
+            # For backward compatibility, the new variable is called layers.
+            # This has been commented out because the ResNet and MobileNetV2
+            # backbones will not be using it.
             # if key.startswith("backbone.layer") and not key.startswith(
             #     "backbone.layers"
             # ):
