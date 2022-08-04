@@ -42,6 +42,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bbox_scores_data|
 
     Configs:
+        model_format (:obj:`str`): **{"pytorch", "tensorrt"},
+            default="pytorch"** |br|
+            Defines the weights format of the model.
         model_type (:obj:`str`): **{"yolox-tiny", "yolox-s", "yolox-m",
             "yolox-l"}, default="yolox-tiny"**. |br|
             Defines the type of YOLOX model to be used.

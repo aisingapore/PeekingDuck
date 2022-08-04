@@ -51,6 +51,9 @@ class Node(AbstractNode):
         |bbox_labels_data|
 
     Configs:
+        model_format (:obj:`str`): **{"tensorflow", "tensorrt"},
+            default="tensorflow"** |br|
+            Defines the weights format of the model.
         model_type (:obj:`str`):
             **{"
             singlepose_lightning", "singlepose_thunder", "multipose_lightning"
