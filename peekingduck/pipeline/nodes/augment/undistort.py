@@ -16,13 +16,12 @@
 Removes distortion from a wide-angle camera image.
 """
 
-
+from pathlib import Path
 from typing import Any, Dict
 
-from pathlib import Path
 import cv2
-import yaml
 import numpy as np
+import yaml
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
@@ -87,7 +86,6 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Outputs dictionary with the key `img`.
         """
-
         img = inputs["img"]
 
         if self.new_camera_matrix is None:
@@ -112,3 +110,9 @@ class Node(AbstractNode):
         undistorted_img = undistorted_img[y_pos : y_pos + img_h, x_pos : x_pos + img_w]
 
         return {"img": undistorted_img}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"file_path": str}

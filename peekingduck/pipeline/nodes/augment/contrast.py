@@ -58,3 +58,9 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         img = cv2.convertScaleAbs(inputs["img"], alpha=self.alpha, beta=0)
 
         return {"img": img}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"alpha": float}

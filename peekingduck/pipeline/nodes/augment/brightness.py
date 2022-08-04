@@ -63,3 +63,9 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         img = np.reshape(img_vector, orig_shape)
 
         return {"img": img}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"beta": int}
