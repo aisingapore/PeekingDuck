@@ -23,9 +23,9 @@ Reads inputs from multiple visual sources |br|
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
 from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class SourceType:  # pylint: disable=too-few-public-methods
@@ -218,6 +218,24 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             else:
                 self._source_type = SourceType.FILE
                 self._file_name = path.name
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "buffering": bool,
+            "filename": str,
+            "frames_log_freq": int,
+            "mirror_image": bool,
+            "resize": Dict[str, Union[bool, int]],
+            "resize.do_resizing": bool,
+            "resize.height": int,
+            "resize.width": int,
+            "saved_video_fps": int,
+            "source": Union[int, str],
+            "threading": bool,
+        }
 
     def _get_files(self, path: Path) -> None:
         """Read all files in given directory (non-recursive)
