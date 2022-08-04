@@ -53,7 +53,7 @@ class Node(AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default = 0.3**.
             Bounding boxes with confidence score below the threshold will be
             discarded.
-        detect (:obj:`List[Union[int, string]]`): **default = [0]**. |br|
+        detect (:obj:`List[Union[int, str]]`): **default = [0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
