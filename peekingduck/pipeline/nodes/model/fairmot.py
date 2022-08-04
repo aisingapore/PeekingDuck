@@ -16,12 +16,12 @@
 detection and re-ID tasks.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.fairmotv1 import fairmot_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.fairmotv1 import fairmot_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -121,6 +121,19 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             "obj_attrs": {"ids": track_ids},
         }
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "input_size": List[int],
+            "K": int,
+            "min_box_area": int,
+            "score_threshold": float,
+            "track_buffer": int,
+            "weights_parent_dir": Optional[str],
+        }
 
     def _reset_model(self) -> None:
         """Creates a new instance of the FairMOT model with the frame rate

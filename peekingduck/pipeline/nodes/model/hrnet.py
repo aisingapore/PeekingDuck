@@ -17,7 +17,7 @@ human pose estimation. Requires an object detector.
 """
 
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.hrnetv1 import hrnet_model
@@ -52,7 +52,7 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        resolution (:obj:`Dict`):
+        resolution (:obj:`Dict[str, int]`):
             **default = { height: 192, width: 256 }**. |br|
             Resolution of input array to HRNet model.
         score_threshold (:obj:`float`): **[0, 1], default = 0.1**. |br|
@@ -81,3 +81,15 @@ class Node(AbstractNode):
             "keypoint_conns": keypoint_conns,
         }
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "resolution": Dict[str, int],
+            "resolution.height": int,
+            "resolution.width": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

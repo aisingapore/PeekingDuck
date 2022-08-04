@@ -14,7 +14,7 @@
 
 """🔲 One-stage Object Detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import cv2
 import numpy as np
@@ -99,3 +99,15 @@ class Node(AbstractNode):
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        return {
+            "detect": List[Union[int, str]],
+            "iou_threshold": float,
+            "max_output_size_per_class": int,
+            "max_total_size": int,
+            "model_type": str,
+            "num_classes": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

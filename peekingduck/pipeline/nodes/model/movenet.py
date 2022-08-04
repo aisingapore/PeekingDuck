@@ -14,7 +14,7 @@
 
 """🕺 Fast Pose Estimation model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -104,4 +104,18 @@ class Node(AbstractNode):
             "keypoints": keypoints,
             "keypoint_conns": keypoint_conns,
             "keypoint_scores": keypoint_scores,
+        }
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "iou_threshold": float,
+            "min_box_area": int,
+            "model_format": str,
+            "nms_threshold": float,
+            "score_threshold": float,
+            "track_buffer": int,
+            "weights_parent_dir": Optional[str],
         }

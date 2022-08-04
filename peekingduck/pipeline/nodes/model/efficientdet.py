@@ -14,13 +14,13 @@
 
 """🔲 Scalable and efficient object detection."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 
 
 class Node(AbstractNode):
@@ -81,3 +81,14 @@ class Node(AbstractNode):
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "detect": List[Union[int, str]],
+            "model_type": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

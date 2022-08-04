@@ -14,15 +14,15 @@
 
 """🔲 License Plate Detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import (
     yolo_license_plate_model,
 )
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -94,3 +94,14 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         }
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "iou_threshold": float,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

@@ -16,13 +16,13 @@
 unmasked faces.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.yolov4_face import yolo_face_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -92,3 +92,17 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         }
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "detect": List[int],
+            "iou_threshold": float,
+            "max_output_size_per_class": int,
+            "max_total_size": int,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

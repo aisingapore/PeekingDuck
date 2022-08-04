@@ -14,12 +14,12 @@
 
 """🔲 High performance anchor-free YOLO object detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -105,3 +105,20 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {
+            "agnostic_nms": bool,
+            "detect": List[Union[int, str]],
+            "fuse": bool,
+            "half": bool,
+            "input_size": int,
+            "iou_threshold": float,
+            "model_format": str,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }
