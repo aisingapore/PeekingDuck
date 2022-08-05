@@ -18,10 +18,11 @@ import copy
 from typing import Any, Dict, List
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.bbox import check_bgr_type, draw_tags
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
 
 
-class Node(AbstractNode):
+class Node(ThresholdCheckerMixin, AbstractNode):
     """Draws a tag above each bounding box in the image, using information from
     selected attributes in :term:`obj_attrs`. In the general example below,
     :term:`obj_attrs` has 2 attributes (`<attr a>` and `<attr b>`). There are
@@ -94,8 +95,8 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.check_bounds("tag_color", "[0, 255]")
         self.attr_keys = []
-        check_bgr_type(self.tag_color)
         if not self.show:
             raise KeyError(
                 "The 'show' config is currently empty. Add the desired attributes to be drawn "
