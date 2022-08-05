@@ -17,9 +17,6 @@ IMAGE_PATH = "../../peekingduck/data/input/shiba_inu.jpeg"
 OBJECT_NAME = "shiba_inu"
 
 
-# set credentials and connect to RabbitMQ
-# remember to create the user on the RabbitMQ server first!
-# credentials = pika.PlainCredentials(username=USERNAME, password=PASSWORD)
 connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST))
 channel = connection.channel()
 

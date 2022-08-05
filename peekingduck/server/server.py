@@ -17,6 +17,7 @@ from peekingduck.utils.requirement_checker import RequirementChecker
 
 
 EXCHANGE = "cameras"
+QUEUE = "task_queue"
 EXCHANGE_TYPE = "fanout"
 
 
@@ -63,30 +64,30 @@ class Server:
         self.host = host
         self.port = port
         if mode == "request-response":
-            print("requestresponse!")
             self.app = FastAPI()
-        elif mode == "publish-subscribe":
+        else:
             connection = pika.BlockingConnection(
                 pika.ConnectionParameters(host=self.host)
             )
             self.channel = connection.channel()
-            self.channel.exchange_declare(
-                exchange=EXCHANGE, exchange_type=EXCHANGE_TYPE
-            )
+            if mode == "publish-subscribe":
+                self.channel.exchange_declare(
+                    exchange=EXCHANGE, exchange_type=EXCHANGE_TYPE
+                )
 
-            # use random queue name, and "exclusive" flag will delete queue after consumer disconnects
-            result = self.channel.queue_declare(queue="", exclusive=True)
-            self.queue_name = result.method.queue
-            self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
-        else:
-            pass
+                # use random queue name, and "exclusive" flag will delete queue after consumer disconnects
+                result = self.channel.queue_declare(queue="", exclusive=True)
+                self.queue_name = result.method.queue
+                # To tell the exchange to send messages to the queue
+                self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
+            else:
+                self.channel.queue_declare(queue=QUEUE, durable=True)
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
 
         if self.mode == "request-response":
-            print("requestresponse!")
-            # # while not self.pipeline.terminate:
+            # move outside?
             @self.app.post("/image")
             async def image(item: dict = Body):
                 self._process_nodes(item)
@@ -98,19 +99,30 @@ class Server:
             # multiple workers with PKD depends on nodes used - e.g. media_writer needs to combine
             # correctly, weights downloading will have issues, tracking needs to be in sequence, etc.
             # If none of the above apply, async will be advantageous.
-            uvicorn.run(self.app, host="127.0.0.1", port=5000, log_level="info")
+            uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
 
-        elif self.mode == "publish-subscribe":
+        else:
 
-            def callback(ch, method, properties, item):
-                global messages_received, completed_pubs
-                item = pickle.loads(item)
-                self._process_nodes(item)
-                return
+            if self.mode == "publish-subscribe":
 
-            self.channel.basic_consume(
-                queue=self.queue_name, on_message_callback=callback, auto_ack=True
-            )
+                def callback(ch, method, properties, item):
+                    item = pickle.loads(item)
+                    self._process_nodes(item)
+                    return
+
+                self.channel.basic_consume(
+                    queue=self.queue_name, on_message_callback=callback, auto_ack=True
+                )
+            else:
+
+                def callback(ch, method, properties, item):
+                    item = pickle.loads(item)
+                    self._process_nodes(item)
+                    ch.basic_ack(delivery_tag=method.delivery_tag)
+                    return
+
+                self.channel.basic_qos(prefetch_count=1)
+                self.channel.basic_consume(queue=QUEUE, on_message_callback=callback)
             self.channel.start_consuming()
 
         # clean up nodes with threads
