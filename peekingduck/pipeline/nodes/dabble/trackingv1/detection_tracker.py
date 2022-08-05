@@ -17,6 +17,7 @@
 import logging
 from typing import Any, Dict, List
 
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.iou_tracker import (
     IOUTracker,
 )
@@ -25,7 +26,7 @@ from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.opencv_tracker 
 )
 
 
-class DetectionTracker:  # pylint: disable=too-few-public-methods
+class DetectionTracker(ThresholdCheckerMixin):  # pylint: disable=too-few-public-methods
     """Tracks detection bounding boxes using the chosen algorithm.
 
     Args:
@@ -46,18 +47,14 @@ class DetectionTracker:  # pylint: disable=too-few-public-methods
     tracker_constructors = {"iou": IOUTracker, "mosse": OpenCVTracker}
 
     def __init__(self, config: Dict[str, Any]) -> None:
+        self.config = config
         self.logger = logging.getLogger(__name__)
 
-        # Check threshold values
-        if not 0 <= config["iou_threshold"] <= 1:
-            raise ValueError("iou_threshold must be in [0, 1]")
-        if config["max_lost"] < 0:
-            raise ValueError("max_lost cannot be negative")
+        self.check_bounds("iou_threshold", "[0, 1]")
+        self.check_bounds("max_lost", "[0, +inf)")
+        self.check_valid_choice("tracking_type", {"iou", "mosse"})
 
-        try:
-            self.tracker = self.tracker_constructors[config["tracking_type"]](config)
-        except KeyError as error:
-            raise ValueError("tracking_type must be one of ['iou', 'mosse']") from error
+        self.tracker = self.tracker_constructors[config["tracking_type"]](config)
 
     def track_detections(self, inputs: Dict[str, Any]) -> List[int]:
         """Tracks detections using the selected algorithm.
