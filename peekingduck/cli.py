@@ -19,7 +19,7 @@ CLI functions for PeekingDuck.
 import click
 
 from peekingduck import __version__
-from peekingduck.commands.core import init, run, verify_install
+from peekingduck.commands.core import init, run, serve, verify_install
 from peekingduck.commands.create_node import create_node
 from peekingduck.commands.nodes import nodes
 
@@ -37,4 +37,5 @@ cli.add_command(create_node)
 cli.add_command(init)
 cli.add_command(nodes)
 cli.add_command(run)
+cli.add_command(serve)
 cli.add_command(verify_install)

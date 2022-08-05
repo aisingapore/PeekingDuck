@@ -86,7 +86,6 @@ class Node(AbstractNode):
 
     def _write(self, img: np.ndarray) -> None:
         if self._image_type == "image":
-            print("saving image: ", self._file_path_with_timestamp)
             cv2.imwrite(self._file_path_with_timestamp, img)
         else:
             self.writer.write(img)

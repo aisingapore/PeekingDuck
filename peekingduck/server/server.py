@@ -3,11 +3,11 @@ import logging
 import sys
 from pathlib import Path
 
-# from time import perf_counter
 from typing import List
 
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, Body
+import pickle
+import pika
 import uvicorn
 
 from peekingduck.declarative_loader import DeclarativeLoader, NodeList
@@ -16,13 +16,8 @@ from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.requirement_checker import RequirementChecker
 
 
-app = FastAPI()
-
-# This needs to be flexible
-class Item(BaseModel):
-    name: str
-    image: str
-    timestamp: str
+EXCHANGE = "cameras"
+EXCHANGE_TYPE = "fanout"
 
 
 class Server:
@@ -30,8 +25,10 @@ class Server:
         self,
         pipeline_path: Path = None,
         config_updates_cli: str = None,
+        mode: str = "request-response",
+        host: str = "0.0.0.0",
+        port: int = 5000,
         custom_nodes_parent_subdir: str = None,
-        num_iter: int = None,
         nodes: List[AbstractNode] = None,
     ) -> None:
         self.logger = logging.getLogger(__name__)
@@ -61,64 +58,60 @@ class Server:
                 "Please rerun for the updates to take effect."
             )
             sys.exit(3)
-        if num_iter is None or num_iter <= 0:
-            self.num_iter = 0
+
+        self.mode = mode
+        self.host = host
+        self.port = port
+        if mode == "request-response":
+            print("requestresponse!")
+            self.app = FastAPI()
+        elif mode == "publish-subscribe":
+            connection = pika.BlockingConnection(
+                pika.ConnectionParameters(host=self.host)
+            )
+            self.channel = connection.channel()
+            self.channel.exchange_declare(
+                exchange=EXCHANGE, exchange_type=EXCHANGE_TYPE
+            )
+
+            # use random queue name, and "exclusive" flag will delete queue after consumer disconnects
+            result = self.channel.queue_declare(queue="", exclusive=True)
+            self.queue_name = result.method.queue
+            self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
         else:
-            self.num_iter = num_iter
-            self.logger.info(f"Run pipeline for {num_iter} iterations")
+            pass
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
-        # num_iter = 0
 
-        # while not self.pipeline.terminate:
-        @app.post("/image")
-        async def image(item: Item):
-            for node in self.pipeline.nodes:
-                # if num_iter == 0:  # report node setup times at first iteration
-                #     self.logger.debug(f"First iteration: setup {node.name}...")
-                #     node_start_time = perf_counter()
-                if self.pipeline.data.get("pipeline_end", False):
-                    self.pipeline.terminate = True
-                    if "pipeline_end" not in node.inputs:
-                        continue
+        if self.mode == "request-response":
+            print("requestresponse!")
+            # # while not self.pipeline.terminate:
+            @self.app.post("/image")
+            async def image(item: dict = Body):
+                self._process_nodes(item)
+                return
 
-                if "all" in node.inputs:
-                    inputs = copy.deepcopy(self.pipeline.data)
-                elif "request" in node.inputs:
-                    inputs = {"request": item}
-                else:
-                    inputs = {
-                        key: self.pipeline.data[key]
-                        for key in node.inputs
-                        if key in self.pipeline.data
-                    }
-                if hasattr(node, "optional_inputs"):
-                    for key in node.optional_inputs:
-                        # The nodes will not receive inputs with the optional
-                        # key if it's not found upstream
-                        if key in self.pipeline.data:
-                            inputs[key] = self.pipeline.data[key]
+            # https://www.uvicorn.org/deployment/#running-programmatically
+            # This doesn't work:
+            # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
+            # multiple workers with PKD depends on nodes used - e.g. media_writer needs to combine
+            # correctly, weights downloading will have issues, tracking needs to be in sequence, etc.
+            # If none of the above apply, async will be advantageous.
+            uvicorn.run(self.app, host="127.0.0.1", port=5000, log_level="info")
 
-                outputs = node.run(inputs)
-                self.pipeline.data.update(outputs)
-            #     if num_iter == 0:
-            #         node_end_time = perf_counter()
-            #         self.logger.debug(
-            #             f"{node.name} setup time = {node_end_time - node_start_time:.2f} sec"
-            #         )
-            # num_iter += 1
-            # if self.num_iter > 0 and num_iter >= self.num_iter:
-            #     self.logger.info(f"Stopping pipeline after {num_iter} iterations")
-            #     break
-            return item.name
+        elif self.mode == "publish-subscribe":
 
-        # https://www.uvicorn.org/deployment/#running-programmatically
-        # This doesn't work:
-        # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
-        # multiple workers probably not a good idea with PKD - e.g. media_writer needs to combine
-        # correctly, weights downloading will have issues, etc
-        uvicorn.run(app, host="127.0.0.1", port=5000, log_level="info")
+            def callback(ch, method, properties, item):
+                global messages_received, completed_pubs
+                item = pickle.loads(item)
+                self._process_nodes(item)
+                return
+
+            self.channel.basic_consume(
+                queue=self.queue_name, on_message_callback=callback, auto_ack=True
+            )
+            self.channel.start_consuming()
 
         # clean up nodes with threads
         for node in self.pipeline.nodes:
@@ -132,3 +125,31 @@ class Server:
             (:obj:`Dict`): Run configurations being used by runner.
         """
         return self.node_loader.node_list
+
+    def _process_nodes(self, item) -> None:
+
+        for node in self.pipeline.nodes:
+            if self.pipeline.data.get("pipeline_end", False):
+                self.pipeline.terminate = True
+                if "pipeline_end" not in node.inputs:
+                    continue
+
+            if "all" in node.inputs:
+                inputs = copy.deepcopy(self.pipeline.data)
+            elif "request" in node.inputs:
+                inputs = {"request": item}
+            else:
+                inputs = {
+                    key: self.pipeline.data[key]
+                    for key in node.inputs
+                    if key in self.pipeline.data
+                }
+            if hasattr(node, "optional_inputs"):
+                for key in node.optional_inputs:
+                    # The nodes will not receive inputs with the optional
+                    # key if it's not found upstream
+                    if key in self.pipeline.data:
+                        inputs[key] = self.pipeline.data[key]
+
+            outputs = node.run(inputs)
+            self.pipeline.data.update(outputs)
