@@ -1,6 +1,4 @@
 input: ["img", "bboxes", "obj_attrs", "large_groups"]
 output: ["none"]
 
-bbox_color: [0, 140, 255]
-bbox_thickness: 4
 tag: "LARGE GROUP!"
