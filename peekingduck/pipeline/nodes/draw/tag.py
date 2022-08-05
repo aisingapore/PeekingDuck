@@ -17,8 +17,8 @@
 import copy
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.draw.utils.bbox import check_bgr_type, draw_tags
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.draw.utils.bbox import check_bgr_type, draw_tags
 
 
 class Node(AbstractNode):
@@ -121,6 +121,12 @@ class Node(AbstractNode):
         draw_tags(inputs["img"], inputs["bboxes"], tags, self.tag_color)
 
         return {}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"show": List[str], "tag_color": List[int]}
 
     def _tags_from_obj_attrs(self, inputs: Dict[str, Any]) -> List[str]:
         """Process inputs from various attributes into tags for drawing."""

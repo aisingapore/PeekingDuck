@@ -20,9 +20,9 @@ from typing import Any, Dict, List
 
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes, draw_tags
 from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -86,6 +86,12 @@ class Node(AbstractNode):
         draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)
 
         return {}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"tag": str}
 
     @staticmethod
     def _get_group_bbox_coords(
