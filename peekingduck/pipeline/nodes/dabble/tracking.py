@@ -16,10 +16,10 @@
 
 from typing import Any, Dict
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.dabble.trackingv1.detection_tracker import (
     DetectionTracker,
 )
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -81,6 +81,12 @@ class Node(AbstractNode):
         track_ids = self.tracker.track_detections(inputs)
 
         return {"obj_attrs": {"ids": track_ids}}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"tracking_type": str, "iou_threshold": float, "max_lost": int}
 
     def _reset_model(self) -> None:
         """Creates a new instance of DetectionTracker."""

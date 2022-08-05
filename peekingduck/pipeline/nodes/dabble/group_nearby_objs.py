@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.dabble.utils.quick_find import QuickFind
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.dabble.utils.quick_find import QuickFind
 
 
 class Node(AbstractNode):
@@ -70,6 +70,12 @@ class Node(AbstractNode):
                 quickfind.union(idx_1, idx_2)
 
         return {"obj_attrs": {"groups": quickfind.get_group_alloc()}}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"obj_dist_threshold": float}
 
     @staticmethod
     def _find_nearby_obj_pairs(

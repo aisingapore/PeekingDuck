@@ -69,3 +69,9 @@ class Node(AbstractNode):
         outputs = {"obj_3D_locs": locations}
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"focal_length": float, "height_factor": float}

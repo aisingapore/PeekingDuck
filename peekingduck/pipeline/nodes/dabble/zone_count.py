@@ -14,10 +14,10 @@
 
 """Counts the number of detected objects within a boundary."""
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
-from peekingduck.pipeline.nodes.dabble.zoningv1.zone import Zone
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.dabble.zoningv1.zone import Zone
 
 
 class Node(AbstractNode):
@@ -104,6 +104,12 @@ class Node(AbstractNode):
             )
 
         return created_zone
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"resolution": List[int], "zones": List[List[List[Union[int, float]]]]}
 
     @staticmethod
     def _get_pixel_coords(coords: List[float], resolution: List[int]) -> List[float]:

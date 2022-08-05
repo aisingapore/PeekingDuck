@@ -73,6 +73,12 @@ class Node(AbstractNode):
 
         return outputs
 
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"focal_length": float, "torso_factor": float}
+
     @staticmethod
     def _get_torso_keypoints(keypoints: np.ndarray) -> np.ndarray:
         """Filter keypoints to get only selected keypoints for torso"""
