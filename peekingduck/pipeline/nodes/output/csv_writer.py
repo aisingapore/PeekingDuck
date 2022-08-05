@@ -36,7 +36,7 @@ class Node(AbstractNode):
         |none_output_data|
 
     Configs:
-        stats_to_track (:obj:`List`):
+        stats_to_track (:obj:`List[str]`):
             **default = ["keypoints", "bboxes", "bbox_labels"]**. |br|
             Parameters to log into the CSV file. The chosen parameters must be
             present in the data pool.
@@ -118,6 +118,12 @@ class Node(AbstractNode):
         # update stats_to_track with valid stats found in data pool
         self.stats_to_track = valid
         self._stats_checked = True
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"stats_to_track": List[str], "file_path": str, "logging_interval": int}
 
     def _reset(self) -> None:
         del self.csv_logger

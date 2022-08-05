@@ -84,6 +84,12 @@ class Node(AbstractNode):
 
         return {}
 
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"output_dir": str}
+
     def _write(self, img: np.ndarray) -> None:
         if self._image_type == "image":
             cv2.imwrite(self._file_path_with_timestamp, img)
