@@ -51,8 +51,6 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.mosaic_level = self.config["mosaic_level"]
-
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         mosaic_img = self._mosaic_bbox(inputs["img"], inputs["bboxes"])
         outputs = {"img": mosaic_img}
