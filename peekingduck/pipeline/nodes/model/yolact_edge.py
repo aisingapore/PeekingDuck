@@ -50,7 +50,12 @@ class Node(AbstractNode):
         detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
-        score_threshold (:obj:`float`): **[0, 1], default = 0.25**. |br|
+        max_num_detections: (:obj:`int`): **default=100**. |br|
+            Maximum number of detections per image, for all classes.
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+            Overlapping bounding boxes with Intersection over Union (IoU) above
+            the threshold will be discarded.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.2**. |br|
             Bounding boxes with confidence score (product of objectness score
             and classification score) below the threshold will be discarded.
 
