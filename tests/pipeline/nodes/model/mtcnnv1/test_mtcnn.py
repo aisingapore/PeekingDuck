@@ -39,7 +39,7 @@ def mtcnn_config():
 
 @pytest.fixture(
     params=[
-        {"key": "min_size", "value": -0.5},
+        {"key": "min_size", "value": -1},
         {"key": "network_thresholds", "value": [-0.5, -0.5, -0.5]},
         {"key": "network_thresholds", "value": [1.5, 1.5, 1.5]},
         {"key": "scale_factor", "value": -0.5},
@@ -88,6 +88,12 @@ class TestMTCNN:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=mtcnn_bad_config_value)
         assert "must be" in str(excinfo.value)
+
+    def test_invalid_config_type(self, mtcnn_config):
+        mtcnn_config["min_size"] = 0.5
+        with pytest.raises(TypeError) as excinfo:
+            _ = Node(config=mtcnn_config)
+        assert "type of model.mtcnn's" in str(excinfo.value)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, mtcnn_config):

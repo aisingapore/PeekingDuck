@@ -48,12 +48,25 @@ def fairmot_config_gpu():
     params=[
         {"key": "score_threshold", "value": -0.5},
         {"key": "score_threshold", "value": 1.5},
-        {"key": "K", "value": -0.5},
-        {"key": "min_box_area", "value": -0.5},
-        {"key": "track_buffer", "value": -0.5},
+        {"key": "K", "value": -1},
+        {"key": "min_box_area", "value": -1},
+        {"key": "track_buffer", "value": -1},
     ],
 )
 def fairmot_bad_config_value(request, fairmot_config):
+    """Various invalid config values."""
+    fairmot_config[request.param["key"]] = request.param["value"]
+    return fairmot_config
+
+
+@pytest.fixture(
+    params=[
+        {"key": "K", "value": 0.5},
+        {"key": "min_box_area", "value": 0.5},
+        {"key": "track_buffer", "value": 0.5},
+    ],
+)
+def fairmot_bad_config_type(request, fairmot_config):
     """Various invalid config values."""
     fairmot_config[request.param["key"]] = request.param["value"]
     return fairmot_config
@@ -258,6 +271,11 @@ class TestFairMOT:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=fairmot_bad_config_value)
         assert "must be" in str(excinfo.value)
+
+    def test_invalid_config_type(self, fairmot_bad_config_type):
+        with pytest.raises(TypeError) as excinfo:
+            _ = Node(config=fairmot_bad_config_type)
+        assert "type of model.fairmot's" in str(excinfo.value)
 
     @mock.patch.object(WeightsDownloaderMixin, "_has_weights", return_value=True)
     def test_invalid_config_model_files(self, _, fairmot_config):
