@@ -41,7 +41,7 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`): (:obj:`str`): **{"r101-fpn", "r50-fpn",
-            "mobilenetv2"}, default="r101-fpn"**. |br|
+            "mobilenetv2"}, default="r50-fpn"**. |br|
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
