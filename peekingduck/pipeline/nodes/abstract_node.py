@@ -143,7 +143,7 @@ class AbstractNode(metaclass=ABCMeta):
         `config_types`. Recursively checks each value of dictionaries.
         """
         for key in config:
-            full_key = parent + key
+            full_key = f"{parent}{key}"
             if isinstance(config[key], dict):
                 self._check_type(config[key], config_types, f"{full_key}.")
             config_type = config_types.get(full_key, Any)
