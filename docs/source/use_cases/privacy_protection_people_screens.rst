@@ -50,8 +50,8 @@ We use an open source instance segmentation model known as `Mask R-CNN <https://
 to obtain the masks of persons, computer screens and laptops. The masks are akin to the input frames
 or images, except that it only has a single channel and each pixel on the mask is a binary of either
 1 or 0, which indicates whether a specific class of thing is present (1) or absent (0) in a
-particular location of the image. For more information on how to adjust the Mask_RCNN node, check
-out the :doc:`Mask_RCNN configurable parameters </nodes/model.mask_rcnn>`.
+particular location of the image. For more information on how to adjust the ``mask_rcnn`` node, check
+out its :doc:`configurable parameters </nodes/model.mask_rcnn>`.
 
 **2. Person and Computer Screen Blurring**
 
