@@ -52,56 +52,45 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        try:
-            self.zones = [
-                self._create_zone(zone, config["resolution"])  # type: ignore
-                for zone in self.zones  # type: ignore
-            ]
-        except TypeError as error:
-            self.logger.warning(error)
+        self.zones = [self._create_zone(zone) for zone in self.zones]  # type: ignore
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Counts all detected objects that falls within any specified zone,
         and return the total object count in each zone.
         """
-        num_of_zones = len(self.zones)
-        zone_counts = [0] * num_of_zones
+        zone_counts = [0] * len(self.zones)
 
         # for each x, y point, check if it is in any zone and add count
         for point in inputs["btm_midpoint"]:
             for i, zone in enumerate(self.zones):
-                if zone.point_within_zone(*point):
+                if zone.contains(point):
                     zone_counts[i] += 1
 
         return {
-            "zones": [zone.get_all_points_of_area() for zone in self.zones],
+            "zones": [zone.polygon_points for zone in self.zones],
             "zone_count": zone_counts,
         }
 
-    def _create_zone(self, zone: List[Any], resolution: List[int]) -> Any:
+    def _create_zone(self, zone: List[List[Union[float, int]]]) -> Zone:
         """Creates the appropriate Zone given either the absolute pixel values
         or % of resolution as a fraction between [0, 1].
         """
-        created_zone = None
-
         if all(all(0 <= i <= 1 for i in coords) for coords in zone):
             # coordinates are in fraction. Use resolution to get correct coords
-            pixel_coords = [
-                self._get_pixel_coords(coords, resolution) for coords in zone
+            zone_points = [
+                self._get_pixel_coords(coords, self.resolution) for coords in zone
             ]
-            created_zone = Zone(pixel_coords)
-        if all(all((isinstance(i, int) and i >= 0) for i in coords) for coords in zone):
-            # when 1st-if fails and this statement passes, list is in pixel
-            # value.
-            created_zone = Zone(zone)
-
-        # if neither, something is wrong
-        if not created_zone:
-            assert False, (
-                "Zone %s needs to be all pixel-wise points or "
-                "all fractions of the frame between 0 and 1. "
-                "please check zone_count configs." % zone
+        elif all(
+            all((isinstance(i, int) and i >= 0) for i in coords) for coords in zone
+        ):
+            # list is in pixel value.
+            zone_points = zone  # type: ignore
+        else:
+            raise ValueError(
+                f"Zone {zone} needs to be all pixel-wise points or all fractions "
+                "of the frame between 0 and 1. Please check zone_count configs."
             )
+        created_zone = Zone(zone_points)
 
         return created_zone
 
@@ -112,6 +101,8 @@ class Node(AbstractNode):
         return {"resolution": List[int], "zones": List[List[List[Union[int, float]]]]}
 
     @staticmethod
-    def _get_pixel_coords(coords: List[float], resolution: List[int]) -> List[float]:
+    def _get_pixel_coords(
+        coords: List[Union[float, int]], resolution: List[int]
+    ) -> List[int]:
         """Returns the pixel position of the zone points."""
         return [int(coords[0] * resolution[0]), int(coords[1] * resolution[1])]

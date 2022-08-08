@@ -70,3 +70,17 @@ class TestBboxCount:
         assert len(results) == 2
         assert results[0] == 2
         assert results[1] == 2
+
+    def test_mixed_pixel_fraction_zone(self):
+        with pytest.raises(ValueError) as excinfo:
+            Node(
+                {
+                    "input": ["btm_midpoint"],
+                    "output": ["zones", "zone_count"],
+                    "resolution": [1280, 720],
+                    "zones": [[[0, 0], [640, 0], [1, 1], [0.5, 1]]],
+                }
+            )
+        assert "needs to be all pixel-wise points or all fractions" in str(
+            excinfo.value
+        )
