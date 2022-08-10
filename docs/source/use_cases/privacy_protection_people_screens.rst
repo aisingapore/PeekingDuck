@@ -41,8 +41,8 @@ How It Works
 
 There are 2 main components to our solution:
 
-#. Person and Computer Screen Segmentation, and
-#. Person and Computer Screen Blurring.
+#. Person and computer screen segmentation, and
+#. Person and computer screen blurring.
 
 **1. Person and Computer Screen Segmentation**
 
