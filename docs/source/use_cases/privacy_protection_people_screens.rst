@@ -5,7 +5,7 @@ Privacy Protection (People & Computer Screens)
 Overview
 ========
 
-Videos and Pictures often contain people and other sensitive visual information (e.g., the display
+Videos and pictures often contain people and other sensitive visual information (e.g., the display
 on computer screens), even though this information might not be needed at all for visual
 processing. Our solution performs full body anonymization and computer screen blurring to protect
 the identities of individuals, and the sensitive information on computer screens from footage or
