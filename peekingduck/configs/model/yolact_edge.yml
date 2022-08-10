@@ -1,0 +1,40 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores", "masks"]
+
+weights_parent_dir: null
+weights:
+  {
+    pytorch:
+      {
+        model_subdir: yolact_edge,
+        blob_file: 
+        { 
+          r50-fpn: yolact-edge-r50-fpn-coco.zip,
+          r101-fpn: yolact-edge-r101-fpn-coco.zip,
+          mobilenetv2: yolact-edge-mobilenetv2-coco.zip
+        },
+        classes_file: coco.names,
+        model_file: 
+        { 
+          r50-fpn: yolact-edge-r50-fpn-coco.pth,
+          r101-fpn: yolact-edge-r101-fpn-coco.pth,
+          mobilenetv2: yolact-edge-mobilenetv2-coco.pth
+        },
+      },
+  }
+
+model_size:
+  {
+    r50-fpn: {},
+    r101-fpn: {},
+    mobilenetv2: {}
+  }
+num_classes: 80
+
+model_format: pytorch
+model_type: r50-fpn # r50-fpn, r101-fpn, mobilenetv2
+input_size: 550
+detect: [0]
+max_num_detections: 100
+score_threshold: 0.2
+iou_threshold: 0.5
