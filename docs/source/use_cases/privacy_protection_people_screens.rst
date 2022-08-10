@@ -47,7 +47,7 @@ There are 2 main components to our solution:
 We use an open source instance segmentation model known as `Mask R-CNN <https://arxiv.org/abs/1703.06870>`_
 to obtain the masks of persons, computer screens and laptops. The masks are akin to the input frames
 or images, except that it only has a single channel and each pixel on the mask is a binary of either
-1 or 0, which indicates whether a specific class of thing is present (1) or absent (0) in a
+1 or 0, which indicates whether a specific class of object is present (1) or absent (0) in a
 particular location of the image. For more information on how to adjust the ``mask_rcnn`` node, check
 out its :doc:`configurable parameters </nodes/model.mask_rcnn>`.
 
