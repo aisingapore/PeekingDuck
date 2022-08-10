@@ -41,7 +41,7 @@ class Node(AbstractNode):
 
     Configs:
         model_type (:obj:`str`): (:obj:`str`): **{"r101-fpn", "r50-fpn",
-            "mobilenetv2"}, default="r101-fpn"**. |br|
+            "mobilenetv2"}, default="r50-fpn"**. |br|
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
@@ -50,7 +50,12 @@ class Node(AbstractNode):
         detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
-        score_threshold (:obj:`float`): **[0, 1], default = 0.25**. |br|
+        max_num_detections: (:obj:`int`): **default=100**. |br|
+            Maximum number of detections per image, for all classes.
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+            Overlapping bounding boxes with Intersection over Union (IoU) above
+            the threshold will be discarded.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.2**. |br|
             Bounding boxes with confidence score (product of objectness score
             and classification score) below the threshold will be discarded.
 
