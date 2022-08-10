@@ -1,0 +1,16 @@
+nodes:
+  - input.visual:
+      source: "tests/data/images"
+  - model.mask_rcnn:
+      detect: ["tv", "laptop"]
+  - draw.instance_mask:
+      effect: { blur: 50 }
+  - model.mask_rcnn:
+      detect: ["person"]
+  - dabble.bbox_count
+  - draw.instance_mask:
+      effect: { blur: 50 }
+  - draw.bbox:
+      show_labels: True
+  - draw.legend:
+      show: ["count"]

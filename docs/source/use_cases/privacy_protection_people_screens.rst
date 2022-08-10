@@ -84,9 +84,9 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
     - output.screen
 
 
-*This config includes the use of two model.mask_rcnn and draw.instance_mask nodes so that the detected instances of 
-"tv" and "laptop" classes can be separated from the "person" class, such that drawing and counting of bboxes are only 
-performed on the "person" class*
+*This config includes the use of two model.mask_rcnn and draw.instance_mask nodes to separate the detected 
+instances of "person" class from the "tv" and "laptop" classes, so that drawing and counting of bboxes are 
+only performed on the "person" class. This repetition is not required if only anonymization is performed.*
 
 **1. Instance Segmentation Node**
 
