@@ -16,9 +16,8 @@ privacy laws.
    :class: no-scaled-link
    :width: 50 %
 
-In this example use case, we want to count the number of people in the office, but we don't want
-compromise the privacy of the office inhabitants, nor the privacy of any information accidentally
-shown on the computer screens.
+In this example use case, we want to count the number of people in the office, but also want to avoid
+compromising the privacy of the office inhabitants or information displayed on computer screens.
 
 Our solution automatically detects people, laptop and computer screens, and then blurs them. This is
 explained in the `How It Works`_ section.
