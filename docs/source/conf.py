@@ -92,6 +92,7 @@ autosummary_mock_imports = [
     "model.mtcnnv1",
     "model.posenetv1",
     "model.movenetv1",
+    "model.yolact_edgev1",
     "model.yolov4",
     "model.yolov4_face",
     "model.yolov4_license_plate",

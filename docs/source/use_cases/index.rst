@@ -114,6 +114,7 @@ Privacy Protection
 
    /use_cases/privacy_protection_faces
    /use_cases/privacy_protection_license_plates
+   /use_cases/privacy_protection_people_screens
 
 +--------------------------------------------------------+-----------------------------+
 | |privacy_protection_faces_doc| |tab| |tab| |tab| |tab| | |privacy_protection_lp_doc| |
