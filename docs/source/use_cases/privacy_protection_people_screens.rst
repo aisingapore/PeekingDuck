@@ -83,7 +83,11 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
         show: ["count"]
     - output.screen
 
-   
+
+*This config includes the use of two model.mask_rcnn and draw.instance_mask nodes so that the detected instances of 
+"tv" and "laptop" classes can be separated from the "person" class, such that drawing and counting of bboxes are only 
+performed on the "person" class*
+
 **1. Instance Segmentation Node**
 
 In this example use case, we used the Mask R-CNN model for instance segmentation. It can detect
