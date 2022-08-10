@@ -1,0 +1,18 @@
+nodes:
+- input.visual:
+    source: <path/to/video>
+- model.mask_rcnn:
+    detect: ["tv", "laptop"]
+- draw.instance_mask:
+    effect: {blur: 50}
+- model.yolact_edge:
+    model_type: r101-fpn
+    detect: ["person"]
+- dabble.bbox_count
+- draw.instance_mask:
+    effect: {blur: 50}
+- draw.bbox:
+    show_labels: True
+- draw.legend:
+    show: ["count"]
+- output.screen
