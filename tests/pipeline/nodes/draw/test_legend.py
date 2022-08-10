@@ -31,6 +31,7 @@ def draw_legend_bottom():
             "show": ["fps", "count", "zone_count"],
             "position": "bottom",
             "box_opacity": 0.3,
+            "font": {"size": 0.7, "thickness": 2},
         }
     )
     return node
@@ -45,6 +46,7 @@ def draw_legend_top():
             "show": ["fps", "count", "zone_count"],
             "position": "top",
             "box_opacity": 0.3,
+            "font": {"size": 0.7, "thickness": 2},
         }
     )
     return node
@@ -59,6 +61,8 @@ class TestLegend:
                     "output": ["img"],
                     "show": [],
                     "position": "bottom",
+                    "box_opacity": 0.3,
+                    "font": {"size": 0.7, "thickness": 2},
                 }
             )
         assert (

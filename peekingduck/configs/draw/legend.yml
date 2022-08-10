@@ -1,6 +1,11 @@
 input: ["all"]
 output: ["img"]
 
-position: "bottom"
+
 box_opacity: 0.3
+font: {
+  size: 0.7,
+  thickness: 2
+}
+position: "bottom"
 show: []
