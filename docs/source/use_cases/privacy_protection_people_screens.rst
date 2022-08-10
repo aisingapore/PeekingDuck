@@ -8,8 +8,7 @@ Overview
 Videos and pictures often contain people and other sensitive visual information (e.g., the display
 on computer screens), even though this information might not be needed at all for visual
 processing. Our solution performs full body anonymization and computer screen blurring to protect
-the identities of individuals, and the sensitive information on computer screens from footage or
-pictures. It can be used to comply with the General Data Protection Regulation (GDPR) or other data
+the identities of individuals and the sensitive information on computer screens. It can be used to comply with the General Data Protection Regulation (GDPR) or other data
 privacy laws.
 
 .. image:: /assets/use_cases/privacy_protection_people_screens.gif
