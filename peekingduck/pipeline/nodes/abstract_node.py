@@ -60,9 +60,10 @@ class AbstractNode(metaclass=ABCMeta):
         # the nodes' config file
         self.optional_inputs: List[str]
 
-        # NOTE: config and kwargs_config are similar but are from different
-        # inputs config is when users input a dictionary to update the node
-        # kwargs_config is when users input parameters to update the node
+        # NOTE: ``config`` and ``kwargs_config`` are similar but are from
+        # different inputs. ``config`` is when users input a dictionary to
+        # update the node. ``kwargs_config`` is when users input parameters to
+        # update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
 

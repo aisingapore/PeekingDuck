@@ -61,7 +61,6 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.file_path = Path(self.file_path)  # type: ignore
-        # check if file_path has a ".yml" extension
         if self.file_path.suffix != ".yml":
             raise ValueError("Filepath must have a '.yml' extension.")
         if not self.file_path.exists():

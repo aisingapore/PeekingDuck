@@ -54,8 +54,7 @@ class Node(AbstractNode):
         locations = []
 
         for bbox in inputs["bboxes"]:
-            # Subtraction is to make the camera the origin of the coordinate
-            # system
+            # Subtraction is to make the camera the origin of the coordinate system
             center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
             bbox_height = bbox[3] - bbox[1]
 
