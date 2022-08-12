@@ -16,9 +16,10 @@
 with unmasked faces.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional
 
 import numpy as np
+
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.mtcnnv1 import mtcnn_model
 
@@ -51,7 +52,7 @@ class Node(AbstractNode):
             Scale factor to create the image pyramid. A larger scale factor
             produces more accurate detections at the expense of inference
             speed.
-        network_thresholds (:obj:`List`):
+        network_thresholds (:obj:`List[float]`):
             **[0, 1], default = [0.6, 0.7, 0.7]**. |br|
             Threshold values for the Proposal Network (P-Net), Refine Network
             (R-Net) and Output Network (O-Net) in the MTCNN model.
@@ -69,16 +70,10 @@ class Node(AbstractNode):
 
         Model weights trained by https://github.com/blaueck/tf-mtcnn
 
-    .. versionchanged:: 1.2.0
-        ``mtcnn_min_size`` is renamed to ``min_size``.
-
-    .. versionchanged:: 1.2.0
-        ``mtcnn_factor`` is renamed to ``scale_factor``.
-
-    .. versionchanged:: 1.2.0
-        ``mtcnn_thresholds`` is renamed to ``network_thresholds``.
-
-    .. versionchanged:: 1.2.0
+    .. versionchanged:: 1.2.0 |br|
+        ``mtcnn_min_size`` is renamed to ``min_size``. |br|
+        ``mtcnn_factor`` is renamed to ``scale_factor``. |br|
+        ``mtcnn_thresholds`` is renamed to ``network_thresholds``. |br|
         ``mtcnn_score`` is renamed to ``score_threshold``.
     """
 
@@ -105,4 +100,14 @@ class Node(AbstractNode):
             "bboxes": bboxes,
             "bbox_labels": bbox_labels,
             "bbox_scores": bbox_scores,
+        }
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "min_size": int,
+            "network_thresholds": List[float],
+            "scale_factor": float,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
         }

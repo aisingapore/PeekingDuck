@@ -14,12 +14,12 @@
 
 """🎯 Joint Detection and Embedding model for human detection and tracking."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.jdev1 import jde_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.jdev1 import jde_model
 
 
 class Node(AbstractNode):
@@ -114,6 +114,17 @@ class Node(AbstractNode):
             "bbox_labels": bbox_labels,
             "bbox_scores": bbox_scores,
             "obj_attrs": {"ids": track_ids},
+        }
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "iou_threshold": float,
+            "min_box_area": int,
+            "nms_threshold": float,
+            "score_threshold": float,
+            "track_buffer": int,
+            "weights_parent_dir": Optional[str],
         }
 
     def _reset_model(self) -> None:

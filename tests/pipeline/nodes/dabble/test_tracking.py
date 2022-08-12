@@ -60,7 +60,7 @@ class TestTracking:
         tracking_config["tracking_type"] = "invalid type"
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config)
-        assert str(excinfo.value) == "tracking_type must be one of ['iou', 'mosse']"
+        assert "tracking_type must be one of" in str(excinfo.value)
 
     def test_should_raise_for_invalid_iou_threshold(
         self, tracking_config_type, invalid_threshold
@@ -68,13 +68,13 @@ class TestTracking:
         tracking_config_type["iou_threshold"] = invalid_threshold
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config_type)
-        assert str(excinfo.value) == "iou_threshold must be in [0, 1]"
+        assert str(excinfo.value) == "iou_threshold must be between [0.0, 1.0]"
 
     def test_should_raise_for_negative_max_lost(self, tracking_config_type):
         tracking_config_type["max_lost"] = -1
         with pytest.raises(ValueError) as excinfo:
             _ = Node(tracking_config_type)
-        assert str(excinfo.value) == "max_lost cannot be negative"
+        assert str(excinfo.value) == "max_lost must be between [0.0, inf)"
 
     def test_no_tags(self, create_image, tracker):
         img1 = create_image(SIZE)

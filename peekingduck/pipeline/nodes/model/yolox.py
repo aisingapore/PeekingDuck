@@ -14,12 +14,12 @@
 
 """🔲 High performance anchor-free YOLO object detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -42,6 +42,9 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         |bbox_scores_data|
 
     Configs:
+        model_format (:obj:`str`): **{"pytorch", "tensorrt"},
+            default="pytorch"** |br|
+            Defines the weights format of the model.
         model_type (:obj:`str`): **{"yolox-tiny", "yolox-s", "yolox-m",
             "yolox-l"}, default="yolox-tiny"**. |br|
             Defines the type of YOLOX model to be used.
@@ -50,7 +53,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             replacing ``null`` with an absolute path to the desired directory.
         input_size (:obj:`int`): **default=416**. |br|
             Input image resolution of the YOLOX model.
-        detect (:obj:`List[Union[int, string]]`): **default=[0]**. |br|
+        detect (:obj:`List[Union[int, str]]`): **default=[0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         iou_threshold (:obj:`float`): **[0, 1], default = 0.45**. |br|
@@ -102,3 +105,18 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "agnostic_nms": bool,
+            "detect": List[Union[int, str]],
+            "fuse": bool,
+            "half": bool,
+            "input_size": int,
+            "iou_threshold": float,
+            "model_format": str,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

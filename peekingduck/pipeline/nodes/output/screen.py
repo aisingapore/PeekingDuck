@@ -16,7 +16,7 @@
 Shows the outputs on your display.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import cv2
 
@@ -35,12 +35,12 @@ class Node(AbstractNode):
     Configs:
         window_name (:obj:`str`): **default = "PeekingDuck"** |br|
             Name of the displayed window.
-        window_size (:obj:`Dict`):
+        window_size (:obj:`Dict[str, Union[bool, int]]`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Resizes the displayed window to the chosen width and weight, if
             ``do_resizing`` is set to ``true``. The size of the displayed
             window can also be adjusted by clicking and dragging.
-        window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
+        window_loc (:obj:`Dict[str, int]`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
 
@@ -78,3 +78,16 @@ class Node(AbstractNode):
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "window_name": str,
+            "window_loc": Dict[str, int],
+            "window_loc.x": int,
+            "window_loc.y": int,
+            "window_size": Dict[str, Union[bool, int]],
+            "window_size.do_resizing": bool,
+            "window_size.width": int,
+            "window_size.height": int,
+        }

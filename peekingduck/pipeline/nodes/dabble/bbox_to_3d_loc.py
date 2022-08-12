@@ -54,8 +54,7 @@ class Node(AbstractNode):
         locations = []
 
         for bbox in inputs["bboxes"]:
-            # Subtraction is to make the camera the origin of the coordinate
-            # system
+            # Subtraction is to make the camera the origin of the coordinate system
             center_2d = ((bbox[0:2] + bbox[2:4]) * 0.5) - np.array([0.5, 0.5])
             bbox_height = bbox[3] - bbox[1]
 
@@ -69,3 +68,7 @@ class Node(AbstractNode):
         outputs = {"obj_3D_locs": locations}
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"focal_length": float, "height_factor": float}
