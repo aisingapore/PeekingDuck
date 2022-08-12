@@ -61,7 +61,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             overridden.
         mirror_image (:obj:`bool`): **default = False**. |br|
             Flag to set extracted image frame as mirror image of input stream.
-        resize (:obj:`Dict`):
+        resize (:obj:`Dict[str, Any]`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Dimension of extracted image frame.
         source (:obj:`Union[int, str]`):
