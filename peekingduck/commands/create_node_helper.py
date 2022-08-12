@@ -19,10 +19,14 @@ import logging
 import re
 from pathlib import Path
 from typing import Any, Callable, List, Dict, Optional, Tuple, Union
+import yaml
 
 import click
 
 from peekingduck.commands import LOGGER_NAME
+
+# Master map file for class name to object IDs for object detection models
+MASTER_MAP = "pipeline/nodes/model/master_map.yml"
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
