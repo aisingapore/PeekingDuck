@@ -223,9 +223,7 @@ class Node(AbstractNode):
         return {"img": img}
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {"num_corners": List[int], "scale_factor": int, "file_path": str}
 
     def _initialize_display_scales(self, img_width: int) -> None:

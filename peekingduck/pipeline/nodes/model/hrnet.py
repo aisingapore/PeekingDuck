@@ -83,9 +83,7 @@ class Node(AbstractNode):
         return outputs
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "resolution": Dict[str, int],
             "resolution.height": int,

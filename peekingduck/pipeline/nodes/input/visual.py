@@ -220,9 +220,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
                 self._file_name = path.name
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "buffering": bool,
             "filename": str,

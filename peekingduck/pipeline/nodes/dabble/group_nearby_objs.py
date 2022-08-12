@@ -72,9 +72,7 @@ class Node(AbstractNode):
         return {"obj_attrs": {"groups": quickfind.get_group_alloc()}}
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {"obj_dist_threshold": float}
 
     @staticmethod

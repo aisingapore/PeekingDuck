@@ -124,9 +124,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         return {}
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {"show": List[str], "tag_color": List[int]}
 
     def _tags_from_obj_attrs(self, inputs: Dict[str, Any]) -> List[str]:

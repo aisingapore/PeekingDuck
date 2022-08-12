@@ -109,9 +109,7 @@ class Node(AbstractNode):
         }
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "min_size": int,
             "network_thresholds": List[float],

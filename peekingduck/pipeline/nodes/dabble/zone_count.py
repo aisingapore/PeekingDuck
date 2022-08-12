@@ -95,9 +95,7 @@ class Node(AbstractNode):
         return created_zone
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {"resolution": List[int], "zones": List[List[List[Union[int, float]]]]}
 
     @staticmethod

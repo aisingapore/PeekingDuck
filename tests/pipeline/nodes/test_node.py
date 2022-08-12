@@ -28,9 +28,7 @@ class ConcreteNode(AbstractNode):
         return {"data1": 1, "data2": 42}
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "buffering": bool,
             "filename": str,

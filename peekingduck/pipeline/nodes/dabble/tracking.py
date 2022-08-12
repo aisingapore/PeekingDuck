@@ -83,9 +83,7 @@ class Node(AbstractNode):
         return {"obj_attrs": {"ids": track_ids}}
 
     def _get_config_types(self) -> Dict[str, Any]:
-        """Returns a dictionary which maps the node's config keys to their
-        respective typing.
-        """
+        """Returns dictionary mapping the node's config keys to respective types."""
         return {"tracking_type": str, "iou_threshold": float, "max_lost": int}
 
     def _reset_model(self) -> None:
