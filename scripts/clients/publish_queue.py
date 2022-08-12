@@ -12,9 +12,13 @@ HOST = "localhost"
 # HOST = "http://127.0.0.1:5000/image"
 IMAGE_PATH = "../../peekingduck/data/input/shiba_inu.jpeg"
 OBJECT_NAME = "shiba_inu"
+USERNAME = "peekingduck"
+PASSWORD = "peekingduck"
 
-
-connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST))
+credentials = pika.PlainCredentials(username=USERNAME, password=PASSWORD)
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host=HOST, credentials=credentials)
+)
 channel = connection.channel()
 
 channel.queue_declare(queue=QUEUE, durable=True)

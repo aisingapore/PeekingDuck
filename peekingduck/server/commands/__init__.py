@@ -11,21 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""
-A modular Python framework for Computer Vision Inference.
-"""
-
-# __version__ = "developer"
-__version__ = "0.1.0a"
-
-import os
-import sys
-
-from peekingduck.utils.logger import LoggerSetup
-from peekingduck.utils.requirement_checker import RequirementChecker
-
-LoggerSetup()
-
-if "READTHEDOCS" not in os.environ:
-    sys.meta_path.insert(0, RequirementChecker())

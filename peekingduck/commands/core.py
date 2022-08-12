@@ -27,7 +27,7 @@ from peekingduck.commands import LOGGER_NAME
 from peekingduck.runner import Runner
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
-from peekingduck.server import Server
+from peekingduck.server.commands.server_modes import pub_sub, queue, req_res
 from peekingduck.viewer import Viewer
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -126,80 +126,14 @@ def run(  # pylint: disable=too-many-arguments
         runner.run()
 
 
-@click.command()
-@click.option(
-    "--config_path",
-    default=None,
-    type=click.Path(),
-    help=(
-        "List of nodes to run. None assumes pipeline_config.yml at current working directory"
-    ),
-)
-@click.option(
-    "--log_level",
-    default="info",
-    help="""Modify log level {"critical", "error", "warning", "info", "debug"}""",
-)
-@click.option(
-    "--node_config",
-    default="None",
-    help="""Modify node configs by wrapping desired configs in a JSON string.\n
-        Example: --node_config '{"node_name": {"param_1": var_1}}'""",
-)
-@click.option(
-    "--mode",
-    default="request-response",
-    help="""Choose server mode {"request-response", "message-queue", "publish-subscribe"}""",
-)
-@click.option(
-    "--host",
-    default="0.0.0.0",
-    help="""Host IP address to listen at""",
-)
-@click.option(
-    "--port",
-    default=5000,
-    type=int,
-    help="""Port to listen to""",
-)
-def serve(  # pylint: disable=too-many-arguments
-    config_path: str,
-    log_level: str,
-    node_config: str,
-    mode: str,
-    host: str,
-    port: int,
-    nodes_parent_dir: str = "src",
-) -> None:
-    """Runs PeekingDuck Server"""
-    LoggerSetup.set_log_level(log_level)
+@click.group()
+def serve() -> None:
+    """Launch PeekingDuck Server"""
 
-    if config_path is None:
-        curr_dir = Path.cwd()
-        if (curr_dir / "pipeline_config.yml").is_file():
-            config_path = curr_dir / "pipeline_config.yml"
-        elif (curr_dir / "run_config.yml").is_file():
-            deprecate(
-                "using 'run_config.yml' as the default pipeline configuration "
-                "file is deprecated and will be removed in the future. Please "
-                "use 'pipeline_config.yml' instead.",
-                2,
-            )
-            config_path = curr_dir / "run_config.yml"
-        else:
-            config_path = curr_dir / "pipeline_config.yml"
-    pipeline_config_path = Path(config_path)
 
-    logger.info("Launching PeekingDuck Server")
-    pkd_server = Server(
-        pipeline_path=pipeline_config_path,
-        config_updates_cli=node_config,
-        mode=mode,
-        host=host,
-        port=port,
-        custom_nodes_parent_subdir=nodes_parent_dir,
-    )
-    pkd_server.run()
+serve.add_command(req_res)
+serve.add_command(queue)
+serve.add_command(pub_sub)
 
 
 @click.command()

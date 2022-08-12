@@ -19,6 +19,8 @@ from peekingduck.utils.requirement_checker import RequirementChecker
 EXCHANGE = "cameras"
 QUEUE = "task_queue"
 EXCHANGE_TYPE = "fanout"
+USERNAME = "peekingduck"
+PASSWORD = "peekingduck"
 
 
 class Server:
@@ -26,12 +28,10 @@ class Server:
         self,
         pipeline_path: Path = None,
         config_updates_cli: str = None,
-        mode: str = "request-response",
-        host: str = "0.0.0.0",
-        port: int = 5000,
         custom_nodes_parent_subdir: str = None,
         nodes: List[AbstractNode] = None,
     ) -> None:
+
         self.logger = logging.getLogger(__name__)
         try:
             if nodes:
@@ -59,76 +59,6 @@ class Server:
                 "Please rerun for the updates to take effect."
             )
             sys.exit(3)
-
-        self.mode = mode
-        self.host = host
-        self.port = port
-        if mode == "request-response":
-            self.app = FastAPI()
-        else:
-            connection = pika.BlockingConnection(
-                pika.ConnectionParameters(host=self.host)
-            )
-            self.channel = connection.channel()
-            if mode == "publish-subscribe":
-                self.channel.exchange_declare(
-                    exchange=EXCHANGE, exchange_type=EXCHANGE_TYPE
-                )
-
-                # use random queue name, and "exclusive" flag will delete queue after consumer disconnects
-                result = self.channel.queue_declare(queue="", exclusive=True)
-                self.queue_name = result.method.queue
-                # To tell the exchange to send messages to the queue
-                self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
-            else:
-                self.channel.queue_declare(queue=QUEUE, durable=True)
-
-    def run(self) -> None:  # pylint: disable=too-many-branches
-        """execute single or continuous inference"""
-
-        if self.mode == "request-response":
-            # move outside?
-            @self.app.post("/image")
-            async def image(item: dict = Body):
-                self._process_nodes(item)
-                return
-
-            # https://www.uvicorn.org/deployment/#running-programmatically
-            # This doesn't work:
-            # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
-            # multiple workers with PKD depends on nodes used - e.g. media_writer needs to combine
-            # correctly, weights downloading will have issues, tracking needs to be in sequence, etc.
-            # If none of the above apply, async will be advantageous.
-            uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
-
-        else:
-
-            if self.mode == "publish-subscribe":
-
-                def callback(ch, method, properties, item):
-                    item = pickle.loads(item)
-                    self._process_nodes(item)
-                    return
-
-                self.channel.basic_consume(
-                    queue=self.queue_name, on_message_callback=callback, auto_ack=True
-                )
-            else:
-
-                def callback(ch, method, properties, item):
-                    item = pickle.loads(item)
-                    self._process_nodes(item)
-                    ch.basic_ack(delivery_tag=method.delivery_tag)
-                    return
-
-                self.channel.basic_qos(prefetch_count=1)
-                self.channel.basic_consume(queue=QUEUE, on_message_callback=callback)
-            self.channel.start_consuming()
-
-        # clean up nodes with threads
-        for node in self.pipeline.nodes:
-            if node.name.endswith(".visual"):
-                node.release_resources()
 
     def get_pipeline(self) -> NodeList:
         """Retrieves run configuration.
@@ -165,3 +95,133 @@ class Server:
 
             outputs = node.run(inputs)
             self.pipeline.data.update(outputs)
+
+
+class PubSub(Server):
+    def __init__(
+        self,
+        pipeline_path: Path = None,
+        config_updates_cli: str = None,
+        custom_nodes_parent_subdir: str = None,
+        nodes: List[AbstractNode] = None,
+        host: str = None,
+        username: str = None,
+        password: str = None,
+        exchange_name: str = None,
+    ) -> None:  # pylint: disable=too-many-arguments
+        super().__init__(
+            pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
+        )
+        credentials = pika.PlainCredentials(username=username, password=password)
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=host, credentials=credentials)
+        )
+        self.channel = connection.channel()
+        self.channel.exchange_declare(
+            exchange=exchange_name, exchange_type=EXCHANGE_TYPE
+        )
+
+        # use random queue name, and "exclusive" flag will delete queue after consumer disconnects
+        result = self.channel.queue_declare(queue="", exclusive=True)
+        self.queue_name = result.method.queue
+        # To tell the exchange to send messages to the queue
+        self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
+
+    def run(self) -> None:  # pylint: disable=too-many-branches
+        """execute single or continuous inference"""
+
+        def callback(ch, method, properties, item):
+            item = pickle.loads(item)
+            self._process_nodes(item)
+            return
+
+        self.channel.basic_consume(
+            queue=self.queue_name, on_message_callback=callback, auto_ack=True
+        )
+        self.channel.start_consuming()
+
+        # clean up nodes with threads
+        for node in self.pipeline.nodes:
+            if node.name.endswith(".visual"):
+                node.release_resources()
+
+
+class Queue(Server):
+    def __init__(
+        self,
+        pipeline_path: Path = None,
+        config_updates_cli: str = None,
+        custom_nodes_parent_subdir: str = None,
+        nodes: List[AbstractNode] = None,
+        host: str = None,
+        username: str = None,
+        password: str = None,
+        queue_name: str = None,
+    ) -> None:  # pylint: disable=too-many-arguments
+        super().__init__(
+            pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
+        )
+        credentials = pika.PlainCredentials(username=username, password=password)
+        connection = pika.BlockingConnection(
+            pika.ConnectionParameters(host=host, credentials=credentials)
+        )
+        self.channel = connection.channel()
+        self.channel.queue_declare(queue=queue_name, durable=True)
+
+    def run(self) -> None:  # pylint: disable=too-many-branches
+        """execute single or continuous inference"""
+
+        def callback(ch, method, properties, item):
+            item = pickle.loads(item)
+            self._process_nodes(item)
+            ch.basic_ack(delivery_tag=method.delivery_tag)
+            return
+
+        self.channel.basic_qos(prefetch_count=1)
+        self.channel.basic_consume(queue=QUEUE, on_message_callback=callback)
+        self.channel.start_consuming()
+
+        # clean up nodes with threads
+        for node in self.pipeline.nodes:
+            if node.name.endswith(".visual"):
+                node.release_resources()
+
+
+class ReqRes(Server):
+    def __init__(
+        self,
+        pipeline_path: Path = None,
+        config_updates_cli: str = None,
+        custom_nodes_parent_subdir: str = None,
+        nodes: List[AbstractNode] = None,
+        host: str = None,
+        port: int = None,
+    ) -> None:  # pylint: disable=too-many-arguments
+        super().__init__(
+            pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
+        )
+        self.app = FastAPI()
+        self.host = host
+        self.port = port
+
+    def run(self) -> None:  # pylint: disable=too-many-branches
+        """execute single or continuous inference"""
+
+        # move outside?
+        @self.app.post("/image")
+        async def image(item: dict = Body):
+            self._process_nodes(item)
+            return
+
+        # https://www.uvicorn.org/deployment/#running-programmatically
+        # This doesn't work:
+        # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
+        # multiple workers with PKD depends on nodes used - e.g. media_writer needs to combine
+        # correctly, weights downloading will have issues, tracking needs to be in sequence, etc.
+        # If none of the above apply, async will be advantageous.
+        uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
+
+        # clean up nodes with threads
+        for node in self.pipeline.nodes:
+            if node.name.endswith(".visual"):
+                node.release_resources()
