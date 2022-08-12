@@ -71,10 +71,8 @@ class Node(AbstractNode):
 
         Inference code adapted from https://github.com/zzh8829/yolov3-tf2
 
-    .. versionchanged:: 1.2.0
-        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
-
-    .. versionchanged:: 1.2.0
+    .. versionchanged:: 1.2.0 |br|
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``. |br|
         ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 

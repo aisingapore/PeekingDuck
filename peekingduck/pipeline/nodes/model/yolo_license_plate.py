@@ -62,10 +62,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
 
-    .. versionchanged:: 1.2.0
-        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
-
-    .. versionchanged:: 1.2.0
+    .. versionchanged:: 1.2.0 |br|
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``. |br|
         ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
