@@ -12,12 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Dict
+from typing import Any, Dict, Union
 
 import pytest
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
+from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
 class ConcreteNode(AbstractNode):
@@ -26,6 +26,22 @@ class ConcreteNode(AbstractNode):
 
     def run(self, inputs: Dict):
         return {"data1": 1, "data2": 42}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "buffering": bool,
+            "filename": str,
+            "frames_log_freq": int,
+            "mirror_image": bool,
+            "resize": Dict[str, Union[bool, int]],
+            "resize.do_resizing": bool,
+            "resize.height": int,
+            "resize.width": int,
+            "saved_video_fps": int,
+            "source": Union[int, str],
+            "threading": bool,
+        }
 
 
 class IncorrectNode(AbstractNode):
@@ -84,6 +100,21 @@ class TestNode:
     def test_node_no_concrete_run_raises_error(self):
         with pytest.raises(TypeError):
             IncorrectNode({})
+
+    def test_node_wrong_config_type(self):
+        with pytest.raises(TypeError) as excinfo:
+            ConcreteNode(config={"source": 0.0})
+        assert (
+            "type of input.visual's `source` must be one of (int, str); got float instead"
+            == str(excinfo.value)
+        )
+
+        with pytest.raises(TypeError) as excinfo:
+            ConcreteNode(config={"resize": {"do_resizing": True, "height": 0.0}})
+        assert (
+            "type of input.visual's `resize.height` must be int; got float instead"
+            == str(excinfo.value)
+        )
 
     #
     # Test class name to object ID translation for different input cases

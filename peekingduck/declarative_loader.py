@@ -31,13 +31,13 @@ import yaml
 from peekingduck.config_loader import ConfigLoader
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.pipeline import Pipeline
-from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
 from peekingduck.utils.deprecation import deprecate
+from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
 
 
-class DeclarativeLoader:  # pylint: disable=too-few-public-methods
+class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
     """A helper class to create
     :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>`.
 
@@ -63,8 +63,10 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
         pipeline_path: Path,
         config_updates_cli: str,
         custom_nodes_parent_subdir: str,
+        pkd_viewer: bool = False,
     ) -> None:
         self.logger = logging.getLogger(__name__)
+        self.pkd_viewer = pkd_viewer
 
         self.pkd_base_dir = Path(__file__).resolve().parent
         self.config_loader = ConfigLoader(self.pkd_base_dir)
@@ -209,6 +211,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods
                     config, self.config_updates_cli[node_name], node_name
                 )
 
+        # inform node if PeekingDuck Viewer is activated or not
+        config["pkd_viewer"] = self.pkd_viewer
         return node.Node(config)
 
     def _edit_config(

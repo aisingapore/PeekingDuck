@@ -60,3 +60,7 @@ class Node(AbstractNode):
         ]
 
         return {"large_groups": large_groups}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"group_size_threshold": int}

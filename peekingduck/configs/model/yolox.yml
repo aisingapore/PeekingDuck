@@ -23,6 +23,25 @@ weights:
             yolox-l: yolox-l.pth,
           },
       },
+    tensorrt:
+      {
+        model_subdir: yolox,
+        blob_file:
+          {
+            yolox-tiny: yolox-tiny-trt.zip,
+            yolox-s: yolox-s-trt.zip,
+            yolox-m: yolox-m-trt.zip,
+            yolox-l: yolox-l-trt.zip,
+          },
+        classes_file: coco.names,
+        model_file:
+          {
+            yolox-tiny: yolox-tiny.trt,
+            yolox-s: yolox-s.trt,
+            yolox-m: yolox-m.trt,
+            yolox-l: yolox-l.trt,
+          },
+      },
   }
 model_size:
   {

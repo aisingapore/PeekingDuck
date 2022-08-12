@@ -44,6 +44,7 @@ class MoveNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         model_dir = self.download_weights()
         self.predictor = Predictor(
             model_dir,
+            self.config["model_format"],
             self.config["model_type"],
             self.weights["model_file"],
             self.config["resolution"],

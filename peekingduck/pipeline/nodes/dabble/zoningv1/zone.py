@@ -17,41 +17,27 @@ Creates a zone from a polygon area
 """
 
 from typing import List, Tuple
-from shapely.geometry.polygon import Polygon, Point
+
+from shapely.geometry.polygon import Point, Polygon
 
 
-class Zone:
+class Zone:  # pylint: disable=too-few-public-methods
     """This class uses polygon area to create a zone for counting."""
 
-    def __init__(self, coord_list: List[List[float]]) -> None:
+    def __init__(self, points: List[List[int]]) -> None:
         # Each zone is a polygon created by a list of x, y coordinates
-        self.polygon_points = [tuple(x) for x in coord_list]
+        self.polygon_points = [tuple(point) for point in points]
         self.polygon = Polygon(self.polygon_points)
 
-    def point_within_zone(self, x_coord: float, y_coord: float) -> bool:
-        """Function used to check whether the bottom middle point of the bounding box
-        is within the stipulated zone created by the divider.
+    def contains(self, point: Tuple[float, float]) -> bool:
+        """Checks if the specified point is within the area bounded by the
+        zone.
 
         Args:
-            x (float): middle x position of the bounding box
-            y (float): lowest y position of the bounding box
+            point (Tuple[float, float]): The x- and y- coordinate to check.
 
         Returns:
-            boolean: whether the point given is within the zone.
+            (bool): True if ``point`` is within the zone.
         """
-        return self._is_inside(x_coord, y_coord)
-
-    def get_all_points_of_area(self) -> List[Tuple[float, ...]]:
-        """Function used to Get all (x, y) tuple points that form the area of the zone.
-
-        Args:
-            None
-
-        Returns:
-            list: returns a list of (x, y) points that form the zone area.
-        """
-        return self.polygon_points
-
-    def _is_inside(self, x_coord: float, y_coord: float) -> bool:
-        point = Point((x_coord, y_coord))
+        point = Point(point)
         return self.polygon.buffer(1).contains(point)

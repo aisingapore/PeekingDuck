@@ -186,9 +186,7 @@ class Legend:  # pylint: disable=too-many-instance-attributes, too-few-public-me
             item_name (str): name of the legend item
             item_info: Union[int, float, str]: info contained by the legend item
         """
-        if isinstance(item_info, (int, float, str)):
-            pass
-        else:
+        if not isinstance(item_info, (int, float, str)):
             raise TypeError(
                 f"With the exception of the 'zone_count' data type, "
                 f"the draw.legend node only draws values that are of type 'int', 'float' or 'str' "

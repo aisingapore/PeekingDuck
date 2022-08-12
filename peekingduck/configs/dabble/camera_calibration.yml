@@ -1,0 +1,8 @@
+# Mandatory configs
+input: ["img"]
+output: ["img"]
+
+# Optional configs
+num_corners: [10, 7]
+scale_factor: 2
+file_path: PeekingDuck/data/camera_calibration_coeffs.yml

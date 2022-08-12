@@ -76,3 +76,7 @@ class Node(AbstractNode):
                     break
 
         return {"obj_attrs": {"flags": obj_flags}}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"near_threshold": float, "tag_msg": str}

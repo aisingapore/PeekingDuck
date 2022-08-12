@@ -18,8 +18,8 @@ Displays selected information from preceding nodes in a legend box.
 
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.draw.utils.legend import Legend
 
 
 class Node(AbstractNode):
@@ -96,6 +96,12 @@ class Node(AbstractNode):
         self.legend.draw(inputs)
         # cv2 weighted does not update the referenced image. Need to return and replace.
         return {"img": inputs["img"]}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns a dictionary which maps the node's config keys to their
+        respective typing.
+        """
+        return {"position": str, "box_opacity": float, "show": List[str]}
 
 
 def _check_data_type(inputs: Dict[str, Any], show: List[str]) -> None:

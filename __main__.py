@@ -45,9 +45,19 @@ from peekingduck.cli import cli, run
     type=int,
     help="Stop pipeline after running this number of iterations",
 )
+@click.option(
+    "--viewer",
+    default=False,
+    is_flag=True,
+    help="Launch PeekingDuck viewer",
+)
 @click.pass_context
 def main(
-    context: click.Context, config_path: str, log_level: str, num_iter: int
+    context: click.Context,
+    config_path: str,
+    log_level: str,
+    num_iter: int,
+    viewer: bool,
 ) -> None:
     """Invokes the run() CLI command with some different defaults for
     ``node_config`` and ``nodes_parent_dir``.
@@ -74,6 +84,7 @@ def main(
         log_level=log_level,
         num_iter=num_iter,
         nodes_parent_dir=nodes_parent_dir,
+        viewer=viewer,
     )
 
 

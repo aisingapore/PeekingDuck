@@ -316,6 +316,7 @@ class WeightsDownloaderMixin:
     def _get_weights_checksum(self) -> str:
         with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
             checksums = response.json()
+        self.logger.debug(f"weights_checksums: {checksums[self.model_subdir]}")
         return checksums[self.model_subdir][self.config["model_format"]][
             str(self.config["model_type"])
         ]

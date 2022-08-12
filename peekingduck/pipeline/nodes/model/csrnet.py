@@ -16,7 +16,7 @@
 networks for understanding the highly congested scenes.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 
@@ -87,3 +87,7 @@ class Node(AbstractNode):
         density_map, crowd_count = self.model.predict(image)
         outputs = {"density_map": density_map, "count": crowd_count}
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"model_type": str, "weights_parent_dir": Optional[str], "width": int}

@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from typing import Dict, List, Tuple
+from typing import Any, Dict, List, Tuple
 
 import cv2
 import numpy as np
@@ -48,6 +48,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_dir: Path,
         class_names: List[str],
         detect_ids: List[int],
+        model_format: str,
         model_type: str,
         num_classes: int,
         model_size: Dict[str, Dict[str, float]],
@@ -63,6 +64,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.class_names = class_names
+        self.model_format = model_format
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_size = model_size[self.model_type]
@@ -101,13 +103,24 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             - An array of human-friendly detection class names
             - An array of detection scores
         """
+
         # Store the original image size to normalize bbox later
         image_size = image.shape[:2]
         image, scale = self._preprocess(image)
-        image = torch.from_numpy(image).unsqueeze(0).to(self.device)
-        image = image.half() if self.half else image.float()
 
-        prediction = self.yolox(image)[0]
+        model_format = self.model_format
+        if model_format == "pytorch":
+            image = torch.from_numpy(image).unsqueeze(0).to(self.device)
+            image = image.half() if self.half else image.float()
+            prediction = self.yolox(image)[0]
+        elif model_format == "tensorrt":
+            image = image[np.newaxis, :]
+            res_arr = self.yolox(image)
+            pred = np.squeeze(res_arr)
+            prediction = torch.from_numpy(pred).to(self.device)
+        else:
+            self.logger.error(f"Unknown model format: {model_format}")
+
         bboxes, classes, scores = self._postprocess(
             prediction, scale, image_size, self.class_names
         )
@@ -136,6 +149,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
         self.logger.info(
             "YOLOX model loaded with the following configs:\n\t"
+            f"Model format: {self.model_format}\n\t"
             f"Model type: {self.model_type}\n\t"
             f"Input resolution: {self.input_size}\n\t"
             f"IDs being detected: {self.detect_ids.int().tolist()}\n\t"
@@ -175,17 +189,32 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Raises:
             ValueError: `model_path` does not exist.
         """
-        if self.model_path.is_file():
-            ckpt = torch.load(str(self.model_path), map_location="cpu")
-            model = self._get_model(self.model_size).to(self.device)
-            if self.half:
-                model.half()
-            model.eval()
-            model.load_state_dict(ckpt["model"])
+        model: Any = None
+        model_format = self.model_format
+        if model_format == "pytorch":
+            if self.model_path.is_file():
+                ckpt = torch.load(str(self.model_path), map_location="cpu")
+                model = self._get_model(self.model_size).to(self.device)
+                if self.half:
+                    model.half()
+                model.eval()
+                model.load_state_dict(ckpt["model"])
 
-            if self.fuse:
-                model = fuse_model(model)
+                if self.fuse:
+                    model = fuse_model(model)
+                return model
+        elif model_format == "tensorrt":
+            # pylint: disable=import-error, import-outside-toplevel
+            from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import (
+                TrtModel,
+            )
+
+            self.logger.info("creating tensorrt model")
+            model = TrtModel(str(self.model_path))
             return model
+        else:
+            self.logger.error(f"Unknown model format: {model_format}")
+
         raise ValueError(
             f"Model file does not exist. Please check that {self.model_path} exists."
         )

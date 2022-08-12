@@ -1,0 +1,6 @@
+# Mandatory configs
+input: ["img"]
+output: ["img"]
+
+# Optional configs
+file_path: PeekingDuck/data/camera_calibration_coeffs.yml

@@ -40,7 +40,6 @@ def efficientdet_config():
         {"key": "score_threshold", "value": -0.5},
         {"key": "score_threshold", "value": 1.5},
         {"key": "model_type", "value": 5},
-        {"key": "model_type", "value": 1.5},
     ],
 )
 def efficientdet_bad_config_value(request, efficientdet_config):
@@ -127,3 +126,12 @@ class TestEfficientDet:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(config=efficientdet_bad_config_value)
         assert "must be" in str(excinfo.value)
+
+    def test_invalid_model_type(self, efficientdet_config):
+        efficientdet_config["model_type"] = 1.5
+        with pytest.raises(TypeError) as excinfo:
+            _ = Node(config=efficientdet_config)
+        assert (
+            str(excinfo.value)
+            == "type of model.efficientdet's `model_type` must be int; got float instead"
+        )
