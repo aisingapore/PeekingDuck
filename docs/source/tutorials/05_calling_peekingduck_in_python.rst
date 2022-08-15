@@ -185,7 +185,7 @@ configuration, you can pass the new values to the ``Node()`` constructor as keyw
 
 
 Lines 25 - 37: Initialize the PeekingDuck ``Runner`` from
-`runner.py <https://github.com/aimakerspace/PeekingDuck/blob/main/peekingduck/runner.py>`_ with the
+`runner.py <https://github.com/aisingapore/PeekingDuck/blob/main/peekingduck/runner.py>`_ with the
 list of nodes passed in via the ``nodes`` argument.
 
 .. note::
@@ -254,7 +254,7 @@ In this demo, we will show how users can construct a custom PeekingDuck pipeline
     * Visualization packages such as `matplotlib <https://pypi.org/project/matplotlib/>`_.
 
 The notebook corresponding to this tutorial, ``calling_peekingduck_in_python.ipynb``, can be found in the
-`notebooks <https://github.com/aimakerspace/PeekingDuck/tree/main/notebooks>`_ folder of the
+`notebooks <https://github.com/aisingapore/PeekingDuck/tree/main/notebooks>`_ folder of the
 PeekingDuck repository and is also available as a
 `Colab notebook <https://colab.research.google.com/drive/1NwQKrnY_3ia2mBEaUinkvUqbrjjT3ssq#scrollTo=l2MCyh5Hgp5O>`_.
 
