@@ -353,4 +353,6 @@ class TestDrawInstanceMasks:
     ) -> bool:
         ground_truth_image = cv2.imread(str(ground_truth_jpeg_path))
 
-        return ssim(output_image, ground_truth_image, multichannel=True) > SSIM_THRESHOLD
+        return (
+            ssim(output_image, ground_truth_image, multichannel=True) > SSIM_THRESHOLD
+        )
