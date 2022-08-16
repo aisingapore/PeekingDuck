@@ -16,7 +16,7 @@
 Displays selected information from preceding nodes in a legend box.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.draw.utils.legend import Legend
@@ -101,15 +101,21 @@ class Node(AbstractNode):
         """Returns a dictionary which maps the node's config keys to their
         respective typing.
         """
-        return {"position": str, "box_opacity": float, "show": List[str]}
+        return {
+            "box_opacity": float,
+            "font": Dict[str, Union[float, int]],
+            "font.size": float,
+            "font.thickness": int,
+            "position": str,
+            "show": List[str],
+        }
 
 
 def _check_data_type(inputs: Dict[str, Any], show: List[str]) -> None:
     """Checks if the data types provided in show were produced from preceding nodes."""
-
     for item in show:
         if item not in inputs:
             raise KeyError(
                 f"'{item}' was selected for drawing, but is not a valid data type from preceding "
-                f"nodes."
+                "nodes."
             )
