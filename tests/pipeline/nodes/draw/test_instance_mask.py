@@ -19,7 +19,7 @@ Tests for draw instance mask node.
 import cv2
 import numpy as np
 import pytest
-from skimage.metrics import structural_similarity as ssim
+from skimage.measure import compare_ssim as ssim
 import yaml
 
 from peekingduck.pipeline.nodes.draw.instance_mask import Node
@@ -353,4 +353,4 @@ class TestDrawInstanceMasks:
     ) -> bool:
         ground_truth_image = cv2.imread(str(ground_truth_jpeg_path))
 
-        return ssim(output_image, ground_truth_image, channel_axis=2) > SSIM_THRESHOLD
+        return ssim(output_image, ground_truth_image, multichannel=True) > SSIM_THRESHOLD
