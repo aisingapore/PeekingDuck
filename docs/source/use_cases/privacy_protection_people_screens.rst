@@ -25,7 +25,7 @@ Demo
 ====
 
 .. |pipeline_config| replace:: privacy_protection_people_screens.yml
-.. _pipeline_config: https://github.com/aimakerspace/PeekingDuck/blob/main/use_cases/privacy_protection_people_screens.yml
+.. _pipeline_config: https://github.com/aisingapore/PeekingDuck/blob/main/use_cases/privacy_protection_people_screens.yml
 
 To try our solution on your own computer, :doc:`install </getting_started/02_standard_install>` and run
 PeekingDuck with the configuration file |pipeline_config|_ as shown:
