@@ -28,7 +28,6 @@ from peekingduck.commands.nodes import nodes
 @click.version_option(__version__)
 def cli() -> None:
     """PeekingDuck is a modular computer vision inference framework.
-
     Developed by Computer Vision Hub at AI Singapore.
     """
 
