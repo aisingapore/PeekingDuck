@@ -28,9 +28,9 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "__".
         """
-        nparr = np.fromstring(base64.b64decode(inputs["request"]["image"]), np.uint8)
+        nparr = np.fromstring(base64.b64decode(inputs["message"]["image"]), np.uint8)
         img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-        filename = inputs["request"]["name"] + inputs["request"]["timestamp"] + ".jpg"
+        filename = inputs["message"]["name"] + inputs["message"]["timestamp"] + ".jpg"
 
         return {
             "img": img,

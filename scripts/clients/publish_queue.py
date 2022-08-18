@@ -13,7 +13,7 @@ HOST = "localhost"
 IMAGE_PATH = "../../peekingduck/data/input/shiba_inu.jpeg"
 OBJECT_NAME = "shiba_inu"
 USERNAME = "peekingduck"
-PASSWORD = "peekingduck"
+PASSWORD = "admin"
 
 credentials = pika.PlainCredentials(username=USERNAME, password=PASSWORD)
 connection = pika.BlockingConnection(

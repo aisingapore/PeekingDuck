@@ -16,11 +16,7 @@ from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.utils.requirement_checker import RequirementChecker
 
 
-EXCHANGE = "cameras"
-QUEUE = "task_queue"
 EXCHANGE_TYPE = "fanout"
-USERNAME = "peekingduck"
-PASSWORD = "peekingduck"
 
 
 class Server:
@@ -78,8 +74,8 @@ class Server:
 
             if "all" in node.inputs:
                 inputs = copy.deepcopy(self.pipeline.data)
-            elif "request" in node.inputs:
-                inputs = {"request": item}
+            elif "message" in node.inputs:
+                inputs = {"message": item}
             else:
                 inputs = {
                     key: self.pipeline.data[key]
@@ -125,12 +121,12 @@ class PubSub(Server):
         result = self.channel.queue_declare(queue="", exclusive=True)
         self.queue_name = result.method.queue
         # To tell the exchange to send messages to the queue
-        self.channel.queue_bind(exchange=EXCHANGE, queue=self.queue_name)
+        self.channel.queue_bind(exchange=exchange_name, queue=self.queue_name)
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
 
-        def callback(ch, method, properties, item):
+        def callback(ch, method, properties, item):  # pylint: disable=unused-argument
             item = pickle.loads(item)
             self._process_nodes(item)
             return
@@ -161,24 +157,25 @@ class Queue(Server):
         super().__init__(
             pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
         )
+        self.queue_name = queue_name
         credentials = pika.PlainCredentials(username=username, password=password)
         connection = pika.BlockingConnection(
             pika.ConnectionParameters(host=host, credentials=credentials)
         )
         self.channel = connection.channel()
-        self.channel.queue_declare(queue=queue_name, durable=True)
+        self.channel.queue_declare(queue=self.queue_name, durable=True)
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
 
-        def callback(ch, method, properties, item):
+        def callback(ch, method, properties, item):  # pylint: disable=unused-argument
             item = pickle.loads(item)
             self._process_nodes(item)
             ch.basic_ack(delivery_tag=method.delivery_tag)
             return
 
         self.channel.basic_qos(prefetch_count=1)
-        self.channel.basic_consume(queue=QUEUE, on_message_callback=callback)
+        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback)
         self.channel.start_consuming()
 
         # clean up nodes with threads

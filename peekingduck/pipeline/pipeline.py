@@ -56,7 +56,7 @@ class Pipeline:  # pylint: disable=too-few-public-methods
 
         if nodes[0].inputs[0] == "none":
             data_pool.extend(nodes[0].outputs)
-        if nodes[0].inputs[0] == "request":
+        if nodes[0].inputs[0] == "message":
             data_pool.extend(nodes[0].outputs)
 
         for node in nodes[1:]:

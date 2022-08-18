@@ -1,2 +1,2 @@
-input: ["request"]
+input: ["message"]
 output: ["img", "filename", "pipeline_end", "saved_video_fps"]
