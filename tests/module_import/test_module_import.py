@@ -29,7 +29,7 @@ TEST_VERSION = "0.0.0dev"
 @pytest.mark.usefixtures("tmp_dir")
 class TestModuleImport:
     """
-    dotw's technotes:
+    Technotes:
     1. The code scripts below do 'import peekingduck ...'
        This will import the installed version of Peeking Duck in the test environment.
     2. The CI/CD post-merge test script install this development version in the

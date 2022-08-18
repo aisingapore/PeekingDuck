@@ -58,6 +58,7 @@ class TestPredictor:
     def test_predictor(self, movenet_config, model_dir):
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
@@ -69,6 +70,7 @@ class TestPredictor:
     def test_model_creation(self, movenet_config, model_dir):
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
@@ -81,6 +83,7 @@ class TestPredictor:
         resolution = {"height": 256, "width": 256}
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
@@ -103,6 +106,7 @@ class TestPredictor:
         img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
@@ -128,6 +132,7 @@ class TestPredictor:
         )
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],
@@ -200,6 +205,7 @@ class TestPredictor:
         )
         movenet_predictor = Predictor(
             model_dir,
+            movenet_config["model_format"],
             movenet_config["model_type"],
             movenet_config["weights"][movenet_config["model_format"]]["model_file"],
             movenet_config["resolution"],

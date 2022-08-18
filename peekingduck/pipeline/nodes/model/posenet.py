@@ -14,7 +14,7 @@
 
 """🕺 Fast Pose Estimation model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional, Union
 
 import numpy as np
 
@@ -90,3 +90,15 @@ class Node(AbstractNode):
             "keypoint_conns": keypoint_conns,
         }
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "max_pose_detection": int,
+            "model_type": Union[str, int],
+            "resolution": Dict[str, int],
+            "resolution.height": int,
+            "resolution.width": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

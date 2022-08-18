@@ -236,7 +236,7 @@ def human_video_sequence_with_empty_frames(request):
     gc.collect()
 
 
-def do_nothing(*_):
+def do_nothing(*args, **kwargs):
     """Does nothing. For use with ``mock.patch``."""
 
 

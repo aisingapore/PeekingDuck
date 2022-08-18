@@ -248,3 +248,5 @@ Thus, the image coordinates are :math:`(130, 48)` top-left and :math:`(374, 422)
 .. note::
    
    The :mod:`model` nodes return results in relative coordinates.
+
+

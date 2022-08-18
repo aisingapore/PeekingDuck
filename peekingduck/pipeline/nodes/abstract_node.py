@@ -22,8 +22,10 @@ from abc import ABCMeta, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
+from typeguard import check_type
+
 from peekingduck.config_loader import ConfigLoader
-from peekingduck.utils.create_node_helper import obj_det_change_class_name_to_id
+from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
 class AbstractNode(metaclass=ABCMeta):
@@ -58,9 +60,10 @@ class AbstractNode(metaclass=ABCMeta):
         # the nodes' config file
         self.optional_inputs: List[str]
 
-        # NOTE: config and kwargs_config are similar but are from different
-        # inputs config is when users input a dictionary to update the node
-        # kwargs_config is when users input parameters to update the node
+        # NOTE: ``config`` and ``kwargs_config`` are similar but are from
+        # different inputs. ``config`` is when users input a dictionary to
+        # update the node. ``kwargs_config`` is when users input parameters to
+        # update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
 
@@ -129,9 +132,23 @@ class AbstractNode(metaclass=ABCMeta):
             updated_config = self._edit_config(loaded_config, kwargs_config)
             self.config = updated_config
 
+        self._check_type(self.config, self._get_config_types())
         # sets class attributes
         for key in self.config:
             setattr(self, key, self.config[key])
+
+    def _check_type(
+        self, config: Dict[str, Any], config_types: Dict[str, Any], parent: str = ""
+    ) -> None:
+        """Checks the typing of the config values against the provided
+        `config_types`. Recursively checks each value of dictionaries.
+        """
+        for key in config:
+            full_key = f"{parent}{key}"
+            if isinstance(config[key], dict):
+                self._check_type(config[key], config_types, f"{full_key}.")
+            config_type = config_types.get(full_key, Any)
+            check_type(f"{self.node_name}'s `{full_key}`", config[key], config_type)
 
     def _edit_config(
         self,
@@ -155,3 +172,7 @@ class AbstractNode(metaclass=ABCMeta):
                         f"Config for node {self.node_name} is updated to: '{key}': {value}"
                     )
         return dict_orig
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {}

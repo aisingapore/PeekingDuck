@@ -16,7 +16,7 @@
 Shows the outputs on your display.
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import cv2
 import numpy as np
@@ -39,21 +39,35 @@ class Node(AbstractNode):
     Configs:
         window_name (:obj:`str`): **default = "PeekingDuck"** |br|
             Name of the displayed window.
-        window_size (:obj:`Dict`):
+        window_size (:obj:`Dict[str, Union[bool, int]]`):
             **default = { do_resizing: False, width: 1280, height: 720 }** |br|
             Resizes the displayed window to the chosen width and weight, if
             ``do_resizing`` is set to ``true``. The size of the displayed
             window can also be adjusted by clicking and dragging.
-        window_loc (:obj:`Dict`): **default = { x: 0, y: 0 }** |br|
+        window_loc (:obj:`Dict[str, int]`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
+
+    .. note::
+
+        **See Also:**
+
+        :ref:`PeekingDuck Viewer<pkd_viewer>`: a GUI for running PeekingDuck pipelines.
+
+        .. figure:: /assets/diagrams/viewer_cat_computer.png
+
+        The PeekingDuck Viewer offers a GUI to view and analyze pipeline output.
+        It has controls to re-play output video, scrub to a frame of interest,
+        zoom video, and a playlist for managing multiple pipelines.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-        cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
         self.previous_filename = ""
+        pkd_viewer = config["pkd_viewer"] if config is not None else False
+        if not pkd_viewer:
+            cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
+            cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
@@ -96,3 +110,16 @@ class Node(AbstractNode):
                 win_width = max(win_width, MIN_DISPLAY_SIZE)
                 win_height = max(win_height, MIN_DISPLAY_SIZE)
                 cv2.resizeWindow(self.window_name, win_width, win_height)
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "window_name": str,
+            "window_loc": Dict[str, int],
+            "window_loc.x": int,
+            "window_loc.y": int,
+            "window_size": Dict[str, Union[bool, int]],
+            "window_size.do_resizing": bool,
+            "window_size.width": int,
+            "window_size.height": int,
+        }

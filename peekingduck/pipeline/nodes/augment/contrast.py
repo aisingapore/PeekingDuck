@@ -37,14 +37,14 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         |img_data|
 
     Configs:
-        alpha (:obj:`float`): **[0, 3], default = 1**. |br|
+        alpha (:obj:`float`): **[0.0, 3.0], default = 1.0**. |br|
             Increasing the value of alpha increases the contrast.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.check_bounds("alpha", "[0, 3]")
+        self.check_bounds("alpha", "[0.0, 3.0]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Adjusts the contrast of an image frame.
@@ -58,3 +58,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         img = cv2.convertScaleAbs(inputs["img"], alpha=self.alpha, beta=0)
 
         return {"img": img}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"alpha": float}

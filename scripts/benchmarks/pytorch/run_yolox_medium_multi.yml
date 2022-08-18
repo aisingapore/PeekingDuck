@@ -1,0 +1,7 @@
+nodes:
+- input.visual:
+    source: data/benchmark/multi
+- model.yolox:
+    model_format: pytorch
+    model_type: yolox-m
+- dabble.fps

@@ -40,6 +40,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
     def __init__(  # pylint: disable=too-many-arguments
         self,
         model_dir: Path,
+        model_format: str,
         model_type: str,
         model_file: Dict[str, str],
         resolution: Dict[str, Dict[str, int]],
@@ -48,6 +49,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
+        self.model_format = model_format
         self.model_type = model_type
         self.model_path = model_dir / model_file[self.model_type]
         self.resolution = self.get_resolution_as_tuple(resolution[self.model_type])
@@ -106,9 +108,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         )
         self.logger.info(
             f"MoveNet model loaded with following configs:\n\t"
-            f"Model type: {self.model_type},\n\t"
-            f"Input resolution: {self.resolution},\n\t"
-            f"bbox_score_threshold: {bbox_score_threshold},\n\t"
+            f"Model format: {self.model_format}\n\t"
+            f"Model type: {self.model_type}\n\t"
+            f"Input resolution: {self.resolution}\n\t"
+            f"bbox_score_threshold: {bbox_score_threshold}\n\t"
             f"keypoint_score_threshold: {self.keypoint_score_threshold}"
         )
 

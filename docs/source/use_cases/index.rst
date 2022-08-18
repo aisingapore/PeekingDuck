@@ -69,6 +69,13 @@ your specific use case - the only limit is your imagination!
    :target: privacy_protection_license_plates.html
    :width: 100 %
 
+.. |privacy_protection_people_screens_doc| replace:: :doc:`Privacy Protection (People and Screens) </use_cases/privacy_protection_people_screens>`
+
+.. |privacy_protection_people_screens_gif| image:: /assets/use_cases/privacy_protection_people_screens.gif
+   :class: no-scaled-link
+   :target: privacy_protection_people_screens.html
+   :width: 100 %
+
 .. |face_mask_detection_doc| replace:: :doc:`Face Mask Detection </use_cases/face_mask_detection>`
 
 .. |face_mask_detection_gif| image:: /assets/use_cases/face_mask_detection.gif
@@ -107,11 +114,16 @@ Privacy Protection
 
    /use_cases/privacy_protection_faces
    /use_cases/privacy_protection_license_plates
+   /use_cases/privacy_protection_people_screens
 
 +--------------------------------------------------------+-----------------------------+
 | |privacy_protection_faces_doc| |tab| |tab| |tab| |tab| | |privacy_protection_lp_doc| |
 +--------------------------------------------------------+-----------------------------+
 | |privacy_protection_faces_gif|                         | |privacy_protection_lp_gif| |
++--------------------------------------------------------+-----------------------------+
+| |privacy_protection_people_screens_doc|                |                             |
++--------------------------------------------------------+                             +
+| |privacy_protection_people_screens_gif|                |                             |
 +--------------------------------------------------------+-----------------------------+
 
 .. _smart_monitoring_use_cases:

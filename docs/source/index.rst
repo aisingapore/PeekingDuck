@@ -39,8 +39,9 @@ Leverage on SOTA models
 PeekingDuck comes with various state of the art (SOTA)
 :doc:`object detection </resources/01a_object_detection>`,
 :doc:`pose estimation </resources/01b_pose_estimation>`,
-:doc:`object tracking <resources/01c_object_tracking>`, and
-:doc:`crowd counting </resources/01d_crowd_counting>` models. Mix and match different nodes to
+:doc:`object tracking <resources/01c_object_tracking>`,
+:doc:`crowd counting </resources/01d_crowd_counting>`, and
+:doc:`instance segmentation </resources/01e_instance_segmentation>` models. Mix and match different nodes to
 construct solutions for various :doc:`use cases </use_cases/index>`.
 
 
