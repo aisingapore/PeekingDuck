@@ -54,7 +54,7 @@ jobs:
       - name: Test installation from Test PyPI
         run: |
           sleep 300
-          pip install click pyyaml colorama
+          pip install click pyyaml colorama typeguard
           pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
           peekingduck
       - name: Publish distribution 📦 to PyPI
@@ -76,6 +76,6 @@ jobs:
       - name: Test installation from PyPI
         run: |
           sleep 300
-          pip install click pyyaml colorama
+          pip install click pyyaml colorama typeguard
           pip install peekingduck==$VERSION --no-dependencies # no tensorflow
           peekingduck
