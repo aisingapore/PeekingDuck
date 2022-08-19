@@ -205,7 +205,7 @@ class ReqRes(Server):
         """execute single or continuous inference"""
 
         # move outside?
-        @self.app.post("/image")
+        @self.app.post("/")
         async def image(item: dict = Body):
             self._process_nodes(item)
             return

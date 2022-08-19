@@ -3,4 +3,4 @@ output: ["img", "filename", "pipeline_end", "saved_video_fps"]
 
 image_format: jpg
 image_key: image
-filename_keys: ["name", "timestamp"]
+filename_keys: []
