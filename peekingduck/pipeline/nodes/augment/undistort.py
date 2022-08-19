@@ -16,13 +16,12 @@
 Removes distortion from a wide-angle camera image.
 """
 
-
+from pathlib import Path
 from typing import Any, Dict
 
-from pathlib import Path
 import cv2
-import yaml
 import numpy as np
+import yaml
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
@@ -62,7 +61,6 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.file_path = Path(self.file_path)  # type: ignore
-        # check if file_path has a ".yml" extension
         if self.file_path.suffix != ".yml":
             raise ValueError("Filepath must have a '.yml' extension.")
         if not self.file_path.exists():
@@ -87,7 +85,6 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Outputs dictionary with the key `img`.
         """
-
         img = inputs["img"]
 
         if self.new_camera_matrix is None:
@@ -112,3 +109,7 @@ class Node(AbstractNode):
         undistorted_img = undistorted_img[y_pos : y_pos + img_h, x_pos : x_pos + img_w]
 
         return {"img": undistorted_img}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"file_path": str}

@@ -45,4 +45,4 @@ Why does the output screen flash briefly and disappear on my second run?
 
 If you are running PeekingDuck on the Windows Subsystem for Linux (WSL), this erroneous behavior
 may be caused by a WSL bug where the key buffer is not flushed. Please refer to this
-`GitHub issue <https://github.com/aimakerspace/PeekingDuck/issues/630>`_ for more details.
+`GitHub issue <https://github.com/aisingapore/PeekingDuck/issues/630>`_ for more details.

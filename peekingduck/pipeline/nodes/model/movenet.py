@@ -14,7 +14,7 @@
 
 """🕺 Fast Pose Estimation model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -51,6 +51,9 @@ class Node(AbstractNode):
         |bbox_labels_data|
 
     Configs:
+        model_format (:obj:`str`): **{"tensorflow", "tensorrt"},
+            default="tensorflow"** |br|
+            Defines the weights format of the model.
         model_type (:obj:`str`):
             **{"
             singlepose_lightning", "singlepose_thunder", "multipose_lightning"
@@ -61,10 +64,6 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
-        resolution (:obj:`Dict`): **default = { height: 256, width: 256 }** |br|
-            Dictionary of resolutions of input array to different MoveNet models.
-            Only multipose allows dynamic shape in multiples of 32 (recommended
-            256). Default will be the resolution for multipose lightning model.
         bbox_score_threshold (:obj:`float`): **[0,1], default = 0.2** |br|
             Detected bounding box confidence score threshold, only boxes above
             threshold will be kept in the output.
@@ -101,4 +100,14 @@ class Node(AbstractNode):
             "keypoints": keypoints,
             "keypoint_conns": keypoint_conns,
             "keypoint_scores": keypoint_scores,
+        }
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "bbox_score_threshold": float,
+            "keypoint_score_threshold": float,
+            "model_format": str,
+            "model_type": str,
+            "weights_parent_dir": Optional[str],
         }

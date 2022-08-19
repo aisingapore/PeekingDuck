@@ -38,6 +38,8 @@
 
 .. |large_groups_data| replace:: |large_groups|: |large_groups_def|
 
+.. |masks_data| replace:: |masks|: |masks_def|
+
 .. |none_input_data| replace:: |none|: |none_input_def|
 
 .. |none_output_data| replace:: |none|: |none_output_def|
@@ -90,6 +92,8 @@
 .. |keypoint_scores| replace:: ``keypoint_scores`` (:obj:`numpy.ndarray`)
 
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`)
+
+.. |masks| replace:: ``masks`` (:obj:`numpy.ndarray`)
    
 .. |none| replace:: ``none``
    
@@ -172,6 +176,10 @@
 
 .. |large_groups_def| replace:: A list of integers representing the group IDs of
    groups that have exceeded the size threshold.
+
+.. |masks_def| replace:: A NumPy array of shape :math:`(N, H, W)` containing
+   :math:`N` detected binarized masks where :math:`H` and :math:`W` are the
+   height and width of the masks. The order corresponds to :term:`bbox_labels`.
 
 .. |none_input_def| replace:: No inputs required.
 

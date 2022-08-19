@@ -14,15 +14,15 @@
 
 """🔲 License Plate Detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
 
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.model.yolov4_license_plate import (
     yolo_license_plate_model,
 )
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -62,10 +62,8 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         Model weights trained using pretrained weights from Darknet:
         https://github.com/AlexeyAB/darknet
 
-    .. versionchanged:: 1.2.0
-        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
-
-    .. versionchanged:: 1.2.0
+    .. versionchanged:: 1.2.0 |br|
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``. |br|
         ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
@@ -94,3 +92,12 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         }
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "iou_threshold": float,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

@@ -15,6 +15,7 @@
 """Core PeekingDuck CLI commands."""
 
 import logging
+import os
 import tempfile
 from pathlib import Path
 from time import perf_counter
@@ -143,6 +144,7 @@ def verify_install() -> None:
     """
     LoggerSetup.set_log_level("info")
 
+    cwd = Path.cwd()
     with tempfile.TemporaryDirectory() as tmp_dir:
         pipeline_config_path = Path(tmp_dir) / "verification_pipeline.yml"
 
@@ -167,6 +169,7 @@ def verify_install() -> None:
             num_iter=None,
         )
         runner.run()
+        os.chdir(cwd)
 
 
 def _create_custom_folder(custom_folder_name: str) -> None:

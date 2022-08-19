@@ -12,7 +12,7 @@ Introduction
    :target: https://pypi.org/project/peekingduck
     
 .. image:: https://img.shields.io/badge/license-Apache%202.0-blue.svg
-   :target: https://github.com/aimakerspace/PeekingDuck/blob/main/LICENSE
+   :target: https://github.com/aisingapore/PeekingDuck/blob/main/LICENSE
 
 
 What is PeekingDuck?
@@ -39,8 +39,9 @@ Leverage on SOTA models
 PeekingDuck comes with various state of the art (SOTA)
 :doc:`object detection </resources/01a_object_detection>`,
 :doc:`pose estimation </resources/01b_pose_estimation>`,
-:doc:`object tracking <resources/01c_object_tracking>`, and
-:doc:`crowd counting </resources/01d_crowd_counting>` models. Mix and match different nodes to
+:doc:`object tracking <resources/01c_object_tracking>`,
+:doc:`crowd counting </resources/01d_crowd_counting>`, and
+:doc:`instance segmentation </resources/01e_instance_segmentation>` models. Mix and match different nodes to
 construct solutions for various :doc:`use cases </use_cases/index>`.
 
 
@@ -86,7 +87,7 @@ Foundation, Singapore.
 License
 =======
 
-PeekingDuck is under the open source `Apache License 2.0 <https://github.com/aimakerspace/PeekingDuck/blob/main/LICENSE>`_ (:
+PeekingDuck is under the open source `Apache License 2.0 <https://github.com/aisingapore/PeekingDuck/blob/main/LICENSE>`_ (:
 
 Even so, your organization may require legal proof of its right to use PeekingDuck, due to
 circumstances such as the following:
@@ -103,4 +104,4 @@ Communities
 ===========
 
 * `AI Singapore community forum <https://community.aisingapore.org/groups/computer-vision/forum/>`_
-* `Discuss on GitHub <https://github.com/aimakerspace/PeekingDuck/discussions>`_
+* `Discuss on GitHub <https://github.com/aisingapore/PeekingDuck/discussions>`_

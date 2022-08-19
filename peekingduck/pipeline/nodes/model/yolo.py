@@ -14,7 +14,7 @@
 
 """🔲 One-stage Object Detection model."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import cv2
 import numpy as np
@@ -48,7 +48,7 @@ class Node(AbstractNode):
             replacing ``null`` with an absolute path to the desired directory.
         num_classes (:obj:`int`): **default = 80**. |br|
             Maximum number of objects to be detected.
-        detect (:obj:`List[Union[int, string]]`): **default = [0]**. |br|
+        detect (:obj:`List[Union[int, str]]`): **default = [0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         max_output_size_per_class (:obj:`int`): **default = 50**. |br|
@@ -71,10 +71,8 @@ class Node(AbstractNode):
 
         Inference code adapted from https://github.com/zzh8829/yolov3-tf2
 
-    .. versionchanged:: 1.2.0
-        ``yolo_iou_threshold`` is renamed to ``iou_threshold``.
-
-    .. versionchanged:: 1.2.0
+    .. versionchanged:: 1.2.0 |br|
+        ``yolo_iou_threshold`` is renamed to ``iou_threshold``. |br|
         ``yolo_score_threshold`` is renamed to ``score_threshold``.
     """
 
@@ -99,3 +97,15 @@ class Node(AbstractNode):
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        return {
+            "detect": List[Union[int, str]],
+            "iou_threshold": float,
+            "max_output_size_per_class": int,
+            "max_total_size": int,
+            "model_type": str,
+            "num_classes": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

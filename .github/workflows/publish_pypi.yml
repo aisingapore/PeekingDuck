@@ -54,8 +54,11 @@ jobs:
       - name: Test installation from Test PyPI
         run: |
           sleep 300
-          pip install click pyyaml colorama
-          pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-dependencies # no tensorflow
+          # need to separately install requirements (from pypi repo), 
+          # as some packages are not available on test.pypi.org repo
+          # e.g. tqdm 4.45 not available
+          pip install -r requirements.txt
+          pip install -i https://test.pypi.org/simple/ peekingduck==$VERSION --no-deps
           peekingduck
       - name: Publish distribution 📦 to PyPI
         # only pushes to actual PyPI if its a tag (i.e. on release: published)
@@ -76,6 +79,5 @@ jobs:
       - name: Test installation from PyPI
         run: |
           sleep 300
-          pip install click pyyaml colorama
-          pip install peekingduck==$VERSION --no-dependencies # no tensorflow
+          pip install peekingduck==$VERSION
           peekingduck

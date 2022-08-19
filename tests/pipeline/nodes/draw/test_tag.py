@@ -17,6 +17,7 @@ Test for draw tag node
 """
 
 from contextlib import contextmanager
+
 import numpy as np
 import pytest
 
@@ -147,21 +148,24 @@ class TestTag:
         tag_config["tag_color"] = [128, -1, 128]
         with pytest.raises(ValueError) as excinfo:
             Node(tag_config)
-        assert "Color values should lie between (and include) 0 and 255" in str(
+        assert "All elements of tag_color must be between [0.0, 255.0]" in str(
             excinfo.value
         )
 
         tag_config["tag_color"] = [128, 256, 128]
         with pytest.raises(ValueError) as excinfo:
             Node(tag_config)
-        assert "Color values should lie between (and include) 0 and 255" in str(
+        assert "All elements of tag_color must be between [0.0, 255.0]" in str(
             excinfo.value
         )
 
         tag_config["tag_color"] = [128, 128.0, 128]
         with pytest.raises(TypeError) as excinfo:
             Node(tag_config)
-        assert "Color values should be integers" in str(excinfo.value)
+        assert (
+            "type of draw.tag's `tag_color`[1] must be int; got float instead"
+            in str(excinfo.value)
+        )
 
     def test_show_config_unchanged_between_frames(self, tag_config, create_image):
         # Each attr_key of the "show" config is obtained by recursion, where items in the

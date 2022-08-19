@@ -17,17 +17,17 @@ Calculates camera coefficients to be used to
 remove distortion from a wide-angle camera image.
 """
 
-from typing import Any, Dict, List
-
-from pathlib import Path
 import math
 import time
+from pathlib import Path
+from typing import Any, Dict, List
+
 import cv2
-import yaml
 import numpy as np
+import yaml
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.constants import CHAMPAGNE, BLACK, TOMATO
+from peekingduck.pipeline.nodes.draw.utils.constants import BLACK, CHAMPAGNE, TOMATO
 
 # global constants
 # terminal criteria for subpixel finetuning
@@ -173,7 +173,7 @@ class Node(AbstractNode):
         gray_img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         height, width = img.shape[:2]
 
-        self._initialise_display_scales(width)
+        self._initialize_display_scales(width)
         start_point, end_point, text_pos = _get_box_info(
             self.num_detections, width, height
         )
@@ -222,9 +222,12 @@ class Node(AbstractNode):
 
         return {"img": img}
 
-    def _initialise_display_scales(self, img_width: int) -> None:
-        """Initalises display scales if it hasn't been initialised before"""
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"num_corners": List[int], "scale_factor": int, "file_path": str}
 
+    def _initialize_display_scales(self, img_width: int) -> None:
+        """Initializes display scales if it hasn't been initialized before"""
         if not self.display_scales:
             self.display_scales = {
                 "box_thickness": max(int(img_width * BOX_THICKNESS_RATIO), 1),
@@ -256,7 +259,6 @@ class Node(AbstractNode):
 
     def _calculate_coeffs(self, img_shape: tuple) -> tuple:
         """Performs calculations with detected corners"""
-
         calibration_data = cv2.calibrateCamera(
             objectPoints=self.object_points,
             imagePoints=self.image_points,
@@ -284,7 +286,6 @@ class Node(AbstractNode):
 
     def _write_coeffs(self, calibration_data: tuple) -> None:
         """Writes camera coefficients to a file"""
-
         (_, camera_matrix, distortion_coeffs, _, _) = calibration_data
 
         file_data = {}
@@ -295,7 +296,6 @@ class Node(AbstractNode):
 
     def _calculate_error(self, calibration_data: tuple) -> None:
         """Calculates re-projection error"""
-
         (
             _,
             camera_matrix,
@@ -332,7 +332,6 @@ class Node(AbstractNode):
         text_pos: tuple,
     ) -> None:
         """Draws text and corners on image"""
-
         # improve corner accuracy
         corners_accurate = cv2.cornerSubPix(
             image=gray_img,
@@ -370,7 +369,6 @@ class Node(AbstractNode):
         self, img: np.ndarray, text_to_draw: List[str], text_pos: tuple
     ) -> None:
         """Draws text and countdown on image"""
-
         _draw_text(
             img=img,
             texts=text_to_draw,
@@ -448,7 +446,6 @@ def _check_corners_validity(
     width: int, height: int, corners: np.ndarray, start_point: tuple, end_point: tuple
 ) -> int:
     """Checks whether the corners are large enough and fall within the box"""
-
     min_w = width
     min_h = height
     max_w = 0
@@ -490,7 +487,6 @@ def _draw_box(
     img: np.ndarray, start_point: tuple, end_point: tuple, box_thickness: int
 ) -> None:
     """Draws rectangle on the image"""
-
     cv2.rectangle(
         img=img,
         pt1=start_point,
@@ -514,7 +510,6 @@ def _draw_bgnd_box(
     pt2: tuple,
 ) -> None:
     """Draws background box on image"""
-
     box_img = img.copy()
 
     # draw the rectangle
@@ -532,7 +527,6 @@ def _draw_text(
     thickness: int,
 ) -> None:
     """Draws text on the image"""
-
     pos, pos_type = pos_info
 
     text_width = 0
@@ -599,7 +593,6 @@ def _draw_countdown(
     img: np.ndarray, num: int, font_scale: float, thickness: int
 ) -> None:
     """Draws a countdown in the center of the screen"""
-
     height, width = img.shape[:2]
 
     text = str(num)

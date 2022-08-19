@@ -18,8 +18,8 @@ Draws bounding boxes over detected objects.
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
 
 
 class Node(AbstractNode):
@@ -53,3 +53,7 @@ class Node(AbstractNode):
             inputs["img"], inputs["bboxes"], inputs["bbox_labels"], self.show_labels
         )
         return {}
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"show_labels": bool}

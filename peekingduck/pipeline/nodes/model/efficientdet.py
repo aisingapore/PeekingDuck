@@ -14,13 +14,13 @@
 
 """🔲 Scalable and efficient object detection."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.efficientdet_d04 import efficientdet_model
 
 
 class Node(AbstractNode):
@@ -53,7 +53,7 @@ class Node(AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default = 0.3**.
             Bounding boxes with confidence score below the threshold will be
             discarded.
-        detect (:obj:`List[Union[int, string]]`): **default = [0]**. |br|
+        detect (:obj:`List[Union[int, str]]`): **default = [0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-object-detection-ids>`.
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
@@ -81,3 +81,12 @@ class Node(AbstractNode):
 
         outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {
+            "detect": List[Union[int, str]],
+            "model_type": int,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }

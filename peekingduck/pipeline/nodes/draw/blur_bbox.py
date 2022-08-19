@@ -47,13 +47,30 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.blur_kernel_size = self.config["blur_kernel_size"]
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Reads the image input and returns the image, with the areas bounded
+        by the bboxes blurred.
 
-    @staticmethod
-    def _blur(
-        bboxes: List[np.ndarray], image: np.ndarray, blur_kernel_size: int
-    ) -> np.ndarray:
-        """Blurs the area bounded by bbox in an image."""
+        Args:
+            inputs (dict): Dictionary of inputs with keys "img", "bboxes"
+
+        Returns:
+            outputs (dict): Output in dictionary format with key "img"
+        """
+        blurred_img = self._blur_bbox(inputs["img"], inputs["bboxes"])
+        outputs = {"img": blurred_img}
+        return outputs
+
+    def _blur_bbox(self, image: np.ndarray, bboxes: List[np.ndarray]) -> np.ndarray:
+        """Blurs areas bounded by bounding boxes on ``image``.
+
+        Args:
+            image (np.ndarray): Image in numpy array.
+            bboxes (List[np.ndarray]): numpy array of detected bboxes
+
+        Returns:
+            (np.ndarray): Image with blurred bounding box regions.
+        """
         height = image.shape[0]
         width = image.shape[1]
 
@@ -66,21 +83,13 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             bbox_image = image[y_1:y_2, x_1:x_2, :]
 
             # apply the blur using blur filter from opencv
-            blur_bbox_image = cv2.blur(bbox_image, (blur_kernel_size, blur_kernel_size))
+            blur_bbox_image = cv2.blur(
+                bbox_image, (self.blur_kernel_size, self.blur_kernel_size)
+            )
             image[y_1:y_2, x_1:x_2, :] = blur_bbox_image
 
         return image
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Reads the image input and returns the image, with the areas bounded
-        by the bboxes blurred.
-
-        Args:
-            inputs (dict): Dictionary of inputs with keys "img", "bboxes"
-
-        Returns:
-            outputs (dict): Output in dictionary format with key "img"
-        """
-        blurred_img = self._blur(inputs["bboxes"], inputs["img"], self.blur_kernel_size)
-        outputs = {"img": blurred_img}
-        return outputs
+    def _get_config_types(self) -> Dict[str, Any]:
+        """Returns dictionary mapping the node's config keys to respective types."""
+        return {"blue_kernel_size": int}
