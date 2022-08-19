@@ -1,0 +1,4 @@
+input: ["img"]
+output: ["none"]
+
+bucket_name: autoscaling-tests
