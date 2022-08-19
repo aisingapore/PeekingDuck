@@ -1,4 +1,5 @@
-input: ["img"]
+input: ["img", "filename"]
 output: ["none"]
 
-bucket_name: autoscaling-tests
+bucket_name: peekingduck
+folder_name: None

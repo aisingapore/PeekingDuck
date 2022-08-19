@@ -1,7 +1,6 @@
 """
 Node template for creating custom nodes.
 """
-import datetime
 from typing import Any, Dict
 
 import cv2
@@ -30,14 +29,11 @@ class Node(AbstractNode):
         Returns:
             outputs (dict): Dictionary with keys "__".
         """
-
-        current_time = datetime.datetime.now()
-        # output as '240621-15-09-13.xxx'
-        time_str = current_time.strftime("%d%m%y-%H-%M-%S.%f")
-
-        blob = self.bucket.blob(f"result_{time_str}.jpeg")
+        filename = inputs["filename"]
+        if self.folder_name:
+            blob = self.bucket.blob(self.folder_name + "/" + filename)
+        else:
+            blob = self.bucket.blob(filename)
         img_str = cv2.imencode(".jpg", inputs["img"])[1].tostring()
         blob.upload_from_string(img_str)
-
-        cv2.imwrite(f"result_{time_str}.jpeg", inputs["img"])
         return {}

@@ -8,16 +8,18 @@ import pika
 
 EXCHANGE = "cameras"
 EXCHANGE_TYPE = "fanout"
-# USERNAME = "peekingduck"
-# PASSWORD = "peekingduck"
+USERNAME = "peekingduck"
+PASSWORD = "admin"
 
-HOST = "localhost"
+HOST = "35.247.179.198"
 # HOST = "http://127.0.0.1:5000/image"
 IMAGE_PATH = "../../peekingduck/data/input/shiba_inu.jpeg"
 OBJECT_NAME = "shiba_inu"
 
-
-connection = pika.BlockingConnection(pika.ConnectionParameters(host=HOST))
+credentials = pika.PlainCredentials(username=USERNAME, password=PASSWORD)
+connection = pika.BlockingConnection(
+    pika.ConnectionParameters(host=HOST, credentials=credentials)
+)
 channel = connection.channel()
 
 channel.exchange_declare(exchange=EXCHANGE, exchange_type=EXCHANGE_TYPE)
