@@ -86,6 +86,7 @@ def calibration_data(request):
     gc.collect()
 
 
+@pytest.mark.usefixtures("tmp_dir")
 class TestCameraCalibration:
     def test_file_io(self):
         with pytest.raises(ValueError) as excinfo:
