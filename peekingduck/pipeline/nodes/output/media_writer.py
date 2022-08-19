@@ -35,19 +35,13 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 class Node(AbstractNode):
     """Outputs the processed image or video to a file. A timestamp is appended to the
     end of the file name.
-
     Inputs:
         |img_data|
-
         |filename_data|
-
         |saved_video_fps_data|
-
         |pipeline_end_data|
-
     Outputs:
         |none_output_data|
-
     Configs:
         output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
@@ -116,17 +110,13 @@ class Node(AbstractNode):
         output_dir.mkdir(parents=True, exist_ok=True)
 
     def _append_datetime_filename(self, filename: str) -> str:
-        # WIP: This function no longer adds timestamp all the time
         self._file_name = filename
-        if self.add_timestamp:
-            current_time = datetime.datetime.now()
-            # output as 'YYYYMMDD_hhmmss'
-            time_str = current_time.strftime("%y%m%d_%H%M%S_%f")
+        current_time = datetime.datetime.now()
+        # output as 'YYYYMMDD_hhmmss'
+        time_str = current_time.strftime("%y%m%d_%H%M%S")
 
-            # append timestamp to filename before extension Format: filename_timestamp.extension
-            filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
-            file_path_with_timestamp = self.output_dir / filename_with_timestamp
-        else:
-            file_path_with_timestamp = self.output_dir / filename
+        # append timestamp to filename before extension Format: filename_timestamp.extension
+        filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
+        file_path_with_timestamp = self.output_dir / filename_with_timestamp
 
         return str(file_path_with_timestamp)

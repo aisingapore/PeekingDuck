@@ -2,4 +2,3 @@ input: ["img", "filename", "saved_video_fps", "pipeline_end"]
 output: ["none"]
 
 output_dir: "PeekingDuck/data/output"
-add_timestamp: False
