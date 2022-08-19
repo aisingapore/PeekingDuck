@@ -40,7 +40,9 @@ def mask_rcnn_config():
     node_config["score_threshold"] = 0.5
     node_config["mask_threshold"] = 0.5
 
-    return node_config
+    # test on CPU only
+    with mock.patch("torch.cuda.is_available", return_value=False):
+        yield node_config
 
 
 @pytest.fixture(
