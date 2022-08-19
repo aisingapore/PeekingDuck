@@ -34,7 +34,7 @@ GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 def yolact_edge_config():
     with open(PKD_DIR / "configs" / "model" / "yolact_edge.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
     node_config["score_threshold"] = 0.2
     return node_config
 

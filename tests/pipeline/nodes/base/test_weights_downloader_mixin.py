@@ -48,7 +48,7 @@ class WeightsModel(WeightsDownloaderMixin):
     def __init__(self, config_file):
         with open(config_file) as infile:
             node_config = yaml.safe_load(infile)
-            node_config["root"] = Path.cwd()
+            node_config["root"] = PKD_DIR
         self.config = node_config
         self.logger = logging.getLogger("test_weights_downloader_mixin.WeightsModel")
 

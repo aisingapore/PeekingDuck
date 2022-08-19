@@ -36,7 +36,7 @@ def single_person_image(request):
 def movenet_config():
     with open(PKD_DIR / "configs" / "model" / "movenet.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
 
     yield node_config
     K.clear_session()

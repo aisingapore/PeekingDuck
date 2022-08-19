@@ -33,7 +33,7 @@ GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 def posenet_config():
     with open(PKD_DIR / "configs" / "model" / "posenet.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
     return node_config
 
 

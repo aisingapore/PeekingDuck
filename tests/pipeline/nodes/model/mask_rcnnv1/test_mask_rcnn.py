@@ -19,12 +19,12 @@ import cv2
 import numpy as np
 import numpy.testing as npt
 import pytest
-import yaml
 import torch
+import yaml
 
 from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
-from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 from peekingduck.pipeline.nodes.model.mask_rcnn import Node
+from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
@@ -35,7 +35,7 @@ NP_FILE = np.load(Path(__file__).resolve().parent / "mask_rcnn_gt_masks.npz")
 def mask_rcnn_config():
     with open(PKD_DIR / "configs" / "model" / "mask_rcnn.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
     node_config["iou_threshold"] = 0.5
     node_config["score_threshold"] = 0.5
     node_config["mask_threshold"] = 0.5

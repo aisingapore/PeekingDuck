@@ -28,7 +28,7 @@ from tests.conftest import PKD_DIR
 def posenet_config():
     with open(PKD_DIR / "configs" / "model" / "posenet.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
     # Only test model_type=75 instead of the default resnet or other types.
     node_config["model_type"] = 75
 
