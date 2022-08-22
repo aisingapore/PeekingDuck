@@ -1,67 +1,108 @@
 import base64
 import click
 import datetime
-import requests
 import pickle
+import requests
 
 import pika
 
-IMAGE_PATH = "../../peekingduck/data/input/shiba_inu.jpeg"
-OBJECT_NAME = "shiba_inu"
-# RabbitMQ related
-USERNAME = "peekingduck"
-PASSWORD = "admin"
-QUEUE_NAME = "task_queue"
-EXCHANGE_NAME = "cameras"
 EXCHANGE_TYPE = "fanout"
 
 
-@click.command()
-@click.option(
-    "--mode", default="req-res", help="Choose between 'req-res', 'queue' or 'pub-sub'"
+host_option = click.option("--host", default="127.0.0.1", help="""IP address of host""")
+username_option = click.option(
+    "--username", default="peekingduck", help="""Username for RabbitMQ authentication"""
 )
-@click.option("--ip_add", default="127.0.0.1", help="IP address to send to.")
-@click.option("--port", default=5000, type=int)
-def send(mode, ip_add, port):
+password_option = click.option(
+    "--password",
+    prompt=True,
+    hide_input=True,
+    help="""Password for RabbitMQ authentication""",
+)
+image_path_option = click.option("--image_path", help="""Path of image file to send""")
+image_descr_option = click.option(
+    "--image_descr", default="image", help="""Description of image"""
+)
+
+
+@click.group()
+def cli() -> None:
+    """Send image and metadata to PeekingDuck Server"""
+
+
+@click.command()
+@host_option
+@image_path_option
+@image_descr_option
+@click.option("--port", default=5000, type=int, help="""Port to send to""")
+def req_res(host, image_path, image_descr, port):
+    """Request response mode"""
+    data = prepare_data(image_path, image_descr)
+    url = "http://" + host + ":" + str(port)
+    requests.post(url, json=data)
+
+
+@click.command()
+@host_option
+@image_path_option
+@image_descr_option
+@username_option
+@password_option
+@click.option(
+    "--exchange_name", default="pkd_exchange", help="""Name of RabbitMQ exchange"""
+)
+def pub_sub(host, image_path, image_descr, username, password, exchange_name):
+    """Publish subscribe mode"""
+    credentials = pika.PlainCredentials(username=username, password=password)
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=host, credentials=credentials)
+    )
+    channel = connection.channel()
+    data = prepare_data(image_path, image_descr)
+    data = pickle.dumps(data)
+    channel.exchange_declare(exchange=exchange_name, exchange_type=EXCHANGE_TYPE)
+    channel.basic_publish(exchange=exchange_name, routing_key="", body=data)
+    connection.close()
+
+
+@click.command()
+@host_option
+@image_path_option
+@image_descr_option
+@username_option
+@password_option
+@click.option("--queue_name", default="pkd_queue", help="""Name of RabbitMQ queue""")
+def queue(host, image_path, image_descr, username, password, queue_name):
+    """Message queue mode"""
+    credentials = pika.PlainCredentials(username=username, password=password)
+    connection = pika.BlockingConnection(
+        pika.ConnectionParameters(host=host, credentials=credentials)
+    )
+    channel = connection.channel()
+    data = prepare_data(image_path, image_descr)
+    data = pickle.dumps(data)
+    channel.queue_declare(queue=queue_name, durable=True)
+    channel.basic_publish(
+        exchange="",
+        routing_key=queue_name,
+        body=data,
+        properties=pika.BasicProperties(
+            delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE
+        ),
+    )
+    connection.close()
+
+
+def prepare_data(image_path, image_descr):
+    """Prepare image and metadata"""
     current_time = datetime.datetime.now()
     time_str = current_time.strftime("%y%m%d-%H%M%S-%f")
-    image_encoded = encode_image(IMAGE_PATH)
-    data = {"name": OBJECT_NAME, "image": image_encoded, "timestamp": time_str}
-
-    if mode == "req-res":
-        url = "http://" + ip_add + ":" + str(port)
-        requests.post(url, json=data)
-    else:
-        credentials = pika.PlainCredentials(username=USERNAME, password=PASSWORD)
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=ip_add, credentials=credentials)
-        )
-        channel = connection.channel()
-        data = pickle.dumps(data)
-        if mode == "queue":
-            channel.queue_declare(queue=QUEUE_NAME, durable=True)
-            channel.basic_publish(
-                exchange="",
-                routing_key=QUEUE_NAME,
-                body=data,
-                properties=pika.BasicProperties(
-                    delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE
-                ),
-            )
-            connection.close()
-        elif mode == "pub-sub":
-            channel.exchange_declare(
-                exchange=EXCHANGE_NAME, exchange_type=EXCHANGE_TYPE
-            )
-            channel.basic_publish(exchange=EXCHANGE_NAME, routing_key="", body=data)
-            connection.close()
-        else:
-            raise ValueError(
-                "Incorrect mode selected. Only 'req-res', 'queue' or 'pub-sub' permitted."
-            )
+    image_encoded = encode_image(image_path)
+    return {"descr": image_descr, "image": image_encoded, "timestamp": time_str}
 
 
 def encode_image(image_path):
+    """Encode image into ASCII string"""
     with open(image_path, "rb") as image_file:
         # b64encode() encodes into a bytes-like object
         # .decode("utf-8") is a string method (not base64) that converts it to an ASCII string
@@ -71,5 +112,10 @@ def encode_image(image_path):
     return image_encoded
 
 
+cli.add_command(req_res)
+cli.add_command(queue)
+cli.add_command(pub_sub)
+
+
 if __name__ == "__main__":
-    send()
+    cli()

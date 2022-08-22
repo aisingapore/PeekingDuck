@@ -204,18 +204,11 @@ class ReqRes(Server):
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
 
-        # move outside?
         @self.app.post("/")
         async def image(item: dict = Body):
             self._process_nodes(item)
             return
 
-        # https://www.uvicorn.org/deployment/#running-programmatically
-        # This doesn't work:
-        # uvicorn.run("server:app", host="127.0.0.1", port=5000, log_level="info")
-        # multiple workers with PKD depends on nodes used - e.g. media_writer needs to combine
-        # correctly, weights downloading will have issues, tracking needs to be in sequence, etc.
-        # If none of the above apply, async will be advantageous.
         uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
 
         # clean up nodes with threads

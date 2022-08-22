@@ -33,8 +33,9 @@ host_option = click.option("--host", default="0.0.0.0", help="""To be updated"""
 username_option = click.option(
     "--username", default="peekingduck", help="""To be updated"""
 )
-# TO-DO: look into hiding
-password_option = click.option("--password", default="", help="""To be updated""")
+password_option = click.option(
+    "--password", prompt=True, hide_input=True, help="""To be updated"""
+)
 
 
 @click.command()
