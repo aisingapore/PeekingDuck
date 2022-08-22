@@ -61,7 +61,7 @@ macOS Monterey.
 
       | \ :blue:`[~user]` \ > \ :green:`conda create -n pkd python=3.8` \
       | \ :blue:`[~user]` \ > \ :green:`conda activate pkd` \
-      | \ :blue:`[~user]` \ > \ :green:`conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm` \
+      | \ :blue:`[~user]` \ > \ :green:`conda install click colorama opencv openblas pyyaml requests scipy shapely tqdm typeguard` \
 
 3. Install Apple's Tensorflow build that is optimized for Apple Silicon Macs:
 
