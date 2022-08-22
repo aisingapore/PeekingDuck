@@ -35,13 +35,19 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 class Node(AbstractNode):
     """Outputs the processed image or video to a file. A timestamp is appended to the
     end of the file name.
+
     Inputs:
         |img_data|
+
         |filename_data|
+
         |saved_video_fps_data|
+
         |pipeline_end_data|
+
     Outputs:
         |none_output_data|
+
     Configs:
         output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.

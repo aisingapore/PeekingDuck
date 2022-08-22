@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Viewer for PeekingDuck
+Server for PeekingDuck
 """
 
 from peekingduck.server.server import PubSub, Queue, ReqRes
