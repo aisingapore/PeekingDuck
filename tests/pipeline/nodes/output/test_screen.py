@@ -19,7 +19,11 @@ import cv2
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.output.screen import MIN_DISPLAY_SIZE, Node
+from peekingduck.pipeline.nodes.output.screen import (
+    MIN_RENDER_SIZE,
+    MIN_WINDOW_SIZE,
+    Node,
+)
 from tests.conftest import PKD_DIR
 
 
@@ -83,8 +87,8 @@ class TestScreen:
         assert mock_resize.call_args == ((node.window_name, width, height),)
 
     def test_resize_to_min_size(self, screen_config, create_input_image):
-        width = MIN_DISPLAY_SIZE // 2
-        height = MIN_DISPLAY_SIZE // 2
+        width = MIN_RENDER_SIZE // 2
+        height = MIN_RENDER_SIZE // 2
         screen_config["window_size"] = {
             "do_resizing": True,
             "height": height,
@@ -98,5 +102,28 @@ class TestScreen:
             node.run(inputs)
 
         assert mock_resize.call_args == (
-            (node.window_name, MIN_DISPLAY_SIZE, MIN_DISPLAY_SIZE),
+            (node.window_name, MIN_WINDOW_SIZE, MIN_WINDOW_SIZE),
         )
+
+    def test_maintain_min_size(self, screen_config, create_input_image):
+        width = MIN_WINDOW_SIZE * 5
+        height = MIN_WINDOW_SIZE * 5
+
+        node = Node(screen_config)
+        filename = "image1.png"
+        image = create_input_image(filename, (height, width, 3))
+        inputs = {"filename": filename, "img": image}
+        node.run(inputs)
+
+        # Force a resize
+        cv2.resizeWindow(node.window_name, MIN_RENDER_SIZE // 2, MIN_RENDER_SIZE // 2)
+        # Patch cv2.resizeWindow() with itself to extract call_args
+        with mock.patch("cv2.resizeWindow", wraps=cv2.resizeWindow) as mock_resize:
+            node.run(inputs)
+        with mock.patch("cv2.resizeWindow") as mock_resize_2:
+            node.run(inputs)
+
+        assert mock_resize.call_args == (
+            (node.window_name, MIN_WINDOW_SIZE, MIN_WINDOW_SIZE),
+        )
+        assert mock_resize_2.call_args is None

@@ -20,9 +20,16 @@ from typing import Any, Dict, Union
 
 import cv2
 import numpy as np
+
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
-MIN_DISPLAY_SIZE = 120
+MIN_RENDER_SIZE = 120
+# cv2.getWindowImageRect() returns the size of the display area while
+# cv2.resizeWindow() changes the overall window size.
+# As a result, cv2.getWindowImageRect() will always return a smaller value.
+# Resize the window to be larger than the threshold by an arbitrary factor to
+# avoid having to run cv2.resizeWindow() at every iteration.
+MIN_WINDOW_SIZE = int(MIN_RENDER_SIZE * 1.5)
 
 
 class Node(AbstractNode):
@@ -88,7 +95,7 @@ class Node(AbstractNode):
         width and height for every new video or image.
 
         The length of either sides of the display window will be clamped to a lower bound of
-        `MIN_DISPLAY_SIZE`
+        `MIN_WINDOW_SIZE`
 
         Args:
             current_filename (str): The filename from the `inputs` dictionary
@@ -97,18 +104,18 @@ class Node(AbstractNode):
         if current_filename != self.previous_filename:
             # Initialize the window size for every new video
             if self.window_size["do_resizing"]:
-                # Clamp the sides fo the window_size to have a minimum of MIN_DISPLAY_SIZE
-                img_width = max(self.window_size["width"], MIN_DISPLAY_SIZE)
-                img_height = max(self.window_size["height"], MIN_DISPLAY_SIZE)
+                # Clamp the sides of the window_size to have a minimum of MIN_WINDOW_SIZE
+                img_width = max(self.window_size["width"], MIN_WINDOW_SIZE)
+                img_height = max(self.window_size["height"], MIN_WINDOW_SIZE)
             else:
                 img_height, img_width, _ = img.shape
             cv2.resizeWindow(self.window_name, img_width, img_height)
             self.previous_filename = current_filename
         else:
             _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
-            if win_width < MIN_DISPLAY_SIZE or win_height < MIN_DISPLAY_SIZE:
-                win_width = max(win_width, MIN_DISPLAY_SIZE)
-                win_height = max(win_height, MIN_DISPLAY_SIZE)
+            if win_width < MIN_RENDER_SIZE or win_height < MIN_RENDER_SIZE:
+                win_width = max(win_width, MIN_WINDOW_SIZE)
+                win_height = max(win_height, MIN_WINDOW_SIZE)
                 cv2.resizeWindow(self.window_name, win_width, win_height)
 
     def _get_config_types(self) -> Dict[str, Any]:
