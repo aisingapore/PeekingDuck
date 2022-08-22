@@ -31,10 +31,13 @@ node_config_option = click.option(
 )
 host_option = click.option("--host", default="0.0.0.0", help="""To be updated""")
 username_option = click.option(
-    "--username", default="peekingduck", help="""To be updated"""
+    "--username", default="peekingduck", help="""Username for RabbitMQ authentication"""
 )
 password_option = click.option(
-    "--password", prompt=True, hide_input=True, help="""To be updated"""
+    "--password",
+    prompt=True,
+    hide_input=True,
+    help="""Password for RabbitMQ authentication""",
 )
 
 
@@ -45,7 +48,9 @@ password_option = click.option(
 @host_option
 @username_option
 @password_option
-@click.option("--exchange_name", default="pkd_exchange", help="""To be updated""")
+@click.option(
+    "--exchange_name", default="pkd_exchange", help="""Name of RabbitMQ exchange"""
+)
 def pub_sub(  # pylint: disable=too-many-arguments
     config_path: str,
     log_level: str,
@@ -80,7 +85,7 @@ def pub_sub(  # pylint: disable=too-many-arguments
 @host_option
 @username_option
 @password_option
-@click.option("--queue_name", default="pkd_queue", help="""To be updated""")
+@click.option("--queue_name", default="pkd_queue", help="""Name of RabbitMQ queue""")
 def queue(  # pylint: disable=too-many-arguments
     config_path: str,
     log_level: str,
@@ -114,7 +119,7 @@ def queue(  # pylint: disable=too-many-arguments
 @log_level_option
 @node_config_option
 @host_option
-@click.option("--port", default=5000, type=int, help="""To be updated""")
+@click.option("--port", default=5000, type=int, help="""Port to listen at""")
 def req_res(  # pylint: disable=too-many-arguments
     config_path: str,
     log_level: str,
