@@ -86,6 +86,7 @@ def calibration_data(request):
     gc.collect()
 
 
+@pytest.mark.usefixtures("tmp_dir")
 class TestCameraCalibration:
     def test_file_io(self):
         with pytest.raises(ValueError) as excinfo:
@@ -119,10 +120,10 @@ class TestCameraCalibration:
     def test_get_box_info(self):
         for i in range(5):
             start_points, end_points, (text_pos, pos_type) = _get_box_info(i, 1280, 720)
-            assert all(type(val) == int for val in start_points)
-            assert all(type(val) == int for val in end_points)
-            assert all(type(val) == int for val in text_pos)
-            assert type(pos_type) == int
+            assert all(isinstance(val, int) for val in start_points)
+            assert all(isinstance(val, int) for val in end_points)
+            assert all(isinstance(val, int) for val in text_pos)
+            assert isinstance(pos_type, int)
 
     def test_check_initialize_display_scales(self, camera_calibration_node):
         camera_calibration_node._initialize_display_scales(1280)

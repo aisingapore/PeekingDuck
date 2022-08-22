@@ -40,7 +40,7 @@ def jde_config():
     """Yields config while forcing the model to run on CPU."""
     with open(PKD_DIR / "configs" / "model" / "jde.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
 
     with mock.patch("torch.cuda.is_available", return_value=False):
         yield node_config
@@ -53,7 +53,7 @@ def jde_config_gpu():
     """
     with open(PKD_DIR / "configs" / "model" / "jde.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
 
     yield node_config
 

@@ -28,7 +28,7 @@ GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 def csrnet_config(request):
     with open(PKD_DIR / "configs" / "model" / "csrnet.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["root"] = Path.cwd()
+    node_config["root"] = PKD_DIR
     node_config["model_type"] = request.param
 
     return node_config
