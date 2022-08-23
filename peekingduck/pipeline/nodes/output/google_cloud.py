@@ -24,10 +24,21 @@ from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
-    """This is a template class of how to write a node for PeekingDuck.
+    """Saves an image with a given filename to Google Cloud Storage.
 
-    Args:
-        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    Inputs:
+        |img_data|
+
+        |filename_data|
+
+    Outputs:
+        |none_output_data|
+
+    Configs:
+        bucket_name (:obj:`str`): **default = "peekingduck"** |br|
+            Name of Google Cloud Storage bucket.
+        folder_name (:obj:`str`): **default = null** |br|
+            Name of folder within Google Cloud Storage bucket, if any.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -35,15 +46,8 @@ class Node(AbstractNode):
         storage_client = storage.Client()
         self.bucket = storage_client.bucket(self.bucket_name)
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-        """This node does ___.
-
-        Args:
-            inputs (dict): Dictionary with keys "__", "__".
-
-        Returns:
-            outputs (dict): Dictionary with keys "__".
-        """
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Saves an image with a given filename to Google Cloud Storage."""
 
         filename = inputs["filename"]
         if self.folder_name:

@@ -22,8 +22,7 @@ import logging
 from pathlib import Path
 import pickle
 import sys
-
-from typing import List
+from typing import Any, Callable, Dict, List
 
 from fastapi import FastAPI, Body
 import pika
@@ -85,7 +84,7 @@ class Server:
         """
         return self.node_loader.node_list
 
-    def process_nodes(self, body) -> None:
+    def process_nodes(self, body: Dict[str, Any]) -> None:
         """Process nodes in PeekingDuck pipeline."""
 
         for node in self.pipeline.nodes:
@@ -138,7 +137,7 @@ class ReqRes(Server):
         """execute single or continuous inference"""
 
         @self.app.post("/")
-        async def receive(body: dict = Body):  # pylint: disable=unused-variable
+        async def receive(body: dict = Body) -> None:  # type: ignore # pylint: disable=unused-variable
             self.process_nodes(body)
             return
 
@@ -194,11 +193,11 @@ class PubSub(Server):
             if node.name.endswith(".visual"):
                 node.release_resources()
 
-    def _callback(
-        self, channel, method, props, body
-    ):  # pylint: disable=unused-argument
-        body = pickle.loads(body)
-        self.process_nodes(body)
+    def _callback(  # pylint: disable=unused-argument
+        self, channel: Callable, method: Callable, props: Callable, body: bytes
+    ) -> None:
+        body_dict = pickle.loads(body)
+        self.process_nodes(body_dict)
 
 
 class Queue(Server):
@@ -240,9 +239,9 @@ class Queue(Server):
             if node.name.endswith(".visual"):
                 node.release_resources()
 
-    def _callback(
-        self, channel, method, props, body
-    ):  # pylint: disable=unused-argument
-        body = pickle.loads(body)
-        self.process_nodes(body)
+    def _callback(  # pylint: disable=unused-argument
+        self, channel: Callable, method: Callable, props: Callable, body: bytes
+    ) -> None:
+        body_dict = pickle.loads(body)
+        self.process_nodes(body_dict)
         channel.basic_ack(delivery_tag=method.delivery_tag)
