@@ -16,7 +16,6 @@
 Object detection class using yolo model to find object bboxes
 """
 
-
 import logging
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple
@@ -69,9 +68,11 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             image (np.ndarray): input image
 
         Return:
-            boxes (np.array): an array of bounding box with definition like
+            boxes (np.ndarray): an array of bounding box with definition like
                 (x1, y1, x2, y2), in a coordinate system with original point in
                 the top-left corner
+            labels (np.ndarray): array of labels
+            scores (np.ndarray): array of scores
         """
         image = self._preprocess(image)
 
