@@ -1,12 +1,31 @@
+# Copyright 2022 AI Singapore
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     https://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+"""
+Implement PeekingDuck Server
+"""
+
+
 import copy
 import logging
-import sys
 from pathlib import Path
+import pickle
+import sys
 
 from typing import List
 
 from fastapi import FastAPI, Body
-import pickle
 import pika
 import uvicorn
 
@@ -20,6 +39,8 @@ EXCHANGE_TYPE = "fanout"
 
 
 class Server:
+    """Implement PeekingDuck Server class"""
+
     def __init__(  # pylint: disable=too-many-arguments
         self,
         pipeline_path: Path = None,
@@ -64,7 +85,8 @@ class Server:
         """
         return self.node_loader.node_list
 
-    def _process_nodes(self, item) -> None:
+    def process_nodes(self, body) -> None:
+        """Process nodes in PeekingDuck pipeline."""
 
         for node in self.pipeline.nodes:
             if self.pipeline.data.get("pipeline_end", False):
@@ -75,7 +97,7 @@ class Server:
             if "all" in node.inputs:
                 inputs = copy.deepcopy(self.pipeline.data)
             elif "message" in node.inputs:
-                inputs = {"message": item}
+                inputs = {"message": body}
             else:
                 inputs = {
                     key: self.pipeline.data[key]
@@ -93,8 +115,45 @@ class Server:
             self.pipeline.data.update(outputs)
 
 
+class ReqRes(Server):
+    """Implement PeekingDuck ReqRes class"""
+
+    def __init__(  # pylint: disable=too-many-arguments
+        self,
+        pipeline_path: Path = None,
+        config_updates_cli: str = None,
+        custom_nodes_parent_subdir: str = None,
+        nodes: List[AbstractNode] = None,
+        host: str = None,
+        port: int = None,
+    ) -> None:
+        super().__init__(
+            pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
+        )
+        self.app = FastAPI()
+        self.host = host
+        self.port = port
+
+    def run(self) -> None:  # pylint: disable=too-many-branches
+        """execute single or continuous inference"""
+
+        @self.app.post("/")
+        async def receive(body: dict = Body):  # pylint: disable=unused-variable
+            self.process_nodes(body)
+            return
+
+        uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
+
+        # clean up nodes with threads
+        for node in self.pipeline.nodes:
+            if node.name.endswith(".visual"):
+                node.release_resources()
+
+
 class PubSub(Server):
-    def __init__(
+    """Implement PeekingDuck PubSub class"""
+
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         pipeline_path: Path = None,
         config_updates_cli: str = None,
@@ -104,7 +163,7 @@ class PubSub(Server):
         username: str = None,
         password: str = None,
         exchange_name: str = None,
-    ) -> None:  # pylint: disable=too-many-arguments
+    ) -> None:
         super().__init__(
             pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
         )
@@ -125,14 +184,8 @@ class PubSub(Server):
 
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
-
-        def callback(ch, method, properties, item):  # pylint: disable=unused-argument
-            item = pickle.loads(item)
-            self._process_nodes(item)
-            return
-
         self.channel.basic_consume(
-            queue=self.queue_name, on_message_callback=callback, auto_ack=True
+            queue=self.queue_name, on_message_callback=self._callback, auto_ack=True
         )
         self.channel.start_consuming()
 
@@ -141,9 +194,17 @@ class PubSub(Server):
             if node.name.endswith(".visual"):
                 node.release_resources()
 
+    def _callback(
+        self, channel, method, props, body
+    ):  # pylint: disable=unused-argument
+        body = pickle.loads(body)
+        self.process_nodes(body)
+
 
 class Queue(Server):
-    def __init__(
+    """Implement PeekingDuck Queue class"""
+
+    def __init__(  # pylint: disable=too-many-arguments
         self,
         pipeline_path: Path = None,
         config_updates_cli: str = None,
@@ -153,7 +214,7 @@ class Queue(Server):
         username: str = None,
         password: str = None,
         queue_name: str = None,
-    ) -> None:  # pylint: disable=too-many-arguments
+    ) -> None:
         super().__init__(
             pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
         )
@@ -168,14 +229,10 @@ class Queue(Server):
     def run(self) -> None:  # pylint: disable=too-many-branches
         """execute single or continuous inference"""
 
-        def callback(ch, method, properties, item):  # pylint: disable=unused-argument
-            item = pickle.loads(item)
-            self._process_nodes(item)
-            ch.basic_ack(delivery_tag=method.delivery_tag)
-            return
-
         self.channel.basic_qos(prefetch_count=1)
-        self.channel.basic_consume(queue=self.queue_name, on_message_callback=callback)
+        self.channel.basic_consume(
+            queue=self.queue_name, on_message_callback=self._callback
+        )
         self.channel.start_consuming()
 
         # clean up nodes with threads
@@ -183,35 +240,9 @@ class Queue(Server):
             if node.name.endswith(".visual"):
                 node.release_resources()
 
-
-class ReqRes(Server):
-    def __init__(
-        self,
-        pipeline_path: Path = None,
-        config_updates_cli: str = None,
-        custom_nodes_parent_subdir: str = None,
-        nodes: List[AbstractNode] = None,
-        host: str = None,
-        port: int = None,
-    ) -> None:  # pylint: disable=too-many-arguments
-        super().__init__(
-            pipeline_path, config_updates_cli, custom_nodes_parent_subdir, nodes
-        )
-        self.app = FastAPI()
-        self.host = host
-        self.port = port
-
-    def run(self) -> None:  # pylint: disable=too-many-branches
-        """execute single or continuous inference"""
-
-        @self.app.post("/")
-        async def image(item: dict = Body):
-            self._process_nodes(item)
-            return
-
-        uvicorn.run(self.app, host=self.host, port=self.port, log_level="info")
-
-        # clean up nodes with threads
-        for node in self.pipeline.nodes:
-            if node.name.endswith(".visual"):
-                node.release_resources()
+    def _callback(
+        self, channel, method, props, body
+    ):  # pylint: disable=unused-argument
+        body = pickle.loads(body)
+        self.process_nodes(body)
+        channel.basic_ack(delivery_tag=method.delivery_tag)
