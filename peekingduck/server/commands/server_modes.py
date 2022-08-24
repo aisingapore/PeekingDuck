@@ -47,7 +47,7 @@ node_config_option = click.option(
     help="""Modify node configs by wrapping desired configs in a JSON string.\n
         Example: --node_config '{"node_name": {"param_1": var_1}}'""",
 )
-host_option = click.option("--host", default="0.0.0.0", help="""To be updated""")
+host_option = click.option("--host", default="127.0.0.1", help="""Host IP address""")
 username_option = click.option(
     "--username", default="peekingduck", help="""Username for RabbitMQ authentication"""
 )
