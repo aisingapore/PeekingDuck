@@ -19,7 +19,7 @@ Script to send messages to PeekingDuck Server
 
 import base64
 import datetime
-import pickle
+import json
 import requests
 
 import click
@@ -78,9 +78,9 @@ def pub_sub(host, image_path, image_descr, username, password, exchange_name):
     )
     channel = connection.channel()
     data = prepare_data(image_path, image_descr)
-    data = pickle.dumps(data)
+    body = json.dumps(data)
     channel.exchange_declare(exchange=exchange_name, exchange_type=EXCHANGE_TYPE)
-    channel.basic_publish(exchange=exchange_name, routing_key="", body=data)
+    channel.basic_publish(exchange=exchange_name, routing_key="", body=body)
     connection.close()
 
 
@@ -99,12 +99,12 @@ def queue(host, image_path, image_descr, username, password, queue_name):
     )
     channel = connection.channel()
     data = prepare_data(image_path, image_descr)
-    data = pickle.dumps(data)
+    body = json.dumps(data)
     channel.queue_declare(queue=queue_name, durable=True)
     channel.basic_publish(
         exchange="",
         routing_key=queue_name,
-        body=data,
+        body=body,
         properties=pika.BasicProperties(
             delivery_mode=pika.spec.PERSISTENT_DELIVERY_MODE
         ),

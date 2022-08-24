@@ -18,9 +18,9 @@ Implement PeekingDuck Server
 
 
 import copy
+import json
 import logging
 from pathlib import Path
-import pickle
 import sys
 from typing import Any, Callable, Dict, List
 
@@ -196,7 +196,7 @@ class PubSub(Server):
     def _callback(  # pylint: disable=unused-argument
         self, channel: Callable, method: Callable, props: Callable, body: bytes
     ) -> None:
-        body_dict = pickle.loads(body)
+        body_dict = json.loads(body)
         self.process_nodes(body_dict)
 
 
@@ -242,6 +242,6 @@ class Queue(Server):
     def _callback(  # pylint: disable=unused-argument
         self, channel: Callable, method: Callable, props: Callable, body: bytes
     ) -> None:
-        body_dict = pickle.loads(body)
+        body_dict = json.loads(body)
         self.process_nodes(body_dict)
         channel.basic_ack(delivery_tag=method.delivery_tag)
