@@ -114,14 +114,14 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
     def track_objects_from_image(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[int], List[float]]:
+    ) -> Tuple[np.ndarray, List[int], np.ndarray]:
         """Tracks detections from the current video frame.
 
         Args:
             image (np.ndarray): The current video frame.
 
         Returns:
-            (Tuple[List[np.ndarray], List[int], List[float]]): A tuple of
+            (Tuple[np.ndarray, List[int], np.ndarray]): A tuple of
             - Numpy array of detected bounding boxes.
             - List of track IDs.
             - List of detection confidence scores.
@@ -142,11 +142,11 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
                 online_ids.append(target.track_id)
                 scores.append(target.score.item())
         if not online_tlwhs:
-            return online_tlwhs, online_ids, scores
+            return np.empty((0, 4)), online_ids, np.empty(0)
 
-        bboxes = self._postprocess(np.asarray(online_tlwhs), image_size)
+        bboxes = self._postprocess(np.array(online_tlwhs), image_size)
 
-        return bboxes, online_ids, scores
+        return bboxes, online_ids, np.array(scores)
 
     @torch.no_grad()
     def update(  # pylint: disable=too-many-branches,too-many-locals,too-many-statements

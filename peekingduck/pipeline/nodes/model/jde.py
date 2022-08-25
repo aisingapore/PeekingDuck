@@ -88,10 +88,10 @@ class Node(AbstractNode):
 
         Returns:
             outputs (dict): Dictionary containing:
-            - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
+            - bboxes (np.ndarray): Bounding boxes for tracked targets.
             - bbox_labels (np.ndarray): Bounding box labels, hard coded as
                 "person".
-            - bbox_scores (List[float]): Detection confidence scores.
+            - bbox_scores (np.ndarray): Detection confidence scores.
             - obj_attrs (Dict[str, List[int]]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
         """
