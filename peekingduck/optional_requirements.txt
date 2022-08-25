@@ -1,3 +1,4 @@
 dabble.zone_count PYTHON shapely >= 1.7.1
 model.jde PYTHON lap == 0.4.0
 model.fairmot PYTHON lap == 0.4.0
+output.google_cloud PYTHON google-cloud-storage >= 1.38.0
