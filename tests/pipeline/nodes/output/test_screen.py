@@ -27,7 +27,6 @@ from tests.conftest import PKD_DIR
 def screen_config():
     with open(PKD_DIR / "configs" / "output" / "screen.yml") as infile:
         node_config = yaml.safe_load(infile)
-    node_config["pkd_viewer"] = False
 
     return node_config
 

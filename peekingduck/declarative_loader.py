@@ -20,7 +20,6 @@ import ast
 import collections.abc
 import importlib
 import logging
-
 import os
 import sys
 from pathlib import Path
@@ -63,10 +62,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
         pipeline_path: Path,
         config_updates_cli: str,
         custom_nodes_parent_subdir: str,
-        pkd_viewer: bool = False,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-        self.pkd_viewer = pkd_viewer
 
         self.pkd_base_dir = Path(__file__).resolve().parent
         self.config_loader = ConfigLoader(self.pkd_base_dir)
@@ -211,8 +208,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                     config, self.config_updates_cli[node_name], node_name
                 )
 
-        # inform node if PeekingDuck Viewer is activated or not
-        config["pkd_viewer"] = self.pkd_viewer
         return node.Node(config)
 
     def _edit_config(

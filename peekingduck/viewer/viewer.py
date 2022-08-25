@@ -16,30 +16,29 @@
 Implement PeekingDuck Viewer
 """
 
-from typing import List
-from contextlib import redirect_stderr
-from pathlib import Path
+import copy
 import logging
-from io import StringIO
 import os
 import platform
-import traceback
+import threading
 import tkinter as tk
+import traceback
+from contextlib import redirect_stderr
+from io import StringIO
+from pathlib import Path
 from tkinter import filedialog
 from tkinter.messagebox import askyesno, showerror
-import threading
-import copy
+from typing import List
+
 import cv2
 import numpy as np
 from PIL import Image, ImageTk
+
 from peekingduck.declarative_loader import DeclarativeLoader
 from peekingduck.pipeline.pipeline import Pipeline
 from peekingduck.viewer.playlist import PlayList
 from peekingduck.viewer.viewer_gui import create_window
-from peekingduck.viewer.viewer_utils import (
-    get_keyboard_char,
-    get_keyboard_modifier,
-)
+from peekingduck.viewer.viewer_utils import get_keyboard_char, get_keyboard_modifier
 
 ####################
 # Globals
@@ -601,7 +600,6 @@ class Viewer:  # pylint: disable=too-many-instance-attributes, too-many-public-m
                     self.pipeline_path,
                     self.config_updates_cli,
                     self.custom_nodes_parent_path,
-                    pkd_viewer=True,
                 )
                 self._pipeline: Pipeline = self._node_loader.get_pipeline()
             except Exception:  # pylint: disable=broad-except
