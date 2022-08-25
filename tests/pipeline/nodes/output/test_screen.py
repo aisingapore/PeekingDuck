@@ -19,11 +19,7 @@ import cv2
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.output.screen import (
-    MIN_RENDER_SIZE,
-    MIN_WINDOW_SIZE,
-    Node,
-)
+from peekingduck.pipeline.nodes.output.screen import Node
 from tests.conftest import PKD_DIR
 
 
@@ -45,29 +41,25 @@ def opencv_instance():
 @pytest.mark.skipif(platform.system() != "Linux", reason="xvfb requires Linux")
 @pytest.mark.usefixtures("opencv_instance")
 class TestScreen:
-    def test_default_screen(self):
-        node = Node()
-        prop = cv2.getWindowProperty(node.window_name, cv2.WND_PROP_VISIBLE)
-        assert int(prop) == 1
+    def test_move_on_first_run(self, screen_config, create_input_image):
+        x = 100
+        y = 200
+        screen_config["window_loc"] = {"x": x, "y": y}
 
-    def test_viewer_disables_screen(self, screen_config):
-        screen_config["pkd_viewer"] = True
         node = Node(screen_config)
-        with pytest.raises(cv2.error) as excinfo:
-            cv2.getWindowProperty(node.window_name, cv2.WND_PROP_VISIBLE)
-        assert "please create a window" in str(excinfo)
-
-    def test_resize_to_image(self, create_input_image):
-        node = Node()
         filename = "image1.png"
-        width = 800
-        height = 900
-        image = create_input_image(filename, (height, width, 3))
+        image = create_input_image(filename, (900, 800, 3))
         inputs = {"filename": filename, "img": image}
-        with mock.patch("cv2.resizeWindow") as mock_resize:
+
+        with mock.patch("cv2.moveWindow") as mock_move_1:
+            node.run(inputs)
+        assert not node.first_run
+
+        with mock.patch("cv2.moveWindow") as mock_move_2:
             node.run(inputs)
 
-        assert mock_resize.call_args == ((node.window_name, width, height),)
+        assert mock_move_1.call_args == ((node.window_name, x, y),)
+        assert mock_move_2.call_args is None
 
     def test_resize_to_config(self, screen_config, create_input_image):
         width = 800
@@ -81,49 +73,20 @@ class TestScreen:
         filename = "image1.png"
         image = create_input_image(filename, (height // 2, width // 2, 3))
         inputs = {"filename": filename, "img": image}
-        with mock.patch("cv2.resizeWindow") as mock_resize:
+        with mock.patch("cv2.resize", wraps=cv2.resize) as mock_resize:
             node.run(inputs)
 
-        assert mock_resize.call_args == ((node.window_name, width, height),)
+        assert mock_resize.call_args[0][1] == (height, width)
 
-    def test_resize_to_min_size(self, screen_config, create_input_image):
-        width = MIN_RENDER_SIZE // 2
-        height = MIN_RENDER_SIZE // 2
-        screen_config["window_size"] = {
-            "do_resizing": True,
-            "height": height,
-            "width": width,
-        }
+    def test_no_resize_by_default(self, screen_config, create_input_image):
+        width = 800
+        height = 900
+
         node = Node(screen_config)
         filename = "image1.png"
         image = create_input_image(filename, (height // 2, width // 2, 3))
         inputs = {"filename": filename, "img": image}
-        with mock.patch("cv2.resizeWindow") as mock_resize:
+        with mock.patch("cv2.resize", wraps=cv2.resize) as mock_resize:
             node.run(inputs)
 
-        assert mock_resize.call_args == (
-            (node.window_name, MIN_WINDOW_SIZE, MIN_WINDOW_SIZE),
-        )
-
-    def test_maintain_min_size(self, screen_config, create_input_image):
-        width = MIN_WINDOW_SIZE * 5
-        height = MIN_WINDOW_SIZE * 5
-
-        node = Node(screen_config)
-        filename = "image1.png"
-        image = create_input_image(filename, (height, width, 3))
-        inputs = {"filename": filename, "img": image}
-        node.run(inputs)
-
-        # Force a resize
-        cv2.resizeWindow(node.window_name, MIN_RENDER_SIZE // 2, MIN_RENDER_SIZE // 2)
-        # Patch cv2.resizeWindow() with itself to extract call_args
-        with mock.patch("cv2.resizeWindow", wraps=cv2.resizeWindow) as mock_resize:
-            node.run(inputs)
-        with mock.patch("cv2.resizeWindow") as mock_resize_2:
-            node.run(inputs)
-
-        assert mock_resize.call_args == (
-            (node.window_name, MIN_WINDOW_SIZE, MIN_WINDOW_SIZE),
-        )
-        assert mock_resize_2.call_args is None
+        assert mock_resize.call_args is None
