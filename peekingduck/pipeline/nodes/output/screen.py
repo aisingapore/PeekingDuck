@@ -19,10 +19,8 @@ Shows the outputs on your display.
 from typing import Any, Dict, Union
 
 import cv2
-import numpy as np
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
-MIN_DISPLAY_SIZE = 120
+from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):
@@ -63,53 +61,25 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.previous_filename = ""
-        pkd_viewer = config["pkd_viewer"] if config is not None else False
-        if not pkd_viewer:
-            cv2.namedWindow(self.window_name, cv2.WINDOW_NORMAL)
-            cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
+        self.first_run = True
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Show the outputs on your display"""
         img = inputs["img"]
-        self._set_window_size(inputs["filename"], img)
+        if self.window_size["do_resizing"]:
+            img = cv2.resize(
+                img, (self.window_size["height"], self.window_size["width"])
+            )
+
         cv2.imshow(self.window_name, img)
+        if self.first_run:
+            cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
+            self.first_run = False
         if cv2.waitKey(1) & 0xFF == ord("q"):
             cv2.destroyWindow(self.window_name)
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
-
-    def _set_window_size(self, current_filename: str, img: np.ndarray) -> None:
-        """If `do_resizing` option is False, window size will be initialized to the image or
-        video's frame default size for every new video or image.
-
-        If `do_resizing` option is True, window size will be initialized to the config setting's
-        width and height for every new video or image.
-
-        The length of either sides of the display window will be clamped to a lower bound of
-        `MIN_DISPLAY_SIZE`
-
-        Args:
-            current_filename (str): The filename from the `inputs` dictionary
-            img (np.ndarray): The current image. The image will not be changed in this function.
-        """
-        if current_filename != self.previous_filename:
-            # Initialize the window size for every new video
-            if self.window_size["do_resizing"]:
-                # Clamp the sides fo the window_size to have a minimum of MIN_DISPLAY_SIZE
-                img_width = max(self.window_size["width"], MIN_DISPLAY_SIZE)
-                img_height = max(self.window_size["height"], MIN_DISPLAY_SIZE)
-            else:
-                img_height, img_width, _ = img.shape
-            cv2.resizeWindow(self.window_name, img_width, img_height)
-            self.previous_filename = current_filename
-        else:
-            _, _, win_width, win_height = cv2.getWindowImageRect(self.window_name)
-            if win_width < MIN_DISPLAY_SIZE or win_height < MIN_DISPLAY_SIZE:
-                win_width = max(win_width, MIN_DISPLAY_SIZE)
-                win_height = max(win_height, MIN_DISPLAY_SIZE)
-                cv2.resizeWindow(self.window_name, win_width, win_height)
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""

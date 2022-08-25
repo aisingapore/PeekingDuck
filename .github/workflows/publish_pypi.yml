@@ -9,7 +9,7 @@ on:
 jobs:
   local-install-test:
     name: Build PeekingDuck and test locally
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.7
@@ -30,7 +30,7 @@ jobs:
   build-publish-test:
     name: Build PeekingDuck on Test PyPI
     needs: local-install-test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python 3.7
@@ -70,7 +70,7 @@ jobs:
   test-install-pypi:
     name: Build PeekingDuck on PyPI
     needs: build-publish-test
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Python 3.7
         uses: actions/setup-python@v2

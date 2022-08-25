@@ -6,7 +6,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-18.04, windows-2019]
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -24,6 +24,8 @@ jobs:
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
-        run: bash ./scripts/run_tests.sh unit
+        uses: GabrielBB/xvfb-action@v1.6
+        with:
+          run: bash ./scripts/run_tests.sh unit
       - name: Run broken link report
         run: python ./scripts/check_links.py
