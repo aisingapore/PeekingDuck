@@ -45,6 +45,10 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         storage_client = storage.Client()
         self.bucket = storage_client.bucket(self.bucket_name)
+        if not self.bucket.exists():
+            raise ValueError(
+                f"The bucket: {self.bucket} does not exist on Google Cloud Storage."
+            )
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Saves an image with a given filename to Google Cloud Storage."""
