@@ -365,7 +365,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         self.logger.info(
             "FairMOT model loaded with the following config:\n\t"
             f"Model type: {self.model_type}\n\t"
-            f"Input resolution: {self.input_size}"
+            f"Input resolution: {self.input_size}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
             f"Max number of output objects: {self.max_per_image}\n\t"
             f"Min bounding box area: {self.min_box_area}\n\t"
