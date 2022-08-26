@@ -63,6 +63,9 @@ types when working with custom nodes.
 
    |masks|
       |masks_def|
+
+   |message|
+      |message_def|
    
    (input) |none|
       |none_input_def|
