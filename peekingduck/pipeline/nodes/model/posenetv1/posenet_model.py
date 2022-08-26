@@ -54,15 +54,15 @@ class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
     def predict(
         self, frame: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        """ Predict poses from input frame
+        """Predict poses from input frame
 
         Args:
             frame (np.array): image in numpy array
 
         Returns:
             bboxes, keypoints, keypoint_scores, keypoint_masks, keypoint_conns
-            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): \
-            tuple containing list of bboxes and pose related info i.e coordinates,
+            (Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]): tuple
+            containing list of bboxes and pose related info i.e coordinates,
             scores, connections
         """
         assert isinstance(frame, np.ndarray)
