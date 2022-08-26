@@ -38,7 +38,13 @@ class Node(AbstractNode):
         bucket_name (:obj:`str`): **default = "peekingduck"** |br|
             Name of Google Cloud Storage bucket.
         folder_name (:obj:`str`): **default = null** |br|
-            Name of folder within Google Cloud Storage bucket, if any.
+            Name of folder within Google Cloud Storage bucket, if any. Subfolders should be
+            separated by ``/``. ::
+
+                # Examples of folder_name
+                level_1
+                level_1/level_2/level_3
+
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
