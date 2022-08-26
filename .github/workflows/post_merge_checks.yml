@@ -38,6 +38,8 @@ jobs:
           pip install . --no-dependencies
         shell: bash
       - name: Run all tests
-        run: bash ./scripts/run_tests.sh post_merge
+        uses: GabrielBB/xvfb-action@v1.6
+        with:
+          run: bash ./scripts/run_tests.sh post_merge
       - name: Run broken link report
         run: python ./scripts/check_links.py
