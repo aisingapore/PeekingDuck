@@ -19,14 +19,18 @@ jobs:
       - name: Update Version Number
         run: |
           bash ./scripts/update_version.sh $VERSION
-      - name: Local Test
+      - name: Local Install
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r cicd_requirements.txt
           pip install .
-          bash ./scripts/run_tests.sh all
-          bash ./scripts/usecase_tests.sh
+      - name: Local Test
+        uses: GabrielBB/xvfb-action@v1.6
+        with:
+          run: |
+            bash ./scripts/run_tests.sh all
+            bash ./scripts/usecase_tests.sh
   build-publish-test:
     name: Build PeekingDuck on Test PyPI
     needs: local-install-test
