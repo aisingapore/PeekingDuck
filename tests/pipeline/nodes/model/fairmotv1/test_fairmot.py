@@ -98,9 +98,9 @@ class TestFairMOT:
         fairmot = Node(fairmot_config)
         output = fairmot.run({"img": no_human_img})
         expected_output = {
-            "bboxes": [],
-            "bbox_labels": [],
-            "bbox_scores": [],
+            "bboxes": np.empty((0, 4)),
+            "bbox_labels": np.empty(0),
+            "bbox_scores": np.empty(0),
             "obj_attrs": {"ids": []},
         }
         assert output.keys() == expected_output.keys()
