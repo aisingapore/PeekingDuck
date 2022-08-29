@@ -108,12 +108,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             keypoint_conns.append(pose_connections)
 
         if not bboxes:
-            return (
-                np.empty((0, 4)),
-                np.array(keypoints),
-                np.array(keypoint_scores),
-                np.array(keypoint_conns),
-            )
+            return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0)
         return (
             np.array(bboxes),
             np.array(keypoints),
