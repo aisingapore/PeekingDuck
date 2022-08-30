@@ -12,21 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from contextlib import contextmanager
+import http.client
+from unittest import TestCase, mock
 
+import cv2
 import numpy as np
 import pytest
-from unittest import TestCase
 
 from peekingduck.pipeline.nodes.input.visual import Node
-
-
-@contextmanager
-def not_raises(exception):
-    try:
-        yield
-    except exception:
-        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
+from tests.conftest import assert_msg_in_logs, not_raises
 
 
 def create_reader(source=None):
@@ -72,9 +66,19 @@ class TestMediaReader:
             )
 
     def test_reader_run_fine_on_empty_folder(self):
-        with not_raises(FileNotFoundError) as excinfo:
+        with not_raises(FileNotFoundError):
             reader = create_reader()
             reader.run({})
+
+    @mock.patch.object(cv2.VideoCapture, "isOpened", return_value=False)
+    @mock.patch.object(http.client.HTTPSConnection, "request", side_effect=OSError(101))
+    def test_show_connectivity_warning_for_url_source(self, *_):
+        with pytest.raises(ValueError), TestCase.assertLogs(
+            "VideoNoThread"
+        ) as captured:
+            Node(source="https://storage.googleapis.com/peekingduck/videos/wave.mp4")
+        print(captured.records)
+        assert_msg_in_logs("Possible network connectivity error.", captured.records)
 
     def test_reader_reads_one_image(self, create_input_image):
         filename = "image1.png"

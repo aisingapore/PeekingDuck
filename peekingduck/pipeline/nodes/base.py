@@ -337,9 +337,14 @@ class WeightsDownloaderMixin:
         if not weights_path.exists():
             self.logger.warning("No weights detected.")
             return False
-        if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
-            self.logger.warning("Weights file is corrupted/out-of-date.")
-            return False
+        try:
+            if self.sha256sum(weights_path).hexdigest() != self._get_weights_checksum():
+                self.logger.warning("Weights file is corrupted/out-of-date.")
+                return False
+        except requests.exceptions.ConnectionError:
+            self.logger.warning(
+                "Skipped weights file integrity check due to network connectivity error."
+            )
         return True
 
     @staticmethod

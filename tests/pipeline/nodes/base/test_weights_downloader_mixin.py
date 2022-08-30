@@ -19,13 +19,14 @@ from pathlib import Path
 from unittest import TestCase, mock
 
 import pytest
+import requests
 import yaml
 
 from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
 )
-from tests.conftest import PKD_DIR, do_nothing
+from tests.conftest import PKD_DIR, assert_msg_in_logs, do_nothing
 
 
 @pytest.fixture(
@@ -114,7 +115,7 @@ class TestWeightsDownloaderMixin:
             weights_model.config["weights_parent_dir"] = tmp_dir
             model_dir = weights_model._find_paths()
             assert not weights_model._has_weights(model_dir)
-            assert captured.records[0].getMessage() == "No weights detected."
+            assert_msg_in_logs("No weights detected.", captured.records)
 
     def test_corrupted_weights(self, weights_model):
         """Checks that the proper logging message is shown then weights are not
@@ -130,9 +131,30 @@ class TestWeightsDownloaderMixin:
             (model_dir / weights_model.model_filename).touch()
 
             assert not weights_model._has_weights(model_dir)
-            assert (
-                captured.records[0].getMessage()
-                == "Weights file is corrupted/out-of-date."
+            assert_msg_in_logs(
+                "Weights file is corrupted/out-of-date.", captured.records
+            )
+
+    def test_skip_integrity_check(self, weights_model):
+        """Checks that the proper logging message is shown then weights are not
+        found.
+        """
+        with tempfile.TemporaryDirectory() as tmp_dir, TestCase.assertLogs(
+            "test_weights_downloader_mixin.WeightsModel"
+        ) as captured, mock.patch.object(
+            WeightsDownloaderMixin, "_get_weights_checksum"
+        ) as mock_get:
+            mock_get.side_effect = requests.exceptions.ConnectionError()
+            weights_model.config["weights_parent_dir"] = tmp_dir
+            model_dir = weights_model._find_paths()
+            # Create a temp weights file which doesn't match the checksum
+            model_dir.mkdir(parents=True, exist_ok=True)
+            (model_dir / weights_model.model_filename).touch()
+
+            assert weights_model._has_weights(model_dir)
+            assert_msg_in_logs(
+                "Skipped weights file integrity check due to network connectivity error.",
+                captured.records,
             )
 
     def test_valid_weights(self, weights_type_model):
@@ -198,9 +220,6 @@ class TestWeightsDownloaderMixin:
             assert mock_extract_file.called
             assert (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
 
-            assert captured.records[0].getMessage() == "No weights detected."
-            assert captured.records[1].getMessage() == "Proceeding to download..."
-            assert (
-                captured.records[2].getMessage()
-                == f"Weights downloaded to {model_dir}."
-            )
+            assert_msg_in_logs("No weights detected.", captured.records)
+            assert_msg_in_logs("Proceeding to download...", captured.records)
+            assert_msg_in_logs(f"Weights downloaded to {model_dir}.", captured.records)

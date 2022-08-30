@@ -12,18 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import errno
 import os
 import subprocess
-from contextlib import contextmanager
-from pathlib import Path
 from time import perf_counter
 
+import pytest
 import yaml
 
-PKD_ROOT_DIR = Path(__file__).parents[4]  # dependent on __file__ location
-PKD_PIPELINE_ORIG_PATH = PKD_ROOT_DIR / "pipeline_config.yml"
-PKD_PIPELINE_BAK_PATH = PKD_ROOT_DIR / "pipeline_config_orig.yml"
-PKD_RUN_DIR = Path(__file__).parents[5]  # dependent on __file__ location
+from tests.conftest import PKD_DIR
+
+PKD_ROOT_DIR = PKD_DIR.parent
+PIPELINE_PATH = PKD_ROOT_DIR / "threading_pipeline_config.yml"
 # collect list of public RTSP URLs
 RTSP_URL_GERMANY = (
     "http://clausenrc5.viewnetcam.com:50003/nphMotionJpeg?Resolution=320x240"
@@ -54,34 +54,28 @@ def get_fps_number(avg_fps_msg: str) -> float:
     return avg_fps
 
 
-@contextmanager
-def run_pipeline_yml():
-    """Save and restore current pipeline_config.yml"""
+@pytest.fixture
+def pipeline_instance():
+    yield
     try:
-        config_saved = False
-        if os.path.isfile(PKD_PIPELINE_ORIG_PATH):
-            print("Backup existing pipeline_config.yml")
-            os.rename(src=PKD_PIPELINE_ORIG_PATH, dst=PKD_PIPELINE_BAK_PATH)
-            config_saved = True
-        yield
-    finally:
-        if config_saved:
-            print("Restore backed up pipeline_config.yml")
-            os.rename(src=PKD_PIPELINE_BAK_PATH, dst=PKD_PIPELINE_ORIG_PATH)
+        os.remove(PIPELINE_PATH)
+    except OSError as error:
+        if error.errno != errno.ENOENT:
+            # re-raise if exception isn't "no such file or directory"
+            raise
 
 
 # Unit Tests
+@pytest.mark.usefixtures("pipeline_instance")
 def test_input_threading():
     """Run input threading unit test.
 
     This test will do the following:
-    1. Backup original pipeline_config.yml in Peeking Duck directory
-    2. Run input live test 1 without threading with custom pipeline_config.yml file
+    1. Run input live test 1 without threading with threading_pipeline_config.yml file
        The test comprises input.visual, model.yolo and dabble.fps
-    3. Run input live test 2 with threading with custom pipeline_config.yml file
+    2. Run input live test 2 with threading with threading_pipeline_config.yml file
        The test comprises input.visual, model.yolo and dabble.fps
-    4. Restore original pipeline_config.yml
-    5. Check average FPS from 2 is higher than 1
+    3. Check average FPS from 2 is higher than 1
     """
 
     def run_rtsp_test(url: str, threading: bool) -> float:
@@ -108,9 +102,7 @@ def test_input_threading():
                 "dabble.fps",
             ]
         }
-        with open(
-            PKD_PIPELINE_ORIG_PATH, "w"
-        ) as outfile:  # make new unit test config yml
+        with open(PIPELINE_PATH, "w") as outfile:  # make new unit test config yml
             yaml.dump(nodes, outfile, default_flow_style=False)
 
         # run input live test
@@ -119,7 +111,7 @@ def test_input_threading():
         # Technotes 2022-06-20:
         # previous `cmd = ["python", PKD_ROOT_DIR.name]` and `.Popen(... cwd=PKD_RUN_DIR, ...)`
         # breaks on Linux when PeekingDuck changes current working directory via full config path
-        cmd = ["python", "__main__.py"]
+        cmd = ["python", "__main__.py", "--config_path", PIPELINE_PATH.name]
         proc = subprocess.Popen(
             cmd,
             cwd=PKD_ROOT_DIR,
@@ -139,7 +131,7 @@ def test_input_threading():
             if dur > num_sec:
                 break
         proc.kill()
-        os.remove(PKD_PIPELINE_ORIG_PATH)  # delete unit test yml
+        os.remove(PIPELINE_PATH)  # delete unit test yml
 
         return avg_fps
 
@@ -147,8 +139,7 @@ def test_input_threading():
         # show test config
         print(f"url={the_url}")
         print(f"PKD_ROOT_DIR={PKD_ROOT_DIR}")
-        print(f"PKD_RUN_DIR={PKD_RUN_DIR}")
-        print(f"PKD_PIPELINE_ORIG_PATH={PKD_PIPELINE_ORIG_PATH}")
+        print(f"PIPELINE_PATH={PIPELINE_PATH}")
 
         print("Run test without threading")
         avg_fps_1 = run_rtsp_test(url=the_url, threading=False)
@@ -159,7 +150,6 @@ def test_input_threading():
         print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
         return res
 
-    with run_pipeline_yml():
-        results = [run_url_test(url) for url in URL_LIST]
-        print(f"results={results}")
-        assert any(results)
+    results = [run_url_test(url) for url in URL_LIST]
+    print(f"results={results}")
+    assert any(results)
