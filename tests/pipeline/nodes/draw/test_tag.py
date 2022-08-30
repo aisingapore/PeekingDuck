@@ -16,12 +16,11 @@
 Test for draw tag node
 """
 
-from contextlib import contextmanager
-
 import numpy as np
 import pytest
 
 from peekingduck.pipeline.nodes.draw.tag import Node
+from tests.conftest import not_raises
 
 
 @pytest.fixture
@@ -187,11 +186,3 @@ class TestTag:
         # This second run below should not throw an error if "show" config is unchanged
         with not_raises(TypeError):
             node.run(input1)
-
-
-@contextmanager
-def not_raises(exception):
-    try:
-        yield
-    except exception:
-        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")

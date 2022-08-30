@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import http.client
-from contextlib import contextmanager
 from unittest import TestCase, mock
 
 import cv2
@@ -21,15 +20,7 @@ import numpy as np
 import pytest
 
 from peekingduck.pipeline.nodes.input.visual import Node
-from tests.conftest import assert_msg_in_logs
-
-
-@contextmanager
-def not_raises(exception):
-    try:
-        yield
-    except exception:
-        raise pytest.fail(f"DID RAISE EXCEPTION: {exception}")
+from tests.conftest import assert_msg_in_logs, not_raises
 
 
 def create_reader(source=None):
