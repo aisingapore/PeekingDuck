@@ -71,13 +71,11 @@ def test_input_threading():
     """Run input threading unit test.
 
     This test will do the following:
-    1. Backup original pipeline_config.yml in Peeking Duck directory
-    2. Run input live test 1 without threading with custom pipeline_config.yml file
+    1. Run input live test 1 without threading with threading_pipeline_config.yml file
        The test comprises input.visual, model.yolo and dabble.fps
-    3. Run input live test 2 with threading with custom pipeline_config.yml file
+    2. Run input live test 2 with threading with threading_pipeline_config.yml file
        The test comprises input.visual, model.yolo and dabble.fps
-    4. Restore original pipeline_config.yml
-    5. Check average FPS from 2 is higher than 1
+    3. Check average FPS from 2 is higher than 1
     """
 
     def run_rtsp_test(url: str, threading: bool) -> float:
