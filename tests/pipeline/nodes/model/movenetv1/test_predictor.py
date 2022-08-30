@@ -13,7 +13,6 @@
 # limitations under the License.
 
 import gc
-from pathlib import Path
 
 import cv2
 import numpy as np
@@ -55,7 +54,7 @@ def model_dir(movenet_config):
 
 @pytest.mark.mlmodel
 class TestPredictor:
-    def test_predictor(self, movenet_config, model_dir):
+    def test_predictor_init(self, movenet_config, model_dir):
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_format"],
@@ -66,21 +65,11 @@ class TestPredictor:
             movenet_config["keypoint_score_threshold"],
         )
         assert movenet_predictor is not None, "Predictor is not instantiated"
-
-    def test_model_creation(self, movenet_config, model_dir):
-        movenet_predictor = Predictor(
-            model_dir,
-            movenet_config["model_format"],
-            movenet_config["model_type"],
-            movenet_config["weights"][movenet_config["model_format"]]["model_file"],
-            movenet_config["resolution"],
-            movenet_config["bbox_score_threshold"],
-            movenet_config["keypoint_score_threshold"],
-        )
         assert movenet_predictor.model is not None, "Model is not loaded"
 
     def test_get_resolution_as_tuple(self, movenet_config, model_dir):
-        resolution = {"height": 256, "width": 256}
+        expected_res = (256, 256)
+        resolution = {"height": expected_res[0], "width": expected_res[1]}
         movenet_predictor = Predictor(
             model_dir,
             movenet_config["model_format"],
@@ -91,16 +80,8 @@ class TestPredictor:
             movenet_config["keypoint_score_threshold"],
         )
         tuple_res = movenet_predictor.get_resolution_as_tuple(resolution)
-        assert isinstance(
-            tuple_res, tuple
-        ), f"Resolution in config must be a tuple instead of {type(tuple_res)}"
-        assert tuple_res == (
-            256,
-            256,
-        ), f"Incorrect resolution: expected (256, 256) but got {tuple_res}"
-        assert (
-            len(tuple_res) == 2
-        ), f"Wrong resolution dimension: expected 2 but got {len(tuple_res)}"
+        assert isinstance(tuple_res, tuple), f"Expected tuple, got {type(tuple_res)}"
+        assert tuple_res == expected_res, f"Expected {expected_res}, got {tuple_res}"
 
     def test_predict(self, movenet_config, model_dir, single_person_image):
         img = cv2.imread(str(TEST_IMAGES_DIR / single_person_image))
@@ -162,38 +143,10 @@ class TestPredictor:
             keypoints_scores_no_pose,
             keypoints_conns_no_pose,
         ) = movenet_predictor._get_results_single(prediction_no_pose)
-        npt.assert_array_equal(
-            x=bbox_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected bbox output for prediction with keypoint score below "
-                f"threshold got {bbox_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=valid_keypoints_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected valid keypoint output for prediction with keypoint score "
-                f"below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=keypoints_scores_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected keypoint score output for prediction with keypoint score "
-                f"below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=keypoints_conns_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected keypoint connection output for prediction with keypoint "
-                f"score below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
+        npt.assert_array_equal(bbox_no_pose, np.empty((0, 4)))
+        npt.assert_array_equal(valid_keypoints_no_pose, np.empty(0))
+        npt.assert_array_equal(keypoints_scores_no_pose, np.empty(0))
+        npt.assert_array_equal(keypoints_conns_no_pose, np.empty(0))
 
     def test_get_results_multi(self, movenet_config, model_dir):
         # prediction for multi model is in shape of [1,6,56]
@@ -240,35 +193,7 @@ class TestPredictor:
             keypoints_scores_no_pose,
             keypoints_conns_no_pose,
         ) = movenet_predictor._get_results_multi(prediction_no_pose)
-        npt.assert_array_equal(
-            x=bbox_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected bbox output for prediction with keypoint score below "
-                f"threshold got {bbox_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=valid_keypoints_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected valid keypoint output for prediction with keypoint score "
-                f"below threshold got {valid_keypoints_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=keypoints_scores_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected keypoint score output for prediction with keypoint score "
-                f"below threshold got {keypoints_scores_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
-        npt.assert_array_equal(
-            x=keypoints_conns_no_pose,
-            y=np.zeros(0),
-            err_msg=(
-                "Unexpected keypoint connection output for prediction with keypoint "
-                f"score below threshold got {keypoints_conns_no_pose} instead of {np.zeros(0)}"
-            ),
-        )
+        npt.assert_array_equal(bbox_no_pose, np.empty((0, 4)))
+        npt.assert_array_equal(valid_keypoints_no_pose, np.empty(0))
+        npt.assert_array_equal(keypoints_scores_no_pose, np.empty(0))
+        npt.assert_array_equal(keypoints_conns_no_pose, np.empty(0))

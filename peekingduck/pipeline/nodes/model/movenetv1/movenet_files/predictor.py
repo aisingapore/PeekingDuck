@@ -161,8 +161,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         bbox_masks = self._get_masks_from_bbox_scores(
             bbox_score, self.bbox_score_threshold
         )
-        if len(bbox_masks) == 0:
-            return (np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0))
+        if not bbox_masks:
+            return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0)
 
         bboxes = bboxes[bbox_masks, :]
         bbox_score = bbox_score[bbox_masks]
@@ -219,8 +219,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         #     return (np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0))
         # if all the keypoints_score are below threshold, valid_keypoints
         # will be an array with all [-1,-1]
-        if np.all(valid_keypoints == np.asarray([[-1, -1]])):
-            return (np.zeros(0), np.zeros(0), np.zeros(0), np.zeros(0))
+        if np.all(valid_keypoints == np.array([[-1, -1]])):
+            return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0)
 
         keypoints_conns = self._get_connections_of_poses(keypoints, keypoints_masks)
         bbox = self._get_bbox_from_keypoints(valid_keypoints)

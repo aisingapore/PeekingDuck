@@ -153,14 +153,14 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
 
     def track_objects_from_image(
         self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[int], List[float]]:
+    ) -> Tuple[np.ndarray, List[int], np.ndarray]:
         """Tracks detections from the current video frame.
 
         Args:
             image (np.ndarray): The current video frame.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float]]): A tuple of
+            (Tuple[np.ndarray, List[int], np.ndarray]): A tuple of
             - Numpy array of detected bounding boxes.
             - List of track IDs.
             - List of detection confidence scores.
@@ -182,11 +182,11 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
                 online_ids.append(target.track_id)
                 scores.append(target.score.item())
         if not online_tlwhs:
-            return online_tlwhs, online_ids, scores
+            return np.empty((0, 4)), online_ids, np.empty(0)
 
-        bboxes = self._postprocess(np.asarray(online_tlwhs), image_size)
+        bboxes = self._postprocess(np.array(online_tlwhs), image_size)
 
-        return bboxes, online_ids, scores
+        return bboxes, online_ids, np.array(scores)
 
     def update(  # pylint: disable=too-many-branches,too-many-locals,too-many-statements
         self, pred_detections: torch.Tensor, pred_embeddings: torch.Tensor
@@ -365,7 +365,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         self.logger.info(
             "FairMOT model loaded with the following config:\n\t"
             f"Model type: {self.model_type}\n\t"
-            f"Input resolution: {self.input_size}"
+            f"Input resolution: {self.input_size}\n\t"
             f"Score threshold: {self.score_threshold}\n\t"
             f"Max number of output objects: {self.max_per_image}\n\t"
             f"Min bounding box area: {self.min_box_area}\n\t"

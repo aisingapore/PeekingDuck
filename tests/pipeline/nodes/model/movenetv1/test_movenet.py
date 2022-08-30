@@ -71,20 +71,16 @@ class TestMoveNet:
         model = Node(movenet_config_single)
         output = model.run({"img": no_human_img})
         expected_output = {
-            "bboxes": np.zeros(0),
-            "keypoints": np.zeros(0),
-            "keypoint_scores": np.zeros(0),
-            "keypoint_conns": np.zeros(0),
-            "bbox_labels": np.zeros(0),
+            "bboxes": np.empty((0, 4)),
+            "keypoints": np.empty(0),
+            "keypoint_scores": np.empty(0),
+            "keypoint_conns": np.empty(0),
+            "bbox_labels": np.empty(0),
         }
         assert output.keys() == expected_output.keys()
         for i in expected_output.keys():
             npt.assert_array_equal(
-                x=output[i],
-                y=expected_output[i],
-                err_msg=(
-                    f"unexpected output for {i}, Expected {np.zeros(0)} got {output[i]}"
-                ),
+                output[i], expected_output[i], f"unexpected output for `{i}`"
             )
 
     def test_no_human_multi(self, no_human_image, movenet_config_multi):
@@ -92,20 +88,16 @@ class TestMoveNet:
         model = Node(movenet_config_multi)
         output = model.run({"img": no_human_img})
         expected_output = {
-            "bboxes": np.zeros(0),
-            "keypoints": np.zeros(0),
-            "keypoint_scores": np.zeros(0),
-            "keypoint_conns": np.zeros(0),
-            "bbox_labels": np.zeros(0),
+            "bboxes": np.empty((0, 4)),
+            "keypoints": np.empty(0),
+            "keypoint_scores": np.empty(0),
+            "keypoint_conns": np.empty(0),
+            "bbox_labels": np.empty(0),
         }
         assert output.keys() == expected_output.keys()
         for i in expected_output.keys():
             npt.assert_array_equal(
-                x=output[i],
-                y=expected_output[i],
-                err_msg=(
-                    f"unexpected output for {i}, Expected {np.zeros(0)} got {output[i]}"
-                ),
+                output[i], expected_output[i], f"unexpected output for `{i}`"
             )
 
     def test_single_person(self, single_person_image, movenet_config_single):
@@ -149,9 +141,7 @@ class TestMoveNet:
         # Thus, iterate through the detections
         for i, expected_keypoint_conns in enumerate(expected["keypoint_conns"]):
             npt.assert_allclose(
-                output["keypoint_conns"][i],
-                expected_keypoint_conns,
-                atol=TOLERANCE,
+                output["keypoint_conns"][i], expected_keypoint_conns, atol=TOLERANCE
             )
 
         npt.assert_allclose(

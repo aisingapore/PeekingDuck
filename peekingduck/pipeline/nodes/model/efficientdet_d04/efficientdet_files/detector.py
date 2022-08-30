@@ -71,7 +71,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             labels (np.ndarray): array of labels
             scores (np.ndarray): array of scores
         """
-        img_shape = image.shape[:2]
+        img_shape = image.shape[0], image.shape[1]
         image, scale = self._preprocess(image)
 
         # run network
@@ -113,9 +113,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         """Postprocessing of detected bboxes for efficientdet
 
         Args:
-            network_output (list): list of boxes, scores and labels from network
-            scale (float): scale the image was resized to
-            img_shape (Tuple[int, int]): height of original image
+            network_output (Tuple[np.ndarray, np.ndarray, np.ndarray]): Tuple of
+                boxes, scores and labels from the network.
+            scale (float): Scale to which the image was resized.
+            img_shape (Tuple[int, int]): Height and width of original image
 
         Returns:
             boxes (np.ndarray): postprocessed array of detected bboxes
@@ -138,7 +139,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         labels = labels[detect_filter]
         scores = scores[detect_filter]
 
-        if labels.size:
+        if labels.size > 0:
             labels = np.vectorize(self.class_names.get)(labels)
         return boxes, labels, scores
 

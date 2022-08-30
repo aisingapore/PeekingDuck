@@ -80,14 +80,11 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             image (np.ndarray): Input image frame.
 
         Returns:
-            object_bboxes(List[Numpy ndarray]): list of bboxes detected
-            object_labels(List[str]): list of index labels of the
-                object detected for the corresponding bbox
-            object_scores(List[float]): list of confidence scores of the
-                object detected for the corresponding bbox
+            bboxes (np.ndarray): Array of bboxes for the detected objects.
+            labels (np.ndarray): Array of class labels of the detected objects.
+            scores (np.ndarray): Array of confidence scores of the detected objects.
         """
         if not isinstance(image, np.ndarray):
             raise TypeError("image must be a np.ndarray")
 
-        # returns object_bboxes, object_labels, object_scores
         return self.detector.predict_object_bbox_from_image(image)

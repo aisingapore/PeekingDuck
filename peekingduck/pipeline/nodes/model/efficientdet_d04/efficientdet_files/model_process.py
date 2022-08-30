@@ -19,7 +19,7 @@
 Processing helper functions for EfficientDet
 """
 
-from typing import List, Tuple
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -28,17 +28,15 @@ IMG_MEAN = [0.485, 0.456, 0.406]
 IMG_STD = [0.229, 0.224, 0.225]
 
 
-def preprocess_image(
-    image: np.ndarray, image_size: int
-) -> Tuple[List[List[float]], float]:
+def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, float]:
     """Preprocessing helper function for efficientdet
 
     Args:
-        image (np.array): the input image in numpy array
+        image (np.ndarray): the input image in numpy array
         image_size (int): the model input size as specified in config
 
     Returns:
-        image (np.array): the preprocessed image
+        image (np.ndarray): the preprocessed image
         scale (float): the scale in which the original image was resized to
     """
     # image, RGB
@@ -70,13 +68,13 @@ def postprocess_boxes(
     """Postprocessing helper function for efficientdet
 
     Args:
-        boxes (np.array): the original detected bboxes from model output
+        boxes (np.ndarray): the original detected bboxes from model output
         scale (float): scale in which the original image was resized to
         height (int): the height of the original image
         width (int): the width of the original image
 
     Returns:
-        boxes (np.array): the postprocessed bboxes
+        boxes (np.ndarray): the postprocessed bboxes
     """
     boxes /= scale
     boxes[:, 0] = np.clip(boxes[:, 0], 0, width - 1)

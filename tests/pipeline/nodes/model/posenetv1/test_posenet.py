@@ -63,11 +63,11 @@ class TestPoseNet:
         posenet = Node(posenet_type)
         output = posenet.run({"img": no_human_img})
         expected_output = {
-            "bboxes": np.zeros(0),
-            "keypoints": np.zeros(0),
-            "keypoint_scores": np.zeros(0),
-            "keypoint_conns": np.zeros(0),
-            "bbox_labels": np.zeros(0),
+            "bboxes": np.empty((0, 4)),
+            "keypoints": np.empty(0),
+            "keypoint_scores": np.empty(0),
+            "keypoint_conns": np.empty(0),
+            "bbox_labels": np.empty(0),
         }
         assert output.keys() == expected_output.keys(), "missing keys"
         for i in expected_output.keys():

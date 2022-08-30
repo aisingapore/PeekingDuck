@@ -20,12 +20,11 @@ import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-import torch.backends as cudnn
-from torch import Tensor
-import torch.nn.functional as F
-import torch
-
 import numpy as np
+import torch
+import torch.backends as cudnn
+import torch.nn.functional as F
+from torch import Tensor
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
     YolactEdge,
@@ -239,16 +238,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             boxes = np.clip(boxes, 0, 1)
             scores = np.array(score[detect_filter].cpu())
             masks = np.array(mask[detect_filter].cpu()).astype(np.uint8)
-
-        except TypeError:
-            return (
-                np.empty((0)),
-                np.empty((0), dtype=np.float32),
-                np.empty((0, 4), dtype=np.float32),
-                np.empty((0, 0, 0), dtype=np.uint8),
-            )
-
-        except RuntimeError:
+        except (RuntimeError, TypeError):
             return (
                 np.empty((0)),
                 np.empty((0), dtype=np.float32),

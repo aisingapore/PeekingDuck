@@ -20,6 +20,7 @@ from typing import Callable, Dict, List, Tuple
 
 import numpy as np
 import tensorflow as tf
+
 from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
     load_graph,
 )
@@ -142,7 +143,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             image (np.ndarray): image in numpy array
 
         Returns:
-            image (np.ndarray): processed numpy array of image
+            image (tf.Tensor): processed image
         """
         image = image.astype(np.float32)
         image = tf.convert_to_tensor(image)

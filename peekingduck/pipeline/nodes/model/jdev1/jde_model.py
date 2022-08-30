@@ -82,9 +82,7 @@ class JDEModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["score_threshold"],
         )
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[float], List[int]]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, List[int]]:
         """Track objects from image.
 
         Args:

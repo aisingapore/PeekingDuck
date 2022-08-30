@@ -79,16 +79,14 @@ class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["score_threshold"],
         )
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[List[np.ndarray], List[float], List[int]]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, List[int]]:
         """Track objects from image.
 
         Args:
             image (np.ndarray): Image in numpy array.
 
         Returns:
-            (Tuple[List[np.ndarray], List[str], List[float], List[int]]): A tuple of
+            (Tuple[np.ndarray, np.ndarray, List[int]]): A tuple of
             - Numpy array of detected bounding boxes.
             - List of detection confidence scores.
             - List of track IDs.

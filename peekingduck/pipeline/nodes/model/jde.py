@@ -69,7 +69,7 @@ class Node(AbstractNode):
         https://github.com/Zhongdao/Towards-Realtime-MOT
     """
 
-    def __init__(self, config: Dict[str, Any], **kwargs: Any) -> None:
+    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._frame_rate = 30.0
 
@@ -88,10 +88,10 @@ class Node(AbstractNode):
 
         Returns:
             outputs (dict): Dictionary containing:
-            - bboxes (List[np.ndarray]): Bounding boxes for tracked targets.
+            - bboxes (np.ndarray): Bounding boxes for tracked targets.
             - bbox_labels (np.ndarray): Bounding box labels, hard coded as
                 "person".
-            - bbox_scores (List[float]): Detection confidence scores.
+            - bbox_scores (np.ndarray): Detection confidence scores.
             - obj_attrs (Dict[str, List[int]]): Tracking IDs, specifically for use
                 with `mot_evaluator`.
         """
