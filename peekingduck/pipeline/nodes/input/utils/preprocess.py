@@ -17,20 +17,12 @@ Preprocessing functions for input nodes
 """
 
 import logging
-from typing import Any, Tuple
+from typing import Any
 
 import cv2
 import numpy as np
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-
-
-def get_res(stream: Any) -> Tuple[int, int]:
-    """Gets the resolution for the video frame"""
-    width = int(stream.get(cv2.CAP_PROP_FRAME_WIDTH))
-    height = int(stream.get(cv2.CAP_PROP_FRAME_HEIGHT))
-
-    return width, height
 
 
 def mirror(frame: np.ndarray) -> np.ndarray:

@@ -16,6 +16,7 @@
 Reader functions for input nodes
 """
 
+import http.client
 import logging
 import platform
 import queue
@@ -28,6 +29,21 @@ import cv2
 
 from peekingduck.pipeline.nodes.input.utils.png_reader import PNGReader
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
+
+
+def has_internet() -> bool:
+    """Checks for internet connectivity by making a HEAD request to one of
+    Google's public DNS servers.
+    """
+    # Suppress bandit B309 as PeekingDuck is meant to run on Python >= 3.6
+    connection = http.client.HTTPSConnection("8.8.8.8", timeout=5)  # nosec
+    try:
+        connection.request("HEAD", "/")
+        return True
+    except Exception:  # pylint: disable=broad-except
+        return False
+    finally:
+        connection.close()
 
 
 class VideoReader(ABC):
@@ -45,11 +61,13 @@ class VideoReader(ABC):
             self.stream = PNGReader(input_source)
         else:
             self.stream = cv2.VideoCapture(input_source)
-        if not self.stream.isOpened():
-            raise ValueError(f"Video or image path incorrect: {input_source}")
         self._frame_counter = 0
         self.logger = logging.getLogger(type(self).__name__)
         self.mirror = mirror_image
+        if not self.stream.isOpened():
+            if self.is_url(input_source) and not has_internet():
+                self.logger.warning("Possible network connectivity error.")
+            raise ValueError(f"Video or image path incorrect: {input_source}")
 
     def __del__(self) -> None:
         # Note: self.logger.debug below crashes on Nvidia Jetson Xavier Ubuntu 18.04 python 3.6
@@ -108,6 +126,11 @@ class VideoReader(ABC):
         width = self.stream.get(cv2.CAP_PROP_FRAME_WIDTH)
         height = self.stream.get(cv2.CAP_PROP_FRAME_HEIGHT)
         return int(width), int(height)
+
+    @staticmethod
+    def is_url(source: Union[int, str]) -> bool:
+        """Checks if the provided ``source`` is a URL."""
+        return isinstance(source, str) and "://" in source
 
 
 class VideoThread(VideoReader):
