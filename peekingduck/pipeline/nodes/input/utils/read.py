@@ -30,13 +30,15 @@ import cv2
 from peekingduck.pipeline.nodes.input.utils.png_reader import PNGReader
 from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
 
+GOOGLE_DNS = "8.8.8.8"
+
 
 def has_internet() -> bool:
     """Checks for internet connectivity by making a HEAD request to one of
     Google's public DNS servers.
     """
     # Suppress bandit B309 as PeekingDuck is meant to run on Python >= 3.6
-    connection = http.client.HTTPSConnection("8.8.8.8", timeout=5)  # nosec
+    connection = http.client.HTTPSConnection(GOOGLE_DNS, timeout=5)  # nosec
     try:
         connection.request("HEAD", "/")
         return True
