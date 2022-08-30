@@ -28,6 +28,7 @@ from peekingduck.commands import LOGGER_NAME
 from peekingduck.runner import Runner
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
+from peekingduck.server.commands.server_modes import pub_sub, queue, req_res
 from peekingduck.viewer import Viewer
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -124,6 +125,16 @@ def run(  # pylint: disable=too-many-arguments
         end_time = perf_counter()
         logger.debug(f"Startup time = {end_time - start_time:.2f} sec")
         runner.run()
+
+
+@click.group()
+def serve() -> None:
+    """Launch PeekingDuck Server"""
+
+
+serve.add_command(req_res)
+serve.add_command(queue)
+serve.add_command(pub_sub)
 
 
 @click.command()

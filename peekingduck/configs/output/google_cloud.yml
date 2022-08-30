@@ -1,0 +1,5 @@
+input: ["img", "filename"]
+output: ["none"]
+
+bucket_name: peekingduck
+folder_name: None

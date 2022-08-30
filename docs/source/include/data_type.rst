@@ -40,6 +40,8 @@
 
 .. |masks_data| replace:: |masks|: |masks_def|
 
+.. |message_data| replace:: |message|: |message_def|
+
 .. |none_input_data| replace:: |none|: |none_input_def|
 
 .. |none_output_data| replace:: |none|: |none_output_def|
@@ -94,6 +96,8 @@
 .. |large_groups| replace:: ``large_groups`` (:obj:`List[int]`)
 
 .. |masks| replace:: ``masks`` (:obj:`numpy.ndarray`)
+
+.. |message| replace:: ``message`` (:obj:`Dict[str, Any]`)
    
 .. |none| replace:: ``none``
    
@@ -180,6 +184,9 @@
 .. |masks_def| replace:: A NumPy array of shape :math:`(N, H, W)` containing
    :math:`N` detected binarized masks where :math:`H` and :math:`W` are the
    height and width of the masks. The order corresponds to :term:`bbox_labels`.
+
+.. |message_def| replace:: A message sent over a network that has been converted
+   to a dictionary format.
 
 .. |none_input_def| replace:: No inputs required.
 
