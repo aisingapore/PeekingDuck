@@ -1,0 +1,13 @@
+input: ["img"]
+output: ["bboxes", "bbox_labels", "bbox_scores"]
+
+weights_parent_dir: null
+weights: { default: { model_subdir: huggingface } }
+
+task: object_detection
+model_format: default
+model_type: null
+detect: ["*"]
+iou_threshold: 0.6
+score_threshold: 0.5
+agnostic_nms: true

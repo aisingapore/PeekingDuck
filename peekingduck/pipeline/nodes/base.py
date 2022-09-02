@@ -24,6 +24,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Union
 
 import requests
+import torch
 from tqdm import tqdm
 
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
@@ -247,6 +248,14 @@ class WeightsDownloaderMixin:
 
         return model_dir
 
+    def prepare_cache_dir(self) -> Path:
+        """Configures the cache location for downloading weights from model
+        hubs.
+        """
+        model_dir = self._find_paths(from_hub=True)
+        torch.hub.set_dir(model_dir)
+        return model_dir
+
     def _download_to(self, filename: str, destination_dir: Path) -> None:
         """Downloads publicly shared files from Google Cloud Platform.
 
@@ -278,9 +287,13 @@ class WeightsDownloaderMixin:
 
         os.remove(zip_path)
 
-    def _find_paths(self) -> Path:
+    def _find_paths(self, from_hub: bool = False) -> Path:
         """Constructs the `peekingduck_weights` directory path and the model
         sub-directory path.
+
+        Args:
+            from_hub (bool): Flag to indicate if the model is from an online
+                model hub.
 
         Returns:
             (Path): /path/to/peekingduck_weights/<model_name> where
@@ -306,12 +319,11 @@ class WeightsDownloaderMixin:
                     f"weights_parent_dir must be an absolute path: {weights_parent_dir}"
                 )
 
-        return (
-            weights_parent_dir
-            / PEEKINGDUCK_WEIGHTS_SUBDIR
-            / self.model_subdir
-            / self.config["model_format"]
-        )
+        parent_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR / self.model_subdir
+        if from_hub:
+            return parent_dir.joinpath(*self.model_type_parts)
+
+        return parent_dir / self.config["model_format"]
 
     def _get_weights_checksum(self) -> str:
         with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
