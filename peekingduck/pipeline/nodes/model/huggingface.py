@@ -60,6 +60,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = huggingface_model.ObjectDetectionModel(self.config)
+        self.config["detect"] = self.model.detect_ids
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads `img` from `inputs` perform prediction on it.

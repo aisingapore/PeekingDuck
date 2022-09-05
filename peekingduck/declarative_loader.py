@@ -238,7 +238,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
 
                         # Only convert class names to id if model is not yolo_face,
                         # since yolo_face has no class names
-                        if node_name != "model.yolo_face":
+                        if node_name not in {"model.yolo_face", "model.huggingface"}:
                             key, value = obj_det_change_class_name_to_id(
                                 node_name, key, value
                             )

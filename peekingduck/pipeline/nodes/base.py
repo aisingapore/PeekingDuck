@@ -248,11 +248,11 @@ class WeightsDownloaderMixin:
 
         return model_dir
 
-    def prepare_cache_dir(self) -> Path:
+    def prepare_cache_dir(self, model_type_subdirs: List[str]) -> Path:
         """Configures the cache location for downloading weights from model
         hubs.
         """
-        model_dir = self._find_paths(from_hub=True)
+        model_dir = self._find_paths(model_type_subdirs)
         torch.hub.set_dir(model_dir)
         return model_dir
 
@@ -287,13 +287,13 @@ class WeightsDownloaderMixin:
 
         os.remove(zip_path)
 
-    def _find_paths(self, from_hub: bool = False) -> Path:
+    def _find_paths(self, model_type_subdirs: List[str] = None) -> Path:
         """Constructs the `peekingduck_weights` directory path and the model
         sub-directory path.
 
         Args:
-            from_hub (bool): Flag to indicate if the model is from an online
-                model hub.
+            model_type_subdirs (List[str]): Optional sub directories for the
+                model type, used when loading models from online model hubs.
 
         Returns:
             (Path): /path/to/peekingduck_weights/<model_name> where
@@ -320,8 +320,8 @@ class WeightsDownloaderMixin:
                 )
 
         parent_dir = weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR / self.model_subdir
-        if from_hub:
-            return parent_dir.joinpath(*self.model_type_parts)
+        if model_type_subdirs is not None:
+            return parent_dir.joinpath(*model_type_subdirs)
 
         return parent_dir / self.config["model_format"]
 
