@@ -42,4 +42,8 @@ def is_valid_object_detection_model(model_info: hf_api.ModelInfo) -> bool:
     """True if model is usable with ``transformers`` and is not from the
     owlvit family.
     """
-    return "transformers" in model_info.tags and "owlvit" not in model_info.tags
+    return (
+        "transformers" in model_info.tags
+        and "owlvit" not in model_info.tags
+        and not any("gpl" in tag for tag in model_info.tags if "license:" in tag)
+    )
