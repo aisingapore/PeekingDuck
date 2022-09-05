@@ -18,9 +18,13 @@ CLI functions for PeekingDuck.
 
 import click
 
+# Import modules to register commands
+# pylint: disable=unused-import
+import peekingduck.commands.model_hub.huggingface
 from peekingduck import __version__
 from peekingduck.commands.core import init, run, verify_install
 from peekingduck.commands.create_node import create_node
+from peekingduck.commands.model_hub import model_hub
 from peekingduck.commands.nodes import nodes
 
 
@@ -34,6 +38,7 @@ def cli() -> None:
 
 cli.add_command(create_node)
 cli.add_command(init)
+cli.add_command(model_hub)
 cli.add_command(nodes)
 cli.add_command(run)
 cli.add_command(verify_install)

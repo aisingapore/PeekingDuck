@@ -26,6 +26,9 @@ def get_valid_models(task: str) -> Set[str]:
 
     Args:
         task (str): Computer vision task, e.g., "object_detection".
+
+    Returns:
+        (Set[str]): A set of valid Hugging Face Hub models.
     """
     pkd_to_hf_task = {"object_detection": "object-detection"}
     is_valid_model = {"object_detection": is_valid_object_detection_model}
