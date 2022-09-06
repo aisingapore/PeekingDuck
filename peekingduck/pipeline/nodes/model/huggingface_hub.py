@@ -27,7 +27,10 @@ class Node(AbstractNode):
     """Initializes and uses Hugging Face Hub models to infer from an image
     frame.
 
-    _TODO: <Explanations about detect ID>
+    The models from the Hugging Face Hub are trained on a variety of datasets
+    and can predict a variety of labels. Please refer to the documentation for
+    ``model_type`` and ``detect`` below for details on how to configure the
+    node.
 
     Inputs:
         |img_data|
@@ -44,13 +47,26 @@ class Node(AbstractNode):
             default="object_detection"** |br|
             Defines the computer vision task of the model.
         model_type (:obj:`str`): **Refer to CLI command, default=null**. |br|
-            Defines the type of YOLOX model to be used.
+            Defines the type of Hugging Face Hub model to be used. Use the CLI
+            command ``peekingduck model-hub huggingface models --task '<task>'``
+            to obtain a list of available models.
         weights_parent_dir (:obj:`Optional[str]`): **default=null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
         detect (:obj:`List[Union[int, str]]`): **default=[0]**. |br|
-            List of object class names or IDs to be detected. To detect all
-            classes, refer to the :ref:`tech note <general-object-detection-ids>`.
+            List of object class names or IDs to be detected. Please refer to
+            the :ref:`tech note <general-object-detection-ids>` for the class
+            name/ID mapping and instructions on detects all classes.
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.6**. |br|
+            Overlapping bounding boxes with Intersection over Union (IoU) above
+            the threshold will be discarded.
+        score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+            Bounding boxes with confidence score below the threshold will be
+            discarded.
+        agnostic_nms (:obj:`bool`): **default = True**. |br|
+            Flag to determine if class-agnostic NMS (``torchvision.ops.nms``)
+            or class-aware NMS (``torchvision.ops.batched_nms``) should be
+            used.
 
     References:
         Hugging Face Hub

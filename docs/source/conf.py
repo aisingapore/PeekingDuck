@@ -87,6 +87,7 @@ autosummary_mock_imports = [
     "model.efficientdet_d04",
     "model.fairmotv1",
     "model.hrnetv1",
+    "model.huggingface_hubv1",
     "model.jdev1",
     "model.mask_rcnnv1",
     "model.mtcnnv1",
