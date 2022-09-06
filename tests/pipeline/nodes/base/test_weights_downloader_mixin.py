@@ -28,11 +28,28 @@ from peekingduck.pipeline.nodes.base import (
 )
 from tests.conftest import PKD_DIR, assert_msg_in_logs, do_nothing
 
+SKIPPED_MODELS = ["huggingface_hub"]
+
 
 @pytest.fixture(
     name="weights_model", params=(PKD_DIR / "configs" / "model").glob("*.yml")
 )
 def fixture_weights_model(request):
+    return WeightsModel(request.param)
+
+
+@pytest.fixture(
+    name="shipped_weights_model",
+    params=[
+        path
+        for path in (PKD_DIR / "configs" / "model").glob("*.yml")
+        if path.stem not in SKIPPED_MODELS
+    ],
+)
+def fixture_shipped_weights_model(request):
+    """Includes only models whose weights files are stored on GCS. Excludes
+    model hub models.
+    """
     return WeightsModel(request.param)
 
 
@@ -105,37 +122,37 @@ class TestWeightsDownloaderMixin:
             / weights_model.config["model_format"]
         )
 
-    def test_weights_not_found(self, weights_model):
+    def test_weights_not_found(self, shipped_weights_model):
         """Checks that the proper logging message is shown then weights are not
         found.
         """
         with tempfile.TemporaryDirectory() as tmp_dir, TestCase.assertLogs(
             "test_weights_downloader_mixin.WeightsModel"
         ) as captured:
-            weights_model.config["weights_parent_dir"] = tmp_dir
-            model_dir = weights_model._find_paths()
-            assert not weights_model._has_weights(model_dir)
+            shipped_weights_model.config["weights_parent_dir"] = tmp_dir
+            model_dir = shipped_weights_model._find_paths()
+            assert not shipped_weights_model._has_weights(model_dir)
             assert_msg_in_logs("No weights detected.", captured.records)
 
-    def test_corrupted_weights(self, weights_model):
+    def test_corrupted_weights(self, shipped_weights_model):
         """Checks that the proper logging message is shown then weights are not
         found.
         """
         with tempfile.TemporaryDirectory() as tmp_dir, TestCase.assertLogs(
             "test_weights_downloader_mixin.WeightsModel"
         ) as captured:
-            weights_model.config["weights_parent_dir"] = tmp_dir
-            model_dir = weights_model._find_paths()
+            shipped_weights_model.config["weights_parent_dir"] = tmp_dir
+            model_dir = shipped_weights_model._find_paths()
             # Create a temp weights file which doesn't match the checksum
             model_dir.mkdir(parents=True, exist_ok=True)
-            (model_dir / weights_model.model_filename).touch()
+            (model_dir / shipped_weights_model.model_filename).touch()
 
-            assert not weights_model._has_weights(model_dir)
+            assert not shipped_weights_model._has_weights(model_dir)
             assert_msg_in_logs(
                 "Weights file is corrupted/out-of-date.", captured.records
             )
 
-    def test_skip_integrity_check(self, weights_model):
+    def test_skip_integrity_check(self, shipped_weights_model):
         """Checks that the proper logging message is shown then weights are not
         found.
         """
@@ -145,13 +162,13 @@ class TestWeightsDownloaderMixin:
             WeightsDownloaderMixin, "_get_weights_checksum"
         ) as mock_get:
             mock_get.side_effect = requests.exceptions.ConnectionError()
-            weights_model.config["weights_parent_dir"] = tmp_dir
-            model_dir = weights_model._find_paths()
+            shipped_weights_model.config["weights_parent_dir"] = tmp_dir
+            model_dir = shipped_weights_model._find_paths()
             # Create a temp weights file which doesn't match the checksum
             model_dir.mkdir(parents=True, exist_ok=True)
-            (model_dir / weights_model.model_filename).touch()
+            (model_dir / shipped_weights_model.model_filename).touch()
 
-            assert weights_model._has_weights(model_dir)
+            assert shipped_weights_model._has_weights(model_dir)
             assert_msg_in_logs(
                 "Skipped weights file integrity check due to network connectivity error.",
                 captured.records,
@@ -198,7 +215,7 @@ class TestWeightsDownloaderMixin:
     @mock.patch.object(WeightsDownloaderMixin, "_download_to", wraps=do_nothing)
     @mock.patch.object(WeightsDownloaderMixin, "_extract_file", wraps=do_nothing)
     def test_create_weights_dir(
-        self, mock_download_to, mock_extract_file, weights_model
+        self, mock_download_to, mock_extract_file, shipped_weights_model
     ):
         with tempfile.TemporaryDirectory() as tmp_dir, TestCase.assertLogs(
             "test_weights_downloader_mixin.WeightsModel"
@@ -207,14 +224,14 @@ class TestWeightsDownloaderMixin:
             model_dir = (
                 weights_parent_dir
                 / PEEKINGDUCK_WEIGHTS_SUBDIR
-                / weights_model.model_subdir
-                / weights_model.config["model_format"]
+                / shipped_weights_model.model_subdir
+                / shipped_weights_model.config["model_format"]
             )
-            weights_model.config["weights_parent_dir"] = weights_parent_dir
+            shipped_weights_model.config["weights_parent_dir"] = weights_parent_dir
 
             assert not (weights_parent_dir / PEEKINGDUCK_WEIGHTS_SUBDIR).exists()
 
-            weights_model.download_weights()
+            shipped_weights_model.download_weights()
 
             assert mock_download_to.called
             assert mock_extract_file.called
