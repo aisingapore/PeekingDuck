@@ -21,7 +21,10 @@ import shutil
 import click
 
 from peekingduck.commands.model_hub import model_hub
-from peekingduck.pipeline.nodes.model.huggingfacev1.api_utils import get_valid_models
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
+    SUPPORTED_TASKS,
+    get_valid_models,
+)
 
 logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
 
@@ -39,12 +42,35 @@ def models(task: str) -> None:
     """Lists the valid/supported Hugging Face Hub models for the specified
     computer vision `task`.
     """
-    try:
-        task_code = "_".join(task.lower().split())
+    task_code = "_".join(task.lower().split())
+    if task_code in SUPPORTED_TASKS:
         valid_models = sorted(list(get_valid_models(task_code)))
 
         command = cmd.Cmd()
         print(f"Supported Hugging Face `{task_code}` models:")
         command.columnize(valid_models, displaywidth=shutil.get_terminal_size().columns)
-    except KeyError:
+    else:
         print(f"{task} is an invalid/unsupported task.")
+
+
+@huggingface.command()
+@click.option(
+    "--model_type",
+    help=(
+        "The model identifier in the format of <organization>/<model name>, "
+        "e.g., facebook/detr-resnet-50."
+    ),
+)
+def detect_ids(model_type: str) -> None:
+    """Returns the URL to the model's config.json which contains the detect
+    ID-to-label mapping.
+    """
+    url_prefix = "https://huggingface.co/"
+    url_suffix = "/blob/main/config.json"
+    if any(model_type in get_valid_models(task) for task in SUPPORTED_TASKS):
+        print(
+            f"The detect ID-to-label mapping for `{model_type}` can be found at "
+            f"{url_prefix}{model_type}{url_suffix} under the `id2label` key."
+        )
+    else:
+        print(f"{model_type} is either invalid or belongs to an unsupported task.")
