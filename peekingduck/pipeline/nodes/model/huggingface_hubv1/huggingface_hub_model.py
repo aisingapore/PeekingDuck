@@ -155,7 +155,7 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
             f"Class agnostic NMS: {self.agnostic_nms}"
         )
 
-    def _map_detect_ids(
+    def _map_detect_ids(  # pylint: disable=too-many-branches
         self, detector_config: AutoConfig, detect_list: List[Union[int, str]]
     ) -> List[int]:
         """Maps a list of detect IDs/labels to a list of valid numeric detect
@@ -216,6 +216,11 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
                 "It is recommended to use class names instead of detect IDs "
                 "for consistent behavior."
             )
+        if not detect_ids:
+            self.logger.warning(
+                "No valid entries in `detect` list, detecting all objects."
+            )
+            detect_ids = [*detector_config.id2label]
         return sorted(list(set(detect_ids)))
 
     def _postprocess(
@@ -266,7 +271,7 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
             )
         detections = detections[nms_out_index]
 
-        if self._detect_ids > 0:
+        if self._detect_ids.size(0) > 0:
             detections = detections[torch.isin(detections[:, 5], self._detect_ids)]
         detections_np = detections.cpu().detach().numpy()
         bboxes = xyxy2xyxyn(detections_np[:, :4], *image_shape)
