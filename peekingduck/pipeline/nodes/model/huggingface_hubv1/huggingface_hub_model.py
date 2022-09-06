@@ -26,7 +26,9 @@ from peekingduck.pipeline.nodes.base import (
     ThresholdCheckerMixin,
     WeightsDownloaderMixin,
 )
-from peekingduck.pipeline.nodes.model.huggingfacev1.api_utils import get_valid_models
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
+    get_valid_models,
+)
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 

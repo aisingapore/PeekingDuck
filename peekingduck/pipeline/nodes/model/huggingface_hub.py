@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.huggingfacev1 import huggingface_model
+from peekingduck.pipeline.nodes.model.huggingface_hubv1 import huggingface_hub_model
 
 
 class Node(AbstractNode):
@@ -59,7 +59,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = huggingface_model.ObjectDetectionModel(self.config)
+        self.model = huggingface_hub_model.ObjectDetectionModel(self.config)
         self.config["detect"] = self.model.detect_ids
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

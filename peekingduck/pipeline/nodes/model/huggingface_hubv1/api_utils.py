@@ -18,6 +18,8 @@ from typing import Set
 
 from huggingface_hub import hf_api
 
+SUPPORTED_TASKS = ["object_detection"]
+
 
 def get_valid_models(task: str) -> Set[str]:
     """Returns a set containing valid model names for the specified ``task``.
