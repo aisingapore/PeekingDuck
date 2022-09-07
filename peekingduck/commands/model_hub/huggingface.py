@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""PeekingDuck CLI `model-hub` command."""
+"""PeekingDuck CLI `model-hub huggingface` command."""
 
 import cmd
 import logging
