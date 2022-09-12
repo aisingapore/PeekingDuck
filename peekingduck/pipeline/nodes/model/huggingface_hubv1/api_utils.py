@@ -41,11 +41,12 @@ def get_valid_models(task: str) -> Set[str]:
 
 
 def is_valid_object_detection_model(model_info: hf_api.ModelInfo) -> bool:
-    """True if model is usable with ``transformers`` and is not from the
-    owlvit family.
+    """True if model is usable with ``transformers`` and is from one of the
+    supported base model types.
     """
+    supported_base_types = ["detr", "yolos"]
     return (
         "transformers" in model_info.tags
-        and "owlvit" not in model_info.tags
+        and any(base_type in model_info.tags for base_type in supported_base_types)
         and not any("gpl" in tag for tag in model_info.tags if "license:" in tag)
     )
