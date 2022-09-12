@@ -27,30 +27,13 @@ from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
 )
 
 logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
+# Replaces underscores with spaces to match expected user input
+PRETTY_SUPPORTED_TASKS = [task.replace("_", " ") for task in SUPPORTED_TASKS]
 
 
 @model_hub.group()
 def huggingface() -> None:
     """Utility commands for Hugging Face Hub models."""
-
-
-@huggingface.command()
-@click.option(
-    "--task", help="The computer vision task, e.g. object detection.", required=True
-)
-def models(task: str) -> None:
-    """Lists the valid/supported Hugging Face Hub models for the specified
-    computer vision `task`.
-    """
-    task_code = "_".join(task.lower().split())
-    if task_code in SUPPORTED_TASKS:
-        valid_models = sorted(list(get_valid_models(task_code)))
-
-        command = cmd.Cmd()
-        print(f"Supported Hugging Face `{task_code}` models:")
-        command.columnize(valid_models, displaywidth=shutil.get_terminal_size().columns)
-    else:
-        print(f"{task} is an invalid/unsupported task.")
 
 
 @huggingface.command()
@@ -74,3 +57,30 @@ def detect_ids(model_type: str) -> None:
         )
     else:
         print(f"{model_type} is either invalid or belongs to an unsupported task.")
+
+
+@huggingface.command()
+@click.option(
+    "--task",
+    help=f"The computer vision task, one of {PRETTY_SUPPORTED_TASKS}.",
+    required=True,
+)
+def models(task: str) -> None:
+    """Lists the valid/supported Hugging Face Hub models for the specified
+    computer vision `task`.
+    """
+    task_code = "_".join(task.lower().split())
+    if task_code in SUPPORTED_TASKS:
+        valid_models = sorted(list(get_valid_models(task_code)))
+
+        command = cmd.Cmd()
+        print(f"Supported Hugging Face `{task_code}` models:")
+        command.columnize(valid_models, displaywidth=shutil.get_terminal_size().columns)
+    else:
+        print(f"{task} is an invalid/unsupported task.")
+
+
+@huggingface.command()
+def tasks() -> None:
+    """Lists the supported computer vision tasks."""
+    print(f"Supported computer vision tasks: {PRETTY_SUPPORTED_TASKS}")
