@@ -17,5 +17,7 @@ sphinx-rtd-theme
 texttable # for pretty print scripts/check_links.py output
 
 # optional requirements
-shapely >= 1.7.1
 lap == 0.4.0
+shapely >= 1.7.1
+timm >= 0.6.7
+transformers >= 4.21.2

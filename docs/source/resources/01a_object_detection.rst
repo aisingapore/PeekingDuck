@@ -2,6 +2,8 @@
 Object Detection Models
 ***********************
 
+.. include:: /include/substitution.rst
+
 List of Object Detection Models
 ===============================
 
@@ -249,3 +251,21 @@ This table provides the associated indices for the :mod:`model.yolo_face` node.
 +------------+----+
 | mask       | 1  |
 +------------+----+
+
+.. _model-hub-object-detection-ids:
+
+Model Hub Models
+----------------
+
+Use the following CLI command to access the class name to ID mapping of model
+hub models:
+
+.. admonition:: Terminal Session
+
+    | \ :blue:`[~user]` \ > \ :green:`peekingduck model-hub <repository name> detect-ids \\` \
+    | \ |tab| :green:`-\-model_type '<model identifier>'` \
+
+where ``repository name`` is the model hub name, e.g., ``huggingface`` and
+``model identifier`` is one of the models from the specified model hub, e.g.,
+``facebook/detr-resnet-50``. Please note that ``model identifier`` is case
+sensitive.
