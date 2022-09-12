@@ -1,5 +1,5 @@
 dabble.zone_count PYTHON shapely >= 1.7.1
 model.fairmot PYTHON lap == 0.4.0
-model.huggingface PYTHON timm >= 0.6.7
-model.huggingface PYTHON transformers >= 4.21.2
+model.huggingface_hub PYTHON timm >= 0.6.7
+model.huggingface_hub PYTHON transformers >= 4.21.2
 model.jde PYTHON lap == 0.4.0
