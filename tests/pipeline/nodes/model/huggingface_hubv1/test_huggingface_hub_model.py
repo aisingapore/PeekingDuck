@@ -40,11 +40,12 @@ class TestObjectDetectionModel:
             "huggingface_hub_model.ObjectDetectionModel"
         ) as captured:
             model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model.post_init()
 
         assert_msg_in_logs(
             "`detect` list is empty, detecting all objects.", captured.records
         )
-        assert len(model.detector.config.label2id) == len(model.detect_ids)
+        assert len(model.wrapper.model.config.label2id) == len(model.detect_ids)
 
     def test_all_invalid_detect_label(self, huggingface_detr_config):
         huggingface_detr_config["detect"] = ["invalid_label_1", "invalid_label_2"]
@@ -53,10 +54,11 @@ class TestObjectDetectionModel:
             "huggingface_hub_model.ObjectDetectionModel"
         ) as captured:
             model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model.post_init()
 
         assert_msg_in_logs("Invalid class names:", captured.records)
         assert_msg_in_logs("No valid entries", captured.records)
-        assert len(model.detector.config.label2id) == len(model.detect_ids)
+        assert len(model.wrapper.model.config.label2id) == len(model.detect_ids)
 
     def test_all_invalid_detect_id(self, huggingface_detr_config):
         # Assume no models use negative detect IDs
@@ -66,11 +68,12 @@ class TestObjectDetectionModel:
             "huggingface_hub_model.ObjectDetectionModel"
         ) as captured:
             model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model.post_init()
 
         assert_msg_in_logs("Invalid detect IDs:", captured.records)
         assert_msg_in_logs("recommended to use class names", captured.records)
         assert_msg_in_logs("No valid entries", captured.records)
-        assert len(model.detector.config.label2id) == len(model.detect_ids)
+        assert len(model.wrapper.model.config.label2id) == len(model.detect_ids)
 
     def test_mixed_detect_id_and_label(self, huggingface_detr_config):
         # Assume no models use negative detect IDs. This should remove all
@@ -83,4 +86,5 @@ class TestObjectDetectionModel:
             0,
         ]
         model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+        model.post_init()
         assert model.detect_ids == [0]

@@ -76,6 +76,7 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = huggingface_hub_model.ObjectDetectionModel(self.config)
+        self.model.post_init()
         self.config["detect"] = self.model.detect_ids
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
