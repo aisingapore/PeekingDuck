@@ -93,7 +93,7 @@ class TestRequirementChecker:
         ), TestCase.assertLogs(
             "peekingduck.utils.requirement_checker.logger"
         ) as captured:
-            # pytest >= 6.2.3 is guaranteed by cicd_requirements.txt so
+            # pytest >= 6.2.3 is guaranteed by requirements_cicd.txt so
             # only 2 updates
             assert check_requirements(NODE_WITH_UPDATE, requirements_file) == 2
             for i, record in enumerate(captured.records):
