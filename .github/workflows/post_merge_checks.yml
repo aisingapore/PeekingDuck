@@ -33,7 +33,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install wheel
           pip install -r requirements.txt
-          pip install -r cicd_requirements.txt
+          pip install -r requirements_cicd.txt
           bash ./scripts/update_version.sh ${TEST_VER}
           pip install . --no-dependencies
         shell: bash

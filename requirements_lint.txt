@@ -1,0 +1,5 @@
+-r requirements.txt
+
+numpy == 1.17.3
+opencv-contrib-python >= 4.5.2.54, != 4.5.4.58, <= 4.5.5.64
+tensorflow == 2.2.0
