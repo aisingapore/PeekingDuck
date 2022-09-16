@@ -53,17 +53,6 @@ class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):
 
         self.score_threshold = self.config["score_threshold"]
 
-    @abstractmethod
-    def _create_huggingface_model(self, model_type: str) -> None:
-        """Creates the specified Hugging Face model from pretrained weights.
-        In addition, also sets up cache directory paths, maps `detect` list to
-        numeric detect IDs, and attempts to setup inference on GPU.
-
-        Args:
-            model_type (str): Hugging Face Hub model identifier
-                (<organization>/<model name>), e.g., facebook/detr-resnet-50.
-        """
-
     @property
     def detect_ids(self) -> List[int]:
         """The list of selected object category IDs."""
@@ -75,12 +64,46 @@ class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):
             raise TypeError("detect_ids has to be a list")
         self._detect_ids = torch.tensor(ids, device=self.device)
 
+    @abstractmethod
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, ...]:
+        """Predicts the supplied image.
+
+        Args:
+            image (np.ndarray): Input image frame.
+
+        Returns:
+            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
+            contains:
+            - An array of detection bboxes
+            - An array of human-friendly detection class names
+            - An array of detection scores
+            - An array of binary masks (if instance segmentation)
+
+        Raises:
+            TypeError: The provided `image` is not a numpy array.
+        """
+
     def post_init(self) -> None:
         """Creates model and logs configuration after validation checks during
         initialization.
         """
         self._create_huggingface_model(self.config["model_type"])
         self._log_model_configs()
+
+    @abstractmethod
+    def _create_huggingface_model(self, model_type: str) -> None:
+        """Creates the specified Hugging Face model from pretrained weights.
+        In addition, also sets up cache directory paths, maps `detect` list to
+        numeric detect IDs, and attempts to setup inference on GPU.
+
+        Args:
+            model_type (str): Hugging Face Hub model identifier
+                (<organization>/<model name>), e.g., facebook/detr-resnet-50.
+        """
+
+    @abstractmethod
+    def _log_model_configs(self) -> None:
+        """Prints the loaded model's settings."""
 
     def _init_device(self) -> torch.device:
         """Initialize torch.device to `cuda` if available and then tries to
@@ -171,9 +194,7 @@ class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):
         return sorted(list(set(detect_ids)))
 
 
-class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
-    HuggingFaceModel
-):
+class ObjectDetectionModel(HuggingFaceModel):
     """Validates configuration, loads model from Hugging Face Hub, and performs
     inference.
 
@@ -189,7 +210,7 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
         self.iou_threshold = self.config["iou_threshold"]
         self.agnostic_nms = self.config["agnostic_nms"]
 
-    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, ...]:
         """Predicts bboxes from image.
 
         Args:
@@ -240,7 +261,7 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
 
     def _postprocess(
         self, result: Dict[str, torch.Tensor], image_shape: Tuple[int, int]
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, ...]:
         """Post-processes model output. Filters detection results by confidence
         score, performs non-maximum suppression, and discards detections which
         do not contain objects of interest based on ``self._detect_ids``.
@@ -296,9 +317,7 @@ class ObjectDetectionModel(  # pylint: disable=too-many-instance-attributes
         return bboxes, classes, scores
 
 
-class InstanceSegmentationModel(  # pylint: disable=too-many-instance-attributes
-    HuggingFaceModel
-):
+class InstanceSegmentationModel(HuggingFaceModel):
     """Validates configuration, loads image segmentation models from Hugging
     Face Hub, and performs inference.
 
@@ -313,9 +332,7 @@ class InstanceSegmentationModel(  # pylint: disable=too-many-instance-attributes
 
         self.mask_threshold = self.config["mask_threshold"]
 
-    def predict(
-        self, image: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, ...]:
         """Predicts bboxes from image.
 
         Args:
@@ -368,7 +385,7 @@ class InstanceSegmentationModel(  # pylint: disable=too-many-instance-attributes
 
     def _postprocess(
         self, result: Dict[str, torch.Tensor], image_shape: Tuple[int, int]
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    ) -> Tuple[np.ndarray, ...]:
         """Post processes detection result. Filters detection results by
         confidence score and discards detections which do not contain objects
         of interest based on ``self._detect_ids``.
