@@ -43,10 +43,10 @@ class Node(ThresholdCheckerMixin, AbstractNode):
 
         |bbox_scores_data|
 
-        |masks_data|
+        |masks_data| (Only available when ``task = instance_segmentation``)
 
     Configs:
-        task (:obj:`str`): **{"object_detection"},
+        task (:obj:`str`): **{"instance_segmentation", "object_detection"},
             default="object_detection"** |br|
             Defines the computer vision task of the model.
         model_type (:obj:`str`): **Refer to CLI command, default=null**. |br|
@@ -92,6 +92,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         self.model = self.model_constructor[self.config["task"]](self.config)
         self.model.post_init()
         self.config["detect"] = self.model.detect_ids
+        self._finalize_output_keys()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads `img` from `inputs` perform prediction on it.
@@ -126,3 +127,8 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             "bbox_scores": results[2],
             "masks": results[3],
         }
+
+    def _finalize_output_keys(self) -> None:
+        """Updates output keys based on the selected ``task``."""
+        self.config["output"] = self.config["output"][self.task]
+        self.output = self.config["output"]

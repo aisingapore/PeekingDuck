@@ -1,5 +1,9 @@
 input: ["img"]
-output: ["bboxes", "bbox_labels", "bbox_scores", "masks"]
+output:
+  {
+    instance_segmentation: ["bboxes", "bbox_labels", "bbox_scores", "masks"],
+    object_detection: ["bboxes", "bbox_labels", "bbox_scores"],
+  }
 
 weights_parent_dir: null
 weights: { default: { model_subdir: huggingface } }
