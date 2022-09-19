@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
 from unittest import TestCase
 
 import pytest
@@ -106,6 +107,7 @@ class TestObjectDetectionModel:
 
 
 @pytest.mark.mlmodel
+@pytest.mark.skipif(os.getenv("CI") is not None, reason="GitHub runner inadequate spec")
 class TestInstanceSegmentationModel:
     def test_empty_detect_list(self, huggingface_segmentation_config):
         huggingface_segmentation_config["detect"] = []

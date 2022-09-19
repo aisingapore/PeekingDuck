@@ -12,12 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import os
+
 import cv2
 import pytest
 import yaml
 
 from peekingduck.pipeline.nodes.model.huggingface_hub import Node
-from tests.conftest import PKD_DIR
+from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 
 @pytest.fixture
@@ -94,15 +96,17 @@ class TestHuggingFaceHub:
         )
         assert len(outputs["bboxes"]) > 0
 
-    def test_instance_segmentation_empty_detections(
-        self, create_image, huggingface_hub_config
-    ):
+    @pytest.mark.skipif(
+        os.getenv("CI") is not None, reason="GitHub runner inadequate spec"
+    )
+    def test_instance_segmentation_empty_detections(self, huggingface_hub_config):
         huggingface_hub_config["task"] = "instance_segmentation"
         huggingface_hub_config["model_type"] = "facebook/detr-resnet-50-dc5-panoptic"
-        img = create_image((416, 416, 3))
+        img = cv2.imread(str(TEST_IMAGES_DIR / "black.jpg"))
         hf_node = Node(huggingface_hub_config)
         outputs = hf_node.run({"img": img})
 
+        print(outputs["bbox_labels"])
         assert (
             len(outputs["bboxes"])
             == len(outputs["bbox_labels"])
@@ -114,6 +118,9 @@ class TestHuggingFaceHub:
     @pytest.mark.parametrize(
         "model_type",
         ["facebook/detr-resnet-50-dc5-panoptic", "facebook/maskformer-swin-tiny-ade"],
+    )
+    @pytest.mark.skipif(
+        os.getenv("CI") is not None, reason="GitHub runner inadequate spec"
     )
     def test_instance_segmentation_single_human(
         self, single_person_image, huggingface_hub_config, model_type
