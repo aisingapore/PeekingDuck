@@ -49,7 +49,6 @@ class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):
         self.config = config
         self.logger = logging.getLogger(__name__)
 
-        self.check_valid_choice("task", {"instance_segmentation", "object_detection"})
         self.check_valid_choice("model_type", get_valid_models(self.config["task"]))  # type: ignore
 
         self.score_threshold = self.config["score_threshold"]
