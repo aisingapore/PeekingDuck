@@ -35,7 +35,7 @@ from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
 class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):
     """Abstract Hugging Face Hub model class."""
 
-    adaptor: adaptors.HuggingFaceAdaptor
+    adaptor: adaptors.base.HuggingFaceAdaptor
     _detect_ids: torch.Tensor
 
     def __init__(self, config: Dict[str, Any]) -> None:

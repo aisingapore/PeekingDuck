@@ -14,6 +14,5 @@
 
 """Hugging Face Hub models."""
 
-from .base import HuggingFaceModel
 from .instance_segmentation import InstanceSegmentationModel
 from .object_detection import ObjectDetectionModel

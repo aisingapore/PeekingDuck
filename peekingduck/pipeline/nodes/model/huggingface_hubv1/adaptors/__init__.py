@@ -14,7 +14,6 @@
 
 """Hugging Face Hub model adaptors."""
 
-from .base import HuggingFaceAdaptor
 from .instance_segmenter import InstanceSegmenter
 from .object_detector import ObjectDetector
 from .panoptic_segmenter import PanopticSegmenter

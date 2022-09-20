@@ -20,11 +20,12 @@ import numpy as np
 import torch
 from transformers import AutoConfig
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors, models
+from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.models import base
 from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
 
 
-class InstanceSegmentationModel(models.HuggingFaceModel):
+class InstanceSegmentationModel(base.HuggingFaceModel):
     """Validates configuration, loads image segmentation models from Hugging
     Face Hub, and performs inference.
 

@@ -21,10 +21,10 @@ import torch
 import torch.nn.functional as F
 from transformers import AutoModelForInstanceSegmentation
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
 
 
-class InstanceSegmenter(adaptors.HuggingFaceAdaptor):
+class InstanceSegmenter(base.HuggingFaceAdaptor):
     """Hugging Face instance segmentation model."""
 
     def __init__(self, model_type: str, cache_dir: Path, mask_threshold: float) -> None:

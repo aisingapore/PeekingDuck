@@ -20,10 +20,10 @@ from typing import Any, Dict, Tuple
 import torch
 from transformers import AutoModelForImageSegmentation
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
 
 
-class PanopticSegmenter(adaptors.HuggingFaceAdaptor):
+class PanopticSegmenter(base.HuggingFaceAdaptor):
     """Hugging Face panoptic segmentation model."""
 
     def __init__(self, model_type: str, cache_dir: Path, mask_threshold: float) -> None:

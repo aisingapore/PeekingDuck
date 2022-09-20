@@ -20,10 +20,10 @@ from typing import Any, Dict, Tuple
 import torch
 from transformers import AutoModelForObjectDetection
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
 
 
-class ObjectDetector(adaptors.HuggingFaceAdaptor):
+class ObjectDetector(base.HuggingFaceAdaptor):
     """Hugging Face object detection model."""
 
     def __init__(self, model_type: str, cache_dir: Path) -> None:
