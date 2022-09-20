@@ -21,7 +21,7 @@ import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import huggingface_hub_model
+from peekingduck.pipeline.nodes.model.huggingface_hubv1 import models
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):
@@ -82,8 +82,8 @@ class Node(ThresholdCheckerMixin, AbstractNode):
     """
 
     model_constructor = {
-        "instance_segmentation": huggingface_hub_model.InstanceSegmentationModel,
-        "object_detection": huggingface_hub_model.ObjectDetectionModel,
+        "instance_segmentation": models.InstanceSegmentationModel,
+        "object_detection": models.ObjectDetectionModel,
     }
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:

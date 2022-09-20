@@ -18,7 +18,10 @@ from unittest import TestCase
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import huggingface_hub_model
+from peekingduck.pipeline.nodes.model.huggingface_hubv1.models import (
+    instance_segmentation,
+    object_detection,
+)
 from tests.conftest import PKD_DIR, assert_msg_in_logs
 
 
@@ -53,9 +56,9 @@ class TestObjectDetectionModel:
         huggingface_detr_config["detect"] = []
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.ObjectDetectionModel"
+            "object_detection.ObjectDetectionModel"
         ) as captured:
-            model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model = object_detection.ObjectDetectionModel(huggingface_detr_config)
             model.post_init()
 
         assert_msg_in_logs(
@@ -67,9 +70,9 @@ class TestObjectDetectionModel:
         huggingface_detr_config["detect"] = ["invalid_label_1", "invalid_label_2"]
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.ObjectDetectionModel"
+            "object_detection.ObjectDetectionModel"
         ) as captured:
-            model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model = object_detection.ObjectDetectionModel(huggingface_detr_config)
             model.post_init()
 
         assert_msg_in_logs("Invalid class names:", captured.records)
@@ -81,9 +84,9 @@ class TestObjectDetectionModel:
         huggingface_detr_config["detect"] = [-1, -2]
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.ObjectDetectionModel"
+            "object_detection.ObjectDetectionModel"
         ) as captured:
-            model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+            model = object_detection.ObjectDetectionModel(huggingface_detr_config)
             model.post_init()
 
         assert_msg_in_logs("Invalid detect IDs:", captured.records)
@@ -101,7 +104,7 @@ class TestObjectDetectionModel:
             -2,
             0,
         ]
-        model = huggingface_hub_model.ObjectDetectionModel(huggingface_detr_config)
+        model = object_detection.ObjectDetectionModel(huggingface_detr_config)
         model.post_init()
         assert model.detect_ids == [0]
 
@@ -113,9 +116,9 @@ class TestInstanceSegmentationModel:
         huggingface_segmentation_config["detect"] = []
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.InstanceSegmentationModel"
+            "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
-            model = huggingface_hub_model.InstanceSegmentationModel(
+            model = instance_segmentation.InstanceSegmentationModel(
                 huggingface_segmentation_config
             )
             model.post_init()
@@ -132,9 +135,9 @@ class TestInstanceSegmentationModel:
         ]
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.InstanceSegmentationModel"
+            "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
-            model = huggingface_hub_model.InstanceSegmentationModel(
+            model = instance_segmentation.InstanceSegmentationModel(
                 huggingface_segmentation_config
             )
             model.post_init()
@@ -148,9 +151,9 @@ class TestInstanceSegmentationModel:
         huggingface_segmentation_config["detect"] = [-1, -2]
         with TestCase.assertLogs(
             "peekingduck.pipeline.nodes.model.huggingface_hubv1."
-            "huggingface_hub_model.InstanceSegmentationModel"
+            "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
-            model = huggingface_hub_model.InstanceSegmentationModel(
+            model = instance_segmentation.InstanceSegmentationModel(
                 huggingface_segmentation_config
             )
             model.post_init()
@@ -170,7 +173,7 @@ class TestInstanceSegmentationModel:
             -2,
             0,
         ]
-        model = huggingface_hub_model.InstanceSegmentationModel(
+        model = instance_segmentation.InstanceSegmentationModel(
             huggingface_segmentation_config
         )
         model.post_init()
