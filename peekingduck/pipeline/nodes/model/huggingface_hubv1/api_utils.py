@@ -18,7 +18,7 @@ from typing import Set
 
 from huggingface_hub import hf_api
 
-SUPPORTED_TASKS = ["object_detection"]
+SUPPORTED_TASKS = ["instance_segmentation", "object_detection"]
 
 
 def get_valid_models(task: str) -> Set[str]:
@@ -32,12 +32,30 @@ def get_valid_models(task: str) -> Set[str]:
     Returns:
         (Set[str]): A set of valid Hugging Face Hub models.
     """
-    pkd_to_hf_task = {"object_detection": "object-detection"}
-    is_valid_model = {"object_detection": is_valid_object_detection_model}
+    pkd_to_hf_task = {
+        "instance_segmentation": "image-segmentation",
+        "object_detection": "object-detection",
+    }
+    is_valid_model = {
+        "instance_segmentation": is_valid_instance_segmentation_model,
+        "object_detection": is_valid_object_detection_model,
+    }
 
     model_infos = hf_api.list_models(filter=pkd_to_hf_task[task])
 
     return {info.modelId for info in model_infos if is_valid_model[task](info)}
+
+
+def is_valid_instance_segmentation_model(model_info: hf_api.ModelInfo) -> bool:
+    """True if model is usable with ``transformers`` and is from one of the
+    supported base model types.
+    """
+    supported_base_types = ["detr", "maskformer"]
+    return (
+        "transformers" in model_info.tags
+        and any(base_type in model_info.tags for base_type in supported_base_types)
+        and not any("gpl" in tag for tag in model_info.tags if "license:" in tag)
+    )
 
 
 def is_valid_object_detection_model(model_info: hf_api.ModelInfo) -> bool:

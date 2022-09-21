@@ -1,5 +1,9 @@
 input: ["img"]
-output: ["bboxes", "bbox_labels", "bbox_scores"]
+output:
+  {
+    instance_segmentation: ["bboxes", "bbox_labels", "bbox_scores", "masks"],
+    object_detection: ["bboxes", "bbox_labels", "bbox_scores"],
+  }
 
 weights_parent_dir: null
 weights: { default: { model_subdir: huggingface } }
@@ -7,7 +11,13 @@ weights: { default: { model_subdir: huggingface } }
 task: object_detection
 model_format: default
 model_type: null
+device: "cpu"
 detect: ["*"]
-iou_threshold: 0.6
 score_threshold: 0.5
+
+# instance_segmentation specific configs
+mask_threshold: 0.5
+
+# object_detection specific configs
+iou_threshold: 0.6
 agnostic_nms: true

@@ -20,10 +20,11 @@ import cv2
 import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import huggingface_hub_model
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.pipeline.nodes.model.huggingface_hubv1 import models
 
 
-class Node(AbstractNode):
+class Node(ThresholdCheckerMixin, AbstractNode):
     """Initializes and uses Hugging Face Hub models to infer from an image
     frame.
 
@@ -42,8 +43,10 @@ class Node(AbstractNode):
 
         |bbox_scores_data|
 
+        |masks_data| (Only available when ``task = instance_segmentation``)
+
     Configs:
-        task (:obj:`str`): **{"object_detection"},
+        task (:obj:`str`): **{"instance_segmentation", "object_detection"},
             default="object_detection"** |br|
             Defines the computer vision task of the model.
         model_type (:obj:`str`): **Refer to CLI command, default=null**. |br|
@@ -57,26 +60,39 @@ class Node(AbstractNode):
             List of object class names or IDs to be detected. Please refer to
             the :ref:`tech note <general-object-detection-ids>` for the class
             name/ID mapping and instructions on detects all classes.
-        iou_threshold (:obj:`float`): **[0, 1], default = 0.6**. |br|
-            Overlapping bounding boxes with Intersection over Union (IoU) above
-            the threshold will be discarded.
         score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Bounding boxes with confidence score below the threshold will be
             discarded.
+        mask_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+            The confidence threshold for binarizing the masks' pixel values;
+            determines whether an object is detected at a particular pixel.
+            Used when ``task = instance_segmentation``.
+        iou_threshold (:obj:`float`): **[0, 1], default = 0.6**. |br|
+            Overlapping bounding boxes with Intersection over Union (IoU) above
+            the threshold will be discarded. Used when
+            ``task = object_detection``.
         agnostic_nms (:obj:`bool`): **default = True**. |br|
             Flag to determine if class-agnostic NMS (``torchvision.ops.nms``)
             or class-aware NMS (``torchvision.ops.batched_nms``) should be
-            used.
+            used. Used when ``task = object_detection``.
 
     References:
         Hugging Face Hub
         https://huggingface.co/docs/hub/index
     """
 
+    model_constructor = {
+        "instance_segmentation": models.InstanceSegmentationModel,
+        "object_detection": models.ObjectDetectionModel,
+    }
+
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.model = huggingface_hub_model.ObjectDetectionModel(self.config)
+        self.check_valid_choice("task", {"instance_segmentation", "object_detection"})
+        self.model = self.model_constructor[self.config["task"]](self.config)
+        self.model.post_init()
         self.config["detect"] = self.model.detect_ids
+        self._finalize_output_keys()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Reads `img` from `inputs` perform prediction on it.
@@ -92,9 +108,27 @@ class Node(AbstractNode):
                 and `bbox_scores`.
         """
         image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
-        bboxes, labels, scores = self.model.predict(image)
-        bboxes = np.clip(bboxes, 0, 1)
 
-        outputs = {"bboxes": bboxes, "bbox_labels": labels, "bbox_scores": scores}
+        # bboxes, bbox_labels, bbox_scores for object_detection
+        # bboxes, bbox_labels, bbox_scores, masks for instance_segmentation
+        results = self.model.predict(image)
+        bboxes = np.clip(results[0], 0, 1)
 
-        return outputs
+        if self.config["task"] == "object_detection":
+            return {
+                "bboxes": bboxes,
+                "bbox_labels": results[1],
+                "bbox_scores": results[2],
+            }
+
+        return {
+            "bboxes": bboxes,
+            "bbox_labels": results[1],
+            "bbox_scores": results[2],
+            "masks": results[3],
+        }
+
+    def _finalize_output_keys(self) -> None:
+        """Updates output keys based on the selected ``task``."""
+        self.config["output"] = self.config["output"][self.task]
+        self.output = self.config["output"]
