@@ -22,6 +22,7 @@ import numpy as np
 from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
 
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.pipeline.utils.pose.handler import CocoKeypointHandler
 
 SUBTASK_MODEL_TYPES: Dict[str, Set[Union[float, int, str]]] = {"person": {0, 1, 2}}
 KEYPOINT_33_TO_17 = [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
@@ -50,6 +51,7 @@ class PoseEstimationModel(ThresholdCheckerMixin):
             self.config["model_type"],
             self.config["score_threshold"],
         )
+        self.keypoint_handler = CocoKeypointHandler(KEYPOINT_33_TO_17)
 
     def predict(self, image: np.ndarray) -> Tuple[np.ndarray, ...]:
         """Predicts bboxes from image.
@@ -112,20 +114,20 @@ class PoseEstimationModel(ThresholdCheckerMixin):
             - An array of keypoint connections
             - An array of keypoint scores
         """
-        landmarks = [pose.landmark[i] for i in KEYPOINT_33_TO_17]
-        keypoints = np.array([[[landmark.x, landmark.y] for landmark in landmarks]])
-        connections = np.array(
-            [
-                [
-                    np.vstack((keypoints[0, start - 1], keypoints[0, stop - 1]))
-                    for start, stop in SKELETON
-                ]
-            ]
+        keypoints_33 = [[[landmark.x, landmark.y] for landmark in pose.landmark]]
+        scores_33 = [[landmark.visibility for landmark in pose.landmark]]
+
+        self.keypoint_handler.update_keypoints(keypoints_33)
+        scores = self.keypoint_handler.convert_scores(scores_33)
+        labels = np.array(["person"] * len(scores))
+
+        return (
+            self.keypoint_handler.bboxes,
+            labels,
+            self.keypoint_handler.keypoints,
+            self.keypoint_handler.connections,
+            scores,
         )
-        scores = np.array([landmark.visibility] for landmark in landmarks)
-        bboxes = np.array([self._get_bbox_from_pose(pose) for pose in keypoints])
-        labels = np.array(["person"] * len(bboxes))
-        return bboxes, labels, keypoints, connections, scores
 
     @staticmethod
     def _get_bbox_from_pose(pose: np.ndarray) -> np.ndarray:
