@@ -5,10 +5,10 @@ output:
     pose_estimation:
       [
         "bboxes",
-        "keypoints",
-        "keypoint_scores",
-        "keypoint_conns",
         "bbox_labels",
+        "keypoints",
+        "keypoint_conns",
+        "keypoint_scores",
       ],
   }
 

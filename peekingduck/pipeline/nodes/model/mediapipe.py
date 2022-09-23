@@ -21,7 +21,10 @@ import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.model.mediapipev1 import object_detection
+from peekingduck.pipeline.nodes.model.mediapipev1 import (
+    object_detection,
+    pose_estimation,
+)
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):
@@ -50,11 +53,14 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             discarded.
     """
 
-    model_constructor = {"object_detection": object_detection.ObjectDetectionModel}
+    model_constructor = {
+        "object_detection": object_detection.ObjectDetectionModel,
+        "pose_estimation": pose_estimation.PoseEstimationModel,
+    }
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.check_valid_choice("task", {"object_detection"})
+        self.check_valid_choice("task", {"object_detection", "pose_estimation"})
 
         self.model = self.model_constructor[self.config["task"]](self.config)
         self._finalize_output_keys()
@@ -75,13 +81,16 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         image = cv2.cvtColor(inputs["img"], cv2.COLOR_BGR2RGB)
 
         # bboxes, bbox_labels, bbox_scores for object_detection
+        # bboxes, bbox_labels, keypoints, keypoint_conns, keypoint_scores for pose_estimation
         results = self.model.predict(image)
         bboxes = np.clip(results[0], 0, 1)
 
         return {
             "bboxes": bboxes,
             "bbox_labels": results[1],
-            "bbox_scores": results[2],
+            "keypoints": results[2],
+            "keypoint_conns": results[3],
+            "keypoint_scores": results[4],
         }
 
     def _finalize_output_keys(self) -> None:
