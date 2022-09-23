@@ -28,7 +28,7 @@ from peekingduck.pipeline.nodes.base import (
 )
 from tests.conftest import PKD_DIR, assert_msg_in_logs, do_nothing
 
-SKIPPED_MODELS = ["huggingface_hub"]
+SKIPPED_MODELS = ["huggingface_hub", "mediapipe"]
 
 
 @pytest.fixture(
