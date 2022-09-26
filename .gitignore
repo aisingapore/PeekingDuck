@@ -154,3 +154,7 @@ docs/source/peekingduck.*
 docs/source/nodes
 # Other likely files that should not be committed
 .DS_Store
+
+# hn's dev
+venv_*/
+.pre-commit-config.yaml
