@@ -16,3 +16,8 @@ task: object_detection
 subtask: null
 model_type: 0
 score_threshold: 0.5
+
+# pose_estimation specific configs
+static_image_mode: false
+smooth_landmarks: true
+tracking_score_threshold: 0.5

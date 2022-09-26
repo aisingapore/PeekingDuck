@@ -21,7 +21,7 @@ from typing import List
 import numpy as np
 
 
-class CocoKeypointHandler:
+class BodyKeypoint:
     """Performs various post processing functions on the COCO format 17-keypoint
     poses. Converts keypoints to the COCO format if `keypoint_map` is provided.
     """
@@ -36,24 +36,6 @@ class CocoKeypointHandler:
         if keypoint_map is not None and len(keypoint_map) != 17:
             raise ValueError("keypoint_map should contain 17 elements.")
         self.keypoint_map = keypoint_map
-
-    @property
-    def keypoints(self) -> np.ndarray:
-        """Returns COCO format 17 keypoints as a NumPy array."""
-        return np.array(self._poses)
-
-    @property
-    def connections(self) -> np.ndarray:
-        """Returns the keypoint connections."""
-        return np.array(
-            [
-                [
-                    np.vstack((keypoints[start - 1], keypoints[stop - 1]))
-                    for start, stop in self.SKELETON
-                ]
-                for keypoints in self._poses
-            ]
-        )
 
     @property
     def bboxes(self) -> np.ndarray:
@@ -71,6 +53,24 @@ class CocoKeypointHandler:
                 for pose in self.keypoints
             ]
         )
+
+    @property
+    def connections(self) -> np.ndarray:
+        """Returns the keypoint connections."""
+        return np.array(
+            [
+                [
+                    np.vstack((keypoints[start - 1], keypoints[stop - 1]))
+                    for start, stop in self.SKELETON
+                ]
+                for keypoints in self._poses
+            ]
+        )
+
+    @property
+    def keypoints(self) -> np.ndarray:
+        """Returns COCO format 17 keypoints as a NumPy array."""
+        return np.array(self._poses)
 
     def convert_scores(self, scores_list: List[List[float]]) -> np.ndarray:
         """Converts the provided keypoint scores to COCO 17-keypoint format.

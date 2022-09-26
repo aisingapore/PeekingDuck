@@ -15,7 +15,7 @@
 """MediaPipe object detection model."""
 
 import logging
-from typing import Any, Dict, Set, Tuple, Union
+from typing import Any, Dict, Optional, Set, Tuple, Union
 
 import mediapipe as mp
 import numpy as np
@@ -77,7 +77,7 @@ class ObjectDetectionModel(ThresholdCheckerMixin):
                 model_selection=model_type, min_detection_confidence=score_threshold
             )
         else:
-            raise NotImplementedError("Currently, only face detection is implemented.")
+            raise NotImplementedError("Only `face` detection is implemented.")
         self.logger.info(
             "MediaPipe model loaded with the following configs:\n\t"
             f"Subtask: {subtask}\n\t"
@@ -86,16 +86,14 @@ class ObjectDetectionModel(ThresholdCheckerMixin):
         )
 
     @staticmethod
-    def _postprocess(detections: Detection) -> Tuple[np.ndarray, ...]:
+    def _postprocess(detections: Optional[Detection]) -> Tuple[np.ndarray, ...]:
         """Post processes detection result. Converts the bounding boxes from
         normalized [t, l, w, h] to normalized [x1, y1, x2, y2] format. Creates
         "face" detection label for each detection.
 
         Args:
-            result (Dict[str, torch.Tensor]): A dictionary containing the model
-                output, with the keys: "boxes", "labels", "masks, and "scores".
-            image_shape (Tuple[int, int]): The height and width of the input
-                image.
+            detections (Optional[Detection]): Detection results which consist
+                of bounding boxes and confidence scores.
 
         Returns:
             (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
@@ -103,8 +101,9 @@ class ObjectDetectionModel(ThresholdCheckerMixin):
             - An array of detection bboxes
             - An array of human-friendly detection class names
             - An array of detection scores
-            - An array of binary instance masks
         """
+        if detections is None:
+            return np.empty((0, 4)), np.empty(0), np.empty(0)
         bboxes = tlwhn2xyxyn(
             np.array(
                 [

@@ -85,6 +85,12 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         results = self.model.predict(image)
         bboxes = np.clip(results[0], 0, 1)
 
+        if self.config["task"] == "object_detection":
+            return {
+                "bboxes": bboxes,
+                "bbox_labels": results[1],
+                "bbox_scores": results[2],
+            }
         return {
             "bboxes": bboxes,
             "bbox_labels": results[1],
