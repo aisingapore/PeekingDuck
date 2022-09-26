@@ -30,7 +30,7 @@ def mediapipe_config():
 
 
 @pytest.mark.mlmodel
-class TestMediapipe:
+class TestMediaPipe:
     def test_require_subtask_config(self, mediapipe_config):
         """Checks that the default `model_type: null` config value throws an error."""
         with pytest.raises(ValueError) as excinfo:

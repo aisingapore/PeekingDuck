@@ -14,81 +14,33 @@
 
 """MediaPipe object detection model."""
 
-import logging
-from typing import Any, Dict, Optional, Set, Tuple, Union
+from typing import Any, Dict, Tuple
 
 import mediapipe as mp
 import numpy as np
-from mediapipe.framework.formats.landmark_pb2 import NormalizedLandmarkList
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.pipeline.nodes.model.mediapipev1.base import MediaPipeModel
 from peekingduck.pipeline.utils.pose.coco import BodyKeypoint
 
-SUBTASK_MODEL_TYPES: Dict[str, Set[Union[float, int, str]]] = {"body": {0, 1, 2}}
 KEYPOINT_33_TO_17 = [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
 
 
-class PoseEstimationModel(ThresholdCheckerMixin):
+class PoseEstimationModel(MediaPipeModel):
     """MediaPipe pose estimation model class."""
 
-    def __init__(self, config: Dict[str, Any]) -> None:
-        self.config = config
-        self.logger = logging.getLogger(__name__)
+    SUBTASK_MODEL_TYPES = {"body": {0, 1, 2}}
+    SUBTASKS = {"body"}
 
-        self.check_valid_choice("subtask", {"body"})
-        self.check_valid_choice(
-            "model_type", SUBTASK_MODEL_TYPES[self.config["subtask"]]
-        )
-        self.check_bounds("score_threshold", "[0, 1]")
+    def __init__(self, config: Dict[str, Any]) -> None:
+        super().__init__(config)
         self.check_bounds("tracking_score_threshold", "[0, 1]")
 
-        model_settings = self._get_model_settings()
-        self._create_mediapipe_model(self.config["subtask"], model_settings)
         self.keypoint_handler = BodyKeypoint(KEYPOINT_33_TO_17)
 
-    def predict(self, image: np.ndarray) -> Tuple[np.ndarray, ...]:
-        """Predicts bboxes from image.
-
-        Args:
-            image (np.ndarray): Input image frame.
-
-        Returns:
-            (Tuple[np.ndarray, np.ndarray, np.ndarray]): Returned tuple
-            contains:
-            - An array of detection bboxes
-            - An array of detection labels
-            - An array of detection scores
-
-        Raises:
-            TypeError: The provided `image` is not a numpy array.
-        """
-        if not isinstance(image, np.ndarray):
-            raise TypeError("image must be a np.ndarray")
-
-        result = self.model.process(image)
-        return self._postprocess(result.pose_landmarks)
-
-    def _create_mediapipe_model(
-        self, subtask: str, model_settings: Dict[str, Any]
-    ) -> None:
-        """Creates the MediaPipe model and logs the settings used."""
-        if subtask == "body":
-            self.model = mp.solutions.pose.Pose(**model_settings)
-        else:
-            raise NotImplementedError("Only `body` pose estimation is implemented.")
-        self.logger.info(
-            "MediaPipe model loaded with the following configs:\n\t"
-            f"Subtask: {subtask}\n\t"
-            f"Model type: {model_settings['model_complexity']}\n\t"
-            f"Score threshold: {model_settings['min_detection_confidence']}\n\t"
-            f"Tracking score threshold: {model_settings['min_tracking_confidence']}\n\t"
-            f"Static image mode: {model_settings['static_image_mode']}\n\t"
-            f"Smooth landmarks: {model_settings['smooth_landmarks']}"
-        )
-
-    def _get_model_settings(self) -> Dict[str, Any]:
+    @property
+    def model_settings(self) -> Dict[str, Any]:
         """Constructs the model configuration options based on subtask type."""
-        if self.config["subtask"] == "body":
+        if self.subtask == "body":
             return {
                 "min_detection_confidence": self.config["score_threshold"],
                 "min_tracking_confidence": self.config["tracking_score_threshold"],
@@ -98,9 +50,23 @@ class PoseEstimationModel(ThresholdCheckerMixin):
             }
         raise NotImplementedError("Only `body` pose estimation is implemented.")
 
-    def _postprocess(
-        self, pose: Optional[NormalizedLandmarkList]
-    ) -> Tuple[np.ndarray, ...]:
+    def _create_mediapipe_model(self, model_settings: Dict[str, Any]) -> None:
+        """Creates the MediaPipe model and logs the settings used."""
+        if self.subtask == "body":
+            self.model = mp.solutions.pose.Pose(**model_settings)
+            self.logger.info(
+                "MediaPipe model loaded with the following configs:\n\t"
+                f"Subtask: {self.subtask}\n\t"
+                f"Model type: {model_settings['model_complexity']}\n\t"
+                f"Score threshold: {model_settings['min_detection_confidence']}\n\t"
+                f"Tracking score threshold: {model_settings['min_tracking_confidence']}\n\t"
+                f"Static image mode: {model_settings['static_image_mode']}\n\t"
+                f"Smooth landmarks: {model_settings['smooth_landmarks']}"
+            )
+        else:
+            raise NotImplementedError("Only `body` pose estimation is implemented.")
+
+    def _postprocess(self, result: Any) -> Tuple[np.ndarray, ...]:
         """Post processes detection result. Converts the bounding boxes from
         normalized [t, l, w, h] to normalized [x1, y1, x2, y2] format. Creates
         "face" detection label for each detection.
@@ -120,9 +86,10 @@ class PoseEstimationModel(ThresholdCheckerMixin):
             - An array of keypoint connections
             - An array of keypoint scores
         """
-        if pose is None:
+        if result.pose_landmarks is None:
             return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0), np.empty(0)
 
+        pose = result.pose_landmarks
         keypoints_33 = [[[landmark.x, landmark.y] for landmark in pose.landmark]]
         scores_33 = [[landmark.visibility for landmark in pose.landmark]]
 
