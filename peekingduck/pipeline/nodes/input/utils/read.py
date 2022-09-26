@@ -72,7 +72,8 @@ class VideoThread:
         """
         Release acquired resources here.
         """
-        self.logger.debug("VideoThread.__del__")
+        # Note: self.logger is 'None' on python 3.7 but works on python 3.8+
+        # self.logger.debug("VideoThread.__del__")
         self.stream.release()
 
     def shutdown(self) -> None:
