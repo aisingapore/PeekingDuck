@@ -40,7 +40,6 @@ class MediaPipeModel(ThresholdCheckerMixin, ABC):
         self.check_valid_choice("subtask", self.SUBTASKS)  # type: ignore
         self.check_valid_choice("model_type", self.model_types)  # type: ignore
         self.check_bounds("score_threshold", "[0, 1]")
-        self.check_bounds("tracking_score_threshold", "[0, 1]")
 
     def __init_subclass__(cls, **kwargs: Any) -> None:
         super().__init_subclass__(**kwargs)  # type: ignore
