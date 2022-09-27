@@ -22,15 +22,15 @@ import numpy as np
 from mediapipe.python.solution_base import SolutionBase
 
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.utils.abstract_class_attributes import abstract_class_attributes
 
 
+@abstract_class_attributes("SUBTASK_MODEL_TYPES", "SUBTASKS")
 class MediaPipeModel(ThresholdCheckerMixin, ABC):
     """Base MediaPipe model with abstract methods and attributes to be
     instantiated by sub classes.
     """
 
-    SUBTASK_MODEL_TYPES: Dict[str, Set[int]] = NotImplemented
-    SUBTASKS: Set[str] = NotImplemented
     model: SolutionBase
 
     def __init__(self, config: Dict[str, Any]) -> None:
@@ -40,14 +40,6 @@ class MediaPipeModel(ThresholdCheckerMixin, ABC):
         self.check_valid_choice("subtask", self.SUBTASKS)  # type: ignore
         self.check_valid_choice("model_type", self.model_types)  # type: ignore
         self.check_bounds("score_threshold", "[0, 1]")
-
-    def __init_subclass__(cls, **kwargs: Any) -> None:
-        super().__init_subclass__(**kwargs)  # type: ignore
-
-        # Checks that the class attributes are implemented in child classes.
-        for name in {"SUBTASK_MODEL_TYPES", "SUBTASKS"}:
-            if getattr(cls, name, NotImplemented) is NotImplemented:
-                raise NotImplementedError(f"`{name}` has to be defined.")
 
     @property
     @abstractmethod
