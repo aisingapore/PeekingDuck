@@ -124,40 +124,25 @@ def yolo2albu(inputs: BboxType) -> BboxType:
     return outputs
 
 
-def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
-    """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] format.
-
-    (x, y): the coordinates of the center of the bounding box;
-    (w, h): the width and height of the bounding box.
-    (x1, y1): the coordinates of the top left corner of the bounding box;
-    (x2, y2): the coordinates of the bottom right corner of the bounding box.
-
-    [x1, y1, x2, y2] is calculated as:
-    x1 = x * width - w * width / 2
-    y1 = y * height - h * height / 2
-    x2 = x * width + w * width / 2
-    y2 = y * height + h * height / 2
+def albu2yolo(inputs: BboxType) -> BboxType:
+    """Converts from [x1, y1, x2, y2] normalized format to normalized [x, y, w, h].
 
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
-            `(center x, center y, width, height)` normalized by image width and height.
-        height (float): Height of the image frame.
-        width (float): Width of the image frame.
+            `(top left x, top left y, bottom right x, bottom right y)` normalized by
+            image width and height.
 
     Returns:
-        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(top
-            left x, top left y, bottom right x, bottom right y)`.
+        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(center
+            x, center y, width, height)` normalized by image width and height.
     """
     outputs = clone(inputs)
     outputs = cast_int_to_float(outputs)
 
-    outputs[..., [0, 2]] *= width
-    outputs[..., [1, 3]] *= height
-
-    outputs[..., 0] -= outputs[..., 2] / 2
-    outputs[..., 1] -= outputs[..., 3] / 2
-    outputs[..., 2] += outputs[..., 0]
-    outputs[..., 3] += outputs[..., 1]
+    outputs[..., 2] -= outputs[..., 0]
+    outputs[..., 3] -= outputs[..., 1]
+    outputs[..., 0] += outputs[..., 2] / 2
+    outputs[..., 1] += outputs[..., 3] / 2
 
     return outputs
 
@@ -197,6 +182,44 @@ def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
 
     outputs[..., 0] += outputs[..., 2] / 2
     outputs[..., 1] += outputs[..., 3] / 2
+
+    return outputs
+
+
+def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
+    """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] format.
+
+    (x, y): the coordinates of the center of the bounding box;
+    (w, h): the width and height of the bounding box.
+    (x1, y1): the coordinates of the top left corner of the bounding box;
+    (x2, y2): the coordinates of the bottom right corner of the bounding box.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = x * width - w * width / 2
+    y1 = y * height - h * height / 2
+    x2 = x * width + w * width / 2
+    y2 = y * height + h * height / 2
+
+    Args:
+        inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
+            `(center x, center y, width, height)` normalized by image width and height.
+        height (float): Height of the image frame.
+        width (float): Width of the image frame.
+
+    Returns:
+        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(top
+            left x, top left y, bottom right x, bottom right y)`.
+    """
+    outputs = clone(inputs)
+    outputs = cast_int_to_float(outputs)
+
+    outputs[..., [0, 2]] *= width
+    outputs[..., [1, 3]] *= height
+
+    outputs[..., 0] -= outputs[..., 2] / 2
+    outputs[..., 1] -= outputs[..., 3] / 2
+    outputs[..., 2] += outputs[..., 0]
+    outputs[..., 3] += outputs[..., 1]
 
     return outputs
 
