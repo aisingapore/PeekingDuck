@@ -24,10 +24,10 @@ class ConcreteNode(AbstractNode):
     def __init__(self, config={}, **kwargs):
         super().__init__(config=config, node_path="input.visual", **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {"data1": 1, "data2": 42}
 
-    def _get_config_types(self) -> Dict[str, Any]:
+    def _get_config_types(self):
         """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "buffering": bool,
@@ -54,7 +54,7 @@ class ObjDetNodeEfficientDet(AbstractNode):
         node_name = "model.efficientdet"
         super().__init__(config=config, node_path=node_name, **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {}
 
 
@@ -63,7 +63,7 @@ class ObjDetNodeYolo(AbstractNode):
         node_name = "model.yolo"
         super().__init__(config=config, node_path=node_name, **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {}
 
 

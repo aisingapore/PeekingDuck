@@ -78,19 +78,8 @@ class AbstractNode(metaclass=ABCMeta):
             self.config["detect"] = updated_ids
 
     @classmethod
-    def __subclasshook__(cls: Any, subclass: Any) -> bool:
+    def __subclasshook__(cls, subclass: Any) -> bool:
         return hasattr(subclass, "run") and callable(subclass.run)
-
-    @abstractmethod
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """abstract method needed for running node"""
-        raise NotImplementedError("This method needs to be implemented")
-
-    # pylint: disable=R0201, W0107
-    def release_resources(self) -> None:
-        """To gracefully release any acquired system resources, e.g. webcam
-        NOTE: To be overridden by subclass if required"""
-        pass
 
     @property
     def inputs(self) -> List[str]:
@@ -106,6 +95,10 @@ class AbstractNode(metaclass=ABCMeta):
     def name(self) -> str:
         """Node name."""
         return self._name
+
+    @abstractmethod
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Abstract method needed for running node."""
 
     def load_node_config(
         self, config: Dict[str, Any], kwargs_config: Dict[str, Any]
@@ -136,6 +129,11 @@ class AbstractNode(metaclass=ABCMeta):
         # sets class attributes
         for key in self.config:
             setattr(self, key, self.config[key])
+
+    def release_resources(self) -> None:
+        """To gracefully release any acquired system resources, e.g. webcam
+        NOTE: To be overridden by subclass if required.
+        """
 
     def _check_type(
         self, config: Dict[str, Any], config_types: Dict[str, Any], parent: str = ""
@@ -173,6 +171,6 @@ class AbstractNode(metaclass=ABCMeta):
                     )
         return dict_orig
 
-    def _get_config_types(self) -> Dict[str, Any]:
+    def _get_config_types(self) -> Dict[str, Any]:  # pylint: disable=no-self-use
         """Returns dictionary mapping the node's config keys to respective types."""
         return {}
