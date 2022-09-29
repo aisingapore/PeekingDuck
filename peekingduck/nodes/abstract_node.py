@@ -18,9 +18,9 @@ Abstract Node class for all nodes.
 
 import collections
 import logging
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 from typeguard import check_type
 
@@ -28,7 +28,7 @@ from peekingduck.config_loader import ConfigLoader
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
-class AbstractNode(metaclass=ABCMeta):
+class AbstractNode(ABC):
     """Abstract Node class for inheritance by nodes.
 
     Defines default attributes and methods of a node.
@@ -37,22 +37,18 @@ class AbstractNode(metaclass=ABCMeta):
         config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
         node_path (:obj:`str`): Period-separated (``.``) relative path to the
             node from the ``peekingduck`` directory. **Default: ""**.
-        pkd_base_dir (:obj:`pathlib.Path` | :obj:`None`): Path to
-            ``peekingduck`` directory.
+        pkd_base_dir (:obj:`pathlib.Path`): Path to ``peekingduck`` directory.
     """
 
     def __init__(
         self,
         config: Dict[str, Any] = None,
         node_path: str = "",
-        pkd_base_dir: Optional[Path] = None,
+        pkd_base_dir: Path = Path(__file__).resolve().parents[1],
         **kwargs: Any,
     ) -> None:
         self._name = node_path
         self.logger = logging.getLogger(self._name)
-
-        if not pkd_base_dir:
-            pkd_base_dir = Path(__file__).resolve().parents[1]
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
