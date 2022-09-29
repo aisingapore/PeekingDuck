@@ -89,17 +89,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
     def _load_node_list(self, pipeline_path: Path) -> "NodeList":
         """Loads a list of nodes from pipeline_path.yml"""
 
-        # dotw 2022-03-17: Temporary helper methods
-        def input_node_deprecation_warning(
-            name: str, config: Union[str, Dict[str, Any]]
-        ) -> None:
-            deprecate(
-                f"`{name}` deprecated and will be removed in the future. "
-                "Please use `input.visual` instead.",
-                4,
-            )
-            self.logger.warning(f"convert `{name}` to `input.visual`: {config}")
-
         with open(pipeline_path) as node_yml:
             data = yaml.safe_load(node_yml)
         if not isinstance(data, dict) or "nodes" not in data:
@@ -112,9 +101,42 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
         if nodes is None:
             raise ValueError(f"{pipeline_path} does not contain any nodes!")
 
-        # dotw 2022-03-16: Temporary code to convert existing `input.live` and
-        #                  `input.recorded` into new `input.visual`
-        #                  To be removed in subsequent versions
+        upgraded_nodes = self._handle_input_node_deprecation(nodes)
+
+        self.logger.info("Successfully loaded pipeline file.")
+        return NodeList(upgraded_nodes)
+
+    def _get_custom_name_from_node_list(self) -> Any:
+        custom_name = None
+
+        for node_str, _ in self.node_list:
+            node_type = node_str.split(".")[0]
+
+            if node_type not in PEEKINGDUCK_NODE_TYPES:
+                custom_name = node_type
+                break
+
+        return custom_name
+
+    def _handle_input_node_deprecation(
+        self, nodes: List[Union[str, Dict[str, Any]]]
+    ) -> List[Union[str, Dict[str, Any]]]:
+        """dotw 2022-03-16: Temporary code to convert existing `input.live` and
+        `input.recorded` into new `input.visual`. To be removed in subsequent
+        versions.
+        """
+
+        # dotw 2022-03-17: Temporary helper methods
+        def input_node_deprecation_warning(
+            name: str, config: Union[str, Dict[str, Any]]
+        ) -> None:
+            deprecate(
+                f"`{name}` deprecated and will be removed in the future. "
+                "Please use `input.visual` instead.",
+                4,
+            )
+            self.logger.warning(f"convert `{name}` to `input.visual`: {config}")
+
         upgraded_nodes = []
         for node in nodes:
             if isinstance(node, str):
@@ -139,21 +161,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                     node["input.visual"] = node_config
                     input_node_deprecation_warning("input.recorded", node_config)
             upgraded_nodes.append(node)
-
-        self.logger.info("Successfully loaded pipeline file.")
-        return NodeList(upgraded_nodes)
-
-    def _get_custom_name_from_node_list(self) -> Any:
-        custom_name = None
-
-        for node_str, _ in self.node_list:
-            node_type = node_str.split(".")[0]
-
-            if node_type not in PEEKINGDUCK_NODE_TYPES:
-                custom_name = node_type
-                break
-
-        return custom_name
+        return upgraded_nodes
 
     def _instantiate_nodes(self) -> List[AbstractNode]:
         """Given a list of imported nodes, instantiate nodes"""
@@ -254,10 +262,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
         return dict_orig
 
     def get_pipeline(self) -> Pipeline:
-        """Returns a compiled
-        :py:class:`Pipeline <peekingduck.pipeline.Pipeline>` for
-        PeekingDuck :py:class:`Runner <peekingduck.runner.Runner>` to execute.
-        """
+        """Returns a compiled `Pipeline` for PeekingDuck `Runner` to execute."""
         instantiated_nodes = self._instantiate_nodes()
 
         try:
