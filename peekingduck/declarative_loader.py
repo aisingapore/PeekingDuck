@@ -86,25 +86,44 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
 
             self.custom_nodes_dir = custom_nodes_dir
 
-    def _load_node_list(self, pipeline_path: Path) -> "NodeList":
-        """Loads a list of nodes from pipeline_path.yml"""
+    def get_pipeline(self) -> Pipeline:
+        """Returns a compiled `Pipeline` for PeekingDuck `Runner` to execute."""
+        instantiated_nodes = self._instantiate_nodes()
 
-        with open(pipeline_path) as node_yml:
-            data = yaml.safe_load(node_yml)
-        if not isinstance(data, dict) or "nodes" not in data:
-            raise ValueError(
-                f"{pipeline_path} has an invalid structure. "
-                "Missing top-level 'nodes' key."
-            )
+        try:
+            return Pipeline(instantiated_nodes)
+        except ValueError as error:
+            self.logger.error(str(error))
+            sys.exit(1)
 
-        nodes = data["nodes"]
-        if nodes is None:
-            raise ValueError(f"{pipeline_path} does not contain any nodes!")
+    def _edit_config(
+        self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
+    ) -> Dict[str, Any]:
+        """Update value of a nested dictionary of varying depth using recursion"""
+        for key, value in dict_update.items():
+            if isinstance(value, collections.abc.Mapping):
+                dict_orig[key] = self._edit_config(
+                    dict_orig.get(key, {}), value, node_name  # type: ignore
+                )
+            else:
+                # Replace "detect_ids" with "detect" in code below
+                if key not in dict_orig and key != "detect_ids":
+                    self.logger.warning(
+                        f"Config for node {node_name} does not have the key: {key}"
+                    )
+                else:
+                    if key == "detect":
+                        value = self._change_class_name_to_id(node_name, value)
+                    elif key == "detect_ids":
+                        key, value = self._handle_detect_ids_deprecation(
+                            node_name, value
+                        )
 
-        upgraded_nodes = self._handle_input_node_deprecation(nodes)
-
-        self.logger.info("Successfully loaded pipeline file.")
-        return NodeList(upgraded_nodes)
+                    dict_orig[key] = value
+                    self.logger.info(
+                        f"Config for node {node_name} is updated to: '{key}': {value}"
+                    )
+        return dict_orig
 
     def _get_custom_name_from_node_list(self) -> Any:
         custom_name = None
@@ -117,6 +136,19 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                 break
 
         return custom_name
+
+    def _handle_detect_ids_deprecation(
+        self, node_name: str, value: List[Any]
+    ) -> Tuple[str, List[int]]:
+        """Supports `detect: ['person']` instead of `detect_ids: ['person']`."""
+        deprecate(
+            "`detect_ids` is deprecated and will be removed in future. "
+            "Please use `detect` instead.",
+            4,
+        )
+        value = self._change_class_name_to_id(node_name, value)
+        key = "detect"
+        return key, value
 
     def _handle_input_node_deprecation(
         self, nodes: List[Union[str, Dict[str, Any]]]
@@ -163,6 +195,30 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
             upgraded_nodes.append(node)
         return upgraded_nodes
 
+    def _init_node(
+        self,
+        path_to_node: str,
+        node_name: str,
+        config_loader: ConfigLoader,
+        config_updates_yml: Optional[Dict[str, Any]],
+    ) -> AbstractNode:
+        """Imports node to filepath and initializes node with config."""
+        node = importlib.import_module(path_to_node + node_name)
+        config = config_loader.get(node_name)
+
+        # First, override default configs with values from pipeline_config.yml
+        if config_updates_yml is not None:
+            config = self._edit_config(config, config_updates_yml, node_name)
+
+        # Second, override configs again with values from cli
+        if self.config_updates_cli is not None:
+            if node_name in self.config_updates_cli.keys():
+                config = self._edit_config(
+                    config, self.config_updates_cli[node_name], node_name
+                )
+
+        return node.Node(config)
+
     def _instantiate_nodes(self) -> List[AbstractNode]:
         """Given a list of imported nodes, instantiate nodes"""
         instantiated_nodes = []
@@ -194,82 +250,33 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
 
         return instantiated_nodes
 
-    def _init_node(
-        self,
-        path_to_node: str,
-        node_name: str,
-        config_loader: ConfigLoader,
-        config_updates_yml: Optional[Dict[str, Any]],
-    ) -> AbstractNode:
-        """Imports node to filepath and initializes node with config."""
-        node = importlib.import_module(path_to_node + node_name)
-        config = config_loader.get(node_name)
+    def _load_node_list(self, pipeline_path: Path) -> "NodeList":
+        """Loads a list of nodes from pipeline_path.yml"""
+        with open(pipeline_path) as node_yml:
+            data = yaml.safe_load(node_yml)
+        if not isinstance(data, dict) or "nodes" not in data:
+            raise ValueError(
+                f"{pipeline_path} has an invalid structure. "
+                "Missing top-level 'nodes' key."
+            )
 
-        # First, override default configs with values from pipeline_config.yml
-        if config_updates_yml is not None:
-            config = self._edit_config(config, config_updates_yml, node_name)
+        nodes = data["nodes"]
+        if nodes is None:
+            raise ValueError(f"{pipeline_path} does not contain any nodes!")
 
-        # Second, override configs again with values from cli
-        if self.config_updates_cli is not None:
-            if node_name in self.config_updates_cli.keys():
-                config = self._edit_config(
-                    config, self.config_updates_cli[node_name], node_name
-                )
+        upgraded_nodes = self._handle_input_node_deprecation(nodes)
 
-        return node.Node(config)
+        self.logger.info("Successfully loaded pipeline file.")
+        return NodeList(upgraded_nodes)
 
-    def _edit_config(
-        self, dict_orig: Dict[str, Any], dict_update: Dict[str, Any], node_name: str
-    ) -> Dict[str, Any]:
-        """Update value of a nested dictionary of varying depth using recursion"""
-        for key, value in dict_update.items():
-            if isinstance(value, collections.abc.Mapping):
-                dict_orig[key] = self._edit_config(
-                    dict_orig.get(key, {}), value, node_name  # type: ignore
-                )
-            else:
-                # Replace "detect_ids" with "detect" in code below
-                if key not in dict_orig and key != "detect_ids":
-                    self.logger.warning(
-                        f"Config for node {node_name} does not have the key: {key}"
-                    )
-                else:
-                    # Support "detect: ['person']" instead of "detect_ids: ['person']"
-                    if key in ["detect", "detect_ids"]:
-                        # Deprecation notice for "detect_ids"
-                        if key == "detect_ids":
-                            deprecate(
-                                "`detect_ids` is deprecated and will be removed in future. "
-                                "Please use `detect` instead.",
-                                4,
-                            )
-
-                        # Only convert class names to id if model is not yolo_face,
-                        # since yolo_face has no class names
-                        if node_name not in {
-                            "model.yolo_face",
-                            "model.huggingface_hub",
-                        }:
-                            key, value = obj_det_change_class_name_to_id(
-                                node_name, key, value
-                            )
-                        key = "detect"  # replace "detect_ids" with new "detect"
-
-                    dict_orig[key] = value
-                    self.logger.info(
-                        f"Config for node {node_name} is updated to: '{key}': {value}"
-                    )
-        return dict_orig
-
-    def get_pipeline(self) -> Pipeline:
-        """Returns a compiled `Pipeline` for PeekingDuck `Runner` to execute."""
-        instantiated_nodes = self._instantiate_nodes()
-
-        try:
-            return Pipeline(instantiated_nodes)
-        except ValueError as error:
-            self.logger.error(str(error))
-            sys.exit(1)
+    @staticmethod
+    def _change_class_name_to_id(node_name: str, value: List[Any]) -> List[int]:
+        """Converts class names to detect IDs, skips yolo_face which has no
+        class names and huggingface_hub which does not conform to master_map.yml.
+        """
+        if node_name not in {"model.yolo_face", "model.huggingface_hub"}:
+            value = obj_det_change_class_name_to_id(node_name, value)
+        return value
 
 
 class NodeList:

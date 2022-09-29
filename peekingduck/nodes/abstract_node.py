@@ -123,6 +123,15 @@ class AbstractNode(ABC):
         NOTE: To be overridden by subclass if required.
         """
 
+    def _change_class_name_to_id(self) -> None:
+        """Convert class names to class IDs for object detection nodes, if any"""
+        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
+            key = "detect" if hasattr(self, "detect") else "detect_ids"
+            current_ids = self.config[key]
+            updated_ids = obj_det_change_class_name_to_id(self.node_name, current_ids)
+            # replace "detect_ids" with new "detect"
+            self.config["detect"] = updated_ids
+
     def _check_type(
         self, config: Dict[str, Any], config_types: Dict[str, Any], parent: str = ""
     ) -> None:
@@ -162,14 +171,3 @@ class AbstractNode(ABC):
     def _get_config_types(self) -> Dict[str, Any]:  # pylint: disable=no-self-use
         """Returns dictionary mapping the node's config keys to respective types."""
         return {}
-
-    def _change_class_name_to_id(self) -> None:
-        """Convert class names to class IDs for object detection nodes, if any"""
-        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
-            key = "detect" if hasattr(self, "detect") else "detect_ids"
-            current_ids = self.config[key]
-            _, updated_ids = obj_det_change_class_name_to_id(
-                self.node_name, key, current_ids
-            )
-            # replace "detect_ids" with new "detect"
-            self.config["detect"] = updated_ids
