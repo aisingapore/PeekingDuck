@@ -63,9 +63,10 @@ class AbstractNode(ABC):
         # update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
-        try:
+
+        if hasattr(self, "callbacks"):
             self.callback_list = CallbackList.from_dict(self.callbacks)
-        except AttributeError:
+        else:
             self.callback_list = CallbackList()
 
         self._change_class_name_to_id()

@@ -17,12 +17,18 @@ Container for callbacks which are called at certain points in the
 pipeline.
 """
 
+import functools
 import importlib
+import logging
 from typing import Any, Callable, Dict, List
 
 
 class CallbackList:
     """Container for callback functions."""
+
+    BASE_MODULE = "callbacks"
+    EVENT_TYPES = ["run_begin", "run_end"]
+    logger = logging.getLogger(__name__)
 
     def __init__(self) -> None:
         self.callbacks: Dict[str, List[Callable]] = {
@@ -76,20 +82,48 @@ class CallbackList:
             callback_dict (Dict[str, List[str]]): A dictionary defined in the
                 pipeline config file. Maps `event_type` to a list of callback
                 definitions. Each callback defintion should contain:
-                    <module name>[.<submodule name>]*.<callback function name>
+                    <module>[.<submodule>]*[::<callback class>]::<callback function>
                 The callback modules are expected to be found in the
                 "callbacks" directory in the same location as the pipeline
                 config file.
         """
         callback_list = cls()
-        base_module = "callbacks"
         for event_type, callback_names in callback_dict.items():
             for callback_name in callback_names:
                 module_part, *callback_parts = callback_name.split("::")
-                module = importlib.import_module(f"{base_module}.{module_part}")
-                callback = lambda *args: None
-                for part in callback_parts:
-                    callback = getattr(module, part)
-                callback_list.append(event_type, callback)
+                try:
+                    module = importlib.import_module(f"{cls.BASE_MODULE}.{module_part}")
+                    callback = chain_getattr(module, callback_parts)
+                    callback_list.append(event_type, callback)
+                except KeyError:
+                    cls.logger.warning(
+                        f"Skipping `{{'{event_type}': {callback_names}}}` as "
+                        f"`{event_type}` event is not one of {cls.EVENT_TYPES}."
+                    )
+                except ModuleNotFoundError:
+                    cls.logger.warning(
+                        f"Skipping `{callback_name}` as `{module_part}` is an invalid module."
+                    )
+                except AttributeError:
+                    cls.logger.warning(
+                        f"Skipping `{callback_name}` as `{'::'.join(callback_parts)}` is not found."
+                    )
 
         return callback_list
+
+
+def chain_getattr(obj: object, names: List[str], *args: Any) -> Any:
+    """Chains getattr according to number of elements in names.
+
+    Args:
+        obj (object): The object to successively get attributes from.
+        names (List[str]): The attribute names.
+
+    Returns:
+        (Any): The final desired attribute.
+    """
+
+    def _getattr(obj: object, name: str) -> Any:
+        return getattr(obj, name, *args)
+
+    return functools.reduce(_getattr, names, obj)
