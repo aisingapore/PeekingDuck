@@ -1,6 +1,7 @@
 bandit == 1.7.0
 black == 21.9b0
 coverage == 5.5
+importlib-metadata < 5; python_version < "3.8"  # fix for https://github.com/PyCQA/bandit/issues/951
 mypy == 0.910
 pylint == 2.7.4
 pytest == 6.2.3

@@ -238,6 +238,8 @@ class VideoNoThread(VideoReader):
                 f"read_frame: ret={ret}, #frames read={self._frame_counter}"
             )
         else:
+            if self.mirror:
+                frame = mirror(frame)
             self._frame_counter += 1
         return ret, frame
 
