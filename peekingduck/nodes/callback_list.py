@@ -18,8 +18,11 @@ pipeline.
 """
 
 import functools
-import importlib
+import importlib.util
 import logging
+import sys
+from pathlib import Path
+from types import ModuleType
 from typing import Any, Callable, Dict, List
 
 
@@ -87,12 +90,13 @@ class CallbackList:
                 "callbacks" directory in the same location as the pipeline
                 config file.
         """
+        callback_dir = Path.cwd() / cls.BASE_MODULE
         callback_list = cls()
         for event_type, callback_names in callback_dict.items():
             for callback_name in callback_names:
                 module_part, *callback_parts = callback_name.split("::")
                 try:
-                    module = importlib.import_module(f"{cls.BASE_MODULE}.{module_part}")
+                    module = import_module_from_file_location(module_part, callback_dir)
                     callback = chain_getattr(module, callback_parts)
                     callback_list.append(event_type, callback)
                 except KeyError:
@@ -100,7 +104,7 @@ class CallbackList:
                         f"Skipping `{{'{event_type}': {callback_names}}}` as "
                         f"`{event_type}` event is not one of {cls.EVENT_TYPES}."
                     )
-                except ModuleNotFoundError:
+                except FileNotFoundError:
                     cls.logger.warning(
                         f"Skipping `{callback_name}` as `{module_part}` is an invalid module."
                     )
@@ -108,7 +112,6 @@ class CallbackList:
                     cls.logger.warning(
                         f"Skipping `{callback_name}` as `{'::'.join(callback_parts)}` is not found."
                     )
-
         return callback_list
 
 
@@ -127,3 +130,31 @@ def chain_getattr(obj: object, names: List[str], *args: Any) -> Any:
         return getattr(obj, name, *args)
 
     return functools.reduce(_getattr, names, obj)
+
+
+def import_module_from_file_location(module_name: str, location: Path) -> ModuleType:
+    """Imports module from the specified location without haivng to modify
+    `sys.path`.
+
+    Args:
+        module_name (str): Name of module, should be the same as the name of
+            the Python script file.
+        location (Path): The directory where the Python script file containing
+            the module can be found.
+
+    Returns:
+        (ModuleType): The imported module.
+
+    Raises:
+        AssertionError: If the default file loader from importlib.util cannot
+        be used.
+    """
+    spec = importlib.util.spec_from_file_location(
+        module_name, location / f"{module_name}.py"
+    )
+    # use default loader
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+    return module
