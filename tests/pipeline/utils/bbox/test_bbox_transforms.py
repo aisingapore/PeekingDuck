@@ -12,16 +12,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Union
+from pathlib import Path
 
-import numpy as np
 import pytest
-import torch
 
 # pylint: disable=unused-import
 from peekingduck.pipeline.utils.bbox.transforms import (
     albu2yolo,
-    clone,
     tlwh2xyah,
     tlwh2xyxy,
     tlwh2xyxyn,
@@ -35,64 +32,10 @@ from peekingduck.pipeline.utils.bbox.transforms import (
     yolo2albu,
     yolo2voc,
 )
+from tests.conftest import get_groundtruth
+from tests.pipeline.utils.bbox.utils import expand_dim, list2numpy, list2torch
 
-HEIGHT, WIDTH = 480, 640
-
-xyah = [259, 403.5, 2.7521367, 117]
-voc = [98, 345, 420, 462]
-albu = [0.153125, 0.71875, 0.65625, 0.9625]
-coco = [98, 345, 322, 117]
-yolo = [0.4046875, 0.840625, 0.503125, 0.24375]
-unnormalized_yolo = [259.0, 403.5, 322.0, 117.0]
-
-
-def list2numpy(list_: list) -> np.ndarray:
-    return np.asarray(list_)
-
-
-def list2torch(list_: list) -> torch.Tensor:
-    return torch.tensor(list_)
-
-
-def expand_dim(
-    bboxes: Union[np.ndarray, torch.Tensor],
-    num_dims: int,
-) -> Union[np.ndarray, torch.Tensor]:
-    """Expand the dimension of bboxes (first in) by num_dims.
-
-    Note:
-        np.expand_dims will not work for tuple dim numpy < 1.18.0 which
-        is not the version in our cicd.
-
-    Args:
-        bboxes (Union[np.ndarray, torch.Tensor]): The input bboxes.
-        num_dims (int): The number of dimensions to expand.
-
-    Returns:
-        (Union[np.ndarray, torch.Tensor]): The bboxes with expanded dimensions.
-    """
-    bboxes = clone(bboxes)
-    return bboxes[(None,) * num_dims]
-
-
-@pytest.fixture(scope="module")
-def gt_bboxes():
-    return {
-        "tlwh2xyah": [coco, xyah],
-        "yolo2albu": [yolo, albu],
-        "albu2yolo": [albu, yolo],
-        "voc2yolo": [voc, yolo],
-        "yolo2voc": [yolo, voc],
-        "tlwh2xyxy": [coco, voc],
-        "xyxy2tlwh": [voc, coco],
-        "xyxy2xywh": [voc, unnormalized_yolo],
-        "xywh2xyxy": [unnormalized_yolo, voc],
-        "xyxy2xyxyn": [voc, albu],
-        "xyxyn2xyxy": [albu, voc],
-        "xyxyn2tlwh": [albu, coco],
-        "tlwh2xyxyn": [coco, albu],
-    }
-
+GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 # the variables below corresponds to parametrize's values
 transforms_require_height_width = [
@@ -116,6 +59,33 @@ convert_types = [list2numpy, list2torch]
 num_dims = [0, 1, 2]
 
 
+@pytest.fixture(scope="module")
+def gt_bboxes():
+    xyah, voc, albu, coco, yolo, unnormalized_yolo = (
+        GT_RESULTS["xyah"],
+        GT_RESULTS["voc"],
+        GT_RESULTS["albu"],
+        GT_RESULTS["coco"],
+        GT_RESULTS["yolo"],
+        GT_RESULTS["unnormalized_yolo"],
+    )
+    return {
+        "tlwh2xyah": [coco, xyah],
+        "yolo2albu": [yolo, albu],
+        "albu2yolo": [albu, yolo],
+        "voc2yolo": [voc, yolo],
+        "yolo2voc": [yolo, voc],
+        "tlwh2xyxy": [coco, voc],
+        "xyxy2tlwh": [voc, coco],
+        "xyxy2xywh": [voc, unnormalized_yolo],
+        "xywh2xyxy": [unnormalized_yolo, voc],
+        "xyxy2xyxyn": [voc, albu],
+        "xyxyn2xyxy": [albu, voc],
+        "xyxyn2tlwh": [albu, coco],
+        "tlwh2xyxyn": [coco, albu],
+    }
+
+
 @pytest.mark.parametrize("convert_type", convert_types)
 @pytest.mark.parametrize("conversion_name", transforms_require_height_width)
 def test_correct_return_type_require_height_width(
@@ -126,7 +96,9 @@ def test_correct_return_type_require_height_width(
     from_bbox, _ = gt_bboxes[conversion_name]
     from_bbox = convert_type(from_bbox)
 
-    to_bbox = conversion_fn(from_bbox, height=HEIGHT, width=WIDTH)
+    to_bbox = conversion_fn(
+        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+    )
 
     assert isinstance(to_bbox, type(from_bbox))
 
@@ -158,7 +130,9 @@ def test_consistent_in_out_dims_require_height_width(
     from_bbox = convert_type(from_bbox)
     from_bbox = expand_dim(from_bbox, num_dims)
 
-    to_bbox = conversion_fn(from_bbox, height=HEIGHT, width=WIDTH)
+    to_bbox = conversion_fn(
+        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+    )
 
     assert from_bbox.shape == to_bbox.shape
 
@@ -192,7 +166,9 @@ def test_correct_transformation_require_height_width(
     from_bbox = convert_type(from_bbox)
     from_bbox = expand_dim(from_bbox, num_dims)
 
-    to_bbox = conversion_fn(from_bbox, height=HEIGHT, width=WIDTH)
+    to_bbox = conversion_fn(
+        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+    )
 
     expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
 

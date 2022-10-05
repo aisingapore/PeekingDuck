@@ -19,11 +19,7 @@ Modifications:
 1. Allow bbox inputs to be either numpy array or torch tensor. Created a type BboxType.
 2. Added clone() function to avoid inplace mutation.
 3. Added cast_int_to_float() function to convert int to float to avoid output become all 0.
-4. Added yolo2albu() function to convert from normalized [x, y, w, h] to [x1, y1, x2, y2]
-normalized format.
-5. Added voc2yolo() function to convert from [x1, y1, x2, y2] format to normalized [x, y, w, h].
-6. Consider changing xywh2xyxy to xcycwh2xyxy or as here the xywh's xy is the center of the bbox.
-Consider renaming the names to be yolo2voc etc.
+4. Added new transforms voc2yolo, yolo2voc, albu2yolo, yolo2albu, xyxyn2xyxy, xyxy2xywh
 """
 
 
@@ -42,7 +38,7 @@ def cast_int_to_float(inputs: BboxType) -> BboxType:
         inputs (BboxType): Input bounding box.
 
     Returns:
-        (BboxType): Bounding box with float type.
+        (BboxType): Cast input bounding box to float type.
     """
     if isinstance(inputs, torch.Tensor):
         return inputs.float()
@@ -59,7 +55,7 @@ def clone(inputs: BboxType) -> BboxType:
         inputs (BboxType): Input bounding box.
 
     Returns:
-        (BboxType): Cloned bounding box.
+        (BboxType): Clone of input bounding box.
     """
     if isinstance(inputs, torch.Tensor):
         return inputs.clone()
@@ -103,6 +99,17 @@ def tlwh2xyah(inputs: BboxType) -> BboxType:
 def yolo2albu(inputs: BboxType) -> BboxType:
     """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] normalized format.
 
+    (x, y): the normalized coordinates of the center of the bounding box;
+    (w, h): the normalized width and height of the bounding box.
+    (x1, y1): the normalized coordinates of the top left corner of the bounding box;
+    (x2, y2): the normalized coordinates of the bottom right corner of the bounding box.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = x - w / 2
+    y1 = y - h / 2
+    x2 = x1 + w
+    y2 = y1 + h
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(center x, center y, width, height)` normalized by image width and
@@ -127,6 +134,17 @@ def yolo2albu(inputs: BboxType) -> BboxType:
 def albu2yolo(inputs: BboxType) -> BboxType:
     """Converts from [x1, y1, x2, y2] normalized format to normalized [x, y, w, h].
 
+    (x1, y1): the normalized coordinates of the top left corner of the bounding box;
+    (x2, y2): the normalized coordinates of the bottom right corner of the bounding box.
+    (x, y): the normalized coordinates of the center of the bounding box;
+    (w, h): the normalized width and height of the bounding box.
+
+    [x, y, w, h] is calculated as:
+    w = x2 - x1
+    h = y2 - y1
+    x = x1 + w / 2
+    y = y1 + h / 2
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(top left x, top left y, bottom right x, bottom right y)` normalized by
@@ -150,10 +168,10 @@ def albu2yolo(inputs: BboxType) -> BboxType:
 def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from [x1, y1, x2, y2] to normalized [x, y, w, h] format.
 
-    (x, y): the coordinates of the center of the bounding box;
-    (w, h): the width and height of the bounding box.
     (x1, y1): the coordinates of the top left corner of the bounding box;
     (x2, y2): the coordinates of the bottom right corner of the bounding box.
+    (x, y): the coordinates of the center of the bounding box;
+    (w, h): the width and height of the bounding box.
 
     [x, y, w, h] is calculated as:
     x = (x1 + x2) / 2 / width
@@ -224,10 +242,13 @@ def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-# voc2unnormalized_yolo
 def xyxy2xywh(inputs: BboxType) -> BboxType:
     """Converts from [x1, y1, x2, y2] to [x, y, w, h] format.
 
+    (x, y) is the object center, w is the width, and h is the height. (x1, y1)
+    is the top left corner and (x2, y2) is the bottom right corner.
+
+    [x, y, w, h] is calculated as:
     w = x2 - x1
     h = y2 - y1
     x = x1 + w / 2
@@ -252,7 +273,6 @@ def xyxy2xywh(inputs: BboxType) -> BboxType:
     return outputs
 
 
-# unnormalized_yolo2voc
 def xywh2xyxy(inputs: BboxType) -> BboxType:
     """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
 
@@ -289,7 +309,6 @@ def xywh2xyxy(inputs: BboxType) -> BboxType:
     return outputs
 
 
-# coco2voc
 def tlwh2xyxy(inputs: BboxType) -> BboxType:
     """Converts from [t, l, w, h] to [x1, y1, x2, y2] format.
 
@@ -323,7 +342,6 @@ def tlwh2xyxy(inputs: BboxType) -> BboxType:
     return outputs
 
 
-# voc2coco
 def xyxy2tlwh(inputs: BboxType) -> BboxType:
     """Converts from [x1, y1, x2, y2] to [t, l, w, h].
 
@@ -358,10 +376,8 @@ def xyxy2tlwh(inputs: BboxType) -> BboxType:
     return outputs
 
 
-# voc2albu
 def xyxy2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from [x1, y1, x2, y2] to normalized [x1, y1, x2, y2].
-    Normalized coordinates are w.r.t. original image size.
 
     (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
 
@@ -393,10 +409,8 @@ def xyxy2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-# albu2voc
 def xyxyn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from normalized [x1, y1, x2, y2] to [x1, y1, x2, y2].
-    Normalized coordinates are w.r.t. original image size.
 
     (x1, y1) is the top left corner and (x2, y2) is the bottom right corner.
 
@@ -429,7 +443,6 @@ def xyxyn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-# albu2coco
 def xyxyn2tlwh(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from normalized [x1, y1, x2, y2] to [t, l, w, h] format.
     Normalized coordinates are w.r.t. original image size.
@@ -471,7 +484,6 @@ def xyxyn2tlwh(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-# coco2albu
 def tlwh2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from [t, l, w, h] to normalized [x1, y1, x2, y2] format.
     Normalized coordinates are w.r.t. original image size.
