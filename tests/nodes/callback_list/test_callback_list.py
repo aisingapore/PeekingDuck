@@ -14,6 +14,7 @@
 
 import textwrap
 from pathlib import Path
+from unittest import TestCase
 
 import pytest
 
@@ -21,6 +22,7 @@ import peekingduck.nodes.dabble.fps as pkd_fps
 import peekingduck.nodes.input.visual as pkd_visual
 from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.runner import Runner
+from tests.conftest import assert_msg_in_logs
 
 SUPPORTED_EVENTS = ["run_begin", "run_end"]
 
@@ -71,7 +73,7 @@ class CounterCallback:
         raise ValueError("Halt execution")
 
 
-@pytest.mark.usefixtures("tmp_dir")
+@pytest.mark.usefixtures("tmp_dir", "callback_file")
 class TestCallbackList:
     def test_init_creates_empty_list_for_supported_events(self):
         callback_list = CallbackList()
@@ -108,9 +110,7 @@ class TestCallbackList:
             ("CallbackClass::callback_static_method", "Static method"),
         ],
     )
-    def test_construct_from_dict(
-        self, callback_file, event_type, callback_type, expected
-    ):
+    def test_construct_from_dict(self, event_type, callback_type, expected):
         """Checks that creating CallbackList from dictionary works. Checks
         various ways to specify the callback methods.
         """
@@ -120,6 +120,58 @@ class TestCallbackList:
         with pytest.raises(ValueError) as excinfo:
             on_event({})
         assert expected in str(excinfo.value)
+
+    def test_skip_invalid_event_type(self):
+        """Checks that invalid event key is skipped. Valid callbacks are still
+        created.
+        """
+        callback_dict = {
+            "run_begin": ["my_callback::callback_func"],
+            "invalid_event": ["my_callback::callback_func"],
+        }
+        with pytest.raises(ValueError) as excinfo, TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.callback_list"
+        ) as captured:
+            callback_list = CallbackList.from_dict(callback_dict)
+            callback_list.on_run_begin({})
+        assert_msg_in_logs("event is not one of", captured.records)
+        assert "Function" in str(excinfo.value)
+
+    def test_skip_invalid_module(self):
+        callback_dict = {
+            "run_begin": [
+                "my_callback::callback_func",
+                "invalid_module::callback_func",
+            ]
+        }
+        with pytest.raises(ValueError) as excinfo, TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.callback_list"
+        ) as captured:
+            callback_list = CallbackList.from_dict(callback_dict)
+            callback_list.on_run_begin({})
+        assert_msg_in_logs("is an invalid module", captured.records)
+        assert "Function" in str(excinfo.value)
+
+    @pytest.mark.parametrize(
+        "callback_name",
+        [
+            "invalid_name",
+            "callback_obj::invalid_name",
+            "invalid_obj::callback_method",
+            "CallbackClass::invalid_name",
+        ],
+    )
+    def test_skip_invalid_function_name(self, callback_name):
+        callback_dict = {
+            "run_begin": ["my_callback::callback_func", f"my_callback::{callback_name}"]
+        }
+        with pytest.raises(ValueError) as excinfo, TestCase.assertLogs(
+            "peekingduck.pipeline.nodes.callback_list"
+        ) as captured:
+            callback_list = CallbackList.from_dict(callback_dict)
+            callback_list.on_run_begin({})
+        assert_msg_in_logs("is not found", captured.records)
+        assert "Function" in str(excinfo.value)
 
     @pytest.mark.parametrize("event_type", SUPPORTED_EVENTS)
     def test_run_event_is_triggered_once_per_node_run(
