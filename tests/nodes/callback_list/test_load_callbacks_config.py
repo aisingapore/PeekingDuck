@@ -17,6 +17,7 @@ from pathlib import Path
 
 import pytest
 
+import peekingduck.nodes.input.visual as pkd_visual
 from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.runner import Runner
 
@@ -105,6 +106,19 @@ class TestLoadCallbacksConfig:
             ),
             custom_nodes_parent_subdir="src",
         )
+        with pytest.raises(ValueError) as excinfo:
+            runner.run()
+        assert "Function" in str(excinfo.value)
+
+    def test_declarative_loader_parses_callbacks_config_in_node_constructor(
+        self, create_input_video
+    ):
+        _ = create_input_video("video1.avi", fps=10, size=(600, 800, 3), num_frames=30)
+        visual_node = pkd_visual.Node(
+            source="video1.avi", callbacks={"run_begin": ["my_callback::callback_func"]}
+        )
+        runner = Runner(nodes=[visual_node])
+
         with pytest.raises(ValueError) as excinfo:
             runner.run()
         assert "Function" in str(excinfo.value)

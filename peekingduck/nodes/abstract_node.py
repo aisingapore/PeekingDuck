@@ -161,7 +161,7 @@ class AbstractNode(ABC):
         """
         if dict_update:
             for key, value in dict_update.items():
-                if isinstance(value, collections.abc.Mapping):
+                if isinstance(value, collections.abc.Mapping) and key != "callbacks":
                     dict_orig[key] = self._edit_config(dict_orig.get(key, {}), value)
                 elif key not in dict_orig:
                     self.logger.warning(
