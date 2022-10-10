@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import textwrap
+from pathlib import Path
+
 import pytest
 
-import peekingduck.pipeline.dabble.fps as pkd_fps
-import peekingduck.pipeline.input.visual as pkd_visual
-from peekingduck.pipeline.callback_list import CallbackList
+import peekingduck.nodes.dabble.fps as pkd_fps
+import peekingduck.nodes.input.visual as pkd_visual
+from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.runner import Runner
 
 SUPPORTED_EVENTS = ["run_begin", "run_end"]
@@ -27,12 +30,45 @@ def fixture_empty_callback_list():
     return CallbackList()
 
 
+@pytest.fixture(name="callback_file")
+def fixture_callback_file():
+    callback_dir = Path.cwd() / "callbacks"
+    callback_dir.mkdir()
+    with open(callback_dir / "my_callback.py", "w") as outfile:
+        outfile.write(
+            textwrap.dedent(
+                """
+                def callback_func(data_pool):
+                    raise ValueError("Function")
+
+                class CallbackClass:
+                    def callback_method(self, data_pool):
+                        raise ValueError("Method")
+
+                    @classmethod
+                    def callback_class_method(cls, data_pool):
+                        raise ValueError("Class method")
+
+                    @staticmethod
+                    def callback_static_method(data_pool):
+                        raise ValueError("Static method")
+
+                callback_obj = CallbackClass()
+                """
+            )
+        )
+    yield
+
+
 class CounterCallback:
     def __init__(self):
         self.count = 0
 
     def callback(self, data_pool):
         self.count += 1
+
+    def halt_execution(self, data_pool):
+        raise ValueError("Halt execution")
 
 
 @pytest.mark.usefixtures("tmp_dir")
@@ -60,6 +96,32 @@ class TestCallbackList:
                 assert empty_callback_list.callbacks[event] == []
 
     @pytest.mark.parametrize("event_type", SUPPORTED_EVENTS)
+    @pytest.mark.parametrize(
+        "callback_type,expected",
+        [
+            ("callback_func", "Function"),
+            ("callback_obj::callback_method", "Method"),
+            ("callback_obj::callback_class_method", "Class method"),
+            ("callback_obj::callback_static_method", "Static method"),
+            # Check that using ClassName works for class and static methods
+            ("CallbackClass::callback_class_method", "Class method"),
+            ("CallbackClass::callback_static_method", "Static method"),
+        ],
+    )
+    def test_construct_from_dict(
+        self, callback_file, event_type, callback_type, expected
+    ):
+        """Checks that creating CallbackList from dictionary works. Checks
+        various ways to specify the callback methods.
+        """
+        callback_dict = {event_type: [f"my_callback::{callback_type}"]}
+        callback_list = CallbackList.from_dict(callback_dict)
+        on_event = getattr(callback_list, f"on_{event_type}")
+        with pytest.raises(ValueError) as excinfo:
+            on_event({})
+        assert expected in str(excinfo.value)
+
+    @pytest.mark.parametrize("event_type", SUPPORTED_EVENTS)
     def test_run_event_is_triggered_once_per_node_run(
         self, create_input_video, event_type
     ):
@@ -81,3 +143,21 @@ class TestCallbackList:
         runner.run()
 
         assert cb_obj.count == num_iter * 2
+
+    def test_run_end_is_triggered_after_run_begin(self, create_input_video):
+        """Checks that on_run_begin increments `count` by 1 before one_run_end
+        terminates the run.
+        """
+        num_iter = 5
+        _ = create_input_video("video1.avi", fps=10, size=(600, 800, 3), num_frames=30)
+        cb_obj = CounterCallback()
+        visual_node = pkd_visual.Node(source="video1.avi")
+        fps_node = pkd_fps.Node()
+        visual_node.callback_list.append("run_begin", cb_obj.callback)
+        visual_node.callback_list.append("run_end", cb_obj.halt_execution)
+        runner = Runner(num_iter=num_iter, nodes=[visual_node, fps_node])
+
+        with pytest.raises(ValueError) as excinfo:
+            runner.run()
+        assert "Halt execution" in str(excinfo.value)
+        assert cb_obj.count == 1
