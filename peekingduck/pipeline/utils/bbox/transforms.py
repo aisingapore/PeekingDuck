@@ -12,16 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Utility functions which convert bbox coordinates from one format to
-another.
-
-Modifications:
-1. Allow bbox inputs to be either numpy array or torch tensor. Created a type BboxType.
-2. Added clone() function to avoid inplace mutation.
-3. Added cast_int_to_float() function to convert int to float to avoid output become all 0.
-4. Added new transforms voc2yolo, yolo2voc, albu2yolo, yolo2albu, xyxyn2xyxy, xyxy2xywh
-"""
-
+"""Utility functions which convert bbox coordinates from one format to another."""
 
 from typing import Union
 
@@ -29,17 +20,33 @@ import numpy as np
 import torch
 
 BboxType = Union[np.ndarray, torch.Tensor]
+NUMPY_TORCH_FLOAT_DTYPES = [
+    float,
+    torch.float16,
+    torch.float32,
+    torch.float64,
+    torch.bfloat16,
+]
 
 
-def cast_int_to_float(inputs: BboxType) -> BboxType:
-    """Converts int to float.
+def cast_to_float(inputs: BboxType) -> BboxType:
+    """Casts inputs of BboxType to have a float data type.
+
+    Note:
+        - For numpy float dtype, `float` is used instead of `np.float`
+            due to deprecation warning
+            see https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations.
+        - For torch float dtype, I check the same types as `torch.is_floating_point`.
 
     Args:
         inputs (BboxType): Input bounding box.
 
     Returns:
-        (BboxType): Cast input bounding box to float type.
+        (BboxType): Returns inputs of BboxType with float data type.
     """
+    if inputs.dtype in NUMPY_TORCH_FLOAT_DTYPES:
+        return inputs
+
     if isinstance(inputs, torch.Tensor):
         return inputs.float()
     return inputs.astype(np.float32)
@@ -60,6 +67,20 @@ def clone(inputs: BboxType) -> BboxType:
     if isinstance(inputs, torch.Tensor):
         return inputs.clone()
     return inputs.copy()
+
+
+def empty_like(inputs: BboxType) -> BboxType:
+    """Creates an empty array/tensor with the same shape and type as the input.
+
+    Args:
+        inputs (BboxType): Input bounding box.
+
+    Returns:
+        (BboxType): Returns unitialized array/tensor with the same shape and type as the input.
+    """
+    if isinstance(inputs, torch.Tensor):
+        return torch.empty_like(inputs)
+    return np.empty_like(inputs)
 
 
 def tlwh2xyah(inputs: BboxType) -> BboxType:
@@ -89,15 +110,15 @@ def tlwh2xyah(inputs: BboxType) -> BboxType:
         ratio,height)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., :2] += outputs[..., 2:] / 2
     outputs[..., 2] /= outputs[..., 3]
     return outputs
 
 
-def yolo2albu(inputs: BboxType) -> BboxType:
-    """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] normalized format.
+def xywhn2xyxyn(inputs: BboxType) -> BboxType:
+    """Converts from normalized [x, y, w, h] to normalized [x1, y1, x2, y2] format.
 
     (x, y): the normalized coordinates of the center of the bounding box;
     (w, h): the normalized width and height of the bounding box.
@@ -110,6 +131,11 @@ def yolo2albu(inputs: BboxType) -> BboxType:
     x2 = x1 + w
     y2 = y1 + h
 
+    Example:
+        >>> a = xywhn2xyxyn(inputs=np.array([0.0775, 0.21, 0.145, 0.38]))
+        >>> a
+        array([0.005, 0.02, 0.15, 0.4])
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(center x, center y, width, height)` normalized by image width and
@@ -121,7 +147,7 @@ def yolo2albu(inputs: BboxType) -> BboxType:
             image width and height.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 0] -= outputs[..., 2] / 2
     outputs[..., 1] -= outputs[..., 3] / 2
@@ -131,8 +157,8 @@ def yolo2albu(inputs: BboxType) -> BboxType:
     return outputs
 
 
-def albu2yolo(inputs: BboxType) -> BboxType:
-    """Converts from [x1, y1, x2, y2] normalized format to normalized [x, y, w, h].
+def xyxyn2xywhn(inputs: BboxType) -> BboxType:
+    """Converts from normalized [x1, y1, x2, y2] to normalized [x, y, w, h] format.
 
     (x1, y1): the normalized coordinates of the top left corner of the bounding box;
     (x2, y2): the normalized coordinates of the bottom right corner of the bounding box.
@@ -145,6 +171,11 @@ def albu2yolo(inputs: BboxType) -> BboxType:
     x = x1 + w / 2
     y = y1 + h / 2
 
+    Example:
+        >>> a = xyxyn2xywhn(inputs=np.array([0.005, 0.02, 0.15, 0.4]))
+        >>> a
+        array([0.0775, 0.21, 0.145, 0.38])
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(top left x, top left y, bottom right x, bottom right y)` normalized by
@@ -155,7 +186,7 @@ def albu2yolo(inputs: BboxType) -> BboxType:
             x, center y, width, height)` normalized by image width and height.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 2] -= outputs[..., 0]
     outputs[..., 3] -= outputs[..., 1]
@@ -165,7 +196,7 @@ def albu2yolo(inputs: BboxType) -> BboxType:
     return outputs
 
 
-def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
+def xyxy2xywhn(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from [x1, y1, x2, y2] to normalized [x, y, w, h] format.
 
     (x1, y1): the coordinates of the top left corner of the bounding box;
@@ -179,6 +210,11 @@ def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
     w = (x2 - x1) / width
     h = (y2 - y1) / height
 
+    Example:
+        >>> a = xyxy2xywhn(inputs=np.array([1.0, 2.0, 30.0, 40.0]), height=100, width=200)
+        >>> a
+        array([0.0775, 0.21, 0.145, 0.38])
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(top left x, top left y, bottom right x, bottom right y)`.
@@ -190,7 +226,7 @@ def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
             center y, width, height)` normalized by image width and height.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., [0, 2]] /= width
     outputs[..., [1, 3]] /= height
@@ -204,7 +240,7 @@ def voc2yolo(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
+def xywhn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
     """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] format.
 
     (x, y): the coordinates of the center of the bounding box;
@@ -218,6 +254,11 @@ def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
     x2 = x * width + w * width / 2
     y2 = y * height + h * height / 2
 
+    Example:
+        >>> a = xywhn2xyxy(inputs=np.array([0.0775, 0.21, 0.145, 0.38]), height=100, width=200)
+        >>> a
+        array([1.0, 2.0, 30.0, 40.0])
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(center x, center y, width, height)` normalized by image width and height.
@@ -229,7 +270,7 @@ def yolo2voc(inputs: BboxType, height: float, width: float) -> BboxType:
             left x, top left y, bottom right x, bottom right y)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., [0, 2]] *= width
     outputs[..., [1, 3]] *= height
@@ -254,6 +295,11 @@ def xyxy2xywh(inputs: BboxType) -> BboxType:
     x = x1 + w / 2
     y = y1 + h / 2
 
+    Example:
+        >>> a = xyxy2xywh(inputs=torch.Tensor([[ 85.0, 180.0, 115.0, 220.0]]))
+        >>> a
+        tensor([[100, 200, 30, 40]])
+
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
             `(top left x, top left y, bottom right x, bottom right y)`.
@@ -263,7 +309,7 @@ def xyxy2xywh(inputs: BboxType) -> BboxType:
             center y, width, height)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 2] = inputs[..., 2] - inputs[..., 0]
     outputs[..., 3] = inputs[..., 3] - inputs[..., 1]
@@ -288,7 +334,7 @@ def xywh2xyxy(inputs: BboxType) -> BboxType:
     Example:
         >>> a = xywh2xyxy(inputs=torch.Tensor([[100, 200, 30, 40]]))
         >>> a
-        tensor([[ 85.0, 180.0, 115.0, 220.0]])
+        tensor([[85.0, 180.0, 115.0, 220.0]])
 
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
@@ -298,8 +344,8 @@ def xywh2xyxy(inputs: BboxType) -> BboxType:
         outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
             bottom right x, bottom right y)`.
     """
-    outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 0] = inputs[..., 0] - inputs[..., 2] / 2
     outputs[..., 1] = inputs[..., 1] - inputs[..., 3] / 2
@@ -325,7 +371,7 @@ def tlwh2xyxy(inputs: BboxType) -> BboxType:
     Example:
         >>> a = tlwh2xyxy(inputs=torch.Tensor([[1.0, 2.0, 30.0, 40.0]]))
         >>> a
-        tensor([[ 1.0,  2.0, 31.0, 42.0]])
+        tensor([[1.0, 2.0, 31.0, 42.0]])
 
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
@@ -336,7 +382,7 @@ def tlwh2xyxy(inputs: BboxType) -> BboxType:
             bottom right x, bottom right y)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 2:] += outputs[..., :2]
     return outputs
@@ -369,7 +415,7 @@ def xyxy2tlwh(inputs: BboxType) -> BboxType:
             width, height)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 2:] -= outputs[..., :2]
 
@@ -400,8 +446,8 @@ def xyxy2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
         outputs (BboxType): Bounding boxes with the format `normalized (top left x,
             top left y, bottom right x, bottom right y)`.
     """
-    outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., [0, 2]] = inputs[..., [0, 2]] / width
     outputs[..., [1, 3]] = inputs[..., [1, 3]] / height
@@ -435,7 +481,7 @@ def xyxyn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
             bottom right x, bottom right y)`.
     """
     outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., [0, 2]] = outputs[..., [0, 2]] * width
     outputs[..., [1, 3]] = outputs[..., [1, 3]] * height
@@ -473,8 +519,8 @@ def xyxyn2tlwh(inputs: BboxType, height: float, width: float) -> BboxType:
         outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
             width, height)`.
     """
-    outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 0] = inputs[..., 0] * width
     outputs[..., 1] = inputs[..., 1] * height
@@ -513,8 +559,8 @@ def tlwh2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
         outputs (BboxType): Bounding boxes with the format `normalized (top left x,
             top left y, bottom right x, bottom right y)`.
     """
-    outputs = clone(inputs)
-    outputs = cast_int_to_float(outputs)
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
 
     outputs[..., 0] = inputs[..., 0] / width
     outputs[..., 1] = inputs[..., 1] / height

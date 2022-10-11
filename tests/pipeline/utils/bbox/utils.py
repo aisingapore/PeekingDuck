@@ -1,23 +1,23 @@
 import numpy as np
 import torch
-from typing import Union
-from peekingduck.pipeline.utils.bbox.transforms import clone
+from typing import List, Union
+from peekingduck.pipeline.utils.bbox.transforms import BboxType, clone
 
 
-def list2numpy(list_: list) -> np.ndarray:
+def list2numpy(input_list: Union[List[int], List[float]]) -> np.ndarray:
     """Convert list to numpy array."""
-    return np.asarray(list_)
+    return np.array(input_list)
 
 
-def list2torch(list_: list) -> torch.Tensor:
+def list2torch(input_list: Union[List[int], List[float]]) -> torch.Tensor:
     """Convert list to torch tensor."""
-    return torch.tensor(list_)
+    return torch.tensor(input_list)
 
 
 def expand_dim(
-    bboxes: Union[np.ndarray, torch.Tensor],
+    bboxes: BboxType,
     num_dims: int,
-) -> Union[np.ndarray, torch.Tensor]:
+) -> BboxType:
     """Expand the dimension of bboxes (first in) by num_dims.
 
     Note:
