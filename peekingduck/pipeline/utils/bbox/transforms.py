@@ -20,23 +20,10 @@ import numpy as np
 import torch
 
 BboxType = Union[np.ndarray, torch.Tensor]
-NUMPY_TORCH_FLOAT_DTYPES = [
-    float,
-    torch.float16,
-    torch.float32,
-    torch.float64,
-    torch.bfloat16,
-]
 
 
 def cast_to_float(inputs: BboxType) -> BboxType:
     """Casts inputs of BboxType to have a float data type.
-
-    Note:
-        - For numpy float dtype, `float` is used instead of `np.float`
-            due to deprecation warning
-            see https://numpy.org/devdocs/release/1.20.0-notes.html#deprecations.
-        - For torch float dtype, I check the same types as `torch.is_floating_point`.
 
     Args:
         inputs (BboxType): Input bounding box.
@@ -44,12 +31,15 @@ def cast_to_float(inputs: BboxType) -> BboxType:
     Returns:
         (BboxType): Returns inputs of BboxType with float data type.
     """
-    if inputs.dtype in NUMPY_TORCH_FLOAT_DTYPES:
-        return inputs
-
     if isinstance(inputs, torch.Tensor):
+        if inputs.is_floating_point():
+            return inputs
         return inputs.float()
-    return inputs.astype(np.float32)
+
+    if isinstance(inputs, np.ndarray):
+        if np.issubdtype(inputs.dtype, np.floating):
+            return inputs
+        return inputs.astype(np.float32)
 
 
 def clone(inputs: BboxType) -> BboxType:
