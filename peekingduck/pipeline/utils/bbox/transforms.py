@@ -39,7 +39,7 @@ def cast_to_float(inputs: BboxType) -> BboxType:
     if isinstance(inputs, np.ndarray):
         if np.issubdtype(inputs.dtype, np.floating):
             return inputs
-        return inputs.astype(np.float32)
+    return inputs.astype(np.float32)
 
 
 def clone(inputs: BboxType) -> BboxType:
