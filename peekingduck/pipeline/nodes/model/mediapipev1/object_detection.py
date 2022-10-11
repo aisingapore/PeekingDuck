@@ -19,6 +19,7 @@ from typing import Any, Dict, Tuple
 import mediapipe as mp
 import numpy as np
 
+from peekingduck.pipeline.nodes.model.mediapipev1.api_doc import SUPPORTED_TASKS
 from peekingduck.pipeline.nodes.model.mediapipev1.base import MediaPipeModel
 from peekingduck.pipeline.utils.bbox.transforms import tlwhn2xyxyn
 
@@ -26,8 +27,9 @@ from peekingduck.pipeline.utils.bbox.transforms import tlwhn2xyxyn
 class ObjectDetectionModel(MediaPipeModel):
     """MediaPipe object detection model class."""
 
-    SUBTASK_MODEL_TYPES = {"face": {0, 1}}
-    SUBTASKS = {"face"}
+    TASK = "object_detection"
+    SUBTASK_MODEL_TYPES = SUPPORTED_TASKS.get_subtask_model_types(TASK)
+    SUBTASKS = SUPPORTED_TASKS.get_subtasks(TASK)
 
     @property
     def model_settings(self) -> Dict[str, Any]:

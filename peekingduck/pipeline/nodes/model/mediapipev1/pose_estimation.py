@@ -19,6 +19,7 @@ from typing import Any, Dict, Tuple
 import mediapipe as mp
 import numpy as np
 
+from peekingduck.pipeline.nodes.model.mediapipev1.api_doc import SUPPORTED_TASKS
 from peekingduck.pipeline.nodes.model.mediapipev1.base import MediaPipeModel
 from peekingduck.pipeline.utils.pose.coco import BodyKeypoint
 
@@ -28,8 +29,9 @@ KEYPOINT_33_TO_17 = [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 
 class PoseEstimationModel(MediaPipeModel):
     """MediaPipe pose estimation model class."""
 
-    SUBTASK_MODEL_TYPES = {"body": {0, 1, 2}}
-    SUBTASKS = {"body"}
+    TASK = "pose_estimation"
+    SUBTASK_MODEL_TYPES = SUPPORTED_TASKS.get_subtask_model_types(TASK)
+    SUBTASKS = SUPPORTED_TASKS.get_subtasks(TASK)
 
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config)

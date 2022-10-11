@@ -63,6 +63,15 @@ class SupportedTasks:
         """
         return set(self.task_subtask_model_type[task][subtask].keys())
 
+    def get_subtask_model_types(self, task: str) -> Dict[str, Set[int]]:
+        """Subtask to model types mapping for the specified computer vision
+        `task`.
+        """
+        return {
+            subtask: self.get_model_types(task, subtask)
+            for subtask in self.get_subtasks(task)
+        }
+
     def get_subtasks(self, task: str) -> Set[str]:
         """Supported subtasks for the specified computer vision `task`."""
         return set(self.task_subtask_model_type[task].keys())
