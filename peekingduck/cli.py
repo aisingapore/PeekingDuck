@@ -21,6 +21,7 @@ import click
 # Import modules to register commands
 # pylint: disable=unused-import
 import peekingduck.commands.model_hub.huggingface
+import peekingduck.commands.model_hub.mediapipe
 from peekingduck import __version__
 from peekingduck.commands.core import init, run, verify_install
 from peekingduck.commands.create_node import create_node

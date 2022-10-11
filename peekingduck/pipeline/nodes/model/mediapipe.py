@@ -41,13 +41,19 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         |bbox_scores_data|
 
     Configs:
-        task (:obj:`str`): **{"object_detection"},
+        task (:obj:`str`): **{"object_detection", "pose_estimation"},
             default="object_detection"** |br|
             Defines the computer vision task of the model.
         subtask (:obj:`str`): **Refer to CLI command, default=null**. |br|
-            Defines the subtask of MediaPipe model.
+            Defines the subtask of MediaPipe model. Use the CLI
+            command ``peekingduck model-hub mediapipe tasks`` to obtain a list
+            of computer vision tasks and their respective subtasks.
         model_type (:obj:`str`): **Refer to CLI command, default=0**. |br|
-            Defines the type of model to be used for the selected subtask.
+            Defines the type of model to be used for the selected subtask. Use
+            the CLI command ``peekingduck model-hub mediapipe model-types
+            --task '<task>' --subtask '<subtask>'`` to obtain a list of
+            supported model types for the specified computer vision tasks and
+            subtasks.
         score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
             Bounding boxes with confidence score below the threshold will be
             discarded.
