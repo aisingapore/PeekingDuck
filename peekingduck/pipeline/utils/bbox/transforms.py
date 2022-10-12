@@ -23,13 +23,13 @@ BboxType = Union[np.ndarray, torch.Tensor]
 
 
 def cast_to_float(inputs: BboxType) -> BboxType:
-    """Casts inputs of BboxType to have a float data type.
+    """Casts inputs to have float data type.
 
     Args:
         inputs (BboxType): Input bounding box.
 
     Returns:
-        (BboxType): Returns inputs of BboxType with float data type.
+        (BboxType): Inputs with float data type.
     """
     if isinstance(inputs, torch.Tensor):
         if inputs.is_floating_point():
@@ -107,6 +107,115 @@ def tlwh2xyah(inputs: BboxType) -> BboxType:
     return outputs
 
 
+def tlwh2xyxy(inputs: BboxType) -> BboxType:
+    """Converts from [t, l, w, h] to [x1, y1, x2, y2] format.
+
+    (t, l) is the coordinates of the top left corner, w is the width, and h is
+    the height. (x1, y1) is the top left corner and (x2, y2) is the bottom
+    right corner.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = t
+    y1 = l
+    x2 = t + w
+    y2 = l + h
+
+    Example:
+        >>> a = tlwh2xyxy(inputs=torch.Tensor([[1.0, 2.0, 30.0, 40.0]]))
+        >>> a
+        tensor([[1.0, 2.0, 31.0, 42.0]])
+
+    Args:
+        inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
+            format `(top left x, top left y, width, height)`.
+
+    Returns:
+        outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
+            bottom right x, bottom right y)`.
+    """
+    outputs = clone(inputs)
+    outputs = cast_to_float(outputs)
+
+    outputs[..., 2:] += outputs[..., :2]
+    return outputs
+
+
+def tlwh2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
+    """Converts from [t, l, w, h] to normalized [x1, y1, x2, y2] format.
+    Normalized coordinates are w.r.t. original image size.
+
+    (t, l) is the coordinates of the top left corner, w is the width, and h is
+    the height. (x1, y1) and (x2, y2) are the normalized coordinates of top
+    left and bottom right, respectively.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = t / width
+    y1 = l / height
+    x2 = (t + w) / width
+    y2 = (l + h) / height
+
+    Example:
+        >>> a = tlwh2xyxyn(inputs=np.array([[1.0, 2.0, 30.0, 40.0]]), height=100, width=200)
+        >>> a
+        array([[0.005, 0.02, 0.155, 0.42]])
+
+    Args:
+        inputs (BboxType): Input bounding boxes of variable shape (..., 4) with
+            format `(top left x, top left y, width, height)`.
+        height (int): Height of the image frame.
+        height (int): Width of the image frame.
+
+    Returns:
+        outputs (BboxType): Bounding boxes with the format `normalized (top left x,
+            top left y, bottom right x, bottom right y)`.
+    """
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
+
+    outputs[..., 0] = inputs[..., 0] / width
+    outputs[..., 1] = inputs[..., 1] / height
+    outputs[..., 2] = (inputs[..., 0] + inputs[..., 2]) / width
+    outputs[..., 3] = (inputs[..., 1] + inputs[..., 3]) / height
+
+    return outputs
+
+
+def xywh2xyxy(inputs: BboxType) -> BboxType:
+    """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
+
+    (x, y) is the object center, w is the width, and h is the height. (x1, y1)
+    is the top left corner and (x2, y2) is the bottom right corner.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = x - w / 2
+    y1 = y - h / 2
+    x2 = x + w / 2
+    y2 = y + w / 2
+
+    Example:
+        >>> a = xywh2xyxy(inputs=torch.Tensor([[100, 200, 30, 40]]))
+        >>> a
+        tensor([[85.0, 180.0, 115.0, 220.0]])
+
+    Args:
+        inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
+            format `(center x, center y, width, height)`.
+
+    Returns:
+        outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
+            bottom right x, bottom right y)`.
+    """
+    outputs = empty_like(inputs)
+    outputs = cast_to_float(outputs)
+
+    outputs[..., 0] = inputs[..., 0] - inputs[..., 2] / 2
+    outputs[..., 1] = inputs[..., 1] - inputs[..., 3] / 2
+    outputs[..., 2] = inputs[..., 0] + inputs[..., 2] / 2
+    outputs[..., 3] = inputs[..., 1] + inputs[..., 3] / 2
+
+    return outputs
+
+
 def xywhn2xyxyn(inputs: BboxType) -> BboxType:
     """Converts from normalized [x, y, w, h] to normalized [x1, y1, x2, y2] format.
 
@@ -147,41 +256,45 @@ def xywhn2xyxyn(inputs: BboxType) -> BboxType:
     return outputs
 
 
-def xyxyn2xywhn(inputs: BboxType) -> BboxType:
-    """Converts from normalized [x1, y1, x2, y2] to normalized [x, y, w, h] format.
+def xywhn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
+    """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] format.
 
-    (x1, y1): the normalized coordinates of the top left corner of the bounding box;
-    (x2, y2): the normalized coordinates of the bottom right corner of the bounding box.
-    (x, y): the normalized coordinates of the center of the bounding box;
-    (w, h): the normalized width and height of the bounding box.
+    (x, y): the coordinates of the center of the bounding box;
+    (w, h): the width and height of the bounding box.
+    (x1, y1): the coordinates of the top left corner of the bounding box;
+    (x2, y2): the coordinates of the bottom right corner of the bounding box.
 
-    [x, y, w, h] is calculated as:
-    w = x2 - x1
-    h = y2 - y1
-    x = x1 + w / 2
-    y = y1 + h / 2
+    [x1, y1, x2, y2] is calculated as:
+    x1 = x * width - w * width / 2
+    y1 = y * height - h * height / 2
+    x2 = x * width + w * width / 2
+    y2 = y * height + h * height / 2
 
     Example:
-        >>> a = xyxyn2xywhn(inputs=np.array([0.005, 0.02, 0.15, 0.4]))
+        >>> a = xywhn2xyxy(inputs=np.array([0.0775, 0.21, 0.145, 0.38]), height=100, width=200)
         >>> a
-        array([0.0775, 0.21, 0.145, 0.38])
+        array([1.0, 2.0, 30.0, 40.0])
 
     Args:
         inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
-            `(top left x, top left y, bottom right x, bottom right y)` normalized by
-            image width and height.
+            `(center x, center y, width, height)` normalized by image width and height.
+        height (float): Height of the image frame.
+        width (float): Width of the image frame.
 
     Returns:
-        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(center
-            x, center y, width, height)` normalized by image width and height.
+        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(top
+            left x, top left y, bottom right x, bottom right y)`.
     """
     outputs = clone(inputs)
     outputs = cast_to_float(outputs)
 
-    outputs[..., 2] -= outputs[..., 0]
-    outputs[..., 3] -= outputs[..., 1]
-    outputs[..., 0] += outputs[..., 2] / 2
-    outputs[..., 1] += outputs[..., 3] / 2
+    outputs[..., [0, 2]] *= width
+    outputs[..., [1, 3]] *= height
+
+    outputs[..., 0] -= outputs[..., 2] / 2
+    outputs[..., 1] -= outputs[..., 3] / 2
+    outputs[..., 2] += outputs[..., 0]
+    outputs[..., 3] += outputs[..., 1]
 
     return outputs
 
@@ -230,49 +343,6 @@ def xyxy2xywhn(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-def xywhn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
-    """Converts from normalized [x, y, w, h] to [x1, y1, x2, y2] format.
-
-    (x, y): the coordinates of the center of the bounding box;
-    (w, h): the width and height of the bounding box.
-    (x1, y1): the coordinates of the top left corner of the bounding box;
-    (x2, y2): the coordinates of the bottom right corner of the bounding box.
-
-    [x1, y1, x2, y2] is calculated as:
-    x1 = x * width - w * width / 2
-    y1 = y * height - h * height / 2
-    x2 = x * width + w * width / 2
-    y2 = y * height + h * height / 2
-
-    Example:
-        >>> a = xywhn2xyxy(inputs=np.array([0.0775, 0.21, 0.145, 0.38]), height=100, width=200)
-        >>> a
-        array([1.0, 2.0, 30.0, 40.0])
-
-    Args:
-        inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
-            `(center x, center y, width, height)` normalized by image width and height.
-        height (float): Height of the image frame.
-        width (float): Width of the image frame.
-
-    Returns:
-        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(top
-            left x, top left y, bottom right x, bottom right y)`.
-    """
-    outputs = clone(inputs)
-    outputs = cast_to_float(outputs)
-
-    outputs[..., [0, 2]] *= width
-    outputs[..., [1, 3]] *= height
-
-    outputs[..., 0] -= outputs[..., 2] / 2
-    outputs[..., 1] -= outputs[..., 3] / 2
-    outputs[..., 2] += outputs[..., 0]
-    outputs[..., 3] += outputs[..., 1]
-
-    return outputs
-
-
 def xyxy2xywh(inputs: BboxType) -> BboxType:
     """Converts from [x1, y1, x2, y2] to [x, y, w, h] format.
 
@@ -306,75 +376,6 @@ def xyxy2xywh(inputs: BboxType) -> BboxType:
     outputs[..., 0] += outputs[..., 2] / 2
     outputs[..., 1] += outputs[..., 3] / 2
 
-    return outputs
-
-
-def xywh2xyxy(inputs: BboxType) -> BboxType:
-    """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
-
-    (x, y) is the object center, w is the width, and h is the height. (x1, y1)
-    is the top left corner and (x2, y2) is the bottom right corner.
-
-    [x1, y1, x2, y2] is calculated as:
-    x1 = x - w / 2
-    y1 = y - h / 2
-    x2 = x + w / 2
-    y2 = y + w / 2
-
-    Example:
-        >>> a = xywh2xyxy(inputs=torch.Tensor([[100, 200, 30, 40]]))
-        >>> a
-        tensor([[85.0, 180.0, 115.0, 220.0]])
-
-    Args:
-        inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
-            format `(center x, center y, width, height)`.
-
-    Returns:
-        outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
-            bottom right x, bottom right y)`.
-    """
-    outputs = empty_like(inputs)
-    outputs = cast_to_float(outputs)
-
-    outputs[..., 0] = inputs[..., 0] - inputs[..., 2] / 2
-    outputs[..., 1] = inputs[..., 1] - inputs[..., 3] / 2
-    outputs[..., 2] = inputs[..., 0] + inputs[..., 2] / 2
-    outputs[..., 3] = inputs[..., 1] + inputs[..., 3] / 2
-
-    return outputs
-
-
-def tlwh2xyxy(inputs: BboxType) -> BboxType:
-    """Converts from [t, l, w, h] to [x1, y1, x2, y2] format.
-
-    (t, l) is the coordinates of the top left corner, w is the width, and h is
-    the height. (x1, y1) is the top left corner and (x2, y2) is the bottom
-    right corner.
-
-    [x1, y1, x2, y2] is calculated as:
-    x1 = t
-    y1 = l
-    x2 = t + w
-    y2 = l + h
-
-    Example:
-        >>> a = tlwh2xyxy(inputs=torch.Tensor([[1.0, 2.0, 30.0, 40.0]]))
-        >>> a
-        tensor([[1.0, 2.0, 31.0, 42.0]])
-
-    Args:
-        inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
-            format `(top left x, top left y, width, height)`.
-
-    Returns:
-        outputs (BboxType): Bounding boxes with the format `(top left x, top left y,
-            bottom right x, bottom right y)`.
-    """
-    outputs = clone(inputs)
-    outputs = cast_to_float(outputs)
-
-    outputs[..., 2:] += outputs[..., :2]
     return outputs
 
 
@@ -473,8 +474,8 @@ def xyxyn2xyxy(inputs: BboxType, height: float, width: float) -> BboxType:
     outputs = clone(inputs)
     outputs = cast_to_float(outputs)
 
-    outputs[..., [0, 2]] = outputs[..., [0, 2]] * width
-    outputs[..., [1, 3]] = outputs[..., [1, 3]] * height
+    outputs[..., [0, 2]] *= width
+    outputs[..., [1, 3]] *= height
 
     return outputs
 
@@ -520,41 +521,40 @@ def xyxyn2tlwh(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
-def tlwh2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
-    """Converts from [t, l, w, h] to normalized [x1, y1, x2, y2] format.
-    Normalized coordinates are w.r.t. original image size.
+def xyxyn2xywhn(inputs: BboxType) -> BboxType:
+    """Converts from normalized [x1, y1, x2, y2] to normalized [x, y, w, h] format.
 
-    (t, l) is the coordinates of the top left corner, w is the width, and h is
-    the height. (x1, y1) and (x2, y2) are the normalized coordinates of top
-    left and bottom right, respectively.
+    (x1, y1): the normalized coordinates of the top left corner of the bounding box;
+    (x2, y2): the normalized coordinates of the bottom right corner of the bounding box.
+    (x, y): the normalized coordinates of the center of the bounding box;
+    (w, h): the normalized width and height of the bounding box.
 
-    [x1, y1, x2, y2] is calculated as:
-    x1 = t / width
-    y1 = l / height
-    x2 = (t + w) / width
-    y2 = (l + h) / height
+    [x, y, w, h] is calculated as:
+    w = x2 - x1
+    h = y2 - y1
+    x = x1 + w / 2
+    y = y1 + h / 2
 
     Example:
-        >>> a = tlwh2xyxyn(inputs=np.array([[1.0, 2.0, 30.0, 40.0]]), height=100, width=200)
+        >>> a = xyxyn2xywhn(inputs=np.array([0.005, 0.02, 0.15, 0.4]))
         >>> a
-        array([[0.005, 0.02, 0.155, 0.42]])
+        array([0.0775, 0.21, 0.145, 0.38])
 
     Args:
-        inputs (BboxType): Input bounding boxes of variable shape (..., 4) with
-            format `(top left x, top left y, width, height)`.
-        height (int): Height of the image frame.
-        height (int): Width of the image frame.
+        inputs (BboxType): Input bounding boxes of shape (..., 4) with the format
+            `(top left x, top left y, bottom right x, bottom right y)` normalized by
+            image width and height.
 
     Returns:
-        outputs (BboxType): Bounding boxes with the format `normalized (top left x,
-            top left y, bottom right x, bottom right y)`.
+        outputs (BboxType): Bounding boxes of shape (..., 4) with the format `(center
+            x, center y, width, height)` normalized by image width and height.
     """
-    outputs = empty_like(inputs)
+    outputs = clone(inputs)
     outputs = cast_to_float(outputs)
 
-    outputs[..., 0] = inputs[..., 0] / width
-    outputs[..., 1] = inputs[..., 1] / height
-    outputs[..., 2] = (inputs[..., 0] + inputs[..., 2]) / width
-    outputs[..., 3] = (inputs[..., 1] + inputs[..., 3]) / height
+    outputs[..., 2] -= outputs[..., 0]
+    outputs[..., 3] -= outputs[..., 1]
+    outputs[..., 0] += outputs[..., 2] / 2
+    outputs[..., 1] += outputs[..., 3] / 2
 
     return outputs

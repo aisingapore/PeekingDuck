@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 import pytest
-import torch.testing as tpt
+import torch
 from peekingduck.pipeline.utils.bbox.transforms import (
     tlwh2xyah,
     tlwh2xyxy,
@@ -34,7 +34,7 @@ from peekingduck.pipeline.utils.bbox.transforms import (
     xyxyn2xyxy,
 )
 from tests.conftest import get_groundtruth
-from tests.pipeline.utils.bbox.utils import expand_dim, list2numpy, list2torch
+from tests.pipeline.utils.bbox.utils import expand_dim
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
@@ -56,7 +56,7 @@ TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH = [
     "tlwh2xyxy",
     "xyxy2tlwh",
 ]
-CONVERT_TYPES = [list2numpy, list2torch]
+CONVERT_TYPES = [np.array, torch.tensor]
 NUM_DIMS = [0, 1, 2]
 
 # tolerance to assert_allclose
@@ -65,126 +65,119 @@ ATOL, RTOL = 1e-4, 1e-07
 
 @pytest.fixture(scope="module")
 def gt_bboxes():
-    xyah, voc, albu, coco, yolo, unnormalized_yolo = (
+    tlwh, xyah, xywh, xywhn, xyxy, xyxyn = (
+        GT_RESULTS["tlwh"],
         GT_RESULTS["xyah"],
-        GT_RESULTS["voc"],
-        GT_RESULTS["albu"],
-        GT_RESULTS["coco"],
-        GT_RESULTS["yolo"],
-        GT_RESULTS["unnormalized_yolo"],
+        GT_RESULTS["xywh"],
+        GT_RESULTS["xywhn"],
+        GT_RESULTS["xyxy"],
+        GT_RESULTS["xyxyn"],
     )
     return {
-        "tlwh2xyah": [coco, xyah, tlwh2xyah],
-        "xywhn2xyxyn": [yolo, albu, xywhn2xyxyn],
-        "xyxyn2xywhn": [albu, yolo, xyxyn2xywhn],
-        "xyxy2xywhn": [voc, yolo, xyxy2xywhn],
-        "xywhn2xyxy": [yolo, voc, xywhn2xyxy],
-        "tlwh2xyxy": [coco, voc, tlwh2xyxy],
-        "xyxy2tlwh": [voc, coco, xyxy2tlwh],
-        "xyxy2xywh": [voc, unnormalized_yolo, xyxy2xywh],
-        "xywh2xyxy": [unnormalized_yolo, voc, xywh2xyxy],
-        "xyxy2xyxyn": [voc, albu, xyxy2xyxyn],
-        "xyxyn2xyxy": [albu, voc, xyxyn2xyxy],
-        "xyxyn2tlwh": [albu, coco, xyxyn2tlwh],
-        "tlwh2xyxyn": [coco, albu, tlwh2xyxyn],
+        "tlwh2xyah": [tlwh, xyah, tlwh2xyah],
+        "tlwh2xyxyn": [tlwh, xyxyn, tlwh2xyxyn],
+        "tlwh2xyxy": [tlwh, xyxy, tlwh2xyxy],
+        "xywh2xyxy": [xywh, xyxy, xywh2xyxy],
+        "xywhn2xyxyn": [xywhn, xyxyn, xywhn2xyxyn],
+        "xywhn2xyxy": [xywhn, xyxy, xywhn2xyxy],
+        "xyxy2xywhn": [xyxy, xywhn, xyxy2xywhn],
+        "xyxy2tlwh": [xyxy, tlwh, xyxy2tlwh],
+        "xyxy2xywh": [xyxy, xywh, xyxy2xywh],
+        "xyxy2xyxyn": [xyxy, xyxyn, xyxy2xyxyn],
+        "xyxyn2xyxy": [xyxyn, xyxy, xyxyn2xyxy],
+        "xyxyn2tlwh": [xyxyn, tlwh, xyxyn2tlwh],
+        "xyxyn2xywhn": [xyxyn, xywhn, xyxyn2xywhn],
     }
 
 
 @pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
-def test_correct_return_type_require_height_width(
-    gt_bboxes, convert_type, conversion_name
-):
-    from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
+class TestBboxTransforms:
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
+    def test_correct_return_type_require_height_width(
+        self, gt_bboxes, convert_type, conversion_name
+    ):
+        from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
 
-    to_bbox = conversion_fn(
-        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
-    )
+        to_bbox = conversion_fn(
+            from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+        )
 
-    assert isinstance(to_bbox, type(from_bbox))
+        assert isinstance(to_bbox, type(from_bbox))
 
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
+    def test_correct_return_type_do_not_require_height_width(
+        self, gt_bboxes, convert_type, conversion_name
+    ):
+        from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
 
-@pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
-def test_correct_return_type_do_not_require_height_width(
-    gt_bboxes, convert_type, conversion_name
-):
-    from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
+        to_bbox = conversion_fn(from_bbox)
 
-    to_bbox = conversion_fn(from_bbox)
+        assert isinstance(to_bbox, type(from_bbox))
 
-    assert isinstance(to_bbox, type(from_bbox))
+    @pytest.mark.parametrize("num_dims", NUM_DIMS)
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
+    def test_consistent_in_out_dims_require_height_width(
+        self, gt_bboxes, convert_type, num_dims, conversion_name
+    ):
+        from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
+        from_bbox = expand_dim(from_bbox, num_dims)
 
+        to_bbox = conversion_fn(
+            from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+        )
 
-@pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("num_dims", NUM_DIMS)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
-def test_consistent_in_out_dims_require_height_width(
-    gt_bboxes, convert_type, num_dims, conversion_name
-):
-    from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
-    from_bbox = expand_dim(from_bbox, num_dims)
+        assert from_bbox.shape == to_bbox.shape
 
-    to_bbox = conversion_fn(
-        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
-    )
+    @pytest.mark.parametrize("num_dims", NUM_DIMS)
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
+    def test_consistent_in_out_dims_do_not_require_height_width(
+        self, gt_bboxes, convert_type, num_dims, conversion_name
+    ):
+        from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
+        from_bbox = expand_dim(from_bbox, num_dims)
 
-    assert from_bbox.shape == to_bbox.shape
+        to_bbox = conversion_fn(from_bbox)
 
+        assert from_bbox.shape == to_bbox.shape
 
-@pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("num_dims", NUM_DIMS)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
-def test_consistent_in_out_dims_do_not_require_height_width(
-    gt_bboxes, convert_type, num_dims, conversion_name
-):
-    from_bbox, _, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
-    from_bbox = expand_dim(from_bbox, num_dims)
+    @pytest.mark.parametrize("num_dims", NUM_DIMS)
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
+    def test_correct_transformation_require_height_width(
+        self, gt_bboxes, convert_type, num_dims, conversion_name
+    ):
+        from_bbox, expected_bbox, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
+        from_bbox = expand_dim(from_bbox, num_dims)
 
-    to_bbox = conversion_fn(from_bbox)
+        to_bbox = conversion_fn(
+            from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
+        )
 
-    assert from_bbox.shape == to_bbox.shape
+        expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
 
+        if isinstance(to_bbox, torch.Tensor):
+            torch.testing.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
+        else:
+            npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
 
-@pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("num_dims", NUM_DIMS)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_REQUIRE_HEIGHT_WIDTH)
-def test_correct_transformation_require_height_width(
-    gt_bboxes, convert_type, num_dims, conversion_name
-):
-    from_bbox, expected_bbox, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
-    from_bbox = expand_dim(from_bbox, num_dims)
+    @pytest.mark.parametrize("num_dims", NUM_DIMS)
+    @pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
+    def test_correct_transformation_do_not_require_height_width(
+        self, gt_bboxes, convert_type, num_dims, conversion_name
+    ):
+        from_bbox, expected_bbox, conversion_fn = gt_bboxes[conversion_name]
+        from_bbox = convert_type(from_bbox)
+        from_bbox = expand_dim(from_bbox, num_dims)
 
-    to_bbox = conversion_fn(
-        from_bbox, height=GT_RESULTS["height"], width=GT_RESULTS["width"]
-    )
+        to_bbox = conversion_fn(from_bbox)
 
-    expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
+        expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
 
-    npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL) if isinstance(
-        to_bbox, np.ndarray
-    ) else tpt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
-
-
-@pytest.mark.parametrize("convert_type", CONVERT_TYPES)
-@pytest.mark.parametrize("num_dims", NUM_DIMS)
-@pytest.mark.parametrize("conversion_name", TRANSFORMS_DO_NOT_REQUIRE_HEIGHT_WIDTH)
-def test_correct_transformation_do_not_require_height_width(
-    gt_bboxes, convert_type, num_dims, conversion_name
-):
-    from_bbox, expected_bbox, conversion_fn = gt_bboxes[conversion_name]
-    from_bbox = convert_type(from_bbox)
-    from_bbox = expand_dim(from_bbox, num_dims)
-
-    to_bbox = conversion_fn(from_bbox)
-
-    expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
-
-    npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL) if isinstance(
-        to_bbox, np.ndarray
-    ) else tpt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
+        if isinstance(to_bbox, torch.Tensor):
+            torch.testing.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
+        else:
+            npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)

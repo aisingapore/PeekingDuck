@@ -1,17 +1,8 @@
+from typing import List, Union
+
 import numpy as np
 import torch
-from typing import List, Union
 from peekingduck.pipeline.utils.bbox.transforms import BboxType, clone
-
-
-def list2numpy(input_list: Union[List[int], List[float]]) -> np.ndarray:
-    """Convert list to numpy array."""
-    return np.array(input_list)
-
-
-def list2torch(input_list: Union[List[int], List[float]]) -> torch.Tensor:
-    """Convert list to torch tensor."""
-    return torch.tensor(input_list)
 
 
 def expand_dim(
