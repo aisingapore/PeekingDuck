@@ -138,7 +138,7 @@ def import_module_from_file_location(module_name: str, location: Path) -> Module
 
     Args:
         module_name (str): Name of module, should be the same as the name of
-            the Python script file.
+            the Python script file and its subdirectory relative to `callbacks`.
         location (Path): The directory where the Python script file containing
             the module can be found.
 
@@ -150,7 +150,9 @@ def import_module_from_file_location(module_name: str, location: Path) -> Module
         be used.
     """
     spec = importlib.util.spec_from_file_location(
-        module_name, location / f"{module_name}.py"
+        #  module_name, location / f"{module_name}.py"
+        module_name,
+        location.joinpath(*module_name.split(".")).with_suffix(".py"),
     )
     # use default loader
     assert spec is not None and spec.loader is not None
