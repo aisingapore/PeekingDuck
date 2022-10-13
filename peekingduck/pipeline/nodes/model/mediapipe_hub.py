@@ -54,9 +54,31 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             --task '<task>' --subtask '<subtask>'`` to obtain a list of
             supported model types for the specified computer vision tasks and
             subtasks.
-        score_threshold (:obj:`float`): **[0, 1], default = 0.5**. |br|
+        score_threshold (:obj:`float`): **[0, 1], default=0.5**. |br|
             Bounding boxes with confidence score below the threshold will be
             discarded.
+        static_image_mode (:obj:`bool`): **default=false**. |br|
+            If set to ``false``, the solution treats the input images as a video
+            stream. It will try to detect the most prominent person in the very
+            first images, and upon a successful detection further localizes the
+            pose landmarks. In subsequent images, it then simply tracks those
+            landmarks without invoking another detection until it loses track,
+            on reducing computation and latency. If set to ``true``, person
+            detection runs every input image, ideal for processing a batch of
+            static, possibly unrelated, images. Used when ``task = pose_estimation``.
+        smooth_landmarks (:obj:`bool`): **default=true**. |br|
+            If set to ``true``, the solution filters pose landmarks across
+            different input images to reduce jitter, but ignored if
+            ``static_image_mode`` is also set to ``true``. Used when
+            ``task = pose_estimation``.
+        tracking_score_threshold (:obj:`float`): **[0, 1], default=0.5**. |br|
+            Minimum confidence value from the landmark-tracking model for the
+            pose landmarks to be considered tracked successfully, or otherwise
+            person detection will be invoked automatically on the next input
+            image. Setting it to a higher value can increase robustness of the
+            solution, at the expense of a higher latency. Ignored if
+            ``static_image_mode = true``, where person detection simply runs on
+            every image. Used when ``task = pose_estimation``.
     """
 
     model_constructor = {
