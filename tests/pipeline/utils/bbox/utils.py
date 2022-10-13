@@ -1,7 +1,3 @@
-from typing import List, Union
-
-import numpy as np
-import torch
 from peekingduck.pipeline.utils.bbox.transforms import BboxType, clone
 
 
