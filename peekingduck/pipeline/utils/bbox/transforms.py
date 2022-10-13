@@ -66,7 +66,7 @@ def empty_like(inputs: BboxType) -> BboxType:
         inputs (BboxType): Input bounding box.
 
     Returns:
-        (BboxType): Returns unitialized array/tensor with the same shape and type as the input.
+        (BboxType): An unitialized array/tensor with the same shape and type as the input.
     """
     if isinstance(inputs, torch.Tensor):
         return torch.empty_like(inputs)

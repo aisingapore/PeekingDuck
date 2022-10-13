@@ -18,6 +18,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 import torch
+
 from peekingduck.pipeline.utils.bbox.transforms import (
     tlwh2xyah,
     tlwh2xyxy,
