@@ -180,6 +180,40 @@ def tlwh2xyxyn(inputs: BboxType, height: float, width: float) -> BboxType:
     return outputs
 
 
+def tlwhn2xyxyn(inputs: BboxType) -> BboxType:
+    """Converts from normalized [t, l, w, h] to normalized [x1, y1, x2, y2]
+    format. Normalized coordinates are w.r.t. original image size.
+
+    (t, l) is the normalized coordinates of the top left corner, w is the
+    normalized width, and h is the normalized height. (x1, y1) and (x2, y2) are
+    the normalized coordinates of top left and bottom right, respectively.
+
+    [x1, y1, x2, y2] is calculated as:
+    x1 = t
+    y1 = l
+    x2 = t + w
+    y2 = l + h
+
+    Example:
+        >>> a = tlwhn2xyxyn(inputs=np.array([[0.1, 0.2, 0.3, 0.4]]))
+        >>> a
+        array([[0.1, 0.2, 0.4, 0.6]])
+
+    Args:
+        inputs (BboxType): Input bounding boxes of shape (..., 4) each with the
+            format normalized `(top left x, top left y, width, height)`.
+
+    Returns:
+        (BboxType): Bounding boxes with the format `normalized (top left x,
+        top left y, bottom right x, bottom right y)`.
+    """
+    outputs = clone(inputs)
+    outputs = cast_to_float(outputs)
+
+    outputs[..., 2:] += outputs[..., :2]
+    return outputs
+
+
 def xywh2xyxy(inputs: BboxType) -> BboxType:
     """Converts from [x, y, w, h] to [x1, y1, x2, y2] format.
 

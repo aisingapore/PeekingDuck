@@ -19,6 +19,7 @@ texttable # for pretty print scripts/check_links.py output
 
 # optional requirements
 lap == 0.4.0
+mediapipe >= 0.8.11
 shapely >= 1.7.1
 timm >= 0.6.7
 transformers >= 4.21.2

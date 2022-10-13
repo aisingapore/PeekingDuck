@@ -90,6 +90,7 @@ autosummary_mock_imports = [
     "model.huggingface_hubv1",
     "model.jdev1",
     "model.mask_rcnnv1",
+    "model.mediapipe_hubv1",
     "model.mtcnnv1",
     "model.posenetv1",
     "model.movenetv1",

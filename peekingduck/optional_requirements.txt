@@ -3,3 +3,4 @@ model.fairmot PYTHON lap == 0.4.0
 model.huggingface_hub PYTHON timm >= 0.6.7
 model.huggingface_hub PYTHON transformers >= 4.21.2
 model.jde PYTHON lap == 0.4.0
+model.mediapipe PYTHON mediapipe >= 0.8.11 | mediapipe-silicon >= 0.8.11

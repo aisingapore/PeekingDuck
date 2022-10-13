@@ -1,0 +1,23 @@
+input: ["img"]
+output:
+  {
+    object_detection: ["bboxes", "bbox_labels", "bbox_scores"],
+    pose_estimation:
+      [
+        "bboxes",
+        "bbox_labels",
+        "keypoints",
+        "keypoint_conns",
+        "keypoint_scores",
+      ],
+  }
+
+task: object_detection
+subtask: null
+model_type: 0
+score_threshold: 0.5
+
+# pose_estimation specific configs
+static_image_mode: false
+smooth_landmarks: true
+tracking_score_threshold: 0.5

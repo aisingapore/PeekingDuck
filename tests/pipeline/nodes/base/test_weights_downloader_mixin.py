@@ -21,18 +21,26 @@ from unittest import TestCase, mock
 import pytest
 import requests
 import yaml
-
 from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
 )
+
 from tests.conftest import PKD_DIR, assert_msg_in_logs, do_nothing
 
-SKIPPED_MODELS = ["huggingface_hub"]
+# cannot change weights directory for these models, should be skipped for all tests
+SKIPPED_MODELS = ["mediapipe_hub"]
+# these weights are not on GCS, should be skipped for integrity tests
+THIRD_PARTY_MODELS = SKIPPED_MODELS + ["huggingface_hub"]
 
 
 @pytest.fixture(
-    name="weights_model", params=(PKD_DIR / "configs" / "model").glob("*.yml")
+    name="weights_model",
+    params=[
+        path
+        for path in (PKD_DIR / "configs" / "model").glob("*.yml")
+        if path.stem not in SKIPPED_MODELS
+    ],
 )
 def fixture_weights_model(request):
     return WeightsModel(request.param)
@@ -43,7 +51,7 @@ def fixture_weights_model(request):
     params=[
         path
         for path in (PKD_DIR / "configs" / "model").glob("*.yml")
-        if path.stem not in SKIPPED_MODELS
+        if path.stem not in THIRD_PARTY_MODELS
     ],
 )
 def fixture_shipped_weights_model(request):
