@@ -19,7 +19,7 @@ import logging
 import click
 
 from peekingduck.commands.model_hub import model_hub
-from peekingduck.pipeline.nodes.model.mediapipev1.api_doc import SUPPORTED_TASKS
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1.api_doc import SUPPORTED_TASKS
 
 logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
 

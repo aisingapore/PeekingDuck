@@ -19,8 +19,8 @@ from typing import Any, Dict, Tuple
 import mediapipe as mp
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.mediapipev1.api_doc import SUPPORTED_TASKS
-from peekingduck.pipeline.nodes.model.mediapipev1.base import MediaPipeModel
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1.api_doc import SUPPORTED_TASKS
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1.base import MediaPipeModel
 from peekingduck.pipeline.utils.pose.coco import BodyKeypoint
 
 KEYPOINT_33_TO_17 = [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]

@@ -21,15 +21,15 @@ from unittest import TestCase, mock
 import pytest
 import requests
 import yaml
-
 from peekingduck.pipeline.nodes.base import (
     PEEKINGDUCK_WEIGHTS_SUBDIR,
     WeightsDownloaderMixin,
 )
+
 from tests.conftest import PKD_DIR, assert_msg_in_logs, do_nothing
 
 # cannot change weights directory for these models, should be skipped for all tests
-SKIPPED_MODELS = ["mediapipe"]
+SKIPPED_MODELS = ["mediapipe_hub"]
 # these weights are not on GCS, should be skipped for integrity tests
 THIRD_PARTY_MODELS = SKIPPED_MODELS + ["huggingface_hub"]
 

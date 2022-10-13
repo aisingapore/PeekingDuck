@@ -21,7 +21,7 @@ import numpy as np
 
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.model.mediapipev1 import (
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1 import (
     object_detection,
     pose_estimation,
 )

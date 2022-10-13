@@ -19,8 +19,8 @@ from typing import Any, Dict, Tuple
 import mediapipe as mp
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.mediapipev1.api_doc import SUPPORTED_TASKS
-from peekingduck.pipeline.nodes.model.mediapipev1.base import MediaPipeModel
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1.api_doc import SUPPORTED_TASKS
+from peekingduck.pipeline.nodes.model.mediapipe_hubv1.base import MediaPipeModel
 from peekingduck.pipeline.utils.bbox.transforms import tlwhn2xyxyn
 
 
