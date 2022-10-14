@@ -35,7 +35,7 @@ from peekingduck.utils.bbox.transforms import (
     xyxyn2xyxy,
 )
 from tests.conftest import get_groundtruth
-from tests.pipeline.utils.bbox.utils import expand_dim
+from tests.utils.bbox.utils import expand_dim
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 

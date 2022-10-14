@@ -16,24 +16,14 @@
 Test for draw heat_map node
 """
 
-from pathlib import Path
-
 import cv2
 import numpy as np
 import pytest
 
 from peekingduck.nodes.draw.heat_map import Node
+from tests.conftest import TEST_IMAGES_DIR
 
-TEST_IMAGE = ["crowd1.jpg"]
-# path to reach 4 file levels up from test_heat_map.py
-PKD_DIR = Path(__file__).resolve().parents[3]
-
-
-@pytest.fixture(params=TEST_IMAGE)
-def test_image(request):
-    test_img_dir = PKD_DIR.parent / "tests" / "data" / "images"
-
-    yield test_img_dir / request.param
+TEST_IMAGE = str(TEST_IMAGES_DIR / "crowd1.jpg")
 
 
 @pytest.fixture
@@ -43,8 +33,8 @@ def draw_heat_map_node():
 
 
 class TestHeatmap:
-    def test_no_heat_map(self, draw_heat_map_node, test_image):
-        original_img = cv2.imread(str(test_image))
+    def test_no_heat_map(self, draw_heat_map_node):
+        original_img = cv2.imread(TEST_IMAGE)
         output_img = original_img.copy()
 
         input = {"img": output_img, "density_map": np.zeros((768, 1024, 3))}
@@ -52,8 +42,8 @@ class TestHeatmap:
         output_img = draw_heat_map_node.run(input)
         np.testing.assert_equal(original_img, output_img["img"])
 
-    def test_heat_map(self, draw_heat_map_node, test_image):
-        original_img = cv2.imread(str(test_image))
+    def test_heat_map(self, draw_heat_map_node):
+        original_img = cv2.imread(TEST_IMAGE)
         output_img = original_img.copy()
 
         input = {"img": output_img, "density_map": np.random.rand(768, 1024, 3)}

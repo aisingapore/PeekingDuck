@@ -16,24 +16,14 @@
 Test for draw bbox node
 """
 
-from pathlib import Path
-
 import cv2
 import numpy as np
 import pytest
 
 from peekingduck.nodes.draw.bbox import Node
+from tests.conftest import TEST_IMAGES_DIR
 
-BLACK_IMAGE = ["black.jpg"]
-# path to reach 4 file levels up from test_bbox.py
-PKD_DIR = Path(__file__).resolve().parents[3]
-
-
-@pytest.fixture(params=BLACK_IMAGE)
-def black_image(request):
-    test_img_dir = PKD_DIR.parent / "tests" / "data" / "images"
-
-    yield test_img_dir / request.param
+BLACK_IMAGE = str(TEST_IMAGES_DIR / "black.jpg")
 
 
 @pytest.fixture
@@ -70,11 +60,9 @@ class TestBbox:
         draw_bbox_no_labels.run(input1)
         np.testing.assert_equal(original_img, output_img)
 
-    def test_bbox_no_label(
-        self, draw_bbox_no_labels, draw_bbox_show_labels, black_image
-    ):
+    def test_bbox_no_label(self, draw_bbox_no_labels, draw_bbox_show_labels):
         bboxes = [np.array([0, 0, 1, 1])]
-        original_img = cv2.imread(str(black_image))
+        original_img = cv2.imread(BLACK_IMAGE)
         output_img_no_label = original_img.copy()
         output_img_show_label = original_img.copy()
         labels = ["Person"]

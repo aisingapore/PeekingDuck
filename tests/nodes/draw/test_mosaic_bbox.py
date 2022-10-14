@@ -16,24 +16,14 @@
 Test for draw mosaic_bbox node
 """
 
-from pathlib import Path
-
 import cv2
 import numpy as np
 import pytest
 
 from peekingduck.nodes.draw.mosaic_bbox import Node
+from tests.conftest import TEST_IMAGES_DIR
 
-TEST_IMAGE = ["t1.jpg"]
-# path to reach 4 file levels up from test_mosaic_bbox.py
-PKD_DIR = Path(__file__).resolve().parents[3]
-
-
-@pytest.fixture(params=TEST_IMAGE)
-def test_image(request):
-    test_img_dir = PKD_DIR.parent / "tests" / "data" / "images"
-
-    yield test_img_dir / request.param
+TEST_IMAGE = str(TEST_IMAGES_DIR / "t1.jpg")
 
 
 @pytest.fixture
@@ -43,8 +33,8 @@ def draw_mosaic_node():
 
 
 class TestMosaic:
-    def test_no_bbox(self, draw_mosaic_node, test_image):
-        original_img = cv2.imread(str(test_image))
+    def test_no_bbox(self, draw_mosaic_node):
+        original_img = cv2.imread(TEST_IMAGE)
         output_img = original_img.copy()
 
         input = {"img": output_img, "bboxes": []}
@@ -52,8 +42,8 @@ class TestMosaic:
         draw_mosaic_node.run(input)
         np.testing.assert_equal(original_img, output_img)
 
-    def test_single_bbox(self, draw_mosaic_node, test_image):
-        original_img = cv2.imread(str(test_image))
+    def test_single_bbox(self, draw_mosaic_node):
+        original_img = cv2.imread(TEST_IMAGE)
         frame_height = original_img.shape[0]
         frame_width = original_img.shape[1]
         x1, x2 = int(0.4 * frame_width), int(0.6 * frame_width)
@@ -79,8 +69,8 @@ class TestMosaic:
             output_bbox_bounded_area,
         )
 
-    def test_multiple_bbox(self, draw_mosaic_node, test_image):
-        original_img = cv2.imread(str(test_image))
+    def test_multiple_bbox(self, draw_mosaic_node):
+        original_img = cv2.imread(TEST_IMAGE)
         frame_height = original_img.shape[0]
         frame_width = original_img.shape[1]
 
