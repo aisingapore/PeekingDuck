@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.mtcnnv1 import mtcnn_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.mtcnnv1 import mtcnn_model
 
 
 class Node(AbstractNode):

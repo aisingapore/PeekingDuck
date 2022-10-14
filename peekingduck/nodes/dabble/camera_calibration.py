@@ -26,8 +26,8 @@ import cv2
 import numpy as np
 import yaml
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.constants import BLACK, CHAMPAGNE, TOMATO
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.constants import BLACK, CHAMPAGNE, TOMATO
 
 # global constants
 # terminal criteria for subpixel finetuning

@@ -18,7 +18,7 @@ import cv2
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.huggingface_hub import Node
+from peekingduck.nodes.model.huggingface_hub import Node
 from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 

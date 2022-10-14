@@ -17,11 +17,11 @@
 General utils for drawing functions
 """
 
-from typing import Tuple, List, Union
+from typing import List, Tuple, Union
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.draw.utils.constants import COLOR_MAP
+from peekingduck.nodes.draw.utils.constants import COLOR_MAP
 
 
 def get_image_size(frame: np.ndarray) -> Tuple[int, int]:

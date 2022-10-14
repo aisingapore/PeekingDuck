@@ -22,13 +22,14 @@ Supporting functions to decode multiple poses
 from typing import List, Tuple
 
 import numpy as np
-import tensorflow as tf
 import scipy.ndimage as ndi
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode import decode_pose
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
+import tensorflow as tf
+
+from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     LOCAL_MAXIMUM_RADIUS,
     SWAP_AXES,
 )
+from peekingduck.nodes.model.posenetv1.posenet_files.decode import decode_pose
 
 
 def decode_multiple_poses(

@@ -22,11 +22,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.efficientdet_d04.efficientdet_files.detector import (
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.efficientdet_d04.efficientdet_files.detector import (
     Detector,
 )
 

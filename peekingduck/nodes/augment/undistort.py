@@ -23,7 +23,7 @@ import cv2
 import numpy as np
 import yaml
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

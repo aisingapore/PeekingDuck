@@ -20,7 +20,7 @@ inference.
 import textwrap
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 
 
 class Pipeline:  # pylint: disable=too-few-public-methods

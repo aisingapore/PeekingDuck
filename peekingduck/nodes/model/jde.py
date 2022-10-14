@@ -18,8 +18,8 @@ from typing import Any, Dict, Optional
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.jdev1 import jde_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.jdev1 import jde_model
 
 
 class Node(AbstractNode):

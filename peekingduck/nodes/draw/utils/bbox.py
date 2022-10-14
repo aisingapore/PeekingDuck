@@ -21,7 +21,7 @@ import cv2
 import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 
-from peekingduck.pipeline.nodes.draw.utils.constants import (
+from peekingduck.nodes.draw.utils.constants import (
     BLACK,
     CHAMPAGNE,
     FILLED,
@@ -29,11 +29,11 @@ from peekingduck.pipeline.nodes.draw.utils.constants import (
     POINT_RADIUS,
     PRIMARY_PALETTE,
 )
-from peekingduck.pipeline.nodes.draw.utils.constants import (
+from peekingduck.nodes.draw.utils.constants import (
     PRIMARY_PALETTE_LENGTH as TOTAL_COLORS,
 )
-from peekingduck.pipeline.nodes.draw.utils.constants import THICK, VERY_THICK
-from peekingduck.pipeline.nodes.draw.utils.general import (
+from peekingduck.nodes.draw.utils.constants import THICK, VERY_THICK
+from peekingduck.nodes.draw.utils.general import (
     get_image_size,
     project_points_onto_original_image,
 )

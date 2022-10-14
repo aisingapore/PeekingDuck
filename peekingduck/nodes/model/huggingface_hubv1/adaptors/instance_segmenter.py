@@ -21,7 +21,7 @@ import torch
 import torch.nn.functional as F
 from transformers import AutoModelForInstanceSegmentation
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
+from peekingduck.nodes.model.huggingface_hubv1.adaptors import base
 
 
 class InstanceSegmenter(base.HuggingFaceAdaptor):

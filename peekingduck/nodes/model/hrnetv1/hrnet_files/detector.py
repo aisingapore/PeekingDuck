@@ -23,18 +23,18 @@ from typing import Callable, Dict, List, Tuple
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
+from peekingduck.nodes.model.hrnetv1.hrnet_files.postprocessing import (
     affine_transform_xy,
     get_keypoint_conns,
     get_valid_keypoints,
     reshape_heatmaps,
     scale_transform,
 )
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
+from peekingduck.nodes.model.hrnetv1.hrnet_files.preprocessing import (
     crop_and_resize,
     tlwh2xywh,
 )
-from peekingduck.pipeline.utils.bbox.transforms import xyxyn2tlwh
+from peekingduck.utils.bbox.transforms import xyxyn2tlwh
 from peekingduck.utils.graph_functions import load_graph
 
 

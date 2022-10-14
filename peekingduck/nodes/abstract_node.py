@@ -52,7 +52,7 @@ class AbstractNode(metaclass=ABCMeta):
         self.logger = logging.getLogger(self._name)
 
         if not pkd_base_dir:
-            pkd_base_dir = Path(__file__).resolve().parents[2]
+            pkd_base_dir = Path(__file__).resolve().parents[1]
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 

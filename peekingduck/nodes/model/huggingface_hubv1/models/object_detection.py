@@ -21,9 +21,9 @@ import torch
 import torchvision
 from transformers import AutoConfig
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.models import base
-from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
+from peekingduck.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.nodes.model.huggingface_hubv1.models import base
+from peekingduck.utils.bbox.transforms import xyxy2xyxyn
 
 
 class ObjectDetectionModel(base.HuggingFaceModel):

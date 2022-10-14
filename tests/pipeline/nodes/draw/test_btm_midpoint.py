@@ -19,7 +19,7 @@ Test for draw bottom midpoint node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.btm_midpoint import Node
+from peekingduck.nodes.draw.btm_midpoint import Node
 
 
 @pytest.fixture

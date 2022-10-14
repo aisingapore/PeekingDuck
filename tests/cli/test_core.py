@@ -99,7 +99,7 @@ def create_node_python(node_dir, node_name, return_statement):
     with open(node_dir / f"{node_name}.py", "w") as outfile:
         content = textwrap.dedent(
             f"""\
-            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+            from peekingduck.nodes.abstract_node import AbstractNode
 
             class Node(AbstractNode):
                 def __init__(self, config, **kwargs):

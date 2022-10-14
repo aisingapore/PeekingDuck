@@ -16,8 +16,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.yolact_edgev1 import yolact_edge_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.yolact_edgev1 import yolact_edge_model
 
 
 class Node(AbstractNode):

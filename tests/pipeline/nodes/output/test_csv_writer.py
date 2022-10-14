@@ -19,7 +19,7 @@ from pathlib import Path
 
 import pytest
 
-from peekingduck.pipeline.nodes.output.csv_writer import Node
+from peekingduck.nodes.output.csv_writer import Node
 
 
 def directory_contents():

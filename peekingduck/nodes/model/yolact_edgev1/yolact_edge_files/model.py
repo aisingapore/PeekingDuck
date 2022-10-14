@@ -93,11 +93,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
+from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
     MobileNetV2Backbone,
     ResNetBackbone,
 )
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
+from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
     decode,
     jaccard,
     make_extra,

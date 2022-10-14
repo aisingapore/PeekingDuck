@@ -15,7 +15,7 @@
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.bbox_to_3d_loc import Node
+from peekingduck.nodes.dabble.bbox_to_3d_loc import Node
 
 
 @pytest.fixture

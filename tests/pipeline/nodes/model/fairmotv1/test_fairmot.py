@@ -22,9 +22,9 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
-from peekingduck.pipeline.nodes.model.fairmot import Node
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching import (
+from peekingduck.nodes.base import WeightsDownloaderMixin
+from peekingduck.nodes.model.fairmot import Node
+from peekingduck.nodes.model.fairmotv1.fairmot_files.matching import (
     fuse_motion,
     iou_distance,
 )
@@ -186,7 +186,7 @@ class TestFairMOT:
         fairmot = Node(fairmot_config)
         prev_tags = []
         with mock.patch(
-            "peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching.fuse_motion",
+            "peekingduck.nodes.model.fairmotv1.fairmot_files.matching.fuse_motion",
             wraps=replace_fuse_motion,
         ):
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -205,10 +205,10 @@ class TestFairMOT:
         _, detections = human_video_sequence
         fairmot = Node(fairmot_config)
         with mock.patch(
-            "peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching.fuse_motion",
+            "peekingduck.nodes.model.fairmotv1.fairmot_files.matching.fuse_motion",
             wraps=replace_fuse_motion,
         ), mock.patch(
-            "peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.matching.iou_distance",
+            "peekingduck.nodes.model.fairmotv1.fairmot_files.matching.iou_distance",
             wraps=replace_iou_distance,
         ):
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -253,7 +253,7 @@ class TestFairMOT:
         fairmot = Node(config=fairmot_config)
         prev_tags = []
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.fairmot_mot.fairmot_model.logger"
+            "peekingduck.nodes.model.fairmot_mot.fairmot_model.logger"
         ) as captured:
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
                 # Insert mot_metadata in input to signal a new model should be

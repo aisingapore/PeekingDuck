@@ -54,7 +54,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.utils import decode_delta_map
+from peekingduck.nodes.model.jdev1.jde_files.utils import decode_delta_map
 
 
 class YOLOLayer(nn.Module):  # pylint: disable=too-many-instance-attributes

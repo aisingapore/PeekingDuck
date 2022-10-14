@@ -16,7 +16,7 @@ from typing import Any, Dict, Union
 
 import pytest
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 

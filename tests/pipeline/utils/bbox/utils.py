@@ -1,4 +1,4 @@
-from peekingduck.pipeline.utils.bbox.transforms import BboxType, clone
+from peekingduck.utils.bbox.transforms import BboxType, clone
 
 
 def expand_dim(

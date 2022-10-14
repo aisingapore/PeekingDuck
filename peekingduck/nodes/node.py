@@ -18,12 +18,12 @@ Abstract Node class for all nodes.
 
 
 # pylint: disable=unused-import
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.utils.deprecation import deprecate
 
 deprecate(
-    "importing AbstractNode from peekingduck.pipeline.nodes.node is deprecated "
+    "importing AbstractNode from peekingduck.nodes.node is deprecated "
     "and will be removed in a future version. Please import from "
-    "peekingduck.pipeline.nodes.abstract_node instead.",
+    "peekingduck.nodes.abstract_node instead.",
     3,
 )

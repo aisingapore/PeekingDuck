@@ -19,7 +19,7 @@ Test for draw tag node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.tag import Node
+from peekingduck.nodes.draw.tag import Node
 from tests.conftest import not_raises
 
 

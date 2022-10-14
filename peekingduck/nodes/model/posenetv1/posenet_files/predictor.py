@@ -23,19 +23,17 @@ from typing import Callable, Dict, List, Tuple, Union
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
+from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     KEYPOINTS_NUM,
     MIN_PART_SCORE,
     SCALE_FACTOR,
     SKELETON,
 )
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
+from peekingduck.nodes.model.posenetv1.posenet_files.detector import (
     detect_keypoints,
     get_keypoints_relative_coords,
 )
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
-    rescale_image,
-)
+from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
 from peekingduck.utils.graph_functions import load_graph
 
 OUTPUT_STRIDE = 16

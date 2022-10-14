@@ -21,14 +21,14 @@ from typing import Any, Dict, List, Tuple
 import yaml
 
 # Master map file for class name to object IDs for object detection models
-MASTER_MAP = "pipeline/nodes/model/master_map.yml"
+MASTER_MAP = "nodes/model/master_map.yml"
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
 
 
 def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
     """Loads class name to object ID mapping from the file
-    peekingduck/pipeline/nodes/model/master_map.yml
+    peekingduck/nodes/model/master_map.yml
     for object detection models only.
 
     Tech Notes

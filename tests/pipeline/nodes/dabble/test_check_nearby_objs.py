@@ -15,7 +15,7 @@
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.check_nearby_objs import Node
+from peekingduck.nodes.dabble.check_nearby_objs import Node
 
 TAG_MSG = "TOO CLOSE!"
 

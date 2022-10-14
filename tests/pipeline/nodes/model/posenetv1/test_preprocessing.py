@@ -19,7 +19,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.preprocessing import (
+from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import (
     _get_valid_resolution,
     _rescale_image,
     rescale_image,

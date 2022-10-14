@@ -21,9 +21,7 @@ from typing import Tuple, Union
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
-    IMAGE_NET_MEAN,
-)
+from peekingduck.nodes.model.posenetv1.posenet_files.constants import IMAGE_NET_MEAN
 
 
 def rescale_image(

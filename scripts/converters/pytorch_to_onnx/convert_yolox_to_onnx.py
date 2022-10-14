@@ -15,15 +15,15 @@
 """Module to convert PyTorch YOLOX models to ONNX"""
 
 import logging
+from time import perf_counter
+
 import numpy as np
 import onnx
 import torch
 import torch.onnx
-
-from time import perf_counter
 from torch import nn
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.model import YOLOX
 
+from peekingduck.nodes.model.yoloxv1.yolox_files.model import YOLOX
 
 ####################
 # Globals

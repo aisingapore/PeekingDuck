@@ -14,7 +14,7 @@
 
 import pytest
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.base import ThresholdCheckerMixin
 from tests.conftest import not_raises
 
 

@@ -373,7 +373,7 @@ node.
          import numpy as np
          import tensorflow as tf
 
-         from peekingduck.pipeline.nodes.node import AbstractNode
+         from peekingduck.nodes.node import AbstractNode
 
          IMG_HEIGHT = 180
          IMG_WIDTH = 180

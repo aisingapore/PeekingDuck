@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.detector import (
+from peekingduck.nodes.model.posenetv1.posenet_files.detector import (
     _sigmoid,
     get_keypoints_relative_coords,
 )

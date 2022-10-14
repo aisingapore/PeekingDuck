@@ -19,7 +19,7 @@ Test for draw zones node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.zones import Node
+from peekingduck.nodes.draw.zones import Node
 
 
 @pytest.fixture

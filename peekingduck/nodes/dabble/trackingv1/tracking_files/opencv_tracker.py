@@ -19,7 +19,7 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.utils import (
+from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import (
     iou_candidates,
     xyxyn2tlwh,
 )

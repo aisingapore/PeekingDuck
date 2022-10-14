@@ -18,7 +18,7 @@ import cv2
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.csrnet import Node
+from peekingduck.nodes.model.csrnet import Node
 from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())

@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.bbox import Node
+from peekingduck.nodes.draw.bbox import Node
 
 BLACK_IMAGE = ["black.jpg"]
 # path to reach 4 file levels up from test_bbox.py

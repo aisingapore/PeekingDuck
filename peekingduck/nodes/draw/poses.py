@@ -18,11 +18,11 @@ Draws keypoints on a detected pose.
 
 from typing import Any, Dict, List, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.draw.utils.constants import COLOR_MAP
-from peekingduck.pipeline.nodes.draw.utils.general import get_color
-from peekingduck.pipeline.nodes.draw.utils.pose import Pose
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.draw.utils.constants import COLOR_MAP
+from peekingduck.nodes.draw.utils.general import get_color
+from peekingduck.nodes.draw.utils.pose import Pose
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):

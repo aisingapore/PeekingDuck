@@ -21,11 +21,8 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.csrnetv1.csrnet_files.predictor import Predictor
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.csrnetv1.csrnet_files.predictor import Predictor
 
 
 class CSRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):

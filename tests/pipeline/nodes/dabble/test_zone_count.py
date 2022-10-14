@@ -17,7 +17,7 @@ Test for zone count node
 
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.zone_count import Node
+from peekingduck.nodes.dabble.zone_count import Node
 
 
 @pytest.fixture

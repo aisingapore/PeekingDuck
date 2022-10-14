@@ -15,7 +15,7 @@
 import numpy as np
 import numpy.testing as npt
 
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.postprocessing import (
+from peekingduck.nodes.model.hrnetv1.hrnet_files.postprocessing import (
     get_valid_keypoints,
     reshape_heatmaps,
     scale_transform,

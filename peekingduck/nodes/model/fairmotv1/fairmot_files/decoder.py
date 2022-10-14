@@ -51,7 +51,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.utils import (
+from peekingduck.nodes.model.fairmotv1.fairmot_files.utils import (
     gather_feat,
     transform_coords,
     transpose_and_gather_feat,

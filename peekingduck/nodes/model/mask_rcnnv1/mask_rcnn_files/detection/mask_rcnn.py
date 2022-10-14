@@ -93,13 +93,13 @@ Modifications include:
     - rpn_post_nms_top_n_train
 """
 
-from typing import Iterable, Optional, Tuple
 from collections import OrderedDict
+from typing import Iterable, Optional, Tuple
+
 from torch import nn
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
-    faster_rcnn,
-)
+
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import faster_rcnn
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
 
 
 class MaskRCNN(faster_rcnn.FasterRCNN):

@@ -19,12 +19,9 @@ from typing import Any, Dict, Optional
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.model.mediapipe_hubv1 import (
-    object_detection,
-    pose_estimation,
-)
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.model.mediapipe_hubv1 import object_detection, pose_estimation
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):

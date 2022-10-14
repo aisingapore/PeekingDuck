@@ -20,13 +20,14 @@
 # 2) TestNodeOperation - To test that this node handles correct or incorrect types appropriately
 # 3) TestStatisticsCalcs - To test that the calculations of cum_avg, cum_max, cum_min are correct
 
-from contextlib import contextmanager
 import operator
-import pytest
-from tests.conftest import not_raises
+from contextlib import contextmanager
 
-from peekingduck.pipeline.nodes.dabble.statistics import Node
-from peekingduck.pipeline.nodes.dabble.statisticsv1 import utils
+import pytest
+
+from peekingduck.nodes.dabble.statistics import Node
+from peekingduck.nodes.dabble.statisticsv1 import utils
+from tests.conftest import not_raises
 
 
 @pytest.fixture

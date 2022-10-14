@@ -27,8 +27,8 @@ from typing import Any, Tuple, Union
 
 import cv2
 
-from peekingduck.pipeline.nodes.input.utils.png_reader import PNGReader
-from peekingduck.pipeline.nodes.input.utils.preprocess import mirror
+from peekingduck.nodes.input.utils.png_reader import PNGReader
+from peekingduck.nodes.input.utils.preprocess import mirror
 
 GOOGLE_DNS = "8.8.8.8"
 

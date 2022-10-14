@@ -19,8 +19,8 @@ of interest over time.
 import operator
 from typing import Any, Dict, Optional, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.dabble.statisticsv1 import utils
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.dabble.statisticsv1 import utils
 
 # Order matters so that regex doesn't read ">=" as ">" or "<=" as "<"
 # Dictionaries are insertion ordered from Python 3.6 onwards

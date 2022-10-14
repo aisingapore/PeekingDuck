@@ -19,9 +19,9 @@ from typing import Any, Dict, List, Optional, Union
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import models
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.model.huggingface_hubv1 import models
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):

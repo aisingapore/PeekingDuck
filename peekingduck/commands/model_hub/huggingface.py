@@ -23,7 +23,7 @@ import click
 from peekingduck.commands import LOGGER_NAME
 from peekingduck.commands.base import AliasedGroup
 from peekingduck.commands.model_hub import model_hub
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
+from peekingduck.nodes.model.huggingface_hubv1.api_utils import (
     SUPPORTED_TASKS,
     get_valid_models,
 )

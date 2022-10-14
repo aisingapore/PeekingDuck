@@ -19,7 +19,7 @@ import cv2
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.input.visual import Node
+from peekingduck.nodes.input.visual import Node
 from tests.conftest import assert_msg_in_logs, not_raises
 
 
@@ -156,7 +156,7 @@ class TestMediaReader:
             ),
         }
         msg_set = set()
-        with TestCase.assertLogs("peekingduck.pipeline.nodes.input.visual") as captured:
+        with TestCase.assertLogs("peekingduck.nodes.input.visual") as captured:
             reader = create_reader()
             for k, v in contents.items():
                 if k.startswith("vid"):

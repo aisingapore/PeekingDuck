@@ -15,8 +15,8 @@
 import numpy as np
 import torch
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files import tracker
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.track import STrack
+from peekingduck.nodes.model.fairmotv1.fairmot_files import tracker
+from peekingduck.nodes.model.fairmotv1.fairmot_files.track import STrack
 
 
 class TestFairMOTTracker:

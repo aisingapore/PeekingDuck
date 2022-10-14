@@ -15,7 +15,7 @@
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.group_nearby_objs import Node
+from peekingduck.nodes.dabble.group_nearby_objs import Node
 
 
 @pytest.fixture

@@ -85,15 +85,17 @@ Modifications include:
 - Removed torch_choice method (unused)
 """
 
-from typing import Dict, Iterable, List, Optional, Tuple, Union
 import math
+from typing import Dict, Iterable, List, Optional, Tuple, Union
+
 import torch
-from torch import nn, Tensor
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.roi_heads import (
-    paste_masks_in_image,
-)
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.image_list import (
+from torch import Tensor, nn
+
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.image_list import (
     ImageList,
+)
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.roi_heads import (
+    paste_masks_in_image,
 )
 
 

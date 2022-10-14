@@ -16,10 +16,8 @@
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.dabble.trackingv1.detection_tracker import (
-    DetectionTracker,
-)
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.dabble.trackingv1.detection_tracker import DetectionTracker
 
 
 class Node(AbstractNode):

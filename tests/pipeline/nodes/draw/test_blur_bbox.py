@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.blur_bbox import Node
+from peekingduck.nodes.draw.blur_bbox import Node
 
 TEST_IMAGE = ["tcar1.jpg"]
 # path to reach 4 file levels up from test_blur_bbox.py

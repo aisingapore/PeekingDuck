@@ -52,21 +52,16 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files import matching
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.decoder import Decoder
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.dla import DLASeg
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
-    KalmanFilter,
-)
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.track import (
-    STrack,
-    TrackState,
-)
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.utils import (
+from peekingduck.nodes.model.fairmotv1.fairmot_files import matching
+from peekingduck.nodes.model.fairmotv1.fairmot_files.decoder import Decoder
+from peekingduck.nodes.model.fairmotv1.fairmot_files.dla import DLASeg
+from peekingduck.nodes.model.fairmotv1.fairmot_files.kalman_filter import KalmanFilter
+from peekingduck.nodes.model.fairmotv1.fairmot_files.track import STrack, TrackState
+from peekingduck.nodes.model.fairmotv1.fairmot_files.utils import (
     letterbox,
     transpose_and_gather_feat,
 )
-from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyxyn, xyxy2tlwh
+from peekingduck.utils.bbox.transforms import tlwh2xyxyn, xyxy2tlwh
 
 
 class Tracker:  # pylint: disable=too-many-instance-attributes

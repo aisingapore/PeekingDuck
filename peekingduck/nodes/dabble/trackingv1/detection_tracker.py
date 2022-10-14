@@ -17,11 +17,9 @@
 import logging
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.iou_tracker import (
-    IOUTracker,
-)
-from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.opencv_tracker import (
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.dabble.trackingv1.tracking_files.iou_tracker import IOUTracker
+from peekingduck.nodes.dabble.trackingv1.tracking_files.opencv_tracker import (
     OpenCVTracker,
 )
 

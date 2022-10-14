@@ -21,7 +21,7 @@ from typing import Any, List, Tuple
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.draw.utils.constants import (
+from peekingduck.nodes.draw.utils.constants import (
     PRIMARY_PALETTE,
     PRIMARY_PALETTE_LENGTH,
     VERY_THICK,

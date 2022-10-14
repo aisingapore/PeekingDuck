@@ -21,8 +21,8 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
-from peekingduck.pipeline.nodes.model.posenet import Node
+from peekingduck.nodes.base import WeightsDownloaderMixin
+from peekingduck.nodes.model.posenet import Node
 from tests.conftest import PKD_DIR, get_groundtruth
 
 TOLERANCE = 1e-5

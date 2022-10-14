@@ -60,7 +60,7 @@ from typing import Any, Dict, List, Tuple
 import torch
 import torch.nn as nn
 
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.network_blocks import YOLOLayer
+from peekingduck.nodes.model.jdev1.jde_files.network_blocks import YOLOLayer
 
 
 class Darknet(nn.Module):

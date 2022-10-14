@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.heat_map import Node
+from peekingduck.nodes.draw.heat_map import Node
 
 TEST_IMAGE = ["crowd1.jpg"]
 # path to reach 4 file levels up from test_heat_map.py

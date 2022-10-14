@@ -47,11 +47,11 @@ import lap
 import numpy as np
 from scipy.spatial.distance import cdist
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
+from peekingduck.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
     KalmanFilter,
     chi2inv95,
 )
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.track import STrack
+from peekingduck.nodes.model.fairmotv1.fairmot_files.track import STrack
 
 
 def bbox_ious(bboxes_1: np.ndarray, bboxes_2: np.ndarray) -> np.ndarray:

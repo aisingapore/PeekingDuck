@@ -22,7 +22,7 @@ import cv2
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.mosaic_bbox import Node
+from peekingduck.nodes.draw.mosaic_bbox import Node
 
 TEST_IMAGE = ["t1.jpg"]
 # path to reach 4 file levels up from test_mosaic_bbox.py

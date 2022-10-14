@@ -17,8 +17,8 @@
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_pts
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.bbox import draw_pts
 
 
 class Node(AbstractNode):

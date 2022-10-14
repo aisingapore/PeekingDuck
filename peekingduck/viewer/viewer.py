@@ -35,7 +35,7 @@ import numpy as np
 from PIL import Image, ImageTk
 
 from peekingduck.declarative_loader import DeclarativeLoader
-from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.pipeline import Pipeline
 from peekingduck.viewer.playlist import PlayList
 from peekingduck.viewer.viewer_gui import create_window
 from peekingduck.viewer.viewer_utils import get_keyboard_char, get_keyboard_modifier

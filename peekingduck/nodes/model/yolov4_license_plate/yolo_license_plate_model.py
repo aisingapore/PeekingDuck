@@ -21,11 +21,8 @@ from typing import Any, Dict, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.yolov4_license_plate.yolo_license_plate_files.detector import (  # pylint: disable=line-too-long
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.yolov4_license_plate.yolo_license_plate_files.detector import (  # pylint: disable=line-too-long
     Detector,
 )
 

@@ -18,8 +18,8 @@ from typing import Any, Dict, List, Optional, Union
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.yoloxv1 import yolox_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.yoloxv1 import yolox_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods

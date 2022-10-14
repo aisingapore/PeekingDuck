@@ -22,7 +22,7 @@ import tensorflow as tf
 import tensorflow.keras.backend as K
 import yaml
 
-from peekingduck.pipeline.nodes.model.movenetv1.movenet_files.predictor import Predictor
+from peekingduck.nodes.model.movenetv1.movenet_files.predictor import Predictor
 from tests.conftest import PKD_DIR, TEST_IMAGES_DIR
 
 

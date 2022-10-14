@@ -17,22 +17,22 @@ Draws instance segmentation masks.
 """
 
 import colorsys
-from random import randint
 from pydoc import locate
+from random import randint
 from typing import Any, Callable, Dict, List, Tuple, cast
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.draw.utils.constants import (
-    SATURATION_STEPS,
-    SATURATION_MINIMUM,
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.draw.utils.constants import (
     ALPHA,
-    CONTOUR_COLOR,
     CLASS_COLORS,
+    CONTOUR_COLOR,
     DEFAULT_CLASS_COLOR,
+    SATURATION_MINIMUM,
+    SATURATION_STEPS,
 )
 
 

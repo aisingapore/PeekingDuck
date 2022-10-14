@@ -18,7 +18,7 @@ from unittest import TestCase
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.models import (
+from peekingduck.nodes.model.huggingface_hubv1.models import (
     instance_segmentation,
     object_detection,
 )
@@ -55,7 +55,7 @@ class TestObjectDetectionModel:
     def test_empty_detect_list(self, huggingface_detr_config):
         huggingface_detr_config["detect"] = []
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "object_detection.ObjectDetectionModel"
         ) as captured:
             model = object_detection.ObjectDetectionModel(huggingface_detr_config)
@@ -69,7 +69,7 @@ class TestObjectDetectionModel:
     def test_all_invalid_detect_label(self, huggingface_detr_config):
         huggingface_detr_config["detect"] = ["invalid_label_1", "invalid_label_2"]
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "object_detection.ObjectDetectionModel"
         ) as captured:
             model = object_detection.ObjectDetectionModel(huggingface_detr_config)
@@ -83,7 +83,7 @@ class TestObjectDetectionModel:
         # Assume no models use negative detect IDs
         huggingface_detr_config["detect"] = [-1, -2]
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "object_detection.ObjectDetectionModel"
         ) as captured:
             model = object_detection.ObjectDetectionModel(huggingface_detr_config)
@@ -115,7 +115,7 @@ class TestInstanceSegmentationModel:
     def test_empty_detect_list(self, huggingface_segmentation_config):
         huggingface_segmentation_config["detect"] = []
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
             model = instance_segmentation.InstanceSegmentationModel(
@@ -134,7 +134,7 @@ class TestInstanceSegmentationModel:
             "invalid_label_2",
         ]
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
             model = instance_segmentation.InstanceSegmentationModel(
@@ -150,7 +150,7 @@ class TestInstanceSegmentationModel:
         # Assume no models use negative detect IDs
         huggingface_segmentation_config["detect"] = [-1, -2]
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.huggingface_hubv1."
+            "peekingduck.nodes.model.huggingface_hubv1."
             "instance_segmentation.InstanceSegmentationModel"
         ) as captured:
             model = instance_segmentation.InstanceSegmentationModel(

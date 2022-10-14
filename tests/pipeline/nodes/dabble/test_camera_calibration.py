@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 import tensorflow.keras.backend as K
 
-from peekingduck.pipeline.nodes.dabble.camera_calibration import (
+from peekingduck.nodes.dabble.camera_calibration import (
     Node,
     _check_corners_validity,
     _get_box_info,

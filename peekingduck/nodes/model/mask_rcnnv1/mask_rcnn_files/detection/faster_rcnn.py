@@ -93,17 +93,20 @@ Modifications include:
     - rpn_post_nms_top_n_train
 """
 
-from typing import Optional, Tuple, Iterable
-from torch import nn, Tensor
+from typing import Iterable, Optional, Tuple
+
 import torch.nn.functional as F
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
-    anchor_utils,
-    rpn,
-    roi_heads,
+from torch import Tensor, nn
+
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import anchor_utils
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     generalized_rcnn as g_rnn,
+)
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import roi_heads, rpn
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     transform as g_rcnn_transform,
 )
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import poolers
 
 
 class FasterRCNN(g_rnn.GeneralizedRCNN):

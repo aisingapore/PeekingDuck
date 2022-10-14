@@ -19,7 +19,7 @@ Test for group bbox and tag node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.group_bbox_and_tag import Node
+from peekingduck.nodes.draw.group_bbox_and_tag import Node
 
 
 @pytest.fixture

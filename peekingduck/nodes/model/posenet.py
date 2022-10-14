@@ -18,8 +18,8 @@ from typing import Any, Dict, Optional, Union
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.posenetv1 import posenet_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.posenetv1 import posenet_model
 
 
 class Node(AbstractNode):

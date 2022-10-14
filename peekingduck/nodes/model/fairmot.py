@@ -20,8 +20,8 @@ from typing import Any, Dict, List, Optional
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.fairmotv1 import fairmot_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.fairmotv1 import fairmot_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods

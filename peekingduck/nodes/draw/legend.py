@@ -18,8 +18,8 @@ Displays selected information from preceding nodes in a legend box.
 
 from typing import Any, Dict, List, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.legend import Legend
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.legend import Legend
 
 
 class Node(AbstractNode):

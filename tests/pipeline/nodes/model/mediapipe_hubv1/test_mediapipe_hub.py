@@ -15,7 +15,8 @@
 import cv2
 import pytest
 import yaml
-from peekingduck.pipeline.nodes.model.mediapipe_hub import Node
+
+from peekingduck.nodes.model.mediapipe_hub import Node
 from tests.conftest import PKD_DIR
 
 

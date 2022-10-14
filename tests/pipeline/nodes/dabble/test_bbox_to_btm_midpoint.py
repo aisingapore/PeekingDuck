@@ -15,7 +15,7 @@
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.bbox_to_btm_midpoint import Node
+from peekingduck.nodes.dabble.bbox_to_btm_midpoint import Node
 
 
 @pytest.fixture

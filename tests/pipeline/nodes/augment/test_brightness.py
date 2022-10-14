@@ -19,7 +19,7 @@ Test for augment brightness node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.augment.brightness import Node
+from peekingduck.nodes.augment.brightness import Node
 
 
 @pytest.fixture

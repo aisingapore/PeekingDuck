@@ -19,7 +19,7 @@ Test for augment contrast node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.augment.contrast import Node
+from peekingduck.nodes.augment.contrast import Node
 
 
 @pytest.fixture

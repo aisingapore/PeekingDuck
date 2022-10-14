@@ -14,8 +14,8 @@
 
 import pytest
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline import Pipeline
 
 
 class MockedNode(AbstractNode):

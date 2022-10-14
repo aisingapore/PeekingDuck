@@ -20,8 +20,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.output.utils.csvlogger import CSVLogger
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.output.utils.csvlogger import CSVLogger
 
 
 class Node(AbstractNode):

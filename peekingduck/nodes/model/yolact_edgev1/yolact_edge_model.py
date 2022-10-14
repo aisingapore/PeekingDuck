@@ -19,13 +19,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.detector import (
-    Detector,
-)
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.detector import Detector
 
 
 class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):

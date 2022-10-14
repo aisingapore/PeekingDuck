@@ -20,7 +20,7 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.movenet import Node
+from peekingduck.nodes.model.movenet import Node
 from tests.conftest import PKD_DIR, get_groundtruth
 
 TOLERANCE = 1e-5

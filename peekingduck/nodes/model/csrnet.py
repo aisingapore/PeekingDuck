@@ -20,8 +20,8 @@ from typing import Any, Dict, Optional
 
 import cv2
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.csrnetv1 import csrnet_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.csrnetv1 import csrnet_model
 
 
 class Node(AbstractNode):

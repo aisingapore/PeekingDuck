@@ -24,7 +24,7 @@ from typing import Any, Iterator, List, TextIO, Tuple, Union
 import pkg_resources as pkg
 
 logger = logging.getLogger(__name__)  # pylint: disable=invalid-name
-PKD_NODE_PREFIX = "peekingduck.pipeline.nodes."
+PKD_NODE_PREFIX = "peekingduck.nodes."
 PKD_REQ_TYPE_LEN = 6  # string length of either PYTHON or SYSTEM
 PKD_REQ_TYPE_PYTHON = "PYTHON"  # type specifier for Python packages
 ROOT = Path(__file__).resolve().parents[1]
@@ -41,7 +41,7 @@ class RequirementChecker(importlib.abc.MetaPathFinder):
 
     @staticmethod
     def find_spec(fullname: str, *_: Any) -> None:
-        """Checks if the peekingduck.pipeline.nodes module being imported
+        """Checks if the peekingduck.nodes module being imported
         contains optional requirements. Attempt to install if it does.
 
         Args:

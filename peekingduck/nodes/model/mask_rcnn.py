@@ -16,8 +16,8 @@
 
 from typing import Any, Dict, List, Optional, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.mask_rcnnv1 import mask_rcnn_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.mask_rcnnv1 import mask_rcnn_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods

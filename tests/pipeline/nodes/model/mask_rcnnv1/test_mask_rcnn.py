@@ -22,9 +22,9 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
-from peekingduck.pipeline.nodes.model.mask_rcnn import Node
-from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
+from peekingduck.nodes.base import WeightsDownloaderMixin
+from peekingduck.nodes.model.mask_rcnn import Node
+from peekingduck.utils.bbox.transforms import xyxy2xyxyn
 from tests.conftest import PKD_DIR, get_groundtruth
 
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())

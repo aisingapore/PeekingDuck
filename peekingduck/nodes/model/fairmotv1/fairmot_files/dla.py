@@ -60,7 +60,7 @@ import numpy as np
 import torch
 from torch import nn
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.network_blocks import (
+from peekingduck.nodes.model.fairmotv1.fairmot_files.network_blocks import (
     BN_MOMENTUM,
     BasicBlock,
     DeformConv,

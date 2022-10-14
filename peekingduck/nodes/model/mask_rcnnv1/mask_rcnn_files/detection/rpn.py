@@ -90,16 +90,16 @@ Modifications include:
 """
 
 from typing import Dict, List, Tuple
+
 import torch
-from torch import nn, Tensor
+from torch import Tensor, nn
 from torch.nn import functional as F
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import (
-    boxes as box_ops,
-)
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
-    image_list,
+
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import (
     detection_utils as det_utils,
 )
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection import image_list
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.ops import boxes as box_ops
 
 
 def permute_and_flatten(

@@ -16,18 +16,14 @@
 Mask R-CNN model with backbone type: r50-fpn and r101-fpn
 """
 
+import json
 import logging
 from typing import Any, Dict, List, Tuple
-import json
+
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detector import (
-    Detector,
-)
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detector import Detector
 
 
 class MaskRCNNModel(ThresholdCheckerMixin, WeightsDownloaderMixin):

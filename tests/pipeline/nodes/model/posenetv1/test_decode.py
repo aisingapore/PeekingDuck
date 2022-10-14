@@ -18,7 +18,7 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode import (
+from peekingduck.nodes.model.posenetv1.posenet_files.decode import (
     _clip_to_indices,
     _traverse_to_target_keypoint,
 )

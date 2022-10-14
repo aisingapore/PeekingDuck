@@ -47,7 +47,7 @@ import numpy as np
 import torch
 from torchvision.ops import nms
 
-from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy
+from peekingduck.utils.bbox.transforms import xywh2xyxy
 
 
 def decode_delta(delta: torch.Tensor, anchor_mesh: torch.Tensor) -> torch.Tensor:

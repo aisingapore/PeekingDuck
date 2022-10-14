@@ -23,9 +23,9 @@ import numpy as np
 import torch
 import torchvision
 
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.model import YOLOX
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.utils import fuse_model
-from peekingduck.pipeline.utils.bbox.transforms import xywh2xyxy, xyxy2xyxyn
+from peekingduck.nodes.model.yoloxv1.yolox_files.model import YOLOX
+from peekingduck.nodes.model.yoloxv1.yolox_files.utils import fuse_model
+from peekingduck.utils.bbox.transforms import xywh2xyxy, xyxy2xyxyn
 
 NUM_CHANNELS = 3
 
@@ -205,9 +205,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
                 return model
         elif model_format == "tensorrt":
             # pylint: disable=import-error, import-outside-toplevel
-            from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.trt_model import (
-                TrtModel,
-            )
+            from peekingduck.nodes.model.yoloxv1.yolox_files.trt_model import TrtModel
 
             self.logger.info("creating tensorrt model")
             model = TrtModel(str(self.model_path))

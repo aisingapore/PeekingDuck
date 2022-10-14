@@ -23,7 +23,7 @@ from typing import Callable, List, Union
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi import (
+from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
     decode_multiple_poses,
 )
 

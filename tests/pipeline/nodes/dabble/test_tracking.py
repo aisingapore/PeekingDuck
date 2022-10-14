@@ -19,7 +19,7 @@ from unittest import TestCase
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.tracking import Node
+from peekingduck.nodes.dabble.tracking import Node
 
 # Frame index for manual manipulation of detections to trigger some
 # branches
@@ -208,7 +208,7 @@ class TestTracking:
         _, detections = human_video_sequence
         prev_tags = []
         with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.dabble.tracking.logger"
+            "peekingduck.nodes.dabble.tracking.logger"
         ) as captured:
             for i, inputs in enumerate(detections):
                 # Insert mot_metadata in input to signal a new model should be

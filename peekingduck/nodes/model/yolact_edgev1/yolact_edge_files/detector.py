@@ -25,10 +25,8 @@ import torch
 import torch.nn.functional as F
 from torch.backends import cudnn
 
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
-    YolactEdge,
-)
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
+from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.model import YolactEdge
+from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
     FastBaseTransform,
     crop,
 )

@@ -20,7 +20,7 @@ from typing import Any, Dict, Tuple
 import torch
 from transformers import AutoModelForObjectDetection
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
+from peekingduck.nodes.model.huggingface_hubv1.adaptors import base
 
 
 class ObjectDetector(base.HuggingFaceAdaptor):

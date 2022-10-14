@@ -17,7 +17,7 @@ from pathlib import Path
 import numpy as np
 import numpy.testing as npt
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.decode_multi import (
+from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
     _calculate_keypoint_coords_on_image,
     _change_dimensions,
     _get_instance_score_fast,

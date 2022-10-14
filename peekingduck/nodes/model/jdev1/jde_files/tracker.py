@@ -48,16 +48,16 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 import torch
 
-from peekingduck.pipeline.nodes.model.jdev1.jde_files import matching
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.darknet import Darknet
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.track import STrack, TrackState
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.utils import (
+from peekingduck.nodes.model.jdev1.jde_files import matching
+from peekingduck.nodes.model.jdev1.jde_files.darknet import Darknet
+from peekingduck.nodes.model.jdev1.jde_files.kalman_filter import KalmanFilter
+from peekingduck.nodes.model.jdev1.jde_files.track import STrack, TrackState
+from peekingduck.nodes.model.jdev1.jde_files.utils import (
     letterbox,
     non_max_suppression,
     scale_coords,
 )
-from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyxyn, xyxy2tlwh
+from peekingduck.utils.bbox.transforms import tlwh2xyxyn, xyxy2tlwh
 
 
 class Tracker:  # pylint: disable=too-many-instance-attributes

@@ -20,7 +20,7 @@ from typing import Any, Dict, Tuple
 import torch
 from transformers import AutoModelForImageSegmentation
 
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.adaptors import base
+from peekingduck.nodes.model.huggingface_hubv1.adaptors import base
 
 
 class PanopticSegmenter(base.HuggingFaceAdaptor):

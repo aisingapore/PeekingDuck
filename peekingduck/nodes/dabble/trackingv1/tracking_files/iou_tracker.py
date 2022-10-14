@@ -39,8 +39,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.track import Track
-from peekingduck.pipeline.nodes.dabble.trackingv1.tracking_files.utils import (
+from peekingduck.nodes.dabble.trackingv1.tracking_files.track import Track
+from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import (
     iou_tlwh,
     xyxyn2tlwh,
 )

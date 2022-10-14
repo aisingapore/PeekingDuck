@@ -14,7 +14,7 @@
 
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.fps import Node
+from peekingduck.nodes.dabble.fps import Node
 
 
 @pytest.fixture

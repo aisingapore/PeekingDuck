@@ -16,13 +16,13 @@
 Pose class for drawing pose keypoints and connections.
 """
 
-from typing import Any, Iterable, Tuple, Optional
+from typing import Any, Iterable, Optional, Tuple
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.draw.utils.constants import THICK
-from peekingduck.pipeline.nodes.draw.utils.general import (
+from peekingduck.nodes.draw.utils.constants import THICK
+from peekingduck.nodes.draw.utils.general import (
     get_image_size,
     project_points_onto_original_image,
 )

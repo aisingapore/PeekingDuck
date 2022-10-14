@@ -21,10 +21,8 @@ from typing import Callable, Dict, List, Tuple
 import numpy as np
 import tensorflow as tf
 
-from peekingduck.pipeline.nodes.model.mtcnnv1.mtcnn_files.graph_functions import (
-    load_graph,
-)
-from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
+from peekingduck.nodes.model.mtcnnv1.mtcnn_files.graph_functions import load_graph
+from peekingduck.utils.bbox.transforms import xyxy2xyxyn
 
 
 class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes

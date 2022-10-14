@@ -49,10 +49,8 @@ from typing import Deque, List
 import numpy as np
 import torch
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.kalman_filter import (
-    KalmanFilter,
-)
-from peekingduck.pipeline.utils.bbox.transforms import tlwh2xyah
+from peekingduck.nodes.model.fairmotv1.fairmot_files.kalman_filter import KalmanFilter
+from peekingduck.utils.bbox.transforms import tlwh2xyah
 
 
 class TrackState:  # pylint: disable=too-few-public-methods

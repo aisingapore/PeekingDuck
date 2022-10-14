@@ -23,7 +23,7 @@ import numpy as np
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.draw.poses import Node
+from peekingduck.nodes.draw.poses import Node
 from tests.conftest import PKD_DIR
 
 

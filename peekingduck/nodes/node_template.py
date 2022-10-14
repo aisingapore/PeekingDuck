@@ -20,7 +20,7 @@ Node template for creating custom nodes.
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

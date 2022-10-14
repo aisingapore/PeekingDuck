@@ -23,9 +23,9 @@ Reads inputs from multiple visual sources |br|
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.input.utils.preprocess import resize_image
-from peekingduck.pipeline.nodes.input.utils.read import VideoNoThread, VideoThread
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.input.utils.preprocess import resize_image
+from peekingduck.nodes.input.utils.read import VideoNoThread, VideoThread
 
 
 class SourceType:  # pylint: disable=too-few-public-methods

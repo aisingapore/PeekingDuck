@@ -21,7 +21,7 @@ from typing import Any, Dict, Set, Tuple
 import numpy as np
 from mediapipe.python.solution_base import SolutionBase
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.base import ThresholdCheckerMixin
 from peekingduck.utils.abstract_class_attributes import abstract_class_attributes
 
 

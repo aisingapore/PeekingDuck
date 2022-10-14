@@ -14,7 +14,7 @@
 
 import pytest
 
-from peekingduck.pipeline.nodes.dabble.check_large_groups import Node
+from peekingduck.nodes.dabble.check_large_groups import Node
 
 
 @pytest.fixture

@@ -46,8 +46,8 @@ from typing import Any, List, Tuple
 import torch
 import torch.nn as nn
 
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.darknet import CSPDarknet
-from peekingduck.pipeline.nodes.model.yoloxv1.yolox_files.network_blocks import (
+from peekingduck.nodes.model.yoloxv1.yolox_files.darknet import CSPDarknet
+from peekingduck.nodes.model.yoloxv1.yolox_files.network_blocks import (
     BaseConv,
     CSPLayer,
 )

@@ -19,10 +19,10 @@ Tests for draw instance mask node.
 import cv2
 import numpy as np
 import pytest
-from skimage.measure import compare_ssim as ssim
 import yaml
+from skimage.measure import compare_ssim as ssim
 
-from peekingduck.pipeline.nodes.draw.instance_mask import Node
+from peekingduck.nodes.draw.instance_mask import Node
 from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
 IMAGE_ORIGINAL = "draw_instance_mask_original_image.jpg"

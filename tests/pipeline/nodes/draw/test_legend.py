@@ -19,7 +19,7 @@ Test for draw legend node
 import numpy as np
 import pytest
 
-from peekingduck.pipeline.nodes.draw.legend import Node
+from peekingduck.nodes.draw.legend import Node
 
 
 @pytest.fixture

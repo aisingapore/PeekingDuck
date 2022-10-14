@@ -19,18 +19,20 @@ Detector class to handle detection of bboxes and masks for mask_rcnn
 import logging
 from pathlib import Path
 from typing import Dict, List, Tuple
+
 import cv2
 import numpy as np
 import torch
-from torch import Tensor
 import torchvision.transforms as T
-from peekingduck.pipeline.utils.bbox.transforms import xyxy2xyxyn
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.backbone_utils import (
+from torch import Tensor
+
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.backbone_utils import (
     resnet_fpn_backbone,
 )
-from peekingduck.pipeline.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.mask_rcnn import (
+from peekingduck.nodes.model.mask_rcnnv1.mask_rcnn_files.detection.mask_rcnn import (
     MaskRCNN,
 )
+from peekingduck.utils.bbox.transforms import xyxy2xyxyn
 
 
 class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attributes

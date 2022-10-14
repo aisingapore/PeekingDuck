@@ -20,11 +20,10 @@ Support functions to decode single pose
 
 
 from typing import Tuple
+
 import numpy as np
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.constants import (
-    POSE_CONNECTIONS,
-)
+from peekingduck.nodes.model.posenetv1.posenet_files.constants import POSE_CONNECTIONS
 
 
 def decode_pose(

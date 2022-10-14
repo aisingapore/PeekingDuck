@@ -18,8 +18,8 @@ Draws bounding boxes over detected objects.
 
 from typing import Any, Dict
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.bbox import draw_bboxes
 
 
 class Node(AbstractNode):

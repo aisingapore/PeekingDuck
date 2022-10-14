@@ -20,9 +20,9 @@ from typing import Any, Dict, List
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_bboxes, draw_tags
-from peekingduck.pipeline.nodes.draw.utils.constants import TOMATO
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.bbox import draw_bboxes, draw_tags
+from peekingduck.nodes.draw.utils.constants import TOMATO
 
 
 class Node(AbstractNode):

@@ -20,7 +20,7 @@ import numpy.testing as npt
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.model.posenetv1.posenet_files.predictor import Predictor
+from peekingduck.nodes.model.posenetv1.posenet_files.predictor import Predictor
 from tests.conftest import PKD_DIR
 
 

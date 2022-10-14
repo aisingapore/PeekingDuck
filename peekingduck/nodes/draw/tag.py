@@ -17,9 +17,9 @@
 import copy
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.draw.utils.bbox import draw_tags
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.nodes.draw.utils.bbox import draw_tags
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):

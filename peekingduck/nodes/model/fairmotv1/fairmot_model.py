@@ -39,11 +39,8 @@ from typing import Any, Dict, List, Tuple
 
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.tracker import Tracker
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.fairmotv1.fairmot_files.tracker import Tracker
 
 
 class FairMOTModel(ThresholdCheckerMixin, WeightsDownloaderMixin):

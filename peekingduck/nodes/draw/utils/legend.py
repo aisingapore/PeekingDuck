@@ -22,14 +22,14 @@ import cv2
 import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 
-from peekingduck.pipeline.nodes.draw.utils.constants import (
+from peekingduck.nodes.draw.utils.constants import (
     BLACK,
     FILLED,
     PRIMARY_PALETTE,
     PRIMARY_PALETTE_LENGTH,
     WHITE,
 )
-from peekingduck.pipeline.nodes.draw.utils.general import get_image_size
+from peekingduck.nodes.draw.utils.general import get_image_size
 
 ZONE_COUNTS_HEADING = "-ZONE COUNTS-"
 LEGEND_LEFT_X = 15

@@ -16,9 +16,9 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from peekingduck.pipeline.nodes.model.hrnetv1.hrnet_files.preprocessing import (
-    tlwh2xywh,
+from peekingduck.nodes.model.hrnetv1.hrnet_files.preprocessing import (
     crop_and_resize,
+    tlwh2xywh,
 )
 
 

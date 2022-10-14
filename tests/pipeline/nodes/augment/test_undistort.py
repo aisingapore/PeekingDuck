@@ -17,14 +17,15 @@ Test for augment undistort node
 """
 
 import gc
+from pathlib import Path
+
 import cv2
 import numpy as np
 import pytest
-from pathlib import Path
 import tensorflow.keras.backend as K
-from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
-from peekingduck.pipeline.nodes.augment.undistort import Node
+from peekingduck.nodes.augment.undistort import Node
+from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
 
 UNDISTORT_BEFORE = ["undistort_before.jpg"]
 CAMERA_COEFFICIENTS = ["camera_calibration_coeffs.yml"]

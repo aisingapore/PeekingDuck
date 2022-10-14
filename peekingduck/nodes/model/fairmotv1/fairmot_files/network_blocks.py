@@ -44,7 +44,7 @@ from typing import Callable, List, Union
 import torch
 from torch import nn
 
-from peekingduck.pipeline.nodes.model.fairmotv1.fairmot_files.dcn import DCNv2
+from peekingduck.nodes.model.fairmotv1.fairmot_files.dcn import DCNv2
 
 BN_MOMENTUM = 0.1
 

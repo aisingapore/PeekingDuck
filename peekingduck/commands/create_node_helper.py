@@ -18,15 +18,15 @@ import functools
 import logging
 import re
 from pathlib import Path
-from typing import Any, Callable, List, Dict, Optional, Tuple, Union
-import yaml
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import click
+import yaml
 
 from peekingduck.commands import LOGGER_NAME
 
 # Master map file for class name to object IDs for object detection models
-MASTER_MAP = "pipeline/nodes/model/master_map.yml"
+MASTER_MAP = "nodes/model/master_map.yml"
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
@@ -40,7 +40,7 @@ def create_config_and_script_files(created_paths: Dict[str, Path]) -> None:
     template_paths = get_config_and_script_paths(
         Path(__file__).resolve().parents[1],
         "configs",
-        ("pipeline", "nodes"),
+        "nodes",
         "node_template",
     )
     with open(template_paths["config"]) as template_file, open(
@@ -63,9 +63,9 @@ def create_config_and_script_files(created_paths: Dict[str, Path]) -> None:
 
 def ensure_relative_path(node_subdir: str) -> str:
     """Checks that the subdir path does not contain parent directory
-    navigator (..), is not absolute, and is not "peekingduck/pipeline/nodes".
+    navigator (..), is not absolute, and is not "peekingduck/nodes".
     """
-    pkd_node_subdir = "peekingduck/pipeline/nodes"
+    pkd_node_subdir = "peekingduck/nodes"
     if ".." in node_subdir:
         raise click.exceptions.UsageError("Path cannot contain '..'!")
     if Path(node_subdir).is_absolute():
@@ -138,7 +138,7 @@ def get_config_and_script_paths(
 
 def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
     """Loads class name to object ID mapping from the file
-    peekingduck/pipeline/nodes/model/master_map.yml
+    peekingduck/nodes/model/master_map.yml
     for object detection and instance segmentation models only.
 
     Tech Notes

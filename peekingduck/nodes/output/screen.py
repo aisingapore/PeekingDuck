@@ -20,7 +20,7 @@ from typing import Any, Dict, Union
 
 import cv2
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 
 
 class Node(AbstractNode):

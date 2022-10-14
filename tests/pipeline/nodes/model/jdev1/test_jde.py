@@ -22,12 +22,9 @@ import pytest
 import torch
 import yaml
 
-from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
-from peekingduck.pipeline.nodes.model.jde import Node
-from peekingduck.pipeline.nodes.model.jdev1.jde_files.matching import (
-    fuse_motion,
-    iou_distance,
-)
+from peekingduck.nodes.base import WeightsDownloaderMixin
+from peekingduck.nodes.model.jde import Node
+from peekingduck.nodes.model.jdev1.jde_files.matching import fuse_motion, iou_distance
 from tests.conftest import PKD_DIR
 
 # Frame index for manual manipulation of detections to trigger some
@@ -180,7 +177,7 @@ class TestJDE:
         jde = Node(jde_config)
         prev_tags = []
         with mock.patch(
-            "peekingduck.pipeline.nodes.model.jdev1.jde_files.matching.fuse_motion",
+            "peekingduck.nodes.model.jdev1.jde_files.matching.fuse_motion",
             wraps=replace_fuse_motion,
         ):
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
@@ -199,10 +196,10 @@ class TestJDE:
         _, detections = human_video_sequence
         jde = Node(jde_config)
         with mock.patch(
-            "peekingduck.pipeline.nodes.model.jdev1.jde_files.matching.fuse_motion",
+            "peekingduck.nodes.model.jdev1.jde_files.matching.fuse_motion",
             wraps=replace_fuse_motion,
         ), mock.patch(
-            "peekingduck.pipeline.nodes.model.jdev1.jde_files.matching.iou_distance",
+            "peekingduck.nodes.model.jdev1.jde_files.matching.iou_distance",
             wraps=replace_iou_distance,
         ):
             for inputs in ({"img": x["img"]} for x in detections):
@@ -242,9 +239,7 @@ class TestJDE:
         _, detections = human_video_sequence
         jde = Node(config=jde_config)
         prev_tags = []
-        with TestCase.assertLogs(
-            "peekingduck.pipeline.nodes.model.jde.logger"
-        ) as captured:
+        with TestCase.assertLogs("peekingduck.nodes.model.jde.logger") as captured:
             for i, inputs in enumerate({"img": x["img"]} for x in detections):
                 # Insert mot_metadata in input to signal a new model should be
                 # created

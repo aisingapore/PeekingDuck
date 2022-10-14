@@ -22,14 +22,9 @@ import numpy as np
 import torch
 from transformers import AutoConfig
 
-from peekingduck.pipeline.nodes.base import (
-    ThresholdCheckerMixin,
-    WeightsDownloaderMixin,
-)
-from peekingduck.pipeline.nodes.model.huggingface_hubv1 import adaptors
-from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
-    get_valid_models,
-)
+from peekingduck.nodes.base import ThresholdCheckerMixin, WeightsDownloaderMixin
+from peekingduck.nodes.model.huggingface_hubv1 import adaptors
+from peekingduck.nodes.model.huggingface_hubv1.api_utils import get_valid_models
 
 
 class HuggingFaceModel(ThresholdCheckerMixin, WeightsDownloaderMixin, ABC):

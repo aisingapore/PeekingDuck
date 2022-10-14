@@ -19,8 +19,8 @@ from typing import Any, Dict, Optional
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.nodes.model.movenetv1 import movenet_model
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.model.movenetv1 import movenet_model
 
 
 class Node(AbstractNode):

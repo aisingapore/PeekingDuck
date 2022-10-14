@@ -17,7 +17,7 @@ from pathlib import Path
 
 import pytest
 
-from peekingduck.pipeline.nodes.output.media_writer import Node
+from peekingduck.nodes.output.media_writer import Node
 
 OUTPUT_PATH = Path("output")
 SIZE = (400, 600, 3)
