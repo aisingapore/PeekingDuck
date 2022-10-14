@@ -34,7 +34,12 @@ from peekingduck.pipeline.nodes.draw.utils.general import (
 
 
 def draw_human_poses(
-    image: np.ndarray, keypoints: np.ndarray, keypoint_conns: np.ndarray
+    image: np.ndarray,
+    keypoints: np.ndarray,
+    keypoint_conns: np.ndarray,
+    keypoint_dot_color: Tuple[int, int, int] = CHAMPAGNE,
+    keypoint_connect_color: Tuple[int, int, int] = TOMATO,
+    keypoint_dot_radius: int = POINT_RADIUS,
 ) -> None:
     # pylint: disable=too-many-arguments
     """Draw poses onto an image frame.
@@ -48,21 +53,31 @@ def draw_human_poses(
     num_persons = keypoints.shape[0]
     if num_persons > 0:
         for i in range(num_persons):
-            _draw_connections(image, keypoint_conns[i], image_size, CHAMPAGNE)
-            _draw_keypoints(image, keypoints[i], image_size, TOMATO, POINT_RADIUS)
+            _draw_connections(
+                image, keypoint_conns[i], image_size, keypoint_connect_color
+            )
+            _draw_keypoints(
+                image,
+                keypoints[i],
+                image_size,
+                keypoint_dot_color,
+                keypoint_dot_radius,
+            )
 
 
 def _draw_connections(
     frame: np.ndarray,
     connections: Union[None, Iterable[Any]],
     image_size: Tuple[int, int],
-    connection_color: Tuple[int, int, int],
+    keypoint_connect_color: Tuple[int, int, int],
 ) -> None:
     """Draw connections between detected keypoints"""
     if connections is not None:
         for connection in connections:
             pt1, pt2 = project_points_onto_original_image(connection, image_size)
-            cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color, THICK)
+            cv2.line(
+                frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), keypoint_connect_color, THICK
+            )
 
 
 def _draw_keypoints(
