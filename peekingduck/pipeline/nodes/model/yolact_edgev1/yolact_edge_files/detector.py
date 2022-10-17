@@ -22,9 +22,8 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import torch
-import torch.backends as cudnn
 import torch.nn.functional as F
-from torch import Tensor
+from torch.backends import cudnn
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
     YolactEdge,
@@ -61,8 +60,17 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         iou_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-        self.device_is_cuda: bool = torch.cuda.is_available()
-        self.device = torch.device("cuda" if self.device_is_cuda else "cpu")
+        self.has_cuda: bool = torch.cuda.is_available()
+        if self.has_cuda:
+            self.device = torch.device("cuda")
+            cudnn.benchmark = True
+            cudnn.fastest = True
+            cudnn.deterministic = True
+            torch.set_default_tensor_type("torch.cuda.FloatTensor")
+        else:
+            self.device = torch.device("cpu")
+            torch.set_default_tensor_type("torch.FloatTensor")
+
         self.class_names = class_names
         self.detect_ids = detect_ids
         self.detect_ids_tensor = torch.tensor(
@@ -78,7 +86,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
 
         self.update_detect_ids(detect_ids)
         self.yolact_edge = self._create_yolact_edge_model()
-        self.filtered_output: Dict[str, torch.Tensor] = dict()
+        # Preprocessor function
+        self._preprocess = FastBaseTransform(self.input_size)
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
@@ -95,23 +104,13 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
-        with torch.no_grad():
-            if self.device_is_cuda:
-                cudnn.benchmark = True
-                cudnn.fastest = True
-                cudnn.deterministic = True
-                torch.set_default_tensor_type("torch.cuda.FloatTensor")
-                frame = torch.from_numpy(image).cuda().float()
-                torch.cuda.synchronize()
-            else:
-                torch.set_default_tensor_type("torch.FloatTensor")
-                frame = torch.from_numpy(image).float()
+        if self.has_cuda:
+            torch.cuda.synchronize()
         img_shape = image.shape[:2]
-        model = self.yolact_edge
+        frame = torch.from_numpy(image).unsqueeze(0).to(self.device).float()
+        frame = self._preprocess(frame)
 
-        preds = model(FastBaseTransform(self.input_size)(frame.unsqueeze(0)))[
-            "pred_outs"
-        ]
+        preds = self.yolact_edge(frame)["pred_outs"]
         labels, scores, boxes, masks = self._postprocess(preds[0], img_shape)
 
         return boxes, labels, scores, masks
@@ -169,17 +168,16 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             model = self._get_model()
             model.load_weights(self.model_path)
             model.eval()
-            if self.device_is_cuda:
-                model = model.cuda()
+            model.to(self.device)
             return model
 
         raise ValueError(
             f"Model file does not exist. Please check that {self.model_path} exists"
         )
 
-    def _postprocess(  # pylint: disable=too-many-locals
+    def _postprocess(
         self,
-        network_output: Dict[str, Tensor],
+        network_output: Dict[str, torch.Tensor],
         img_shape: Tuple[int, ...],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for YolactEdge
