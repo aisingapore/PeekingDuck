@@ -18,11 +18,12 @@ Draws keypoints on a detected pose.
 
 from typing import Any, Dict, List
 
-from peekingduck.pipeline.nodes.draw.utils.pose import draw_human_poses
+from peekingduck.pipeline.nodes.draw.utils.pose import Pose
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 
 
-class Node(AbstractNode):
+class Node(ThresholdCheckerMixin, AbstractNode):
     """Draws poses onto image.
 
     The :mod:`draw.poses` node uses the :term:`keypoints`,
@@ -49,9 +50,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.keypoint_dot_radius: int
-        self.keypoint_dot_color = tuple(self.config["keypoint_dot_color"])
-        self.keypoint_connect_color = tuple(self.config["keypoint_connect_color"])
+        self.pose = Pose(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws pose details onto input image.
@@ -60,13 +59,10 @@ class Node(AbstractNode):
             inputs (dict): Dictionary with keys "img", "keypoints", and
                 "keypoint_conns".
         """
-        draw_human_poses(
+        self.pose.draw_human_poses(
             inputs["img"],
             inputs["keypoints"],
             inputs["keypoint_conns"],
-            self.keypoint_dot_color,
-            self.keypoint_connect_color,
-            self.keypoint_dot_radius,
         )
         return {}
 
