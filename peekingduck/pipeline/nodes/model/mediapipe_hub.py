@@ -91,10 +91,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         self.check_valid_choice("task", {"object_detection", "pose_estimation"})
 
         self.model = self.model_constructor[self.config["task"]](self.config)
-        try:
-            self.model.post_init()
-        except AttributeError:
-            pass
+        self.model.post_init()
         self._finalize_output_keys()
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
