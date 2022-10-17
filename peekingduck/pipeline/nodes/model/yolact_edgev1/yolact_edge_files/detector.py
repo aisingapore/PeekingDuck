@@ -72,10 +72,6 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             torch.set_default_tensor_type("torch.FloatTensor")
 
         self.class_names = class_names
-        self.detect_ids = detect_ids
-        self.detect_ids_tensor = torch.tensor(
-            detect_ids, dtype=torch.int64, device=self.device
-        )
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
@@ -85,6 +81,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self.iou_threshold = iou_threshold
 
         self.update_detect_ids(detect_ids)
+
         self.yolact_edge = self._create_yolact_edge_model()
         # Preprocessor function
         self._preprocess = FastBaseTransform(self.input_size)
@@ -122,7 +119,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Args:
             ids (List[int]): List of selected object category IDs
         """
-        self.detect_ids = Tensor(ids).to(self.device)  # type: ignore
+        self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
 
     def _create_yolact_edge_model(self) -> YolactEdge:
         """Creates YolactEdge model and loads its weights.
@@ -195,27 +192,20 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             masks (ndarray): An array of masks in uint8
         """
         try:
-            keep = network_output["score"] > self.score_threshold
-            for k in network_output:
-                if k != "proto":
-                    network_output[k] = network_output[k][keep]
-
+            score_filter = network_output["score"] > self.score_threshold
+            for key in network_output:
+                if key != "proto":
+                    network_output[key] = network_output[key][score_filter]
             detect_filter = torch.where(
-                torch.isin(network_output["class"], self.detect_ids_tensor)
+                torch.isin(network_output["class"], self.detect_ids)
             )
+            for key in network_output:
+                if key != "proto":
+                    network_output[key] = network_output[key][detect_filter]
 
-            for output_key in network_output.keys():
-                self.filtered_output[output_key] = network_output[output_key][
-                    detect_filter
-                ]
-
-            classes = network_output["class"]
             box = network_output["box"]
-            score = network_output["score"]
-            mask = network_output["mask"]
-            proto_data = network_output["proto"]
 
-            mask = proto_data @ mask.t()
+            mask = network_output["proto"] @ network_output["mask"].t()
             mask = torch.sigmoid(mask)
             mask = crop(mask, box)
             mask = mask.permute(2, 0, 1).contiguous()
@@ -231,11 +221,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             )
 
             # Filters the detections to the IDs being detected as specified in the config
-            labels = np.array([self.class_names[i] for i in classes[detect_filter]])
-            boxes = np.array(box[detect_filter].cpu())
+            labels = np.array([self.class_names[i] for i in network_output["class"]])
+            boxes = box.cpu().numpy()
             boxes = np.clip(boxes, 0, 1)
-            scores = np.array(score[detect_filter].cpu())
-            masks = np.array(mask[detect_filter].cpu()).astype(np.uint8)
+            scores = network_output["score"].cpu().numpy()
+            masks = mask.cpu().numpy().astype(np.uint8)
         except (RuntimeError, TypeError):
             return (
                 np.empty((0)),
