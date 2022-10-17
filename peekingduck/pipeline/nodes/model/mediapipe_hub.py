@@ -14,7 +14,7 @@
 
 """MediaPipe ML solutions."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -48,7 +48,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             Defines the subtask of MediaPipe model. Use the CLI
             command ``peekingduck model-hub mediapipe tasks`` to obtain a list
             of computer vision tasks and their respective subtasks.
-        model_type (:obj:`str`): **Refer to CLI command, default=0**. |br|
+        model_type (:obj:`int`): **Refer to CLI command, default=0**. |br|
             Defines the type of model to be used for the selected subtask. Use
             the CLI command ``peekingduck model-hub mediapipe model-types
             --task '<task>' --subtask '<subtask>'`` to obtain a list of
@@ -135,3 +135,15 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         """Updates output keys based on the selected ``task``."""
         self.config["output"] = self.config["output"][self.task]
         self.output = self.config["output"]
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        return {
+            "task": str,
+            "model_type": int,
+            "score_threshold": float,
+            "smooth_landmarks": bool,
+            "static_image_mode": bool,
+            # Allow `None` to list available subtasks in error message
+            "subtask": Optional[str],
+            "tracking_score_threshold": float,
+        }
