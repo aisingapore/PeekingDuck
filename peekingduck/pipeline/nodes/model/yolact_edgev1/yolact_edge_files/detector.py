@@ -56,8 +56,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_file: Dict[str, str],
         input_size: int,
         max_num_detections: int,
-        score_threshold: float,
         iou_threshold: float,
+        score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
         self.has_cuda: bool = torch.cuda.is_available()
@@ -77,8 +77,8 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         self.model_path = model_dir / model_file[self.model_type]
         self.input_size = (input_size, input_size)
         self.max_num_detections = max_num_detections
-        self.score_threshold = score_threshold
         self.iou_threshold = iou_threshold
+        self.score_threshold = score_threshold
 
         self.update_detect_ids(detect_ids)
 

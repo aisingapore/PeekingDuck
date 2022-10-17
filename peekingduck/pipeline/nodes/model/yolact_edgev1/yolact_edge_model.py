@@ -16,6 +16,7 @@
 
 import logging
 from typing import Any, Dict, List, Tuple
+
 import numpy as np
 
 from peekingduck.pipeline.nodes.base import (
@@ -51,8 +52,8 @@ class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.weights["model_file"],
             self.config["input_size"],
             self.config["max_num_detections"],
-            self.config["score_threshold"],
             self.config["iou_threshold"],
+            self.config["score_threshold"],
         )
 
     @property
