@@ -14,7 +14,7 @@
 
 """Hugging Face Hub models for computer vision tasks."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
 import cv2
 import numpy as np
@@ -132,3 +132,16 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         """Updates output keys based on the selected ``task``."""
         self.config["output"] = self.config["output"][self.task]
         self.output = self.config["output"]
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        return {
+            "agnostic_nms": bool,
+            "detect": List[Union[int, str]],
+            "iou_threshold": float,
+            "mask_threshold": float,
+            # Allow `None` to trigger listing available model types in error message
+            "model_type": Optional[str],
+            "score_threshold": float,
+            "task": str,
+            "weights_parent_dir": Optional[str],
+        }
