@@ -26,7 +26,6 @@ from peekingduck.pipeline.nodes.base import WeightsDownloaderMixin
 from peekingduck.pipeline.nodes.model.yolact_edge import Node
 from tests.conftest import PKD_DIR, get_groundtruth
 
-
 GT_RESULTS = get_groundtruth(Path(__file__).resolve())
 
 
@@ -126,10 +125,3 @@ class TestYolactEdge:
             ][yolact_edge_config["model_type"]] = "some/invalid/path"
             _ = Node(config=yolact_edge_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
-
-    def test_invalid_detect_id(self, yolact_edge_config):
-        yolact_edge_config["detect"] = 0
-        with pytest.raises(TypeError) as excinfo:
-            # Passing a non-list detect_id into the config
-            _ = Node(config=yolact_edge_config)
-        assert "detect_ids has to be a list" == str(excinfo.value)
