@@ -22,9 +22,8 @@ from typing import Dict, List, Tuple
 
 import numpy as np
 import torch
-import torch.backends as cudnn
 import torch.nn.functional as F
-from torch import Tensor
+from torch.backends import cudnn
 
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.model import (
     YolactEdge,
@@ -57,28 +56,35 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         model_file: Dict[str, str],
         input_size: int,
         max_num_detections: int,
-        score_threshold: float,
         iou_threshold: float,
+        score_threshold: float,
     ) -> None:
         self.logger = logging.getLogger(__name__)
-        self.device_is_cuda: bool = torch.cuda.is_available()
-        self.device = torch.device("cuda" if self.device_is_cuda else "cpu")
+        self.has_cuda: bool = torch.cuda.is_available()
+        if self.has_cuda:
+            self.device = torch.device("cuda")
+            cudnn.benchmark = True
+            cudnn.fastest = True
+            cudnn.deterministic = True
+            torch.set_default_tensor_type("torch.cuda.FloatTensor")
+        else:
+            self.device = torch.device("cpu")
+            torch.set_default_tensor_type("torch.FloatTensor")
+
         self.class_names = class_names
-        self.detect_ids = detect_ids
-        self.detect_ids_tensor = torch.tensor(
-            detect_ids, dtype=torch.int64, device=self.device
-        )
         self.model_type = model_type
         self.num_classes = num_classes
         self.model_path = model_dir / model_file[self.model_type]
         self.input_size = (input_size, input_size)
         self.max_num_detections = max_num_detections
-        self.score_threshold = score_threshold
         self.iou_threshold = iou_threshold
+        self.score_threshold = score_threshold
 
         self.update_detect_ids(detect_ids)
+
         self.yolact_edge = self._create_yolact_edge_model()
-        self.filtered_output: Dict[str, torch.Tensor] = dict()
+        # Preprocessor function
+        self._preprocess = FastBaseTransform(self.input_size)
 
     @torch.no_grad()
     def predict_instance_mask_from_image(
@@ -95,23 +101,13 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
-        with torch.no_grad():
-            if self.device_is_cuda:
-                cudnn.benchmark = True
-                cudnn.fastest = True
-                cudnn.deterministic = True
-                torch.set_default_tensor_type("torch.cuda.FloatTensor")
-                frame = torch.from_numpy(image).cuda().float()
-                torch.cuda.synchronize()
-            else:
-                torch.set_default_tensor_type("torch.FloatTensor")
-                frame = torch.from_numpy(image).float()
+        if self.has_cuda:
+            torch.cuda.synchronize()
         img_shape = image.shape[:2]
-        model = self.yolact_edge
+        frame = torch.from_numpy(image).unsqueeze(0).to(self.device).float()
+        frame = self._preprocess(frame)
 
-        preds = model(FastBaseTransform(self.input_size)(frame.unsqueeze(0)))[
-            "pred_outs"
-        ]
+        preds = self.yolact_edge(frame)["pred_outs"]
         labels, scores, boxes, masks = self._postprocess(preds[0], img_shape)
 
         return boxes, labels, scores, masks
@@ -123,7 +119,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         Args:
             ids (List[int]): List of selected object category IDs
         """
-        self.detect_ids = Tensor(ids).to(self.device)  # type: ignore
+        self.detect_ids = torch.Tensor(ids).to(self.device)  # type: ignore
 
     def _create_yolact_edge_model(self) -> YolactEdge:
         """Creates YolactEdge model and loads its weights.
@@ -169,17 +165,16 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             model = self._get_model()
             model.load_weights(self.model_path)
             model.eval()
-            if self.device_is_cuda:
-                model = model.cuda()
+            model.to(self.device)
             return model
 
         raise ValueError(
             f"Model file does not exist. Please check that {self.model_path} exists"
         )
 
-    def _postprocess(  # pylint: disable=too-many-locals
+    def _postprocess(
         self,
-        network_output: Dict[str, Tensor],
+        network_output: Dict[str, torch.Tensor],
         img_shape: Tuple[int, ...],
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
         """Postprocessing of detected bboxes and masks for YolactEdge
@@ -197,27 +192,20 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             masks (ndarray): An array of masks in uint8
         """
         try:
-            keep = network_output["score"] > self.score_threshold
-            for k in network_output:
-                if k != "proto":
-                    network_output[k] = network_output[k][keep]
-
+            score_filter = network_output["score"] > self.score_threshold
+            for key in network_output:
+                if key != "proto":
+                    network_output[key] = network_output[key][score_filter]
             detect_filter = torch.where(
-                torch.isin(network_output["class"], self.detect_ids_tensor)
+                torch.isin(network_output["class"], self.detect_ids)
             )
+            for key in network_output:
+                if key != "proto":
+                    network_output[key] = network_output[key][detect_filter]
 
-            for output_key in network_output.keys():
-                self.filtered_output[output_key] = network_output[output_key][
-                    detect_filter
-                ]
-
-            classes = network_output["class"]
             box = network_output["box"]
-            score = network_output["score"]
-            mask = network_output["mask"]
-            proto_data = network_output["proto"]
 
-            mask = proto_data @ mask.t()
+            mask = network_output["proto"] @ network_output["mask"].t()
             mask = torch.sigmoid(mask)
             mask = crop(mask, box)
             mask = mask.permute(2, 0, 1).contiguous()
@@ -233,11 +221,11 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             )
 
             # Filters the detections to the IDs being detected as specified in the config
-            labels = np.array([self.class_names[i] for i in classes[detect_filter]])
-            boxes = np.array(box[detect_filter].cpu())
+            labels = np.array([self.class_names[i] for i in network_output["class"]])
+            boxes = box.cpu().numpy()
             boxes = np.clip(boxes, 0, 1)
-            scores = np.array(score[detect_filter].cpu())
-            masks = np.array(mask[detect_filter].cpu()).astype(np.uint8)
+            scores = network_output["score"].cpu().numpy()
+            masks = mask.cpu().numpy().astype(np.uint8)
         except (RuntimeError, TypeError):
             return (
                 np.empty((0)),

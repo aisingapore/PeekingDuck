@@ -83,30 +83,26 @@ Modifications include:
 """
 
 import logging
-from math import sqrt
 from itertools import product
+from math import sqrt
 from pathlib import Path
-from typing import Iterable, List, Tuple, Dict, Any, Union, Optional, Callable
+from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
 
-from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
-    make_net,
-    jaccard,
-    decode,
-    make_extra,
-)
 from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
-    ResNetBackbone,
     MobileNetV2Backbone,
+    ResNetBackbone,
 )
-
-if torch.cuda.is_available():
-    torch.cuda.current_device()
-
+from peekingduck.pipeline.nodes.model.yolact_edgev1.yolact_edge_files.utils import (
+    decode,
+    jaccard,
+    make_extra,
+    make_net,
+)
 
 ScriptModuleWrapper = torch.jit.ScriptModule
 
