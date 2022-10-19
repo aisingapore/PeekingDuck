@@ -194,6 +194,12 @@ class TestMaskRCNN:
             _ = Node(config=mask_rcnn_config)
         assert "Model file does not exist. Please check that" in str(excinfo.value)
 
+    def test_invalid_config_detect_ids(self, mask_rcnn_config):
+        mask_rcnn_config["detect"] = 0
+        with pytest.raises(TypeError):
+            # Passing a non-list detect_id into the config
+            _ = Node(config=mask_rcnn_config)
+
     def test_invalid_image(self, no_human_image, mask_rcnn_config):
         no_human_img = cv2.imread(no_human_image)
         mask_rcnn = Node(config=mask_rcnn_config)
@@ -205,10 +211,3 @@ class TestMaskRCNN:
         with pytest.raises(TypeError) as excinfo:
             _ = mask_rcnn.run({"img": ("image name", no_human_img)})
         assert "image must be a np.ndarray" == str(excinfo.value)
-
-    def test_invalid_detect_id(self, mask_rcnn_config):
-        mask_rcnn_config["detect"] = 0
-        with pytest.raises(TypeError) as excinfo:
-            # Passing a non-list detect_id into the config
-            _ = Node(config=mask_rcnn_config)
-        assert "detect_ids has to be a list" == str(excinfo.value)
