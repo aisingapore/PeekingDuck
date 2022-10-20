@@ -16,7 +16,9 @@
 
 import click
 
+from peekingduck.commands.base import AliasedGroup
 
-@click.group()
+
+@click.command(cls=AliasedGroup)
 def model_hub() -> None:
     """Utility commands for model hub models."""
