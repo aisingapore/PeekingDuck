@@ -7,22 +7,22 @@ Using Model Hub Nodes
 PeekingDuck has support for external model hub models. You can leverage the model
 hub nodes to use these external models with the PeekingDuck pipeline. The model
 hub nodes differ in design from traditional model nodes as the model hub models
-perform a variety of computer vision tasks. This tutorial will demonstrate how
+perform a variety of computer vision tasks. This tutorial demonstrates how
 to use these nodes through some sample pipelines.
 
 
 List of Model Hub Nodes
 =======================
 
-The table below shows the instance segmentation models available.
+The table below shows the model hub nodes available.
 
-+------------------------+---------------------------------+
-| Model                  | Documentation                   |
-+========================+=================================+
-| Hugging Face Hub       | :mod:`model.huggingface_hub`    |
-+------------------------+---------------------------------+
-| MediaPipe Solutions    | :mod:`model.mediapipe_hub`      |
-+------------------------+---------------------------------+
++-----------------------------------------------------------------+---------------------------------+
+| Model                                                           | Documentation                   |
++=================================================================+=================================+
+| `Hugging Face Hub <https://huggingface.co/docs/hub/index>`_     | :mod:`model.huggingface_hub`    |
++-----------------------------------------------------------------+---------------------------------+
+| `MediaPipe Solutions <https://google.github.io/mediapipe/>`_    | :mod:`model.mediapipe_hub`      |
++-----------------------------------------------------------------+---------------------------------+
 
 
 Hugging Face Hub
