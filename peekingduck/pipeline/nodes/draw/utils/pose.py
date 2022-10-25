@@ -13,15 +13,14 @@
 # limitations under the License.
 
 """
-Functions for drawing pose keypoints and connections
+Pose class for drawing pose keypoints and connections.
 """
 
-from typing import Any, Dict, Iterable, Tuple, Union
+from typing import Any, Iterable, Tuple, Union
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
 from peekingduck.pipeline.nodes.draw.utils.constants import THICK
 from peekingduck.pipeline.nodes.draw.utils.general import (
     get_image_size,
@@ -29,20 +28,18 @@ from peekingduck.pipeline.nodes.draw.utils.general import (
 )
 
 
-class Pose(ThresholdCheckerMixin):
-    """Pose class to draw pose keypoints and connections"""
+class Pose:  # pylint: disable=too-few-public-methods
+    """Pose class to draw pose keypoints and connections."""
 
     def __init__(
         self,
-        config: Dict[str, Any],
+        keypoint_dot_color: Tuple[int, int, int],
+        keypoint_connect_color: Tuple[int, int, int],
+        keypoint_dot_radius: int,
     ) -> None:
-        self.config = config
-        self.check_bounds(["keypoint_dot_color", "keypoint_connect_color"], "[0, 255]")
-        self.check_bounds("keypoint_dot_radius", "[0, +inf)")
-
-        self.keypoint_dot_color = tuple(self.config["keypoint_dot_color"])
-        self.keypoint_connect_color = tuple(self.config["keypoint_connect_color"])
-        self.keypoint_dot_radius = self.config["keypoint_dot_radius"]
+        self.keypoint_dot_color = keypoint_dot_color
+        self.keypoint_connect_color = keypoint_connect_color
+        self.keypoint_dot_radius = keypoint_dot_radius
 
     def draw_human_poses(
         self,
@@ -50,14 +47,13 @@ class Pose(ThresholdCheckerMixin):
         all_keypoints: np.ndarray,
         all_keypoint_connections: np.ndarray,
     ) -> None:
-        # pylint: disable=too-many-arguments
         """Draw poses onto an image frame.
 
         Args:
-            image (np.ndarray): image of current frame
-            all_keypoints (np.ndarray): keypoint coordinates of shape (N, 17, 2)
+            image (np.ndarray): Input image frame.
+            all_keypoints (np.ndarray): Keypoint coordinates of shape (N, 17, 2)
                 where N is the number of humans detected.
-            all_keypoint_connections (np.ndarray): keypoint connections of shape
+            all_keypoint_connections (np.ndarray): Keypoint connections of shape
                 (N, 15, 2, 2) where N is the number of humans detected.
         """
         image_size = get_image_size(image)
@@ -75,7 +71,14 @@ class Pose(ThresholdCheckerMixin):
         keypoint_connections: Union[None, Iterable[Any]],
         image_size: Tuple[int, int],
     ) -> None:
-        """Draw connections between detected keypoints"""
+        """Draw connections between detected keypoints.
+
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoint_connections (Union[None, Iterable[Any]]): Keypoint connections
+                of one individual human with shape (15, 2, 2).
+            image_size (Tuple[int, int]): Image size of the input image frame.
+        """
         if keypoint_connections is not None:
             for connection in keypoint_connections:
                 pt1, pt2 = project_points_onto_original_image(connection, image_size)
@@ -93,8 +96,14 @@ class Pose(ThresholdCheckerMixin):
         keypoints: np.ndarray,
         image_size: Tuple[int, int],
     ) -> None:
-        # pylint: disable=too-many-arguments
-        """Draw detected keypoints"""
+        """Draw detected keypoints.
+
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoints (np.ndarray): Keypoint coordinates of one individual human
+                with shape (17, 2).
+            image_size (Tuple[int, int]): Image size of the input image frame.
+        """
         image_keypoints = project_points_onto_original_image(keypoints, image_size)
 
         for _, image_keypoint in enumerate(image_keypoints):
@@ -103,12 +112,17 @@ class Pose(ThresholdCheckerMixin):
     def _draw_one_keypoint_dot(
         self,
         image: np.ndarray,
-        keypoints: np.ndarray,
+        keypoint: np.ndarray,
     ) -> None:
-        """Draw single keypoint"""
+        """Draw single keypoint.
+
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoint (np.ndarray): Keypoint coordinates of shape (2,).
+        """
         cv2.circle(
             image,
-            (keypoints[0], keypoints[1]),
+            (keypoint[0], keypoint[1]),
             self.keypoint_dot_radius,
             self.keypoint_dot_color,
             -1,
