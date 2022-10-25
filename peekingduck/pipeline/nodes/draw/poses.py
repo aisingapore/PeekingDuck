@@ -16,11 +16,13 @@
 Draws keypoints on a detected pose.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union, Set
 
 from peekingduck.pipeline.nodes.draw.utils.pose import Pose
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
+from peekingduck.pipeline.nodes.draw.utils.general import get_color
+from peekingduck.pipeline.nodes.draw.utils.constants import COLOR_MAP
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):
@@ -45,12 +47,68 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         |none_output_data|
 
     Configs:
-        None.
+        keypoint_dot_color (:obj:`List[int]`): **default = [77, 103, 255]** |br|
+            Color of the keypoints in BGR format. For example, [77, 103, 255] is tomato color.
+        keypoint_connect_color (:obj:`List[int]`): **default = [156, 223, 244]** |br|
+            Color of the keypoint connections in BGR format. For example, [156, 223, 244] is
+            champagne color.
+        keypoint_dot_radius (:obj:`int`): **default = 5** |br|
+            Radius of the keypoints.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        self.pose = Pose(self.config)
+        self._validate_configs()
+
+        self.keypoint_dot_color = get_color(self.config["keypoint_dot_color"])
+        self.keypoint_connect_color = get_color(self.config["keypoint_connect_color"])
+
+        self.pose = Pose(
+            self.keypoint_dot_color,
+            self.keypoint_connect_color,
+            self.keypoint_dot_radius,
+        )
+
+    def _validate_configs(self) -> None:
+        """Validates the config values."""
+        self._check_valid_color_choice("keypoint_dot_color", set(COLOR_MAP.keys()))
+        self._check_valid_color_choice("keypoint_connect_color", set(COLOR_MAP.keys()))
+        self.check_bounds("keypoint_dot_radius", "[0, +inf)")
+
+    def _check_valid_color_choice(
+        self, key: str, choices: Set[Union[int, float, str]]
+    ) -> None:
+        """Checks that configuration value specified by `key` can be found
+        in `choices`.
+
+        Note:
+            1. If the key value is a string, it is checked if it is in `choices`.
+            2. if the key value is a list, then it is checked if the list values
+                are within bounds.
+
+        Args:
+            key (str): The specified key.
+            choices (Set[Union[int, float, str]]): The valid choices.
+
+        Raises:
+            TypeError: `key` type is not a str.
+            ValueError: If the configuration value is not found in `choices`.
+        """
+        if not isinstance(key, str):
+            raise TypeError("`key` must be str")
+
+        if not isinstance(self.config[key], (list, str)):
+            raise TypeError(
+                f"Config value for {key} must be a list or str, or a tuple thereof."
+            )
+
+        if isinstance(self.config[key], str) and self.config[key] not in choices:
+            raise ValueError(
+                f"{key} must be one of {choices} or passed as a list of BGR values."
+            )
+
+        if isinstance(self.config[key], list):
+            self.check_bounds(key, "[0, 255]")
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         """Draws pose details onto input image.
@@ -69,7 +127,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
         return {
-            "keypoint_dot_color": List[int],
-            "keypoint_connect_color": List[int],
+            "keypoint_dot_color": Union[List[int], str],
+            "keypoint_connect_color": Union[List[int], str],
             "keypoint_dot_radius": int,
         }
