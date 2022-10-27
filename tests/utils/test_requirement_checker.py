@@ -108,7 +108,7 @@ class TestRequirementChecker:
                 captured.records,
             )
 
-    def test_checker_class_exits_the_programe_upon_update_failure(
+    def test_checker_class_exits_the_program_upon_update_failure(
         self, requirements_file
     ):
         ret_code = 123
@@ -173,8 +173,6 @@ class TestRequirementChecker:
     ):
         with mock.patch(
             "subprocess.check_output", wraps=replace_subprocess_check_output
-        ), TestCase.assertLogs(
-            "peekingduck.utils.requirement_checker.logger"
-        ) as captured:
+        ):
             # doesn't install if one of the alternative is available
             assert check_requirements(NODE_WITH_UPDATE, behavior_requirements_file) == 3
