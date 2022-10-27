@@ -15,3 +15,51 @@
 """
 Deep learning model nodes for computer vision.
 """
+
+import sys
+from typing import TYPE_CHECKING
+
+from peekingduck.utils.lazy_module import ImportStructure, _LazyModule
+
+_import_structure: ImportStructure = {
+    "csrnet": [],
+    "yolo_license_plate": [],
+    "huggingface_hub": [],
+    "posenet": [],
+    "yolo": [],
+    "mediapipe_hub": [],
+    "efficientdet": [],
+    "fairmot": [],
+    "jde": [],
+    "movenet": [],
+    "yolact_edge": [],
+    "yolox": [],
+    "hrnet": [],
+    "mask_rcnn": [],
+    "mtcnn": [],
+    "yolo_face": [],
+}
+
+if TYPE_CHECKING:
+    from . import (
+        csrnet,
+        efficientdet,
+        fairmot,
+        hrnet,
+        huggingface_hub,
+        jde,
+        mask_rcnn,
+        mediapipe_hub,
+        movenet,
+        mtcnn,
+        posenet,
+        yolact_edge,
+        yolo,
+        yolo_face,
+        yolo_license_plate,
+        yolox,
+    )
+else:
+    sys.modules[__name__] = _LazyModule(
+        __name__, globals()["__file__"], _import_structure, __spec__
+    )

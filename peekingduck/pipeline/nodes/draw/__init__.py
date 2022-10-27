@@ -19,3 +19,41 @@ Draws results/outputs to an image.
     :mod:`draw.image_processor` is deprecated, and replaced by the nodes
     :mod:`augment.brightness` and :mod:`augment.contrast`.
 """
+
+import sys
+from typing import TYPE_CHECKING
+
+from peekingduck.utils.lazy_module import ImportStructure, _LazyModule
+
+_import_structure: ImportStructure = {
+    "bbox": [],
+    "blur_bbox": [],
+    "btm_midpoint": [],
+    "group_bbox_and_tag": [],
+    "heat_map": [],
+    "instance_mask": [],
+    "legend": [],
+    "mosaic_bbox": [],
+    "poses": [],
+    "tag": [],
+    "zones": [],
+}
+
+if TYPE_CHECKING:
+    from . import (
+        bbox,
+        blur_bbox,
+        btm_midpoint,
+        group_bbox_and_tag,
+        heat_map,
+        instance_mask,
+        legend,
+        mosaic_bbox,
+        poses,
+        tag,
+        zones,
+    )
+else:
+    sys.modules[__name__] = _LazyModule(
+        __name__, globals()["__file__"], _import_structure, __spec__
+    )

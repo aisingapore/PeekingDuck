@@ -15,3 +15,21 @@
 """
 Writes/displays the outputs of the pipeline.
 """
+
+import sys
+from typing import TYPE_CHECKING
+
+from peekingduck.utils.lazy_module import ImportStructure, _LazyModule
+
+_import_structure: ImportStructure = {
+    "csv_writer": [],
+    "media_writer": [],
+    "screen": [],
+}
+
+if TYPE_CHECKING:
+    from . import csv_writer, media_writer, screen
+else:
+    sys.modules[__name__] = _LazyModule(
+        __name__, globals()["__file__"], _import_structure, __spec__
+    )

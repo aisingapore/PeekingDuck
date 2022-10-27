@@ -19,3 +19,19 @@ Reads data from a given input.
     :mod:`input.live` and :mod:`input.recorded` are deprecated.
     They have been replaced by the :mod:`input.visual` node.
 """
+
+import sys
+from typing import TYPE_CHECKING
+
+from peekingduck.utils.lazy_module import ImportStructure, _LazyModule
+
+_import_structure: ImportStructure = {
+    "visual": [],
+}
+
+if TYPE_CHECKING:
+    from . import visual
+else:
+    sys.modules[__name__] = _LazyModule(
+        __name__, globals()["__file__"], _import_structure, __spec__
+    )
