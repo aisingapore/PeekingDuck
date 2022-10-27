@@ -16,13 +16,13 @@
 Draws keypoints on a detected pose.
 """
 
-from typing import Any, Dict, List, Union, Set
+from typing import Any, Dict, List, Set, Union
 
-from peekingduck.pipeline.nodes.draw.utils.pose import Pose
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline.nodes.base import ThresholdCheckerMixin
-from peekingduck.pipeline.nodes.draw.utils.general import get_color
 from peekingduck.pipeline.nodes.draw.utils.constants import COLOR_MAP
+from peekingduck.pipeline.nodes.draw.utils.general import get_color
+from peekingduck.pipeline.nodes.draw.utils.pose import Pose
 
 
 class Node(ThresholdCheckerMixin, AbstractNode):
@@ -47,13 +47,40 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         |none_output_data|
 
     Configs:
-        keypoint_dot_color (:obj:`List[int]`): **default = [77, 103, 255]** |br|
-            Color of the keypoints in BGR format. For example, [77, 103, 255] is tomato color.
-        keypoint_connect_color (:obj:`List[int]`): **default = [156, 223, 244]** |br|
-            Color of the keypoint connections in BGR format. For example, [156, 223, 244] is
-            champagne color.
+        keypoint_dot_color (:obj:`Union[List[int], str]`): **default = "tomato"** |br|
+            Color of the keypoints should either be a string in :ref:`color-palette`,
+            or a list of BGR values.
+
+        keypoint_connect_color (:obj:`Union[List[int], str],`): **default = "champagne"** |br|
+            Color of the keypoints should either be a string in :ref:`color-palette`,
+            or a list of BGR values.
+
         keypoint_dot_radius (:obj:`int`): **default = 5** |br|
             Radius of the keypoints.
+
+    **Color Palette**
+
+    :ref:`color-palette` offers a wide range of default colors for the user to choose from.
+
+    .. _color-palette:
+
+    .. list-table:: PeekingDuck's Color Palette
+       :widths: 20 20
+       :header-rows: 1
+
+       * - Color Palette by Type
+         - Color Palette by Name
+       * - .. figure:: ../assets/api/color_map_by_type.png
+
+           PeekingDuck's Color Palette Sorted by Color Types [1]_.
+
+         - .. figure:: ../assets/api/color_map_by_name.png
+
+           PeekingDuck's Color Palette Sorted by Color Names [1]_.
+
+    .. rubric:: Footnotes
+
+    .. [1] Colors with asterisk indicates PeekingDuck's in-house colors.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
