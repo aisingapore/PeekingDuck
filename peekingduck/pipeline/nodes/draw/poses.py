@@ -129,7 +129,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
 
         if isinstance(self.config[key], str):
             try:
-                self.check_valid_choice(key, valid_colors_type)
+                self.check_valid_choice(key, valid_colors_type)  # type: ignore
             except Exception as wrong_color_choice:
                 raise ValueError(
                     f"{key} must be one of {valid_colors_type} or passed as a list of BGR values."
