@@ -68,11 +68,11 @@ class Node(ThresholdCheckerMixin, AbstractNode):
        :widths: 20 20
        :header-rows: 1
 
-       * - Color Palette by Type
+       * - Color Palette by Hue
          - Color Palette by Name
-       * - .. figure:: ../assets/api/color_map_by_type.png
+       * - .. figure:: ../assets/api/color_map_by_hue.png
 
-           PeekingDuck's Color Palette Sorted by Color Types [1]_.
+           PeekingDuck's Color Palette Sorted by Color Hues [1]_.
 
          - .. figure:: ../assets/api/color_map_by_name.png
 

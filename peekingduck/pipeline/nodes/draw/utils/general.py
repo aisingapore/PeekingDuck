@@ -74,8 +74,8 @@ def get_color(color: Union[str, List[int]]) -> Tuple[int, int, int]:
         (0, 0, 255)
 
     Args:
-        color (Union[str, List[int]]): Color can be a string from COLOR_MAP defined
-            in ./constants.py or a list of 3 integers representing BGR values.
+        color (Union[str, List[int]]): Color can be a string from COLOR_MAP
+            or a list of 3 integers representing BGR values.
 
     Returns:
         color_tuple (Tuple[int, int, int]): Color in BGR tuple.

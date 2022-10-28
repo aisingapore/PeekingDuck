@@ -16,7 +16,7 @@
 Pose class for drawing pose keypoints and connections.
 """
 
-from typing import Any, Iterable, Tuple, Union
+from typing import Any, Iterable, Tuple, Optional
 
 import cv2
 import numpy as np
@@ -68,14 +68,14 @@ class Pose:  # pylint: disable=too-few-public-methods
     def _draw_connections(
         self,
         image: np.ndarray,
-        keypoint_connections: Union[None, Iterable[Any]],
+        keypoint_connections: Optional[Iterable[Any]],
         image_size: Tuple[int, int],
     ) -> None:
         """Draw connections between detected keypoints.
 
         Args:
             image (np.ndarray): Input image frame.
-            keypoint_connections (Union[None, Iterable[Any]]): Keypoint connections
+            keypoint_connections (Optional[Iterable[Any]]): Keypoint connections
                 of one individual human with shape (15, 2, 2).
             image_size (Tuple[int, int]): Image size of the input image frame.
         """
