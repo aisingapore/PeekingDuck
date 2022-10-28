@@ -156,6 +156,7 @@ COLOR_MAP = {
     "blizzard": (241, 232, 164),
     "violet blue": (188, 118, 119),
     "tomato": (77, 103, 255),
+    "pkdbrown": (96, 109, 167),
     "aliceblue": (255, 248, 240),
     "antiquewhite": (215, 235, 250),
     "aqua": (255, 255, 0),

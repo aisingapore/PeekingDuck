@@ -52,7 +52,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             or a list of BGR values.
 
         keypoint_connect_color (:obj:`Union[List[int], str]`): **default = "champagne"** |br|
-            Color of the keypoints should either be a string in :ref:`color-palette`,
+            Color of the keypoint connections should either be a string in :ref:`color-palette`,
             or a list of BGR values.
 
         keypoint_dot_radius (:obj:`int`): **default = 5** |br|
@@ -87,8 +87,8 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self._validate_configs()
 
-        self.keypoint_dot_color = get_color(self.config["keypoint_dot_color"])
-        self.keypoint_connect_color = get_color(self.config["keypoint_connect_color"])
+        self.keypoint_dot_color = get_color(self.keypoint_dot_color)
+        self.keypoint_connect_color = get_color(self.keypoint_connect_color)
 
         self.pose = Pose(
             self.keypoint_dot_color,
@@ -96,11 +96,19 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             self.keypoint_dot_radius,
         )
 
-    def _validate_configs(self) -> None:
-        """Validates the config values."""
-        self._check_valid_color("keypoint_dot_color")
-        self._check_valid_color("keypoint_connect_color")
-        self.check_bounds("keypoint_dot_radius", "[0, +inf)")
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Draws pose details onto input image.
+
+        Args:
+            inputs (dict): Dictionary with keys "img", "keypoints", and
+                "keypoint_conns".
+        """
+        self.pose.draw_human_poses(
+            inputs["img"],
+            inputs["keypoints"],
+            inputs["keypoint_conns"],
+        )
+        return {}
 
     def _check_valid_color(self, key: str) -> None:
         """Checks that configuration value specified by `key` is a valid color.
@@ -124,32 +132,34 @@ class Node(ThresholdCheckerMixin, AbstractNode):
                 in :ref:`color-palette`, or a list of BGR values, or if the BGR
                 values are out of range [0, 255].
         """
-        valid_colors_type = set(COLOR_MAP.keys())
-        valid_colors_range = "[0, 255]"
+        valid_color_names = set(COLOR_MAP.keys())
+        valid_color_range = "[0, 255]"
 
         if isinstance(self.config[key], str):
             try:
-                self.check_valid_choice(key, valid_colors_type)  # type: ignore
+                self.check_valid_choice(key, valid_color_names)  # type: ignore
             except Exception as wrong_color_choice:
                 raise ValueError(
-                    f"{key} must be one of {valid_colors_type} or passed as a list of BGR values."
+                    f"{key} must be one of {sorted(valid_color_names)} or passed as a list of BGR values."
                 ) from wrong_color_choice
         else:
-            self.check_bounds(key, valid_colors_range)
+            self._check_valid_length(key)
+            self.check_bounds(key, valid_color_range)
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """Draws pose details onto input image.
+    def _check_valid_length(self, key: str) -> None:
+        """Checks that configuration value specified by `key` is a list of length 3.
 
-        Args:
-            inputs (dict): Dictionary with keys "img", "keypoints", and
-                "keypoint_conns".
+        Example:
+            >>> keypoint_dot_color = [100, 100, 100, 100]
+            >>> self._check_valid_length("keypoint_dot_color")
+
+            This will raise a ValueError as the list is of length 4.
+
+        Raises:
+            ValueError: If the configuration value is not a list of length 3.
         """
-        self.pose.draw_human_poses(
-            inputs["img"],
-            inputs["keypoints"],
-            inputs["keypoint_conns"],
-        )
-        return {}
+        if len(self.config[key]) != 3:
+            raise ValueError("BGR values must be a list of length 3.")
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
@@ -158,3 +168,9 @@ class Node(ThresholdCheckerMixin, AbstractNode):
             "keypoint_connect_color": Union[List[int], str],
             "keypoint_dot_radius": int,
         }
+
+    def _validate_configs(self) -> None:
+        """Validates the config values."""
+        self._check_valid_color("keypoint_dot_color")
+        self._check_valid_color("keypoint_connect_color")
+        self.check_bounds("keypoint_dot_radius", "[0, +inf)")
