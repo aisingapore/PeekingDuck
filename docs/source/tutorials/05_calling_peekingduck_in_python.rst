@@ -134,12 +134,9 @@ Copy over the following code to ``demo_debug.py``:
       :linenos:
   
       from pathlib import Path
+
+      from peekingduck.pipeline.nodes import dabble, draw, input, model, output
   
-      from peekingduck.pipeline.nodes.dabble import fps
-      from peekingduck.pipeline.nodes.draw import bbox, legend
-      from peekingduck.pipeline.nodes.input import visual
-      from peekingduck.pipeline.nodes.model import yolo
-      from peekingduck.pipeline.nodes.output import media_writer, screen
       from peekingduck.runner import Runner
       from src.custom_nodes.dabble import debug
   
@@ -147,15 +144,15 @@ Copy over the following code to ``demo_debug.py``:
       def main():
           debug_node = debug.Node(pkd_base_dir=Path.cwd() / "src" / "custom_nodes")
       
-          visual_node = visual.Node(source=str(Path.cwd() / "cat_and_computer.mp4"))
-          yolo_node = yolo.Node(detect=["cup", "cat", "laptop", "keyboard", "mouse"])
-          bbox_node = bbox.Node(show_labels=True)
+          visual_node = input.visual.Node(source=str(Path.cwd() / "cat_and_computer.mp4"))
+          yolo_node = model.yolo.Node(detect=["cup", "cat", "laptop", "keyboard", "mouse"])
+          bbox_node = draw.bbox.Node(show_labels=True)
       
-          fps_node = fps.Node()
-          legend_node = legend.Node(show=["fps"])
-          screen_node = screen.Node()
+          fps_node = dabble.fps.Node()
+          legend_node = draw.legend.Node(show=["fps"])
+          screen_node = output.screen.Node()
       
-          media_writer_node = media_writer.Node(output_dir=str(Path.cwd() / "results"))
+          media_writer_node = output.media_writer.Node(output_dir=str(Path.cwd() / "results"))
       
           runner = Runner(
               nodes=[
@@ -393,13 +390,12 @@ Import the Modules
 
 Lines 9 - 10: You can also do::
 
-   from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
-   from peekingduck.pipeline.nodes.model import yolo_license_plate as pkd_yolo_license_plate
+   from peekingduck.pipeline.nodes import draw, model
     
-   bbox_node = pkd_bbox.Node()
-   yolo_license_plate_node = pkd_yolo_license_plate.Node()
+   bbox_node = draw.bbox.Node()
+   yolo_license_plate_node = model.yolo_license_plate.Node()
 
-to avoid potential name conflicts.
+to isolate the namespace to avoid potential name conflicts.
 
 
 Initialize PeekingDuck Nodes
