@@ -140,7 +140,8 @@ class Node(ThresholdCheckerMixin, AbstractNode):
                 self.check_valid_choice(key, valid_color_names)  # type: ignore
             except Exception as wrong_color_choice:
                 raise ValueError(
-                    f"{key} must be one of {sorted(valid_color_names)} or passed as a list of BGR values."
+                    f"{key} must be one of {sorted(valid_color_names)} or passed as a \
+                    list of BGR values."
                 ) from wrong_color_choice
         else:
             self._check_valid_length(key)
