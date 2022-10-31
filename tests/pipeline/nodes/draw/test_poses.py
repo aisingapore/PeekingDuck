@@ -37,7 +37,7 @@ def draw_poses():
     return node
 
 
-class TestBtmMidpoint:
+class TestPoses:
     def test_no_poses(self, draw_poses, create_image):
         poses = np.empty((0, 2))
         scores = []
