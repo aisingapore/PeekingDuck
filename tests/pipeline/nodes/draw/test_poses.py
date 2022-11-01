@@ -18,27 +18,54 @@ Test for draw poses node
 
 import numpy as np
 import pytest
+import yaml
 
 from peekingduck.pipeline.nodes.draw.poses import Node
+from tests.conftest import PKD_DIR
 
 
 @pytest.fixture
-def draw_poses():
-    node = Node(
-        {
-            "input": ["keypoints", "keypoint_scores", "keypoint_conns", "img"],
-            "output": ["none"],
-            "keypoint_dot_color": [0, 255, 0],
-            "keypoint_dot_radius": 5,
-            "keypoint_connect_color": [0, 255, 255],
-            "keypoint_text_color": [255, 0, 255],
-        }
-    )
-    return node
+def draw_poses_config():
+    with open(PKD_DIR / "configs" / "draw" / "poses.yml") as infile:
+        node_config = yaml.safe_load(infile)
+    node_config["root"] = PKD_DIR
+    return node_config
+
+
+@pytest.fixture(
+    params=[
+        {"value": "whiteee"},
+        {"value": "123"},
+    ]
+)
+def invalid_color_name(request):
+    return request.param["value"]
+
+
+@pytest.fixture(
+    params=[
+        {"value": [-1, 255, 255]},
+        {"value": [256, 255, 255]},
+    ]
+)
+def invalid_color_range(request):
+    return request.param["value"]
+
+
+@pytest.fixture(
+    params=[
+        {"value": [0, 0, 0, 0]},
+        {"value": [0, 0]},
+    ]
+)
+def invalid_color_tuple_len(request):
+    return request.param["value"]
 
 
 class TestPoses:
-    def test_no_poses(self, draw_poses, create_image):
+    def test_no_poses(self, draw_poses_config, create_image):
+        draw_poses_node = Node(draw_poses_config)
+
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
 
@@ -52,6 +79,45 @@ class TestPoses:
             "keypoint_conns": keypoint_conns,
             "img": output_img,
         }
-        draw_poses.run(inputs)
+
+        draw_poses_node.run(inputs)
 
         np.testing.assert_equal(original_img, output_img)
+
+    @pytest.mark.parametrize(
+        "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
+    )
+    def test_invalid_color_name(
+        self, config_key, draw_poses_config, invalid_color_name
+    ):
+        draw_poses_config[config_key] = invalid_color_name
+
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(draw_poses_config)
+        assert f"{config_key} must be one of" in str(excinfo.value)
+
+    @pytest.mark.parametrize(
+        "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
+    )
+    def test_invalid_color_range(
+        self, config_key, draw_poses_config, invalid_color_range
+    ):
+        draw_poses_config[config_key] = invalid_color_range
+
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(draw_poses_config)
+        assert f"All elements of {config_key} must be between [0.0, 255.0]" in str(
+            excinfo.value
+        )
+
+    @pytest.mark.parametrize(
+        "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
+    )
+    def test_invalid_color_tuple_len(
+        self, config_key, draw_poses_config, invalid_color_tuple_len
+    ):
+        draw_poses_config[config_key] = invalid_color_tuple_len
+
+        with pytest.raises(ValueError) as excinfo:
+            _ = Node(draw_poses_config)
+        assert "BGR values must be a list of length 3." in str(excinfo.value)
