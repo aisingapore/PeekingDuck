@@ -141,23 +141,31 @@ class Node(ThresholdCheckerMixin, AbstractNode):
                     list of BGR values."
                 ) from wrong_color_choice
         else:
-            self._check_valid_length(key)
-            self.check_bounds(key, valid_color_range)
+            self._check_valid_bgr_value(key, valid_color_range)
 
-    def _check_valid_length(self, key: str) -> None:
-        """Checks that configuration value specified by `key` is a list of length 3.
+    def _check_valid_bgr_value(self, key: str, color_range: str) -> None:
+        """Checks that configuration value specified by `key` is a list of length 3,
+        and if it is, checks that each value is within the range specified by
+        color_range.
 
         Example:
             >>> keypoint_dot_color = [100, 100, 100, 100]
-            >>> self._check_valid_length("keypoint_dot_color")
+            >>> self._check_valid_bgr_value("keypoint_dot_color", "[0, 255]")
 
             This will raise a ValueError as the list is of length 4.
 
+            >>> keypoint_dot_color = [100, 100, 300]
+            >>> self._check_valid_bgr_value("keypoint_dot_color", "[0, 255]")
+
+            This will raise a ValueError as 300 is out of range.
+
         Raises:
-            ValueError: If the configuration value is not a list of length 3.
+            ValueError: If the configuration value is not a list of length 3
+                or if the BGR values are out of range.
         """
         if len(self.config[key]) != 3:
             raise ValueError("BGR values must be a list of length 3.")
+        self.check_bounds(key, color_range)
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
