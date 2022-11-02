@@ -14,10 +14,10 @@
 
 """🎭 Instance segmentation model for generating high-quality masks."""
 
-from typing import Any, Dict
+from typing import Any, Dict, List, Optional, Union
 
-from peekingduck.pipeline.nodes.model.mask_rcnnv1 import mask_rcnn_model
 from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline.nodes.model.mask_rcnnv1 import mask_rcnn_model
 
 
 class Node(AbstractNode):  # pylint: disable=too-few-public-methods
@@ -53,7 +53,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         max_size (:obj:`int`): **default = 1333**. |br|
             Maximum size of the image to be rescaled before feeding it to the
             backbone.
-        detect (:obj:`List[Union[int, string]]`): **default = [0]**. |br|
+        detect (:obj:`List[Union[int, str]]`): **default = [0]**. |br|
             List of object class names or IDs to be detected. To detect all classes,
             refer to the :ref:`tech note <general-instance-segmentation-ids>`.
         max_num_detections: (:obj:`int`): **default = 100**. |br|
@@ -107,3 +107,16 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         }
 
         return outputs
+
+    def _get_config_types(self) -> Dict[str, Any]:
+        return {
+            "detect": List[Union[int, str]],
+            "iou_threshold": float,
+            "mask_threshold": float,
+            "max_num_detections": int,
+            "max_size": int,
+            "min_size": int,
+            "model_type": str,
+            "score_threshold": float,
+            "weights_parent_dir": Optional[str],
+        }
