@@ -130,9 +130,9 @@ class TestPoses:
     def test_if_configs_are_used(
         self, mock_circle, mock_line, draw_poses_config, create_image
     ):
-
+        color = [10, 20, 30]  # pass in a color that is different from the default
         draw_poses_config.update(
-            {"keypoint_dot_color": [10, 20, 30], "keypoint_connect_color": [30, 20, 10]}
+            {"keypoint_dot_color": color, "keypoint_connect_color": color}
         )
         draw_poses_node = Node(draw_poses_config)
 
@@ -155,10 +155,8 @@ class TestPoses:
         draw_poses_node.run(inputs)
 
         # asserts that cv2.circle()'s 4th argument `color` is the same as the config's color
-        assert mock_circle.call_args[0][3] == tuple(draw_poses_node.keypoint_dot_color)
-        assert mock_line.call_args[0][3] == tuple(
-            draw_poses_node.keypoint_connect_color
-        )
+        assert mock_circle.call_args[0][3] == tuple(color)
+        assert mock_line.call_args[0][3] == tuple(color)
 
         # asserts that cv2.circle() is called 17 times (once for each keypoint)
         assert mock_circle.call_count == 17
