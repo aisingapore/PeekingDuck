@@ -16,6 +16,9 @@
 Test for draw poses node
 """
 
+from unittest import mock
+
+import cv2
 import numpy as np
 import pytest
 import yaml
@@ -121,3 +124,39 @@ class TestPoses:
         with pytest.raises(ValueError) as excinfo:
             _ = Node(draw_poses_config)
         assert "BGR values must be a list of length 3." in str(excinfo.value)
+
+    @mock.patch("cv2.line", wraps=cv2.line)
+    @mock.patch("cv2.circle", wraps=cv2.circle)
+    def test_if_configs_are_used(
+        self, mock_circle, mock_line, draw_poses_config, create_image
+    ):
+        draw_poses_node = Node(draw_poses_config)
+
+        default_keypoint_dot_color = draw_poses_node.keypoint_dot_color
+        default_keypoint_connect_color = draw_poses_node.keypoint_connect_color
+
+        original_img = create_image((28, 28, 3))
+        output_img = original_img.copy()
+
+        keypoints = np.random.rand(1, 17, 2)  # keypoints shape for 1 person
+        keypoint_scores = np.random.rand(1, 17)  # keypoint_scores shape for 1 person
+        keypoint_conns = np.random.rand(
+            1, 15, 2, 2
+        )  # keypoint_conns shape for 1 person
+
+        inputs = {
+            "keypoints": keypoints,
+            "keypoint_scores": keypoint_scores,
+            "keypoint_conns": keypoint_conns,
+            "img": output_img,
+        }
+
+        draw_poses_node.run(inputs)
+
+        # asserts that cv2.circle()'s 4th argument `color` is the same as the config's color
+        assert mock_circle.call_args[0][3] == default_keypoint_dot_color
+        assert mock_line.call_args[0][3] == default_keypoint_connect_color
+
+        # asserts that cv2.circle() is called 17 times (once for each keypoint)
+        assert mock_circle.call_count == 17
+        assert mock_line.call_count == 15
