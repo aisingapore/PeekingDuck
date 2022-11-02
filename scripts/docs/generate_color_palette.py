@@ -1,3 +1,7 @@
+"""This script is used to generate the color palette table in the API documentation
+for `draw.poses` node.
+"""
+
 from typing import Tuple
 
 import matplotlib.colors as mcolors
