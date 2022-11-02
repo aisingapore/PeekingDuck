@@ -87,12 +87,9 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
         self._validate_configs()
 
-        self.keypoint_dot_color = get_color(self.config["keypoint_dot_color"])
-        self.keypoint_connect_color = get_color(self.config["keypoint_connect_color"])
-
         self.pose = Pose(
-            self.keypoint_dot_color,
-            self.keypoint_connect_color,
+            get_color(self.config["keypoint_dot_color"]),
+            get_color(self.config["keypoint_connect_color"]),
             self.keypoint_dot_radius,
         )
 
