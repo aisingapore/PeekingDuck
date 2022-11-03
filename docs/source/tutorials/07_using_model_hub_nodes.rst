@@ -4,9 +4,9 @@
 Using Model Hub Nodes
 *********************
 
-PeekingDuck has support for external model hub models. You can leverage the model
+PeekingDuck has support for models from external model hubs. You can leverage the model
 hub nodes to use these external models with the PeekingDuck pipeline. The model
-hub nodes differ in design from traditional model nodes as the model hub models
+hub nodes differ in design from traditional model nodes as the external models
 perform a variety of computer vision tasks. This tutorial demonstrates how
 to use these nodes through some sample pipelines.
 
@@ -16,13 +16,13 @@ List of Model Hub Nodes
 
 The table below shows the model hub nodes available.
 
-+-----------------------------------------------------------------+---------------------------------+
-| Model                                                           | Documentation                   |
-+=================================================================+=================================+
-| `Hugging Face Hub <https://huggingface.co/docs/hub/index>`_     | :mod:`model.huggingface_hub`    |
-+-----------------------------------------------------------------+---------------------------------+
-| `MediaPipe Solutions <https://google.github.io/mediapipe/>`_    | :mod:`model.mediapipe_hub`      |
-+-----------------------------------------------------------------+---------------------------------+
++---------------------------------+-----------------------------------------------------------------+
+| Documentation                   | Model Hubs                                                      |
++=================================+=================================================================+
+| :mod:`model.huggingface_hub`    | `Hugging Face Hub <https://huggingface.co/docs/hub/index>`_     |
++---------------------------------+-----------------------------------------------------------------+
+| :mod:`model.mediapipe_hub`      | `MediaPipe Solutions <https://google.github.io/mediapipe/>`_    |
++---------------------------------+-----------------------------------------------------------------+
 
 
 Hugging Face Hub
@@ -31,8 +31,8 @@ Hugging Face Hub
 The :mod:`model.huggingface_hub` node supports transformer models which perform
 the following computer vision tasks:
 
-   #. Instance segmentation
    #. Object detection
+   #. Instance segmentation
 
 You can use the following command to get a list of supported computer vision tasks:
 
@@ -42,12 +42,87 @@ You can use the following command to get a list of supported computer vision tas
       | Supported computer vision tasks: ['instance segmentation', 'object detection']
 
 
+Object Detection
+----------------
+
+This example shows how Hugging Face Hub's object detection models can be used
+to blur computer related objects from `cat_and_computer.mp4 
+<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_.
+
+Supported Models
+^^^^^^^^^^^^^^^^
+
+Use the following command to get a list of supported object detection models:
+
+   .. admonition:: Terminal Session
+   
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface models -\-task \'object detection\'` \
+      | Supported Hugging Face \`object_detection\` models:
+      | facebook/detr-resnet-50
+      | facebook/detr-resnet-50-dc5
+      | hustvl/yolos-base
+      | hustvl/yolos-small
+      |
+      | <long list truncated>
+
+Class Labels
+^^^^^^^^^^^^
+
+Similar to the instnace segmentation models, the object detection models are also
+trained on a variety of datasets, the same ``detect-ids`` command can be used to
+retrieve the file containing the model's class labels:
+
+   .. admonition:: Terminal Session
+   
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface detect-ids  -\-model_type \'hustvl/yolos-small\'` \
+      | The detect ID-to-label mapping for \`facebook/hustvl/yolos-small\` can be found at https://huggingface.co/hustvl/yolos-small/blob/main/config.json under the \`id2label\` key.
+
+Pipeline
+^^^^^^^^
+
+The following ``pipeline_config.yml`` can be used to blur computer related objects:
+
+   .. code-block:: yaml
+      :linenos:
+   
+      nodes:
+      - input.visual:
+          source: /path/to/cat_and_computer.mp4
+      - model.huggingface_hub:
+          task: object_detection 
+          model_type: hustvl/yolos-small
+          detect: ["laptop", "keyboard", "mouse"]
+      - draw.blur_bbox
+      - output.screen
+
+Here is a step-by-step explanation of what has been done:
+
+   | Line 2 :mod:`input.visual` tells PeekingDuck to load ``cat_and_computer.mp4``.
+   | Line 4 :mod:`model.huggingface_hub` is set to perform the ``object_detection``
+   |        task and load the ``hustvl/yolos-small`` model. We also
+   |        set the model to detect only laptops, keyboards, and mice.
+   | Line 8 :mod:`draw.blur_bbox` is used to apply a blur effect on the bounding
+   |        boxes detected by the model.
+
+Run the above with the command :greenbox:`peekingduck run`. 
+
+   .. figure:: /assets/tutorials/ss_huggingface_object_detection.png
+      :width: 416
+      :alt: Cat and Computer Screenshot with Computer Related Objects Blurred
+   
+      Cat and Computer Screenshot with Computer Related Objects Blurred
+
+
+You should see a display of the ``cat_and_computer.mp4`` with the computer related
+objects blurred. The 30-second video will auto-close at the end, or you can press
+:greenbox:`q` to end early.
+
+
 Instance Segmentation
 ---------------------
 
-This example shows how Hugging Face Hub's instance segmentation models can be used
-to blur computer related objects from `cat_and_computer.mp4 
-<https://storage.googleapis.com/peekingduck/videos/cat_and_computer.mp4>`_.
+This example also demonstrates how to blur computer related objects but with Hugging
+Face Hub's instance segmentation models instead.
 
 Supported Models
 ^^^^^^^^^^^^^^^^
@@ -56,14 +131,14 @@ To get a list of supported instance segmentation models, use the following CLI c
 
    .. admonition:: Terminal Session
    
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface models -\-task 'instance segmentation'` \
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface models -\-task \'instance segmentation\'` \
       | Supported hugging face \`instance_segmentation\` models:
       | facebook/detr-resnet-101-panoptic
       | facebook/detr-resnet-50-dc5-panoptic
       | facebook/detr-resnet-50-panoptic
       | facebook/maskformer-swin-tiny-coco
       |
-      | <omitted>
+      | <long list truncated>
 
 Class Labels
 ^^^^^^^^^^^^
@@ -76,7 +151,7 @@ by the model. You can do so with the following command:
 
    .. admonition:: Terminal Session
    
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface detect-ids  -\-model_type 'facebook/maskformer-swin-tiny-coco'` \
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface detect-ids  -\-model_type \'facebook/maskformer-swin-tiny-coco\'` \
       | The detect ID-to-label mapping for \`facebook/maskformer-swin-tiny-coco\` can be found at https://huggingface.co/facebook/maskformer-swin-tiny-coco/blob/main/config.json under the \`id2label\` key.
 
 Pipeline
@@ -123,83 +198,6 @@ You should see a display of the ``cat_and_computer.mp4`` with the computer relat
 objects blurred. The 30-second video will auto-close at the end, or you can press
 :greenbox:`q` to end early.
 
-
-Object Detection
-----------------
-
-This example also demonstrates how to blur computer related objects but with Hugging
-Face Hub's object detection models instead.
-
-Supported Models
-^^^^^^^^^^^^^^^^
-
-Use the following command to get a list of supported object detection models:
-
-   .. admonition:: Terminal Session
-   
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface models -\-task 'object detection'` \
-      | Supported Hugging Face \`object_detection\` models:
-      | facebook/detr-resnet-50
-      | facebook/detr-resnet-50-dc5
-      | hustvl/yolos-base
-      | hustvl/yolos-small
-      |
-      | <omitted>
-
-Class Labels
-^^^^^^^^^^^^
-
-Similar to the instnace segmentation models, the object detection models are also
-trained on a variety of datasets, the same ``detect-ids`` command can be used to
-retrieve the file containing the model's class labels:
-
-   .. admonition:: Terminal Session
-   
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub huggingface detect-ids  -\-model_type 'hustvl/yolos-small'` \
-      | The detect ID-to-label mapping for \`facebook/hustvl/yolos-small\` can be found at https://huggingface.co/hustvl/yolos-small/blob/main/config.json under the \`id2label\` key.
-
-Pipeline
-^^^^^^^^
-
-The following ``pipeline_config.yml`` can be used to blur computer related objects:
-
-   .. code-block:: yaml
-      :linenos:
-   
-      nodes:
-      - input.visual:
-          source: /path/to/cat_and_computer.mp4
-      - model.huggingface_hub:
-          task: object_detection 
-          model_type: hustvl/yolos-small
-          detect: ["laptop", "keyboard", "mouse"]
-      - draw.blur_bbox
-      - output.screen
-
-Here is a step-by-step explanation of what has been done:
-
-   | Line 2 :mod:`input.visual` tells PeekingDuck to load ``cat_and_computer.mp4``.
-   | Line 4 :mod:`model.huggingface_hub` is set to perform the ``object_detection``
-   |        task and load the ``hustvl/yolos-small`` model. We also
-   |        set the model to detect only laptops, keyboards, and mice.
-   | Line 8 :mod:`draw.blur_bbox` is used to apply a blur effect on the bounding
-   |        boxes detected by the model.
-
-Run the above with the command :greenbox:`peekingduck run`. 
-
-   .. figure:: /assets/tutorials/ss_huggingface_object_detection.png
-      :width: 416
-      :alt: Cat and Computer Screenshot with Computer Related Objects Blurred
-   
-      Cat and Computer Screenshot with Computer Related Objects Blurred
-
-
-You should see a display of the ``cat_and_computer.mp4`` with the computer related
-objects blurred. The 30-second video will auto-close at the end, or you can press
-:greenbox:`q` to end early.
-
-
-
 MediaPipe Solutions
 ===================
 
@@ -208,6 +206,9 @@ following computer vision tasks:
 
    #. Object detection
    #. Pose estimation
+
+*Note: The object detection model only detects faces as the generic object detection
+model is not available in Python at the time of writing.*
 
 You can use the following command to get a list of supported computer vision tasks
 and their respective subtasks:
@@ -235,7 +236,7 @@ the following command:
 
    .. admonition:: Terminal Session
    
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub mediapipe model-types -\-task 'object detection' -\-subtask 'face'` \
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub mediapipe model-types -\-task \'object detection\' -\-subtask \'face\'` \
       | Supported model types for 'object detection/face'
       | 0: A short-range model that works best for faces within 2 meters from the camera.
       | 1: A full-range model best for faces within 5 meters.
@@ -291,7 +292,7 @@ the following command:
 
    .. admonition:: Terminal Session
    
-      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub mediapipe model-types -\-task 'pose estimation' -\-subtask 'body'` \
+      | \ :blue:`[~user/project_dir]` \ > \ :green:`peekingduck model-hub mediapipe model-types -\-task \'pose estimation\' -\-subtask \'body\'` \
       | Supported model types for 'pose estimation/body'
       | 0: BlazePose GHUM Lite, lower inference latency at the cost of landmark accuracy.
       | 1: BlazePose GHUM Full.
