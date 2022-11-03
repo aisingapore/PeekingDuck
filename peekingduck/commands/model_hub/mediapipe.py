@@ -18,20 +18,29 @@ import logging
 
 import click
 
+from peekingduck.commands import LOGGER_NAME
+from peekingduck.commands.base import AliasedGroup
 from peekingduck.commands.model_hub import model_hub
 from peekingduck.pipeline.nodes.model.mediapipe_hubv1.api_doc import SUPPORTED_TASKS
 
-logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-@model_hub.group()
+@model_hub.command(cls=AliasedGroup, aliases=["mp"])
 def mediapipe() -> None:
-    """Utility commands for MediaPipe models."""
+    """MediaPipe Solutions models."""
 
 
-@mediapipe.command()
-@click.option("--task", help="Computer vision task, e.g., object detection")
-@click.option("--subtask", help="Computer vision subtask, e.g., face")
+@mediapipe.command(
+    aliases=["model", "mt"],
+    short_help="Lists the supported model types for the specified `task` and `subtask`.",
+)
+@click.option(
+    "-t", "--task", help="Computer vision task, e.g., object detection", required=True
+)
+@click.option(
+    "-s", "--subtask", help="Computer vision subtask, e.g., face", required=True
+)
 def model_types(task: str, subtask: str) -> None:
     """Lists the supported model types for the specified `task` and `subtask`."""
     print(f"Supported model types for '{task}/{subtask}'")
@@ -41,7 +50,7 @@ def model_types(task: str, subtask: str) -> None:
         print(f"{model_type}: {docstring}")
 
 
-@mediapipe.command()
+@mediapipe.command(aliases=["t"])
 def tasks() -> None:
     """Lists the supported computer vision tasks."""
     print("Supported computer vision tasks and respective subtasks:")

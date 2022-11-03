@@ -20,23 +20,29 @@ import shutil
 
 import click
 
+from peekingduck.commands import LOGGER_NAME
+from peekingduck.commands.base import AliasedGroup
 from peekingduck.commands.model_hub import model_hub
 from peekingduck.pipeline.nodes.model.huggingface_hubv1.api_utils import (
     SUPPORTED_TASKS,
     get_valid_models,
 )
 
-logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 # Replaces underscores with spaces to match expected user input
 PRETTY_SUPPORTED_TASKS = [task.replace("_", " ") for task in SUPPORTED_TASKS]
 
 
-@model_hub.group()
+@model_hub.command(cls=AliasedGroup, aliases=["hf"])
 def huggingface() -> None:
-    """Utility commands for Hugging Face Hub models."""
+    """Hugging Face Hub models."""
 
 
-@huggingface.command()
+@huggingface.command(
+    aliases=["detect", "di"],
+    short_help="Returns the URL to the model's config.json which contains the "
+    "detect ID-to-label mapping.",
+)
 @click.option(
     "--model_type",
     help=(
@@ -59,8 +65,13 @@ def detect_ids(model_type: str) -> None:
         print(f"{model_type} is either invalid or belongs to an unsupported task.")
 
 
-@huggingface.command()
+@huggingface.command(
+    aliases=["m"],
+    short_help="Lists the valid/supported Hugging Face Hub models for the "
+    "specified computer vision `task`.",
+)
 @click.option(
+    "-t",
     "--task",
     help=f"The computer vision task, one of {PRETTY_SUPPORTED_TASKS}.",
     required=True,
@@ -80,7 +91,7 @@ def models(task: str) -> None:
         print(f"{task} is an invalid/unsupported task.")
 
 
-@huggingface.command()
+@huggingface.command(aliases=["t"])
 def tasks() -> None:
     """Lists the supported computer vision tasks."""
     print(f"Supported computer vision tasks: {PRETTY_SUPPORTED_TASKS}")
