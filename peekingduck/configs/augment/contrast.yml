@@ -1,4 +1,5 @@
 input: ["img"]
 output: ["img"]
+callbacks: {}
 
 alpha: 1.0

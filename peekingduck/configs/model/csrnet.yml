@@ -1,5 +1,6 @@
 input: ["img"]
 output: ["density_map", "count"]
+callbacks: {}
 
 weights_parent_dir: null
 weights:

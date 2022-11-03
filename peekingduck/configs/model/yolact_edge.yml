@@ -1,5 +1,6 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores", "masks"]
+callbacks: {}
 
 weights_parent_dir: null
 weights:
@@ -7,28 +8,23 @@ weights:
     pytorch:
       {
         model_subdir: yolact_edge,
-        blob_file: 
-        { 
-          r50-fpn: yolact-edge-r50-fpn-coco.zip,
-          r101-fpn: yolact-edge-r101-fpn-coco.zip,
-          mobilenetv2: yolact-edge-mobilenetv2-coco.zip
-        },
+        blob_file:
+          {
+            r50-fpn: yolact-edge-r50-fpn-coco.zip,
+            r101-fpn: yolact-edge-r101-fpn-coco.zip,
+            mobilenetv2: yolact-edge-mobilenetv2-coco.zip,
+          },
         classes_file: coco.names,
-        model_file: 
-        { 
-          r50-fpn: yolact-edge-r50-fpn-coco.pth,
-          r101-fpn: yolact-edge-r101-fpn-coco.pth,
-          mobilenetv2: yolact-edge-mobilenetv2-coco.pth
-        },
+        model_file:
+          {
+            r50-fpn: yolact-edge-r50-fpn-coco.pth,
+            r101-fpn: yolact-edge-r101-fpn-coco.pth,
+            mobilenetv2: yolact-edge-mobilenetv2-coco.pth,
+          },
       },
   }
 
-model_size:
-  {
-    r50-fpn: {},
-    r101-fpn: {},
-    mobilenetv2: {}
-  }
+model_size: { r50-fpn: {}, r101-fpn: {}, mobilenetv2: {} }
 num_classes: 80
 
 model_format: pytorch

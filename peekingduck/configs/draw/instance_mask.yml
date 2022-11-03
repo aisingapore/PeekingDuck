@@ -1,16 +1,15 @@
 input: ["img", "masks", "bbox_labels"]
 output: ["img"]
+callbacks: {}
 
 instance_color_scheme: hue_family
-effect: {
-  contrast: null,
-  brightness: null,
-  gamma_correction: null,
-  blur: null,
-  mosaic: null
-}
+effect:
+  {
+    contrast: null,
+    brightness: null,
+    gamma_correction: null,
+    blur: null,
+    mosaic: null,
+  }
 effect_area: objects
-contours: {
-    show: False,
-    thickness: 2
-}
+contours: { show: False, thickness: 2 }

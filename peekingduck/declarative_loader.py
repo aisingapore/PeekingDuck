@@ -23,7 +23,7 @@ import logging
 import os
 import sys
 from pathlib import Path
-from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
+from typing import Any, Dict, Iterator, List, Optional, Tuple, Union, cast
 
 import yaml
 
@@ -101,28 +101,29 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
     ) -> Dict[str, Any]:
         """Update value of a nested dictionary of varying depth using recursion"""
         for key, value in dict_update.items():
-            if isinstance(value, collections.abc.Mapping):
+            # Replace "detect_ids" with "detect" in code below
+            if key not in dict_orig and key != "detect_ids":
+                self.logger.warning(
+                    f"Config for node {node_name} does not have the key: {key}"
+                )
+                continue
+            if isinstance(value, collections.abc.Mapping) and key != "callbacks":
                 dict_orig[key] = self._edit_config(
                     dict_orig.get(key, {}), value, node_name  # type: ignore
                 )
-            else:
-                # Replace "detect_ids" with "detect" in code below
-                if key not in dict_orig and key != "detect_ids":
-                    self.logger.warning(
-                        f"Config for node {node_name} does not have the key: {key}"
-                    )
-                else:
-                    if key == "detect":
-                        value = self._change_class_name_to_id(node_name, value)
-                    elif key == "detect_ids":
-                        key, value = self._handle_detect_ids_deprecation(
-                            node_name, value
-                        )
+                continue
+            # `value` below will not be a Dict since the keys are not `callbacks`
+            if key == "detect":
+                value = self._change_class_name_to_id(node_name, cast(List[Any], value))
+            elif key == "detect_ids":
+                key, value = self._handle_detect_ids_deprecation(
+                    node_name, cast(List[Any], value)
+                )
 
-                    dict_orig[key] = value
-                    self.logger.info(
-                        f"Config for node {node_name} is updated to: '{key}': {value}"
-                    )
+            dict_orig[key] = value
+            self.logger.info(
+                f"Config for node {node_name} is updated to: '{key}': {value}"
+            )
         return dict_orig
 
     def _get_custom_name_from_node_list(self) -> Any:
@@ -211,7 +212,14 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
             config = self._edit_config(config, config_updates_yml, node_name)
 
         # Second, override configs again with values from cli
-        if self.config_updates_cli is not None:
+        if (
+            self.config_updates_cli is not None
+            and node_name in self.config_updates_cli.keys()
+        ):
+
+            config = self._edit_config(
+                config, self.config_updates_cli[node_name], node_name
+            )
             if node_name in self.config_updates_cli.keys():
                 config = self._edit_config(
                     config, self.config_updates_cli[node_name], node_name

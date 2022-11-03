@@ -1,5 +1,6 @@
 input: ["all"]
 output: ["cum_avg", "cum_min", "cum_max"]
+callbacks: {}
 
 identity: null
 length: null

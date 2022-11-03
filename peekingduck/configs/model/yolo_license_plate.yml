@@ -1,5 +1,6 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores"]
+callbacks: {}
 
 weights_parent_dir: null
 weights:

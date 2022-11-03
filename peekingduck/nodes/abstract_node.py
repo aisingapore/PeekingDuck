@@ -16,7 +16,7 @@
 Abstract Node class for all nodes.
 """
 
-import collections
+import collections.abc
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
@@ -25,6 +25,7 @@ from typing import Any, Dict, List, Union
 from typeguard import check_type
 
 from peekingduck.config_loader import ConfigLoader
+from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
@@ -62,6 +63,7 @@ class AbstractNode(ABC):
         # update the node
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
+        self.callback_list = CallbackList.from_dict(self.callbacks)
 
         self._change_class_name_to_id()
 

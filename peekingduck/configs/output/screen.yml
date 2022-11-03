@@ -1,13 +1,7 @@
 input: ["img", "filename"]
 output: ["pipeline_end"]
+callbacks: {}
 
 window_name: "PeekingDuck"
-window_size: {
-    do_resizing: False,
-    width: 1280,
-    height: 720 
-}
-window_loc: {
-    x: 0,
-    y: 0
-}
+window_size: { do_resizing: False, width: 1280, height: 720 }
+window_loc: { x: 0, y: 0 }

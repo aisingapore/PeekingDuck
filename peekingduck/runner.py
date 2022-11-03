@@ -124,8 +124,10 @@ class Runner:
                         if key in self.pipeline.data:
                             inputs[key] = self.pipeline.data[key]
 
+                node.callback_list.on_run_begin(self.pipeline.data)
                 outputs = node.run(inputs)
                 self.pipeline.data.update(outputs)
+                node.callback_list.on_run_end(self.pipeline.data)
                 if num_iter == 0:
                     node_end_time = perf_counter()
                     self.logger.debug(

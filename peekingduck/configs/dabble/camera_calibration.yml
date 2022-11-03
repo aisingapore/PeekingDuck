@@ -1,6 +1,7 @@
 # Mandatory configs
 input: ["img"]
 output: ["img"]
+callbacks: {}
 
 # Optional configs
 num_corners: [10, 7]

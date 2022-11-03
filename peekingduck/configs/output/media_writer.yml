@@ -1,4 +1,5 @@
 input: ["img", "filename", "saved_video_fps", "pipeline_end"]
 output: ["none"]
+callbacks: {}
 
 output_dir: "PeekingDuck/data/output"
