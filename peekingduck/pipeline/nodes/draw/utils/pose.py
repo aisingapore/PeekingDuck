@@ -13,80 +13,117 @@
 # limitations under the License.
 
 """
-Functions for drawing pose keypoints and connections
+Pose class for drawing pose keypoints and connections.
 """
 
-from typing import Any, Iterable, Tuple, Union
+from typing import Any, Iterable, Tuple, Optional
 
 import cv2
 import numpy as np
 
-from peekingduck.pipeline.nodes.draw.utils.constants import (
-    CHAMPAGNE,
-    POINT_RADIUS,
-    THICK,
-    TOMATO,
-)
+from peekingduck.pipeline.nodes.draw.utils.constants import THICK
 from peekingduck.pipeline.nodes.draw.utils.general import (
     get_image_size,
     project_points_onto_original_image,
 )
 
 
-def draw_human_poses(
-    image: np.ndarray, keypoints: np.ndarray, keypoint_conns: np.ndarray
-) -> None:
-    # pylint: disable=too-many-arguments
-    """Draw poses onto an image frame.
+class Pose:  # pylint: disable=too-few-public-methods
+    """Pose class to draw pose keypoints and connections."""
 
-    Args:
-        image (np.array): image of current frame
-        keypoints (List[Any]): list of keypoint coordinates
-        keypoints_conns (List[Any]): list of keypoint connections
-    """
-    image_size = get_image_size(image)
-    num_persons = keypoints.shape[0]
-    if num_persons > 0:
-        for i in range(num_persons):
-            _draw_connections(image, keypoint_conns[i], image_size, CHAMPAGNE)
-            _draw_keypoints(image, keypoints[i], image_size, TOMATO, POINT_RADIUS)
+    def __init__(
+        self,
+        keypoint_dot_color: Tuple[int, int, int],
+        keypoint_connect_color: Tuple[int, int, int],
+        keypoint_dot_radius: int,
+    ) -> None:
+        self.keypoint_dot_color = keypoint_dot_color
+        self.keypoint_connect_color = keypoint_connect_color
+        self.keypoint_dot_radius = keypoint_dot_radius
 
+    def draw_human_poses(
+        self,
+        image: np.ndarray,
+        all_keypoints: np.ndarray,
+        all_keypoint_connections: np.ndarray,
+    ) -> None:
+        """Draw poses onto an image frame.
 
-def _draw_connections(
-    frame: np.ndarray,
-    connections: Union[None, Iterable[Any]],
-    image_size: Tuple[int, int],
-    connection_color: Tuple[int, int, int],
-) -> None:
-    """Draw connections between detected keypoints"""
-    if connections is not None:
-        for connection in connections:
-            pt1, pt2 = project_points_onto_original_image(connection, image_size)
-            cv2.line(frame, (pt1[0], pt1[1]), (pt2[0], pt2[1]), connection_color, THICK)
+        Args:
+            image (np.ndarray): Input image frame.
+            all_keypoints (np.ndarray): Keypoint coordinates of shape (N, 17, 2)
+                where N is the number of humans detected.
+            all_keypoint_connections (np.ndarray): Keypoint connections of shape
+                (N, 15, 2, 2) where N is the number of humans detected.
+        """
+        image_size = get_image_size(image)
+        num_persons = all_keypoints.shape[0]
+        if num_persons > 0:
+            for keypoints, keypoint_connections in zip(
+                all_keypoints, all_keypoint_connections
+            ):
+                self._draw_connections(image, keypoint_connections, image_size)
+                self._draw_keypoints(image, keypoints, image_size)
 
+    def _draw_connections(
+        self,
+        image: np.ndarray,
+        keypoint_connections: Optional[Iterable[Any]],
+        image_size: Tuple[int, int],
+    ) -> None:
+        """Draw connections between detected keypoints.
 
-def _draw_keypoints(
-    frame: np.ndarray,
-    keypoints: np.ndarray,
-    image_size: Tuple[int, int],
-    keypoint_dot_color: Tuple[int, int, int],
-    keypoint_dot_radius: int,
-) -> None:
-    # pylint: disable=too-many-arguments
-    """Draw detected keypoints"""
-    img_keypoints = project_points_onto_original_image(keypoints, image_size)
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoint_connections (Optional[Iterable[Any]]): Keypoint connections
+                of one individual human with shape (15, 2, 2).
+            image_size (Tuple[int, int]): Image size of the input image frame.
+        """
+        if keypoint_connections is not None:
+            for connection in keypoint_connections:
+                pt1, pt2 = project_points_onto_original_image(connection, image_size)
+                cv2.line(
+                    image,
+                    (pt1[0], pt1[1]),
+                    (pt2[0], pt2[1]),
+                    self.keypoint_connect_color,
+                    THICK,
+                )
 
-    for _, keypoint in enumerate(img_keypoints):
-        _draw_one_keypoint_dot(frame, keypoint, keypoint_dot_color, keypoint_dot_radius)
+    def _draw_keypoints(
+        self,
+        image: np.ndarray,
+        keypoints: np.ndarray,
+        image_size: Tuple[int, int],
+    ) -> None:
+        """Draw detected keypoints.
 
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoints (np.ndarray): Keypoint coordinates of one individual human
+                with shape (17, 2).
+            image_size (Tuple[int, int]): Image size of the input image frame.
+        """
+        image_keypoints = project_points_onto_original_image(keypoints, image_size)
 
-def _draw_one_keypoint_dot(
-    frame: np.ndarray,
-    keypoint: np.ndarray,
-    keypoint_dot_color: Tuple[int, int, int],
-    keypoint_dot_radius: int,
-) -> None:
-    """Draw single keypoint"""
-    cv2.circle(
-        frame, (keypoint[0], keypoint[1]), keypoint_dot_radius, keypoint_dot_color, -1
-    )
+        for _, image_keypoint in enumerate(image_keypoints):
+            self._draw_one_keypoint_dot(image, image_keypoint)
+
+    def _draw_one_keypoint_dot(
+        self,
+        image: np.ndarray,
+        keypoint: np.ndarray,
+    ) -> None:
+        """Draw single keypoint.
+
+        Args:
+            image (np.ndarray): Input image frame.
+            keypoint (np.ndarray): Keypoint coordinates of shape (2,).
+        """
+        cv2.circle(
+            image,
+            (keypoint[0], keypoint[1]),
+            self.keypoint_dot_radius,
+            self.keypoint_dot_color,
+            -1,
+        )

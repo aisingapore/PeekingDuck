@@ -133,6 +133,19 @@ div.highlight span.pkd-raw-terminal:before {
   display: none;
 }
 
+/*****************************************************************************
+ * Color palette
+ * Adapted from "Installation quickstart"
+ *****************************************************************************/
+/* Show hidden content when the checkbox is checked */
+#sort-by-hue:checked ~ * [data-sort="hue"] {
+  display: block;
+}
+
+#sort-by-name:checked ~ * [data-sort="name"] {
+  display: block;
+}
+
 /* Colors */
 .red {
   color: red;

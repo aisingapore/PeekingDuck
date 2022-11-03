@@ -17,9 +17,11 @@
 General utils for drawing functions
 """
 
-from typing import Tuple
+from typing import Tuple, List, Union
 
 import numpy as np
+
+from peekingduck.pipeline.nodes.draw.utils.constants import COLOR_MAP
 
 
 def get_image_size(frame: np.ndarray) -> Tuple[int, int]:
@@ -61,3 +63,25 @@ def project_points_onto_original_image(
     projected_points[:, 1] *= height
 
     return np.round(projected_points).astype(int)
+
+
+def get_color(color: Union[str, List[int]]) -> Tuple[int, int, int]:
+    """Convert color to BGR tuple.
+
+    Example:
+        >>> color = "red"
+        >>> get_color(color)
+        (0, 0, 255)
+
+    Args:
+        color (Union[str, List[int]]): Color can be a string from COLOR_MAP
+            or a list of 3 integers representing BGR values.
+
+    Returns:
+        color_tuple (Tuple[int, int, int]): Color in BGR tuple.
+    """
+    if isinstance(color, str):
+        color_tuple = COLOR_MAP[color]
+    else:
+        color_tuple = (color[0], color[1], color[2])
+    return color_tuple
