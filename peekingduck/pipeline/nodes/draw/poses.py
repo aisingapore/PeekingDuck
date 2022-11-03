@@ -58,29 +58,25 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         keypoint_dot_radius (:obj:`int`): **default = 5** |br|
             Radius of the keypoints.
 
-    **Color Palette**
-
-    :ref:`color-palette` offers a wide range of default colors for the user to choose from.
-
     .. _color-palette:
 
-    .. list-table:: PeekingDuck's Color Palette
-       :widths: 20 20
-       :header-rows: 1
+    .. rubric:: PeekingDuck's Color Palette
 
-       * - Color Palette by Hue
-         - Color Palette by Name
-       * - .. figure:: ../assets/api/color_map_by_hue.png
+    :ref:`color-palette` offers a wide range of default colors [1]_ for the user to choose from.
 
-           PeekingDuck's Color Palette Sorted by Color Hues [1]_.
+    .. include:: /include/color_palette.rst
 
-         - .. figure:: ../assets/api/color_map_by_name.png
+    .. container:: toggle
 
-           PeekingDuck's Color Palette Sorted by Color Names [1]_.
+       .. container:: header
 
-    .. rubric:: Footnotes
+          **Show/Hide color palette**
 
-    .. [1] Colors with asterisk indicates PeekingDuck's in-house colors.
+       |color_palette|
+
+       .. rubric:: Footnotes
+
+       .. [1] Colors with asterisk indicates PeekingDuck's in-house colors.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
