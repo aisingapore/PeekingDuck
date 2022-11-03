@@ -68,9 +68,11 @@ Use the following command to get a list of supported object detection models:
 Class Labels
 ^^^^^^^^^^^^
 
-Similar to the instnace segmentation models, the object detection models are also
-trained on a variety of datasets, the same ``detect-ids`` command can be used to
-retrieve the file containing the model's class labels:
+The models are trained on a variety of datasets which may not share the same set
+of class labels, e.g., the `PubTables-1M <https://msropendata.com/datasets/505fcbe3-1383-42b1-913a-f651b8b712d3>`_
+dataset contains the label "table column" which is not found in the `COCO <https://cocodataset.org/#home>`_
+dataset. As such, it may be necessary to look through the class labels supported
+by the model. You can do so with the following command:
 
    .. admonition:: Terminal Session
    
@@ -143,11 +145,9 @@ To get a list of supported instance segmentation models, use the following CLI c
 Class Labels
 ^^^^^^^^^^^^
 
-The models are trained on a variety of datasets which may not share the same set
-of class labels, e.g., the `ADE20K <https://groups.csail.mit.edu/vision/datasets/ADE20K/>`_
-dataset contains the label "sky" which is not found in the `COCO <https://cocodataset.org/#home>`_
-dataset. As such, it may be necessary to look through the class labels supported
-by the model. You can do so with the following command:
+Similar to the object detection models, the instance segmentation models are also
+trained on a variety of datasets, the same ``detect-ids`` command can be used to
+retrieve the file containing the model's class labels:
 
    .. admonition:: Terminal Session
    
