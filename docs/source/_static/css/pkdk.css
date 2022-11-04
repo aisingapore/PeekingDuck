@@ -41,6 +41,11 @@ dt.sig {
   white-space: normal;
 }
 
+.wy-table-responsive table.longtable td code,
+.wy-table-responsive table.longtable th code {
+  white-space: nowrap;
+}
+
 div.deprecated,
 div.versionchanged {
   margin-top: 0.5rem;
