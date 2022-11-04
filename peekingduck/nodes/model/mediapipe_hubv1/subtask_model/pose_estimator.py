@@ -19,22 +19,25 @@ from typing import Any, Dict, Tuple
 import mediapipe as mp
 import numpy as np
 
+from peekingduck.nodes.model.mediapipe_hubv1.api_doc import SUPPORTED_TASKS
 from peekingduck.nodes.model.mediapipe_hubv1.subtask_model import base
-from peekingduck.utils.pose.keypoint_handler import COCOBody, COCOHand
+from peekingduck.utils.pose.keypoint_handler import (
+    BlazePoseBody,
+    COCOBody,
+    COCOHand,
+    KeypointHandler,
+)
 
 
 class BodyEstimator(base.BaseEstimator):
     """Mediapipe pose estimation (body) model."""
 
-    KEYPOINT_MAP = {
-        "blaze_pose": None,
-        "coco": [0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28],
-    }
+    KEYPOINT_FORMATS = SUPPORTED_TASKS.get_keypoint_formats("body")
 
-    def __init__(self, config: Dict[str, Any], keypoint_format: str) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config)
 
-        self.keypoint_handler = COCOBody(self.KEYPOINT_MAP[keypoint_format])
+        self.keypoint_handler = self._get_keypoint_handler(config["keypoint_format"])
         self.settings.append(
             base.ModelSetting(
                 "smooth_landmarks", "Smooth landmarks", config["smooth_landmarks"]
@@ -86,16 +89,22 @@ class BodyEstimator(base.BaseEstimator):
             scores,
         )
 
+    @staticmethod
+    def _get_keypoint_handler(keypoint_format: str) -> KeypointHandler:
+        if keypoint_format == "blaze_pose":
+            return BlazePoseBody()
+        return COCOBody([0, 2, 5, 7, 8, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28])
+
 
 class HandEstimator(base.BaseEstimator):
     """Mediapipe pose estimation (hand) model."""
 
-    KEYPOINT_MAP = {"coco": None}
+    KEYPOINT_FORMATS = SUPPORTED_TASKS.get_keypoint_formats("hand")
 
-    def __init__(self, config: Dict[str, Any], keypoint_format: str) -> None:
+    def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config)
 
-        self.keypoint_handler = COCOHand(self.KEYPOINT_MAP[keypoint_format])
+        self.keypoint_handler = COCOHand()
         self.settings.append(
             base.ModelSetting(
                 "max_num_hands", "Maximum number of hands", config["max_num_hands"]

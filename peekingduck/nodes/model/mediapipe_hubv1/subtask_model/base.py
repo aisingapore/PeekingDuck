@@ -16,9 +16,12 @@
 
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, NamedTuple, Tuple
+from typing import Any, Dict, NamedTuple, Optional, Tuple
 
 import numpy as np
+
+from peekingduck.nodes.base import ThresholdCheckerMixin
+from peekingduck.utils.abstract_class_attributes import abstract_class_attributes
 
 
 class ModelSetting(NamedTuple):
@@ -27,19 +30,24 @@ class ModelSetting(NamedTuple):
     """
 
     # Keyword argument name
-    keyword: str
+    keyword: Optional[str]
     # Logging option name
     option: str
     # Config value
     value: Any
 
 
-class BaseEstimator(ABC):
+@abstract_class_attributes("KEYPOINT_FORMATS")
+class BaseEstimator(ThresholdCheckerMixin, ABC):
     """Base class to handle MediaPipe pose estimation subtasks."""
 
     def __init__(self, config: Dict[str, Any]) -> None:
+        self.config = config
+
+        self.check_valid_choice("keypoint_format", self.KEYPOINT_FORMATS)
         self.settings = [
             ModelSetting("model_complexity", "Model type", config["model_type"]),
+            ModelSetting(None, "Keypoint format", config["keypoint_format"]),
             ModelSetting(
                 "min_detection_confidence", "Score threshold", config["score_threshold"]
             ),
@@ -56,7 +64,11 @@ class BaseEstimator(ABC):
     @property
     def arguments(self) -> Dict[str, Any]:
         """A dictionary of keyword arguments and their respective values."""
-        return {setting.keyword: setting.value for setting in self.settings}
+        return {
+            setting.keyword: setting.value
+            for setting in self.settings
+            if setting.keyword is not None
+        }
 
     @property
     def loaded_config(self) -> str:

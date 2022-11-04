@@ -42,6 +42,16 @@ _TASK_SUBTASK_MODEL_TYPE = {
     },
 }
 
+_KEYPOINT_FORMAT = {
+    "body": {
+        "blaze_pose": "Keypoint format used by the BlazePose model. Contains 33 keypoints.",
+        "coco": "Keypoint format used by COCO dataset. Contains 17 keypoints.",
+    },
+    "hand": {
+        "coco": "Keypoint format used by COCO-WholeBody dataset. Contains 21 keypoints.",
+    },
+}
+
 
 class SupportedTasks:
     """Utility class to extract information from task->subtask->model type
@@ -49,14 +59,25 @@ class SupportedTasks:
     """
 
     def __init__(
-        self, task_subtask_model_type: Dict[str, Dict[str, Dict[int, str]]]
+        self,
+        task_subtask_model_type: Dict[str, Dict[str, Dict[int, str]]],
+        keypoint_format: Dict[str, Dict[str, str]],
     ) -> None:
         self.task_subtask_model_type = task_subtask_model_type
+        self.keypoint_format = keypoint_format
 
     @property
     def tasks(self) -> Set[str]:
         """Supported computer vision tasks."""
         return set(self.task_subtask_model_type.keys())
+
+    def get_keypoint_formats(self, subtask: str) -> Set[str]:
+        """Supported keypoint formats."""
+        return set(self.keypoint_format[subtask].keys())
+
+    def get_keypoint_format_cards(self, subtask: str) -> Dict[str, str]:
+        """Supported keypoint formats and details for the specified `subtask`."""
+        return self.keypoint_format[subtask]
 
     def get_model_cards(self, task: str, subtask: str) -> Dict[int, str]:
         """Supported model types and details for the specified computer vision
@@ -84,4 +105,4 @@ class SupportedTasks:
         return set(self.task_subtask_model_type[task].keys())
 
 
-SUPPORTED_TASKS = SupportedTasks(_TASK_SUBTASK_MODEL_TYPE)
+SUPPORTED_TASKS = SupportedTasks(_TASK_SUBTASK_MODEL_TYPE, _KEYPOINT_FORMAT)

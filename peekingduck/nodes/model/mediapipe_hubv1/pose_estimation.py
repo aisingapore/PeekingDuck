@@ -50,14 +50,15 @@ class PoseEstimationModel(MediaPipeModel):
         """Creates the MediaPipe model and logs the settings used."""
         self.logger.info(
             "MediaPipe model loaded with the following configs:\n\t"
-            f"Subtask: {self.subtask}\n\t" + self.model.loaded_config
+            f"Subtask: {self.subtask}\n\t"
+            f"{self.model.loaded_config}"
         )
 
     def _get_subtask_model(self, config: Dict[str, Any]) -> BaseEstimator:
         if self.subtask == "body":
-            return BodyEstimator(config, "coco")
+            return BodyEstimator(config)
         if self.subtask == "hand":
-            return HandEstimator(config, "coco")
+            return HandEstimator(config)
         raise NotImplementedError(
             f"Pose estimation subtask '{self.subtask}' is not implemented."
         )
