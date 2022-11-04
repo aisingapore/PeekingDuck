@@ -31,7 +31,14 @@ _TASK_SUBTASK_MODEL_TYPE = {
             0: "BlazePose GHUM Lite, lower inference latency at the cost of landmark accuracy.",
             1: "BlazePose GHUM Full.",
             2: "BlazePose GHUM Heavy, higher landmark accuracy at the cost of inference latency.",
-        }
+        },
+        "hand": {
+            0: "Palm detection model (lite) + Hand landmark model.",
+            1: (
+                "Palm detection model (full) + Hand landmark model, higher landmark "
+                "accuracy at the cost of inference latency."
+            ),
+        },
     },
 }
 

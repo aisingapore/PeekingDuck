@@ -16,25 +16,25 @@
 pose estimation landmarks.
 """
 
-from typing import List
+from abc import ABC
+from typing import List, Optional
 
 import numpy as np
 
+from peekingduck.utils.abstract_class_attributes import abstract_class_attributes
 
-class BodyKeypoint:
+
+@abstract_class_attributes("NUM_KEYPOINTS", "SKELETON")
+class KeypointHandler(ABC):
     """Performs various post processing functions on the COCO format 17-keypoint
     poses. Converts keypoints to the COCO format if `keypoint_map` is provided.
     """
 
-    # fmt: off
-    SKELETON = [[16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12],
-                [7, 13], [6, 7], [6, 8], [7, 9], [8, 10], [9, 11], [2, 3],
-                [1, 2], [1, 3], [2, 4], [3, 5], [4, 6], [5, 7]]
-    # fmt: on
-
-    def __init__(self, keypoint_map: List[int] = None) -> None:
-        if keypoint_map is not None and len(keypoint_map) != 17:
-            raise ValueError("keypoint_map should contain 17 elements.")
+    def __init__(self, keypoint_map: Optional[List[int]] = None) -> None:
+        if keypoint_map is not None and len(keypoint_map) != self.NUM_KEYPOINTS:
+            raise ValueError(
+                f"keypoint_map should contain {self.NUM_KEYPOINTS} elements."
+            )
         self.keypoint_map = keypoint_map
 
     @property
@@ -43,43 +43,27 @@ class BodyKeypoint:
         if len(self._poses) == 0:
             return np.empty((0, 4))
         return np.array(
-            [
-                [
-                    pose[:, 0].min(),
-                    pose[:, 1].min(),
-                    pose[:, 0].max(),
-                    pose[:, 1].max(),
-                ]
-                for pose in self.keypoints
-            ]
+            [np.hstack((pose.min(axis=0), pose.max(axis=0))) for pose in self._poses]
         )
 
     @property
     def connections(self) -> np.ndarray:
         """Returns the keypoint connections."""
         return np.array(
-            [
-                [
-                    np.vstack((keypoints[start - 1], keypoints[stop - 1]))
-                    for start, stop in self.SKELETON
-                ]
-                for keypoints in self._poses
-            ]
+            [[pose[edge] for edge in self.SKELETON] for pose in self._poses]
         )
 
     @property
     def keypoints(self) -> np.ndarray:
         """Returns COCO format 17 keypoints as a NumPy array."""
-        return np.array(self._poses)
+        return getattr(self, "_poses", np.empty(0))
 
     def convert_scores(self, scores_list: List[List[float]]) -> np.ndarray:
         """Converts the provided keypoint scores to COCO 17-keypoint format.
-
         Args:
             scores_list (List[List[float]]): A (N,K,1) array of scores where N
                 is the number of poses, K is the number of keypoints. K=17 for
                 the COCO format.
-
         Returns:
             (np.ndarray): A (N, 17, 1) array of keypoint scores.
         """
@@ -92,13 +76,37 @@ class BodyKeypoint:
     def update_keypoints(self, poses: List[List[List[float]]]) -> None:
         """Updates internal `_poses`. Convert to COCO format if
         `self.keypoint_map` is set.
-
         Args:
             poses (List[List[List[float]]]): A (N,K,2) array of keypoints where
                 N is the number of poses, K is the number of keypoints. K=17 for
                 the COCO format.
         """
         if self.keypoint_map is None:
-            self._poses = poses
+            self._poses = np.array(poses)
         else:
-            self._poses = [[pose[i] for i in self.keypoint_map] for pose in poses]
+            self._poses = np.array(
+                [[pose[i] for i in self.keypoint_map] for pose in poses]
+            )
+
+
+class COCOBody(KeypointHandler):
+    """Body keypoints in COCO format (17 keypoints)."""
+
+    NUM_KEYPOINTS = 17
+    # fmt: off
+    SKELETON = [[15, 13], [13, 11], [16, 14], [14, 12], [11, 12], [5, 11],
+                [6, 12], [5, 6], [5, 7], [6, 8], [7, 9], [8, 10], [1, 2],
+                [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 6]]
+    # fmt: on
+
+
+class COCOHand(KeypointHandler):
+    """Hand keypoints in COCO format (21 keypoints)."""
+
+    NUM_KEYPOINTS = 21
+    # fmt: off
+    SKELETON = [[0, 1], [0, 5], [9, 13], [13, 17], [5, 9], [0, 17],
+                [1, 2], [2, 3], [3, 4], [5, 6], [6, 7], [7, 8], [9, 10],
+                [10, 11], [11, 12], [13, 14], [14, 15], [15, 16], [17, 18],
+                [18, 19], [19, 20]]
+    # fmt: on
