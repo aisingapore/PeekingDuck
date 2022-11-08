@@ -592,6 +592,143 @@ be desirable to refactor the existing codebase such that it can be constructed/i
 in a custom node.
 
 
+Introduction to Using Callbacks in PeekingDuck
+----------------------------------------------
+
+Callbacks are externally defined functions/methods which are invoked as specific
+points of a PeekingDuck pipeline and can interact with code/systems outside of PeekingDuck.
+They can be registered to nodes in a pipeline using the ``callbacks`` config option.
+
+Pipeline Events
+^^^^^^^^^^^^^^^
+
+The following pipeline events and their respective event keys are implemented:
+
+   #. ``run_begin``: Invoked before a ``Node``'s ``run()`` method.
+   #. ``run_end``: Invoked after a ``Nodes``'s ``run()`` method.
+
+For example, in the following pipeline config:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.visual:
+      - model.posenet
+          callbacks:
+            run_begin: [<callback 1>]
+            run_end: [<callback 2>]
+      - draw.poses
+      - output.screen
+
+After a image frame is read by :mod:`input.visual`, ``<callback 1>`` is invoked,
+followed by :mod:`model.posenet`'s ``run()`` method, and ``<callback 2>`` is invoked
+after that.
+
+Callback Definition
+^^^^^^^^^^^^^^^^^^^
+
+Callback definition, i.e. ``<callback 1>`` and ``<callback 2>`` in the previous
+example, follows a strict format. The following definition has been written using
+the `EBNF notation <https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_form>`_:
+
+   .. parsed-literal::
+      
+      callback definition = module part, "::", callback part
+      module part         = { subdir name, "." }, script name
+      callback part       = function
+                           | class name, "::", method
+                           | instance name, "::", instance method
+      
+      script name     = ? name of callback Python script ?
+      subdir name     = ? name of individual subdirectory folders relative to "callbacks" folder ?
+      class name      = ? name of class which contains the callback methods ?
+      instance name   = ? name of instantiated object which contains the callback method ?
+      function        = ? name of callback function ?
+      method          = ? name of class/static methods ?
+      instance method = ? name of instance method ? 
+
+The ``callbacks`` directory, which houses the scripts containing the callback functions,
+is expected to be at the same location of the pipeline config file. For example,
+given the following directory structure and file contents:
+
+   .. parsed-literal::
+
+      \ :blue:`callbacks_project/`
+      ├── pipeline_config.yml
+      └── \ :blue:`callbacks/`
+          ├── my_callback.py
+          └── \ :blue:`cb_dir/`
+              └── my_cb.py
+
+#. **callbacks/my_callback.py**
+
+   .. container:: toggle
+
+      .. container:: header
+
+         **Show/Hide Code for my_callback.py**
+
+      .. code-block:: python
+         :linenos:
+
+         def my_callback_function(data_pool):
+             print("Called my_callback_function")
+
+
+         class MyCallbackClass:
+             @staticmethod
+             def my_callback_static_method(data_pool):
+                 print("Called my_callback_static_method")
+
+             @classmethod
+             def my_callback_class_method(cls, data_pool):
+                 print("Called my_callback_class_method")
+
+             def my_callback_instance_method(self, data_pool):
+                 print("Called my_callback_instance_method")
+
+
+         my_callback_obj = MyCallbackClass()
+
+
+#. **callbacks/cb_dir/my_cb.py**
+
+   .. container:: toggle
+
+      .. container:: header
+
+         **Show/Hide Code for my_cb.py**
+
+      .. code-block:: python
+         :linenos:
+
+         def my_cb_function(data_pool):
+             print("Called my_cb_function")
+
+The various callback functions and methods can be registered in ``pipeline_config.yml``
+as follows:
+
+   .. code-block:: yaml
+      :linenos:
+
+      nodes:
+      - input.visual:
+          source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+          callbacks:
+            run_end:
+              [
+                "my_callback::my_callback_function",
+                "my_callback::MyCallbackClass::my_callback_static_method",
+                "my_callback::MyCallbackClass::my_callback_class_method",
+                "my_callback::my_callback_obj::my_callback_static_method",
+                "my_callback::my_callback_obj::my_callback_class_method",
+                "my_callback::my_callback_obj::my_callback_instance_method",
+                "cb_dir.my_cb::my_cb_function",
+              ]
+      - output.screen
+
+
 Interfacing with SQL Using Callbacks
 ------------------------------------
 
