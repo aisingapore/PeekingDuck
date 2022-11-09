@@ -48,8 +48,7 @@ class BodyEstimator(base.BaseEstimator):
     def postprocess(self, result: Any) -> Tuple[np.ndarray, ...]:
         """Post processes detection result. Converts the bounding boxes from
         normalized [t, l, w, h] to normalized [x1, y1, x2, y2] format. Manually
-        creates a "face" detection label for each
-        detection.
+        creates a "face" detection label for each detection.
 
         Args:
             result (Any): Pose estimation results which consists of landmark
@@ -105,11 +104,15 @@ class HandEstimator(base.BaseEstimator):
         super().__init__(config)
 
         self.keypoint_handler = COCOHand()
-        self.settings.append(
-            base.ModelSetting(
-                "max_num_hands", "Maximum number of hands", config["max_num_hands"]
+        self.settings.extend(
+            (
+                base.ModelSetting(
+                    "max_num_hands", "Maximum number of hands", config["max_num_hands"]
+                ),
+                base.ModelSetting(None, "Mirror image", config["mirror_image"]),
             )
         )
+
         self.model = mp.solutions.hands.Hands(**self.arguments)
 
     def postprocess(self, result: Any) -> Tuple[np.ndarray, ...]:
@@ -149,7 +152,8 @@ class HandEstimator(base.BaseEstimator):
         ]
         self.keypoint_handler.update_keypoints(keypoints_33)
         scores = self.keypoint_handler.convert_scores(scores_33)
-        labels = np.array(["hand"] * len(scores))
+        labels = self.process_labels(result, self.config["mirror_image"])
+        print(labels)
 
         return (
             self.keypoint_handler.bboxes,
@@ -158,3 +162,26 @@ class HandEstimator(base.BaseEstimator):
             self.keypoint_handler.connections,
             scores,
         )
+
+    @staticmethod
+    def process_labels(result: Any, mirror_image: bool) -> np.ndarray:
+        """Processes the handedness classification results. Reverses the labels
+        if the input image is not mirrored.
+
+        Args:
+            result (Any): Pose estimation results which consists of landmark
+                coordinates and visibility scores.
+            mirror_image (bool): Flag to indicate if input image is mirrored.
+
+        Returns:
+            (np.ndarray): An array of labels of left/right hands.
+        """
+        # Reverse the predicted direction if input image is not mirrored
+        reversed_direction = {"left": "right", "right": "left"}
+        labels = []
+        for handedness in result.multi_handedness:
+            direction = handedness.classification[0].label.lower()
+            if not mirror_image:
+                direction = reversed_direction[direction]
+            labels.append(f"{direction} hand")
+        return np.array(labels)
