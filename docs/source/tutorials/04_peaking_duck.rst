@@ -728,6 +728,47 @@ as follows:
               ]
       - output.screen
 
+The following table illustrates how the callback definitions map to their respective
+callback functions:
+
++---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
+| Definition                                                    | Function                                           | Script location                             |
++===============================================================+====================================================+=============================================+
+| ``my_callback::my_callback_function``                         | ``my_callback_function()``                         | ``callbacks/my_callback.py``                |
++---------------------------------------------------------------+----------------------------------------------------+                                             +
+| ``my_callback::MyCallbackClass::my_callback_static_method``   | ``MyCallbackClass.my_callback_static_method()``    |                                             |
++---------------------------------------------------------------+                                                    +                                             +
+| ``my_callback::my_callback_obj::my_callback_static_method``   |                                                    |                                             |
++---------------------------------------------------------------+----------------------------------------------------+                                             +
+| ``my_callback::MyCallbackClass::my_callback_class_method``    | ``MyCallbackClass.my_callback_class_method()``     |                                             |
++---------------------------------------------------------------+                                                    +                                             +
+| ``my_callback::my_callback_obj::my_callback_class_method``    |                                                    |                                             |
++---------------------------------------------------------------+----------------------------------------------------+                                             +
+| ``my_callback::my_callback_obj::my_callback_instance_method`` | ``MyCallbackClass::my_callback_instance_method()`` |                                             |
++---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
+| ``cb_dir.my_cb::my_cb_function``                              | ``my_cb_function()``                               | ``callbacks/cb_dir/my_cb.py``               |
++---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
+
+Running the pipeline with :greenbox:`peekingduck run` should give the following output:
+
+   .. admonition:: Terminal Session
+
+      | [Truncated]
+      |
+      | 2022-11-09 09:04:04 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'callbacks': {'run_end': ['my_callback::my_callback_function', 'my_callback::MyCallbackClass::my_callback_static_method', 'my_callback::MyCallbackClass::my_callback_class_method', 'my_callback::my_callback_obj::my_callback_static_method', 'my_callback::my_callback_obj::my_callback_class_method', 'my_callback::my_callback_obj::my_callback_instance_method', 'cb_dir.my_cb::my_cb_function']}
+      | 2022-11-09 09:04:04 peekingduck.pipeline.nodes.input.visual  INFO:  Input size: 710 by 540
+      | 2022-11-09 09:04:04 peekingduck.declarative_loader  INFO:  Initializing output.screen node...
+      | Called my_callback_function
+      | Called my_callback_static_method
+      | Called my_callback_class_method
+      | Called my_callback_static_method
+      | Called my_callback_class_method
+      | Called my_callback_instance_method
+      | Called my_cb_function
+      |
+      | [Truncated]
+
+
 
 Interfacing with SQL Using Callbacks
 ------------------------------------
