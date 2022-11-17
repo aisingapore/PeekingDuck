@@ -19,7 +19,9 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Set, Tuple
 
 import numpy as np
-from mediapipe.python.solution_base import SolutionBase
+from mediapipe.python.solution_base import (  # pylint: disable=no-name-in-module
+    SolutionBase,
+)
 
 from peekingduck.nodes.base import ThresholdCheckerMixin
 from peekingduck.utils.abstract_class_attributes import abstract_class_attributes
