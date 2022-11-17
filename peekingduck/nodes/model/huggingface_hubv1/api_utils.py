@@ -43,7 +43,11 @@ def get_valid_models(task: str) -> Set[str]:
 
     model_infos = hf_api.list_models(filter=pkd_to_hf_task[task])
 
-    return {info.modelId for info in model_infos if is_valid_model[task](info)}
+    return {
+        info.modelId
+        for info in model_infos
+        if is_valid_model[task](info) and info.modelId is not None
+    }
 
 
 def is_valid_instance_segmentation_model(model_info: hf_api.ModelInfo) -> bool:
@@ -52,7 +56,8 @@ def is_valid_instance_segmentation_model(model_info: hf_api.ModelInfo) -> bool:
     """
     supported_base_types = ["detr", "maskformer"]
     return (
-        "transformers" in model_info.tags
+        model_info.tags is not None
+        and "transformers" in model_info.tags
         and any(base_type in model_info.tags for base_type in supported_base_types)
         and not any("gpl" in tag for tag in model_info.tags if "license:" in tag)
     )
@@ -64,7 +69,8 @@ def is_valid_object_detection_model(model_info: hf_api.ModelInfo) -> bool:
     """
     supported_base_types = ["detr", "yolos"]
     return (
-        "transformers" in model_info.tags
+        model_info.tags is not None
+        and "transformers" in model_info.tags
         and any(base_type in model_info.tags for base_type in supported_base_types)
         and not any("gpl" in tag for tag in model_info.tags if "license:" in tag)
     )
