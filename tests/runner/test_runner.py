@@ -19,7 +19,7 @@ from unittest import mock
 import pytest
 import yaml
 
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.runner import Runner
 from peekingduck.utils.requirement_checker import RequirementChecker
 
@@ -70,7 +70,7 @@ def setup():
 def get_pipeline_with_default_node_names():
     mock_node = mock.Mock()
     mock_node.inputs = ["none"]
-    mock_node.name = f"peekingduck.pipeline.nodes.{PKD_NODE}"
+    mock_node.name = f"peekingduck.nodes.{PKD_NODE}"
     mock_node.node_name = PKD_NODE
 
     mock_pipeline = mock.Mock()
@@ -164,7 +164,7 @@ class TestRunner:
 
     def test_init_nodes_with_instantiated_nodes(self, runner_with_nodes):
         with mock.patch(
-            "peekingduck.pipeline.pipeline.Pipeline._check_pipe",
+            "peekingduck.pipeline.Pipeline._check_pipe",
             wraps=replace_pipeline_check_pipe,
         ):
             assert runner_with_nodes.pipeline.nodes[0]._name == PKD_NODE
@@ -174,7 +174,7 @@ class TestRunner:
     def test_init_nodes_with_wrong_input(self):
         ground_truth = "pipeline"
         with mock.patch(
-            "peekingduck.pipeline.pipeline.Pipeline.__init__", side_effect=ValueError
+            "peekingduck.pipeline.Pipeline.__init__", side_effect=ValueError
         ), pytest.raises(SystemExit):
             Runner(
                 pipeline_path=PIPELINE_PATH,

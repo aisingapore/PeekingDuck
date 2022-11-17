@@ -16,10 +16,11 @@
 To test "import peekingduck" as a module
 """
 
-import pytest
 import subprocess
 import textwrap
 from pathlib import Path
+
+import pytest
 
 # This version is read by CI/CD script and used for post-merge tests
 TEST_VERSION = "0.0.0dev"
@@ -82,8 +83,8 @@ class TestModuleImport:
             from peekingduck.config_loader import ConfigLoader
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
-            from peekingduck.pipeline.pipeline import Pipeline
-            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+            from peekingduck.pipeline import Pipeline
+            from peekingduck.nodes.abstract_node import AbstractNode
 
             print("good")
             """
@@ -102,8 +103,8 @@ class TestModuleImport:
             from peekingduck.config_loader import ConfigLoader
             from peekingduck.declarative_loader import DeclarativeLoader
             from peekingduck.runner import Runner
-            from peekingduck.pipeline.pipeline import Pipeline
-            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+            from peekingduck.pipeline import Pipeline
+            from peekingduck.nodes.abstract_node import AbstractNode
             import inspect
 
             the_types = []

@@ -63,8 +63,8 @@ def create_node_python(node_dir, node_name):
         content = textwrap.dedent(
             """\
             import pathlib
-            from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-            
+            from peekingduck.nodes.abstract_node import AbstractNode
+
             class Node(AbstractNode):
                 def __init__(self, config, pkd_base_dir=None):
                     pkd_base_dir = str(pathlib.Path(__file__).parents[1].resolve())
@@ -159,13 +159,13 @@ class TestDeclarativeLoader:
 
     def test_instantiate_nodes(self, declarativeloader):
         pkd_node_default = [
-            "peekingduck.pipeline.nodes.",
+            "peekingduck.nodes.",
             PKD_NODE,
             declarativeloader.config_loader,
             None,
         ]
         pkd_node_edit = [
-            "peekingduck.pipeline.nodes.",
+            "peekingduck.nodes.",
             PKD_NODE,
             declarativeloader.config_loader,
             [{"setting": True}],

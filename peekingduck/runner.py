@@ -24,8 +24,8 @@ from time import perf_counter
 from typing import List
 
 from peekingduck.declarative_loader import DeclarativeLoader, NodeList
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline import Pipeline
 from peekingduck.utils.requirement_checker import RequirementChecker
 
 

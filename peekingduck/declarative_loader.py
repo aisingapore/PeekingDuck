@@ -28,8 +28,8 @@ from typing import Any, Dict, Iterator, List, Optional, Tuple, Union
 import yaml
 
 from peekingduck.config_loader import ConfigLoader
-from peekingduck.pipeline.nodes.abstract_node import AbstractNode
-from peekingduck.pipeline.pipeline import Pipeline
+from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.pipeline import Pipeline
 from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
@@ -38,7 +38,7 @@ PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output
 
 class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-instance-attributes
     """A helper class to create
-    :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>`.
+    :py:class:`Pipeline <peekingduck.pipeline.Pipeline>`.
 
     The declarative loader class creates the specified nodes according to any
     modifications provided in the configs and returns the pipeline needed for
@@ -176,7 +176,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                     config_updates_yml,
                 )
             else:
-                path_to_node = "peekingduck.pipeline.nodes."
+                path_to_node = "peekingduck.nodes."
 
                 instantiated_node = self._init_node(
                     path_to_node, node_str, self.config_loader, config_updates_yml
@@ -255,7 +255,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
 
     def get_pipeline(self) -> Pipeline:
         """Returns a compiled
-        :py:class:`Pipeline <peekingduck.pipeline.pipeline.Pipeline>` for
+        :py:class:`Pipeline <peekingduck.pipeline.Pipeline>` for
         PeekingDuck :py:class:`Runner <peekingduck.runner.Runner>` to execute.
         """
         instantiated_nodes = self._instantiate_nodes()

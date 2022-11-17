@@ -31,7 +31,7 @@ PROJECT_DIR = Path("tmp_dir")
 
 PKD_DIR = Path(__file__).resolve().parents[2] / "peekingduck"
 PKD_CONFIG_DIR = PKD_DIR / "configs"
-PKD_NODES_DIR = PKD_DIR / "pipeline" / "nodes"
+PKD_NODES_DIR = PKD_DIR / "nodes"
 
 with open(
     PKD_DIR.parent / "tests" / "data" / "user_inputs" / "create_node.yml"

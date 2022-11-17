@@ -3,13 +3,13 @@ bad_paths: |
   ../some/path
   /
   /some/path
-  peekingduck/pipeline/nodes
+  peekingduck/nodes
 bad_paths_win: |
   ..
   ../some/path
   C:/
   C:/some/path
-  peekingduck/pipeline/nodes
+  peekingduck/nodes
 bad_types: |
   inputs
   random type

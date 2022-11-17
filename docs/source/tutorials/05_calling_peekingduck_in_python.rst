@@ -97,7 +97,7 @@ Change the content of ``debug.py`` to:
   
       import numpy as np
   
-      from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+      from peekingduck.nodes.abstract_node import AbstractNode
   
   
       class Node(AbstractNode):
@@ -135,11 +135,11 @@ Copy over the following code to ``demo_debug.py``:
   
       from pathlib import Path
   
-      from peekingduck.pipeline.nodes.dabble import fps
-      from peekingduck.pipeline.nodes.draw import bbox, legend
-      from peekingduck.pipeline.nodes.input import visual
-      from peekingduck.pipeline.nodes.model import yolo
-      from peekingduck.pipeline.nodes.output import media_writer, screen
+      from peekingduck.nodes.dabble import fps
+      from peekingduck.nodes.draw import bbox, legend
+      from peekingduck.nodes.input import visual
+      from peekingduck.nodes.model import yolo
+      from peekingduck.nodes.output import media_writer, screen
       from peekingduck.runner import Runner
       from src.custom_nodes.dabble import debug
   
@@ -208,11 +208,11 @@ You should see the following output in your terminal:
 .. code-block:: text
    :linenos:
 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Config for node input.visual is updated to: 'source': ~user/pkd_project/cat_and_computer.mp4 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 720 by 480 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect': [41, 15, 63, 66, 64] 
-   2022-02-24 16:33:06 peekingduck.pipeline.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
+   2022-02-24 16:33:06 peekingduck.nodes.input.visual  INFO:  Config for node input.visual is updated to: 'source': ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.nodes.input.visual  INFO:  Video/Image size: 720 by 480 
+   2022-02-24 16:33:06 peekingduck.nodes.input.visual  INFO:  Filepath used: ~user/pkd_project/cat_and_computer.mp4 
+   2022-02-24 16:33:06 peekingduck.nodes.model.yolo  INFO:  Config for node model.yolo is updated to: 'detect': [41, 15, 63, 66, 64] 
+   2022-02-24 16:33:06 peekingduck.nodes.model.yolov4.yolo_files.detector  INFO:  Yolo model loaded with following configs: 
        Model type: v4tiny, 
        Input resolution: 416, 
        IDs being detected: [41, 15, 63, 66, 64] 
@@ -220,10 +220,10 @@ You should see the following output in your terminal:
        Max Total Detections: 50, 
        IOU threshold: 0.5, 
        Score threshold: 0.2 
-   2022-02-24 16:33:07 peekingduck.pipeline.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
-   2022-02-24 16:33:07 peekingduck.pipeline.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
-   2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': ~user/pkd_project/results 
-   2022-02-24 16:33:07 peekingduck.pipeline.nodes.output.media_writer  INFO:  Output directory used is: ~user/pkd_project/results 
+   2022-02-24 16:33:07 peekingduck.nodes.draw.bbox  INFO:  Config for node draw.bbox is updated to: 'show_labels': True 
+   2022-02-24 16:33:07 peekingduck.nodes.dabble.fps  INFO:  Moving average of FPS will be logged every: 100 frames 
+   2022-02-24 16:33:07 peekingduck.nodes.output.media_writer  INFO:  Config for node output.media_writer is updated to: 'output_dir': ~user/pkd_project/results 
+   2022-02-24 16:33:07 peekingduck.nodes.output.media_writer  INFO:  Output directory used is: ~user/pkd_project/results 
    0 [0.90861976]
    1 [0.9082737]
    2 [0.90818006]
@@ -386,15 +386,15 @@ Import the Modules
       import matplotlib.pyplot as plt
       import numpy as np
       import tensorflow as tf
-      from peekingduck.pipeline.nodes.draw import bbox
-      from peekingduck.pipeline.nodes.model import yolo_license_plate
+      from peekingduck.nodes.draw import bbox
+      from peekingduck.nodes.model import yolo_license_plate
   
       %matplotlib inline
 
 Lines 9 - 10: You can also do::
 
-   from peekingduck.pipeline.nodes.draw import bbox as pkd_bbox
-   from peekingduck.pipeline.nodes.model import yolo_license_plate as pkd_yolo_license_plate
+   from peekingduck.nodes.draw import bbox as pkd_bbox
+   from peekingduck.nodes.model import yolo_license_plate as pkd_yolo_license_plate
     
    bbox_node = pkd_bbox.Node()
    yolo_license_plate_node = pkd_yolo_license_plate.Node()

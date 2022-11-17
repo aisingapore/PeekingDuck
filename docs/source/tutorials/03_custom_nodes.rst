@@ -174,7 +174,7 @@ implement our custom node function.
    
          from typing import Any, Dict, List, Tuple
          import cv2
-         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+         from peekingduck.nodes.abstract_node import AbstractNode
    
          YELLOW = (0, 255, 255)        # in BGR format, per opencv's convention
    
@@ -412,7 +412,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
    
          from typing import Any, Dict, List, Tuple
          import cv2
-         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+         from peekingduck.nodes.abstract_node import AbstractNode
    
          # setup global constants
          FONT = cv2.FONT_HERSHEY_SIMPLEX
@@ -721,7 +721,7 @@ Make the following **three** changes:
 
          from typing import Any, Dict
 
-         from peekingduck.pipeline.nodes.abstract_node import AbstractNode
+         from peekingduck.nodes.abstract_node import AbstractNode
 
 
          class Node(AbstractNode):
@@ -792,8 +792,8 @@ one below:
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Successfully loaded pipeline_config file. 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing input.visual node.\.\. 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'source': wave.mp4 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Video/Image size: 710 by 540 
-   | 2022-03-02 18:42:51 peekingduck.pipeline.nodes.input.visual  INFO:  Filepath used: wave.mp4 
+   | 2022-03-02 18:42:51 peekingduck.nodes.input.visual  INFO:  Video/Image size: 710 by 540 
+   | 2022-03-02 18:42:51 peekingduck.nodes.input.visual  INFO:  Filepath used: wave.mp4 
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing model.yolo node.\.\. 
    |                     [ .\.\. many lines of output deleted here .\.\. ]
    | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing custom_nodes.dabble.debug node.\.\. 
