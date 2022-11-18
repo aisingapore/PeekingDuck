@@ -37,12 +37,12 @@ class BodyEstimator(base.BaseEstimator):
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config)
 
-        self.keypoint_handler = self._get_keypoint_handler(config["keypoint_format"])
         self.settings.append(
             base.ModelSetting(
                 "smooth_landmarks", "Smooth landmarks", config["smooth_landmarks"]
             )
         )
+        self.keypoint_handler = self._get_keypoint_handler(config["keypoint_format"])
         self.model = mp.solutions.pose.Pose(**self.arguments)
 
     def postprocess(self, result: Any) -> Tuple[np.ndarray, ...]:
@@ -76,16 +76,15 @@ class BodyEstimator(base.BaseEstimator):
         raw_keypoints = [[[landmark.x, landmark.y] for landmark in pose.landmark]]
         raw_scores = [[landmark.visibility for landmark in pose.landmark]]
 
-        self.keypoint_handler.update_keypoints(raw_keypoints)
-        scores = self.keypoint_handler.convert_scores(raw_scores)
-        labels = np.array(["person"] * len(scores))
+        self.keypoint_handler.update(raw_keypoints, raw_scores)
+        labels = np.array(["person"] * len(self.keypoint_handler.scores))
 
         return (
             self.keypoint_handler.bboxes,
             labels,
             self.keypoint_handler.keypoints,
             self.keypoint_handler.connections,
-            scores,
+            self.keypoint_handler.scores,
         )
 
     @staticmethod
@@ -103,7 +102,6 @@ class HandEstimator(base.BaseEstimator):
     def __init__(self, config: Dict[str, Any]) -> None:
         super().__init__(config)
 
-        self.keypoint_handler = COCOHand()
         self.settings.extend(
             (
                 base.ModelSetting(
@@ -112,7 +110,7 @@ class HandEstimator(base.BaseEstimator):
                 base.ModelSetting(None, "Mirror image", config["mirror_image"]),
             )
         )
-
+        self.keypoint_handler = COCOHand()
         self.model = mp.solutions.hands.Hands(**self.arguments)
 
     def postprocess(self, result: Any) -> Tuple[np.ndarray, ...]:
@@ -144,23 +142,21 @@ class HandEstimator(base.BaseEstimator):
             )
 
         poses = result.multi_hand_landmarks
-        keypoints_33 = [
+        raw_keypoints = [
             [[landmark.x, landmark.y] for landmark in pose.landmark] for pose in poses
         ]
-        scores_33 = [
+        raw_scores = [
             [landmark.visibility for landmark in pose.landmark] for pose in poses
         ]
-        self.keypoint_handler.update_keypoints(keypoints_33)
-        scores = self.keypoint_handler.convert_scores(scores_33)
+        self.keypoint_handler.update(raw_keypoints, raw_scores)
         labels = self.process_labels(result, self.config["mirror_image"])
-        print(labels)
 
         return (
             self.keypoint_handler.bboxes,
             labels,
             self.keypoint_handler.keypoints,
             self.keypoint_handler.connections,
-            scores,
+            self.keypoint_handler.scores,
         )
 
     @staticmethod

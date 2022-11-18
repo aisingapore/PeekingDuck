@@ -26,67 +26,91 @@ from peekingduck.utils.abstract_class_attributes import abstract_class_attribute
 
 @abstract_class_attributes("NUM_KEYPOINTS", "SKELETON")
 class KeypointHandler(ABC):
-    """Performs various post processing functions on the COCO format 17-keypoint
-    poses. Converts keypoints to the COCO format if `keypoint_map` is provided.
+    """Performs various post processing functions on generic K-keypoint
+    poses. Converts keypoints to another format if `keypoint_map` is provided.
     """
 
-    def __init__(self, keypoint_map: Optional[List[int]] = None) -> None:
+    def __init__(
+        self,
+        keypoint_map: Optional[List[int]] = None,
+        score_threshold: float = 0.0,
+    ) -> None:
         if keypoint_map is not None and len(keypoint_map) != self.NUM_KEYPOINTS:
             raise ValueError(
                 f"keypoint_map should contain {self.NUM_KEYPOINTS} elements."
             )
         self.keypoint_map = keypoint_map
+        self.score_threshold = score_threshold
 
     @property
     def bboxes(self) -> np.ndarray:
-        """Returns the bounding boxes encompassing each detected pose."""
-        if len(self._poses) == 0:
+        """Bounding boxes encompassing each detected pose."""
+        if len(self.keypoints) == 0:
             return np.empty((0, 4))
+
+        # apply absolute when calculating min because invalid keypoints are
+        # hardcoded to (-1, -1)
         return np.array(
-            [np.hstack((pose.min(axis=0), pose.max(axis=0))) for pose in self._poses]
+            [
+                np.hstack((np.abs(pose).min(axis=0), pose.max(axis=0)))
+                for pose in self.keypoints
+            ]
         )
 
     @property
     def connections(self) -> np.ndarray:
-        """Returns the keypoint connections."""
+        """Keypoint connections, a connection is present only when both
+        keypoints are valid.
+        """
         return np.array(
-            [[pose[edge] for edge in self.SKELETON] for pose in self._poses]
+            [
+                [pose[edge] for edge in self.SKELETON if mask[edge].all()]
+                for pose, mask in zip(self.keypoints, self.keypoint_masks)
+            ]
         )
 
     @property
     def keypoints(self) -> np.ndarray:
-        """Returns COCO format 17 keypoints as a NumPy array."""
+        """Keypoints as a NumPy array."""
         return getattr(self, "_poses", np.empty(0))
 
-    def convert_scores(self, scores_list: List[List[float]]) -> np.ndarray:
-        """Converts the provided keypoint scores to COCO 17-keypoint format.
-        Args:
-            scores_list (List[List[float]]): A (N,K,1) array of scores where N
-                is the number of poses, K is the number of keypoints. K=17 for
-                the COCO format.
-        Returns:
-            (np.ndarray): A (N, 17, 1) array of keypoint scores.
-        """
-        if self.keypoint_map is None:
-            return np.array(scores_list)
-        return np.array(
-            [[scores[i] for i in self.keypoint_map] for scores in scores_list]
-        )
+    @property
+    def keypoint_masks(self) -> np.ndarray:
+        """Boolean mask of keypoints above the confidence threshold."""
+        return getattr(self, "_pose_masks", np.empty(0))
 
-    def update_keypoints(self, poses: List[List[List[float]]]) -> None:
-        """Updates internal `_poses`. Convert to COCO format if
+    @property
+    def scores(self) -> np.ndarray:
+        """Keypoint scores as a NumPy array."""
+        return getattr(self, "_pose_scores", np.empty(0))
+
+    def update(
+        self, poses: List[List[List[float]]], pose_scores: List[List[float]]
+    ) -> None:
+        """Updates internal `_poses`. Convert to another format if
         `self.keypoint_map` is set.
+
         Args:
             poses (List[List[List[float]]]): A (N,K,2) array of keypoints where
                 N is the number of poses, K is the number of keypoints. K=17 for
                 the COCO format.
+            pose_scores (List[List[float]]): A (N,K,1) array of scores where N
+                is the number of poses, K is the number of keypoints. K=17 for
+                the COCO format.
         """
-        if self.keypoint_map is None:
-            self._poses = np.array(poses)
-        else:
-            self._poses = np.array(
-                [[pose[i] for i in self.keypoint_map] for pose in poses]
-            )
+        self._poses = np.asarray(poses)
+        self._pose_scores = np.asarray(pose_scores)
+        self._pose_masks = self._pose_scores > self.score_threshold
+
+        if self.keypoint_map is not None:
+            self._poses = self._poses[:, self.keypoint_map]
+            self._pose_scores = self._pose_scores[:, self.keypoint_map]
+            self._pose_masks = self._pose_masks[:, self.keypoint_map]
+
+        # Constrain keypoint coordinates to [0, 1]
+        self._poses = np.clip(self._poses, 0, 1)
+        # Assign low confidence keypoint coordinates as (-1, -1)
+        self._poses[~self._pose_masks] = [-1, -1]
 
 
 class BlazePoseBody(KeypointHandler):
