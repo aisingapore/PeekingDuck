@@ -20,19 +20,22 @@ import logging
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple, Union
 
+import cv2
 import numpy as np
 import tensorflow as tf
 
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
+    IMAGE_NET_MEAN,
     KEYPOINTS_NUM,
     MIN_PART_SCORE,
     SCALE_FACTOR,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.detector import (
-    detect_keypoints,
-    get_keypoints_relative_coords,
+from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
+    decode_multiple_poses,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
+from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import (
+    get_valid_resolution,
+)
 from peekingduck.utils.graph_functions import load_graph
 from peekingduck.utils.pose.keypoint_handler import COCOBody
 
@@ -127,39 +130,54 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
             full_keypoint_scores (np.ndarray): keypoints confidence scores of
                 detected poses
         """
+        # image_size = [W, H]
         image, output_scale, image_size = self._preprocess(frame)
 
         dst_scores = np.zeros((self.max_pose_detection, KEYPOINTS_NUM))
         dst_keypoints = np.zeros((self.max_pose_detection, KEYPOINTS_NUM, 2))
 
-        pose_count = detect_keypoints(
-            self.posenet,
-            image,
-            OUTPUT_STRIDE,
+        outputs = self.posenet(image)
+        if self.model_type == "resnet":
+            outputs[0] = tf.keras.activations.sigmoid(outputs[0])
+
+        pose_count = decode_multiple_poses(
+            outputs,
             dst_scores,
             dst_keypoints,
-            self.model_type,
-            self.score_threshold,
+            OUTPUT_STRIDE,
+            min_pose_score=self.score_threshold,
         )
+
         full_keypoint_scores = dst_scores[:pose_count]
         full_keypoint_coords = dst_keypoints[:pose_count]
 
-        full_keypoint_rel_coords = get_keypoints_relative_coords(
-            full_keypoint_coords, output_scale, image_size
-        )
+        # Convert coordinate to be relative to image size
+        full_keypoint_coords = full_keypoint_coords * output_scale / image_size
 
-        return full_keypoint_rel_coords, full_keypoint_scores
+        return full_keypoint_coords, full_keypoint_scores
 
-    def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, np.ndarray, List[int]]:
+    def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, List[int], List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
-
-        image, output_scale = rescale_image(
-            frame,
-            self.resolution,
-            SCALE_FACTOR,
+        target_height, target_width = get_valid_resolution(
+            self.resolution[0] * SCALE_FACTOR,
+            self.resolution[1] * SCALE_FACTOR,
             OUTPUT_STRIDE,
-            self.model_type,
         )
-        image = tf.convert_to_tensor(image)
-        return image, output_scale, image_size
+        scale = [frame.shape[1] / target_width, frame.shape[0] / target_height]
+
+        scaled_image = cv2.resize(
+            frame, (target_width, target_height), interpolation=cv2.INTER_LINEAR
+        )
+        scaled_image = cv2.cvtColor(scaled_image, cv2.COLOR_BGR2RGB).astype(np.float32)
+
+        if self.model_type == "resnet":
+            scaled_image += IMAGE_NET_MEAN
+        else:
+            # Scale to [-1, 1] range
+            scaled_image = scaled_image / 127.5 - 1.0
+
+        scaled_image = np.expand_dims(scaled_image, axis=0)
+        image_tensor = tf.convert_to_tensor(scaled_image)
+
+        return image_tensor, scale, image_size

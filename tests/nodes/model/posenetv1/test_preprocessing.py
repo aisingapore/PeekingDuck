@@ -19,10 +19,8 @@ import numpy as np
 import numpy.testing as npt
 import pytest
 
-from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import (
-    _get_valid_resolution,
-    _rescale_image,
-    rescale_image,
+from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import (  # rescale_image,
+    get_valid_resolution,
 )
 from tests.conftest import TEST_IMAGES_DIR
 
@@ -37,90 +35,43 @@ def frame():
 
 
 class TestPreprocessing:
-    def test_resize_image(self, frame):
-        image_processed, scale = rescale_image(frame, (500, 333), 1.5, 16, "resnet")
-        assert image_processed.shape == (
-            1,
-            497,
-            737,
-            3,
-        ), "Rescaled image is of incorrect shape"
-        npt.assert_almost_equal(
-            scale, np.array([0.8684, 0.8551]), 4, err_msg="Incorrect scale"
-        )
-
-    def test_preprocess_image_resnet(self, frame):
-        image_processed, scale = rescale_image(frame, (225, 225), 1, 16, "resnet")
-        assert image_processed.shape == (
-            1,
-            225,
-            225,
-            3,
-        ), "Rescaled image is of incorrect shape"
-        assert scale == pytest.approx(np.array([2.844, 1.888]), 0.01), "Incorrect scale"
-        npt.assert_almost_equal(
-            image_processed,
-            NP_FILE["image_resnet"],
-            2,
-            err_msg="Processed resnet image did not meet expected value",
-        )
-
-    @pytest.mark.parametrize("mobilenet_model", MOBILENET_MODELS)
-    def test_preprocess_image_mobilenet(self, frame, mobilenet_model):
-        image_processed, scale = rescale_image(
-            frame, (225, 225), 1, 16, mobilenet_model
-        )
-        assert image_processed.shape == (
-            1,
-            225,
-            225,
-            3,
-        ), "Rescaled image is of incorrect shape"
-        assert scale == pytest.approx(np.array([2.844, 1.888]), 0.01), "Incorrect scale"
-        npt.assert_almost_equal(
-            image_processed,
-            NP_FILE["image"],
-            2,
-            err_msg="Processed mobilenet image did not meet expected value",
-        )
-
     def test_get_valid_resolution(self):
-        assert _get_valid_resolution(183.0, 183.0, 16) == (
+        assert get_valid_resolution(183.0, 183.0, 16) == (
             177,
             177,
         ), "Unable to obtain valid resolution"
-        assert _get_valid_resolution(225.0, 225.0, 32) == (
+        assert get_valid_resolution(225.0, 225.0, 32) == (
             225,
             225,
         ), "Unable to obtain valid resolution"
 
-    @pytest.mark.parametrize("mobilenet_model", MOBILENET_MODELS)
-    def test_rescale_image_mobilenet(self, frame, mobilenet_model):
-        rescaled_image = _rescale_image(frame, 225, 225, mobilenet_model)
-        assert rescaled_image.shape == (
-            1,
-            225,
-            225,
-            3,
-        ), "Rescaled image is of incorrect shape"
-        npt.assert_almost_equal(
-            rescaled_image,
-            NP_FILE["image"],
-            2,
-            err_msg="Processed mobilenet image did not meet expected value",
-        )
-
-    def test_rescale_image_resnet(self, frame):
-        rescaled_image = _rescale_image(frame, 225, 225, "resnet")
-        assert rescaled_image.shape == (
-            1,
-            225,
-            225,
-            3,
-        ), "Rescaled image is of incorrect shape"
-        npt.assert_almost_equal(
-            rescaled_image,
-            NP_FILE["image_resnet"],
-            2,
-            err_msg="Processed resnet image did not meet expected value",
-        )
+    #  @pytest.mark.parametrize("mobilenet_model", MOBILENET_MODELS)
+    #  def test_rescale_image_mobilenet(self, frame, mobilenet_model):
+    #      rescaled_image = rescale_image(frame, 225, 225, mobilenet_model)
+    #      assert rescaled_image.shape == (
+    #          1,
+    #          225,
+    #          225,
+    #          3,
+    #      ), "Rescaled image is of incorrect shape"
+    #      npt.assert_almost_equal(
+    #          rescaled_image,
+    #          NP_FILE["image"],
+    #          2,
+    #          err_msg="Processed mobilenet image did not meet expected value",
+    #      )
+    #
+    #  def test_rescale_image_resnet(self, frame):
+    #      rescaled_image = rescale_image(frame, 225, 225, "resnet")
+    #      assert rescaled_image.shape == (
+    #          1,
+    #          225,
+    #          225,
+    #          3,
+    #      ), "Rescaled image is of incorrect shape"
+    #      npt.assert_almost_equal(
+    #          rescaled_image,
+    #          NP_FILE["image_resnet"],
+    #          2,
+    #          err_msg="Processed resnet image did not meet expected value",
+    #      )

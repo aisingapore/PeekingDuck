@@ -85,9 +85,9 @@ class TestPredictor:
             posenet_config["score_threshold"],
         )
         _, output_scale, image_size = predictor._preprocess(single_person_img)
-        assert type(image_size) is list, "Image size must be a list"
+        assert isinstance(image_size, list), "Image size must be a list"
         assert image_size == [439, 640], "Incorrect image size"
-        assert type(output_scale) is np.ndarray, "Output scale must be a numpy array"
+        assert isinstance(output_scale, list), "Output scale must be a numpy array"
         npt.assert_almost_equal(
             output_scale, np.array([1.95, 2.84]), 2, err_msg="Incorrect scale"
         )
