@@ -18,7 +18,6 @@ import numpy as np
 import numpy.testing as npt
 
 from peekingduck.nodes.model.posenetv1.posenet_files.detector import (
-    _sigmoid,
     get_keypoints_relative_coords,
 )
 
@@ -26,16 +25,6 @@ NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
 
 
 class TestDetector:
-    def test_sigmoid(self):
-        x = np.array([[1, 2], [-1, -2]])
-        f = _sigmoid(x)
-        npt.assert_almost_equal(
-            f,
-            np.array([[0.731, 0.881], [0.269, 0.119]]),
-            3,
-            err_msg="Incorrect output after applying sigmoid",
-        )
-
     def test_get_keypoints_relative_coords(self):
         full_keypoint_rel_coords = get_keypoints_relative_coords(
             NP_FILE["full_keypoint_coords"], np.array([2.844, 1.888]), [640, 425]

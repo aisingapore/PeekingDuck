@@ -35,7 +35,7 @@ def get_keypoints_relative_coords(
     Args:
         keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
         output_scale (np.array): output scale in Hx2 format
-        image_size (List[int]): image size in HxW format
+        image_size (List[int]): image size in WxH format
     Returns:
         keypoints_coords (np.array): Nx17x2 keypoints coordinates of N persons
                 relative to image size
@@ -47,10 +47,6 @@ def get_keypoints_relative_coords(
     rel_keypoint_coords = keypoint_coords * output_scale
     rel_keypoint_coords = rel_keypoint_coords / image_size
     return rel_keypoint_coords
-
-
-def _sigmoid(array: np.ndarray) -> np.ndarray:
-    return 1 / (1 + np.exp(-array))
 
 
 def detect_keypoints(  # pylint: disable=too-many-arguments
@@ -81,7 +77,8 @@ def detect_keypoints(  # pylint: disable=too-many-arguments
     # For resnet's implementation, we need to apply a sigmoid function on
     # the heatmap, which is the first tensor in the output
     if model_type == "resnet":
-        model_output[0] = _sigmoid(model_output[0])
+        #  model_output[0] = _sigmoid(model_output[0])
+        model_output[0] = tf.keras.activations.sigmoid(model_output[0])
 
     pose_count = decode_multiple_poses(
         model_output,
