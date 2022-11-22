@@ -90,7 +90,7 @@ def crop_and_resize(
     translate_y = bboxes[:, 1] - (bboxes[:, 3] - 1) * 0.5
     scale_x = bboxes[:, 2] / out_size[0]
     scale_y = bboxes[:, 3] / out_size[1]
-    zero_mat = np.zeros((len(translate_x),))
+    zero_mat = np.zeros(len(translate_x))
 
     x_mat = np.column_stack((scale_x, zero_mat, translate_x))
     y_mat = np.column_stack((zero_mat, scale_y, translate_y))
@@ -99,8 +99,8 @@ def crop_and_resize(
 
     transformed_images = [
         cv2.warpAffine(
-            frame, x, out_size, flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP
+            frame, matrix, out_size, flags=cv2.INTER_LINEAR | cv2.WARP_INVERSE_MAP
         )
-        for x in affine_matrices
+        for matrix in affine_matrices
     ]
-    return transformed_images, affine_matrices
+    return np.array(transformed_images), affine_matrices

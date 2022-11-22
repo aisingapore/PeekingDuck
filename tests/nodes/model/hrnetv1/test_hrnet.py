@@ -48,7 +48,7 @@ def hrnet_bad_config_value(request, hrnet_config):
 
 
 @pytest.mark.mlmodel
-class TestHrnet:
+class TestHRNet:
     def test_no_human_image(self, no_human_image, hrnet_config):
         """Tests HRnet on images with no humans present."""
         no_human_img = cv2.imread(no_human_image)
