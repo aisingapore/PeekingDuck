@@ -26,15 +26,10 @@ import tensorflow as tf
 
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     IMAGE_NET_MEAN,
-    KEYPOINTS_NUM,
     MIN_PART_SCORE,
-    SCALE_FACTOR,
 )
 from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
     decode_multiple_poses,
-)
-from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import (
-    get_valid_resolution,
 )
 from peekingduck.utils.graph_functions import load_graph
 from peekingduck.utils.pose.keypoint_handler import COCOBody
@@ -84,8 +79,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
             keypoints_scores (np.ndarray): array of keypoint scores
             keypoints_conns (np.ndarray): array of keypoint connections
         """
-        full_keypoint_rel_coords, full_keypoint_scores = self._predict_all_poses(frame)
-        self.keypoint_handler.update(full_keypoint_rel_coords, full_keypoint_scores)
+        raw_keypoints, raw_keypoint_scores = self._predict_all_poses(frame)
+        self.keypoint_handler.update(raw_keypoints, raw_keypoint_scores)
 
         if len(self.keypoint_handler.bboxes) == 0:
             return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0)
@@ -105,6 +100,12 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
             f"Score threshold: {self.score_threshold}"
         )
         return self._load_posenet_weights()
+
+    def _get_valid_resolution(self, output_stride: int) -> Tuple[int, int]:
+        """Calculates the valid height and width divisible by `output_stride`."""
+        target_height = int(self.resolution[0] / output_stride) * output_stride + 1
+        target_width = int(self.resolution[1] / output_stride) * output_stride + 1
+        return target_height, target_width
 
     def _load_posenet_weights(self) -> Callable:
         if not self.model_path.is_file():
@@ -133,8 +134,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         # image_size = [W, H]
         image, output_scale, image_size = self._preprocess(frame)
 
-        dst_scores = np.zeros((self.max_pose_detection, KEYPOINTS_NUM))
-        dst_keypoints = np.zeros((self.max_pose_detection, KEYPOINTS_NUM, 2))
+        keypoint_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
+        keypoints = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
 
         outputs = self.posenet(image)
         if self.model_type == "resnet":
@@ -142,28 +143,24 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
 
         pose_count = decode_multiple_poses(
             outputs,
-            dst_scores,
-            dst_keypoints,
+            keypoint_scores,
+            keypoints,
             OUTPUT_STRIDE,
             min_pose_score=self.score_threshold,
         )
 
-        full_keypoint_scores = dst_scores[:pose_count]
-        full_keypoint_coords = dst_keypoints[:pose_count]
+        keypoint_scores = keypoint_scores[:pose_count]
+        keypoints = keypoints[:pose_count]
 
         # Convert coordinate to be relative to image size
-        full_keypoint_coords = full_keypoint_coords * output_scale / image_size
+        keypoints = keypoints * output_scale / image_size
 
-        return full_keypoint_coords, full_keypoint_scores
+        return keypoints, keypoint_scores
 
     def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, List[int], List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
-        target_height, target_width = get_valid_resolution(
-            self.resolution[0] * SCALE_FACTOR,
-            self.resolution[1] * SCALE_FACTOR,
-            OUTPUT_STRIDE,
-        )
+        target_height, target_width = self._get_valid_resolution(OUTPUT_STRIDE)
         scale = [frame.shape[1] / target_width, frame.shape[0] / target_height]
 
         scaled_image = cv2.resize(
