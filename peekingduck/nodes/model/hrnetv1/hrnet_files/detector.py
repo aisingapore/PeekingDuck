@@ -149,10 +149,10 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             (Tuple[np.ndarray, np.ndarray]): Tuple containing array of keypoints
             coordinates and scores.
         """
-        batch, out_h, out_w, num_joints = heatmaps.shape
+        num_bboxes, out_h, out_w, num_keypoints = heatmaps.shape
 
         heatmaps = np.transpose(heatmaps, axes=(0, 3, 1, 2)).reshape(
-            (batch, num_joints, -1)
+            (num_bboxes, num_keypoints, -1)
         )
 
         max_indices = np.argmax(heatmaps, 2).astype(np.float32)
