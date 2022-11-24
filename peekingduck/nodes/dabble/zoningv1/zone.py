@@ -24,20 +24,19 @@ from shapely.geometry.polygon import Point, Polygon
 class Zone:  # pylint: disable=too-few-public-methods
     """This class uses polygon area to create a zone for counting."""
 
-    def __init__(self, points: List[List[int]]) -> None:
+    def __init__(self, points: List[Tuple[int, int]]) -> None:
         # Each zone is a polygon created by a list of x, y coordinates
-        self.polygon_points = [tuple(point) for point in points]
-        self.polygon = Polygon(self.polygon_points)
+        self.polygon_points = points
+        self.polygon = Polygon(self.polygon_points).buffer(1)
 
-    def contains(self, point: Tuple[float, float]) -> bool:
+    def contains(self, point: Point) -> bool:
         """Checks if the specified point is within the area bounded by the
         zone.
 
         Args:
-            point (Tuple[float, float]): The x- and y- coordinate to check.
+            point (Point): The x- and y- coordinate to check.
 
         Returns:
             (bool): True if ``point`` is within the zone.
         """
-        point = Point(point)
-        return self.polygon.buffer(1).contains(point)
+        return self.polygon.contains(point)
