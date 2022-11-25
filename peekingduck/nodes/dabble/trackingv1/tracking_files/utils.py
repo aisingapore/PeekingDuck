@@ -45,28 +45,3 @@ def iou_candidates(bbox: np.ndarray, candidates: np.ndarray) -> np.ndarray:
     area_candidates = candidates[:, 2] * candidates[:, 3]
 
     return area_intersection / (area_bbox + area_candidates - area_intersection)
-
-
-def xyxyn2tlwh(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
-    """Converts bounding boxes format from (x1, y2, x2, y2) to (t, l, w, h).
-    (x1, y1) is the normalized coordinates of the top-left corner, (x2, y2) is
-    the normalized coordinates of the bottom-right corner. (t, l) is the
-    original coordinates of the top-left corner, (w, h) is the original width
-    and height of the bounding box.
-
-    Args:
-        inputs (np.ndarray): Bounding box coordinates with (x1, y1, x2, y2)
-            format.
-        height (int): Original height of bounding box.
-        width (int): Original width of bounding box.
-
-    Returns:
-        (np.ndarray): Converted bounding box coordinates with (t, l, w, h)
-            format.
-    """
-    outputs = np.empty_like(inputs)
-    outputs[:, 0] = inputs[:, 0] * width  # Bottom left x
-    outputs[:, 1] = inputs[:, 1] * height  # Bottom left y
-    outputs[:, 2] = (inputs[:, 2] - inputs[:, 0]) * width  # Top right x
-    outputs[:, 3] = (inputs[:, 3] - inputs[:, 1]) * height  # Top right y
-    return outputs

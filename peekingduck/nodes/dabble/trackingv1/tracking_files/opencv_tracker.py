@@ -19,10 +19,8 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 import cv2
 import numpy as np
 
-from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import (
-    iou_candidates,
-    xyxyn2tlwh,
-)
+from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import iou_candidates
+from peekingduck.utils.bbox.transforms import xyxyn2tlwh
 
 
 class OpenCVTracker:  # pylint: disable=too-few-public-methods
