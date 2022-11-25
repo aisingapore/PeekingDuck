@@ -23,7 +23,6 @@ import numpy as np
 from cv2 import FONT_HERSHEY_SIMPLEX, LINE_AA
 
 from peekingduck.nodes.draw.utils.constants import (
-    BLACK,
     FILLED,
     PRIMARY_PALETTE,
     PRIMARY_PALETTE_LENGTH,
@@ -148,27 +147,25 @@ class Legend:  # pylint: disable=too-many-instance-attributes, too-few-public-me
             )
 
     def _draw_legend_box(self, frame: np.ndarray) -> None:
-        """draw pts of selected object onto frame
+        """Draws the legend box background on the input frame.
 
         Args:
-            frame (np.array): image of current frame
+            frame (np.array): Image of current frame.
         """
         assert self.legend_height is not None
-        overlay = frame.copy()
-        cv2.rectangle(
-            overlay,
-            (LEGEND_LEFT_X, self.legend_starting_y - self.item_padding),
-            (
-                LEGEND_LEFT_X + self.legend_width,
-                self.legend_starting_y + self.legend_height,
-            ),
-            BLACK,
-            FILLED,
-        )
+        # calculate indices range of the legend box
+        y_start = self.legend_starting_y - self.item_padding
+        y_end = self.legend_starting_y + self.legend_height
+        x_start = LEGEND_LEFT_X
+        x_end = LEGEND_LEFT_X + self.legend_width
+
+        sub_frame = frame[y_start:y_end, x_start:x_end]
+        black_rect = np.zeros_like(sub_frame, dtype=np.uint8)
         # apply the overlay
-        cv2.addWeighted(
-            overlay, self.box_opacity, frame, 1 - self.box_opacity, 0, frame
+        result = cv2.addWeighted(
+            black_rect, self.box_opacity, sub_frame, 1 - self.box_opacity, 0
         )
+        frame[y_start:y_end, x_start:x_end] = result
 
     def _draw_item_info(
         self,
