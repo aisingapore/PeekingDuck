@@ -36,19 +36,13 @@ def iou_candidates(bbox: np.ndarray, candidates: np.ndarray) -> np.ndarray:
     candidates_tl = candidates[:, :2]
     candidates_br = candidates[:, :2] + candidates[:, 2:]
 
-    top_left = np.c_[
-        np.maximum(bbox_tl[0], candidates_tl[:, 0])[:, np.newaxis],
-        np.maximum(bbox_tl[1], candidates_tl[:, 1])[:, np.newaxis],
-    ]
-    bottom_right = np.c_[
-        np.minimum(bbox_br[0], candidates_br[:, 0])[:, np.newaxis],
-        np.minimum(bbox_br[1], candidates_br[:, 1])[:, np.newaxis],
-    ]
+    top_left = np.maximum(bbox_tl, candidates_tl)
+    bottom_right = np.minimum(bbox_br, candidates_br)
     width_height = np.maximum(0.0, bottom_right - top_left)
 
-    area_intersection = width_height.prod(axis=1)
-    area_bbox = bbox[2:].prod()
-    area_candidates = candidates[:, 2:].prod(axis=1)
+    area_intersection = width_height[:, 0] * width_height[:, 1]
+    area_bbox = bbox[2] * bbox[3]
+    area_candidates = candidates[:, 2] * candidates[:, 3]
 
     return area_intersection / (area_bbox + area_candidates - area_intersection)
 
