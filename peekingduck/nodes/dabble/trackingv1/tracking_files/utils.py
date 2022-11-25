@@ -53,37 +53,6 @@ def iou_candidates(bbox: np.ndarray, candidates: np.ndarray) -> np.ndarray:
     return area_intersection / (area_bbox + area_candidates - area_intersection)
 
 
-def iou_tlwh(bbox_1: np.ndarray, bbox_2: np.ndarray) -> float:
-    """Calculates the Intersection-over-Union (IoU) of two bounding boxes. Each
-    bounding box as the format (t, l, w, h) where (t, l) is the top-left
-    corner, w is the width, and h is the height.
-
-    Args:
-        bbox_1 (np.ndarray): The first bounding box.
-        bbox_2 (np.ndarray): The other bounding box.
-
-    Returns:
-        (float): IoU of bbox1, bbox2.
-    """
-    bbox_1 = bbox_1.astype(float)
-    bbox_2 = bbox_2.astype(float)
-    overlap_x1 = np.maximum(bbox_1[0], bbox_2[0])
-    overlap_y1 = np.maximum(bbox_1[1], bbox_2[1])
-    overlap_x2 = np.minimum(bbox_1[0] + bbox_1[2], bbox_2[0] + bbox_2[2])
-    overlap_y2 = np.minimum(bbox_1[1] + bbox_1[3], bbox_2[1] + bbox_2[3])
-
-    overlap_w = max(0.0, overlap_x2 - overlap_x1)
-    overlap_h = max(0.0, overlap_y2 - overlap_y1)
-    if overlap_w <= 0 or overlap_h <= 0:
-        return 0.0
-
-    area_intersection = overlap_w * overlap_h
-    area_bbox_1 = bbox_1[2:].prod()
-    area_bbox_2 = bbox_2[2:].prod()
-
-    return area_intersection / (area_bbox_1 + area_bbox_2 - area_intersection)
-
-
 def xyxyn2tlwh(inputs: np.ndarray, height: int, width: int) -> np.ndarray:
     """Converts bounding boxes format from (x1, y2, x2, y2) to (t, l, w, h).
     (x1, y1) is the normalized coordinates of the top-left corner, (x2, y2) is
