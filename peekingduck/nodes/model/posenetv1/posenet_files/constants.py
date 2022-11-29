@@ -63,19 +63,7 @@ POSE_CONNECTIONS = np.array(
     [(_KEYPOINT_IDS[parent], _KEYPOINT_IDS[child]) for parent, child in _POSE_CHAIN]
 )
 
-# fmt: off
-SKELETON = [
-    [16, 14], [14, 12], [17, 15], [15, 13], [12, 13], [6, 12], [7, 13], [6, 7],
-    [6, 8], [7, 9], [8, 10], [9, 11], [2, 3], [1, 2], [1, 3], [2, 4], [3, 5],
-    [4, 6], [5, 7],
-]
-# fmt: on
-
 LOCAL_MAXIMUM_RADIUS = 1
-
-SCALE_FACTOR = 1.0
-
-KEYPOINTS_NUM = 17
 
 MIN_PART_SCORE = 0.1
 

@@ -21,8 +21,7 @@ from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
     _calculate_keypoint_coords_on_image,
     _change_dimensions,
     _get_instance_score_fast,
-    _sort_scored_parts,
-    _within_nms_radius_fast,
+    _is_within_nms_radius,
 )
 
 NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
@@ -43,22 +42,22 @@ class TestDecodeMulti:
             err_msg="Incorrect image coordinates",
         )
 
-    def test_within_nms_radius_fast(self):
+    def test_is_within_nms_radius(self):
         squared_nms_radius = 400
         pose_coords = np.zeros((0, 2))
-        check = _within_nms_radius_fast(
+        check = _is_within_nms_radius(
             pose_coords, squared_nms_radius, NP_FILE["root_image_coords"]
         )
         assert not check, "Unable to catch false cases"
 
         pose_coords = np.array([[65.9072, 99.2803]])
-        check = _within_nms_radius_fast(
+        check = _is_within_nms_radius(
             pose_coords, squared_nms_radius, NP_FILE["root_image_coords"]
         )
         assert check, "Unable to catch true cases"
 
         pose_coords = np.array([[160.4044, 115.450]])
-        check = _within_nms_radius_fast(
+        check = _is_within_nms_radius(
             pose_coords, squared_nms_radius, NP_FILE["root_image_coords"]
         )
         assert not check, "Unable to catch false cases"
@@ -76,11 +75,10 @@ class TestDecodeMulti:
         )
 
     def test_change_dimensions(self):
-        scores = np.tile(np.array([1, 2, 3]), (2, 2, 1))
         offsets = np.tile(np.array([1, 2]), (2, 2, 3, 1))
         displacements_fwd = displacements_bwd = np.tile(np.array([1, 2]), (2, 2, 2, 1))
         new_offsets, new_dfwd, new_dbwd = _change_dimensions(
-            scores, offsets, displacements_fwd, displacements_bwd
+            offsets, displacements_fwd, displacements_bwd
         )
         npt.assert_almost_equal(
             new_offsets,
@@ -99,26 +97,4 @@ class TestDecodeMulti:
             np.tile(np.array([[1, 1], [2, 2]]), (2, 2, 1, 1)),
             4,
             err_msg="Outputs are incorrect after dimension change",
-        )
-
-    def test_sort_scored_parts(self):
-        sample_parts = [
-            (0.058, 15, np.array([10, 0])),
-            (0.924, 12, np.array([5, 11])),
-            (0.299, 2, np.array([4, 3])),
-            (0.490, 1, np.array([3, 15])),
-            (0.806, 0, np.array([15, 12])),
-        ]
-        expected_parts = [
-            (0.924, 12, np.array([5, 11])),
-            (0.806, 0, np.array([15, 12])),
-            (0.490, 1, np.array([3, 15])),
-            (0.299, 2, np.array([4, 3])),
-            (0.058, 15, np.array([10, 0])),
-        ]
-        scored_parts = _sort_scored_parts(sample_parts)
-        npt.assert_array_equal(
-            np.array(scored_parts, dtype="object")[:, :2],
-            np.array(expected_parts, dtype="object")[:, :2],
-            err_msg="Unable to sort scored parts correctly",
         )

@@ -57,8 +57,8 @@ class HRNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         """
         assert isinstance(frame, np.ndarray)
         assert isinstance(bboxes, np.ndarray)
-        detected_bboxes = bboxes.copy()
         if bboxes.size == 0:
             return np.empty(0), np.empty(0), np.empty(0)
+        detected_bboxes = bboxes.copy()
 
         return self.detector.predict(frame, detected_bboxes)

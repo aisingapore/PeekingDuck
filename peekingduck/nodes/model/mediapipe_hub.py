@@ -54,6 +54,15 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default=0.5**. |br|
             Bounding boxes with confidence score below the threshold will be
             discarded.
+        keypoint_format (:obj:`str`): **Refer to CLI command, default="coco"**. |br|
+            The expected format of the keypoints output by the model. This could
+            be the standard COCO format which is 17 keypoints for the body and
+            21 keypoints for the hand. Some models like BlazePose can output 33
+            keypoints for the body. Used when ``task = pose_estimation``.
+        mirror_image (:obj:`bool`): **default=true**. |br|
+            If ``true``, the input image is assumed to be mirrored, i.e., the left
+            and right are reversed. Used when ``task = pose_estimation`` and
+            ``subtask = hand``.
         static_image_mode (:obj:`bool`): **default=false**. |br|
             If set to ``false``, the solution treats the input images as a video
             stream. It will try to detect the most prominent person in the very

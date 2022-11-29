@@ -12,8 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pathlib import Path
-
 import cv2
 import numpy as np
 import numpy.testing as npt
@@ -75,24 +73,7 @@ class TestPredictor:
         for i in output:
             assert len(i) == 1, "Unexpected number of outputs"
 
-    def test_get_resolution_as_tuple(self, posenet_config, model_dir):
-        resolution = {"height": 225, "width": 225}
-        predictor = Predictor(
-            model_dir,
-            posenet_config["model_type"],
-            posenet_config["weights"][posenet_config["model_format"]]["model_file"],
-            posenet_config["model_nodes"],
-            posenet_config["resolution"],
-            posenet_config["max_pose_detection"],
-            posenet_config["score_threshold"],
-        )
-        tuple_res = predictor.get_resolution_as_tuple(resolution)
-        assert type(tuple_res) is tuple, "Loaded data must be a tuple"
-        assert len(tuple_res) == 2, "Loaded data must be of length 2"
-
-    def test_create_image_from_frame(
-        self, single_person_image, posenet_config, model_dir
-    ):
+    def test_preprocess(self, single_person_image, posenet_config, model_dir):
         single_person_img = cv2.imread(single_person_image)
         predictor = Predictor(
             model_dir,
@@ -103,12 +84,10 @@ class TestPredictor:
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
         )
-        _, output_scale, image_size = predictor._create_image_from_frame(
-            16, single_person_img, (225, 225), "75"
-        )
-        assert type(image_size) is list, "Image size must be a list"
+        _, output_scale, image_size = predictor._preprocess(single_person_img)
+        assert isinstance(image_size, list), "Image size must be a list"
         assert image_size == [439, 640], "Incorrect image size"
-        assert type(output_scale) is np.ndarray, "Output scale must be a numpy array"
+        assert isinstance(output_scale, list), "Output scale must be a numpy array"
         npt.assert_almost_equal(
             output_scale, np.array([1.95, 2.84]), 2, err_msg="Incorrect scale"
         )
@@ -139,10 +118,9 @@ class TestPredictor:
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
-        coords, scores, masks = predictor._predict_all_poses(single_person_img)
+        coords, scores = predictor._predict_all_poses(single_person_img)
         assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
         assert scores.shape == (1, 17), "Scores is of wrong shape"
-        assert masks.shape == (1, 17), "Masks is of wrong shape"
 
     def test_get_bbox_of_one_pose(self, single_person_image, posenet_config, model_dir):
         single_person_img = cv2.imread(single_person_image)
@@ -157,7 +135,6 @@ class TestPredictor:
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
-        coords, scores, masks = predictor._predict_all_poses(single_person_img)
+        coords, scores = predictor._predict_all_poses(single_person_img)
         assert coords.shape == (1, 17, 2), "Coordinates is of wrong shape"
         assert scores.shape == (1, 17), "Scores is of wrong shape"
-        assert masks.shape == (1, 17), "Masks is of wrong shape"

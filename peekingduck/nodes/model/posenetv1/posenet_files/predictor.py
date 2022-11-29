@@ -20,26 +20,24 @@ import logging
 from pathlib import Path
 from typing import Callable, Dict, List, Tuple, Union
 
+import cv2
 import numpy as np
 import tensorflow as tf
 
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
-    KEYPOINTS_NUM,
+    IMAGE_NET_MEAN,
     MIN_PART_SCORE,
-    SCALE_FACTOR,
-    SKELETON,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.detector import (
-    detect_keypoints,
-    get_keypoints_relative_coords,
+from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
+    decode_multiple_poses,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.preprocessing import rescale_image
 from peekingduck.utils.graph_functions import load_graph
+from peekingduck.utils.pose.keypoint_handler import COCOBody
 
 OUTPUT_STRIDE = 16
 
 
-class Predictor:  # pylint: disable=too-many-instance-attributes
+class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-methods
     """Predictor class to handle detection of poses for posenet"""
 
     def __init__(  # pylint: disable=too-many-arguments
@@ -60,16 +58,16 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             "resnet" if self.model_type == "resnet" else "mobilenet"
         ]
 
-        self.resolution = self.get_resolution_as_tuple(resolution)
+        self.resolution = int(resolution["height"]), int(resolution["width"])
         self.max_pose_detection = max_pose_detection
         self.score_threshold = score_threshold
 
+        self.keypoint_handler = COCOBody(score_threshold=MIN_PART_SCORE)
         self.posenet = self._create_posenet_model()
 
-    def predict(
+    def predict(  # pylint: disable=too-many-locals
         self, frame: np.ndarray
     ) -> Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-        # pylint: disable=too-many-locals
         """PoseNet prediction function
 
         Args:
@@ -81,37 +79,16 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             keypoints_scores (np.ndarray): array of keypoint scores
             keypoints_conns (np.ndarray): array of keypoint connections
         """
-        (
-            full_keypoint_rel_coords,
-            full_keypoint_scores,
-            full_masks,
-        ) = self._predict_all_poses(frame)
+        raw_keypoints, raw_keypoint_scores = self._predict_all_poses(frame)
+        self.keypoint_handler.update(raw_keypoints, raw_keypoint_scores)
 
-        bboxes = []
-        keypoints = []
-        keypoint_scores = []
-        keypoint_conns = []
-
-        for pose_coords, pose_scores, pose_masks in zip(
-            full_keypoint_rel_coords, full_keypoint_scores, full_masks
-        ):
-            bbox = self._get_bbox_of_one_pose(pose_coords, pose_masks)
-            pose_coords = self._get_valid_full_keypoints_coords(pose_coords, pose_masks)
-            pose_connections = self._get_connections_of_one_pose(
-                pose_coords, pose_masks
-            )
-            bboxes.append(bbox)
-            keypoints.append(pose_coords)
-            keypoint_scores.append(pose_scores)
-            keypoint_conns.append(pose_connections)
-
-        if not bboxes:
+        if len(self.keypoint_handler.bboxes) == 0:
             return np.empty((0, 4)), np.empty(0), np.empty(0), np.empty(0)
         return (
-            np.array(bboxes),
-            np.array(keypoints),
-            np.array(keypoint_scores),
-            np.array(keypoint_conns),
+            self.keypoint_handler.bboxes,
+            self.keypoint_handler.keypoints,
+            self.keypoint_handler.scores,
+            self.keypoint_handler.connections,
         )
 
     def _create_posenet_model(self) -> Callable:
@@ -124,6 +101,12 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
         )
         return self._load_posenet_weights()
 
+    def _get_valid_resolution(self, output_stride: int) -> Tuple[int, int]:
+        """Calculates the valid height and width divisible by `output_stride`."""
+        target_height = int(self.resolution[0] / output_stride) * output_stride + 1
+        target_width = int(self.resolution[1] / output_stride) * output_stride + 1
+        return target_height, target_width
+
     def _load_posenet_weights(self) -> Callable:
         if not self.model_path.is_file():
             raise ValueError(
@@ -135,9 +118,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
             outputs=self.model_nodes["outputs"],
         )
 
-    def _predict_all_poses(
-        self, frame: np.ndarray
-    ) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
+    def _predict_all_poses(self, frame: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
         """Predict relative coordinates, confident scores and validation masks
         for all detected poses
 
@@ -149,119 +130,51 @@ class Predictor:  # pylint: disable=too-many-instance-attributes
                 detected poses
             full_keypoint_scores (np.ndarray): keypoints confidence scores of
                 detected poses
-            full_masks (np.ndarray): keypoints validation masks of detected
-                poses
         """
-        image, output_scale, image_size = self._create_image_from_frame(
-            OUTPUT_STRIDE, frame, self.resolution, self.model_type
-        )
+        # image_size = [W, H]
+        image, output_scale, image_size = self._preprocess(frame)
 
-        dst_scores = np.zeros((self.max_pose_detection, KEYPOINTS_NUM))
-        dst_keypoints = np.zeros((self.max_pose_detection, KEYPOINTS_NUM, 2))
+        keypoint_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
+        keypoints = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
 
-        pose_count = detect_keypoints(
-            self.posenet,
-            image,
+        outputs = self.posenet(image)
+        if self.model_type == "resnet":
+            outputs[0] = tf.keras.activations.sigmoid(outputs[0])
+
+        pose_count = decode_multiple_poses(
+            outputs,
+            keypoint_scores,
+            keypoints,
             OUTPUT_STRIDE,
-            dst_scores,
-            dst_keypoints,
-            self.model_type,
-            self.score_threshold,
-        )
-        full_keypoint_scores = dst_scores[:pose_count]
-        full_keypoint_coords = dst_keypoints[:pose_count]
-
-        full_keypoint_rel_coords = get_keypoints_relative_coords(
-            full_keypoint_coords, output_scale, image_size
+            min_pose_score=self.score_threshold,
         )
 
-        full_masks = self._get_full_masks_from_keypoint_scores(full_keypoint_scores)
+        keypoint_scores = keypoint_scores[:pose_count]
+        keypoints = keypoints[:pose_count]
 
-        return full_keypoint_rel_coords, full_keypoint_scores, full_masks
+        # Convert coordinate to be relative to image size
+        keypoints = keypoints * output_scale / image_size
 
-    @staticmethod
-    def get_resolution_as_tuple(resolution: Dict[str, int]) -> Tuple[int, int]:
-        """Convert resolution from dict to tuple format
+        return keypoints, keypoint_scores
 
-        Args:
-            resolution (Dict[str, int]): height and width in dict format
-
-        Returns:
-            resolution (Tuple(int)): height and width in tuple format
-        """
-        return int(resolution["height"]), int(resolution["width"])
-
-    @staticmethod
-    def _create_image_from_frame(
-        output_stride: int,
-        frame: np.ndarray,
-        input_res: Tuple[int, int],
-        model_type: Union[int, str],
-    ) -> Tuple[tf.Tensor, np.ndarray, List[int]]:
+    def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, List[int], List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
+        target_height, target_width = self._get_valid_resolution(OUTPUT_STRIDE)
+        scale = [frame.shape[1] / target_width, frame.shape[0] / target_height]
 
-        image, output_scale = rescale_image(
-            frame,
-            input_res,
-            SCALE_FACTOR,
-            output_stride,
-            model_type,
+        scaled_image = cv2.resize(
+            frame, (target_width, target_height), interpolation=cv2.INTER_LINEAR
         )
-        image = tf.convert_to_tensor(image)
-        return image, output_scale, image_size
+        scaled_image = cv2.cvtColor(scaled_image, cv2.COLOR_BGR2RGB).astype(np.float32)
 
-    @staticmethod
-    def _get_bbox_of_one_pose(coords: np.ndarray, mask: np.ndarray) -> np.ndarray:
-        """Get the bounding box bordering the keypoints of a single pose"""
-        coords = coords[mask, :]
-        if coords.shape[0]:
-            min_x, min_y, max_x, max_y = (
-                coords[:, 0].min(),
-                coords[:, 1].min(),
-                coords[:, 0].max(),
-                coords[:, 1].max(),
-            )
-            bbox = [min_x, min_y, max_x, max_y]
-            return np.array(bbox)
-        return np.zeros(0)
+        if self.model_type == "resnet":
+            scaled_image += IMAGE_NET_MEAN
+        else:
+            # Scale to [-1, 1] range
+            scaled_image = scaled_image / 127.5 - 1.0
 
-    @staticmethod
-    def _get_connections_of_one_pose(
-        coords: np.ndarray, masks: np.ndarray
-    ) -> np.ndarray:
-        """Get connections between adjacent keypoint pairs if both keypoints are
-        detected
-        """
-        connections = []
-        for start_joint, end_joint in SKELETON:
-            if masks[start_joint - 1] and masks[end_joint - 1]:
-                connections.append((coords[start_joint - 1], coords[end_joint - 1]))
-        return np.array(connections)
+        scaled_image = np.expand_dims(scaled_image, axis=0)
+        image_tensor = tf.convert_to_tensor(scaled_image)
 
-    @staticmethod
-    def _get_full_masks_from_keypoint_scores(keypoint_scores: np.ndarray) -> np.ndarray:
-        """Obtain masks for keypoints with confidence scores above the detection
-        threshold
-        """
-        masks = keypoint_scores > MIN_PART_SCORE
-        return masks
-
-    @staticmethod
-    def _get_valid_full_keypoints_coords(
-        coords: np.ndarray, masks: np.ndarray
-    ) -> np.ndarray:
-        """Apply masks to keep only valid keypoints' relative coordinates
-
-        Args:
-            coords (np.array): Nx2 array of keypoints' relative coordinates
-            masks (np.array): masks for valid (> min confidence score) keypoints
-
-        Returns:
-            full_joints (np.array): Nx2 array of keypoints where undetected
-                keypoints are assigned a (-1) value.
-        """
-        full_joints = coords.copy()
-        full_joints = np.clip(full_joints, 0, 1)
-        full_joints[~masks] = -1
-        return full_joints
+        return image_tensor, scale, image_size

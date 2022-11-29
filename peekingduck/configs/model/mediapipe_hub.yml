@@ -18,6 +18,9 @@ model_type: 0
 score_threshold: 0.5
 
 # pose_estimation specific configs
+keypoint_format: "coco"
+max_num_hands: 2
+mirror_image: true
 static_image_mode: false
 smooth_landmarks: true
 tracking_score_threshold: 0.5
