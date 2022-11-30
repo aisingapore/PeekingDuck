@@ -22,6 +22,7 @@ Support functions to decode single pose
 from typing import Tuple
 
 import numpy as np
+from numba import jit
 
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import POSE_CONNECTIONS
 
@@ -36,7 +37,7 @@ def decode_pose(
     displacements_fwd: np.ndarray,
     displacements_bwd: np.ndarray,
     keypoint_scores: np.ndarray,
-    keypoint_coords: np.ndarray,
+    keypoints: np.ndarray,
 ) -> None:
     # pylint: disable=too-many-arguments
     """Decode pose's keypoints scores and coordinates from keypoints score,
@@ -60,7 +61,7 @@ def decode_pose(
     num_edges = len(POSE_CONNECTIONS)
 
     keypoint_scores[root_id] = root_score
-    keypoint_coords[root_id] = root_image_coord
+    keypoints[root_id] = root_image_coord
 
     for edge in reversed(range(num_edges)):
         target_keypoint_id, source_keypoint_id = POSE_CONNECTIONS[edge]
@@ -69,7 +70,7 @@ def decode_pose(
             target_keypoint_id,
             source_keypoint_id,
             keypoint_scores,
-            keypoint_coords,
+            keypoints,
             scores,
             offsets,
             output_stride,
@@ -83,7 +84,7 @@ def decode_pose(
             target_keypoint_id,
             source_keypoint_id,
             keypoint_scores,
-            keypoint_coords,
+            keypoints,
             scores,
             offsets,
             output_stride,
@@ -95,8 +96,8 @@ def _calculate_instance_keypoints(
     edge: int,
     target_keypoint_id: int,
     source_keypoint_id: int,
-    instance_keypoint_scores: np.ndarray,
-    instance_keypoint_coords: np.ndarray,
+    keypoint_scores: np.ndarray,
+    keypoints: np.ndarray,
     scores: np.ndarray,
     offsets: np.ndarray,
     output_stride: int,
@@ -105,10 +106,10 @@ def _calculate_instance_keypoints(
     # pylint: disable=too-many-arguments
     """Obtain instance keypoints scores and coordinates"""
     if (
-        instance_keypoint_scores[source_keypoint_id] > 0.0
-        and instance_keypoint_scores[target_keypoint_id] == 0.0
+        keypoint_scores[source_keypoint_id] > 0.0
+        and keypoint_scores[target_keypoint_id] == 0.0
     ):
-        source_keypoint = instance_keypoint_coords[source_keypoint_id]
+        source_keypoint = keypoints[source_keypoint_id]
 
         score, coords = _traverse_to_target_keypoint(
             edge,
@@ -120,23 +121,25 @@ def _calculate_instance_keypoints(
             displacements,
         )
 
-        instance_keypoint_scores[target_keypoint_id] = score
-        instance_keypoint_coords[target_keypoint_id] = coords
+        keypoint_scores[target_keypoint_id] = score
+        keypoints[target_keypoint_id] = coords
 
 
+@jit(nopython=True)
 def _clip_to_indices(
     keypoints: np.ndarray, output_stride: int, width: int, height: int
 ) -> np.ndarray:
     """Clip keypoint coordinate to indices within dimension (width, height)"""
-    keypoints = keypoints / output_stride
+    keypoints = np.rint(keypoints / output_stride)
     keypoint_indices = np.zeros((2,), dtype=np.int32)
 
-    keypoint_indices[0] = max(min(round(keypoints[0]), width - 1), 0)
-    keypoint_indices[1] = max(min(round(keypoints[1]), height - 1), 0)
+    keypoint_indices[0] = max(min(keypoints[0], width - 1), 0)
+    keypoint_indices[1] = max(min(keypoints[1], height - 1), 0)
 
     return keypoint_indices
 
 
+@jit(nopython=True)
 def _traverse_to_target_keypoint(
     edge_id: int,
     source_keypoint: np.ndarray,
@@ -157,7 +160,7 @@ def _traverse_to_target_keypoint(
 
     displaced_point = (
         source_keypoint
-        + displacements[source_keypoint_indices[1], source_keypoint_indices[0], edge_id]
+        + displacements[source_keypoint_indices[0], source_keypoint_indices[1], edge_id]
     )
 
     displaced_point_indices = _clip_to_indices(
@@ -165,13 +168,13 @@ def _traverse_to_target_keypoint(
     )
 
     score = scores[
-        displaced_point_indices[1], displaced_point_indices[0], target_keypoint_id
+        displaced_point_indices[0], displaced_point_indices[1], target_keypoint_id
     ]
 
     image_coord = (
         displaced_point_indices * output_stride
         + offsets[
-            displaced_point_indices[1], displaced_point_indices[0], target_keypoint_id
+            displaced_point_indices[0], displaced_point_indices[1], target_keypoint_id
         ]
     )
 

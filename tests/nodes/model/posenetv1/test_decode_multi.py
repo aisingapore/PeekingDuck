@@ -18,7 +18,6 @@ import numpy as np
 import numpy.testing as npt
 
 from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
-    _calculate_keypoint_coords_on_image,
     _change_dimensions,
     _get_instance_score_fast,
     _is_within_nms_radius,
@@ -28,20 +27,6 @@ NP_FILE = np.load(Path(__file__).resolve().parent / "posenet.npz")
 
 
 class TestDecodeMulti:
-    def test_calculate_keypoint_coords_on_image(self):
-        root_coords = _calculate_keypoint_coords_on_image(
-            heatmap_positions=np.array([4, 6]),
-            output_stride=16,
-            offsets=NP_FILE["offsets"],
-            keypoint_id=6,
-        )
-        npt.assert_almost_equal(
-            root_coords,
-            NP_FILE["root_image_coords"],
-            2,
-            err_msg="Incorrect image coordinates",
-        )
-
     def test_is_within_nms_radius(self):
         squared_nms_radius = 400
         pose_coords = np.zeros((0, 2))
@@ -82,7 +67,7 @@ class TestDecodeMulti:
         )
         npt.assert_almost_equal(
             new_offsets,
-            np.tile(np.array([[2, 1], [1, 2], [2, 1]]), (2, 2, 1, 1)),
+            np.tile(np.array([[1, 2], [2, 1], [1, 2]]), (2, 2, 1, 1)),
             4,
             err_msg="Outputs are incorrect after dimension change",
         )

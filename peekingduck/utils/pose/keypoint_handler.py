@@ -17,7 +17,7 @@ pose estimation landmarks.
 """
 
 from abc import ABC
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 
@@ -85,7 +85,9 @@ class KeypointHandler(ABC):
         return getattr(self, "_pose_scores", np.empty(0))
 
     def update(
-        self, poses: List[List[List[float]]], pose_scores: List[List[float]]
+        self,
+        poses: Union[np.ndarray, List[List[List[float]]]],
+        pose_scores: Union[np.ndarray, List[List[float]]],
     ) -> None:
         """Updates internal `_poses`. Convert to another format if
         `self.keypoint_map` is set.

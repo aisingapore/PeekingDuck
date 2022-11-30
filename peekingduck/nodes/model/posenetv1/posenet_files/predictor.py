@@ -134,8 +134,8 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         # image_size = [W, H]
         image, output_scale, image_size = self._preprocess(frame)
 
-        keypoint_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
-        keypoints = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
+        pose_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
+        poses = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
 
         outputs = self.posenet(image)
         if self.model_type == "resnet":
@@ -143,21 +143,24 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
 
         pose_count = decode_multiple_poses(
             outputs,
-            keypoint_scores,
-            keypoints,
+            pose_scores,
+            poses,
             OUTPUT_STRIDE,
             min_pose_score=self.score_threshold,
         )
 
-        keypoint_scores = keypoint_scores[:pose_count]
-        keypoints = keypoints[:pose_count]
+        pose_scores = pose_scores[:pose_count]
+        # Swap coordinates ordering
+        poses = poses[:pose_count, ..., [1, 0]]
 
         # Convert coordinate to be relative to image size
-        keypoints = keypoints * output_scale / image_size
+        poses = poses * output_scale / image_size
 
-        return keypoints, keypoint_scores
+        return poses, pose_scores
 
-    def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, List[int], List[int]]:
+    def _preprocess(
+        self, frame: np.ndarray
+    ) -> Tuple[tf.Tensor, List[float], List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
         target_height, target_width = self._get_valid_resolution(OUTPUT_STRIDE)

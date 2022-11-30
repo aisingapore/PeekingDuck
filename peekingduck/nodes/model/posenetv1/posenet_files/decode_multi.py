@@ -19,44 +19,40 @@ Supporting functions to decode multiple poses
 """
 
 import operator
-from typing import List, Tuple
+from typing import List, Tuple, Union
 
 import numpy as np
 import scipy.ndimage as ndi
 import tensorflow as tf
+from numba import jit
 
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     LOCAL_MAXIMUM_RADIUS,
-    SWAP_AXES,
+    MIN_ROOT_SCORE,
+    NMS_RADIUS,
 )
 from peekingduck.nodes.model.posenetv1.posenet_files.decode import decode_pose
 
 
 def decode_multiple_poses(
     model_output: List[tf.Tensor],
-    dst_keypoint_scores: np.ndarray,
-    dst_keypoints: np.ndarray,
+    pose_scores: np.ndarray,
+    poses: np.ndarray,
     output_stride: int,
-    score_threshold: float = 0.5,
-    nms_radius: int = 20,
     min_pose_score: float = 0.5,
 ) -> int:
-    # pylint: disable=too-many-arguments
     """Decodes the offsets and displacements map and return the keypoints
-
 
     Args:
         model_output (List[tf.Tensor]): Scores, offsets, displacements_fwd, and
             displacements_bwd from model predictions.
-        dst_scores (np.array): Nx17 buffer to store keypoint scores where N is
-                        the max persons to be detected
-        dst_keypoints (np.array): Nx17x2 buffer to store keypoints coordinate
-                        where N is the max persons to be detected
-        output_stride (int): output stride to convert output indices to image coordinates
-        score_threshold (float): return instance detections if root part score
-                        >= threshold
-        nms_radius (int): non-maximum suppression part distance in pixels
-        min_pose_score (float): minimum pose score to return detected pose
+        pose_scores (np.array): Nx17 buffer to store keypoint scores where N is
+            the max persons to be detected.
+        poses (np.array): Nx17x2 buffer to store keypoints coordinate where N
+            is the max persons to be detected.
+        output_stride (int): Output stride to convert output indices to image
+            coordinates.
+        min_pose_score (float): Minimum pose score to return detected pose.
 
     Returns:
         pose_count (int): number of poses detected
@@ -66,9 +62,7 @@ def decode_multiple_poses(
     displacements_fwd = np.array(model_output[2][0])
     displacements_bwd = np.array(model_output[3][0])
 
-    parts = _build_parts_with_score(scores, score_threshold)
-    # Sort parts by score in descending order
-    parts = sorted(parts, key=operator.itemgetter(0), reverse=True)
+    parts = _build_parts(scores, MIN_ROOT_SCORE)
 
     offsets, displacements_fwd, displacements_bwd = _change_dimensions(
         offsets, displacements_fwd, displacements_bwd
@@ -80,34 +74,62 @@ def decode_multiple_poses(
         offsets,
         displacements_fwd,
         displacements_bwd,
-        dst_keypoint_scores,
-        dst_keypoints,
+        pose_scores,
+        poses,
         output_stride,
-        nms_radius,
         min_pose_score,
     )
 
     return pose_count
 
 
-def _build_parts_with_score(
+def _build_parts(
     scores: np.ndarray, score_threshold: float
 ) -> List[Tuple[float, int, np.ndarray]]:
     """Builds the parts list. Each part in the list consists of the score,
     keypoint ID, and coordinates. A part is defined as the cell with the highest
-    score in the local window of size (2 x LOCAL_MAXIMUM_RADIUS, 2 x LOCAL_MAXIMUM_RADIUS, 1).
+    score in the local window of size (D, D, 1) where
+    D = 2 * LOCAL_MAXIMUM_RADIUS + 1.
 
     Args:
         scores (np.ndarray): Score heatmap output by the model.
         score_threshold (float): Local peaks below this threshold will be
             discarded.
+
+    Returns:
+        (List[Tuple[float, int, np.ndarray]]): The parts list sorted by score in
+        descending order.
     """
-    parts = []
     diameter = 2 * LOCAL_MAXIMUM_RADIUS + 1
 
     local_peaks = ndi.maximum_filter(
         scores, size=(diameter, diameter, 1), mode="constant"
     )
+    parts = _build_parts_with_peaks(scores, score_threshold, local_peaks)
+    parts = sorted(parts, key=operator.itemgetter(0), reverse=True)
+    return parts
+
+
+@jit(nopython=True)
+def _build_parts_with_peaks(
+    scores: np.ndarray, score_threshold: float, local_peaks: np.ndarray
+) -> List[Tuple[float, int, np.ndarray]]:
+    """Builds the parts list. Each part in the list consists of the score,
+    keypoint ID, and coordinates. A part is defined as the cell with the highest
+    score in the local window of size (D, D, 1) where
+    D = 2 * LOCAL_MAXIMUM_RADIUS + 1.
+
+    Args:
+        scores (np.ndarray): Score heatmap output by the model.
+        score_threshold (float): Local peaks below this threshold will be
+            discarded.
+        local_peaks (np.ndarray): Local peaks in the score heatmap.
+
+    Returns:
+        (List[Tuple[float, int, np.ndarray]]): The parts list sorted by score in
+        descending order.
+    """
+    parts = []
     local_peak_locations = (
         (scores == local_peaks) & (scores > score_threshold)
     ).nonzero()
@@ -116,64 +138,41 @@ def _build_parts_with_score(
             (
                 scores[y_coord, x_coord, keypoint_id],
                 keypoint_id,
-                np.array((x_coord, y_coord)),
+                np.array((y_coord, x_coord)),
             )
         )
 
     return parts
 
 
-def _calculate_keypoint_coords_on_image(
-    heatmap_positions: np.ndarray,
-    output_stride: int,
-    offsets: np.ndarray,
-    keypoint_id: int,
-) -> np.ndarray:
-    """Calculate keypoint image coordinates from heatmap positions,
-    output_stride and offset_vectors
+def _change_dimensions(*arrays: np.ndarray) -> Union[np.ndarray, List[np.ndarray]]:
+    """Changes the dimensions of input arrays from (h, w, x) to (h, w, x//2, 2)
+    to return a complete coordinate array.
     """
-    offset_vectors = offsets[heatmap_positions[1], heatmap_positions[0], keypoint_id]
-    return heatmap_positions * output_stride + offset_vectors
+    results = []
+    for array in arrays:
+        height, width = array.shape[0], array.shape[1]
+        results.append(array.reshape(height, width, 2, -1).swapaxes(2, 3))
 
-
-def _change_dimensions(
-    offsets: np.ndarray,
-    displacements_fwd: np.ndarray,
-    displacements_bwd: np.ndarray,
-) -> Tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Change dimensions from (h, w, x) to (h, w, x//2, 2) to return a
-    complete coordinate array
-    """
-    height, width = offsets.shape[0], offsets.shape[1]
-    offsets = offsets.reshape(height, width, 2, -1).swapaxes(2, 3)
-    displacements_fwd = displacements_fwd.reshape(height, width, 2, -1).swapaxes(2, 3)
-    displacements_bwd = displacements_bwd.reshape(height, width, 2, -1).swapaxes(2, 3)
-
-    offsets = offsets[:, :, :, SWAP_AXES]
-    displacements_fwd = displacements_fwd[:, :, :, SWAP_AXES]
-    displacements_bwd = displacements_bwd[:, :, :, SWAP_AXES]
-
-    return offsets, displacements_fwd, displacements_bwd
+    return results[0] if len(results) == 1 else results
 
 
 def _get_instance_score_fast(
     existing_coords: np.ndarray,
-    squared_nms_radius: int,
+    nms_radius: int,
     keypoint_scores: np.ndarray,
-    keypoint_coords: np.ndarray,
+    keypoints: np.ndarray,
 ) -> float:
     """Obtain instance scores for keypoints"""
     if existing_coords.shape[0] > 0:
-        score_sum = (
-            np.sum((existing_coords - keypoint_coords) ** 2, axis=2)
-            > squared_nms_radius
-        )
+        score_sum = np.linalg.norm(existing_coords - keypoints, axis=2) > nms_radius
         not_overlapped_scores = np.sum(keypoint_scores[np.all(score_sum, axis=0)])
     else:
         not_overlapped_scores = np.sum(keypoint_scores)
     return not_overlapped_scores / len(keypoint_scores)
 
 
+@jit(nopython=True)
 def _is_within_nms_radius(
     existing_coords: np.ndarray, radius: int, point: np.ndarray
 ) -> bool:
@@ -196,10 +195,9 @@ def _look_for_poses(
     offsets: np.ndarray,
     displacements_fwd: np.ndarray,
     displacements_bwd: np.ndarray,
-    dst_keypoint_scores: np.ndarray,
-    dst_keypoints: np.ndarray,
+    pose_scores: np.ndarray,
+    poses: np.ndarray,
     output_stride: int,
-    nms_radius: int,
     min_pose_score: float,
 ) -> int:
     # pylint: disable=too-many-arguments, too-many-locals
@@ -207,24 +205,22 @@ def _look_for_poses(
     complete coordinate array
     """
     pose_count = 0
-    dst_keypoint_scores[:] = 0
-    max_pose_detections = dst_keypoint_scores.shape[0]
-    squared_nms_radius = nms_radius ** 2
+    max_pose_detections = pose_scores.shape[0]
+    squared_nms_radius = NMS_RADIUS ** 2
 
-    for root_score, root_id, root_coord in parts:
-        root_image_coords = _calculate_keypoint_coords_on_image(
-            root_coord, output_stride, offsets, root_id
+    for root_score, root_id, root_coords in parts:
+        root_image_coords = (
+            root_coords * output_stride
+            + offsets[root_coords[0], root_coords[1], root_id]
         )
 
         if _is_within_nms_radius(
-            dst_keypoints[:pose_count, root_id, :],
-            squared_nms_radius,
-            root_image_coords,
+            poses[:pose_count, root_id], squared_nms_radius, root_image_coords
         ):
             continue
 
-        keypoint_scores = dst_keypoint_scores[pose_count]
-        keypoint_coords = dst_keypoints[pose_count]
+        keypoint_scores = pose_scores[pose_count]
+        keypoints = poses[pose_count]
         decode_pose(
             root_score,
             root_id,
@@ -235,19 +231,19 @@ def _look_for_poses(
             displacements_fwd,
             displacements_bwd,
             keypoint_scores,
-            keypoint_coords,
+            keypoints,
         )
 
         pose_score = _get_instance_score_fast(
-            dst_keypoints[:pose_count, :, :],
-            squared_nms_radius,
+            poses[:pose_count],
+            NMS_RADIUS,
             keypoint_scores,
-            keypoint_coords,
+            keypoints,
         )
         if pose_score >= min_pose_score:
             pose_count += 1
         else:
-            dst_keypoint_scores[pose_count] = 0
+            pose_scores[pose_count] = 0
 
         if pose_count >= max_pose_detections:
             break
