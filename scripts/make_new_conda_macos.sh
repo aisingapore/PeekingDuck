@@ -2,15 +2,17 @@
 set -e      # tell bash to exit on error
 
 #
-# PeekingDuck Installation Script for macOS Monterey/Big Sur
-# by dotw 2022-03-06
-# update 2022-04-12 for uninterrupted install
+# PeekingDuck Installation Script for M1 macOS
+# by dotw
+# created 2022-03-06 initial version
+# updated 2022-04-12 for uninterrupted install
+# updated 2022-11-30 add typeguard, pytorch channel
 #
 # Prerequisites: brew install miniforge
 #
 
-echo "PeekingDuck Installation Script for macOS Monterey/Big Sur"
-echo "----------------------------------------------------------"
+echo "PeekingDuck Installation Script for M1 macOS"
+echo "--------------------------------------------"
 
 # Global working vars
 SELF=`basename $0`
@@ -76,12 +78,17 @@ conda create -y -n $ENV_NAME python=$PY_VER
 conda init bash
 source ~/.bash_profile
 conda activate $ENV_NAME
+echo "conda env=$CONDA_DEFAULT_ENV"
 
 # Install basic packages
 echo "Installing basic packages"
-conda install -y black click colorama opencv pyyaml requests scipy shapely tqdm
+conda install -y black click colorama opencv pyyaml requests scipy shapely tqdm typeguard
 
-# Install pip packages: Tensorflow and PyTorch
+# Install PyTorch
+echo "installing PyTorch"
+conda install -y -c pytorch pytorch torchvision timm
+
+# Install Tensorflow
 if [[ $ARCHI == i386 ]]; then
     echo "Installing for Intel macOS"
     pip install tensorflow==2.7.0
@@ -98,13 +105,12 @@ else
     exit 1
 fi
 
-pip install torch torchvision
-
 # Install more packages
 if [ $INSTALL == "full" ]; then
     echo "Installing CI/CD packages"
     conda install -y bandit coverage mypy pylint pytest types-PyYAML types-requests \
-        types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints texttable
+        types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints \
+        texttable
     pip install lap sphinx-rtd-theme
 fi
 
