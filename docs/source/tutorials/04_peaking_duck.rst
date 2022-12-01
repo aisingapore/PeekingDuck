@@ -675,25 +675,29 @@ given the following directory structure and file contents:
       .. code-block:: python
          :linenos:
 
-         def my_callback_function(data_pool):
-             print("Called my_callback_function")
+         def general_function(data_pool):
+             print("Called general_function")
+             filename = data_pool["filename"]
+             print(f"  filename={filename}")
 
 
          class MyCallbackClass:
              @staticmethod
-             def my_callback_static_method(data_pool):
-                 print("Called my_callback_static_method")
+             def the_static_method(data_pool):
+                 print("Called the_static_method")
 
              @classmethod
-             def my_callback_class_method(cls, data_pool):
-                 print("Called my_callback_class_method")
+             def the_class_method(cls, data_pool):
+                 print("Called the_class_method")
 
-             def my_callback_instance_method(self, data_pool):
-                 print("Called my_callback_instance_method")
+             def the_instance_method(self, data_pool):
+                 print("Called the_instance_method")
+                 kp_scores = data_pool["keypoint_scores"][0]
+                 print(f"  num_keypoint_scores={len(kp_scores)}")
 
 
          # my_callback_obj has to be visible from my_callback.py's global scope
-         # to enable access to my_callback_instance_method()
+         # to enable access to the_instance_method()
          my_callback_obj = MyCallbackClass()
 
 
@@ -720,17 +724,22 @@ as follows:
       nodes:
       - input.visual:
           source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
+      - model.posenet:
           callbacks:
+            run_begin:
+              [
+                "my_callback::MyCallbackClass::the_static_method",
+                "my_callback::MyCallbackClass::the_class_method",
+              ]
             run_end:
               [
-                "my_callback::my_callback_function",
-                "my_callback::MyCallbackClass::my_callback_static_method",
-                "my_callback::MyCallbackClass::my_callback_class_method",
-                "my_callback::my_callback_obj::my_callback_static_method",
-                "my_callback::my_callback_obj::my_callback_class_method",
-                "my_callback::my_callback_obj::my_callback_instance_method",
+                "my_callback::general_function",
+                "my_callback::my_callback_obj::the_static_method",
+                "my_callback::my_callback_obj::the_class_method",
+                "my_callback::my_callback_obj::the_instance_method",
                 "cb_dir.my_cb::my_cb_function",
               ]
+      - draw.poses
       - output.screen
 
 The following table illustrates how the callback definitions map to their respective
@@ -739,17 +748,17 @@ callback functions:
 +---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
 | Definition                                                    | Function                                           | Script location                             |
 +===============================================================+====================================================+=============================================+
-| ``my_callback::my_callback_function``                         | ``my_callback_function()``                         | ``callbacks/my_callback.py``                |
+| ``my_callback::general_function``                             | ``general_function()``                             | ``callbacks/my_callback.py``                |
 +---------------------------------------------------------------+----------------------------------------------------+                                             +
-| ``my_callback::MyCallbackClass::my_callback_static_method``   | ``MyCallbackClass.my_callback_static_method()``    |                                             |
+| ``my_callback::MyCallbackClass::the_static_method``           | ``MyCallbackClass.the_static_method()``            |                                             |
 +---------------------------------------------------------------+                                                    +                                             +
-| ``my_callback::my_callback_obj::my_callback_static_method``   |                                                    |                                             |
+| ``my_callback::my_callback_obj::the_static_method``           |                                                    |                                             |
 +---------------------------------------------------------------+----------------------------------------------------+                                             +
-| ``my_callback::MyCallbackClass::my_callback_class_method``    | ``MyCallbackClass.my_callback_class_method()``     |                                             |
+| ``my_callback::MyCallbackClass::the_class_method``            | ``MyCallbackClass.the_class_method()``             |                                             |
 +---------------------------------------------------------------+                                                    +                                             +
-| ``my_callback::my_callback_obj::my_callback_class_method``    |                                                    |                                             |
+| ``my_callback::my_callback_obj::the_class_method``            |                                                    |                                             |
 +---------------------------------------------------------------+----------------------------------------------------+                                             +
-| ``my_callback::my_callback_obj::my_callback_instance_method`` | ``MyCallbackClass::my_callback_instance_method()`` |                                             |
+| ``my_callback::my_callback_obj::the_instance_method``         | ``MyCallbackClass::the_instance_method()``         |                                             |
 +---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
 | ``cb_dir.my_cb::my_cb_function``                              | ``my_cb_function()``                               | ``callbacks/cb_dir/my_cb.py``               |
 +---------------------------------------------------------------+----------------------------------------------------+---------------------------------------------+
@@ -760,19 +769,25 @@ Running the pipeline with :greenbox:`peekingduck run` should give the following 
 
       | [Truncated]
       |
-      | 2022-11-09 09:04:04 peekingduck.declarative_loader  INFO:  Config for node input.visual is updated to: 'callbacks': {'run_end': ['my_callback::my_callback_function', 'my_callback::MyCallbackClass::my_callback_static_method', 'my_callback::MyCallbackClass::my_callback_class_method', 'my_callback::my_callback_obj::my_callback_static_method', 'my_callback::my_callback_obj::my_callback_class_method', 'my_callback::my_callback_obj::my_callback_instance_method', 'cb_dir.my_cb::my_cb_function']}
-      | 2022-11-09 09:04:04 peekingduck.pipeline.nodes.input.visual  INFO:  Input size: 710 by 540
-      | 2022-11-09 09:04:04 peekingduck.declarative_loader  INFO:  Initializing output.screen node...
-      | Called my_callback_function
-      | Called my_callback_static_method
-      | Called my_callback_class_method
-      | Called my_callback_static_method
-      | Called my_callback_class_method
-      | Called my_callback_instance_method
+      | 2022-12-01 17:33:23 peekingduck.declarative_loader  INFO:  Config for node model.posenet is updated to: 'callbacks': {'run_begin': ['my_callback::MyCallbackClass::the_static_method', 'my_callback::MyCallbackClass::the_class_method'], 'run_end': ['my_callback::general_function', 'my_callback::my_callback_obj::the_static_method', 'my_callback::my_callback_obj::the_class_method', 'my_callback::my_callback_obj::the_instance_method', 'cb_dir.my_cb::my_cb_function']}
+      | 2022-12-01 17:33:23 peekingduck.nodes.model.posenetv1.posenet_files.predictor  INFO:  PoseNet model loaded with following configs:
+      |         Model type: resnet,
+      |         Input resolution: (225, 225),
+      |         Max pose detection: 10,
+      |         Score threshold: 0.4
+      | 2022-12-01 17:33:26 peekingduck.declarative_loader  INFO:  Initializing draw.poses node...
+      | 2022-12-01 17:33:26 peekingduck.declarative_loader  INFO:  Initializing output.screen node...
+      | Called the_static_method
+      | Called the_class_method
+      | Called general_function
+      |   filename=video.mp4
+      | Called the_static_method
+      | Called the_class_method
+      | Called the_instance_method
+      |   num_keypoint_scores=17
       | Called my_cb_function
       |
       | [Truncated]
-
 
 
 Interfacing with SQL Using Callbacks
