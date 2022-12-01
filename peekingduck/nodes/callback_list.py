@@ -150,9 +150,7 @@ def import_module_from_file_location(module_name: str, location: Path) -> Module
         be used.
     """
     spec = importlib.util.spec_from_file_location(
-        #  module_name, location / f"{module_name}.py"
-        module_name,
-        location.joinpath(*module_name.split(".")).with_suffix(".py"),
+        module_name, location.joinpath(*module_name.split(".")).with_suffix(".py")
     )
     # use default loader
     assert spec is not None and spec.loader is not None

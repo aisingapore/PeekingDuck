@@ -81,7 +81,7 @@ def obj_det_change_class_name_to_id(node_name: str, value: List[Any]) -> List[in
                            If class names, convert to object IDs.
 
     Returns:
-        Tuple[str, List[int]]: "detect", list of sorted object IDs.
+        List[int]: List of sorted object IDs.
     """
     class_id_map = obj_det_load_class_id_mapping(node_name)
 
