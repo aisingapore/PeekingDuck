@@ -84,7 +84,7 @@ class CallbackList:
         Args:
             callback_dict (Dict[str, List[str]]): A dictionary defined in the
                 pipeline config file. Maps `event_type` to a list of callback
-                definitions. Each callback defintion should contain:
+                definition. Each callback defintion should contain:
                     <module>[.<submodule>]*[::<callback class>]::<callback function>
                 The callback modules are expected to be found in the
                 "callbacks" directory in the same location as the pipeline
@@ -133,7 +133,7 @@ def chain_getattr(obj: object, names: List[str], *args: Any) -> Any:
 
 
 def import_module_from_file_location(module_name: str, location: Path) -> ModuleType:
-    """Imports module from the specified location without haivng to modify
+    """Imports module from the specified location without having to modify
     `sys.path`.
 
     Args:
