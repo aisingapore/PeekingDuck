@@ -613,17 +613,17 @@ For example, in the following pipeline config:
       :linenos:
 
       nodes:
-      - input.visual:
-      - model.posenet
+      - input.visual
+      - model.posenet:
           callbacks:
             run_begin: [<callback 1>]
-            run_end: [<callback 2>]
+            run_end: [<callback 2>, <callback 3>, <callback 4>]
       - draw.poses
       - output.screen
 
 After a image frame is read by :mod:`input.visual`, ``<callback 1>`` is invoked,
-followed by :mod:`model.posenet`'s ``run()`` method, and ``<callback 2>`` is invoked
-after that.
+followed by :mod:`model.posenet`'s ``run()`` method, then ``<callback 2>``, ``<callback 3>``,
+and ``<callback 4>`` are invoked after that.
 
 Callback Definition
 ^^^^^^^^^^^^^^^^^^^
@@ -647,6 +647,9 @@ the `EBNF notation <https://en.wikipedia.org/wiki/Extended_Backus%E2%80%93Naur_f
       function        = ? name of callback function ?
       method          = ? name of class/static methods ?
       instance method = ? name of instance method ? 
+
+When using ``<instance name>::<instance method>`` for ``callback part``, the
+instance object has to be in the script's global scope. 
 
 The ``callbacks`` directory, which houses the scripts containing the callback functions,
 is expected to be at the same location of the pipeline config file. For example,
@@ -689,6 +692,8 @@ given the following directory structure and file contents:
                  print("Called my_callback_instance_method")
 
 
+         # my_callback_obj has to be visible from my_callback.py's global scope
+         # to enable access to my_callback_instance_method()
          my_callback_obj = MyCallbackClass()
 
 
