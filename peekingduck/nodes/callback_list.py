@@ -84,7 +84,7 @@ class CallbackList:
         Args:
             callback_dict (Dict[str, List[str]]): A dictionary defined in the
                 pipeline config file. Maps `event_type` to a list of callback
-                definition. Each callback defintion should contain:
+                definitions. Each callback definition should contain:
                     <module>[.<submodule>]*[::<callback class>]::<callback function>
                 The callback modules are expected to be found in the
                 "callbacks" directory in the same location as the pipeline
