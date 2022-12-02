@@ -24,10 +24,10 @@ class ConcreteNode(AbstractNode):
     def __init__(self, config={}, **kwargs):
         super().__init__(config=config, node_path="input.visual", **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {"data1": 1, "data2": 42}
 
-    def _get_config_types(self) -> Dict[str, Any]:
+    def _get_config_types(self):
         """Returns dictionary mapping the node's config keys to respective types."""
         return {
             "buffering": bool,
@@ -54,7 +54,7 @@ class ObjDetNodeEfficientDet(AbstractNode):
         node_name = "model.efficientdet"
         super().__init__(config=config, node_path=node_name, **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {}
 
 
@@ -63,7 +63,7 @@ class ObjDetNodeYolo(AbstractNode):
         node_name = "model.yolo"
         super().__init__(config=config, node_path=node_name, **kwargs)
 
-    def run(self, inputs: Dict):
+    def run(self, inputs):
         return {}
 
 
@@ -129,19 +129,16 @@ class TestNode:
         key = "detect"
         val = ["*"]
         # fmt: off
-        ground_truth = (
-            "detect",
-            [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16,
-                17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 30, 31, 32, 33, 34, 35,
-                36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52,
-                53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 69, 71, 72,
-                73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89
-            ]
-        )
+        ground_truth = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16,
+            17, 18, 19, 20, 21, 22, 23, 24, 26, 27, 30, 31, 32, 33, 34, 35,
+            36, 37, 38, 39, 40, 41, 42, 43, 45, 46, 47, 48, 49, 50, 51, 52,
+            53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 66, 69, 71, 72,
+            73, 74, 75, 76, 77, 78, 79, 80, 81, 83, 84, 85, 86, 87, 88, 89
+        ]
         # fmt: on
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_obj_det_wildcard_yolo(self):
@@ -150,19 +147,16 @@ class TestNode:
         key = "detect"
         val = ["*"]
         # fmt: off
-        ground_truth = (
-            "detect",
-            [
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-                16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
-                32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
-                48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
-                64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79
-            ]
-        )
+        ground_truth = [
+            0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
+            16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31,
+            32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47,
+            48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63,
+            64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79
+        ]
         # fmt: on
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_change_class_name_to_id_all_text(self):
@@ -170,9 +164,9 @@ class TestNode:
         node_name = "model.yolo"
         key = "detect"
         val = ["person", "car", "BUS", "CELL PHONE", "oven"]
-        ground_truth = ("detect", [0, 2, 5, 67, 69])
+        ground_truth = [0, 2, 5, 67, 69]
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_change_class_name_to_id_all_int(self):
@@ -180,9 +174,9 @@ class TestNode:
         node_name = "model.yolo"
         key = "detect"
         val = [0, 1, 2, 3, 5]
-        ground_truth = ("detect", [0, 1, 2, 3, 5])
+        ground_truth = [0, 1, 2, 3, 5]
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_change_class_name_to_id_mix_int_text(self):
@@ -190,9 +184,9 @@ class TestNode:
         node_name = "model.yolo"
         key = "detect"
         val = [4, "bicycle", 10, "LAPTOP", "teddy bear"]
-        ground_truth = ("detect", [1, 4, 10, 63, 77])
+        ground_truth = [1, 4, 10, 63, 77]
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_change_class_name_to_id_mix_int_text_duplicates(self):
@@ -209,9 +203,9 @@ class TestNode:
             63,
             10,
         ]
-        ground_truth = ("detect", [1, 4, 10, 63, 77])
+        ground_truth = [1, 4, 10, 63, 77]
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     def test_config_loader_change_class_name_to_id_mix_int_text_errors(self):
@@ -230,9 +224,9 @@ class TestNode:
             "pokemon",
             "scary monster",
         ]
-        ground_truth = ("detect", [0, 1, 4, 10, 63, 77])
+        ground_truth = [0, 1, 4, 10, 63, 77]
 
-        test_res = obj_det_change_class_name_to_id(node_name, key, val)
+        test_res = obj_det_change_class_name_to_id(node_name, val)
         assert test_res == ground_truth
 
     #

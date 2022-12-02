@@ -1,4 +1,5 @@
 input: ["obj_3D_locs"]
 output: ["obj_attrs"]
+callbacks: {}
 
 obj_dist_threshold: 1.5

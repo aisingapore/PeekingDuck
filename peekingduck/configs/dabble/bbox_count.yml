@@ -1,2 +1,3 @@
 input: ["bboxes"]
 output: ["count"]
+callbacks: {}

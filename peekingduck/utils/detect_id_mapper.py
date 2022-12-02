@@ -16,7 +16,7 @@
 
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 import yaml
 
@@ -68,9 +68,7 @@ def obj_det_load_class_id_mapping(node_name: str) -> Dict[str, int]:
     return class_id_map
 
 
-def obj_det_change_class_name_to_id(
-    node_name: str, key: str, value: List[Any]
-) -> Tuple[str, List[int]]:
+def obj_det_change_class_name_to_id(node_name: str, value: List[Any]) -> List[int]:
     """Process object detection model node's detect key and check for
     any class names to be converted to object IDs.
     E.g. person to 0, car to 2
@@ -78,13 +76,12 @@ def obj_det_change_class_name_to_id(
     Args:
         node_name (str): to determine which object detection model is being used
                          because different models can use different object IDs.
-        key (str): expected to be "detect"; error otherwise.
         value (List[Any]): list of class names or object IDs for detection.
                            If object IDs, do nothing.
                            If class names, convert to object IDs.
 
     Returns:
-        Tuple[str, List[int]]: "detect", list of sorted object IDs.
+        List[int]: List of sorted object IDs.
     """
     class_id_map = obj_det_load_class_id_mapping(node_name)
 
@@ -111,4 +108,4 @@ def obj_det_change_class_name_to_id(
         x if isinstance(x, int) else class_id_map.get(x, 0) for x in value_lc
     }
     obj_ids_sorted_list = sorted(list(obj_ids_set))
-    return key, obj_ids_sorted_list
+    return obj_ids_sorted_list

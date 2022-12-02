@@ -1,5 +1,6 @@
 input: ["img"]
 output: ["bboxes", "bbox_labels", "bbox_scores", "obj_attrs"]
+callbacks: {}
 
 optional_inputs: ["mot_metadata"]
 

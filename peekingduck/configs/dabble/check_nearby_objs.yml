@@ -1,5 +1,6 @@
 input: ["obj_3D_locs"]
 output: ["obj_attrs"]
+callbacks: {}
 
 near_threshold: 2.0
 tag_msg: "TOO CLOSE!"

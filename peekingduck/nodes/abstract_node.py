@@ -16,19 +16,20 @@
 Abstract Node class for all nodes.
 """
 
-import collections
+import collections.abc
 import logging
-from abc import ABCMeta, abstractmethod
+from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Union
 
 from typeguard import check_type
 
 from peekingduck.config_loader import ConfigLoader
+from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
-class AbstractNode(metaclass=ABCMeta):
+class AbstractNode(ABC):
     """Abstract Node class for inheritance by nodes.
 
     Defines default attributes and methods of a node.
@@ -37,22 +38,18 @@ class AbstractNode(metaclass=ABCMeta):
         config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
         node_path (:obj:`str`): Period-separated (``.``) relative path to the
             node from the ``peekingduck`` directory. **Default: ""**.
-        pkd_base_dir (:obj:`pathlib.Path` | :obj:`None`): Path to
-            ``peekingduck`` directory.
+        pkd_base_dir (:obj:`pathlib.Path`): Path to ``peekingduck`` directory.
     """
 
     def __init__(
         self,
         config: Dict[str, Any] = None,
         node_path: str = "",
-        pkd_base_dir: Optional[Path] = None,
+        pkd_base_dir: Path = Path(__file__).resolve().parents[1],
         **kwargs: Any,
     ) -> None:
         self._name = node_path
         self.logger = logging.getLogger(self._name)
-
-        if not pkd_base_dir:
-            pkd_base_dir = Path(__file__).resolve().parents[1]
 
         self.node_name = ".".join(node_path.split(".")[-2:])
 
@@ -67,30 +64,16 @@ class AbstractNode(metaclass=ABCMeta):
         self.config_loader = ConfigLoader(pkd_base_dir)
         self.load_node_config(config, kwargs)  # type: ignore
 
-        # For object detection nodes, convert class names to class ids, if any
-        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
-            key = "detect" if hasattr(self, "detect") else "detect_ids"
-            current_ids = self.config[key]
-            _, updated_ids = obj_det_change_class_name_to_id(
-                self.node_name, key, current_ids
-            )
-            # replace "detect_ids" with new "detect"
-            self.config["detect"] = updated_ids
+        if hasattr(self, "callbacks"):
+            self.callback_list = CallbackList.from_dict(self.callbacks)
+        else:
+            self.callback_list = CallbackList()
+
+        self._change_class_name_to_id()
 
     @classmethod
-    def __subclasshook__(cls: Any, subclass: Any) -> bool:
+    def __subclasshook__(cls, subclass: Any) -> bool:
         return hasattr(subclass, "run") and callable(subclass.run)
-
-    @abstractmethod
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-        """abstract method needed for running node"""
-        raise NotImplementedError("This method needs to be implemented")
-
-    # pylint: disable=R0201, W0107
-    def release_resources(self) -> None:
-        """To gracefully release any acquired system resources, e.g. webcam
-        NOTE: To be overridden by subclass if required"""
-        pass
 
     @property
     def inputs(self) -> List[str]:
@@ -106,6 +89,10 @@ class AbstractNode(metaclass=ABCMeta):
     def name(self) -> str:
         """Node name."""
         return self._name
+
+    @abstractmethod
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        """Abstract method needed for running node."""
 
     def load_node_config(
         self, config: Dict[str, Any], kwargs_config: Dict[str, Any]
@@ -137,6 +124,20 @@ class AbstractNode(metaclass=ABCMeta):
         for key in self.config:
             setattr(self, key, self.config[key])
 
+    def release_resources(self) -> None:
+        """To gracefully release any acquired system resources, e.g. webcam
+        NOTE: To be overridden by subclass if required.
+        """
+
+    def _change_class_name_to_id(self) -> None:
+        """Convert class names to class IDs for object detection nodes, if any"""
+        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
+            key = "detect" if hasattr(self, "detect") else "detect_ids"
+            current_ids = self.config[key]
+            updated_ids = obj_det_change_class_name_to_id(self.node_name, current_ids)
+            # replace "detect_ids" with new "detect"
+            self.config["detect"] = updated_ids
+
     def _check_type(
         self, config: Dict[str, Any], config_types: Dict[str, Any], parent: str = ""
     ) -> None:
@@ -160,7 +161,7 @@ class AbstractNode(metaclass=ABCMeta):
         """
         if dict_update:
             for key, value in dict_update.items():
-                if isinstance(value, collections.abc.Mapping):
+                if isinstance(value, collections.abc.Mapping) and key != "callbacks":
                     dict_orig[key] = self._edit_config(dict_orig.get(key, {}), value)
                 elif key not in dict_orig:
                     self.logger.warning(
@@ -173,6 +174,6 @@ class AbstractNode(metaclass=ABCMeta):
                     )
         return dict_orig
 
-    def _get_config_types(self) -> Dict[str, Any]:
+    def _get_config_types(self) -> Dict[str, Any]:  # pylint: disable=no-self-use
         """Returns dictionary mapping the node's config keys to respective types."""
         return {}
