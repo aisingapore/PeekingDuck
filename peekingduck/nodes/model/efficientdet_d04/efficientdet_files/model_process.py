@@ -23,9 +23,10 @@ from typing import Tuple
 
 import cv2
 import numpy as np
+from numba import jit
 
-IMG_MEAN = [0.485, 0.456, 0.406]
-IMG_STD = [0.229, 0.224, 0.225]
+IMG_MEAN = np.array((0.485, 0.456, 0.406))
+IMG_STD = np.array((0.229, 0.224, 0.225))
 
 
 def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, float]:
@@ -40,26 +41,45 @@ def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, fl
         scale (float): the scale in which the original image was resized to
     """
     # image, RGB
-    image_height, image_width = image.shape[:2]
-    if image_height > image_width:
-        scale = image_size / image_height
+    height, width = image.shape[:2]
+    scale = image_size / max(height, width)
+    if height > width:
         resized_height = image_size
-        resized_width = int(image_width * scale)
+        resized_width = int(width * scale)
     else:
-        scale = image_size / image_width
-        resized_height = int(image_height * scale)
+        resized_height = int(height * scale)
         resized_width = image_size
+    pad_height = image_size - resized_height
+    pad_width = image_size - resized_width
 
     image = cv2.resize(image, (resized_width, resized_height))
-    image = image.astype(np.float32)
-    image /= 255.0
-    image -= IMG_MEAN
-    image /= IMG_STD
-    pad_h = image_size - resized_height
-    pad_w = image_size - resized_width
-    image = np.pad(image, [(0, pad_h), (0, pad_w), (0, 0)], mode="constant")
+    image = _normalize_and_pad(image, pad_height, pad_width)
 
     return image, scale
+
+
+@jit(nopython=True)
+def _normalize_and_pad(
+    image: np.ndarray, pad_height: int, pad_width: int
+) -> np.ndarray:
+    """Normalizes image values and pad the right and bottom of the image.
+
+    Args:
+        image (np.ndarray): The input image with uint8 pixel values.
+        pad_height (int): The amount of vertical padding.
+        pad_width (int): The amount of horizontal padding.
+
+    Returns:
+        (np.ndarray): The padded image with normalized values.
+    """
+    image = image.astype(np.float32)
+    image = (image / 255.0 - IMG_MEAN) / IMG_STD
+    padded_image = np.zeros(
+        (image.shape[0] + pad_height, image.shape[1] + pad_width, image.shape[2]),
+        dtype=np.float32,
+    )
+    padded_image[: image.shape[0], : image.shape[1]] = image
+    return np.expand_dims(padded_image, axis=0)
 
 
 def postprocess_boxes(

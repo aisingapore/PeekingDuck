@@ -75,9 +75,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         image, scale = self._preprocess(image)
 
         # run network
-        graph_input = tf.convert_to_tensor(
-            np.expand_dims(image, axis=0), dtype=tf.float32
-        )
+        graph_input = tf.convert_to_tensor(image, dtype=tf.float32)
         boxes, scores, labels = self.efficient_det(x=graph_input)
         network_output = (
             np.squeeze(boxes.numpy()),
