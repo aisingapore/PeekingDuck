@@ -29,7 +29,7 @@ from peekingduck.nodes.callback_list import CallbackList
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 
-class AbstractNode(ABC):
+class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
     """Abstract Node class for inheritance by nodes.
 
     Defines default attributes and methods of a node.
@@ -131,12 +131,15 @@ class AbstractNode(ABC):
 
     def _change_class_name_to_id(self) -> None:
         """Convert class names to class IDs for object detection nodes, if any"""
-        if self.node_name in ["model.yolo", "model.efficientdet", "model.yolox"]:
+        if not any(key in self.config for key in ("detect", "detect_ids")):
+            return
+        if self.node_name not in {"model.yolo_face", "model.huggingface_hub"}:
             key = "detect" if hasattr(self, "detect") else "detect_ids"
             current_ids = self.config[key]
             updated_ids = obj_det_change_class_name_to_id(self.node_name, current_ids)
             # replace "detect_ids" with new "detect"
             self.config["detect"] = updated_ids
+            self.detect = updated_ids
 
     def _check_type(
         self, config: Dict[str, Any], config_types: Dict[str, Any], parent: str = ""
