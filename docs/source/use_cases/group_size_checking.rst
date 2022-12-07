@@ -104,7 +104,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        near_threshold: 1.5
    - dabble.check_large_groups:
        group_size_threshold: 2
-   - draw.poses
+   - draw.pose
    - draw.group_bbox_and_tag
    - output.screen
 

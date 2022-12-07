@@ -13,7 +13,7 @@
 # limitations under the License.
 
 """
-Test for draw poses node
+Test for draw.pose node
 """
 
 from unittest import mock
@@ -23,13 +23,13 @@ import numpy as np
 import pytest
 import yaml
 
-from peekingduck.nodes.draw.poses import Node
+from peekingduck.nodes.draw.pose import Node
 from tests.conftest import PKD_DIR
 
 
 @pytest.fixture
-def draw_poses_config():
-    with open(PKD_DIR / "configs" / "draw" / "poses.yml") as infile:
+def draw_pose_config():
+    with open(PKD_DIR / "configs" / "draw" / "pose.yml") as infile:
         node_config = yaml.safe_load(infile)
     node_config["root"] = PKD_DIR
     return node_config
@@ -65,9 +65,9 @@ def invalid_color_tuple_len(request):
     return request.param["value"]
 
 
-class TestPoses:
-    def test_no_poses(self, draw_poses_config, create_image):
-        draw_poses_node = Node(draw_poses_config)
+class TestPose:
+    def test_no_poses(self, draw_pose_config, create_image):
+        draw_pose_node = Node(draw_pose_config)
 
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
@@ -83,32 +83,30 @@ class TestPoses:
             "img": output_img,
         }
 
-        draw_poses_node.run(inputs)
+        draw_pose_node.run(inputs)
 
         np.testing.assert_equal(original_img, output_img)
 
     @pytest.mark.parametrize(
         "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
     )
-    def test_invalid_color_name(
-        self, config_key, draw_poses_config, invalid_color_name
-    ):
-        draw_poses_config[config_key] = invalid_color_name
+    def test_invalid_color_name(self, config_key, draw_pose_config, invalid_color_name):
+        draw_pose_config[config_key] = invalid_color_name
 
         with pytest.raises(ValueError) as excinfo:
-            _ = Node(draw_poses_config)
+            _ = Node(draw_pose_config)
         assert f"{config_key} must be one of" in str(excinfo.value)
 
     @pytest.mark.parametrize(
         "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
     )
     def test_invalid_color_range(
-        self, config_key, draw_poses_config, invalid_color_range
+        self, config_key, draw_pose_config, invalid_color_range
     ):
-        draw_poses_config[config_key] = invalid_color_range
+        draw_pose_config[config_key] = invalid_color_range
 
         with pytest.raises(ValueError) as excinfo:
-            _ = Node(draw_poses_config)
+            _ = Node(draw_pose_config)
         assert f"All elements of {config_key} must be between [0.0, 255.0]" in str(
             excinfo.value
         )
@@ -117,24 +115,24 @@ class TestPoses:
         "config_key", ["keypoint_dot_color", "keypoint_connect_color"]
     )
     def test_invalid_color_tuple_len(
-        self, config_key, draw_poses_config, invalid_color_tuple_len
+        self, config_key, draw_pose_config, invalid_color_tuple_len
     ):
-        draw_poses_config[config_key] = invalid_color_tuple_len
+        draw_pose_config[config_key] = invalid_color_tuple_len
 
         with pytest.raises(ValueError) as excinfo:
-            _ = Node(draw_poses_config)
+            _ = Node(draw_pose_config)
         assert "BGR values must be a list of length 3." in str(excinfo.value)
 
     @mock.patch("cv2.line", wraps=cv2.line)
     @mock.patch("cv2.circle", wraps=cv2.circle)
     def test_if_configs_are_used(
-        self, mock_circle, mock_line, draw_poses_config, create_image
+        self, mock_circle, mock_line, draw_pose_config, create_image
     ):
         color = [10, 20, 30]  # pass in a color that is different from the default
-        draw_poses_config.update(
+        draw_pose_config.update(
             {"keypoint_dot_color": color, "keypoint_connect_color": color}
         )
-        draw_poses_node = Node(draw_poses_config)
+        draw_pose_node = Node(draw_pose_config)
 
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
@@ -152,7 +150,7 @@ class TestPoses:
             "img": output_img,
         }
 
-        draw_poses_node.run(inputs)
+        draw_pose_node.run(inputs)
 
         # asserts that cv2.circle()'s 4th argument `color` is the same as the config's color
         assert mock_circle.call_args[0][3] == tuple(color)

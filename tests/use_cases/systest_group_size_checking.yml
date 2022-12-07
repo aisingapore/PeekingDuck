@@ -9,6 +9,6 @@ nodes:
     near_threshold: 1.5
 - dabble.check_large_groups:
     group_size_threshold: 2
-- draw.bbox # not in demo config, but included here
-- draw.poses
+- draw.bbox     # not in demo config, but included here
+- draw.pose
 - draw.group_bbox_and_tag

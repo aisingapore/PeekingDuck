@@ -618,7 +618,7 @@ For example, in the following pipeline config:
           callbacks:
             run_begin: [<callback 1>]
             run_end: [<callback 2>, <callback 3>, <callback 4>]
-      - draw.poses
+      - draw.pose
       - output.screen
 
 After a image frame is read by :mod:`input.visual`, ``<callback 1>`` is invoked,
@@ -739,7 +739,7 @@ as follows:
                 "my_callback::my_callback_obj::the_instance_method",
                 "cb_dir.my_cb::my_cb_function",
               ]
-      - draw.poses
+      - draw.pose
       - output.screen
 
 The following table illustrates how the callback definitions map to their respective
@@ -775,7 +775,7 @@ Running the pipeline with :greenbox:`peekingduck run` should give the following 
       |         Input resolution: (225, 225),
       |         Max pose detection: 10,
       |         Score threshold: 0.4
-      | 2022-12-01 17:33:26 peekingduck.declarative_loader  INFO:  Initializing draw.poses node...
+      | 2022-12-01 17:33:26 peekingduck.declarative_loader  INFO:  Initializing draw.pose node...
       | 2022-12-01 17:33:26 peekingduck.declarative_loader  INFO:  Initializing output.screen node...
       | Called the_static_method
       | Called the_class_method
@@ -1132,7 +1132,7 @@ Edit the following **files** as described below:
       - custom_nodes.dabble.wave:
           callbacks:
             run_end: ["sql_callback::sql_callback_obj::track_wave_callback"]
-      - draw.poses
+      - draw.pose
       - output.screen
 
    To use the callback function, we override the ``callbacks`` config option in

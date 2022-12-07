@@ -28,7 +28,7 @@ from peekingduck.nodes.draw.utils.pose import Pose
 class Node(ThresholdCheckerMixin, AbstractNode):
     """Draws poses onto image.
 
-    The :mod:`draw.poses` node uses the :term:`keypoints`,
+    The :mod:`draw.pose` node uses the :term:`keypoints`,
     :term:`keypoint_scores`, and :term:`keypoint_conns` predictions from pose
     models to draw the human poses onto the image. For better understanding,
     check out the pose models such as :mod:`HRNet <model.hrnet>` and

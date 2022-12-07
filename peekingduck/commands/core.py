@@ -197,7 +197,7 @@ def _create_pipeline_config_yml(
                 }
             },
             "model.posenet",
-            "draw.poses",
+            "draw.pose",
             "output.screen",
         ]
     default_yml = dict(nodes=default_nodes)

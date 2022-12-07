@@ -2,5 +2,5 @@ nodes:
 - input.visual:
     source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
 - model.posenet
-- draw.poses
+- draw.pose
 - output.screen

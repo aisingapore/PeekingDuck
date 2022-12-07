@@ -65,7 +65,7 @@ DEFAULT_YML = dict(
             }
         },
         "model.posenet",
-        "draw.poses",
+        "draw.pose",
         "output.screen",
     ]
 )
