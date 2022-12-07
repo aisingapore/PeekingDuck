@@ -13,39 +13,39 @@
 # limitations under the License.
 
 """
-Test for draw zones node
+Test for draw.zone node
 """
 
 import numpy as np
 import pytest
 
-from peekingduck.nodes.draw.zones import Node
+from peekingduck.nodes.draw.zone import Node
 
 
 @pytest.fixture
-def draw_zones():
+def draw_zone():
     node = Node({"input": ["zones", "img"], "output": ["none"]})
     return node
 
 
-class TestZones:
-    def test_no_zones(self, draw_zones, create_image):
+class TestZone:
+    def test_no_zones(self, draw_zone, create_image):
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
         input1 = {
             "img": output_img,
             "zones": [],
         }
-        draw_zones.run(input1)
+        draw_zone.run(input1)
         assert original_img.shape == output_img.shape
         np.testing.assert_equal(original_img, output_img)
 
     # formula: processed image = contrast * image + brightness
-    def test_zones(self, draw_zones, create_image):
+    def test_zones(self, draw_zone, create_image):
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
         input1 = {"img": output_img, "zones": [[(2, 2), (10, 10), (10, 20), (2, 20)]]}
-        draw_zones.run(input1)
+        draw_zone.run(input1)
 
         assert original_img.shape == output_img.shape
         np.testing.assert_raises(

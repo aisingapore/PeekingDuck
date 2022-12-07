@@ -12,7 +12,7 @@ nodes:
     ]
 - draw.bbox
 - draw.btm_midpoint
-- draw.zones
+- draw.zone
 - draw.legend:
     show: ["zone_count"]
 - output.screen

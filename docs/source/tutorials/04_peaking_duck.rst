@@ -471,7 +471,7 @@ Change ``pipeline_config.yml`` to the following:
           maximum: obj_attrs["ids"]
       - dabble.fps
       - draw.bbox
-      - draw.zones
+      - draw.zone
       - draw.tag:
           show: ["ids"]
       - draw.legend:

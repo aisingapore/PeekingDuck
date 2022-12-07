@@ -139,7 +139,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        ]
    - draw.bbox
    - draw.btm_midpoint
-   - draw.zones
+   - draw.zone
    - draw.legend:
        show: ["zone_count"]
    - output.screen

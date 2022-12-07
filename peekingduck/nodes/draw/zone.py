@@ -25,8 +25,8 @@ from peekingduck.nodes.draw.utils.zone import draw_zones
 class Node(AbstractNode):
     """Draws the boundaries of each specified zone onto the image.
 
-    The ``draw.zones`` node uses the :term:`zones` output from the
-    ``dabble.zone_count`` node to draw a bounding box that represents the zone
+    The :mod:`draw.zone` node uses the :term:`zones` output from the
+    :mod:`dabble.zone_count` node to draw a bounding box that represents the zone
     boundaries onto the image.
 
     Inputs:
