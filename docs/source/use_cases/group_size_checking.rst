@@ -101,7 +101,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
        focal_length: 1.14
        torso_factor: 0.9
    - dabble.group_nearby_objs:
-       obj_dist_threshold: 1.5
+       near_threshold: 1.5
    - dabble.check_large_groups:
        group_size_threshold: 2
    - draw.poses
@@ -123,7 +123,7 @@ Some common node behaviors that you might need to adjust are:
 * ``focal_length`` & ``torso_factor``: We calibrated these settings using a Logitech c170 webcam,
   with 2 individuals of heights about 1.7m. We recommend running a few experiments on your setup
   and calibrate these accordingly.
-* ``obj_dist_threshold``: The maximum distance between 2 individuals, in meters, for them to be
+* ``near_threshold``: The maximum distance between 2 individuals, in meters, for them to be
   considered to be part of a group.
 * ``group_size_threshold``: The acceptable group size limit.
 

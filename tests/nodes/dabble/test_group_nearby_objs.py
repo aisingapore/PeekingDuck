@@ -21,7 +21,7 @@ from peekingduck.nodes.dabble.group_nearby_objs import Node
 @pytest.fixture
 def group_nearby_objs():
     node = Node(
-        {"input": ["obj_3D_locs"], "output": ["obj_attrs"], "obj_dist_threshold": 1.5}
+        {"input": ["obj_3D_locs"], "output": ["obj_attrs"], "near_threshold": 1.5}
     )
     return node
 

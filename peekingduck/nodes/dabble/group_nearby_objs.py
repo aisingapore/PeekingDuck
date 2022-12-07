@@ -39,16 +39,19 @@ class Node(AbstractNode):
         :mod:`dabble.group_nearby_objs` produces the ``groups`` attribute.
 
     Configs:
-        obj_dist_threshold (:obj:`float`): **default = 1.5**. |br|
+        near_threshold (:obj:`float`): **default = 1.5**. |br|
             Threshold of distance, in metres, between two objects. Objects with
-            distance less than ``obj_dist_threshold`` would be assigned to the
-            same group.
+            distance less than ``near_threshold`` would be considered as near
+            and assigned to the same group.
 
     .. versionchanged:: 1.2.0
         :mod:`draw.group_nearby_objs` used to return ``obj_tags``
         (:obj:`List[str]`) as an output data type, which has been deprecated
         and now subsumed under :term:`obj_attrs`. The same attribute is
         accessed by the ``groups`` key of :term:`obj_attrs`.
+
+    .. versionchanged:: 2.0.0
+        Config ``obj_dist_threshold`` has been renamed to ``near_threshold``.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -61,7 +64,7 @@ class Node(AbstractNode):
         group. Repeat for all object pairs.
         """
         nearby_obj_pairs = self._find_nearby_obj_pairs(
-            inputs["obj_3D_locs"], self.obj_dist_threshold
+            inputs["obj_3D_locs"], self.near_threshold
         )
 
         quickfind = QuickFind(len(inputs["obj_3D_locs"]))
@@ -73,11 +76,11 @@ class Node(AbstractNode):
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
-        return {"obj_dist_threshold": float}
+        return {"near_threshold": float}
 
     @staticmethod
     def _find_nearby_obj_pairs(
-        obj_locs: List[np.ndarray], obj_dist_threshold: float
+        obj_locs: List[np.ndarray], near_threshold: float
     ) -> List[Tuple[int, int]]:
         """If the distance between 2 objects are less than the threshold,
         append their indexes to nearby_obj_pairs as a tuple.
@@ -90,7 +93,7 @@ class Node(AbstractNode):
 
                 dist_bet = np.linalg.norm(loc_1 - loc_2)
 
-                if dist_bet <= obj_dist_threshold:
+                if dist_bet <= near_threshold:
                     if (idx_2, idx_1) not in nearby_obj_pairs:
                         nearby_obj_pairs.append((idx_1, idx_2))
 

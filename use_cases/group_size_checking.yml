@@ -6,7 +6,7 @@ nodes:
     focal_length: 1.14
     torso_factor: 0.9
 - dabble.group_nearby_objs:
-    obj_dist_threshold: 1.5
+    near_threshold: 1.5
 - dabble.check_large_groups:
     group_size_threshold: 2
 - draw.poses
