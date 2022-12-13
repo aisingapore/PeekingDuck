@@ -28,9 +28,7 @@ from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     IMAGE_NET_MEAN,
     MIN_PART_SCORE,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
-    decode_multiple_poses,
-)
+from peekingduck.nodes.model.posenetv1.posenet_files.decoder import Decoder
 from peekingduck.utils.graph_functions import load_graph
 from peekingduck.utils.pose.keypoint_handler import COCOBody
 
@@ -49,6 +47,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         resolution: Dict[str, int],
         max_pose_detection: int,
         score_threshold: float,
+        use_jit: bool,
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
@@ -61,8 +60,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         self.resolution = int(resolution["height"]), int(resolution["width"])
         self.max_pose_detection = max_pose_detection
         self.score_threshold = score_threshold
+        self.use_jit = use_jit
 
         self.keypoint_handler = COCOBody(score_threshold=MIN_PART_SCORE)
+        self.decoder = Decoder(score_threshold, use_jit)
         self.posenet = self._create_posenet_model()
 
     def predict(  # pylint: disable=too-many-locals
@@ -94,10 +95,11 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
     def _create_posenet_model(self) -> Callable:
         self.logger.info(
             "PoseNet model loaded with following configs:\n\t"
-            f"Model type: {self.model_type},\n\t"
-            f"Input resolution: {self.resolution},\n\t"
-            f"Max pose detection: {self.max_pose_detection},\n\t"
-            f"Score threshold: {self.score_threshold}"
+            f"Model type: {self.model_type}\n\t"
+            f"Input resolution: {self.resolution}\n\t"
+            f"Max pose detection: {self.max_pose_detection}\n\t"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Compile with Numba JIT: {self.use_jit}"
         )
         return self._load_posenet_weights()
 
@@ -141,13 +143,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         if self.model_type == "resnet":
             outputs[0] = tf.keras.activations.sigmoid(outputs[0])
 
-        pose_count = decode_multiple_poses(
-            outputs,
-            pose_scores,
-            poses,
-            OUTPUT_STRIDE,
-            min_pose_score=self.score_threshold,
-        )
+        pose_count = self.decoder.decode(outputs, pose_scores, poses, OUTPUT_STRIDE)
 
         pose_scores = pose_scores[:pose_count]
         # Swap coordinates ordering

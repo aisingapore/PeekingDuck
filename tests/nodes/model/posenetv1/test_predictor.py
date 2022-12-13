@@ -54,6 +54,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         assert predictor is not None, "Predictor is not instantiated"
 
@@ -67,6 +68,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         output = predictor.predict(single_person_img)
         assert len(output) == 4, "Predicted output has missing keys"
@@ -83,6 +85,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         _, output_scale, image_size = predictor._preprocess(single_person_img)
         assert isinstance(image_size, list), "Image size must be a list"
@@ -101,6 +104,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not instantiated"
@@ -115,6 +119,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"
@@ -132,6 +137,7 @@ class TestPredictor:
             posenet_config["resolution"],
             posenet_config["max_pose_detection"],
             posenet_config["score_threshold"],
+            posenet_config["use_jit"],
         )
         posenet_model = predictor._create_posenet_model()
         assert posenet_model is not None, "Model is not created"

@@ -46,6 +46,7 @@ class PoseNetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["resolution"],
             self.config["max_pose_detection"],
             self.config["score_threshold"],
+            self.config["use_jit"],
         )
 
     def predict(
