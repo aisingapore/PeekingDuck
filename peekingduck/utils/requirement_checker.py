@@ -19,7 +19,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Iterator, List, TextIO, Tuple, Union
+from typing import Any, Iterator, List, Optional, TextIO, Tuple, Union
 
 import pkg_resources as pkg
 
@@ -88,7 +88,9 @@ class OptionalRequirement:
 
 
 def check_requirements(
-    identifier: str, requirements_path: Path = ROOT / "optional_requirements.txt"
+    identifier: str,
+    requirements_path: Path = ROOT / "optional_requirements.txt",
+    flags: Optional[str] = None,
 ) -> int:
     """Checks if the packages specified by the ``identifier`` in the
     requirements file at ``requirements_path`` are present on the system. If
@@ -103,7 +105,7 @@ def check_requirements(
         (:obj:`int`): The number of packages updated.
     """
     with open(requirements_path) as infile:
-        requirements = list(_parse_requirements(infile, identifier))
+        requirements = list(_parse_requirements(infile, identifier, flags))
 
     n_update = 0
     for req in requirements:
@@ -139,7 +141,9 @@ def check_requirements(
     return n_update
 
 
-def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequirement]:
+def _parse_requirements(
+    file: TextIO, identifier: str, flags: Optional[str]
+) -> Iterator[OptionalRequirement]:
     """Yield ``OptionalRequirement`` objects for each specification in
     ``strings``.
 
@@ -158,7 +162,16 @@ def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequi
     for line in lines:
         # Drop comments -- a hash without a space may be in a URL.
         if " #" in line:
-            line = line[: line.find(" #")]
+            comment_start = line.find(" #")
+            comment_part = line[comment_start:]
+            if (flags is None and "flags:" in comment_part) or (
+                flags is not None and f"flags: {flags}" not in comment_part
+            ):
+                # Skip current line if:
+                # 1) it is a optional req with flags and flags are not provided, or
+                # 2) it is not selected by the provided flags
+                continue
+            line = line[:comment_start]
         req_type, req_name = _split_type_and_name(line)
         if req_type == PKD_REQ_TYPE_PYTHON:
             reqs = [pkg.Requirement.parse(name) for name in req_name.split("|")]

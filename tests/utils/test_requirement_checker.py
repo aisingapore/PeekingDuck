@@ -42,7 +42,7 @@ PY_PKGS = [
 # Comments are added to get all branches of parse_requirements to run
 REQUIREMENTS_CONTENT = [
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} pytest >= 6.2.3",
-    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[0])}",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[0])} # inline comment",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[1])}",
     f"{NODE_WITH_SYS_PKG} {PKG_REQ_TYPE_SYSTEM} sys_package_name0  # inline comment",
     f"{NODE_WITH_SYS_PKG} {PKG_REQ_TYPE_SYSTEM} sys_package_name1",
