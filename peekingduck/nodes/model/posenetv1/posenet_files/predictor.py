@@ -27,12 +27,11 @@ import tensorflow as tf
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     IMAGE_NET_MEAN,
     MIN_PART_SCORE,
+    OUTPUT_STRIDE,
 )
 from peekingduck.nodes.model.posenetv1.posenet_files.decoder import Decoder
 from peekingduck.utils.graph_functions import load_graph
 from peekingduck.utils.pose.keypoint_handler import COCOBody
-
-OUTPUT_STRIDE = 16
 
 
 class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-methods
