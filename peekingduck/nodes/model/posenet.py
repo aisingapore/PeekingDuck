@@ -19,11 +19,11 @@ from typing import Any, Dict, Optional, Union
 import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import RequirementCheckerMixin
 from peekingduck.nodes.model.posenetv1 import posenet_model
-from peekingduck.utils.requirement_checker import RequirementChecker, check_requirements
 
 
-class Node(AbstractNode):
+class Node(RequirementCheckerMixin, AbstractNode):
     """Initializes a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
@@ -71,11 +71,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        jit_key = "use_jit"
-        if self.config[jit_key]:
-            RequirementChecker.n_update += check_requirements(
-                self.node_name, flags=jit_key
-            )
+        self.check_requirements("use_jit")
 
         self.model = posenet_model.PoseNetModel(self.config)
 

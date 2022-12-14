@@ -20,11 +20,11 @@ import cv2
 import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import RequirementCheckerMixin
 from peekingduck.nodes.model.efficientdet_d04 import efficientdet_model
-from peekingduck.utils.requirement_checker import RequirementChecker, check_requirements
 
 
-class Node(AbstractNode):
+class Node(RequirementCheckerMixin, AbstractNode):
     """Initializes an EfficientDet model to detect bounding boxes from an image.
 
     The EfficientDet node is capable of detecting objects from 80 categories.
@@ -70,11 +70,7 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
-        jit_key = "use_jit"
-        if self.config[jit_key]:
-            RequirementChecker.n_update += check_requirements(
-                self.node_name, flags=jit_key
-            )
+        self.check_requirements("use_jit")
 
         self.model = efficientdet_model.EfficientDetModel(self.config)
 

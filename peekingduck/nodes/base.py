@@ -27,8 +27,29 @@ import requests
 import torch
 from tqdm import tqdm
 
+from peekingduck.utils.requirement_checker import RequirementChecker, check_requirements
+
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
+
+
+class RequirementCheckerMixin:  # pylint: disable=too-few-public-methods
+    """Mixin class to install optional requirements specified by various
+    node config options.
+    """
+
+    def check_requirements(self, *keys: str) -> None:
+        """Checks if the optional requirements for the node, specified by the
+        ``key`` is available. Attempts to install if not.
+
+        Args:
+            keys (str): The node config keys used to specify that the
+                optional requirement should be installed.
+        """
+        if all(self.config[key] for key in keys):
+            RequirementChecker.n_update += check_requirements(
+                self.node_name, flags=",".join(keys)
+            )
 
 
 class ThresholdCheckerMixin:

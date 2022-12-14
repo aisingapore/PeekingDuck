@@ -141,6 +141,25 @@ def check_requirements(
     return n_update
 
 
+def _not_selected(flags: Optional[str], comment_part: str) -> bool:
+    """Checks if package is an optional requirement with config selector.
+
+    Args:
+        flags (Optional[str]): A string indicating the combination of configs
+            uses to select this package for installation.
+        comment_part (str): The comment part of the package which can store
+            flags used to select the package.
+
+    Returns:
+        (bool): True if the package is an optional requirement with config selector
+        but no flags is provided, or the package is an optional requirement but
+        the provided flags does not match the selector.
+    """
+    return (flags is None and "flags:" in comment_part) or (
+        flags is not None and f"flags: {flags}$" not in comment_part
+    )
+
+
 def _parse_requirements(
     file: TextIO, identifier: str, flags: Optional[str]
 ) -> Iterator[OptionalRequirement]:
@@ -163,10 +182,7 @@ def _parse_requirements(
         # Drop comments -- a hash without a space may be in a URL.
         if " #" in line:
             comment_start = line.find(" #")
-            comment_part = line[comment_start:]
-            if (flags is None and "flags:" in comment_part) or (
-                flags is not None and f"flags: {flags}" not in comment_part
-            ):
+            if _not_selected(flags, line[comment_start:]):
                 # Skip current line if:
                 # 1) it is a optional req with flags and flags are not provided, or
                 # 2) it is not selected by the provided flags
