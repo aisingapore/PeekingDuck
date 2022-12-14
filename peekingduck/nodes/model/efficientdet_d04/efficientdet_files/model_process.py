@@ -19,17 +19,15 @@
 Processing helper functions for EfficientDet
 """
 
-from typing import Tuple
+from typing import Callable, Tuple
 
 import cv2
 import numpy as np
-from numba import jit
-
-IMG_MEAN = np.array((0.485, 0.456, 0.406))
-IMG_STD = np.array((0.229, 0.224, 0.225))
 
 
-def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, float]:
+def preprocess_image(
+    image: np.ndarray, image_size: int, normalize_and_pad: Callable
+) -> Tuple[np.ndarray, float]:
     """Preprocessing helper function for efficientdet
 
     Args:
@@ -53,33 +51,9 @@ def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, fl
     pad_width = image_size - resized_width
 
     image = cv2.resize(image, (resized_width, resized_height))
-    image = _normalize_and_pad(image, pad_height, pad_width)
+    image = normalize_and_pad(image, pad_height, pad_width)
 
     return image, scale
-
-
-@jit(nopython=True)
-def _normalize_and_pad(
-    image: np.ndarray, pad_height: int, pad_width: int
-) -> np.ndarray:
-    """Normalizes image values and pad the right and bottom of the image.
-
-    Args:
-        image (np.ndarray): The input image with uint8 pixel values.
-        pad_height (int): The amount of vertical padding.
-        pad_width (int): The amount of horizontal padding.
-
-    Returns:
-        (np.ndarray): The padded image with normalized values.
-    """
-    image = image.astype(np.float32)
-    image = (image / 255.0 - IMG_MEAN) / IMG_STD
-    padded_image = np.zeros(
-        (image.shape[0] + pad_height, image.shape[1] + pad_width, image.shape[2]),
-        dtype=np.float32,
-    )
-    padded_image[: image.shape[0], : image.shape[1]] = image
-    return np.expand_dims(padded_image, axis=0)
 
 
 def postprocess_boxes(

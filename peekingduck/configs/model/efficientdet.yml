@@ -36,3 +36,4 @@ model_format: tensorflow
 model_type: 0 # 0-4
 detect: [0]
 score_threshold: 0.3
+use_jit: true

@@ -55,6 +55,7 @@ class EfficientDetModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
             self.config["model_nodes"],
             self.config["image_size"],
             self.config["score_threshold"],
+            self.config["use_jit"],
         )
 
     @property

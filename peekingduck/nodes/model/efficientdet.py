@@ -21,6 +21,7 @@ import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.nodes.model.efficientdet_d04 import efficientdet_model
+from peekingduck.utils.requirement_checker import RequirementChecker, check_requirements
 
 
 class Node(AbstractNode):
@@ -69,6 +70,12 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        jit_key = "use_jit"
+        if self.config[jit_key]:
+            RequirementChecker.n_update += check_requirements(
+                self.node_name, flags=jit_key
+            )
+
         self.model = efficientdet_model.EfficientDetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
