@@ -46,7 +46,7 @@ The ``pipeline_config.yml`` file looks like this:
    - input.visual:
        source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
    - model.posenet
-   - draw.poses
+   - draw.pose
    - output.screen
 
 The above forms a **pose estimation pipeline** and it comprises four nodes that do the
@@ -54,7 +54,7 @@ following:
 
    #. :mod:`input.visual`: reads the file ``wave.mp4`` from PeekingDuck's cloud storage
    #. :mod:`model.posenet`: runs the PoseNet pose estimation model on it
-   #. :mod:`draw.poses`: draws a human pose skeleton over the person tracking his hand movement
+   #. :mod:`draw.pose`: draws a human pose skeleton over the person tracking his hand movement
    #. :mod:`output.screen`: outputs everything onto the screen for display
 
 Now, run the pipeline using
@@ -142,7 +142,7 @@ If your computer has a webcam attached, you can use it by changing the first
    - input.visual:
        source: 0        # use webcam for live video
    - model.posenet      # use pose estimation model
-   - draw.poses         # draw skeletal poses
+   - draw.pose          # draw skeletal poses
    - output.screen
 
 Now do a :greenbox:`peekingduck run` and you will see yourself onscreen. 

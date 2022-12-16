@@ -8,7 +8,7 @@ nodes:
 - dabble.check_nearby_objs:
     near_threshold: 1.5
     tag_msg: "TOO CLOSE!"
-- draw.poses
+- draw.pose
 - draw.tag:
     show: ["flags"]
 - output.screen

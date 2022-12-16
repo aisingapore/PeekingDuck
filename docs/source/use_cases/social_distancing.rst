@@ -95,7 +95,7 @@ These are the nodes used in the earlier demo (also in |pipeline_config|_):
    - dabble.check_nearby_objs:
        near_threshold: 1.5
        tag_msg: "TOO CLOSE!"
-   - draw.poses
+   - draw.pose
    - draw.tag:
        show: ["flags"]
    - output.screen

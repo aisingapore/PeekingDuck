@@ -59,7 +59,7 @@ for pose estimation:
     - model.movenet:
         model_format: tensorrt
         model_type: singlepose_lightning
-    - draw.poses
+    - draw.pose
     - dabble.fps
     - draw.legend:
         show: ["fps"]

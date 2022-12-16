@@ -18,4 +18,7 @@ Draws results/outputs to an image.
 .. deprecated:: 1.2.0
     :mod:`draw.image_processor` is deprecated, and replaced by the nodes
     :mod:`augment.brightness` and :mod:`augment.contrast`.
+
+.. versionchanged:: 2.0.0
+    :mod:`draw.poses` has been renamed to :mod:`draw.pose`.
 """

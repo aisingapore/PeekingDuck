@@ -278,7 +278,7 @@ implement our custom node function.
       - input.visual:
           source: https://storage.googleapis.com/peekingduck/videos/wave.mp4
       - model.posenet
-      - draw.poses
+      - draw.pose
       - output.screen
 
    This file implements the pipeline.  Modify the default pipeline to the one shown below:
@@ -621,7 +621,7 @@ To implement this tutorial, the **three files** ``wave.yml``, ``wave.py`` and
       - model.posenet
       - dabble.fps
       - custom_nodes.dabble.wave
-      - draw.poses
+      - draw.pose
       - draw.legend:
           show: ["fps"]
       - output.screen
@@ -778,7 +778,7 @@ Make the following **three** changes:
       - dabble.fps
       - custom_nodes.dabble.wave
       - custom_nodes.dabble.debug
-      - draw.poses
+      - draw.pose
       - draw.legend:
           show: ["fps"]
       - output.screen
@@ -797,7 +797,7 @@ one below:
    | 2022-03-02 18:42:51 peekingduck.declarative_loader  INFO:  Initializing model.yolo node.\.\. 
    |                     [ .\.\. many lines of output deleted here .\.\. ]
    | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing custom_nodes.dabble.debug node.\.\. 
-   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.poses node.\.\. 
+   | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.pose node.\.\. 
    | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing draw.legend node.\.\. 
    | 2022-03-02 18:42:53 peekingduck.declarative_loader  INFO:  Initializing output.screen node.\.\. 
    | 2022-03-02 18:42:55 custom_nodes.dabble.debug  INFO:  -- debug -- 
@@ -858,7 +858,7 @@ Starting with the basic folder structure from :green:`peekingduck init`:
       - dabble.fps
       - custom_nodes.dabble.wave
       - custom_nodes.dabble.debug
-      - draw.poses
+      - draw.pose
       - draw.legend:
           show: ["fps"]
       - output.screen

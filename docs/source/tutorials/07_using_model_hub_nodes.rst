@@ -311,7 +311,7 @@ Pipeline
             task: pose_estimation
             subtask: body
             model_type: 1
-        - draw.poses
+        - draw.pose
         - output.screen
 
 Here is a step-by-step explanation of what has been done:
@@ -319,7 +319,7 @@ Here is a step-by-step explanation of what has been done:
    | Line 2 :mod:`input.visual` tells PeekingDuck to load ``wave.mp4``.
    | Line 4 :mod:`model.mediapipe_hub` is set to perform the ``pose_estimation``
    |        task and ``body`` subtask. Model type 1 is selected.
-   | Line 8 :mod:`draw.poses` is used to visualize the output of the
+   | Line 8 :mod:`draw.pose` is used to visualize the output of the
    |        MediaPipe model.
 
 Run the above with the command :greenbox:`peekingduck run`.
