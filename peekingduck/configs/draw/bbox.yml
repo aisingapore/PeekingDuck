@@ -3,3 +3,4 @@ output: ["none"]
 callbacks: {}
 
 show_labels: False
+color_choice: []

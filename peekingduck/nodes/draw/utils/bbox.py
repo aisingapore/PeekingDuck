@@ -44,7 +44,7 @@ def draw_bboxes(
     bboxes: List[List[float]],
     bbox_labels: List[str],
     show_labels: bool,
-    color_choice: Tuple[int, int, int] = None,
+    color_choice: Tuple[int, int, int],
 ) -> None:
     """Draws bboxes onto an image frame.
 
