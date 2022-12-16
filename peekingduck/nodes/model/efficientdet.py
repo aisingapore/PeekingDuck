@@ -60,6 +60,10 @@ class Node(RequirementCheckerMixin, AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
+        use_jit (:obj:`bool`): **default = True**. |br|
+            Flag to enable compile parts of the model code with Numba JIT compiler
+            to improve inference speed. Requires installing ``numba`` as an
+            optional dependency.
 
     References:
         EfficientDet: Scalable and Efficient Object Detection:
