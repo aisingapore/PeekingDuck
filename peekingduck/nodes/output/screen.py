@@ -76,15 +76,28 @@ class Node(AbstractNode):
             cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
             self.first_run = False
 
-        wait_ms = 1  # Delay in milliseconds
-        if inputs["filename"].split(".")[-1] in ["jpg", "jpeg", "png"]:
-            wait_ms = 0
+        return_key = self._wait_for_keyboard_input(inputs["filename"])
 
-        if cv2.waitKey(wait_ms) & 0xFF == ord("q"):
+        # Any key to close window
+        if return_key != -1:
             cv2.destroyWindow(self.window_name)
+
+        # Key 'q' to quit
+        if return_key & 0xFF == ord("q"):
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
+
+    def _wait_for_keyboard_input(self, filename: str) -> int:
+        wait_ms = 1  # Delay in milliseconds
+        if self.window_image_wait and filename.split(".")[-1] in [
+            "jpg",
+            "jpeg",
+            "png",
+        ]:
+            wait_ms = 0
+
+        return cv2.waitKey(wait_ms)
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
@@ -97,4 +110,5 @@ class Node(AbstractNode):
             "window_size.do_resizing": bool,
             "window_size.width": int,
             "window_size.height": int,
+            "window_image_wait": bool,
         }
