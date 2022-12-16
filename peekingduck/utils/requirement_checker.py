@@ -141,25 +141,6 @@ def check_requirements(
     return n_update
 
 
-def _not_selected(flags: Optional[str], comment_part: str) -> bool:
-    """Checks if package is an optional requirement with config selector.
-
-    Args:
-        flags (Optional[str]): A string indicating the combination of configs
-            uses to select this package for installation.
-        comment_part (str): The comment part of the package which can store
-            flags used to select the package.
-
-    Returns:
-        (bool): True if the package is an optional requirement with config selector
-        but no flags is provided, or the package is an optional requirement but
-        the provided flags does not match the selector.
-    """
-    return (flags is None and "flags:" in comment_part) or (
-        flags is not None and f"flags: {flags}$" not in comment_part
-    )
-
-
 def _parse_requirements(
     file: TextIO, identifier: str, flags: Optional[str]
 ) -> Iterator[OptionalRequirement]:
@@ -179,15 +160,9 @@ def _parse_requirements(
     """
     lines = iter(_yield_lines(file, identifier))
     for line in lines:
-        # Drop comments -- a hash without a space may be in a URL.
-        if " #" in line:
-            comment_start = line.find(" #")
-            if _not_selected(flags, line[comment_start:]):
-                # Skip current line if:
-                # 1) it is a optional req with flags and flags are not provided, or
-                # 2) it is not selected by the provided flags
-                continue
-            line = line[:comment_start]
+        skip, line = _select_line(flags, line)
+        if skip:
+            continue
         req_type, req_name = _split_type_and_name(line)
         if req_type == PKD_REQ_TYPE_PYTHON:
             reqs = [pkg.Requirement.parse(name) for name in req_name.split("|")]
@@ -195,6 +170,41 @@ def _parse_requirements(
         else:
             requirement = OptionalRequirement(req_name, req_type)
         yield requirement
+
+
+def _select_line(flags: Optional[str], line: str) -> Tuple[bool, str]:
+    """Selects the optional requirement line for further processing and
+    installation. If flags are not provided, skips line with selector. If flags
+    are provided, skips lines without selector or with wrong selector.
+
+    Args:
+        flags (Optional[str]): A string indicating the combination of configs
+            used to select this package for installation.
+        line (str): A line in the optional requirements file containing the
+            package specification and optional comments/selector.
+
+    Returns:
+        Tuple[bool, str]: A tuple containing a boolean flag indicating if the
+        line should be skipped and a clean requirement line without any comments.
+    """
+    flags_start = "flags:"
+    flags_stop = "$"
+    comment_start = line.find(" #")  # only used when there is comment in line
+    is_clean = " #" not in line  # no comment in line
+    is_comment = not is_clean and flags_start not in line  # only comment in line
+
+    if flags is None:
+        if is_clean:
+            return False, line
+        if is_comment:
+            return False, line[:comment_start]
+        return True, line
+
+    if is_clean or is_comment:
+        return True, line
+    if f"{flags_start} {flags}{flags_stop}" in line[comment_start:]:
+        return False, line[:comment_start]
+    return True, line
 
 
 def _require_any(req: OptionalRequirement) -> bool:
