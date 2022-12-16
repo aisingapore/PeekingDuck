@@ -50,7 +50,11 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
         draw_bboxes(
-            inputs["img"], inputs["bboxes"], inputs["bbox_labels"], self.show_labels, self.color_choice
+            inputs["img"], 
+            inputs["bboxes"], 
+            inputs["bbox_labels"], 
+            self.show_labels, 
+            self.color_choice,
         )
         return {}
 
