@@ -75,7 +75,12 @@ class Node(AbstractNode):
         if self.first_run:
             cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
             self.first_run = False
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+
+        wait_ms = 1  # Delay in milliseconds
+        if inputs["filename"].split(".")[-1] in ["jpg", "jpeg", "png"]:
+            wait_ms = 0
+
+        if cv2.waitKey(wait_ms) & 0xFF == ord("q"):
             cv2.destroyWindow(self.window_name)
             return {"pipeline_end": True}
 
