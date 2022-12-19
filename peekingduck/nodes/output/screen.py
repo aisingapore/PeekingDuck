@@ -89,7 +89,10 @@ class Node(AbstractNode):
         return {"pipeline_end": False}
 
     def _wait_for_keyboard_input(self, filename: str) -> int:
-        """check config['output'] image_waitkey whether to wait for user input before pipeline end"""
+        """
+        check config['output'] image_waitkey whether to wait
+        for user input before pipeline end
+        """
         wait_ms = 1  # Default - Delay in milliseconds
         if self.image_waitkey and filename.split(".")[-1] in [
             "jpg",
