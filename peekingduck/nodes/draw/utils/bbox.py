@@ -52,6 +52,7 @@ def draw_bboxes(
         frame (np.ndarray): Image of current frame.
         bboxes (List[List[float]]): Bounding box coordinates.
         color (Tuple[int, int, int]): Color used for bounding box.
+        show_labels: whether to show the object labels
         bbox_labels (List[str]): Labels of object detected.
     """
     image_size = get_image_size(frame)
@@ -63,10 +64,7 @@ def draw_bboxes(
             color = color_choice
         else:
             color = PRIMARY_PALETTE[color_idx[bbox_labels[i]] % TOTAL_COLORS]
-        if show_labels:
-            _draw_bbox(frame, bbox, image_size, color, bbox_labels[i])
-        else:
-            _draw_bbox(frame, bbox, image_size, color)
+        _draw_bbox(frame, bbox, image_size, color, show_labels, bbox_labels[i])
 
 
 def _draw_bbox(
@@ -74,6 +72,7 @@ def _draw_bbox(
     bbox: np.ndarray,
     image_size: Tuple[int, int],
     color: Tuple[int, int, int],
+    show_labels: bool = None,
     bbox_label: str = None,
 ) -> None:
     """Draws a single bounding box."""
@@ -86,7 +85,7 @@ def _draw_bbox(
         VERY_THICK,
     )
 
-    if bbox_label:
+    if show_labels:
         _draw_label(frame, top_left, bbox_label, color, BLACK)
 
 

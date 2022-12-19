@@ -17,79 +17,90 @@ Draws the prediction score at the corner of the bounding box over detected objec
 """
 
 from typing import Any, Dict, List, Tuple
+
 import cv2
+import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.draw.utils.constants import(
+    YELLOW,
+    NORMAL_FONTSCALE,
+    THICK
+    )
 
-YELLOW = (0, 255, 255)        # in BGR format, per opencv's convention
-
-
-def map_bbox_to_image_coords(
-   bbox: List[float], image_size: Tuple[int, int]
-) -> List[int]:
-   """This is a helper function to map bounding box coords (relative) to
-   image coords (absolute).
-   Bounding box coords ranges from 0 to 1
-   where (0, 0) = image top-left, (1, 1) = image bottom-right.
-
-   Args:
-      bbox (List[float]): List of 4 floats x1, y1, x2, y2
-      image_size (Tuple[int, int]): Width, Height of image
-
-   Returns:
-      List[int]: x1, y1, x2, y2 in integer image coords
-   """
-   width, height = image_size[0], image_size[1]
-   x1, y1, x2, y2 = bbox
-   x1 *= width
-   x2 *= width
-   y1 *= height
-   y2 *= height
-   return int(x1), int(y1), int(x2), int(y2)
 
 class Node(AbstractNode):
     """Draws the prediction score of the detection near the bounding box.
+
+    The :mod:`draw.score` node uses :term:`bbox_scores` from the model predictions 
+    to draw the prediction score onto the image.
     
-    Args:
-        config (:obj:`Dict[str, Any]` | :obj:`None`): Node configuration.
+    Inputs:
+        |img_data|
+
+        |bboxes_data|
+
+        |bbox_scores_data|
+
+    Outputs:
+        |none_output_data|
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:  # type: ignore
-        """Implements the display score function.
+    def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+        self._draw_scores(
+            inputs["img"], inputs["bboxes"], inputs["bbox_scores"]
+            )
+        return {}
 
-        Args:
-            inputs (dict): Dictionary with keys "img", "bboxes", "bbox_scores"
 
-        Returns:
-            outputs (dict): Empty dictionary
+    def _draw_scores(self, img: np.array, bboxes: np.array, scores: np.array) -> None:
+        """Draw the prediction scores on every bounding boxes
+        
+         for each bounding box:
+            - compute (x1, y1) top-left, (x2, y2) bottom-right coordinates
+            - convert score into a two decimal place numeric string
+            - draw score string onto image using opencv's putText()
+              (see opencv's API docs for more info)
+        
         """
 
-        # extract pipeline inputs and compute image size in (width, height)
-        img = inputs["img"]
-        bboxes = inputs["bboxes"]
-        scores = inputs["bbox_scores"]
-        img_size = (img.shape[1], img.shape[0])  # width, height
+        image_size = (img.shape[1], img.shape[0])  # width, height
 
         for i, bbox in enumerate(bboxes):
-            # for each bounding box:
-            #   - compute (x1, y1) top-left, (x2, y2) bottom-right coordinates
-            #   - convert score into a two decimal place numeric string
-            #   - draw score string onto image using opencv's putText()
-            #     (see opencv's API docs for more info)
-            x1, y1, x2, y2 = map_bbox_to_image_coords(bbox, img_size)
+            x1, y1, x2, y2 = self._map_bbox_to_image_coords(bbox, image_size)
             score = scores[i]
             score_str = f"{score:0.2f}"
-            cv2.putText(
-                img=img,
-                text=score_str,
+            cv2.putText(img=img,text=score_str,
                 org=(x1, y2),
                 fontFace=cv2.FONT_HERSHEY_SIMPLEX,
-                fontScale=1.0,
+                fontScale=NORMAL_FONTSCALE,
                 color=YELLOW,
-                thickness=2,
+                thickness=THICK,
             )
 
         return {}
+
+
+    @staticmethod
+    def _map_bbox_to_image_coords(bbox: List[float], image_size: Tuple[int, int]):
+        """Map bounding box coords (from 0 to 1) to absolute image coords.
+        
+        Args:
+            bbox (List[float]): relative coords x1, y1, x2, y2
+            image_size (Tuple[int, int]): Width, Height of image
+
+        Returns:
+            List[int]: absolute image coords x1, y1, x2, y2
+        """
+        width, height = image_size[0], image_size[1]
+        x1, y1, x2, y2 = bbox
+        x1 *= width
+        x2 *= width
+        y1 *= height
+        y2 *= height
+
+        return int(x1), int(y1), int(x2), int(y2)
+    
