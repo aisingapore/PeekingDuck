@@ -43,7 +43,9 @@ def draw_bboxes(
     frame: np.ndarray,
     bboxes: List[List[float]],
     bbox_labels: List[str],
+    bbox_scores: List[float],
     show_labels: bool,
+    show_scores: bool,
     color_choice: Tuple[int, int, int] = None,
 ) -> None:
     """Draws bboxes onto an image frame.
@@ -51,9 +53,11 @@ def draw_bboxes(
     Args:
         frame (np.ndarray): Image of current frame.
         bboxes (List[List[float]]): Bounding box coordinates.
-        color (Tuple[int, int, int]): Color used for bounding box.
-        show_labels: whether to show the object labels
         bbox_labels (List[str]): Labels of object detected.
+        bbox_scores (List[str]): Prediction scores of object detected.
+        show_labels: whether to show the object labels
+        show_scores: whether to show the prediction score
+        color (Tuple[int, int, int]): Color used for bounding box.
     """
     image_size = get_image_size(frame)
     # Get unique label color indexes
@@ -64,7 +68,16 @@ def draw_bboxes(
             color = color_choice
         else:
             color = PRIMARY_PALETTE[color_idx[bbox_labels[i]] % TOTAL_COLORS]
-        _draw_bbox(frame, bbox, image_size, color, show_labels, bbox_labels[i])
+        _draw_bbox(
+            frame,
+            bbox,
+            image_size,
+            color,
+            show_labels,
+            bbox_labels[i],
+            show_scores,
+            bbox_scores[i],
+        )
 
 
 def _draw_bbox(
@@ -74,9 +87,14 @@ def _draw_bbox(
     color: Tuple[int, int, int],
     show_labels: bool = None,
     bbox_label: str = None,
+    show_scores: bool = True,
+    bbox_score: float = None,
 ) -> None:
     """Draws a single bounding box."""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
+    top_right = (bottom_right[0], top_left[1])  # reserved for future use
+    bottom_left = (top_left[0], bottom_right[1])
+
     cv2.rectangle(
         frame,
         (top_left[0], top_left[1]),
@@ -87,6 +105,10 @@ def _draw_bbox(
 
     if show_labels:
         _draw_label(frame, top_left, bbox_label, color, BLACK)
+
+    if show_scores:
+        bbox_score_str = f"{bbox_score:0.2f}"
+        _draw_score(frame, bottom_left, bbox_score_str, color, BLACK)
 
 
 def _draw_label(
@@ -116,6 +138,41 @@ def _draw_label(
         frame,
         bbox_label,
         (top_left[0], top_left[1] - 6),
+        FONT_HERSHEY_SIMPLEX,
+        NORMAL_FONTSCALE,
+        text_color,
+        THICK,
+        LINE_AA,
+    )
+
+
+# draw score function
+def _draw_score(
+    frame: np.ndarray,
+    bottom_left: Tuple[int, int],
+    bbox_score_str: str,
+    bg_color: Tuple[int, int, int],
+    text_color: Tuple[int, int, int],
+) -> None:
+    """Draws prediction score at bottom left of bbox."""
+    # get label size
+    (text_width, text_height), baseline = cv2.getTextSize(
+        bbox_score_str, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, THICK
+    )
+    # put filled text rectangle
+    cv2.rectangle(
+        frame,
+        (bottom_left[0], bottom_left[1]),
+        (bottom_left[0] + text_width, bottom_left[1] - text_height - baseline),
+        bg_color,
+        FILLED,
+    )
+
+    # put text above rectangle
+    cv2.putText(
+        frame,
+        bbox_score_str,
+        (bottom_left[0], bottom_left[1] - 6),
         FONT_HERSHEY_SIMPLEX,
         NORMAL_FONTSCALE,
         text_color,
