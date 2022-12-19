@@ -1,2 +1,0 @@
-input: ["img", "bboxes", "bbox_scores"]
-output: ["none"]
