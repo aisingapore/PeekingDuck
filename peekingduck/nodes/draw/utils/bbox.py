@@ -43,8 +43,8 @@ def draw_bboxes(
     frame: np.ndarray,
     bboxes: List[List[float]],
     bbox_labels: List[str],
-    bbox_scores: List[float],
     show_labels: bool,
+    bbox_scores: List[float],
     show_scores: bool,
     color_choice: Tuple[int, int, int] = None,
 ) -> None:
@@ -54,7 +54,7 @@ def draw_bboxes(
         frame (np.ndarray): Image of current frame.
         bboxes (List[List[float]]): Bounding box coordinates.
         bbox_labels (List[str]): Labels of object detected.
-        bbox_scores (List[str]): Prediction scores of object detected.
+        bbox_scores (List[float]): Prediction scores of object detected.
         show_labels: whether to show the object labels
         show_scores: whether to show the prediction score
         color (Tuple[int, int, int]): Color used for bounding box.
@@ -73,10 +73,8 @@ def draw_bboxes(
             bbox,
             image_size,
             color,
-            show_labels,
-            bbox_labels[i],
-            show_scores,
-            bbox_scores[i],
+            bbox_labels[i] if show_labels else None,
+            bbox_scores[i] if show_scores else None,
         )
 
 
@@ -85,14 +83,11 @@ def _draw_bbox(
     bbox: np.ndarray,
     image_size: Tuple[int, int],
     color: Tuple[int, int, int],
-    show_labels: bool = None,
     bbox_label: str = None,
-    show_scores: bool = True,
     bbox_score: float = None,
 ) -> None:
     """Draws a single bounding box."""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
-    top_right = (bottom_right[0], top_left[1])  # reserved for future use
     bottom_left = (top_left[0], bottom_right[1])
 
     cv2.rectangle(
@@ -103,10 +98,10 @@ def _draw_bbox(
         VERY_THICK,
     )
 
-    if show_labels:
+    if bbox_label:
         _draw_label(frame, top_left, bbox_label, color, BLACK)
 
-    if show_scores:
+    if bbox_score:
         bbox_score_str = f"{bbox_score:0.2f}"
         _draw_score(frame, bottom_left, bbox_score_str, color, BLACK)
 

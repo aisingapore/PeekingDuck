@@ -35,7 +35,7 @@ class Node(AbstractNode):
         |bboxes_data|
 
         |bbox_labels_data|
-        
+
         |bbox_scores_data|
 
     Outputs:
@@ -58,8 +58,8 @@ class Node(AbstractNode):
             inputs["img"],
             inputs["bboxes"],
             inputs["bbox_labels"],
-            inputs["bbox_scores"],
             self.show_labels,
+            inputs["bbox_scores"],
             self.show_scores,
         )
         return {}
