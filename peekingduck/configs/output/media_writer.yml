@@ -3,3 +3,4 @@ output: ["none"]
 callbacks: {}
 
 output_dir: "PeekingDuck/data/output"
+output_filename: null
