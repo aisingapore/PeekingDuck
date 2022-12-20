@@ -4,3 +4,4 @@ callbacks: {}
 
 show_labels: False
 show_scores: False
+color_choice: []

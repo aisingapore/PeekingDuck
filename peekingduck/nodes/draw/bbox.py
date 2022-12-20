@@ -61,6 +61,7 @@ class Node(AbstractNode):
             self.show_labels,
             inputs["bbox_scores"],
             self.show_scores,
+            self.color_choice,
         )
         return {}
 

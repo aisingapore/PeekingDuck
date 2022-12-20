@@ -33,6 +33,7 @@ def draw_bbox_no_labels():
             "input": ["bboxes", "img", "bbox_labels"],
             "output": ["none"],
             "show_labels": False,
+            "color_choice": [],
         }
     )
     return node
@@ -45,6 +46,7 @@ def draw_bbox_show_labels():
             "input": ["bboxes", "img", "bbox_labels"],
             "output": ["none"],
             "show_labels": True,
+            "color_choice": [],
         }
     )
     return node
