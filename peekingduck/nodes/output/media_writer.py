@@ -51,6 +51,8 @@ class Node(AbstractNode):
     Configs:
         output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
+        output_filename (:obj:`str`): **default = None**. |br|
+            Output filename for files to be written locally. Video only.
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
@@ -62,6 +64,7 @@ class Node(AbstractNode):
         self._image_type: Optional[str] = None
         self.writer = None
         self._prepare_directory(self.output_dir)
+        self._output_filename: Optional[str] = getattr(self, "output_filename", None)
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         self.logger.info(f"Output directory used is: {self.output_dir}")
 
@@ -74,11 +77,17 @@ class Node(AbstractNode):
             return {}
         if not self._file_name:
             self._prepare_writer(
-                inputs["filename"], inputs["img"], inputs["saved_video_fps"]
+                inputs["filename"],
+                inputs["img"],
+                inputs["saved_video_fps"],
+                self._output_filename,
             )
         if inputs["filename"] != self._file_name:
             self._prepare_writer(
-                inputs["filename"], inputs["img"], inputs["saved_video_fps"]
+                inputs["filename"],
+                inputs["img"],
+                inputs["saved_video_fps"],
+                self._output_filename,
             )
         self._write(inputs["img"])
 
@@ -95,14 +104,21 @@ class Node(AbstractNode):
             self.writer.write(img)
 
     def _prepare_writer(
-        self, filename: str, img: np.ndarray, saved_video_fps: int
+        self,
+        filename: str,
+        img: np.ndarray,
+        saved_video_fps: int,
+        output_filename: str,
     ) -> None:
-        self._file_path_with_timestamp = self._append_datetime_filename(filename)
+        file_ext = filename.split(".")[-1]
 
-        if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
+        if file_ext in ["jpg", "jpeg", "png"]:
+            self._file_path_with_timestamp = self._append_datetime_filename(filename)
             self._image_type = "image"
         else:
             self._image_type = "video"
+            if output_filename is not None:
+                filename = ".".join([output_filename, file_ext])
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
                 self._file_path_with_timestamp,
