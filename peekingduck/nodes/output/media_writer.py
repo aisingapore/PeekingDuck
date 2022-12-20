@@ -115,7 +115,7 @@ class Node(AbstractNode):
         filename: str,
         img: np.ndarray,
         saved_video_fps: int,
-        output_filename: str,
+        output_filename: Optional[str],
     ) -> None:
         self._file_path_with_timestamp = self._append_datetime_filename(filename)
         if self._image_type == "video":
