@@ -70,8 +70,18 @@ class TestBbox:
         output_img_show_label = original_img.copy()
         labels = ["Person"]
         no_scores = []
-        input1 = {"bboxes": bboxes, "img": output_img_no_label, "bbox_labels": labels, "bbox_scores": no_scores}
-        input2 = {"bboxes": bboxes, "img": output_img_show_label, "bbox_labels": labels, "bbox_scores": no_scores}
+        input1 = {
+                    "bboxes": bboxes,
+                    "img": output_img_no_label,
+                    "bbox_labels": labels,
+                    "bbox_scores": no_scores,
+                }
+        input2 = {
+                    "bboxes": bboxes,
+                    "img": output_img_show_label,
+                    "bbox_labels": labels,
+                    "bbox_scores": no_scores,
+                }
         draw_bbox_no_labels.run(input1)
         # after running draw, should not be equal
         assert original_img.shape == output_img_no_label.shape
