@@ -48,6 +48,10 @@ class Node(AbstractNode):
         show_scores (:obj:`bool`): **default = False**. |br|
             If ``True``, shows prediction scores, e.g., "0.99", at the bottom
             left of the bounding box.
+        show colors (:obj:`List[int]`): **default = []**. |br|
+            Define the color of the bounding box, in BGR format.
+            Defined values have to be integers, and :math:`0 \\leq value \\leq 255`.
+
     """
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
