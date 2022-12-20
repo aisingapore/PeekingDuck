@@ -30,7 +30,7 @@ BLACK_IMAGE = str(TEST_IMAGES_DIR / "black.jpg")
 def draw_bbox_no_labels():
     node = Node(
         {
-            "input": ["bboxes", "img", "bbox_labels"],
+            "input": ["bboxes", "img", "bbox_labels", "bbox_scores"],
             "output": ["none"],
             "show_labels": False,
             "color_choice": [],
@@ -43,7 +43,7 @@ def draw_bbox_no_labels():
 def draw_bbox_show_labels():
     node = Node(
         {
-            "input": ["bboxes", "img", "bbox_labels"],
+            "input": ["bboxes", "img", "bbox_labels", "bbox_scores"],
             "output": ["none"],
             "show_labels": True,
             "color_choice": [],
