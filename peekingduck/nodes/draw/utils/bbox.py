@@ -44,13 +44,9 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
     bboxes: List[List[float]],
     bbox_labels: List[str],
     show_labels: bool,
-<<<<<<< HEAD
-    color_choice: Tuple[int, int, int],
-=======
     bbox_scores: List[float],
     show_scores: bool,
-    color_choice: Tuple[int, int, int] = None,
->>>>>>> feature-bboxscores
+    color_choice: Tuple[int, int, int],
 ) -> None:
     """Draws bboxes onto an image frame.
 
