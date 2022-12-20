@@ -39,7 +39,7 @@ from peekingduck.nodes.draw.utils.general import (
 )
 
 
-def draw_bboxes(
+def draw_bboxes(  # pylint: disable=too-many-arguments
     frame: np.ndarray,
     bboxes: List[List[float]],
     bbox_labels: List[str],
@@ -78,7 +78,7 @@ def draw_bboxes(
         )
 
 
-def _draw_bbox(
+def _draw_bbox(  # pylint: disable=too-many-arguments
     frame: np.ndarray,
     bbox: np.ndarray,
     image_size: Tuple[int, int],
