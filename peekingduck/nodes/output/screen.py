@@ -46,6 +46,7 @@ class Node(AbstractNode):
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
         image_waitkey (:obj:`bool`): **default = False** |br|
+            Whether to wait for input before going to next image. Image files only.
 
     .. note::
 
