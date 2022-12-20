@@ -55,6 +55,7 @@ class Node(AbstractNode):
             Output filename for files to be written locally. Video only.
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
@@ -62,10 +63,10 @@ class Node(AbstractNode):
         self._file_name: Optional[str] = None
         self._file_path_with_timestamp: Optional[str] = None
         self._image_type: Optional[str] = None
-        self._output_type: Optional[str] = None
         self.writer = None
         self._prepare_directory(self.output_dir)
         self._output_filename: Optional[str] = getattr(self, "output_filename", None)
+        self._output_type: Optional[str] = None  # vod/img output from _output_filename
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         self.logger.info(f"Output directory used is: {self.output_dir}")
 
@@ -81,7 +82,6 @@ class Node(AbstractNode):
             self._output_type = self._detect_input_type(self._output_filename)
         if not self._file_name:
             self._file_name = inputs["filename"]
-            self.logger.info(f"_file_name: {self._file_name}")
             self._prepare_writer(
                 inputs["filename"],
                 inputs["img"],
@@ -90,7 +90,6 @@ class Node(AbstractNode):
             )
         if self._file_name != inputs["filename"]:
             self._file_name = inputs["filename"]
-            self.logger.info(f"_file_name: {self._file_name}")
             self._prepare_writer(
                 inputs["filename"],
                 inputs["img"],
@@ -111,12 +110,6 @@ class Node(AbstractNode):
         else:
             self.writer.write(img)
 
-    def _detect_input_type(self, filename: str) -> str:
-        if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
-            return "image"
-        else:
-            return "video"
-
     def _prepare_writer(
         self,
         filename: str,
@@ -127,7 +120,6 @@ class Node(AbstractNode):
         self._file_path_with_timestamp = self._append_datetime_filename(filename)
         if self._image_type == "video":
             if output_filename is not None:
-                self.logger.info(f"video output_filename: {output_filename}")
                 self._file_path_with_timestamp = self._append_datetime_filename(
                     output_filename
                 )
@@ -143,6 +135,13 @@ class Node(AbstractNode):
     @staticmethod
     def _prepare_directory(output_dir: Path) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
+
+    @staticmethod
+    def _detect_input_type(filename: str) -> str:
+        if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
+            return "image"
+
+        return "video"
 
     def _append_datetime_filename(self, filename: str) -> str:
         current_time = datetime.datetime.now()
