@@ -82,7 +82,7 @@ class Node(AbstractNode):
         group_tags = self._get_group_tags(inputs["large_groups"], self.tag)
 
         # show labels set to False to reduce clutter on display
-        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)
+        draw_bboxes(inputs["img"], group_bboxes, [], False, [], False, TOMATO)
         draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)
 
         return {}
