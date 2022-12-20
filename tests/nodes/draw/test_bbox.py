@@ -47,7 +47,7 @@ def draw_bbox_show_labels():
             "input": ["bboxes", "img", "bbox_labels", "bbox_scores"],
             "output": ["none"],
             "show_labels": True,
-            "show_scores": True,
+            "show_scores": False,
             "color_choice": [],
         }
     )
@@ -76,18 +76,18 @@ class TestBbox:
         output_img_no_label = original_img.copy()
         output_img_show_label = original_img.copy()
         labels = ["Person"]
-        no_scores = []
+        scores = [0.99]
         input1 = {
             "bboxes": bboxes,
             "img": output_img_no_label,
             "bbox_labels": labels,
-            "bbox_scores": no_scores,
+            "bbox_scores": scores,
         }
         input2 = {
             "bboxes": bboxes,
             "img": output_img_show_label,
             "bbox_labels": labels,
-            "bbox_scores": no_scores,
+            "bbox_scores": scores,
         }
         draw_bbox_no_labels.run(input1)
         # after running draw, should not be equal

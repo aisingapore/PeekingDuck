@@ -3,5 +3,5 @@ output: ["none"]
 callbacks: {}
 
 show_labels: False
-color_choice: []
 show_scores: False
+color_choice: []
