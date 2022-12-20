@@ -45,6 +45,7 @@ class Node(AbstractNode):
         window_loc (:obj:`Dict[str, int]`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
+        image_waitkey (:obj:`bool`): **default = False** |br|
 
     .. note::
 
@@ -78,12 +79,9 @@ class Node(AbstractNode):
 
         return_key = self._wait_for_keyboard_input(inputs["filename"])
 
-        # Any key to close window
-        if return_key != -1:
-            cv2.destroyWindow(self.window_name)
-
         # Key 'q' to quit
         if return_key & 0xFF == ord("q"):
+            cv2.destroyWindow(self.window_name)
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
@@ -114,5 +112,5 @@ class Node(AbstractNode):
             "window_size.do_resizing": bool,
             "window_size.width": int,
             "window_size.height": int,
-            "window_image_wait": bool,
+            "image_waitkey": bool,
         }
