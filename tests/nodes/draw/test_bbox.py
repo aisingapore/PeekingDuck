@@ -58,7 +58,8 @@ class TestBbox:
         original_img = create_image((28, 28, 3))
         output_img = original_img.copy()
         no_labels = []
-        input1 = {"bboxes": no_bboxes, "img": output_img, "bbox_labels": no_labels}
+        no_scores = []
+        input1 = {"bboxes": no_bboxes, "img": output_img, "bbox_labels": no_labels, "bbox_scores": no_scores}
         draw_bbox_no_labels.run(input1)
         np.testing.assert_equal(original_img, output_img)
 
@@ -68,8 +69,9 @@ class TestBbox:
         output_img_no_label = original_img.copy()
         output_img_show_label = original_img.copy()
         labels = ["Person"]
-        input1 = {"bboxes": bboxes, "img": output_img_no_label, "bbox_labels": labels}
-        input2 = {"bboxes": bboxes, "img": output_img_show_label, "bbox_labels": labels}
+        no_scores = []
+        input1 = {"bboxes": bboxes, "img": output_img_no_label, "bbox_labels": labels, "bbox_scores": no_scores}
+        input2 = {"bboxes": bboxes, "img": output_img_show_label, "bbox_labels": labels, "bbox_scores": no_scores}
         draw_bbox_no_labels.run(input1)
         # after running draw, should not be equal
         assert original_img.shape == output_img_no_label.shape
