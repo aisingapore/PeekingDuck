@@ -172,8 +172,7 @@ class Node(AbstractNode):
 
     def _append_frame_filename(self, filename: Optional[str]) -> str:
         """append frame to filename before extension Format: filename_frame.extension"""
-        if filename is None:
-            return ""
+        assert filename is not None, "filename cannot be None"
         filename_with_frame = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
         file_path_with_frame = self.output_dir / filename_with_frame
         self._frame += 1
