@@ -60,12 +60,13 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.output_dir = Path(self.output_dir)  # type: ignore
+        self.output_filename: Optional[str] = getattr(self, "output_filename", None)
         self._file_name: Optional[str] = None
-        self._file_path_with_timestamp: Optional[str] = None
-        self._image_type: Optional[str] = None
+        self._file_path_post_processed: Optional[str] = None
+        self._input_type: Optional[str] = None
+        self._frame: int = 0  # start from 1 eventually
         self.writer = None
         self._prepare_directory(self.output_dir)
-        self._output_filename: Optional[str] = getattr(self, "output_filename", None)
         self._output_type: Optional[str] = None  # vod/img output from _output_filename
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         self.logger.info(f"Output directory used is: {self.output_dir}")
@@ -77,24 +78,28 @@ class Node(AbstractNode):
             if self.writer:  # images automatically releases writer
                 self.writer.release()
             return {}
-        self._image_type = self._detect_input_type(inputs["filename"])
-        if self._output_filename is not None:
-            self._output_type = self._detect_input_type(self._output_filename)
+        self._input_type = self._detect_input_type(inputs["filename"])
+        # init
+        if self.output_filename is not None:
+            self._output_type = self._detect_input_type(self.output_filename)
         if not self._file_name:
             self._file_name = inputs["filename"]
+
             self._prepare_writer(
                 inputs["filename"],
                 inputs["img"],
                 inputs["saved_video_fps"],
-                self._output_filename,
+                self.output_filename,
             )
+        # different input file
         if self._file_name != inputs["filename"]:
             self._file_name = inputs["filename"]
+
             self._prepare_writer(
                 inputs["filename"],
                 inputs["img"],
                 inputs["saved_video_fps"],
-                self._output_filename,
+                self.output_filename,
             )
         self._write(inputs["img"])
 
@@ -105,8 +110,14 @@ class Node(AbstractNode):
         return {"output_dir": str}
 
     def _write(self, img: np.ndarray) -> None:
-        if self._image_type == "image" or self._output_type == "image":
-            cv2.imwrite(self._file_path_with_timestamp, img)
+        if self._input_type == "image" or self._output_type == "image":
+            if self._input_type == "video":
+                _file_path_post_processed = self._append_frame_filename(
+                    self.output_filename  # only video with output_filename specified
+                )
+                cv2.imwrite(_file_path_post_processed, img)
+            else:  # image input
+                cv2.imwrite(self._file_path_post_processed, img)
         else:
             self.writer.write(img)
 
@@ -117,16 +128,21 @@ class Node(AbstractNode):
         saved_video_fps: int,
         output_filename: Optional[str],
     ) -> None:
-        self._file_path_with_timestamp = self._append_datetime_filename(filename)
-        if self._image_type == "video":
+        self._file_path_post_processed = self._append_datetime_filename(filename)
+        if self._input_type == "video":
             if output_filename is not None:
-                self._file_path_with_timestamp = self._append_datetime_filename(
-                    output_filename
-                )
+                if self._output_type == "video":
+                    self._file_path_post_processed = self._append_datetime_filename(
+                        output_filename
+                    )
+                else:  # image
+                    self._file_path_post_processed = self._append_frame_filename(
+                        output_filename
+                    )
 
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
-                self._file_path_with_timestamp,
+                self._file_path_post_processed,
                 self._fourcc,
                 saved_video_fps,
                 resolution,
@@ -153,3 +169,11 @@ class Node(AbstractNode):
         file_path_with_timestamp = self.output_dir / filename_with_timestamp
 
         return str(file_path_with_timestamp)
+
+    def _append_frame_filename(self, filename: str) -> str:
+        # append timestamp to filename before extension Format: filename_timestamp.extension
+        filename_with_frame = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
+        file_path_with_frame = self.output_dir / filename_with_frame
+        self._frame += 1
+
+        return str(file_path_with_frame)
