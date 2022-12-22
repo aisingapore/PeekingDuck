@@ -170,7 +170,7 @@ class Node(AbstractNode):
 
         return str(file_path_with_timestamp)
 
-    def _append_frame_filename(self, filename: str) -> str:
+    def _append_frame_filename(self, filename: Optional[str]) -> str:
         # append timestamp to filename before extension Format: filename_timestamp.extension
         filename_with_frame = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
         file_path_with_frame = self.output_dir / filename_with_frame
