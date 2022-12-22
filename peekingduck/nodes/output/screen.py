@@ -45,6 +45,8 @@ class Node(AbstractNode):
         window_loc (:obj:`Dict[str, int]`): **default = { x: 0, y: 0 }** |br|
             X and Y coordinates of the top left corner of the displayed window,
             with reference from the top left corner of the screen, in pixels.
+        image_waitkey (:obj:`bool`): **default = False** |br|
+            Whether to wait for input before going to next image. Image files only.
 
     .. note::
 
@@ -75,11 +77,30 @@ class Node(AbstractNode):
         if self.first_run:
             cv2.moveWindow(self.window_name, self.window_loc["x"], self.window_loc["y"])
             self.first_run = False
-        if cv2.waitKey(1) & 0xFF == ord("q"):
+
+        return_key = self._wait_for_keyboard_input(inputs["filename"])
+
+        # Key 'q' to quit
+        if return_key & 0xFF == ord("q"):
             cv2.destroyWindow(self.window_name)
             return {"pipeline_end": True}
 
         return {"pipeline_end": False}
+
+    def _wait_for_keyboard_input(self, filename: str) -> int:
+        """
+        check config['output'] image_waitkey whether to wait
+        for user input before pipeline end
+        """
+        wait_ms = 1  # Default - Delay in milliseconds
+        if self.image_waitkey and filename.split(".")[-1] in [
+            "jpg",
+            "jpeg",
+            "png",
+        ]:
+            wait_ms = 0
+
+        return cv2.waitKey(wait_ms)
 
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
@@ -92,4 +113,5 @@ class Node(AbstractNode):
             "window_size.do_resizing": bool,
             "window_size.width": int,
             "window_size.height": int,
+            "image_waitkey": bool,
         }

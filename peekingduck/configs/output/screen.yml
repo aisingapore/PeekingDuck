@@ -5,3 +5,5 @@ callbacks: {}
 window_name: "PeekingDuck"
 window_size: { do_resizing: False, width: 1280, height: 720 }
 window_loc: { x: 0, y: 0 }
+
+image_waitkey: False
