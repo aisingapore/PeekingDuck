@@ -78,19 +78,11 @@ class Node(AbstractNode):
             if self.writer:  # images automatically releases writer
                 self.writer.release()
             return {}
-        self._input_type = self._detect_input_type(inputs["filename"])
         # init
+        self._input_type = self._detect_media_type(inputs["filename"])
         if self.output_filename is not None:
-            self._output_type = self._detect_input_type(self.output_filename)
-        if not self._file_name:
-            self._file_name = inputs["filename"]
+            self._output_type = self._detect_media_type(self.output_filename)
 
-            self._prepare_writer(
-                inputs["filename"],
-                inputs["img"],
-                inputs["saved_video_fps"],
-                self.output_filename,
-            )
         # different input file
         if self._file_name != inputs["filename"]:
             self._file_name = inputs["filename"]
@@ -153,7 +145,7 @@ class Node(AbstractNode):
         output_dir.mkdir(parents=True, exist_ok=True)
 
     @staticmethod
-    def _detect_input_type(filename: str) -> str:
+    def _detect_media_type(filename: str) -> str:
         if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
             return "image"
 
