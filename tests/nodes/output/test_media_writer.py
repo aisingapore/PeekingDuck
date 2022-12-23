@@ -185,7 +185,7 @@ class TestMediaWriter:
 
         assert len(directory_contents()) == 1
         assert directory_contents()[0].suffix == ".mp4"
-        assert re.search(FILENAME_PATTERN, str(directory_contents()[0]))
+        assert re.search(OUTPUT_FILENAME_PATTERN, str(directory_contents()[0]))
 
     def test_image_writer_writes_single_video(self, image_writer, create_video):
         video = create_video(SIZE, num_frames=20)
@@ -280,7 +280,7 @@ class TestMediaWriter:
         assert len(directory_contents()) == 2
         for filename in directory_contents():
             assert filename.suffix == ".mp4"
-            assert re.search(FILENAME_PATTERN, str(filename))
+            assert re.search(OUTPUT_FILENAME_PATTERN, str(filename))
 
     def test_image_writer_writes_multi_video(self, image_writer, create_video):
         video1 = create_video(SIZE, num_frames=20)

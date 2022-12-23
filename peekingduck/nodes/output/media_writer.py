@@ -123,14 +123,9 @@ class Node(AbstractNode):
         self._file_path_post_processed = self._append_datetime_filename(filename)
         if self._input_type == "video":
             if output_filename is not None:
-                if self._output_type == "video":
-                    self._file_path_post_processed = self._append_datetime_filename(
-                        output_filename
-                    )
-                else:  # image
-                    self._file_path_post_processed = self._append_frame_filename(
-                        output_filename
-                    )
+                self._file_path_post_processed = self._append_frame_filename(
+                    output_filename
+                )
 
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
