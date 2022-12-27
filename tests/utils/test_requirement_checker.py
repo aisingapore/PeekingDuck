@@ -48,8 +48,8 @@ REQUIREMENTS_CONTENT = [
     f"{NODE_WITH_SYS_PKG} {PKG_REQ_TYPE_SYSTEM} sys_package_name1",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} | {' '.join(PY_PKGS[3])}",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[4])} | pytest >= 6.2.3",
-    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: flag1$ inline comment",
-    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: flag1,flag2$ inline comment",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: shared_flag$ inline comment",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: shared_flag,valid_flag$ inline comment",
 ]
 
 
@@ -199,7 +199,7 @@ class TestRequirementChecker:
     @pytest.mark.parametrize(
         "behavior_requirements_file", ("python + selector",), indirect=True
     )
-    @pytest.mark.parametrize("flags", ("flag2", "invalid_flag"))
+    @pytest.mark.parametrize("flags", ("valid_flag", "invalid_flag"))
     def test_skip_install_with_wrong_selector(self, behavior_requirements_file, flags):
         with mock.patch(
             "subprocess.check_output", wraps=replace_subprocess_check_output
@@ -214,7 +214,7 @@ class TestRequirementChecker:
     @pytest.mark.parametrize(
         "behavior_requirements_file", ("python + selector",), indirect=True
     )
-    @pytest.mark.parametrize("flags", ("flag1", "flag1,flag2"))
+    @pytest.mark.parametrize("flags", ("shared_flag", "shared_flag,valid_flag"))
     def test_install_with_selector(self, behavior_requirements_file, flags):
         with mock.patch(
             "subprocess.check_output", wraps=replace_subprocess_check_output
