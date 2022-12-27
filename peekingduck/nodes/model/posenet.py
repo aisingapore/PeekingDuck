@@ -60,7 +60,7 @@ class Node(RequirementCheckerMixin, AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default = 0.4**. |br|
             Detected keypoints confidence score threshold, only keypoints above
             threshold will be kept in output.
-        use_jit (:obj:`bool`): **default = True**. |br|
+        use_jit (:obj:`bool`): **default = False**. |br|
             Flag to enable compile parts of the model code with Numba JIT compiler
             to improve inference speed. Requires installing ``numba`` as an
             optional dependency.
