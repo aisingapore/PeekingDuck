@@ -83,7 +83,9 @@ class TestHRNet:
 
         npt.assert_allclose(output["keypoints"], expected["keypoints"], atol=TOLERANCE)
         npt.assert_allclose(
-            output["keypoint_conns"], expected["keypoint_conns"], atol=TOLERANCE
+            np.asarray(output["keypoint_conns"], dtype=float),
+            expected["keypoint_conns"],
+            atol=TOLERANCE,
         )
         npt.assert_allclose(
             output["keypoint_scores"], expected["keypoint_scores"], atol=TOLERANCE
@@ -112,7 +114,7 @@ class TestHRNet:
         # Thus, iterate through the detections
         for i, expected_keypoint_conns in enumerate(expected["keypoint_conns"]):
             npt.assert_allclose(
-                output["keypoint_conns"][i],
+                np.asarray(output["keypoint_conns"][i], dtype=float),
                 expected_keypoint_conns,
                 atol=TOLERANCE,
             )

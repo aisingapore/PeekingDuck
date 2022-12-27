@@ -66,7 +66,8 @@ class KeypointHandler(ABC):
             [
                 [pose[edge] for edge in self.SKELETON if mask[edge].all()]
                 for pose, mask in zip(self.keypoints, self.keypoint_masks)
-            ]
+            ],
+            dtype=object,
         )
 
     @property
