@@ -27,14 +27,11 @@ import tensorflow as tf
 from peekingduck.nodes.model.posenetv1.posenet_files.constants import (
     IMAGE_NET_MEAN,
     MIN_PART_SCORE,
+    OUTPUT_STRIDE,
 )
-from peekingduck.nodes.model.posenetv1.posenet_files.decode_multi import (
-    decode_multiple_poses,
-)
+from peekingduck.nodes.model.posenetv1.posenet_files.decoder import Decoder
 from peekingduck.utils.graph_functions import load_graph
 from peekingduck.utils.pose.keypoint_handler import COCOBody
-
-OUTPUT_STRIDE = 16
 
 
 class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-methods
@@ -49,6 +46,7 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         resolution: Dict[str, int],
         max_pose_detection: int,
         score_threshold: float,
+        use_jit: bool,
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
@@ -61,8 +59,10 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         self.resolution = int(resolution["height"]), int(resolution["width"])
         self.max_pose_detection = max_pose_detection
         self.score_threshold = score_threshold
+        self.use_jit = use_jit
 
         self.keypoint_handler = COCOBody(score_threshold=MIN_PART_SCORE)
+        self.decoder = Decoder(score_threshold, use_jit)
         self.posenet = self._create_posenet_model()
 
     def predict(  # pylint: disable=too-many-locals
@@ -94,10 +94,11 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
     def _create_posenet_model(self) -> Callable:
         self.logger.info(
             "PoseNet model loaded with following configs:\n\t"
-            f"Model type: {self.model_type},\n\t"
-            f"Input resolution: {self.resolution},\n\t"
-            f"Max pose detection: {self.max_pose_detection},\n\t"
-            f"Score threshold: {self.score_threshold}"
+            f"Model type: {self.model_type}\n\t"
+            f"Input resolution: {self.resolution}\n\t"
+            f"Max pose detection: {self.max_pose_detection}\n\t"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Compile with Numba JIT: {self.use_jit}"
         )
         return self._load_posenet_weights()
 
@@ -134,30 +135,27 @@ class Predictor:  # pylint: disable=too-many-instance-attributes,too-few-public-
         # image_size = [W, H]
         image, output_scale, image_size = self._preprocess(frame)
 
-        keypoint_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
-        keypoints = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
+        pose_scores = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS))
+        poses = np.zeros((self.max_pose_detection, COCOBody.NUM_KEYPOINTS, 2))
 
         outputs = self.posenet(image)
         if self.model_type == "resnet":
             outputs[0] = tf.keras.activations.sigmoid(outputs[0])
 
-        pose_count = decode_multiple_poses(
-            outputs,
-            keypoint_scores,
-            keypoints,
-            OUTPUT_STRIDE,
-            min_pose_score=self.score_threshold,
-        )
+        pose_count = self.decoder.decode(outputs, pose_scores, poses, OUTPUT_STRIDE)
 
-        keypoint_scores = keypoint_scores[:pose_count]
-        keypoints = keypoints[:pose_count]
+        pose_scores = pose_scores[:pose_count]
+        # Swap coordinates ordering
+        poses = poses[:pose_count, ..., [1, 0]]
 
         # Convert coordinate to be relative to image size
-        keypoints = keypoints * output_scale / image_size
+        poses = poses * output_scale / image_size
 
-        return keypoints, keypoint_scores
+        return poses, pose_scores
 
-    def _preprocess(self, frame: np.ndarray) -> Tuple[tf.Tensor, List[int], List[int]]:
+    def _preprocess(
+        self, frame: np.ndarray
+    ) -> Tuple[tf.Tensor, List[float], List[int]]:
         """Rescale raw frame and convert to tensor image for inference"""
         image_size = [frame.shape[1], frame.shape[0]]
         target_height, target_width = self._get_valid_resolution(OUTPUT_STRIDE)

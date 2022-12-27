@@ -40,10 +40,8 @@ from typing import Any, Dict, List, Tuple
 import numpy as np
 
 from peekingduck.nodes.dabble.trackingv1.tracking_files.track import Track
-from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import (
-    iou_tlwh,
-    xyxyn2tlwh,
-)
+from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import iou_candidates
+from peekingduck.utils.bbox.transforms import xyxyn2tlwh
 
 
 class IOUTracker:
@@ -84,7 +82,7 @@ class IOUTracker:
         frame_size = frame.shape[:2]
         tlwhs = xyxyn2tlwh(inputs["bboxes"], *frame_size)
 
-        tracks = self.update(list(tlwhs))
+        tracks = self.update(tlwhs)
         track_ids = self._order_track_ids_by_bbox(tlwhs, tracks)
 
         return track_ids
@@ -106,21 +104,25 @@ class IOUTracker:
         """
         track_ids = list(self.tracks.keys())
 
+        num_detections = len(detections)
+        mask = np.ones(num_detections, dtype=bool)
+        indices = list(range(num_detections))
         updated_tracks = []
         for track_id in track_ids:
-            if detections:
+            if len(detections[mask]) > 0:
                 idx, best_match, best_iou = self.get_best_match_by_iou(
-                    detections, self.tracks[track_id].bbox
+                    detections[mask], self.tracks[track_id].bbox
                 )
                 if best_iou >= self.iou_threshold:
                     self._update_track(track_id, best_match, best_iou)
                     updated_tracks.append(track_id)
-                    del detections[idx]
+                    adjusted_idx = indices.pop(idx)
+                    mask[adjusted_idx] = False
             if not updated_tracks or track_id != updated_tracks[-1]:
                 self.tracks[track_id].lost += 1
                 if self.tracks[track_id].lost > self.max_lost:
                     self._remove_track(track_id)
-        for tlwh in detections:
+        for tlwh in detections[mask]:
             self._add_track(tlwh)
         outputs = self._get_tracks()
         return outputs
@@ -165,29 +167,26 @@ class IOUTracker:
 
     @staticmethod
     def get_best_match_by_iou(
-        detections: List[np.ndarray], tracked_bbox: np.ndarray
+        detections: np.ndarray, tracked_bbox: np.ndarray
     ) -> Tuple[int, np.ndarray, float]:
         """Finds the best match between all the current detections and the
         specified tracked bounding box. Best match is the pair with the largest
         IoU value.
 
         Args:
-            detections (List[np.ndarray]): List of tuples containing the
-                bounding box coordinates for each of the detection. The
-                bounding box has the format (t, l, w, h) where (t, l) is the
-                top-left corner, w is the width, and h is the height.
+            detections (np.ndarray): Array containing the bounding box
+                coordinates for each of the detection. The bounding box has the
+                format (t, l, w, h) where (t, l) is the top-left corner, w is
+                the width, and h is the height.
             tracked_bbox (np.ndarray): The specified tracked bounding box.
 
         Returns:
             (Tuple[int, np.ndarray, float]): The index, bounding box of the
             best match current detection, and the IoU value.
         """
-        detection_and_iou = lambda det: (det, iou_tlwh(tracked_bbox, det))
-        idx, (best_match, best_iou) = max(
-            enumerate(map(detection_and_iou, detections)),
-            key=lambda x: x[1][1],
-        )
-        return idx, best_match, best_iou
+        candidates = iou_candidates(tracked_bbox, detections)
+        idx, best_iou = max(enumerate(candidates), key=lambda x: x[1])
+        return idx, detections[idx], best_iou
 
     @staticmethod
     def _order_track_ids_by_bbox(bboxes: np.ndarray, tracks: List[Track]) -> List[int]:

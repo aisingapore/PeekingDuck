@@ -42,12 +42,14 @@ PY_PKGS = [
 # Comments are added to get all branches of parse_requirements to run
 REQUIREMENTS_CONTENT = [
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} pytest >= 6.2.3",
-    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[0])}",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[0])} # inline comment",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[1])}",
     f"{NODE_WITH_SYS_PKG} {PKG_REQ_TYPE_SYSTEM} sys_package_name0  # inline comment",
     f"{NODE_WITH_SYS_PKG} {PKG_REQ_TYPE_SYSTEM} sys_package_name1",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} | {' '.join(PY_PKGS[3])}",
     f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[4])} | pytest >= 6.2.3",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: shared_flag$ inline comment",
+    f"{NODE_WITH_UPDATE} {PKG_REQ_TYPE_PYTHON} {' '.join(PY_PKGS[2])} # flags: shared_flag,valid_flag$ inline comment",
 ]
 
 
@@ -72,14 +74,15 @@ def fixture_behavior_requirements_file(request):
     # Maps the requirement check behavior that is triggered when creating a
     # requirements up to this line number.
     checker_behavior = {
-        "python": 3,
-        "system": 6,
-        "python + alt": 7,
-        "python + alt short circuit": 8,
+        "python": [0, 1, 2],
+        "system": [0, 1, 2, 3, 4],
+        "python + alt": [0, 1, 2, 3, 5],
+        "python + alt short circuit": [0, 1, 2, 3, 5, 6],
+        "python + selector": [0, 1, 2, 3, 5, 7, 8],
     }
     requirements_path = Path.cwd() / "optional_requirements.txt"
     with open(requirements_path, "w") as outfile:
-        for line in REQUIREMENTS_CONTENT[: checker_behavior[request.param]]:
+        for line in (REQUIREMENTS_CONTENT[i] for i in checker_behavior[request.param]):
             outfile.write(f"{line}\n")
     return requirements_path
 
@@ -108,9 +111,7 @@ class TestRequirementChecker:
                 captured.records,
             )
 
-    def test_checker_class_exits_the_programe_upon_update_failure(
-        self, requirements_file
-    ):
+    def test_checker_class_exits_the_programe_upon_update_failure(self):
         ret_code = 123
         cmd = "command"
         with mock.patch(
@@ -173,8 +174,58 @@ class TestRequirementChecker:
     ):
         with mock.patch(
             "subprocess.check_output", wraps=replace_subprocess_check_output
+        ):
+            # doesn't install if one of the alternative is available
+            assert check_requirements(NODE_WITH_UPDATE, behavior_requirements_file) == 3
+
+    @pytest.mark.parametrize(
+        "behavior_requirements_file", ("python + selector",), indirect=True
+    )
+    def test_skip_install_without_selector(self, behavior_requirements_file):
+        with mock.patch(
+            "subprocess.check_output", wraps=replace_subprocess_check_output
         ), TestCase.assertLogs(
             "peekingduck.utils.requirement_checker.logger"
         ) as captured:
-            # doesn't install if one of the alternative is available
-            assert check_requirements(NODE_WITH_UPDATE, behavior_requirements_file) == 3
+            # does not install any req with selector, so 3 updates
+            n_update = check_requirements(
+                NODE_WITH_UPDATE, behavior_requirements_file, None
+            )
+
+            assert n_update == 3
+            assert_msg_in_logs(f"{''.join(PY_PKGS[2])} not found", captured.records)
+            assert_msg_in_logs(f"pip install {''.join(PY_PKGS[2])}", captured.records)
+
+    @pytest.mark.parametrize(
+        "behavior_requirements_file", ("python + selector",), indirect=True
+    )
+    @pytest.mark.parametrize("flags", ("valid_flag", "invalid_flag"))
+    def test_skip_install_with_wrong_selector(self, behavior_requirements_file, flags):
+        with mock.patch(
+            "subprocess.check_output", wraps=replace_subprocess_check_output
+        ):
+            # only installs one of the alternatives, so 3 updates
+            n_update = check_requirements(
+                NODE_WITH_UPDATE, behavior_requirements_file, flags
+            )
+
+            assert n_update == 0
+
+    @pytest.mark.parametrize(
+        "behavior_requirements_file", ("python + selector",), indirect=True
+    )
+    @pytest.mark.parametrize("flags", ("shared_flag", "shared_flag,valid_flag"))
+    def test_install_with_selector(self, behavior_requirements_file, flags):
+        with mock.patch(
+            "subprocess.check_output", wraps=replace_subprocess_check_output
+        ), TestCase.assertLogs(
+            "peekingduck.utils.requirement_checker.logger"
+        ) as captured:
+            # only installs one of the alternatives, so 3 updates
+            n_update = check_requirements(
+                NODE_WITH_UPDATE, behavior_requirements_file, flags
+            )
+
+            assert n_update == 1
+            assert_msg_in_logs(f"{''.join(PY_PKGS[2])} not found", captured.records)
+            assert_msg_in_logs(f"pip install {''.join(PY_PKGS[2])}", captured.records)

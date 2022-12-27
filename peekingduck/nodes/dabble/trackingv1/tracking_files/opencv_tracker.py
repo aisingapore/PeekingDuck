@@ -19,10 +19,8 @@ from typing import Any, Dict, List, NamedTuple, Optional, Tuple
 import cv2
 import numpy as np
 
-from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import (
-    iou_candidates,
-    xyxyn2tlwh,
-)
+from peekingduck.nodes.dabble.trackingv1.tracking_files.utils import iou_candidates
+from peekingduck.utils.bbox.transforms import xyxyn2tlwh
 
 
 class OpenCVTracker:  # pylint: disable=too-few-public-methods
@@ -76,7 +74,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
             bbox (np.ndarray): Single detected bounding box.
         """
         tracker = cv2.legacy.TrackerMOSSE_create()
-        tracker.init(frame, tuple(bbox))
+        tracker.init(frame, bbox)
         self.tracks[self.next_track_id] = Track(tracker, bbox)
         self.next_track_id += 1
         self.is_initialized = True
@@ -110,7 +108,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         track_ids = []
         for bbox, matched_id in matching_dict.items():
             if matched_id is None:
-                self._initialize_tracker(frame, np.array(bbox))
+                self._initialize_tracker(frame, bbox)
                 track_ids.append(list(self.tracks)[-1])
             else:
                 track_ids.append(list(self.tracks)[matched_id])
@@ -125,7 +123,7 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         for track_id, track in self.tracks.items():
             success, bbox = track.tracker.update(frame)
             if success:
-                self.tracks[track_id] = Track(track.tracker, np.array(bbox))
+                self.tracks[track_id] = Track(track.tracker, bbox)
             else:
                 failures.append(track_id)
         for track_id in failures:
@@ -144,4 +142,4 @@ class Track(NamedTuple):
     """
 
     tracker: cv2.legacy_TrackerMOSSE
-    bbox: np.ndarray
+    bbox: Tuple[float, float, float, float]

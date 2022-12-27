@@ -20,10 +20,11 @@ import cv2
 import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import RequirementCheckerMixin
 from peekingduck.nodes.model.efficientdet_d04 import efficientdet_model
 
 
-class Node(AbstractNode):
+class Node(RequirementCheckerMixin, AbstractNode):
     """Initializes an EfficientDet model to detect bounding boxes from an image.
 
     The EfficientDet node is capable of detecting objects from 80 categories.
@@ -59,6 +60,10 @@ class Node(AbstractNode):
         weights_parent_dir (:obj:`Optional[str]`): **default = null**. |br|
             Change the parent directory where weights will be stored by
             replacing ``null`` with an absolute path to the desired directory.
+        use_jit (:obj:`bool`): **default = False**. |br|
+            Flag to enable compile parts of the model code with Numba JIT compiler
+            to improve inference speed. Requires installing ``numba`` as an
+            optional dependency.
 
     References:
         EfficientDet: Scalable and Efficient Object Detection:
@@ -69,6 +74,8 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.check_requirements("use_jit")
+
         self.model = efficientdet_model.EfficientDetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

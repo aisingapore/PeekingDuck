@@ -44,6 +44,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         model_nodes: Dict[str, List[str]],
         image_size: Dict[int, int],
         score_threshold: float,
+        use_jit: bool,
     ) -> None:
         self.logger = logging.getLogger(__name__)
 
@@ -54,9 +55,24 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         self.model_nodes = model_nodes
         self.image_size = image_size[self.model_type]
         self.score_threshold = score_threshold
+        self.use_jit = use_jit
 
         self.detect_ids = detect_ids
         self.efficient_det = self._create_efficient_det_model()
+
+        # pylint: disable=import-outside-toplevel
+        if use_jit:
+            from peekingduck.nodes.model.efficientdet_d04.efficientdet_files import (
+                jit_funcs,
+            )
+
+            self._normalize_and_pad = jit_funcs.normalize_and_pad
+        else:
+            from peekingduck.nodes.model.efficientdet_d04.efficientdet_files import (
+                nojit_funcs,
+            )
+
+            self._normalize_and_pad = nojit_funcs.normalize_and_pad
 
     def predict_object_bbox_from_image(
         self, image: np.ndarray
@@ -75,9 +91,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
         image, scale = self._preprocess(image)
 
         # run network
-        graph_input = tf.convert_to_tensor(
-            np.expand_dims(image, axis=0), dtype=tf.float32
-        )
+        graph_input = tf.convert_to_tensor(image, dtype=tf.float32)
         boxes, scores, labels = self.efficient_det(x=graph_input)
         network_output = (
             np.squeeze(boxes.numpy()),
@@ -99,7 +113,8 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             "EfficientDet model loaded with following configs:\n\t"
             f"Model type: D{self.model_type}\n\t"
             f"IDs being detected: {self.detect_ids}\n\t"
-            f"Score threshold: {self.score_threshold}"
+            f"Score threshold: {self.score_threshold}\n\t"
+            f"Compile with Numba JIT: {self.use_jit}"
         )
 
         return model
@@ -153,4 +168,4 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             image (np.ndarray): the preprocessed image
             scale (float): the scale the image was resized to
         """
-        return preprocess_image(image, self.image_size)
+        return preprocess_image(image, self.image_size, self._normalize_and_pad)

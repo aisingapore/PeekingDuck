@@ -52,17 +52,11 @@ def project_points_onto_original_image(
                                      in integer coordinates
     """
     if len(points) == 0:
-        return []
+        return np.empty(0)
 
     points = points.reshape((-1, 2))
 
-    projected_points = np.array(points, dtype=np.float32)
-
-    width, height = image_size[0], image_size[1]
-    projected_points[:, 0] *= width
-    projected_points[:, 1] *= height
-
-    return np.round(projected_points).astype(int)
+    return np.rint(points * image_size).astype(int)
 
 
 def get_color(color: Union[str, List[int]]) -> Tuple[int, int, int]:

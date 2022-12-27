@@ -51,3 +51,4 @@ model_type: resnet # 50, 75, 100 or resnet
 resolution: { height: 225, width: 225 }
 max_pose_detection: 10
 score_threshold: 0.4
+use_jit: false

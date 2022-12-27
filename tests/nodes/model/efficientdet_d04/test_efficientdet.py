@@ -93,8 +93,8 @@ class TestEfficientDet:
         actual_img1, actual_scale1 = efficientdet.model.detector._preprocess(test_img1)
         actual_img2, actual_scale2 = efficientdet.model.detector._preprocess(test_img2)
 
-        assert actual_img1.shape == (512, 512, 3)
-        assert actual_img2.shape == (512, 512, 3)
+        assert actual_img1.shape == (1, 512, 512, 3)
+        assert actual_img2.shape == (1, 512, 512, 3)
         assert actual_img1.dtype == np.float32
         assert actual_img2.dtype == np.float32
         assert actual_scale1 == 0.4

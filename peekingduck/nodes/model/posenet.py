@@ -19,10 +19,11 @@ from typing import Any, Dict, Optional, Union
 import numpy as np
 
 from peekingduck.nodes.abstract_node import AbstractNode
+from peekingduck.nodes.base import RequirementCheckerMixin
 from peekingduck.nodes.model.posenetv1 import posenet_model
 
 
-class Node(AbstractNode):
+class Node(RequirementCheckerMixin, AbstractNode):
     """Initializes a PoseNet model to detect human poses from an image.
 
     The PoseNet node is capable of detecting multiple human figures
@@ -59,6 +60,10 @@ class Node(AbstractNode):
         score_threshold (:obj:`float`): **[0, 1], default = 0.4**. |br|
             Detected keypoints confidence score threshold, only keypoints above
             threshold will be kept in output.
+        use_jit (:obj:`bool`): **default = False**. |br|
+            Flag to enable compile parts of the model code with Numba JIT compiler
+            to improve inference speed. Requires installing ``numba`` as an
+            optional dependency.
 
     References:
         PersonLab: Person Pose Estimation and Instance Segmentation with a
@@ -70,6 +75,8 @@ class Node(AbstractNode):
 
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
+        self.check_requirements("use_jit")
+
         self.model = posenet_model.PoseNetModel(self.config)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

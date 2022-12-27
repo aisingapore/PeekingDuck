@@ -19,16 +19,15 @@
 Processing helper functions for EfficientDet
 """
 
-from typing import Tuple
+from typing import Callable, Tuple
 
 import cv2
 import numpy as np
 
-IMG_MEAN = [0.485, 0.456, 0.406]
-IMG_STD = [0.229, 0.224, 0.225]
 
-
-def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, float]:
+def preprocess_image(
+    image: np.ndarray, image_size: int, normalize_and_pad: Callable
+) -> Tuple[np.ndarray, float]:
     """Preprocessing helper function for efficientdet
 
     Args:
@@ -40,24 +39,19 @@ def preprocess_image(image: np.ndarray, image_size: int) -> Tuple[np.ndarray, fl
         scale (float): the scale in which the original image was resized to
     """
     # image, RGB
-    image_height, image_width = image.shape[:2]
-    if image_height > image_width:
-        scale = image_size / image_height
+    height, width = image.shape[:2]
+    scale = image_size / max(height, width)
+    if height > width:
         resized_height = image_size
-        resized_width = int(image_width * scale)
+        resized_width = int(width * scale)
     else:
-        scale = image_size / image_width
-        resized_height = int(image_height * scale)
+        resized_height = int(height * scale)
         resized_width = image_size
+    pad_height = image_size - resized_height
+    pad_width = image_size - resized_width
 
     image = cv2.resize(image, (resized_width, resized_height))
-    image = image.astype(np.float32)
-    image /= 255.0
-    image -= IMG_MEAN
-    image /= IMG_STD
-    pad_h = image_size - resized_height
-    pad_w = image_size - resized_width
-    image = np.pad(image, [(0, pad_h), (0, pad_w), (0, 0)], mode="constant")
+    image = normalize_and_pad(image, pad_height, pad_width)
 
     return image, scale
 

@@ -19,7 +19,7 @@ import logging
 import subprocess
 import sys
 from pathlib import Path
-from typing import Any, Iterator, List, TextIO, Tuple, Union
+from typing import Any, Iterator, List, Optional, TextIO, Tuple, Union
 
 import pkg_resources as pkg
 
@@ -88,7 +88,9 @@ class OptionalRequirement:
 
 
 def check_requirements(
-    identifier: str, requirements_path: Path = ROOT / "optional_requirements.txt"
+    identifier: str,
+    requirements_path: Path = ROOT / "optional_requirements.txt",
+    flags: Optional[str] = None,
 ) -> int:
     """Checks if the packages specified by the ``identifier`` in the
     requirements file at ``requirements_path`` are present on the system. If
@@ -103,7 +105,7 @@ def check_requirements(
         (:obj:`int`): The number of packages updated.
     """
     with open(requirements_path) as infile:
-        requirements = list(_parse_requirements(infile, identifier))
+        requirements = list(_parse_requirements(infile, identifier, flags))
 
     n_update = 0
     for req in requirements:
@@ -139,7 +141,9 @@ def check_requirements(
     return n_update
 
 
-def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequirement]:
+def _parse_requirements(
+    file: TextIO, identifier: str, flags: Optional[str]
+) -> Iterator[OptionalRequirement]:
     """Yield ``OptionalRequirement`` objects for each specification in
     ``strings``.
 
@@ -156,9 +160,9 @@ def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequi
     """
     lines = iter(_yield_lines(file, identifier))
     for line in lines:
-        # Drop comments -- a hash without a space may be in a URL.
-        if " #" in line:
-            line = line[: line.find(" #")]
+        skip, line = _select_line(flags, line)
+        if skip:
+            continue
         req_type, req_name = _split_type_and_name(line)
         if req_type == PKD_REQ_TYPE_PYTHON:
             reqs = [pkg.Requirement.parse(name) for name in req_name.split("|")]
@@ -166,6 +170,41 @@ def _parse_requirements(file: TextIO, identifier: str) -> Iterator[OptionalRequi
         else:
             requirement = OptionalRequirement(req_name, req_type)
         yield requirement
+
+
+def _select_line(flags: Optional[str], line: str) -> Tuple[bool, str]:
+    """Selects the optional requirement line for further processing and
+    installation. If flags are not provided, skips line with selector. If flags
+    are provided, skips lines without selector or with wrong selector.
+
+    Args:
+        flags (Optional[str]): A string indicating the combination of configs
+            used to select this package for installation.
+        line (str): A line in the optional requirements file containing the
+            package specification and optional comments/selector.
+
+    Returns:
+        Tuple[bool, str]: A tuple containing a boolean flag indicating if the
+        line should be skipped and a clean requirement line without any comments.
+    """
+    flags_start = "flags:"
+    flags_stop = "$"
+    comment_start = line.find(" #")  # only used when there is comment in line
+    is_clean = " #" not in line  # no comment in line
+    is_comment = not is_clean and flags_start not in line  # only comment in line
+
+    if flags is None:
+        if is_clean:
+            return False, line
+        if is_comment:
+            return False, line[:comment_start]
+        return True, line
+
+    if is_clean or is_comment:
+        return True, line
+    if f"{flags_start} {flags}{flags_stop}" in line[comment_start:]:
+        return False, line[:comment_start]
+    return True, line
 
 
 def _require_any(req: OptionalRequirement) -> bool:
