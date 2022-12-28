@@ -24,7 +24,7 @@ from peekingduck.nodes.draw.bbox import Node
 from tests.conftest import TEST_IMAGES_DIR
 
 BLACK_IMAGE = str(TEST_IMAGES_DIR / "black.jpg")
-TURQUOISE = [229, 255, 0] # [ B, G, R ] Turquoise
+TURQUOISE = [229, 255, 0]
 
 
 @pytest.fixture
@@ -61,7 +61,7 @@ def draw_bbox_color_choice():
             "output": ["none"],
             "show_labels": True,
             "show_scores": False,
-            "color_choice": TURQUOISE
+            "color_choice": TURQUOISE,
         }
     )
     return node
@@ -83,7 +83,9 @@ class TestBbox:
         draw_bbox_no_labels.run(input1)
         np.testing.assert_equal(original_img, output_img)
 
-    def test_bbox_no_label(self, draw_bbox_no_labels, draw_bbox_show_labels, draw_bbox_color_choice):
+    def test_bbox_no_label(
+        self, draw_bbox_no_labels, draw_bbox_show_labels, draw_bbox_color_choice
+    ):
         bboxes = [np.array([0, 0, 1, 1])]
         original_img = cv2.imread(BLACK_IMAGE)
         output_img_no_label = original_img.copy()
