@@ -63,8 +63,6 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
     # Get unique label color indexes
     color_idx = {label: idx for idx, label in enumerate(set(bbox_labels))}
 
-    
-
     for i, bbox in enumerate(bboxes):
         if color_choice:
             color = color_choice
