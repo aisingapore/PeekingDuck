@@ -24,6 +24,7 @@ from peekingduck.nodes.draw.bbox import Node
 from tests.conftest import TEST_IMAGES_DIR
 
 BLACK_IMAGE = str(TEST_IMAGES_DIR / "black.jpg")
+TURQUOISE = [229, 255, 0] # [ B, G, R ] Turquoise
 
 
 @pytest.fixture
@@ -34,7 +35,6 @@ def draw_bbox_no_labels():
             "output": ["none"],
             "show_labels": False,
             "show_scores": False,
-            "color_choice": [],
         }
     )
     return node
@@ -48,7 +48,20 @@ def draw_bbox_show_labels():
             "output": ["none"],
             "show_labels": True,
             "show_scores": False,
-            "color_choice": [],
+        }
+    )
+    return node
+
+
+@pytest.fixture
+def draw_bbox_color_choice():
+    node = Node(
+        {
+            "input": ["bboxes", "img", "bbox_labels", "bbox_scores"],
+            "output": ["none"],
+            "show_labels": True,
+            "show_scores": False,
+            "color_choice": TURQUOISE
         }
     )
     return node
@@ -70,7 +83,7 @@ class TestBbox:
         draw_bbox_no_labels.run(input1)
         np.testing.assert_equal(original_img, output_img)
 
-    def test_bbox_no_label(self, draw_bbox_no_labels, draw_bbox_show_labels):
+    def test_bbox_no_label(self, draw_bbox_no_labels, draw_bbox_show_labels, draw_bbox_color_choice):
         bboxes = [np.array([0, 0, 1, 1])]
         original_img = cv2.imread(BLACK_IMAGE)
         output_img_no_label = original_img.copy()
@@ -104,4 +117,26 @@ class TestBbox:
         np.testing.assert_raises(
             AssertionError, np.testing.assert_equal, original_img, output_img_show_label
         )
-        np.testing.assert_equal(output_img_no_label[0][0], np.array([156, 223, 244]))
+        np.testing.assert_equal(output_img_show_label[0][0], np.array([156, 223, 244]))
+
+    def test_bbox_color_choice(self, draw_bbox_color_choice):
+        bboxes = [np.array([0, 0, 1, 1])]
+        original_img = cv2.imread(BLACK_IMAGE)
+        output_img_show_label = original_img.copy()
+        labels = ["Person"]
+        scores = [0.99]
+        input = {
+            "bboxes": bboxes,
+            "img": output_img_show_label,
+            "bbox_labels": labels,
+            "bbox_scores": scores,
+        }
+
+        # test with labels and selected bbox color
+        draw_bbox_color_choice.run(input)
+        assert original_img.shape == output_img_show_label.shape
+        np.testing.assert_raises(
+            AssertionError, np.testing.assert_equal, original_img, output_img_show_label
+        )
+        # assert the top left pixel is replaced with bbox color choice
+        np.testing.assert_equal(output_img_show_label[0][0], np.array(TURQUOISE))

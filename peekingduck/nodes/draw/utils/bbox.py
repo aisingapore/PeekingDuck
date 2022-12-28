@@ -46,7 +46,7 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
     show_labels: bool,
     bbox_scores: List[float],
     show_scores: bool,
-    color_choice: Tuple[int, int, int],
+    color_choice: Tuple[int, int, int] = None,
 ) -> None:
     """Draws bboxes onto an image frame.
 
@@ -62,6 +62,8 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
     image_size = get_image_size(frame)
     # Get unique label color indexes
     color_idx = {label: idx for idx, label in enumerate(set(bbox_labels))}
+
+    
 
     for i, bbox in enumerate(bboxes):
         if color_choice:

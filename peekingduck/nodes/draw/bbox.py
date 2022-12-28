@@ -58,6 +58,10 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
+
+        # Optional Parameter
+        color_choice = self.color_choice if 'color_choice' in self.__dict__ else None
+
         draw_bboxes(
             inputs["img"],
             inputs["bboxes"],
@@ -65,7 +69,7 @@ class Node(AbstractNode):
             self.show_labels,
             inputs["bbox_scores"],
             self.show_scores,
-            self.color_choice,
+            color_choice,
         )
         return {}
 
