@@ -1,6 +1,8 @@
-input: ["bboxes", "img", "bbox_labels", "bbox_scores"]
+input: ["bboxes", "img", "bbox_labels"]
 output: ["none"]
 callbacks: {}
+
+optional_inputs: ["bbox_scores"]
 
 show_labels: False
 show_scores: False
