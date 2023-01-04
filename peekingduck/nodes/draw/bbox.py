@@ -36,7 +36,7 @@ class Node(AbstractNode):
 
         |bbox_labels_data|
 
-        |bbox_scores_data|
+        |bbox_scores_data| (optional input)
 
     Outputs:
         |none_output_data|
@@ -48,8 +48,8 @@ class Node(AbstractNode):
         show_scores (:obj:`bool`): **default = False**. |br|
             If ``True``, shows prediction scores, e.g., "0.99", at the bottom
             left of the bounding box. (If set as ``True``, the previous node must
-            output |bbox_scores_data|, otherwise the pipeline willbreak.)
-        color_choice (:obj:`List[int]`): **default = None**. |br|
+            output |bbox_scores_data|, otherwise the pipeline will break.)
+        color_choice (:obj:`List[int]`): **default = null**. |br|
             Define the color of the bounding box, in BGR format.
             Defined values have to be integers, and :math:`0 \\leq value \\leq 255`
             (values out of this range will be clipped).
@@ -61,12 +61,6 @@ class Node(AbstractNode):
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
 
-        # if "bbox_scores" not in inputs:
-        #     bbox_scores = []
-        # else:
-        #     bbox_scores = inputs["bbox_scores"]
-        # Optional Parameter
-        # print(self.__dict__)
         bbox_scores = inputs["bbox_scores"] if "bbox_scores" in inputs else None
         color_choice = self.color_choice if "color_choice" in self.__dict__ else None
 

@@ -55,8 +55,8 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
         bboxes (List[List[float]]): Bounding box coordinates.
         bbox_labels (List[str]): Labels of object detected.
         bbox_scores (List[float]): Prediction scores of object detected.
-        show_labels: whether to show the object labels
-        show_scores: whether to show the prediction score
+        show_labels: whether to show the object labels.
+        show_scores: whether to show the prediction score.
         color (Tuple[int, int, int]): Color used for bounding box.
     """
     image_size = get_image_size(frame)
