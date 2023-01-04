@@ -51,7 +51,7 @@ class Node(AbstractNode):
     Configs:
         output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
-        output_filename (:obj:`str`): **default = None**. |br|
+        output_filename (:obj:`str`): **default = null**. |br|
             Output filename for files to be written locally. Video only.
     """
 
