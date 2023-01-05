@@ -101,13 +101,6 @@ class Node(AbstractNode):
 
         return {}
 
-    def _validate_file_extension(self, filename: str) -> str:
-        """Return default .mp4 if extension is empty"""
-        ext: str = os.path.splitext(filename)[-1]
-        if ext is "":
-            return "".join([filename, ".mp4"])
-        return filename
-
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
         return {"output_dir": str}
@@ -145,6 +138,14 @@ class Node(AbstractNode):
                 saved_video_fps,
                 resolution,
             )
+
+    @staticmethod
+    def _validate_file_extension(filename: str) -> str:
+        """Return default .mp4 if extension is empty"""
+        ext: str = os.path.splitext(filename)[-1]
+        if ext == "":
+            return "".join([filename, ".mp4"])
+        return filename
 
     @staticmethod
     def _prepare_directory(output_dir: Path) -> None:
