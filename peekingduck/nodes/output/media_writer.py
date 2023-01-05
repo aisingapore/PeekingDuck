@@ -138,7 +138,7 @@ class Node(AbstractNode):
                     output_filename
                 )
 
-            resolution: tuple[int, int] = img.shape[1], img.shape[0]
+            resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
                 self._file_path_post_processed,
                 self._fourcc,
