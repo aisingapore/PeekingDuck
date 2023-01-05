@@ -159,7 +159,7 @@ class Node(AbstractNode):
         return "video"
 
     def _append_datetime_filename(self, filename: str) -> str:
-        current_time: datetime = datetime.datetime.now()
+        current_time = datetime.datetime.now()
         # output as 'YYYYMMDD_hhmmss'
         time_str: str = current_time.strftime("%y%m%d_%H%M%S")
 
