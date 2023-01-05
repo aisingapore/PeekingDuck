@@ -16,6 +16,7 @@
 Writes the output image/video to file.
 """
 
+import os
 import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -59,15 +60,17 @@ class Node(AbstractNode):
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.output_dir = Path(self.output_dir)  # type: ignore
+        self.output_dir: Path = Path(self.output_dir)  # type: ignore
         self.output_filename: Optional[str] = getattr(self, "output_filename", None)
         self._file_name: Optional[str] = None
         self._file_path_post_processed: Optional[str] = None
         self._input_type: Optional[str] = None
-        self._frame: int = 0  # start from 1 eventually
-        self.writer = None
+        self._frame: int = 0
+        self.writer: None = None
         self._prepare_directory(self.output_dir)
-        self._output_type: Optional[str] = None  # vod/img output from _output_filename
+        self._output_type: Optional[
+            str
+        ] = None  # video/img output from _output_filename
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         self.logger.info(f"Output directory used is: {self.output_dir}")
 
@@ -81,6 +84,7 @@ class Node(AbstractNode):
         # init
         self._input_type = self._detect_media_type(inputs["filename"])
         if self.output_filename is not None:
+            self.output_filename = self._validate_file_extension(self.output_filename)
             self._output_type = self._detect_media_type(self.output_filename)
 
         # different input file
@@ -97,6 +101,13 @@ class Node(AbstractNode):
 
         return {}
 
+    def _validate_file_extension(self, filename: str) -> str:
+        """Return default .mp4 if extension is empty"""
+        ext: str = os.path.splitext(filename)[-1]
+        if ext is "":
+            return "".join([filename, ".mp4"])
+        return filename
+
     def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
         return {"output_dir": str}
@@ -104,7 +115,7 @@ class Node(AbstractNode):
     def _write(self, img: np.ndarray) -> None:
         if self._input_type == "image" or self._output_type == "image":
             if self._input_type == "video":
-                _file_path_post_processed = self._append_frame_filename(
+                _file_path_post_processed: str = self._append_frame_filename(
                     self.output_filename  # only video with output_filename specified
                 )
                 cv2.imwrite(_file_path_post_processed, img)
@@ -127,7 +138,7 @@ class Node(AbstractNode):
                     output_filename
                 )
 
-            resolution = img.shape[1], img.shape[0]
+            resolution: tuple[int, int] = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
                 self._file_path_post_processed,
                 self._fourcc,
@@ -141,27 +152,27 @@ class Node(AbstractNode):
 
     @staticmethod
     def _detect_media_type(filename: str) -> str:
-        if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
+        if os.path.splitext(filename)[-1].lower() in ["jpg", "jpeg", "png"]:
             return "image"
 
         return "video"
 
     def _append_datetime_filename(self, filename: str) -> str:
-        current_time = datetime.datetime.now()
+        current_time: datetime = datetime.datetime.now()
         # output as 'YYYYMMDD_hhmmss'
-        time_str = current_time.strftime("%y%m%d_%H%M%S")
+        time_str: str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension
-        filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
-        file_path_with_timestamp = self.output_dir / filename_with_timestamp
+        filename_with_timestamp: str = f"_{time_str}.".join(filename.split(".")[-2:])
+        file_path_with_timestamp: Path = self.output_dir / filename_with_timestamp
 
         return str(file_path_with_timestamp)
 
     def _append_frame_filename(self, filename: Optional[str]) -> str:
         """append frame to filename before extension Format: filename_frame.extension"""
         assert filename is not None, "filename cannot be None"
-        filename_with_frame = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
-        file_path_with_frame = self.output_dir / filename_with_frame
+        filename_with_frame: str = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
+        file_path_with_frame: Path = self.output_dir / filename_with_frame
         self._frame += 1
 
         return str(file_path_with_frame)
