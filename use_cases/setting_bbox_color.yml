@@ -1,0 +1,8 @@
+nodes:
+- input.visual:
+    source: 0
+- model.yolox
+- draw.bbox:
+    show_labels: True
+    color_choice: [229, 255, 0] # [ B, G, R ] Turquoise
+- output.screen
