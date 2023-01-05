@@ -16,7 +16,6 @@
 Writes the output image/video to file.
 """
 
-import os
 import datetime
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -84,7 +83,9 @@ class Node(AbstractNode):
         # init
         self._input_type = self._detect_media_type(inputs["filename"])
         if self.output_filename is not None:
-            self.output_filename = self._validate_file_extension(self.output_filename)
+            self.output_filename = self._get_outputfile_extension(
+                inputs["filename"], self.output_filename
+            )
             self._output_type = self._detect_media_type(self.output_filename)
 
         # different input file
@@ -140,12 +141,11 @@ class Node(AbstractNode):
             )
 
     @staticmethod
-    def _validate_file_extension(filename: str) -> str:
-        """Return default .mp4 if extension is empty"""
-        ext: str = os.path.splitext(filename)[-1]
-        if ext == "":
-            return "".join([filename, ".mp4"])
-        return filename
+    def _get_outputfile_extension(input_filename: str, output_filename: str) -> str:
+        """Return: Use input_filename extension if output_filename extension is empty"""
+        if Path(output_filename).suffix == "":
+            return "".join([output_filename, f"{Path(input_filename).suffix}"])
+        return output_filename
 
     @staticmethod
     def _prepare_directory(output_dir: Path) -> None:
@@ -153,7 +153,7 @@ class Node(AbstractNode):
 
     @staticmethod
     def _detect_media_type(filename: str) -> str:
-        if os.path.splitext(filename)[-1].lower() in ["jpg", "jpeg", "png"]:
+        if Path(filename).suffix.lower() in [".jpg", ".jpeg", ".png"]:
             return "image"
 
         return "video"
