@@ -83,10 +83,11 @@ class Node(AbstractNode):
         # init
         self._input_type = self._detect_media_type(inputs["filename"])
         if self.output_filename is not None:
+            output_filename: Path = Path(self.output_filename)
             # Use input_filename extension if output_filename extension is empty
-            if Path(self.output_filename).suffix == "":
-                self.output_filename = "".join(
-                    [self.output_filename, f"{Path(inputs['filename']).suffix}"]
+            if output_filename.suffix == "":
+                self.output_filename = str(
+                    output_filename.with_suffix(Path(inputs["filename"]).suffix)
                 )
 
             self._output_type = self._detect_media_type(self.output_filename)
@@ -128,6 +129,7 @@ class Node(AbstractNode):
         saved_video_fps: int,
         output_filename: Optional[str],
     ) -> None:
+        # Use datetime stamp for image input
         self._file_path_post_processed = self._append_datetime_filename(filename)
         if self._input_type == "video":
             if output_filename is not None:
@@ -160,16 +162,24 @@ class Node(AbstractNode):
         time_str: str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension
-        filename_with_timestamp: str = f"_{time_str}.".join(filename.split(".")[-2:])
-        file_path_with_timestamp: Path = self.output_dir / filename_with_timestamp
+        p_filename: Path = Path(filename)
+        filename_with_timestamp: str = (
+            f"{p_filename.stem}_{time_str}{p_filename.suffix}"
+        )
+        file_path_with_timestamp: Path = self.output_dir.joinpath(
+            filename_with_timestamp
+        )
 
         return str(file_path_with_timestamp)
 
     def _append_frame_filename(self, filename: Optional[str]) -> str:
         """append frame to filename before extension Format: filename_frame.extension"""
         assert filename is not None, "filename cannot be None"
-        filename_with_frame: str = f"_{self._frame:05d}.".join(filename.split(".")[-2:])
-        file_path_with_frame: Path = self.output_dir / filename_with_frame
+        p_filename: Path = Path(filename)
+        filename_with_frame: str = (
+            f"{p_filename.stem}_{self._frame:05d}{p_filename.suffix}"
+        )
+        file_path_with_frame: Path = self.output_dir.joinpath(filename_with_frame)
         self._frame += 1
 
         return str(file_path_with_frame)
