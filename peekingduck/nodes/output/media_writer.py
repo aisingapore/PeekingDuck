@@ -83,9 +83,12 @@ class Node(AbstractNode):
         # init
         self._input_type = self._detect_media_type(inputs["filename"])
         if self.output_filename is not None:
-            self.output_filename = self._get_outputfile_extension(
-                inputs["filename"], self.output_filename
-            )
+            # Use input_filename extension if output_filename extension is empty
+            if Path(self.output_filename).suffix == "":
+                self.output_filename = "".join(
+                    [self.output_filename, f"{Path(inputs['filename']).suffix}"]
+                )
+
             self._output_type = self._detect_media_type(self.output_filename)
 
         # different input file
@@ -139,13 +142,6 @@ class Node(AbstractNode):
                 saved_video_fps,
                 resolution,
             )
-
-    @staticmethod
-    def _get_outputfile_extension(input_filename: str, output_filename: str) -> str:
-        """Return: Use input_filename extension if output_filename extension is empty"""
-        if Path(output_filename).suffix == "":
-            return "".join([output_filename, f"{Path(input_filename).suffix}"])
-        return output_filename
 
     @staticmethod
     def _prepare_directory(output_dir: Path) -> None:
