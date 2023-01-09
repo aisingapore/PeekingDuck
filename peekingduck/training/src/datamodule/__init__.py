@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""PeekingDuck CLI commands."""
-
-# Make all CLI commands log through the same logger
-LOGGER_NAME = "peekingduck_training.cli"
+"""
+A modular Python framework for Computer Vision Inference.
+"""

@@ -11,8 +11,27 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+import logging
 
-"""PeekingDuck CLI commands."""
+from omegaconf import OmegaConf, DictConfig
+import hydra
 
-# Make all CLI commands log through the same logger
-LOGGER_NAME = "peekingduck_training.cli"
+from hydra.core.hydra_config import HydraConfig
+from src.pipeline import run
+
+logger: logging.Logger = logging.getLogger(__name__)
+
+
+@hydra.main(
+    version_base=None,
+    config_path="configs",
+    config_name="config",
+)
+def main(cfg: DictConfig) -> None:
+    logger.info(OmegaConf.to_yaml(cfg))
+    logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
+    run(cfg)
+
+
+if __name__ == "__main__":
+    main()

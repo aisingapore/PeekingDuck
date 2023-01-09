@@ -3,17 +3,18 @@ from time import perf_counter
 import logging
 from configs import LOGGER_NAME
 
-from src.data_module.base import DataLoader
+from src.datamodule.base import DataModule
 from src.model.default_model import Model
 from src.trainer.default_trainer import Trainer
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
+
 def run(cfg: DictConfig) -> None:
-    
+
     start_time = perf_counter()
 
-    dl = DataLoader()
+    dl = DataModule()
     train_loader = dl.train_dataloader()
     valid_loader = dl.valid_dataloader()
 
