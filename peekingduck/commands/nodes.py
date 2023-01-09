@@ -25,7 +25,16 @@ from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
 
 @click.command()
 @click.argument("type_name", required=False)
-def nodes(type_name: str = None) -> None:
+@click.option(
+    "--order",
+    help=(
+        "Sorts the node names by either ascending (ASC) or descending (DESC) "
+        "alphabetical order."
+    ),
+    required=False,
+    type=click.Choice(["ASC", "DESC"]),
+)
+def nodes(type_name: str = None, order: str = "ASC") -> None:
     """Lists available nodes in PeekingDuck. When no argument is given, all
     available nodes will be listed. When the node type is given as an argument,
     all available nodes in the specified node type will be listed.
@@ -45,7 +54,10 @@ def nodes(type_name: str = None) -> None:
         click.secho(f"{node_type} ", fg="red", bold=True, nl=False)
         click.secho("nodes:", bold=True)
 
-        node_names = [path.stem for path in (config_dir / node_type).glob("*.yml")]
+        node_names = sorted(
+            [path.stem for path in (config_dir / node_type).glob("*.yml")],
+            reverse=order == "DESC",
+        )
         idx_and_node_names = list(enumerate(node_names, start=1))
 
         max_length = _len_enumerate(max(idx_and_node_names, key=_len_enumerate))
