@@ -51,17 +51,25 @@ class Node(AbstractNode):
     Configs:
         output_dir (:obj:`str`): **default = "PeekingDuck/data/output"**. |br|
             Output directory for files to be written locally.
+        output_filename (:obj:`str`): **default = null**. |br|
+            Output filename for files to be written locally. Video only.
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
-        self.output_dir = Path(self.output_dir)  # type: ignore
+        self.output_dir: Path = Path(self.output_dir)  # type: ignore
+        self.output_filename: Optional[str] = getattr(self, "output_filename", None)
         self._file_name: Optional[str] = None
-        self._file_path_with_timestamp: Optional[str] = None
-        self._image_type: Optional[str] = None
-        self.writer = None
+        self._file_path_post_processed: Optional[str] = None
+        self._input_type: Optional[str] = None
+        self._frame: int = 0
+        self.writer: None = None
         self._prepare_directory(self.output_dir)
+        self._output_type: Optional[
+            str
+        ] = None  # video/img output from _output_filename
         self._fourcc = cv2.VideoWriter_fourcc(*"mp4v")
         self.logger.info(f"Output directory used is: {self.output_dir}")
 
@@ -72,13 +80,27 @@ class Node(AbstractNode):
             if self.writer:  # images automatically releases writer
                 self.writer.release()
             return {}
-        if not self._file_name:
+        # init
+        self._input_type = self._detect_media_type(inputs["filename"])
+        if self.output_filename is not None:
+            output_filename: Path = Path(self.output_filename)
+            # Use input_filename extension if output_filename extension is empty
+            if output_filename.suffix == "":
+                self.output_filename = str(
+                    output_filename.with_suffix(Path(inputs["filename"]).suffix)
+                )
+
+            self._output_type = self._detect_media_type(self.output_filename)
+
+        # different input file
+        if self._file_name != inputs["filename"]:
+            self._file_name = inputs["filename"]
+
             self._prepare_writer(
-                inputs["filename"], inputs["img"], inputs["saved_video_fps"]
-            )
-        if inputs["filename"] != self._file_name:
-            self._prepare_writer(
-                inputs["filename"], inputs["img"], inputs["saved_video_fps"]
+                inputs["filename"],
+                inputs["img"],
+                inputs["saved_video_fps"],
+                self.output_filename,
             )
         self._write(inputs["img"])
 
@@ -89,23 +111,35 @@ class Node(AbstractNode):
         return {"output_dir": str}
 
     def _write(self, img: np.ndarray) -> None:
-        if self._image_type == "image":
-            cv2.imwrite(self._file_path_with_timestamp, img)
+        if self._input_type == "image" or self._output_type == "image":
+            if self._input_type == "video":
+                _file_path_post_processed: str = self._append_frame_filename(
+                    self.output_filename  # only video with output_filename specified
+                )
+                cv2.imwrite(_file_path_post_processed, img)
+            else:  # image input
+                cv2.imwrite(self._file_path_post_processed, img)
         else:
             self.writer.write(img)
 
     def _prepare_writer(
-        self, filename: str, img: np.ndarray, saved_video_fps: int
+        self,
+        filename: str,
+        img: np.ndarray,
+        saved_video_fps: int,
+        output_filename: Optional[str],
     ) -> None:
-        self._file_path_with_timestamp = self._append_datetime_filename(filename)
+        # Use datetime stamp for image input
+        self._file_path_post_processed = self._append_datetime_filename(filename)
+        if self._input_type == "video":
+            if output_filename is not None:
+                self._file_path_post_processed = self._append_frame_filename(
+                    output_filename
+                )
 
-        if filename.split(".")[-1] in ["jpg", "jpeg", "png"]:
-            self._image_type = "image"
-        else:
-            self._image_type = "video"
             resolution = img.shape[1], img.shape[0]
             self.writer = cv2.VideoWriter(
-                self._file_path_with_timestamp,
+                self._file_path_post_processed,
                 self._fourcc,
                 saved_video_fps,
                 resolution,
@@ -115,14 +149,37 @@ class Node(AbstractNode):
     def _prepare_directory(output_dir: Path) -> None:
         output_dir.mkdir(parents=True, exist_ok=True)
 
+    @staticmethod
+    def _detect_media_type(filename: str) -> str:
+        if Path(filename).suffix.lower() in [".jpg", ".jpeg", ".png"]:
+            return "image"
+
+        return "video"
+
     def _append_datetime_filename(self, filename: str) -> str:
-        self._file_name = filename
         current_time = datetime.datetime.now()
         # output as 'YYYYMMDD_hhmmss'
-        time_str = current_time.strftime("%y%m%d_%H%M%S")
+        time_str: str = current_time.strftime("%y%m%d_%H%M%S")
 
         # append timestamp to filename before extension Format: filename_timestamp.extension
-        filename_with_timestamp = f"_{time_str}.".join(filename.split(".")[-2:])
-        file_path_with_timestamp = self.output_dir / filename_with_timestamp
+        p_filename: Path = Path(filename)
+        filename_with_timestamp: str = (
+            f"{p_filename.stem}_{time_str}{p_filename.suffix}"
+        )
+        file_path_with_timestamp: Path = self.output_dir.joinpath(
+            filename_with_timestamp
+        )
 
         return str(file_path_with_timestamp)
+
+    def _append_frame_filename(self, filename: Optional[str]) -> str:
+        """append frame to filename before extension Format: filename_frame.extension"""
+        assert filename is not None, "filename cannot be None"
+        p_filename: Path = Path(filename)
+        filename_with_frame: str = (
+            f"{p_filename.stem}_{self._frame:05d}{p_filename.suffix}"
+        )
+        file_path_with_frame: Path = self.output_dir.joinpath(filename_with_frame)
+        self._frame += 1
+
+        return str(file_path_with_frame)
