@@ -13,14 +13,9 @@
 # limitations under the License.
 
 from omegaconf import DictConfig
-from torch.utils.data import DataLoader, Dataset
 
 
-from src.datamodule.base import DataModule
-
-
-class ImageClassificationDataset(Dataset):
-    """A sample template for Image Classification Dataset."""
+from src.data_module.base import DataModule
 
 
 class ImageClassificationDataModule(DataModule):

@@ -17,7 +17,8 @@ from time import perf_counter
 import logging
 from configs import LOGGER_NAME
 
-from src.datamodule.base import DataModule
+from src.data_module.base import DataModule
+from src.data_module.data_module import ImageClassificationDataModule
 from src.model.default_model import Model
 from src.trainer.default_trainer import Trainer
 
@@ -28,7 +29,7 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    dl = DataModule()
+    dl: DataModule = ImageClassificationDataModule(cfg.data_module)
     train_loader = dl.train_dataloader()
     valid_loader = dl.valid_dataloader()
 
@@ -36,8 +37,8 @@ def run(cfg: DictConfig) -> None:
     callbacks = cfg.callbacks
 
     model = Model(cfg.model)
-    trainer = Trainer(cfg.trainer, model=model, callbacks=callbacks)
-    history = trainer.fit(train_loader, valid_loader)
+    # trainer = Trainer(cfg.trainer, model=model, callbacks=callbacks)
+    # history = trainer.fit(train_loader, valid_loader)
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")

@@ -1,5 +1,8 @@
 defaults:
-  - dataloader:
+  - data_loader:
+    - train
+    - test
+  - transform:
     - train
     - test
   - data_adapter:

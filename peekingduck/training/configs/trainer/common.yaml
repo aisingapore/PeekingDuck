@@ -2,7 +2,7 @@
 # PipelineConfig:
 #   data: DataConfig = Data()
 #   resample: ResamplingConfig = Resampling()
-#   datamodule: DataModuleConfig = DataModuleParams()
+#   data_module: DataModuleConfig = DataModuleParams()
 #   transforms: TransformConfig = AugmentationParams()
 #   model: ModelConfig = ModelParams()
 #   # stores: StoresConfig = Stores()
