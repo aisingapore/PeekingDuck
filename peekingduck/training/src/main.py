@@ -4,6 +4,7 @@ from omegaconf import OmegaConf, DictConfig
 import hydra
 
 from hydra.core.hydra_config import HydraConfig
+from pipeline import run
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -16,7 +17,7 @@ logger: logging.Logger = logging.getLogger(__name__)
 def main(cfg: DictConfig) -> None:
     logger.info(OmegaConf.to_yaml(cfg))
     logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
-
+    run(cfg)
 
 if __name__ == "__main__":
     main()
