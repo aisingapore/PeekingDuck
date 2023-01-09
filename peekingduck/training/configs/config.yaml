@@ -1,0 +1,15 @@
+defaults:
+  # - base_config
+  - datamodule: common
+  # You typically want _self_ somewhere after the schema (base_config)
+  - _self_
+  - override hydra/job_logging: custom
+
+project_name: titan
+debug: true
+
+hydra:
+  run:
+    dir: outputs/${project_name}/${now:%Y-%m-%d_%H-%M-%S}
+
+outdir: "${hydra.runtime.output_dir}"

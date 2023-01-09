@@ -1,0 +1,10 @@
+ipykernel
+nbformat
+black
+pandas
+numpy
+hydra-core
+scikit-learn
+pytorch
+torchvision
+tensorflow
