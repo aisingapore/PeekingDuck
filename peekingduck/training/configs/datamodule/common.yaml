@@ -1,1 +1,3 @@
 batch_size: 32
+augmentation:
+  - image_size: 224

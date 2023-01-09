@@ -4,7 +4,7 @@ import logging
 from configs import LOGGER_NAME
 
 from src.datamodule.base import DataModule
-from src.model.default_model import Model
+from src.model.base import Model
 from src.trainer.default_trainer import Trainer
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
