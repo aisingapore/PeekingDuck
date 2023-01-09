@@ -10,3 +10,4 @@ torchvision
 tensorflow
 tqdm
 torchmetrics
+albumentations

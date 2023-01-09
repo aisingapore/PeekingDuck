@@ -26,6 +26,16 @@ class ImageClassificationDataModule(DataModule):
         cfg: DictConfig,
         **kwargs,
     ) -> None:
-        """"""
+        """ """
 
         super().__init__(**kwargs)
+        self.cfg: DictConfig = cfg
+
+    def setup(self):
+        """ """
+
+    def train_dataloader(self):
+        """ """
+
+    def valid_dataloader(self):
+        """ """
