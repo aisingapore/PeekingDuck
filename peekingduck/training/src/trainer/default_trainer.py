@@ -25,12 +25,9 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
 
-# from src.callbacks.default_callbacks import Callback
-# from src.model.default_model import Model
-# from src.utils.general_utils import free_gpu_memory, init_logger
-from callbacks.default_callbacks import Callback
-from model.default_model import Model
-from utils.general_utils import free_gpu_memory, init_logger
+from src.callbacks.default_callbacks import Callback
+from src.model.default_model import Model
+from src.utils.general_utils import free_gpu_memory  # , init_logger
 
 
 # TODO: clean up val vs valid naming confusions.

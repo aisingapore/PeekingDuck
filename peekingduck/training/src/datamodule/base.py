@@ -22,8 +22,10 @@ class DataModule(ABC):
         """setup"""
         raise NotImplementedError
 
+    # @abstractmethod
     def train_dataloader(self):
         """"""
 
+    # @abstractmethod
     def valid_dataloader(self):
         """"""

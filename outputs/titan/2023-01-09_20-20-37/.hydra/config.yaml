@@ -1,0 +1,78 @@
+datamodule:
+  dataloader:
+    train:
+      batch_size: 32
+      shuffle: true
+    test:
+      batch_size: 1
+      shuffle: false
+  data_adapter:
+    pytorch:
+      tensor: pytorch
+      scale: 1.0
+  data_source: data/train/
+  label_source: data/train.csv
+  image_path_col_name: image_path
+  class_name_to_id:
+  - airplane: 0
+  - automobile: 1
+  - bird: 2
+  - cat: 3
+  - deer: 4
+  - dog: 5
+  - frog: 6
+  - horse: 7
+  - ship: 8
+  - truck: 9
+model: {}
+trainer:
+  stores:
+    project_name: CIFAR-10
+    unique_id: ${now:%Y%m%dT%H%M%S}
+    logs_dir: ''
+    model_artifacts_dir: ''
+  criterion_params:
+    train_criterion: CrossEntropyLoss
+    valid_criterion: CrossEntropyLoss
+    train_criterion_params:
+      weight: null
+      size_average: null
+      ignore_index: -100
+      reduce: null
+      reduction: mean
+      label_smoothing: 0.0
+    valid_criterion_params:
+      weight: null
+      size_average: null
+      ignore_index: -100
+      reduce: null
+      reduction: mean
+      label_smoothing: 0.0
+  optimizer_params:
+    optimizer: AdamW
+    optimizer_params:
+      lr: 0.0003
+      betas: (0.9, 0.999)
+      amsgrad: false
+      weight_decay: 1.0e-06
+      eps: 1.0e-08
+  scheduler_params:
+    scheduler: CosineAnnealingWarmRestarts
+    scheduler_params:
+      T_0: 10
+      T_mult: 1
+      eta_min: 1.0e-06
+      last_epoch: -1
+      verbose: false
+  global_train_params:
+    epochs: 10
+    use_amp: true
+    patience: 3
+    classification_type: multiclass
+    monitored_metric:
+      monitor: val_Accuracy
+      mode: max
+callbacks: {}
+project_name: titan
+debug: true
+outdir: ${hydra.runtime.output_dir}

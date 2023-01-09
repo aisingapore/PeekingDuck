@@ -11,11 +11,26 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from omegaconf import DictConfig
 from torch.utils.data import DataLoader, Dataset
 
 
 from src.datamodule.base import DataModule
 
 
+class ImageClassificationDataset(Dataset):
+    """A sample template for Image Classification Dataset."""
+
+
 class ImageClassificationDataModule(DataModule):
     """Data module for generic image classification dataset."""
+
+    def __init__(
+        self,
+        cfg: DictConfig,
+        **kwargs,
+    ) -> None:
+        """"""
+
+        super().__init__(**kwargs)

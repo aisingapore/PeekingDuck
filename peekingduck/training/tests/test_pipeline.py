@@ -12,9 +12,4 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
-
-
-class Callback(ABC):
-    def __init__(self) -> None:
-        pass
+import pytest
