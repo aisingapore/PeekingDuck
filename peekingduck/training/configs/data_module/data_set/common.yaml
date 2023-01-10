@@ -1,0 +1,18 @@
+download: False
+url: "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"
+blob_file: "cifar10.zip"
+root_dir: "data"
+train_dir: "./${data_module.data_set.root_dir}"
+test_dir: "./${data_module.data_set.root_dir}"
+train_csv: "./${data_module.data_set.root_dir}/train.csv"
+class_name_to_id: 
+  airplane: 0
+  automobile: 1
+  bird: 2
+  cat: 3
+  deer: 4
+  dog: 5
+  frog: 6
+  horse: 7
+  ship: 8
+  truck: 9
