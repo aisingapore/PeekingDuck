@@ -37,7 +37,7 @@ def run(cfg: DictConfig) -> None:
     # TODO Support Early Stopping and Checkpoint
     callbacks = cfg.callbacks
 
-    model = Model(cfg.model)
+    # model = Model(cfg.model)
     # trainer = Trainer(cfg.trainer, model=model, callbacks=callbacks)
     # history = trainer.fit(train_loader, valid_loader)
 

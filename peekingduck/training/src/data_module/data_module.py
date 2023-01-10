@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from pathlib import Path
+from typing import Dict
 
 from omegaconf import DictConfig
 import pandas as pd
@@ -58,9 +59,11 @@ class ImageClassificationDataModule(DataModule):
         """ """
         url = self.cfg.data_set.url
         blob_file = self.cfg.data_set.blob_file
-        root_dir = Path(self.cfg.data_set.root_dir)
-        train_dir = Path(self.cfg.data_set.train_dir)
-        test_dir = Path(self.cfg.data_set.test_dir)
+        root_dir: Path = Path(self.cfg.data_set.root_dir)
+        train_dir: Path = Path(self.cfg.data_set.train_dir)
+        test_dir: Path = Path(self.cfg.data_set.test_dir)
+        class_name_to_id: Dict[str, int] = self.cfg.data_set.class_name_to_id
+        train_csv = self.cfg.data_set.train_csv
 
         if self.cfg.data_set.download:
             logger.info(f"downloading from {url} to {blob_file} in {root_dir}")
@@ -76,17 +79,17 @@ class ImageClassificationDataModule(DataModule):
         logger.info(f"Total number of images: {len(train_images)}")
         logger.info(f"Total number of test images: {len(test_images)}")
 
-        if Path(self.cfg.data_set.train_csv).exists():
+        if Path(train_csv).exists():
             # TODO: this step is assumed to be done by user where
             # image_path is inside the csv.
-            df = pd.read_csv(self.cfg.data_set.train_csv)
+            df = pd.read_csv(train_csv)
         else:
             # TODO: only invoke this if images are store in the following format
             # train_dir
             #   - class1 ...
             df = create_dataframe_with_image_info(
                 train_images,
-                self.cfg.class_name_to_id,
-                save_path=self.cfg.data_set.train_csv,
+                class_name_to_id,
+                save_path=train_csv,
             )
-        print(df.head())
+        logger.info(df.head())

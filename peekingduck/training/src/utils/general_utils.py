@@ -240,7 +240,9 @@ def create_dataframe_with_image_info(
         #       - image4.jpg
         #   - class3
         #       - ...
+        # print(image_path)
         class_name = image_path.parents[0].name
+        # print(class_name)
         class_id = int(class_name_to_id[class_name])
 
         image_path = image_path.as_posix()
