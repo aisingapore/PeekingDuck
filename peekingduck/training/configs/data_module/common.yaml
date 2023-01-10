@@ -1,11 +1,14 @@
 defaults:
-  - data_set: common
-  - data_loader:
-      - train
-      - test
-  - transform:
-      - train
-      - test
-  - data_adapter:
-      - pytorch
+    - data_set: common
+    - data_loader:
+          - train
+          - test
+    - resample: train_test_split
+    - transform:
+          - train
+          - test
+    - data_adapter:
+          - pytorch
 
+debug: true
+num_debug_samples: 1000

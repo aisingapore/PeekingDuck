@@ -19,6 +19,11 @@ from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
 from src.data_module.data_module import ImageClassificationDataModule
+<<<<<<< HEAD
+=======
+
+# from src.model.default_model import Model
+>>>>>>> refs/remotes/origin/feat-training
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
@@ -33,6 +38,7 @@ def run(cfg: DictConfig) -> None:
 
     data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
     data_module.prepare_data()
+    data_module.setup(stage="fit")
     train_loader = data_module.train_dataloader()
     valid_loader = data_module.valid_dataloader()
 
@@ -45,11 +51,16 @@ def run(cfg: DictConfig) -> None:
     for choice in cfg.metrics.evaluate:
         print(choice)
         metrics[choice] = getattr(metricsAdapter, choice, "NotImplementedError: Metric not found")
-    
-    model = ImageClassificationModel(cfg.model)
-    trainer = Trainer(cfg.trainer, model=model, callbacks=callbacks, metrics=metrics, device=cfg.device)
-    history = trainer.fit(train_loader, valid_loader)
 
+    model = ImageClassificationModel(cfg.model)
+    trainer = Trainer(
+        cfg.trainer,
+        model=model,
+        callbacks=callbacks,
+        metrics=metrics,
+        device=cfg.device,
+    )
+    history = trainer.fit(train_loader, valid_loader)
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")

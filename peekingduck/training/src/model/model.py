@@ -37,16 +37,16 @@ class ImageClassificationModel(Model):
     it can be used for any image classification by just modifying the head.
     """
 
-    def __init__(self, pipeline_config: DictConfig) -> None:
-        super().__init__(pipeline_config)
+    def __init__(self, model_config: DictConfig) -> None:
+        super().__init__(model_config)
 
-        self.adapter = self.pipeline_config.model.adapter  # leave out the adapter first
-        self.model_name = self.pipeline_config.model.model_name
-        self.pretrained = self.pipeline_config.model.pretrained
+        self.adapter = self.model_config.adapter  # leave out the adapter first
+        self.model_name = self.model_config.model_name
+        self.pretrained = self.model_config.pretrained
         self.model = self.create_model()
 
         # self.model.apply(self._init_weights) # activate if init weights
-        print(f"Successfully created model: {self.pipeline_config.model.model_name}")
+        print(f"Successfully created model: {self.model_config.model_name}")
 
     def _concat_backbone_and_head(self, last_layer_name) -> nn.Module:
         """Concatenate the backbone and head of the model."""
@@ -94,7 +94,7 @@ class ImageClassificationModel(Model):
             models will have different names for the penultimate layer.
         """
         # fully connected
-        out_features = self.pipeline_config.model.num_classes
+        out_features = self.model_config.num_classes
         head = nn.Linear(in_features=in_features, out_features=out_features)
         return head
 

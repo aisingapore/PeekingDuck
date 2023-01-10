@@ -33,7 +33,7 @@ class Model(ABC, nn.Module):
         self.backbone: Optional[nn.Module]
         self.head: Optional[nn.Module]
         self.model: nn.Module
-        self.pipeline_config = pipeline_config
+        self.model_config = pipeline_config
 
     @abstractmethod
     def create_model(self) -> nn.Module:
@@ -81,8 +81,8 @@ class Model(ABC, nn.Module):
             input_size = (
                 1,
                 3,
-                self.pipeline_config.augmentation.image_size,
-                self.pipeline_config.augmentation.image_size,
+                self.model_config.augmentation.image_size,
+                self.model_config.augmentation.image_size,
             )
         return torchinfo.summary(self.model, input_size=input_size, **kwargs)
 
