@@ -20,7 +20,7 @@ stores:
     project_name: "CIFAR-10"
     unique_id: ${now:%Y%m%dT%H%M%S} # field(default_factory=generate_uuid4)
     logs_dir: "" # Path = field(init=False)
-    model_artifacts_dir: "" # Path = field(init=False)
+    model_artifacts_dir: "./artifacts/${project_name}/${trainer.stores.unique_id}/"
 
 criterion_params:
     train_criterion: "CrossEntropyLoss"

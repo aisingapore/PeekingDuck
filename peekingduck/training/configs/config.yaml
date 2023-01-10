@@ -4,10 +4,13 @@ defaults:
   - model: common
   - trainer: common
   - callbacks: common
+  - metrics: common
   # You typically want _self_ somewhere after the schema (base_config)
   - _self_
   - override hydra/job_logging: custom
 
+num_classes: 12
+device: 'cpu'
 project_name: titan
 debug: true
 

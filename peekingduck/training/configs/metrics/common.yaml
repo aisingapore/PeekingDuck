@@ -1,0 +1,1 @@
+evaluate: ['accuracy', 'precision', 'recall', 'auroc']

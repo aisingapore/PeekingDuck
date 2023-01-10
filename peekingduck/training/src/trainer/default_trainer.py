@@ -63,10 +63,16 @@ class Trainer(ABC):
 
         self.callbacks = callbacks
         self.metrics = metrics
-        self._initialize()  # init non init attributes, etc
 
-    def _initialize(self) -> None:
+        self.__initialize()  # init non init attributes, etc
+
+        print(self.__dict__)
+
+    def __initialize(self) -> None:
         """Called when the trainer begins."""
+        print("TRAINER CLASS optimizer params: ", self.pipeline_config.optimizer_params)
+        print("TRAINER CLASS scheduler params: ", self.pipeline_config.scheduler_params)
+
         self.optimizer = self.get_optimizer(
             model=self.model,
             optimizer_params=self.pipeline_config.optimizer_params,
@@ -87,7 +93,7 @@ class Trainer(ABC):
         self.epoch_dict = {}
         self.batch_dict = {}
         self.history_dict = {}
-        self.invoke_callbacks("on_trainer_start")
+        # self.invoke_callbacks("on_trainer_start")
 
     def fit(
         self,
@@ -96,11 +102,11 @@ class Trainer(ABC):
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
-        self._on_fit_start(fold=fold)
+        self.__on_fit_start(fold=fold)
 
         for _epoch in range(1, self.train_params.epochs + 1):
-            self._train_one_epoch(train_loader, _epoch)
-            self._train_one_epoch(valid_loader, _epoch)
+            self.__train_one_epoch(train_loader, _epoch)
+            self.__train_one_epoch(valid_loader, _epoch)
 
             self.monitored_metric["metric_score"] = torch.clone(
                 self.valid_history_dict[self.monitored_metric["monitor"]]
@@ -121,19 +127,19 @@ class Trainer(ABC):
 
             self.current_epoch += 1
 
-        self._on_fit_end()
+        self.__on_fit_end()
         # FIXME: here is finish fitting, whether to call it on train end or on fit end?
         # Currently only history uses on_trainer_end.
         for callback in self.callbacks:
             callback.on_trainer_end(self)
         return self.history
 
-    def _on_fit_start(self, fold: int) -> None:
+    def __on_fit_start(self, fold: int) -> None:
         self.logger.info(f"Fold {fold} started")
         self.best_valid_loss = np.inf
         self.current_fold = fold
 
-    def _on_fit_end(self) -> None:
+    def __on_fit_end(self) -> None:
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
@@ -143,7 +149,7 @@ class Trainer(ABC):
             self.history_dict["valid_probs"],
         )
 
-    def _train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
+    def __train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
         """Train one epoch of the model."""
         curr_lr = self.get_lr(self.optimizer)
         train_start_time = time.time()
@@ -208,7 +214,7 @@ class Trainer(ABC):
         self.train_history_dict = {**self.train_epoch_dict}
         self.invoke_callbacks("on_train_epoch_end")
 
-    def _valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
+    def __valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.
         Args:
             valid_loader (torch.utils.data.DataLoader): The validation set dataloader.
@@ -306,3 +312,28 @@ class Trainer(ABC):
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.
         self.invoke_callbacks("on_valid_epoch_end")
+
+
+    @staticmethod
+    def get_optimizer(
+        model,
+        optimizer_params: Dict[str, Any],
+    ) -> torch.optim.Optimizer:
+        """Get the optimizer for the model.
+        Note:
+            Do not invoke self.model directly in this call as it may affect model initalization.
+            https://stackoverflow.com/questions/70107044/can-i-define-a-method-as-an-attribute
+        """
+        return getattr(torch.optim, optimizer_params.optimizer)(
+            model.parameters(), **optimizer_params.optimizer_params
+        )
+
+    @staticmethod
+    def get_scheduler(
+        optimizer: torch.optim.Optimizer,
+        scheduler_params: Dict[str, Any],
+    ) -> torch.optim.lr_scheduler:
+        """Get the scheduler for the optimizer."""
+        return getattr(torch.optim.lr_scheduler, scheduler_params.scheduler)(
+            optimizer=optimizer, **scheduler_params.scheduler_params
+        )
