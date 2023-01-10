@@ -19,7 +19,7 @@ from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
 from src.data_module.data_module import ImageClassificationDataModule
-from src.model.default_model import Model
+from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
 
@@ -46,9 +46,9 @@ def run(cfg: DictConfig) -> None:
         print(choice)
         metrics[choice] = getattr(metricsAdapter, choice, "NotImplementedError: Metric not found")
     
-    model = Model(cfg.model)
+    model = ImageClassificationModel(cfg.model)
     trainer = Trainer(cfg.trainer, model=model, callbacks=callbacks, metrics=metrics, device=cfg.device)
-    # history = trainer.fit(train_loader, valid_loader)
+    history = trainer.fit(train_loader, valid_loader)
 
 
     end_time = perf_counter()

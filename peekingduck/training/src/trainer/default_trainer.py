@@ -29,6 +29,12 @@ from src.callbacks.default_callbacks import Callback
 from src.model.default_model import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
+import logging
+from configs import LOGGER_NAME
+
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+
+
 
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
@@ -64,14 +70,14 @@ class Trainer(ABC):
         self.callbacks = callbacks
         self.metrics = metrics
 
+        self.logger = logger
+
         self.__initialize()  # init non init attributes, etc
 
         print(self.__dict__)
 
     def __initialize(self) -> None:
         """Called when the trainer begins."""
-        print("TRAINER CLASS optimizer params: ", self.pipeline_config.optimizer_params)
-        print("TRAINER CLASS scheduler params: ", self.pipeline_config.scheduler_params)
 
         self.optimizer = self.get_optimizer(
             model=self.model,
@@ -93,7 +99,7 @@ class Trainer(ABC):
         self.epoch_dict = {}
         self.batch_dict = {}
         self.history_dict = {}
-        # self.invoke_callbacks("on_trainer_start")
+        self.__invoke_callbacks("on_trainer_start")
 
     def fit(
         self,
@@ -106,12 +112,12 @@ class Trainer(ABC):
 
         for _epoch in range(1, self.train_params.epochs + 1):
             self.__train_one_epoch(train_loader, _epoch)
-            self.__train_one_epoch(valid_loader, _epoch)
+            self.__valid_one_epoch(valid_loader, _epoch)
 
             self.monitored_metric["metric_score"] = torch.clone(
-                self.valid_history_dict[self.monitored_metric["monitor"]]
+                self.history_dict['valid'][self.monitored_metric["monitor"]]
             ).detach()
-            valid_loss = self.valid_history_dict["valid_loss"]
+            valid_loss = self.history_dict['valid']["valid_loss"]
 
             if self.stop:  # from early stopping
                 break  # Early Stopping
@@ -143,10 +149,10 @@ class Trainer(ABC):
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
-            self.history_dict["valid_trues"],
-            self.history_dict["valid_logits"],
-            self.history_dict["valid_preds"],
-            self.history_dict["valid_probs"],
+            self.history_dict['valid']["valid_trues"],
+            self.history_dict['valid']["valid_logits"],
+            self.history_dict['valid']["valid_preds"],
+            self.history_dict['valid']["valid_probs"],
         )
 
     def __train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
@@ -198,9 +204,9 @@ class Trainer(ABC):
 
             _y_train_pred = torch.argmax(_y_train_prob, dim=1)
 
-            self.invoke_callbacks("on_train_batch_end")
+            self.__invoke_callbacks("on_train_batch_end")
 
-        self.invoke_callbacks("on_train_loader_end")
+        self.__invoke_callbacks("on_train_loader_end")
         # total time elapsed for this epoch
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
@@ -212,7 +218,7 @@ class Trainer(ABC):
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
         self.train_history_dict = {**self.train_epoch_dict}
-        self.invoke_callbacks("on_train_epoch_end")
+        self.__invoke_callbacks("on_train_epoch_end")
 
     def __valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.
@@ -263,7 +269,7 @@ class Trainer(ABC):
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
-                self.invoke_callbacks("on_valid_batch_end")
+                self.__invoke_callbacks("on_valid_batch_end")
                 # For OOF score and other computation.
                 # TODO: Consider giving numerical example. Consider rolling back to targets.cpu().numpy() if torch fails.
                 valid_trues.extend(targets.cpu())
@@ -281,7 +287,7 @@ class Trainer(ABC):
             valid_trues, valid_preds, valid_probs
         )
 
-        self.invoke_callbacks("on_valid_loader_end")
+        self.__invoke_callbacks("on_valid_loader_end")
 
         # total time elapsed for this epoch
         valid_elapsed_time = time.strftime(
@@ -311,8 +317,15 @@ class Trainer(ABC):
 
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.
-        self.invoke_callbacks("on_valid_epoch_end")
+        self.__invoke_callbacks("on_valid_epoch_end")
 
+    def __invoke_callbacks(self, event_name: str) -> None:
+        """Invoke the callbacks."""
+        for callback in self.callbacks:
+            try:
+                getattr(callback, event_name)(self)
+            except NotImplementedError:
+                pass
 
     @staticmethod
     def get_optimizer(
@@ -337,3 +350,41 @@ class Trainer(ABC):
         return getattr(torch.optim.lr_scheduler, scheduler_params.scheduler)(
             optimizer=optimizer, **scheduler_params.scheduler_params
         )
+
+    @staticmethod
+    def computer_criterion(
+        y_trues: torch.Tensor,
+        y_logits: torch.Tensor,
+        criterion_params: Dict[str, Any],
+        stage: str,
+    ) -> torch.Tensor:
+        """Train Loss Function.
+        Note that we can evaluate train and validation fold with different loss functions.
+        The below example applies for CrossEntropyLoss.
+        Args:
+            y_trues ([type]): Input - N,C) where N = number of samples and C = number of classes.
+            y_logits ([type]): If containing class indices, shape (N) where each value is
+                $0 \leq \text{targets}[i] \leq C-10≤targets[i]≤C-1$.
+                If containing class probabilities, same shape as the input.
+            stage (str): train or valid, sometimes people use different loss functions for
+                train and valid.
+        """
+
+        if stage == "train":
+            loss_fn = getattr(torch.nn, criterion_params.train_criterion)(
+                **criterion_params.train_criterion_params
+            )
+        elif stage == "valid":
+            loss_fn = getattr(torch.nn, criterion_params.valid_criterion)(
+                **criterion_params.valid_criterion_params
+            )
+        loss = loss_fn(y_logits, y_trues)
+        return loss
+
+    @staticmethod
+    def get_lr(optimizer: torch.optim) -> float:
+        """Get the learning rate of optimizer for the current epoch.
+        Note learning rate can be different for different layers, hence the for loop.
+        """
+        for param_group in optimizer.param_groups:
+            return param_group["lr"]
