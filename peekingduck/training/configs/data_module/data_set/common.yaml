@@ -5,7 +5,9 @@ root_dir: "data"
 train_dir: "./${data_module.data_set.root_dir}"
 test_dir: "./${data_module.data_set.root_dir}"
 train_csv: "./${data_module.data_set.root_dir}/train.csv"
-class_name_to_id: 
+image_path_col_name: "image_path"
+target_col_name: "class_id"
+class_name_to_id:
   airplane: 0
   automobile: 1
   bird: 2
