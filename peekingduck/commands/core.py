@@ -26,7 +26,6 @@ import yaml
 
 from peekingduck.commands import LOGGER_NAME
 from peekingduck.runner import Runner
-from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.logger import LoggerSetup
 from peekingduck.viewer import Viewer
 
@@ -86,19 +85,7 @@ def run(  # pylint: disable=too-many-arguments
     LoggerSetup.set_log_level(log_level)
 
     if config_path is None:
-        curr_dir = Path.cwd()
-        if (curr_dir / "pipeline_config.yml").is_file():
-            config_path = curr_dir / "pipeline_config.yml"
-        elif (curr_dir / "run_config.yml").is_file():
-            deprecate(
-                "using 'run_config.yml' as the default pipeline configuration "
-                "file is deprecated and will be removed in the future. Please "
-                "use 'pipeline_config.yml' instead.",
-                2,
-            )
-            config_path = curr_dir / "run_config.yml"
-        else:
-            config_path = curr_dir / "pipeline_config.yml"
+        config_path = Path.cwd() / "pipeline_config.yml"
     pipeline_config_path = Path(config_path)
 
     if viewer:
