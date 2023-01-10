@@ -30,7 +30,6 @@ logger: logging.Logger = logging.getLogger(__name__)
 def main(cfg: DictConfig) -> None:
     logger.info(OmegaConf.to_yaml(cfg))
     logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
-    print(cfg.data_module.class_name_to_id)
     run(cfg)
 
 

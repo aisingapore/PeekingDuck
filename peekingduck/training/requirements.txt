@@ -11,3 +11,5 @@ tensorflow
 tqdm
 torchmetrics
 albumentations
+imagesize
+matplotlib

@@ -29,9 +29,10 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    dl: DataModule = ImageClassificationDataModule(cfg.data_module)
-    train_loader = dl.train_dataloader()
-    valid_loader = dl.valid_dataloader()
+    data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
+    data_module.prepare_data()
+    train_loader = data_module.train_dataloader()
+    valid_loader = data_module.valid_dataloader()
 
     # TODO Support Early Stopping and Checkpoint
     callbacks = cfg.callbacks

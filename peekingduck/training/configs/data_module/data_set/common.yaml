@@ -1,0 +1,7 @@
+download: True
+url: "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"
+blob_file: "cifar10.zip"
+root_dir: "data/cifar10"
+train_dir: ""
+test_dir: ""
+train_csv: "train.csv"
