@@ -22,6 +22,7 @@ from torch.utils.data import DataLoader
 
 from src.data_module.base import DataModule
 from src.data_module.dataset import ImageClassificationDataset
+from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
     create_dataframe_with_image_info,
     download_to,
@@ -47,6 +48,7 @@ class ImageClassificationDataModule(DataModule):
 
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
+        self.transforms = ImageClassificationTransforms(cfg)
 
     def train_dataloader(self):
         """ """
@@ -106,20 +108,20 @@ class ImageClassificationDataModule(DataModule):
 
     def setup(self, stage: str):
         """ """
-        # train_transforms = self.transforms.train_transforms
-        # valid_transforms = self.transforms.valid_transforms
+        train_transforms = self.transforms.train_transforms
+        valid_transforms = self.transforms.valid_transforms
         if stage == "fit":
             self.train_dataset = ImageClassificationDataset(
                 self.cfg,
                 df=self.train_df,
                 stage="train",
-                # transforms=train_transforms,
+                transforms=train_transforms,
             )
             self.valid_dataset = ImageClassificationDataset(
                 self.cfg,
                 df=self.valid_df,
                 stage="valid",
-                # transforms=valid_transforms,
+                transforms=valid_transforms,
             )
 
     def cross_validation_split(

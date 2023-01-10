@@ -23,6 +23,7 @@ import torchvision
 import torchvision.transforms as T
 from torch.utils.data import DataLoader, Dataset
 
+
 TransformTypes = Optional[Union[A.Compose, T.Compose]]
 
 
@@ -34,6 +35,7 @@ class ImageClassificationDataset(Dataset):
         cfg: DictConfig,
         df: Optional[pd.DataFrame] = None,
         stage: str = "train",
+        transforms: TransformTypes = None,
         **kwargs,
     ) -> None:
         """"""
@@ -42,6 +44,12 @@ class ImageClassificationDataset(Dataset):
         self.cfg: DictConfig = cfg
         self.df = df
         self.stage = stage
+        self.transforms = transforms
+
+        self.image_path = df[cfg.data_set.image_path_col_name].values
+        self.targets = (
+            df[cfg.data_set.target_col_name].values if stage != "test" else None
+        )
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
