@@ -13,5 +13,5 @@
 # limitations under the License.
 
 """
-A modular Python framework for Computer Vision Inference.
+A modular Python framework for Computer Vision Training.
 """

@@ -11,11 +11,10 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-from torch.utils.data import DataLoader, Dataset
+
+from abc import ABC, abstractmethod
 
 
-from src.datamodule.base import DataModule
-
-
-class ImageClassificationDataModule(DataModule):
-    """Data module for generic image classification dataset."""
+class Callback(ABC):
+    def __init__(self) -> None:
+        pass

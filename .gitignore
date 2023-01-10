@@ -154,3 +154,5 @@ docs/source/peekingduck.*
 docs/source/nodes
 # Other likely files that should not be committed
 .DS_Store
+peekingduck/training/.gitignore
+**/outputs

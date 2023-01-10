@@ -1,6 +1,6 @@
 defaults:
   # - base_config
-  - datamodule: common
+  - data_module: common
   - model: common
   - trainer: common
   - callbacks: common

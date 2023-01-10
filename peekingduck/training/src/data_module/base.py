@@ -17,13 +17,15 @@ from abc import ABC, abstractmethod
 class DataModule(ABC):
     """Base class for custom data module."""
 
-    # @abstractmethod
+    @abstractmethod
     def setup(self) -> None:
         """setup"""
         raise NotImplementedError
 
+    @abstractmethod
     def train_dataloader(self):
         """"""
 
+    @abstractmethod
     def valid_dataloader(self):
         """"""

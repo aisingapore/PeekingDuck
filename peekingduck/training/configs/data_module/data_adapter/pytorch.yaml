@@ -1,0 +1,3 @@
+pytorch:
+  tensor: "pytorch"
+  scale: 1.

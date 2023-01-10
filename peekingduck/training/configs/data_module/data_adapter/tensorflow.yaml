@@ -1,0 +1,3 @@
+pytorch:
+  tensor: "tensorflow"
+  scale: 255.

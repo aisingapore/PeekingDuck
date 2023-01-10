@@ -8,3 +8,6 @@ scikit-learn
 pytorch
 torchvision
 tensorflow
+tqdm
+torchmetrics
+albumentations

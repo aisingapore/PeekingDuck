@@ -1,0 +1,3 @@
+train:
+  batch_size: 32
+  shuffle: True
