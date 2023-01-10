@@ -30,7 +30,6 @@ import yaml
 from peekingduck.config_loader import ConfigLoader
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline import Pipeline
-from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
@@ -101,8 +100,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
     ) -> Dict[str, Any]:
         """Update value of a nested dictionary of varying depth using recursion"""
         for key, value in dict_update.items():
-            # Replace "detect_ids" with "detect" in code below
-            if key not in dict_orig and key != "detect_ids":
+            if key not in dict_orig:
                 self.logger.warning(
                     f"Config for node {node_name} does not have the key: {key}"
                 )
@@ -115,10 +113,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
             # `value` below will not be a Dict since the keys are not `callbacks`
             if key == "detect":
                 value = self._change_class_name_to_id(node_name, cast(List[Any], value))
-            elif key == "detect_ids":
-                key, value = self._handle_detect_ids_deprecation(
-                    node_name, cast(List[Any], value)
-                )
 
             dict_orig[key] = value
             self.logger.info(
@@ -137,19 +131,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                 break
 
         return custom_name
-
-    def _handle_detect_ids_deprecation(
-        self, node_name: str, value: List[Any]
-    ) -> Tuple[str, List[int]]:
-        """Supports `detect: ['person']` instead of `detect_ids: ['person']`."""
-        deprecate(
-            "`detect_ids` is deprecated and will be removed in future. "
-            "Please use `detect` instead.",
-            4,
-        )
-        value = self._change_class_name_to_id(node_name, value)
-        key = "detect"
-        return key, value
 
     def _init_node(
         self,
