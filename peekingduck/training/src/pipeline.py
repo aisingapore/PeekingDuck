@@ -19,11 +19,6 @@ from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
 from src.data_module.data_module import ImageClassificationDataModule
-<<<<<<< HEAD
-=======
-
-# from src.model.default_model import Model
->>>>>>> refs/remotes/origin/feat-training
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
