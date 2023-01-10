@@ -20,7 +20,6 @@ import torch
 import torchinfo
 from torch import nn
 from torchinfo.model_statistics import ModelStatistics
-
 from omegaconf import DictConfig
 
 # from configs.base_params import PipelineConfig

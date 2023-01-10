@@ -1,3 +1,4 @@
+adapter: torchvision
 model_type: classification
 model_name: resnet18
 pretrained: True
