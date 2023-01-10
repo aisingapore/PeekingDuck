@@ -1,0 +1,4 @@
+resample_strategy:
+  _target_: sklearn.model_selection.train_test_split
+  test_size: 0.2
+  shuffle: True

@@ -35,6 +35,7 @@ def run(cfg: DictConfig) -> None:
 
     data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
     data_module.prepare_data()
+    data_module.setup(stage="fit")
     train_loader = data_module.train_dataloader()
     valid_loader = data_module.valid_dataloader()
 
@@ -58,7 +59,7 @@ def run(cfg: DictConfig) -> None:
         metrics=metrics,
         device=cfg.device,
     )
-    # history = trainer.fit(train_loader, valid_loader)
+    history = trainer.fit(train_loader, valid_loader)
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")

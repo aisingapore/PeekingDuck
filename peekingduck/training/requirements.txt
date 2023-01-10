@@ -5,7 +5,7 @@ pandas
 numpy
 hydra-core
 scikit-learn
-pytorch
+torch
 torchvision
 torchinfo
 tensorflow
@@ -15,3 +15,4 @@ albumentations
 imagesize
 matplotlib
 torchinfo
+timm
