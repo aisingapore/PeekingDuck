@@ -39,13 +39,15 @@ def run(cfg: DictConfig) -> None:
     valid_loader = data_module.valid_dataloader()
 
     callbacks = instantiate(cfg.callbacks.callbacks)
-    metricsAdapter = MetricsAdapter(task=cfg.classification_type, num_classes=cfg.num_classes)
+    metricsAdapter = MetricsAdapter(
+        task=cfg.classification_type, num_classes=cfg.data_module.data_set.num_classes
+    )
     for metric in cfg.metrics.evaluate:
         try:
             getattr(metricsAdapter, metric)()
         except NotImplementedError:
             pass
-    
+
     metrics_collection = metricsAdapter.make_collection()
 
     model = ImageClassificationModel(cfg.model).to(cfg.device)

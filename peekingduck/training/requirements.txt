@@ -1,9 +1,10 @@
 ipykernel
 nbformat
 black
+pydantic
+hydra-core
 pandas
 numpy
-hydra-core
 scikit-learn
 torch
 torchvision

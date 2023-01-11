@@ -5,18 +5,18 @@ defaults:
   - trainer: common
   - callbacks: common
   - metrics: common
+  - stores: common
   # You typically want _self_ somewhere after the schema (base_config)
   - _self_
   - override hydra/job_logging: custom
 
 classification_type: "multiclass"
-num_classes: 10
+
 device: "cpu"
-project_name: "titan"
+project_name: "CIFAR-10"
 debug: true
+
 
 hydra:
   run:
-    dir: "outputs/${project_name}/${now:%Y-%m-%d_%H-%M-%S}"
-
-outdir: "${hydra.runtime.output_dir}"
+    dir: "outputs/${project_name}/${stores.unique_id}"
