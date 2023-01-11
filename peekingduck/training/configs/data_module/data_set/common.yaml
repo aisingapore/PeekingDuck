@@ -7,6 +7,7 @@ test_dir: "./${data_module.data_set.root_dir}"
 train_csv: "./${data_module.data_set.root_dir}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "class_id"
+classification_type: "multiclass"
 num_classes: 10
 class_name_to_id:
   airplane: 0
