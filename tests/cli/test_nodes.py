@@ -16,6 +16,7 @@ import io
 import math
 from pathlib import Path
 
+import pytest
 from click.testing import CliRunner
 
 from peekingduck.cli import cli
@@ -25,7 +26,7 @@ PKD_DIR = Path(__file__).resolve().parents[2] / "peekingduck"
 PKD_CONFIG_DIR = PKD_DIR / "configs"
 
 
-def available_nodes_msg(type_name=None):
+def available_nodes_msg(type_name=None, order="ASC"):
     def len_enumerate(item):
         return int(math.log10(item[0]) + 1) + len(item[1])
 
@@ -38,7 +39,10 @@ def available_nodes_msg(type_name=None):
     url_prefix = "https://peekingduck.readthedocs.io/en/stable/nodes/"
     url_postfix = ".html#module-"
     for node_type in node_types:
-        node_names = [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")]
+        node_names = sorted(
+            [path.stem for path in (PKD_CONFIG_DIR / node_type).glob("*.yml")],
+            reverse=order == "DESC",
+        )
         idx_and_node_names = list(enumerate(node_names, start=1))
         max_length = len_enumerate(max(idx_and_node_names, key=len_enumerate))
         print(f"\nPeekingDuck has the following {node_type} nodes:", file=output)
@@ -54,15 +58,17 @@ def available_nodes_msg(type_name=None):
 
 
 class TestCliNodes:
-    def test_nodes_all(self):
-        result = CliRunner().invoke(cli, ["nodes"])
+    @pytest.mark.parametrize("order", ["ASC", "DESC"])
+    def test_nodes_all(self, order):
+        result = CliRunner().invoke(cli, ["nodes", "--order", order])
         print(result.exception)
         print(result.output)
         assert result.exit_code == 0
-        assert result.output == available_nodes_msg()
+        assert result.output == available_nodes_msg(order=order)
 
-    def test_nodes_single(self):
+    @pytest.mark.parametrize("order", ["ASC", "DESC"])
+    def test_nodes_single(self, order):
         for node_type in PEEKINGDUCK_NODE_TYPES:
-            result = CliRunner().invoke(cli, ["nodes", node_type])
+            result = CliRunner().invoke(cli, ["nodes", node_type, "--order", order])
             assert result.exit_code == 0
-            assert result.output == available_nodes_msg(node_type)
+            assert result.output == available_nodes_msg(node_type, order)
