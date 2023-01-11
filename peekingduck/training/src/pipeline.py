@@ -45,9 +45,11 @@ def run(cfg: DictConfig) -> None:
     print("METRICS Evaluation: ", cfg.metrics.evaluate)
     for choice in cfg.metrics.evaluate:
         print(choice)
-        metrics[choice] = getattr(metricsAdapter, choice, "NotImplementedError: Metric not found")
+        metrics[choice] = getattr(
+            metricsAdapter, choice, "NotImplementedError: Metric not found"
+        )
 
-    model = ImageClassificationModel(cfg.model)
+    model = ImageClassificationModel(cfg.model).to(cfg.device)
     trainer = Trainer(
         cfg.trainer,
         model=model,
