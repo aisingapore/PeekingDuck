@@ -71,8 +71,8 @@ from typing import Any, Dict
 
 import torch
 
-from src.callbacks.base import Callback
-from src.trainer import Trainer
+from src.callbacks.default_callbacks import Callback
+from src.trainer.default_trainer import Trainer
 from src.utils.callback_utils import init_improvement
 
 
@@ -138,7 +138,7 @@ class ModelCheckpoint(Callback):
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
-        valid_score = trainer.valid_epoch_dict.get(self.monitor)
+        valid_score = trainer.epoch_dict.get(self.monitor)
 
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_valid_score
@@ -155,9 +155,9 @@ class ModelCheckpoint(Callback):
             self.state_dict["scheduler_state_dict"] = trainer.scheduler.state_dict()
             # self.state_dict["epoch"] = trainer.current_epoch
             # self.state_dict["best_score"] = self.best_valid_score
-            self.state_dict["oof_trues"] = trainer.valid_history_dict["valid_trues"]
-            self.state_dict["oof_preds"] = trainer.valid_history_dict["valid_preds"]
-            self.state_dict["oof_probs"] = trainer.valid_history_dict["valid_probs"]
-            self.state_dict["oof_logits"] = trainer.valid_history_dict["valid_logits"]
+            self.state_dict["oof_trues"] = trainer.history_dict["valid_trues"]
+            self.state_dict["oof_preds"] = trainer.history_dict["valid_preds"]
+            self.state_dict["oof_probs"] = trainer.history_dict["valid_probs"]
+            self.state_dict["oof_logits"] = trainer.history_dict["valid_logits"]
             self.state_dict["model_artifacts_path"] = model_artifacts_path
             self.save_checkpoint(self.state_dict, model_artifacts_path)

@@ -1,6 +1,7 @@
 adapter: "torchvision"
 model_type: "classification"
 model_name: "resnet18"
-num_classes: 10
+num_classes: ${num_classes}
+device: ${device}
 pretrained: True
 # You typically want _self_ somewhere after the schema (base_config)

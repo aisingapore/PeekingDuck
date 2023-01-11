@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from pyparsing import util
 from omegaconf import DictConfig
 from time import perf_counter
 import logging
+from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
@@ -22,7 +24,6 @@ from src.data_module.data_module import ImageClassificationDataModule
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
-
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
@@ -37,9 +38,7 @@ def run(cfg: DictConfig) -> None:
     train_loader = data_module.train_dataloader()
     valid_loader = data_module.valid_dataloader()
 
-    # TODO Support Early Stopping and Checkpoint
-    callbacks = cfg.callbacks
-
+    callbacks = instantiate(cfg.callbacks.callbacks)
     metricsAdapter = MetricsAdapter(cfg.num_classes)
     metrics = {}
     print("METRICS Evaluation: ", cfg.metrics.evaluate)

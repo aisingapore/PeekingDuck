@@ -16,7 +16,7 @@ TODO:
         may need to inherit the `pipeline_config` and use it to initiate the attributes.
 """
 from src.callbacks.default_callbacks import Callback
-from src.trainer import Trainer
+from src.trainer.default_trainer import Trainer
 from src.utils.callback_utils import init_improvement
 
 
@@ -49,7 +49,7 @@ class EarlyStopping(Callback):
         trainer.stop = self.stop  # assign to trainer
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
-        valid_score = trainer.valid_epoch_dict.get(self.monitor)
+        valid_score = trainer.epoch_dict.get(self.monitor)
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_valid_score
         ):
