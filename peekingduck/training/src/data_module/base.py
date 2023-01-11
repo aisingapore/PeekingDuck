@@ -29,3 +29,15 @@ class DataModule(ABC):
     @abstractmethod
     def valid_dataloader(self):
         """"""
+
+
+class DataAdapter(ABC):
+    """"""
+
+    @abstractmethod
+    def train_dataloader(self, dataset):
+        raise NotImplementedError
+
+    @abstractmethod
+    def valid_dataloader(self, dataset):
+        raise NotImplementedError

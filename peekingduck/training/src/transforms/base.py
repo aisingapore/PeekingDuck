@@ -11,7 +11,7 @@ class Transforms(ABC):
     """
 
     def __init__(self, pipeline_config: DictConfig) -> None:
-        self.pipeline_config = pipeline_config
+        self.pipeline_config: DictConfig = pipeline_config
 
     @property
     @abstractmethod

@@ -11,3 +11,32 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+from torch.utils.data import DataLoader
+
+from src.data_module.base import DataAdapter
+
+
+class DatasetLoader(DataAdapter):
+    """"""
+
+    def __init__(self, cfg):
+        self.cfg = cfg
+
+    def train_dataloader(self, dataset):
+        return DataLoader(
+            dataset,
+            **self.cfg.data_loader.train,
+        )
+
+    def valid_dataloader(self, dataset):
+        return DataLoader(
+            dataset,
+            **self.cfg.data_loader.valid,
+        )
+
+    def test_dataloader(self, dataset):
+        return DataLoader(
+            dataset,
+            **self.cfg.data_loader.test,
+        )
