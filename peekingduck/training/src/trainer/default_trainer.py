@@ -37,7 +37,6 @@ from configs import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
     pipeline_config: DictConfig,
@@ -95,7 +94,6 @@ class Trainer(ABC):
             self.scaler = torch.cuda.amp.GradScaler()
         else:
             self.scaler = None
-
 
         self.monitored_metric = self.train_params.monitored_metric
 

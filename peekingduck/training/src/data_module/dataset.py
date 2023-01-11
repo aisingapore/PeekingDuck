@@ -19,16 +19,15 @@ import albumentations as A
 import cv2
 import pandas as pd
 import torch
-import torchvision
 import torchvision.transforms as T
-from torch.utils.data import DataLoader, Dataset
+from torch.utils.data import Dataset
 
 
 TransformTypes = Optional[Union[A.Compose, T.Compose]]
 
 
 class ImageClassificationDataset(Dataset):
-    """A sample template for Image Classification Dataset."""
+    """Template for Image Classification Dataset."""
 
     def __init__(
         self,

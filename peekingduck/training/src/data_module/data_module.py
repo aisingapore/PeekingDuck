@@ -18,10 +18,9 @@ from omegaconf import DictConfig
 from hydra.utils import instantiate
 import pandas as pd
 
-from torch.utils.data import DataLoader
-
 from src.data_module.base import DataModule
 from src.data_module.dataset import ImageClassificationDataset
+from src.data_module.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
     create_dataframe_with_image_info,
@@ -49,19 +48,18 @@ class ImageClassificationDataModule(DataModule):
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
         self.transforms = ImageClassificationTransforms(cfg)
+        self.dataset_loader = DataAdapter(cfg.data_adapter)
 
     def train_dataloader(self):
         """ """
-        return DataLoader(
+        return self.dataset_loader.train_dataloader(
             self.train_dataset,
-            **self.cfg.data_loader.train,
         )
 
     def valid_dataloader(self):
         """ """
-        return DataLoader(
+        return self.dataset_loader.valid_dataloader(
             self.valid_dataset,
-            **self.cfg.data_loader.test,
         )
 
     def prepare_data(self):
@@ -104,6 +102,13 @@ class ImageClassificationDataModule(DataModule):
         logger.info(df.head())
         self.train_df = df
         self.train_df, self.valid_df = self.cross_validation_split(df)
+
+        if self.cfg.debug:
+            num_debug_samples = self.cfg.num_debug_samples
+            print(f"Debug mode is on, using {num_debug_samples} images for training.")
+            self.train_df = self.train_df.sample(num_debug_samples)
+            self.valid_df = self.valid_df.sample(num_debug_samples)
+
         logger.info(self.train_df.info())
 
     def setup(self, stage: str):
