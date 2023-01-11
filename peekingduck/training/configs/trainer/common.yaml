@@ -62,7 +62,7 @@ scheduler_params:
 
 
 global_train_params:
-    epochs: 10  # 10 when not debug
+    epochs: 1  # 10 when not debug
     use_amp: False
     patience: 3
     classification_type: "multiclass"

@@ -87,7 +87,7 @@ class Trainer(ABC):
             optimizer=self.optimizer,
             scheduler_params=self.pipeline_config.scheduler_params,
         )
-        
+
         if self.train_params.use_amp:
             # https://pytorch.org/docs/stable/notes/amp_examples.html
             self.scaler = torch.cuda.amp.GradScaler()
@@ -122,9 +122,9 @@ class Trainer(ABC):
             self.__valid_one_epoch(valid_loader, _epoch)
 
             self.monitored_metric["metric_score"] = torch.clone(
-                self.history_dict['valid'][self.monitored_metric["monitor"]]
+                self.history_dict[self.monitored_metric["monitor"]]
             ).detach()
-            valid_loss = self.history_dict['valid']["valid_loss"]
+            valid_loss = self.history_dict["valid_loss"]
 
             if self.stop:  # from early stopping
                 break  # Early Stopping
@@ -156,10 +156,10 @@ class Trainer(ABC):
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
-            self.history_dict['valid']["valid_trues"],
-            self.history_dict['valid']["valid_logits"],
-            self.history_dict['valid']["valid_preds"],
-            self.history_dict['valid']["valid_probs"],
+            self.history_dict["valid_trues"],
+            self.history_dict["valid_logits"],
+            self.history_dict["valid_preds"],
+            self.history_dict["valid_probs"],
         )
 
     def __train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
@@ -204,7 +204,7 @@ class Trainer(ABC):
                 self.optimizer.step()  # Update weights using the optimizer
 
             # Update loss metric, every batch is diff
-            self.train_batch_dict["train_loss"] = curr_batch_train_loss.item()
+            self.batch_dict["train_loss"] = curr_batch_train_loss.item()
             # train_bar.set_description(f"Train. {metric_monitor}")
 
             _y_train_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
@@ -220,11 +220,11 @@ class Trainer(ABC):
         )
         self.logger.info(
             f"\n[RESULT]: Train. Epoch {epoch}:"
-            f"\nAvg Train Summary Loss: {self.train_epoch_dict['train_loss']:.3f}"
+            f"\nAvg Train Summary Loss: {self.epoch_dict['train_loss']:.3f}"
             f"\nLearning Rate: {curr_lr:.5f}"
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
-        self.train_history_dict = {**self.train_epoch_dict}
+        self.history_dict = {**self.epoch_dict}
         self.__invoke_callbacks("on_train_epoch_end")
 
     def __valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
@@ -272,7 +272,7 @@ class Trainer(ABC):
                     stage="valid",
                 )
                 # Update loss metric, every batch is diff
-                self.valid_batch_dict["valid_loss"] = curr_batch_val_loss.item()
+                self.batch_dict["valid_loss"] = curr_batch_val_loss.item()
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
@@ -302,13 +302,13 @@ class Trainer(ABC):
         )
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
-            f"\nAvg Val Summary Loss: {self.valid_epoch_dict['valid_loss']:.3f}"
+            f"\nAvg Val Summary Loss: {self.epoch_dict['valid_loss']:.3f}"
             f"\nAvg Val Accuracy: {valid_metrics_dict['val_Accuracy']:.3f}"
             f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_AUROC']:.3f}"
             f"\nTime Elapsed: {valid_elapsed_time}\n"
         )
-        # here self.valid_epoch_dict only has valid_loss, we update the rest
-        self.valid_epoch_dict.update(
+        # here self.epoch_dict only has valid_loss, we update the rest
+        self.epoch_dict.update(
             {
                 "valid_trues": valid_trues,
                 "valid_logits": valid_logits,
@@ -316,11 +316,11 @@ class Trainer(ABC):
                 "valid_probs": valid_probs,
                 "valid_elapsed_time": valid_elapsed_time,
             }
-        )  # FIXME: potential difficulty in debugging since valid_epoch_dict is called in metrics meter
-        self.valid_epoch_dict.update(valid_metrics_dict)
+        )  # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
+        self.epoch_dict.update(valid_metrics_dict)
         # temporary stores current valid epochs info
         # FIXME: so now valid epoch dict and valid history dict are the same lol.
-        self.valid_history_dict = {**self.valid_epoch_dict, **valid_metrics_dict}
+        self.valid_history_dict = {**self.epoch_dict, **valid_metrics_dict}
 
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.

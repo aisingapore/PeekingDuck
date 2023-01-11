@@ -9,7 +9,7 @@ defaults:
   - _self_
   - override hydra/job_logging: custom
 
-num_classes: 12
+num_classes: 10
 device: 'cpu'
 project_name: titan
 debug: true
