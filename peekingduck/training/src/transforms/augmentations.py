@@ -1,7 +1,4 @@
 """Transforms for data augmentation."""
-from abc import ABC, abstractmethod
-from typing import Any
-
 import torchvision.transforms as T
 
 from omegaconf import DictConfig
@@ -15,7 +12,7 @@ class ImageClassificationTransforms(Transforms):
 
     def __init__(self, pipeline_config: DictConfig) -> None:
         super().__init__(pipeline_config)
-        self.pipeline_config = pipeline_config
+        self.pipeline_config: DictConfig = pipeline_config
 
     @property
     def train_transforms(self) -> T.Compose:

@@ -54,14 +54,14 @@ class ImageClassificationDataModule(DataModule):
         """ """
         return DataLoader(
             self.train_dataset,
-            # **self.cfg.data_module.train_loader,
+            **self.cfg.data_loader.train,
         )
 
     def valid_dataloader(self):
         """ """
         return DataLoader(
             self.valid_dataset,
-            # **self.pipeline_config.datamodule.valid_loader
+            **self.cfg.data_loader.test,
         )
 
     def prepare_data(self):

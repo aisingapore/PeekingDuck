@@ -16,3 +16,4 @@ imagesize
 matplotlib
 torchinfo
 timm
+tabulate
