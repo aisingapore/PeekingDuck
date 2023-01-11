@@ -1,1 +1,1 @@
-evaluate: ['accuracy', 'precision', 'recall', 'auroc']
+evaluate: ['accuracy', 'precision', 'recall', 'auroc', 'multiclass_calibration_error']

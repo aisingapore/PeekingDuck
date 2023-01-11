@@ -3,7 +3,7 @@ callbacks:
   - _target_: src.callbacks.metric_meter.MetricMeter
   - _target_: src.callbacks.model_checkpoint.ModelCheckpoint
     mode: 'max'
-    monitor: 'val_Accuracy'
+    monitor: 'val_MulticlassAccuracy'
   - _target_: src.callbacks.early_stopping.EarlyStopping
     mode: 'max'
-    monitor: 'val_Accuracy'
+    monitor: 'val_MulticlassAccuracy'

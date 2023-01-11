@@ -145,7 +145,7 @@ class ModelCheckpoint(Callback):
         ):
             model_artifacts_path = Path.joinpath(
                 self.model_artifacts_dir,
-                f"{trainer.pipeline_config.model.model_name}_best_{self.monitor}_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
+                f"{trainer.train_params.model_name}_best_{self.monitor}_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
             ).as_posix()
 
             self.best_valid_score = valid_score

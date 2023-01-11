@@ -39,21 +39,21 @@ def run(cfg: DictConfig) -> None:
     valid_loader = data_module.valid_dataloader()
 
     callbacks = instantiate(cfg.callbacks.callbacks)
-    metricsAdapter = MetricsAdapter(cfg.num_classes)
-    metrics = {}
-    print("METRICS Evaluation: ", cfg.metrics.evaluate)
-    for choice in cfg.metrics.evaluate:
-        print(choice)
-        metrics[choice] = getattr(
-            metricsAdapter, choice, "NotImplementedError: Metric not found"
-        )
+    metricsAdapter = MetricsAdapter(task=cfg.classification_type, num_classes=cfg.num_classes)
+    for metric in cfg.metrics.evaluate:
+        try:
+            getattr(metricsAdapter, metric)()
+        except NotImplementedError:
+            pass
+    
+    metrics_collection = metricsAdapter.make_collection()
 
     model = ImageClassificationModel(cfg.model).to(cfg.device)
     trainer = Trainer(
         cfg.trainer,
         model=model,
         callbacks=callbacks,
-        metrics=metrics,
+        metrics=metrics_collection,
         device=cfg.device,
     )
     history = trainer.fit(train_loader, valid_loader)

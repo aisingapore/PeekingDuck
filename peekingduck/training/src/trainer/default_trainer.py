@@ -303,8 +303,8 @@ class Trainer(ABC):
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
             f"\nAvg Val Summary Loss: {self.epoch_dict['valid_loss']:.3f}"
-            f"\nAvg Val Accuracy: {valid_metrics_dict['val_Accuracy']:.3f}"
-            f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_AUROC']:.3f}"
+            f"\nAvg Val Accuracy: {valid_metrics_dict['val_MulticlassAccuracy']:.3f}"
+            f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_MulticlassAUROC']:.3f}"
             f"\nTime Elapsed: {valid_elapsed_time}\n"
         )
         # here self.epoch_dict only has valid_loss, we update the rest

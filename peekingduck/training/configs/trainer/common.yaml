@@ -65,7 +65,8 @@ global_train_params:
     epochs: 2  # 10 when not debug
     use_amp: False
     patience: 3
-    classification_type: "multiclass"
+    model_name: ${model.model_name}
+    classification_type: ${classification_type}
     monitored_metric:
-        monitor: val_Accuracy
+        monitor: val_MulticlassAccuracy
         mode: max

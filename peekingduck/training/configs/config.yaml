@@ -9,6 +9,7 @@ defaults:
   - _self_
   - override hydra/job_logging: custom
 
+classification_type: "multiclass"
 num_classes: 10
 device: "cpu"
 project_name: "titan"
