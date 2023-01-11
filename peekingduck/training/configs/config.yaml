@@ -1,0 +1,20 @@
+defaults:
+  - datamodule: base
+  - model: base
+  - stores: base
+  # - trainer: common
+  # - callbacks: common
+  # - metrics: common
+  # You typically want _self_ somewhere after the schema (base_config)
+  - _self_
+
+general:
+  num_classes: 10
+  device: "cpu"
+  project_name: "peekingduck"
+  debug: true
+  seed: 1992
+
+hydra:
+  run:
+    dir: "outputs/${general.project_name}/${stores.unique_id}" # in sync with stores

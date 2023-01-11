@@ -1,0 +1,6 @@
+model_name: "resnet18"
+pretrained: True
+in_chans: 3
+num_classes: ${general.num_classes}
+global_pool: "avg"
+# You typically want _self_ somewhere after the schema (base_config)
