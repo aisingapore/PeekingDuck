@@ -58,7 +58,7 @@ scheduler_params:
         verbose: False
 
 global_train_params:
-    epochs: 2 # 10 when not debug
+    epochs: 10 # 10 when not debug
     use_amp: False
     patience: 3
     model_name: ${model.model_name}

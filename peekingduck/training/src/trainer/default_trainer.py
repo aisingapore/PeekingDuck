@@ -121,10 +121,11 @@ class Trainer(ABC):
             self.__train_one_epoch(train_loader, _epoch)
             self.__valid_one_epoch(valid_loader, _epoch)
 
-            self.monitored_metric["metric_score"] = torch.clone(
-                self.history_dict[self.monitored_metric["monitor"]]
-            ).detach()
-            valid_loss = self.history_dict["valid_loss"]
+
+            # self.monitored_metric["metric_score"] = torch.clone(
+            #     self.history_dict[self.monitored_metric["monitor"]]
+            # ).detach()
+            # valid_loss = self.history_dict["valid_loss"]
 
             if self.stop:  # from early stopping
                 break  # Early Stopping
