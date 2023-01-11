@@ -19,7 +19,7 @@ stores:
     project_name: ${project_name}
     unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
     logs_dir: "" # Path = field(init=False)
-    model_artifacts_dir: "./artifacts/${project_name}/${stores.unique_id}/"
+    model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
 
 criterion_params:
     train_criterion: "CrossEntropyLoss"
