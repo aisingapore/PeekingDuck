@@ -71,7 +71,7 @@ from typing import Any, Dict
 
 import torch
 
-from src.callbacks.default_callbacks import Callback
+from src.callbacks.base import Callback
 from src.trainer.default_trainer import Trainer
 from src.utils.callback_utils import init_improvement
 

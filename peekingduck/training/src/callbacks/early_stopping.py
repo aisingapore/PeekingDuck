@@ -15,7 +15,7 @@ TODO:
     1. As usual, the issue is attributes/args such as mode is defined in `pipeline_config`,
         may need to inherit the `pipeline_config` and use it to initiate the attributes.
 """
-from src.callbacks.default_callbacks import Callback
+from src.callbacks.base import Callback
 from src.trainer.default_trainer import Trainer
 from src.utils.callback_utils import init_improvement
 

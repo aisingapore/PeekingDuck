@@ -27,8 +27,8 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
 
-from src.callbacks.default_callbacks import Callback
-from src.model.default_model import Model
+from src.callbacks.base import Callback
+from src.model.base import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
 import logging
@@ -334,7 +334,6 @@ class Trainer(ABC):
             except NotImplementedError:
                 pass
 
-
     def get_classification_metrics(
         self,
         y_trues: torch.Tensor,
@@ -370,7 +369,6 @@ class Trainer(ABC):
             f'\nvalid_metrics:\n{tabulate(valid_metrics_results_df, headers="keys", tablefmt="psql")}\n'
         )
         return train_metrics_results, valid_metrics_results
-
 
     @staticmethod
     def get_optimizer(

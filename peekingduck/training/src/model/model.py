@@ -28,7 +28,7 @@ import torchvision
 from torch import nn
 from omegaconf import DictConfig
 
-from src.model.default_model import Model
+from src.model.base import Model
 from src.utils.general_utils import seed_all, rsetattr
 
 # TODO: Follow timm's creation of head and backbone
