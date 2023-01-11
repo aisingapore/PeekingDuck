@@ -1,5 +1,0 @@
-train:
-  batch_size: 32
-  shuffle: True
-  pin_memory: True
-  drop_last: False

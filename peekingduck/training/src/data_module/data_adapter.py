@@ -14,29 +14,32 @@
 
 from torch.utils.data import DataLoader
 
-from src.data_module.base import DataAdapter
+from src.data_module.base import AbstractDataAdapter
 
 
-class DatasetLoader(DataAdapter):
+class DataAdapter(AbstractDataAdapter):
     """"""
 
     def __init__(self, cfg):
         self.cfg = cfg
+        self.loader = None
+        if cfg.adapter_type == "pytorch":
+            self.loader = DataLoader
 
     def train_dataloader(self, dataset):
-        return DataLoader(
+        return self.loader(
             dataset,
-            **self.cfg.data_loader.train,
+            **self.cfg.train,
         )
 
     def valid_dataloader(self, dataset):
-        return DataLoader(
+        return self.loader(
             dataset,
-            **self.cfg.data_loader.valid,
+            **self.cfg.valid,
         )
 
     def test_dataloader(self, dataset):
-        return DataLoader(
+        return self.loader(
             dataset,
-            **self.cfg.data_loader.test,
+            **self.cfg.test,
         )

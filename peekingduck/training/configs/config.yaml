@@ -10,12 +10,12 @@ defaults:
   - override hydra/job_logging: custom
 
 num_classes: 10
-device: 'cpu'
-project_name: titan
+device: "cpu"
+project_name: "titan"
 debug: true
 
 hydra:
   run:
-    dir: outputs/${project_name}/${now:%Y-%m-%d_%H-%M-%S}
+    dir: "outputs/${project_name}/${now:%Y-%m-%d_%H-%M-%S}"
 
 outdir: "${hydra.runtime.output_dir}"

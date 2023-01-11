@@ -31,7 +31,7 @@ class DataModule(ABC):
         """"""
 
 
-class DataAdapter(ABC):
+class AbstractDataAdapter(ABC):
     """"""
 
     @abstractmethod

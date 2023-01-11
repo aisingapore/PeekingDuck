@@ -18,11 +18,9 @@ from omegaconf import DictConfig
 from hydra.utils import instantiate
 import pandas as pd
 
-from torch.utils.data import DataLoader
-
 from src.data_module.base import DataModule
 from src.data_module.dataset import ImageClassificationDataset
-from src.data_module.data_adapter import DatasetLoader
+from src.data_module.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
     create_dataframe_with_image_info,
@@ -50,7 +48,7 @@ class ImageClassificationDataModule(DataModule):
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
         self.transforms = ImageClassificationTransforms(cfg)
-        self.dataset_loader = DatasetLoader(cfg)
+        self.dataset_loader = DataAdapter(cfg.data_adapter)
 
     def train_dataloader(self):
         """ """

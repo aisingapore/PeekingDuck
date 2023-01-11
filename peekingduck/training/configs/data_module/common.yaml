@@ -1,9 +1,5 @@
 defaults:
     - data_set: common
-    - data_loader:
-          - train
-          - test
-          - valid
     - resample: train_test_split
     - transform:
           - train
@@ -11,5 +7,5 @@ defaults:
     - data_adapter:
           - pytorch
 
-debug: true
+debug: ${debug}
 num_debug_samples: 500
