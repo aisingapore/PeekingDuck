@@ -40,7 +40,8 @@ def run(cfg: DictConfig) -> None:
 
     callbacks = instantiate(cfg.callbacks.callbacks)
     metricsAdapter = MetricsAdapter(
-        task=cfg.classification_type, num_classes=cfg.data_module.data_set.num_classes
+        task=cfg.data_module.data_set.classification_type,
+        num_classes=cfg.data_module.data_set.num_classes,
     )
     for metric in cfg.metrics.evaluate:
         try:

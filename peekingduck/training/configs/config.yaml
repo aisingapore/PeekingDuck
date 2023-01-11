@@ -10,8 +10,6 @@ defaults:
   - _self_
   - override hydra/job_logging: custom
 
-classification_type: "multiclass"
-
 device: "cpu"
 project_name: "CIFAR-10"
 debug: true
