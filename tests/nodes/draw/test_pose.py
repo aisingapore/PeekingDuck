@@ -139,10 +139,8 @@ class TestPose:
 
         keypoints = np.random.rand(1, 17, 2)  # keypoints shape for 1 person
         keypoint_scores = np.random.rand(1, 17)  # keypoint_scores shape for 1 person
-        keypoint_conns = np.random.rand(
-            1, 15, 2, 2
-        )  # keypoint_conns shape for 1 person
-
+        # keypoint_conns shape for 1 person, cast to object
+        keypoint_conns = np.random.rand(1, 15, 2, 2).astype(object)
         inputs = {
             "keypoints": keypoints,
             "keypoint_scores": keypoint_scores,
