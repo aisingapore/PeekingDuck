@@ -87,6 +87,13 @@ class Trainer(ABC):
             optimizer=self.optimizer,
             scheduler_params=self.pipeline_config.scheduler_params,
         )
+        
+        if self.train_params.use_amp:
+            # https://pytorch.org/docs/stable/notes/amp_examples.html
+            self.scaler = torch.cuda.amp.GradScaler()
+        else:
+            self.scaler = None
+
 
         self.monitored_metric = self.train_params.monitored_metric
 
@@ -180,7 +187,7 @@ class Trainer(ABC):
                 cache_enabled=True,
             ):
                 logits = self.model(inputs)  # Forward pass logits
-                curr_batch_train_loss = self.computer_criterion(
+                curr_batch_train_loss = self.compute_criterion(
                     targets,
                     logits,
                     criterion_params=self.pipeline_config.criterion_params,
@@ -258,7 +265,7 @@ class Trainer(ABC):
                 y_valid_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
                 y_valid_pred = torch.argmax(y_valid_prob, axis=1)
 
-                curr_batch_val_loss = self.computer_criterion(
+                curr_batch_val_loss = self.compute_criterion(
                     targets,
                     logits,
                     criterion_params=self.pipeline_config.criterion_params,
@@ -352,7 +359,7 @@ class Trainer(ABC):
         )
 
     @staticmethod
-    def computer_criterion(
+    def compute_criterion(
         y_trues: torch.Tensor,
         y_logits: torch.Tensor,
         criterion_params: Dict[str, Any],
