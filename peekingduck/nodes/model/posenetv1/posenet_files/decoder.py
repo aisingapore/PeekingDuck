@@ -83,9 +83,11 @@ class Decoder:  # pylint: disable=too-few-public-methods
 
         parts = self._build_parts(scores)
 
-        offsets, displacements_fwd, displacements_bwd = _change_dimensions(
-            offsets, displacements_fwd, displacements_bwd
-        )
+        (  # pylint: disable=unbalanced-tuple-unpacking
+            offsets,
+            displacements_fwd,
+            displacements_bwd,
+        ) = _change_dimensions(offsets, displacements_fwd, displacements_bwd)
 
         pose_count = self._look_for_poses(
             parts,
