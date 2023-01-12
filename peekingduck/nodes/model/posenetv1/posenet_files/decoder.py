@@ -239,7 +239,7 @@ class Decoder:  # pylint: disable=too-few-public-methods
         """
         pose_count = 0
         max_pose_detections = pose_scores.shape[0]
-        squared_nms_radius = NMS_RADIUS ** 2
+        squared_nms_radius = NMS_RADIUS**2
 
         for root_score, root_id, root_coords in parts:
             root_image_coords = (
