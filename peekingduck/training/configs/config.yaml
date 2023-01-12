@@ -12,7 +12,7 @@ defaults:
 
 device: "cpu"
 project_name: "CIFAR-10"
-debug: true
+debug: True
 
 
 hydra:

@@ -62,6 +62,8 @@ global_train_params:
     use_amp: False
     patience: 3
     model_name: ${model.model_name}
+    debug: ${debug}
+    debug_epochs: 2
     classification_type: ${data_module.data_set.classification_type}
     monitored_metric:
         monitor: val_MulticlassAccuracy

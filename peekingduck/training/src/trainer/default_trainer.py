@@ -116,11 +116,13 @@ class Trainer(ABC):
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
         self.__on_fit_start(fold=fold)
+        epochs = self.train_params.epochs
+        if self.train_params.debug:
+            epochs = self.train_params.debug_epochs
 
-        for _epoch in range(1, self.train_params.epochs + 1):
+        for _epoch in range(1, epochs + 1):
             self.__train_one_epoch(train_loader, _epoch)
             self.__valid_one_epoch(valid_loader, _epoch)
-
 
             # self.monitored_metric["metric_score"] = torch.clone(
             #     self.history_dict[self.monitored_metric["monitor"]]

@@ -156,3 +156,4 @@ docs/source/nodes
 .DS_Store
 peekingduck/training/.gitignore
 **/outputs
+**/multirun

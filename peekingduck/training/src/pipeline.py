@@ -24,6 +24,7 @@ from src.data_module.data_module import ImageClassificationDataModule
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
+from src.utils.general_utils import choose_torch_device
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
@@ -31,6 +32,8 @@ logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
+
+    # cfg.device = choose_torch_device()
 
     data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
     data_module.prepare_data()
