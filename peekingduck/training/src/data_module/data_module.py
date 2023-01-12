@@ -43,12 +43,13 @@ class ImageClassificationDataModule(DataModule):
     def __init__(
         self,
         cfg: DictConfig,
-        **kwargs,
+        # **kwargs,
     ) -> None:
         """ """
 
-        super().__init__(**kwargs)
+        # super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
+        self.debug: DictConfig = cfg.debug
         self.transforms = ImageClassificationTransforms(cfg)
         self.dataset_loader = DataAdapter(cfg.data_adapter)
 
@@ -105,7 +106,7 @@ class ImageClassificationDataModule(DataModule):
         self.train_df = df
         self.train_df, self.valid_df = self.cross_validation_split(df)
 
-        if self.cfg.debug:
+        if self.debug:
             num_debug_samples = self.cfg.num_debug_samples
             logger.debug(
                 f"Debug mode is on, using {num_debug_samples} images for training."

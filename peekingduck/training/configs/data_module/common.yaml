@@ -1,11 +1,14 @@
 defaults:
-    - data_set: common
-    - resample: train_test_split
-    - transform:
-          - train
-          - test
-    - data_adapter:
-          - pytorch
+      - data_set: common
+      - resample: train_test_split
+      - transform:
+              - train
+              - test
+      - data_adapter:
+              - pytorch
+
+module:
+      _target_: src.data_module.data_module.ImageClassificationDataModule
 
 debug: ${debug}
 num_debug_samples: 500
