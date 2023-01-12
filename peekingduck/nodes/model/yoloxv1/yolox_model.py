@@ -14,6 +14,7 @@
 
 """YOLOX models with model types: yolox-tiny, yolox-s, yolox-m, and yolox-l."""
 
+import locale
 import logging
 from typing import Any, Dict, List, Tuple
 
@@ -47,7 +48,10 @@ class YOLOXModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["iou_threshold", "score_threshold"], "[0, 1]")
 
         model_dir = self.download_weights()
-        with open(model_dir / self.weights["classes_file"]) as infile:
+        with open(
+            model_dir / self.weights["classes_file"],
+            encoding=locale.getpreferredencoding(False),
+        ) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
         self.detect_ids = self.config["detect"]  # change "detect_ids" to "detect"

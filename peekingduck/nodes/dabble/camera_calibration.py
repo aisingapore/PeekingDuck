@@ -17,6 +17,7 @@ Calculates camera coefficients to be used to
 remove distortion from a wide-angle camera image.
 """
 
+import locale
 import math
 import time
 from pathlib import Path
@@ -292,7 +293,10 @@ class Node(AbstractNode):
         file_data["camera_matrix"] = camera_matrix.tolist()
         file_data["distortion_coeffs"] = distortion_coeffs.tolist()
 
-        yaml.dump(file_data, open(self.file_path, "w"), default_flow_style=None)
+        with open(
+            self.file_path, "w", encoding=locale.getpreferredencoding(False)
+        ) as outfile:
+            yaml.dump(file_data, outfile, default_flow_style=None)
 
     def _calculate_error(self, calibration_data: tuple) -> None:
         """Calculates re-projection error"""
