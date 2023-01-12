@@ -32,6 +32,8 @@ import pandas as pd
 import requests
 import torch
 import torchvision.transforms.functional as F
+from torch import autocast
+from contextlib import nullcontext
 from tqdm import tqdm
 
 

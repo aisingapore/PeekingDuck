@@ -4,7 +4,7 @@ formatters:
   json:
     format: "%(asctime)s %(process)d %(name)s %(levelname)s %(message)s"
     # class: pythonjsonlogger.jsonlogger.JsonFormatter
-    datefmt: "%Y%m%d_%H%M%S%z"
+    datefmt: "%Y%m%d_%H%M%S"
 
 handlers:
   console:

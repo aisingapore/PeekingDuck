@@ -25,11 +25,11 @@ class DataModule(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def train_dataloader(self):
+    def get_train_dataloader(self):
         """"""
 
     @abstractmethod
-    def valid_dataloader(self):
+    def get_valid_dataloader(self):
         """"""
 
 

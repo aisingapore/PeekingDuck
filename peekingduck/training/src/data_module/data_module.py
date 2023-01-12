@@ -52,13 +52,13 @@ class ImageClassificationDataModule(DataModule):
         self.transforms = ImageClassificationTransforms(cfg)
         self.dataset_loader = DataAdapter(cfg.data_adapter)
 
-    def train_dataloader(self):
+    def get_train_dataloader(self):
         """ """
         return self.dataset_loader.train_dataloader(
             self.train_dataset,
         )
 
-    def valid_dataloader(self):
+    def get_valid_dataloader(self):
         """ """
         return self.dataset_loader.valid_dataloader(
             self.valid_dataset,
@@ -107,7 +107,9 @@ class ImageClassificationDataModule(DataModule):
 
         if self.cfg.debug:
             num_debug_samples = self.cfg.num_debug_samples
-            print(f"Debug mode is on, using {num_debug_samples} images for training.")
+            logger.debug(
+                f"Debug mode is on, using {num_debug_samples} images for training."
+            )
             self.train_df = self.train_df.sample(num_debug_samples)
             self.valid_df = self.valid_df.sample(num_debug_samples)
 

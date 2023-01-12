@@ -57,7 +57,7 @@ class Trainer(ABC):
         pipeline_config: DictConfig,
         model: Model,
         callbacks: List[Callback] = None,
-        metrics: Union[MetricCollection, List[str]] = None,
+        metrics: Union[MetricCollection, List[str]] = None,  # TODO py/tf
         device: str = "cpu",
     ) -> None:
         """Initialize the trainer."""
@@ -73,11 +73,11 @@ class Trainer(ABC):
 
         self.logger = logger
 
-        self.__initialize()  # init non init attributes, etc
+        self._initialize()  # init non init attributes, etc
 
         print(self.__dict__)
 
-    def __initialize(self) -> None:
+    def _initialize(self) -> None:
         """Called when the trainer begins."""
 
         self.optimizer = self.get_optimizer(
@@ -89,7 +89,7 @@ class Trainer(ABC):
             scheduler_params=self.pipeline_config.scheduler_params,
         )
 
-        if self.train_params.use_amp:
+        if self.train_params.use_amp:  # TODO
             # https://pytorch.org/docs/stable/notes/amp_examples.html
             self.scaler = torch.cuda.amp.GradScaler()
         else:
@@ -106,7 +106,7 @@ class Trainer(ABC):
         self.epoch_dict = {}
         self.batch_dict = {}
         self.history_dict = {}
-        self.__invoke_callbacks("on_trainer_start")
+        self._invoke_callbacks("on_trainer_start")
 
     def fit(
         self,
@@ -115,19 +115,15 @@ class Trainer(ABC):
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
-        self.__on_fit_start(fold=fold)
+        self._on_fit_start(fold=fold)  # startup
+
         epochs = self.train_params.epochs
         if self.train_params.debug:
             epochs = self.train_params.debug_epochs
-
-        for _epoch in range(1, epochs + 1):
-            self.__train_one_epoch(train_loader, _epoch)
-            self.__valid_one_epoch(valid_loader, _epoch)
-
-            # self.monitored_metric["metric_score"] = torch.clone(
-            #     self.history_dict[self.monitored_metric["monitor"]]
-            # ).detach()
-            # valid_loss = self.history_dict["valid_loss"]
+        # implement
+        for epoch in range(1, epochs + 1):
+            self._train_one_epoch(train_loader, epoch)
+            self._valid_one_epoch(valid_loader, epoch)
 
             if self.stop:  # from early stopping
                 break  # Early Stopping
@@ -143,19 +139,19 @@ class Trainer(ABC):
 
             self.current_epoch += 1
 
-        self.__on_fit_end()
+        self._on_fit_end()  # shutdown
         # FIXME: here is finish fitting, whether to call it on train end or on fit end?
         # Currently only history uses on_trainer_end.
-        for callback in self.callbacks:
+        for callback in self.callbacks:  # TODO
             callback.on_trainer_end(self)
         return self.history
 
-    def __on_fit_start(self, fold: int) -> None:
+    def _on_fit_start(self, fold: int) -> None:  # TODO rename
         self.logger.info(f"Fold {fold} started")
         self.best_valid_loss = np.inf
         self.current_fold = fold
 
-    def __on_fit_end(self) -> None:
+    def _on_fit_end(self) -> None:  # TODO rename
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
@@ -165,7 +161,7 @@ class Trainer(ABC):
             self.history_dict["valid_probs"],
         )
 
-    def __train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
+    def _train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
         """Train one epoch of the model."""
         curr_lr = self.get_lr(self.optimizer)
         train_start_time = time.time()
@@ -176,15 +172,15 @@ class Trainer(ABC):
         train_bar = tqdm(train_loader)
 
         # Iterate over train batches
-        for _step, batch in enumerate(train_bar, start=1):
+        for _, batch in enumerate(train_bar, start=1):
             # unpack - note that if BCEWithLogitsLoss, dataset should do view(-1,1) and not here.
             inputs, targets = batch
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
 
-            _batch_size = inputs.shape[0]  # unused for now
+            _batch_size = inputs.shape[0]  # TODO unused for now
 
-            with torch.cuda.amp.autocast(
+            with torch.cuda.amp.autocast(  # TODO
                 enabled=self.train_params.use_amp,
                 dtype=torch.float16,
                 cache_enabled=True,
@@ -214,9 +210,9 @@ class Trainer(ABC):
 
             _y_train_pred = torch.argmax(_y_train_prob, dim=1)
 
-            self.__invoke_callbacks("on_train_batch_end")
+            self._invoke_callbacks("on_train_batch_end")
 
-        self.__invoke_callbacks("on_train_loader_end")
+        self._invoke_callbacks("on_train_loader_end")
         # total time elapsed for this epoch
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
@@ -228,9 +224,9 @@ class Trainer(ABC):
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
         self.history_dict = {**self.epoch_dict}
-        self.__invoke_callbacks("on_train_epoch_end")
+        self._invoke_callbacks("on_train_epoch_end")
 
-    def __valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
+    def _valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.
         Args:
             valid_loader (torch.utils.data.DataLoader): The validation set dataloader.
@@ -250,7 +246,7 @@ class Trainer(ABC):
 
         valid_logits, valid_trues, valid_preds, valid_probs = [], [], [], []
 
-        with torch.no_grad():
+        with torch.no_grad():  # TODO
             for _step, batch in enumerate(valid_bar, start=1):
                 # unpack
                 inputs, targets = batch
@@ -279,7 +275,7 @@ class Trainer(ABC):
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
-                self.__invoke_callbacks("on_valid_batch_end")
+                self._invoke_callbacks("on_valid_batch_end")
                 # For OOF score and other computation.
                 # TODO: Consider giving numerical example. Consider rolling back to targets.cpu().numpy() if torch fails.
                 valid_trues.extend(targets.cpu())
@@ -297,7 +293,7 @@ class Trainer(ABC):
             valid_trues, valid_preds, valid_probs
         )
 
-        self.__invoke_callbacks("on_valid_loader_end")
+        self._invoke_callbacks("on_valid_loader_end")
 
         # total time elapsed for this epoch
         valid_elapsed_time = time.strftime(
@@ -327,9 +323,9 @@ class Trainer(ABC):
 
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.
-        self.__invoke_callbacks("on_valid_epoch_end")
+        self._invoke_callbacks("on_valid_epoch_end")
 
-    def __invoke_callbacks(self, event_name: str) -> None:
+    def _invoke_callbacks(self, event_name: str) -> None:
         """Invoke the callbacks."""
         for callback in self.callbacks:
             try:

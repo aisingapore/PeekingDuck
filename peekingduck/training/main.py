@@ -17,7 +17,7 @@ from omegaconf import OmegaConf, DictConfig
 import hydra
 
 from hydra.core.hydra_config import HydraConfig
-from src.pipeline import run
+from src.training_pipeline import run
 
 logger: logging.Logger = logging.getLogger(__name__)
 

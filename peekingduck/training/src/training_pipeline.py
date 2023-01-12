@@ -33,26 +33,27 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    cfg.device = choose_torch_device()
+    cfg.device = choose_torch_device()  # TODO tensorflow
+    logger.info(f"Using device: {cfg.device}")
 
     data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
     data_module.prepare_data()
     data_module.setup(stage="fit")
-    train_loader = data_module.train_dataloader()
-    valid_loader = data_module.valid_dataloader()
+    train_loader = data_module.get_train_dataloader()
+    valid_loader = data_module.get_valid_dataloader()
 
     callbacks = instantiate(cfg.callbacks.callbacks)
-    metricsAdapter = MetricsAdapter(
+    metrics_adapter = MetricsAdapter(
         task=cfg.data_module.data_set.classification_type,
         num_classes=cfg.data_module.data_set.num_classes,
     )
     for metric in cfg.metrics.evaluate:
         try:
-            getattr(metricsAdapter, metric)()
+            getattr(metrics_adapter, metric)()
         except NotImplementedError:
             pass
 
-    metrics_collection = metricsAdapter.make_collection()
+    metrics_collection = metrics_adapter.make_collection()
 
     model = ImageClassificationModel(cfg.model).to(cfg.device)
     trainer = Trainer(
