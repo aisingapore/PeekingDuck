@@ -267,7 +267,7 @@ class MaskRCNNHeads(nn.Sequential):
         layers_dict: "OrderedDict[str, nn.Module]" = OrderedDict()
         next_feature = in_channels
         for layer_idx, layer_features in enumerate(layers, 1):
-            layers_dict["mask_fcn{}".format(layer_idx)] = nn.Conv2d(
+            layers_dict[f"mask_fcn{layer_idx}"] = nn.Conv2d(
                 next_feature,
                 layer_features,
                 kernel_size=3,
@@ -275,7 +275,7 @@ class MaskRCNNHeads(nn.Sequential):
                 padding=dilation,
                 dilation=dilation,
             )
-            layers_dict["relu{}".format(layer_idx)] = nn.ReLU(inplace=True)
+            layers_dict[f"relu{layer_idx}"] = nn.ReLU(inplace=True)
             next_feature = layer_features
 
         super().__init__(layers_dict)
