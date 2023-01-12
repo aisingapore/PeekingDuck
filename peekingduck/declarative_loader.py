@@ -19,6 +19,7 @@ Helper classes to load configurations and nodes.
 import ast
 import collections.abc
 import importlib
+import locale
 import logging
 import os
 import sys
@@ -260,7 +261,9 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
 
     def _load_node_list(self, pipeline_path: Path) -> "NodeList":
         """Loads a list of nodes from pipeline_path.yml"""
-        with open(pipeline_path) as node_yml:
+        with open(
+            pipeline_path, encoding=locale.getpreferredencoding(False)
+        ) as node_yml:
             data = yaml.safe_load(node_yml)
         if not isinstance(data, dict) or "nodes" not in data:
             raise ValueError(

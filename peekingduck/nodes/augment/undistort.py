@@ -16,6 +16,7 @@
 Removes distortion from a wide-angle camera image.
 """
 
+import locale
 from pathlib import Path
 from typing import Any, Dict
 
@@ -69,8 +70,10 @@ class Node(AbstractNode):
                 "with the dabble.camera_calibation node. You may refer to this tutorial: "
                 "https://peekingduck.readthedocs.io/en/stable/nodes/dabble.camera_calibration.html"
             )
-
-        yaml_file = yaml.safe_load(open(self.file_path))
+        with open(
+            self.file_path, encoding=locale.getpreferredencoding(False)
+        ) as infile:
+            yaml_file = yaml.safe_load(infile.read())
         self.camera_matrix = np.array(yaml_file["camera_matrix"])
         self.distortion_coeffs = np.array(yaml_file["distortion_coeffs"])
 
