@@ -40,7 +40,7 @@ Modification:
 - Use @ instead of np.dot for matrix multiplication
 """
 
-from typing import Tuple
+from typing import List, Tuple
 
 import cv2
 import numpy as np
@@ -204,7 +204,7 @@ def _get_affine_transform(  # pylint:disable=too-many-arguments
     src_w = scale
     dst_w = output_size[0]
 
-    src_dir = _get_dir([0, src_w * -0.5], np.pi * rot / 180)
+    src_dir = _get_dir((0, src_w * -0.5), np.pi * rot / 180)
     dst_dir = np.array([0, dst_w * -0.5], np.float32)
 
     src = np.zeros((3, 2), dtype=np.float32)
@@ -226,11 +226,11 @@ def _get_affine_transform(  # pylint:disable=too-many-arguments
     return matrix
 
 
-def _get_dir(src_point: np.ndarray, rot_rad: float) -> np.ndarray:
+def _get_dir(src_point: Tuple[float, float], rot_rad: float) -> np.ndarray:
     """Computes the direction vector.
 
     Args:
-        src_point (np.ndarray): The coordinates of the source point.
+        src_point (Tuple[float, float]): The coordinates of the source point.
         rot_rad (float): The amount of rotation (in radians).
 
     Returns:

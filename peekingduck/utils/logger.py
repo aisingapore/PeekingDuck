@@ -21,7 +21,7 @@ import os
 import sys
 import traceback
 from types import TracebackType
-from typing import Dict, Optional, Type
+from typing import Dict, Literal, Optional, Type
 
 from colorama import Fore, Style, init
 
@@ -36,8 +36,8 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         formatter = ColoredFormatter(
             "{asctime} {name} {level_color} {levelname}"
             "{reset}: {msg_color} {message} {reset}",
-            style="{",
             datefmt="%Y-%m-%d %H:%M:%S",
+            style="{",
             colors={
                 "DEBUG": Fore.RESET + Style.BRIGHT,
                 "INFO": Fore.RESET + Style.BRIGHT,
@@ -60,7 +60,7 @@ class LoggerSetup:  # pylint: disable=too-few-public-methods
         self,
         exc_type: Type[BaseException],
         exc_value: BaseException,
-        exc_traceback: TracebackType,
+        exc_traceback: Optional[TracebackType],
     ) -> None:
         """Use Python's logging module when showing errors"""
 
@@ -104,11 +104,14 @@ class ColoredFormatter(logging.Formatter):
     """This class formats the color of logging messages"""
 
     def __init__(
-        self, *args: str, colors: Optional[Dict[str, str]] = None, **kwargs: str
-    ) -> None:
+        self,
+        fmt: str,
+        datefmt: str,
+        style: Literal["%", "{", "$"],
+        colors: Optional[Dict[str, str]] = None,
+    ):
         """Initialize the formatter with specified format strings"""
-
-        super().__init__(*args, **kwargs)
+        super().__init__(fmt, datefmt, style)
 
         self.colors = colors if colors else {}
 
