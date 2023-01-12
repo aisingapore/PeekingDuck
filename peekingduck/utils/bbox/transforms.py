@@ -14,12 +14,12 @@
 
 """Utility functions which convert bbox coordinates from one format to another."""
 
-from typing import Union
+from typing import TypeVar
 
 import numpy as np
 import torch
 
-BboxType = Union[np.ndarray, torch.Tensor]
+BboxType = TypeVar("BboxType", np.ndarray, torch.Tensor)  # pylint: disable=invalid-name
 
 
 def cast_to_float(inputs: BboxType) -> BboxType:
