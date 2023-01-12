@@ -44,10 +44,10 @@ Modifications include:
 - Refactor and formatting
 """
 
-from typing import Callable, List, Any, Tuple, Union, Optional
 from functools import partial
-import torch.nn as nn
-from torch import Tensor
+from typing import Any, Callable, List, Optional, Tuple, Union
+
+from torch import Tensor, nn
 
 
 class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes

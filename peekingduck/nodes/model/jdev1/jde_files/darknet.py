@@ -58,7 +58,7 @@ Modifications include:
 from typing import Any, Dict, List, Tuple
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from peekingduck.nodes.model.jdev1.jde_files.network_blocks import YOLOLayer
 
