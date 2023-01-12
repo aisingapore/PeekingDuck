@@ -41,6 +41,7 @@ Modifications include:
 - Refactor combine_stracks() to use bool for dictionary values instead
 """
 
+import locale
 import logging
 from pathlib import Path
 from typing import Any, Dict, List, Tuple
@@ -412,7 +413,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             (List[Dict[str, Any]]): A list of dictionaries each containing
                 the configuration of a layer/module.
         """
-        with open(config_path) as infile:
+        with open(config_path, encoding=locale.getpreferredencoding(False)) as infile:
             lines = [
                 line
                 for line in map(str.strip, infile.readlines())

@@ -14,6 +14,7 @@
 
 """Core PeekingDuck CLI commands."""
 
+import locale
 import logging
 import os
 import tempfile
@@ -189,5 +190,7 @@ def _create_pipeline_config_yml(
         ]
     default_yml = dict(nodes=default_nodes)
 
-    with open(default_path, "w") as yml_file:
+    with open(
+        default_path, "w", encoding=locale.getpreferredencoding(False)
+    ) as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)
