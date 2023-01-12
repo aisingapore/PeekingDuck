@@ -114,7 +114,9 @@ class Predictor:  # pylint: disable=too-few-public-methods
         return image
 
     @staticmethod
-    def _process_output(image: np.ndarray, density_map: np.ndarray) -> np.ndarray:
+    def _process_output(
+        image: np.ndarray, density_map: np.ndarray
+    ) -> Tuple[np.ndarray, int]:
         """Counts the number of people and resizes the output density map to match
         the original image size. The CSRNet model returns a density map that is
         1/8 the original image size. The resized density map is used to superimpose

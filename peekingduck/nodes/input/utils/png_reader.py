@@ -16,7 +16,7 @@
 Custom PNG reader to fix opencv 'PNG magic' problem on Windows platform
 """
 
-from typing import Any, Tuple
+from typing import Any, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -57,11 +57,12 @@ class PNGReader:
         """
         return True
 
-    def read(self) -> Tuple[bool, np.ndarray]:
+    def read(self) -> Tuple[bool, Optional[np.ndarray]]:
         """To mimic opencv's video capture object read()
 
         Returns:
-            Tuple[bool, np.ndarray]: tuple of return status, image frame
+            Tuple[bool, Optional[np.ndarray]]: Tuple of return status, image
+            frame if return status is True.
         """
         if self.has_frames:
             self.has_frames = False  # only 1 frame to read and return
