@@ -77,7 +77,7 @@ class Node(AbstractNode):
         ``mtcnn_score`` is renamed to ``score_threshold``.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = mtcnn_model.MTCNNModel(self.config)
 

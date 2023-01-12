@@ -16,7 +16,7 @@
 Shows the outputs on your display.
 """
 
-from typing import Any, Dict, Union
+from typing import Any, Dict, Optional, Union
 
 import cv2
 
@@ -61,7 +61,7 @@ class Node(AbstractNode):
         zoom video, and a playlist for managing multiple pipelines.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.first_run = True
 

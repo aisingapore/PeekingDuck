@@ -79,7 +79,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
         https://download.pytorch.org/models/maskrcnn_resnet50_fpn_coco-bf2d0c1e.pth
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = mask_rcnn_model.MaskRCNNModel(self.config)
 

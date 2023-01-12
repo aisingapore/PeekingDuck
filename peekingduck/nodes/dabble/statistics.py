@@ -167,7 +167,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
             ``<current result>``.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.cum_avg, self.cum_min, self.cum_max = 0.0, float("inf"), float("-inf")
         self.num_iter = 0

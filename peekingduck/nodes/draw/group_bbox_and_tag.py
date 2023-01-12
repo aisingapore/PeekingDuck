@@ -16,7 +16,7 @@
 Draws large bounding boxes with tags, over identified groups of bounding boxes.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -62,7 +62,7 @@ class Node(AbstractNode):
         using the ``groups`` key of :term:`obj_attrs`.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

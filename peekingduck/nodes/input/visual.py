@@ -146,7 +146,7 @@ class Node(AbstractNode):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        config: Dict[str, Any] = None,
+        config: Optional[Dict[str, Any]] = None,
         node_path: str = "",
         pkd_base_dir: Optional[Path] = None,
         **kwargs: Any,

@@ -16,7 +16,7 @@
 Blurs area bounded by bounding boxes over detected object.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
@@ -44,7 +44,7 @@ class Node(AbstractNode):  # pylint: disable=too-few-public-methods
             of ``blur_kernel_size`` gives more intense blurring.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

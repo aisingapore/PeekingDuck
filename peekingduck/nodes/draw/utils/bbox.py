@@ -15,7 +15,7 @@
 
 """Functions for drawing bounding box related UI components."""
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -46,7 +46,7 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
     show_labels: bool,
     bbox_scores: List[float],
     show_scores: bool,
-    color_choice: Tuple[int, int, int] = None,
+    color_choice: Optional[Tuple[int, int, int]] = None,
 ) -> None:
     """Draws bboxes onto an image frame.
 
@@ -57,7 +57,7 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
         bbox_scores (List[float]): Prediction scores of object detected.
         show_labels: whether to show the object labels.
         show_scores: whether to show the prediction score.
-        color (Tuple[int, int, int]): Color used for bounding box.
+        color (Optional[Tuple[int, int, int]]): Color used for bounding box.
     """
     image_size = get_image_size(frame)
     # Get unique label color indexes
@@ -83,8 +83,8 @@ def _draw_bbox(  # pylint: disable=too-many-arguments
     bbox: np.ndarray,
     image_size: Tuple[int, int],
     color: Tuple[int, int, int],
-    bbox_label: str = None,
-    bbox_score: float = None,
+    bbox_label: Optional[str],
+    bbox_score: Optional[float],
 ) -> None:
     """Draws a single bounding box."""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
