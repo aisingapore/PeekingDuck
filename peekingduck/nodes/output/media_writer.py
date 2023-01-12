@@ -56,7 +56,7 @@ class Node(AbstractNode):
     """
 
     # pylint: disable=too-many-instance-attributes
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.output_dir: Path = Path(self.output_dir)  # type: ignore

@@ -92,7 +92,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         "pose_estimation": pose_estimation.PoseEstimationModel,
     }
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.check_valid_choice("task", {"object_detection", "pose_estimation"})
 

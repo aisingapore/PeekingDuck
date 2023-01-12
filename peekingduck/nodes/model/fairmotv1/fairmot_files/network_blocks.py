@@ -39,7 +39,7 @@
 - Remove self.residual in Root
 """
 
-from typing import Callable, List, Union
+from typing import Callable, List, Optional, Union
 
 import torch
 from torch import nn
@@ -89,7 +89,7 @@ class BasicBlock(nn.Module):
         self.stride = stride
 
     def forward(
-        self, input: torch.Tensor, residual: torch.Tensor = None
+        self, input: torch.Tensor, residual: Optional[torch.Tensor] = None
     ) -> torch.Tensor:
         """Defines the computation performed at every call.
 
@@ -279,15 +279,15 @@ class Tree(nn.Module):  # pylint: disable=too-many-instance-attributes
     def forward(
         self,
         input: torch.Tensor,
-        residual: torch.Tensor = None,
-        children: List[torch.Tensor] = None,
+        residual: Optional[torch.Tensor] = None,
+        children: Optional[List[torch.Tensor]] = None,
     ) -> torch.Tensor:
         """Defines the computation performed at every call.
 
         Args:
             input (torch.Tensor): Input from the previous layer.
-            residual (torch.Tensor): Residual from the connected node.
-            children (List[torch.Tensor]): Inputs from child nodes of the
+            residual (Optional[torch.Tensor]): Residual from the connected node.
+            children (Optional[List[torch.Tensor]]): Inputs from child nodes of the
                 current node.
 
         Returns:

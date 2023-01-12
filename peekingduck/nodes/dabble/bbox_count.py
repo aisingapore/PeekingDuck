@@ -14,7 +14,7 @@
 
 """Counts the number of detected boxes."""
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from peekingduck.nodes.abstract_node import AbstractNode
 
@@ -32,7 +32,7 @@ class Node(AbstractNode):
         None.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:

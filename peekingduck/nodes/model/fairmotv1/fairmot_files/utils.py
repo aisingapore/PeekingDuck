@@ -40,7 +40,7 @@ Modification:
 - Use @ instead of np.dot for matrix multiplication
 """
 
-from typing import List, Tuple
+from typing import Tuple
 
 import cv2
 import numpy as np

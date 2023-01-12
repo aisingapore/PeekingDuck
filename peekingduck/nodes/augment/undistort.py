@@ -18,7 +18,7 @@ Removes distortion from a wide-angle camera image.
 
 import locale
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -58,7 +58,7 @@ class Node(AbstractNode):
             Path of the YML file containing calculated camera coefficients.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.file_path = Path(self.file_path)  # type: ignore
