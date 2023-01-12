@@ -54,7 +54,7 @@ Modifications include:
   - Remove output_padding in Conv2DTranspose function call
 """
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 import torch
@@ -287,7 +287,7 @@ class DLAUp(nn.Module):
         start_level (int): The starting stage of this upsample network.
         channels (List[int]): List of number of channels at various stages.
         scales (List[int]): Scale factors at various stages.
-        in_channels (List[int]): Number of channels in the input image at
+        in_channels (Optional[List[int]]): Number of channels in the input image at
             various stages.
     """
 
@@ -296,7 +296,7 @@ class DLAUp(nn.Module):
         start_level: int,
         channels: List[int],
         scales: List[int],
-        in_channels: List[int] = None,
+        in_channels: Optional[List[int]] = None,
     ) -> None:
         super().__init__()
         self.start_level = start_level

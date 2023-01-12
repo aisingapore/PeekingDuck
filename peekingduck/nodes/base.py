@@ -310,7 +310,7 @@ class WeightsDownloaderMixin:
 
         os.remove(zip_path)
 
-    def _find_paths(self, model_type_subdirs: List[str] = None) -> Path:
+    def _find_paths(self, model_type_subdirs: Optional[List[str]] = None) -> Path:
         """Constructs the `peekingduck_weights` directory path and the model
         sub-directory path.
 
@@ -385,7 +385,9 @@ class WeightsDownloaderMixin:
         return True
 
     @staticmethod
-    def sha256sum(path: Path, hash_func: "hashlib._Hash" = None) -> "hashlib._Hash":
+    def sha256sum(
+        path: Path, hash_func: Optional["hashlib._Hash"] = None
+    ) -> "hashlib._Hash":
         """Hashes the specified file/directory using SHA256. Reads the file in
         chunks to be more memory efficient.
 

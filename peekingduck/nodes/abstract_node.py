@@ -20,7 +20,7 @@ import collections.abc
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typeguard import check_type
 
@@ -43,7 +43,7 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        config: Dict[str, Any] = None,
+        config: Optional[Dict[str, Any]] = None,
         node_path: str = "",
         pkd_base_dir: Path = Path(__file__).resolve().parents[1],
         **kwargs: Any,
