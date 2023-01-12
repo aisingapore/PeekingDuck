@@ -15,7 +15,9 @@
 """
 Custom PNG reader to fix opencv 'PNG magic' problem on Windows platform
 """
+
 from typing import Any, Tuple
+
 import cv2
 import numpy as np
 
@@ -47,7 +49,7 @@ class PNGReader:
             return self.get_map[param]
         return -1
 
-    def isOpened(self) -> bool:  # pylint: disable=invalid-name, no-self-use
+    def isOpened(self) -> bool:  # pylint: disable=invalid-name
         """To mimic opencv's video capture object isOpened()
 
         Returns:
