@@ -33,7 +33,7 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    # cfg.device = choose_torch_device()
+    cfg.device = choose_torch_device()
 
     data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
     data_module.prepare_data()
