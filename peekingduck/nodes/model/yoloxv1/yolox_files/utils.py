@@ -37,7 +37,7 @@ from pathlib import Path
 from typing import no_type_check
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from peekingduck.nodes.model.yoloxv1.yolox_files.model import YOLOX
 from peekingduck.nodes.model.yoloxv1.yolox_files.network_blocks import BaseConv

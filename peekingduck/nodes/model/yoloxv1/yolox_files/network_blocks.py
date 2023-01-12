@@ -44,7 +44,7 @@ Modifications include:
 from typing import Tuple
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 
 class BaseConv(nn.Module):

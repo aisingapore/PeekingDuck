@@ -38,7 +38,7 @@ Modifications include:
 from typing import Dict, Tuple
 
 import torch
-import torch.nn as nn
+from torch import nn
 
 from peekingduck.nodes.model.yoloxv1.yolox_files.network_blocks import (
     BaseConv,

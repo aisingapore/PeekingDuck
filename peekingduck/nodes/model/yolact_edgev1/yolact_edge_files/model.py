@@ -89,9 +89,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, nn
 
 from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
     MobileNetV2Backbone,
