@@ -111,7 +111,7 @@ class Trainer(ABC):
     def fit(
         self,
         train_loader: DataLoader,
-        valid_loader: DataLoader,
+        validation_loader: DataLoader,
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
@@ -122,8 +122,8 @@ class Trainer(ABC):
             epochs = self.train_params.debug_epochs
         # implement
         for epoch in range(1, epochs + 1):
-            self._train_one_epoch(train_loader, epoch)
-            self._valid_one_epoch(valid_loader, epoch)
+            self._run_train_epoch(train_loader, epoch)
+            self._run_validation_epoch(validation_loader, epoch)
 
             if self.stop:  # from early stopping
                 break  # Early Stopping
@@ -161,7 +161,7 @@ class Trainer(ABC):
             self.history_dict["valid_probs"],
         )
 
-    def _train_one_epoch(self, train_loader: DataLoader, epoch: int) -> None:
+    def _run_train_epoch(self, train_loader: DataLoader, epoch: int) -> None:
         """Train one epoch of the model."""
         curr_lr = self.get_lr(self.optimizer)
         train_start_time = time.time()
@@ -226,10 +226,10 @@ class Trainer(ABC):
         self.history_dict = {**self.epoch_dict}
         self._invoke_callbacks("on_train_epoch_end")
 
-    def _valid_one_epoch(self, valid_loader: DataLoader, epoch: int) -> None:
+    def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.
         Args:
-            valid_loader (torch.utils.data.DataLoader): The validation set dataloader.
+            validation_loader (torch.utils.data.DataLoader): The validation set dataloader.
         Returns:
             Dict[str, np.ndarray]:
                 valid_loss (float): The validation loss for each epoch.
@@ -242,7 +242,7 @@ class Trainer(ABC):
 
         self.model.eval()  # set to eval mode
 
-        valid_bar = tqdm(valid_loader)
+        valid_bar = tqdm(validation_loader)
 
         valid_logits, valid_trues, valid_preds, valid_probs = [], [], [], []
 

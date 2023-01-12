@@ -13,7 +13,7 @@ defaults:
 device: "cpu"
 project_name: "CIFAR-10"
 debug: True
-
+framework: "pytorch" # 'pytorch' | 'tensorflow'
 
 hydra:
   run:

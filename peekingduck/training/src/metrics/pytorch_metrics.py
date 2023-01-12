@@ -14,29 +14,38 @@
 
 from torchmetrics import AUROC, Accuracy, MetricCollection, Precision, Recall
 from torchmetrics.classification import MulticlassCalibrationError
+from typing import List
+from src.metrics.base import MetricsAdapter
 
-
-class MetricsAdapter:
-    def __init__(self, task: str = "multiclass", num_classes: int = 2) -> None:
-        self.metrics = {}
-        self.num_classes = num_classes
-        self.task = task
-
-    def setup(self):
+class torchMetrics(MetricsAdapter):
+    def __init__(self) -> None:
         pass
 
+    def setup(self,
+            task: str = "multiclass",
+            num_classes: int = 2,
+            metrics: List[str] = None,
+            framework: str = "pytorch",
+        ) -> MetricCollection:
+
+        self.num_classes = num_classes
+        self.task = task
+        self.framework = framework
+        self.metrics = metrics
+        return self.create_collection()
+
     def accuracy(self):
-        self.metrics["accuracy"] = Accuracy(
+        return Accuracy(
             task=self.task, num_classes=self.num_classes
         )
 
     def precision(self):
-        self.metrics["precision"] = Precision(
+        return  Precision(
             task=self.task, num_classes=self.num_classes, average="macro"
         )
 
     def recall(self):
-        self.metrics["recall"] = Recall(
+        return  Recall(
             task=self.task, num_classes=self.num_classes, average="macro"
         )
 
@@ -44,15 +53,23 @@ class MetricsAdapter:
         pass
 
     def auroc(self):
-        self.metrics["auroc"] = AUROC(
+        return AUROC(
             task=self.task, num_classes=self.num_classes, average="macro"
         )
 
     def multiclass_calibration_error(self):
-        self.metrics["multiclass_calibration_error"] = MulticlassCalibrationError(
+        return  MulticlassCalibrationError(
             num_classes=self.num_classes
         )
 
-    def make_collection(self):
-        self.metrics_collection = MetricCollection(list(self.metrics.values()))
+    def create_collection(self):
+
+        metricList = {}
+        for metric in self.metrics:
+            try:
+                metricList[metric] = getattr(self, metric)()
+            except NotImplementedError:
+                pass
+
+        self.metrics_collection = MetricCollection(list(metricList.values()))
         return self.metrics_collection

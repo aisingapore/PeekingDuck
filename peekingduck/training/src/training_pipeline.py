@@ -23,7 +23,6 @@ from src.data_module.base import DataModule
 from src.data_module.data_module import ImageClassificationDataModule
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
-from src.metrics.metrics_adapter import MetricsAdapter
 from src.utils.general_utils import choose_torch_device
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -43,24 +42,19 @@ def run(cfg: DictConfig) -> None:
     valid_loader = data_module.get_valid_dataloader()
 
     callbacks = instantiate(cfg.callbacks.callbacks)
-    metrics_adapter = MetricsAdapter(
+    metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
+    metrics_obj = metrics_adapter.setup(
         task=cfg.data_module.data_set.classification_type,
         num_classes=cfg.data_module.data_set.num_classes,
+        metrics=cfg.metrics.evaluate,
     )
-    for metric in cfg.metrics.evaluate:
-        try:
-            getattr(metrics_adapter, metric)()
-        except NotImplementedError:
-            pass
-
-    metrics_collection = metrics_adapter.make_collection()
 
     model = ImageClassificationModel(cfg.model).to(cfg.device)
     trainer = Trainer(
         cfg.trainer,
         model=model,
         callbacks=callbacks,
-        metrics=metrics_collection,
+        metrics=metrics_obj,
         device=cfg.device,
     )
     history = trainer.fit(train_loader, valid_loader)
