@@ -8,15 +8,16 @@ markers = [
     "mlmodel: marks tests as (slow) ml models (deselect with '-m \"not mlmodel\"')",
 ]
 
-[tool.pylint]
-    [tool.pylint.'MESSAGES CONTROL']
-    disable = [
-        "access-member-before-definition",
-        "attribute-defined-outside-init",
-        "duplicate-code",
-        "logging-fstring-interpolation",
-        "no-member",
-    ]
+[tool.pylint.main]
+disable = [
+    "access-member-before-definition",
+    "attribute-defined-outside-init",
+    "duplicate-code",
+    "logging-fstring-interpolation",
+    "no-member",
+]
+fail-under = 10
+ignored-modules = ["cv2", "tensorflow"]
 
 [tool.mypy]
 ignore_missing_imports = true
