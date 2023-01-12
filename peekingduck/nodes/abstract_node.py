@@ -177,6 +177,6 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
                     )
         return dict_orig
 
-    def _get_config_types(self) -> Dict[str, Any]:  # pylint: disable=no-self-use
+    def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
         return {}
