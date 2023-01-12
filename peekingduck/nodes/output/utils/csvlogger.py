@@ -33,7 +33,7 @@ class CSVLogger:
         self.headers.insert(0, "Time")
         self.file_path = file_path
         self.logging_interval = logging_interval
-        self.csv_file = open(
+        self.csv_file = open(  # pylint: disable=consider-using-with
             self.file_path,
             mode="a+",
             encoding=locale.getpreferredencoding(False),
