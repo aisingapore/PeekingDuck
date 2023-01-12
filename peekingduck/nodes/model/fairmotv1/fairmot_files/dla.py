@@ -98,13 +98,13 @@ class DLASeg(nn.Module):
         self.last_level = last_level
         self.base = DLA([1, 1, 1, 2, 2, 1], [16, 32, 64, 128, 256, 512])
         channels = self.base.channels
-        scales = [2 ** i for i in range(len(channels[self.first_level :]))]
+        scales = [2**i for i in range(len(channels[self.first_level :]))]
         self.dla_up = DLAUp(self.first_level, channels[self.first_level :], scales)
 
         self.ida_up = IDAUp(
             channels[self.first_level : self.last_level],
             channels[self.first_level],
-            [2 ** i for i in range(self.last_level - self.first_level)],
+            [2**i for i in range(self.last_level - self.first_level)],
         )
 
         self.heads = heads

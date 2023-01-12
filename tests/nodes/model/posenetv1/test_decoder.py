@@ -83,7 +83,7 @@ def test_point_is_beyond_radius(decoder):
     existing_coords += pos_offsets + neg_offsets
 
     assert not decoder._is_within_nms_radius(
-        existing_coords, radius ** 2, SOURCE_KEYPOINT
+        existing_coords, radius**2, SOURCE_KEYPOINT
     )
 
 
@@ -109,7 +109,7 @@ def test_point_is_within_radius(decoder):
 
     # pass in a larger radius
     assert decoder._is_within_nms_radius(
-        existing_coords, 4 * radius ** 2, SOURCE_KEYPOINT
+        existing_coords, 4 * radius**2, SOURCE_KEYPOINT
     )
 
 
