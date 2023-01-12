@@ -309,9 +309,9 @@ class Node(AbstractNode):
         ) = calibration_data
 
         mean_error = 0
-        for i in range(len(self.object_points)):
+        for i, object_point in enumerate(self.object_points):
             projected_image_points, _ = cv2.projectPoints(
-                objectPoints=self.object_points[i],
+                objectPoints=object_point,
                 rvec=rotation_vec[i],
                 tvec=translation_vec[i],
                 cameraMatrix=camera_matrix,
