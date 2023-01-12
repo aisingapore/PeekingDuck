@@ -11,44 +11,21 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-import logging
-import sys
-from pathlib import Path
-from typing import Any, Dict, Optional, Tuple, Union
 
-import hydra
-from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, OmegaConf, MISSING
+"""Base class for config abstractions."""
+
+from pathlib import Path
+from typing import Any, Dict, Optional
+
+from pydantic import BaseModel, conint, validator  # pylint:disable=no-name-in-module
 from sklearn import model_selection
 
-# pylint:disable=no-name-in-module
-from pydantic import BaseModel, conint, validator
-
+# from src.callbacks.history import History
 
 # pylint: disable=no-self-argument, no-self-use, too-few-public-methods
-class Model(BaseModel):
-    model_name: str
-    pretrained: bool
-    in_chans: conint(ge=1)  # in_channels must be greater than or equal to 1
-    num_classes: conint(ge=1)
-    global_pool: str
-
-    @validator("global_pool")
-    def validate_global_pool(cls, global_pool: str) -> str:
-        """Validates global_pool is in ["avg", "max"]."""
-        if global_pool not in ["avg", "max"]:
-            raise ValueError("global_pool must be avg or max")
-        return global_pool
-
-
-class Stores(BaseModel):
-    project_name: str
-    unique_id: str
-    logs_dir: Path
-    model_artifacts_dir: Path
-
-
 class Dataset(BaseModel):
+    """Base config for dataset."""
+
     # filepath configs
     root_dir: Path
     train_dir: Path
@@ -67,38 +44,9 @@ class Dataset(BaseModel):
     blob_file: Optional[str] = None
 
 
-# TODO: using _target_ makes type hinting difficult, to discuss with team
-# If follow this approach, we can structure
-# - resample
-#   - train_test_split
-#   - kfold
-# in our configs/datamodule/resample folder
-# and have different concrete implementations of resample
-# class Resample(BaseModel):
-#     _target_: str
-#     shuffle: bool
-#     random_state: int  # if no random_state is provided, it will be set to sklearn's default
-
-
-# # concrete implementation of resample
-# class TrainTestSplit(Resample):
-#     train_size: float
-#     test_size: float
-
-# class StratifiedKFold(BaseModel):
-#     n_splits: int
-#     shuffle: bool
-#     random_state: int
-
-# class Resample(BaseModel):
-#     resample_strategy: Any
-
-# for now, I use back the original approach which requires us to instantiate without hydra
-# the good thing is we can have any resample strategy that is in sklearn.model_selection
-# we can do some checks to ensure this is a valid resample strategy. See below!
-
-
 class Resample(BaseModel):
+    """Base config for resampling strategy."""
+
     resample_strategy: str
     resample_params: Dict[str, Any]
 
@@ -113,9 +61,40 @@ class Resample(BaseModel):
             ) from BaseException
 
 
+class Model(BaseModel):
+    """Base config for model."""
+
+    model_name: str
+    pretrained: bool
+    in_chans: conint(ge=1)  # in_channels must be greater than or equal to 1
+    num_classes: conint(ge=1)
+    global_pool: str
+
+    @validator("global_pool")
+    def validate_global_pool(cls, global_pool: str) -> str:
+        """Validates global_pool is in ["avg", "max"]."""
+        if global_pool not in ["avg", "max"]:
+            raise ValueError("global_pool must be avg or max")
+        return global_pool
+
+
+# class Callbacks(BaseModel):
+#     """Base config for callbacks."""
+
+#     history: History
+
+
+class Stores(BaseModel):
+    """Base config for stores."""
+
+    project_name: str
+    unique_id: str
+    logs_dir: Path
+    model_artifacts_dir: Path
+
+
 class DataModule(BaseModel):
     dataset: Dataset
-    # transforms: Transform
     resample: Resample
 
 

@@ -1,0 +1,2 @@
+callbacks:
+  - _target_: src.callbacks.history.History

@@ -12,28 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Base class for Dataset."""
+"""Trainer base class."""
 
 from abc import ABC, abstractmethod
-from typing import Union
-
-import torch
-from torch.utils.data import Dataset
 
 from configs.base import Config
 
 
-class ImageDataset(ABC, Dataset):
+class Trainer(ABC):
+    """Trainer base class."""
+
     def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
 
     @abstractmethod
-    def __len__(self) -> int:
-        """Returns the length of the dataset."""
-
-    @abstractmethod
-    def __getitem__(
-        self, index
-    ) -> Union[torch.FloatTensor, Union[torch.FloatTensor, torch.LongTensor]]:
-        """Gets the item at index."""
+    def fit(self) -> None:
+        """Trains the model."""

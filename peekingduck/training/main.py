@@ -11,55 +11,42 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+"""Controller for training pipeline."""
+
 import logging
 
-from omegaconf import OmegaConf, DictConfig
 import hydra
-
-from hydra.core.hydra_config import HydraConfig
-import logging
-import sys
-from pathlib import Path
-from typing import Optional, Tuple, Union, Dict, Any
-
-from pydantic import (
-    BaseModel,
-    BaseSettings,
-    Field,
-    PositiveInt,
-    conint,
-    constr,
-    schema,
-    schema_json_of,
-    validator,
-)
-from pydantic.dataclasses import dataclass
-from pydantic.env_settings import SettingsSourceCallable
 from configs.base import Config
+from hydra.core.hydra_config import HydraConfig
+from omegaconf import DictConfig, OmegaConf
+from rich.pretty import pprint
 
-# from src.pipeline import run
+# from hydra.utils import instantiate
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-@hydra.main(
-    version_base=None,
-    config_path="configs",
-    config_name="config",
-)
-def main(cfg: DictConfig) -> None:
-    logger.info(OmegaConf.to_yaml(cfg))
-    logger.info(f"Project Name: {cfg.stores.project_name}")
-    train_dir = cfg.datamodule.dataset.train_dir
+def hydra_to_pydantic(config: DictConfig) -> Config:
+    """Converts Hydra config to Pydantic config."""
+    OmegaConf.resolve(config)
+    return Config(**config)
 
-    logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
-    OmegaConf.resolve(cfg)
 
-    r_model = Config(**cfg)
-    print(r_model)
-    
-    # run(cfg)
+@hydra.main(version_base=None, config_path="configs", config_name="config")
+def main(config: DictConfig) -> None:
+    """Main entry to training pipeline."""
+    logger.info(f"Config representation:\n{OmegaConf.to_yaml(config)}")
+    logger.info(f"Output dir: {HydraConfig.get().runtime.output_dir}")
+
+    # callbacks = instantiate(config.callbacks.callbacks)
+
+    config = hydra_to_pydantic(config)
+    pprint(config)
+
+    # pass config to training pipeline
+    # run(config)
 
 
 if __name__ == "__main__":
-    main()
+    main()  # pylint: disable=no-value-for-parameter

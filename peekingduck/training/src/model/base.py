@@ -12,18 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Base class for Model."""
 
 from abc import ABC, abstractmethod
 
 import torch
-from omegaconf import DictConfig
 from torch import nn
+
+from configs.base import Config
 
 
 class Model(ABC, nn.Module):
     """Model Base Class."""
 
-    def __init__(self, config: DictConfig) -> None:
+    def __init__(self, config: Config) -> None:
         super().__init__()
         self.config = config
 
