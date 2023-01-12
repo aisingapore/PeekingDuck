@@ -20,7 +20,6 @@ from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
-from src.data_module.data_module import ImageClassificationDataModule
 from src.model.model import ImageClassificationModel
 from src.trainer.default_trainer import Trainer
 from src.metrics.metrics_adapter import MetricsAdapter
@@ -36,7 +35,9 @@ def run(cfg: DictConfig) -> None:
     cfg.device = choose_torch_device()  # TODO tensorflow
     logger.info(f"Using device: {cfg.device}")
 
-    data_module: DataModule = ImageClassificationDataModule(cfg.data_module)
+    data_module: DataModule = instantiate(
+        cfg.data_module.module, cfg=cfg.data_module, _recursive_=False
+    )
     data_module.prepare_data()
     data_module.setup(stage="fit")
     train_loader = data_module.get_train_dataloader()
