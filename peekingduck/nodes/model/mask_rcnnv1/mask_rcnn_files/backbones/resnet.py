@@ -90,10 +90,10 @@ Modifications include:
     - progress option
 """
 
-from typing import Type, Any, Callable, Union, List, Optional
+from typing import Any, Callable, List, Optional, Type, Union
+
 import torch
 from torch import Tensor, nn
-
 
 __all__ = ["resnet50", "resnet101"]
 
@@ -275,7 +275,7 @@ class ResNet(nn.Module):
         if len(replace_stride_with_dilation) != 3:
             raise ValueError(
                 "replace_stride_with_dilation should be None "
-                "or a 3-element tuple, got {}".format(replace_stride_with_dilation)
+                f"or a 3-element tuple, got {replace_stride_with_dilation}"
             )
         self.groups = groups
         self.base_width = width_per_group
