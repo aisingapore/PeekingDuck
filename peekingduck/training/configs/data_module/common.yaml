@@ -9,6 +9,7 @@ defaults:
 
 module:
       _target_: src.data_module.data_module.ImageClassificationDataModule
+      _recursive_: False
 
 debug: ${debug}
-num_debug_samples: 500
+num_debug_samples: 1000

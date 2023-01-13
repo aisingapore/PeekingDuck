@@ -31,11 +31,13 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    cfg.device = choose_torch_device()  # TODO tensorflow
-    logger.info(f"Using device: {cfg.device}")
+    if cfg.framework == "pytorch":
+        cfg.device = choose_torch_device()  # TODO tensorflow
+        logger.info(f"Using device: {cfg.device}")
 
     data_module: DataModule = instantiate(
-        cfg.data_module.module, cfg=cfg.data_module, _recursive_=False
+        config=cfg.data_module.module,
+        cfg=cfg.data_module,
     )
     data_module.prepare_data()
     data_module.setup(stage="fit")
