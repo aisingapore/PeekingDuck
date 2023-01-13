@@ -41,7 +41,7 @@ from peekingduck.nodes.draw.utils.general import (
 
 def draw_bboxes(  # pylint: disable=too-many-arguments
     frame: np.ndarray,
-    bboxes: List[List[float]],
+    bboxes: np.ndarray,
     bbox_labels: List[str],
     show_labels: bool,
     bbox_scores: List[float],
@@ -52,7 +52,7 @@ def draw_bboxes(  # pylint: disable=too-many-arguments
 
     Args:
         frame (np.ndarray): Image of current frame.
-        bboxes (List[List[float]]): Bounding box coordinates.
+        bboxes (np.ndarray): Bounding box coordinates.
         bbox_labels (List[str]): Labels of object detected.
         bbox_scores (List[float]): Prediction scores of object detected.
         show_labels: whether to show the object labels.

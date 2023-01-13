@@ -115,11 +115,11 @@ class Decoder:  # pylint: disable=too-few-public-methods
             dim=2,
         )
         detections = torch.cat([bboxes, scores, classes], dim=2)
-        detections = self._post_process(detections, orig_shape, input_shape)
+        processed_detections = self._post_process(detections, orig_shape, input_shape)
         # Currently not needed as FairMOT only detect one class
         # detections = self._trim_outputs(detections)
 
-        return detections, indices
+        return processed_detections, indices
 
     def _post_process(
         self,

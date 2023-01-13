@@ -129,9 +129,11 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         """
         image_size = image.shape[:2]
         padded_image = self._preprocess(image)
-        padded_image = torch.from_numpy(padded_image).to(self.device).unsqueeze(0)
+        padded_image_tensor = (
+            torch.from_numpy(padded_image).to(self.device).unsqueeze(0)
+        )
 
-        online_targets = self.update(padded_image, image)
+        online_targets = self.update(padded_image_tensor, image)
         online_tlwhs = []
         online_ids = []
         scores = []
@@ -189,7 +191,9 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             # and embeddings also included
             dets = non_max_suppression(pred.unsqueeze(0), self.nms_threshold)[0].cpu()
             # Next step changes the detection scales
-            scale_coords(self.input_size, dets[:, :4], image.shape[:2]).round()
+            scale_coords(
+                self.input_size, dets[:, :4], (image.shape[0], image.shape[1])
+            ).round()
 
             # Detections is list of (x1, y1, x2, y2, object_conf, class_score,
             # class_pred) class_pred is the embeddings.

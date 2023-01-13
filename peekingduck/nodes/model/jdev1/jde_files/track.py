@@ -44,7 +44,7 @@ Modifications include:
 
 from abc import ABC, abstractmethod
 from collections import deque
-from typing import Deque, List
+from typing import Deque, List, Optional
 
 import numpy as np
 import torch
@@ -149,13 +149,13 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.score = score
 
         self.kalman_filter: KalmanFilter
-        self.mean = None
-        self.covariance = None
+        self.mean = np.empty((8,))
+        self.covariance = np.empty((8, 8))
 
         self.is_activated = False
         self.tracklet_len = 0
 
-        self.smooth_feat = None
+        self.smooth_feat: Optional[np.ndarray] = None
         self.update_features(feat)
         self.features = deque([], maxlen=buffer_size)
         self.alpha = 0.9

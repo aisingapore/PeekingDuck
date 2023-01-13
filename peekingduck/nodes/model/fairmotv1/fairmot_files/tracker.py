@@ -118,7 +118,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
     @torch.no_grad()
     def predict(
         self, padded_image: torch.Tensor, image: np.ndarray
-    ) -> Tuple[torch.Tensor, torch.Tensor]:
+    ) -> Tuple[np.ndarray, np.ndarray]:
         """Predicts bounding boxes from the image and their associated Re-ID
         embeddings.
 
@@ -128,7 +128,7 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             image (np.ndarray): The original video frame.
 
         Returns:
-            (Tuple[torch.Tensor, torch.Tensor]): The predicted bounding boxes
+            (Tuple[np.ndarray, np.ndarray]): The predicted bounding boxes
             and their associated Re-ID embeddings.
         """
         output = self.model(padded_image)
@@ -141,10 +141,10 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
             heatmap, size, offset, image.shape, padded_image.shape
         )
         id_feature = transpose_and_gather_feat(id_feature, indices)
-        id_feature = id_feature.squeeze(0).cpu().numpy()
+        id_feature_arr = id_feature.squeeze(0).cpu().numpy()
 
-        id_feature = id_feature[detections[:, 4] > self.score_threshold]
-        return detections, id_feature
+        id_feature_arr = id_feature_arr[detections[:, 4] > self.score_threshold]
+        return detections, id_feature_arr
 
     def track_objects_from_image(
         self, image: np.ndarray
@@ -162,9 +162,11 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         """
         image_size = image.shape[:2]
         padded_image = self._preprocess(image)
-        padded_image = torch.from_numpy(padded_image).to(self.device).unsqueeze(0)
+        padded_image_tensor = (
+            torch.from_numpy(padded_image).to(self.device).unsqueeze(0)
+        )
 
-        detections, embeddings = self.predict(padded_image, image)
+        detections, embeddings = self.predict(padded_image_tensor, image)
         online_targets = self.update(detections, embeddings)
         online_tlwhs = []
         online_ids = []
@@ -184,15 +186,15 @@ class Tracker:  # pylint: disable=too-many-instance-attributes
         return bboxes, online_ids, np.array(scores)
 
     def update(  # pylint: disable=too-many-branches,too-many-locals,too-many-statements
-        self, pred_detections: torch.Tensor, pred_embeddings: torch.Tensor
+        self, pred_detections: np.ndarray, pred_embeddings: np.ndarray
     ) -> List[STrack]:
         """Associates the detections with corresponding tracklets and also
         handles lost, removed, re-found and active tracklets.
 
         Args:
-            pred_detections (torch.Tensor): Detections from the image, has the
+            pred_detections (np.ndarray): Detections from the image, has the
                 shape [N, 5].
-            pred_embeddings (torch.Tensor): Re-ID embedding corresponding to
+            pred_embeddings (np.ndarray): Re-ID embedding corresponding to
                 each detection, has the shape [N, 128].
         Returns:
             (List[STrack]): The list contains information regarding the
