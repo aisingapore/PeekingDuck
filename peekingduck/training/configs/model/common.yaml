@@ -1,6 +1,8 @@
 adapter: "torchvision"
-model_type: "classification"
+task: "classification"
 model_name: "resnet18"
+model_type:
+    _target_: src.model.pytorch_model.ImageClassificationModel
 num_classes: ${data_module.data_set.num_classes}
 device: ${device}
 pretrained: True

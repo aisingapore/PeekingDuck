@@ -20,7 +20,7 @@ from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
-from src.model.model import ImageClassificationModel
+from src.model.base import Model
 from src.trainer.default_trainer import Trainer
 from src.utils.general_utils import choose_torch_device
 
@@ -50,7 +50,9 @@ def run(cfg: DictConfig) -> None:
         metrics=cfg.metrics.evaluate,
     )
 
-    model = ImageClassificationModel(cfg.model).to(cfg.device)
+    model: Model = instantiate(
+        config=cfg.model.model_type, cfg=cfg.model, _recursive_=False
+    ).to(cfg.device)
     trainer = Trainer(
         cfg.trainer,
         model=model,
