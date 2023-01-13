@@ -17,10 +17,11 @@ Calculates camera coefficients to be used to
 remove distortion from a wide-angle camera image.
 """
 
+import locale
 import math
 import time
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import cv2
 import numpy as np
@@ -131,7 +132,7 @@ class Node(AbstractNode):
             Path of the YML file to store the calculated camera coefficients.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.file_path = Path(self.file_path)  # type: ignore
@@ -292,7 +293,10 @@ class Node(AbstractNode):
         file_data["camera_matrix"] = camera_matrix.tolist()
         file_data["distortion_coeffs"] = distortion_coeffs.tolist()
 
-        yaml.dump(file_data, open(self.file_path, "w"), default_flow_style=None)
+        with open(
+            self.file_path, "w", encoding=locale.getpreferredencoding(False)
+        ) as outfile:
+            yaml.dump(file_data, outfile, default_flow_style=None)
 
     def _calculate_error(self, calibration_data: tuple) -> None:
         """Calculates re-projection error"""
@@ -305,9 +309,9 @@ class Node(AbstractNode):
         ) = calibration_data
 
         mean_error = 0
-        for i in range(len(self.object_points)):
+        for i, object_point in enumerate(self.object_points):
             projected_image_points, _ = cv2.projectPoints(
-                objectPoints=self.object_points[i],
+                objectPoints=object_point,
                 rvec=rotation_vec[i],
                 tvec=translation_vec[i],
                 cameraMatrix=camera_matrix,

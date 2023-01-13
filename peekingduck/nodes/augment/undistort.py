@@ -16,8 +16,9 @@
 Removes distortion from a wide-angle camera image.
 """
 
+import locale
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 import cv2
 import numpy as np
@@ -57,7 +58,7 @@ class Node(AbstractNode):
             Path of the YML file containing calculated camera coefficients.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.file_path = Path(self.file_path)  # type: ignore
@@ -69,8 +70,10 @@ class Node(AbstractNode):
                 "with the dabble.camera_calibation node. You may refer to this tutorial: "
                 "https://peekingduck.readthedocs.io/en/stable/nodes/dabble.camera_calibration.html"
             )
-
-        yaml_file = yaml.safe_load(open(self.file_path))
+        with open(
+            self.file_path, encoding=locale.getpreferredencoding(False)
+        ) as infile:
+            yaml_file = yaml.safe_load(infile.read())
         self.camera_matrix = np.array(yaml_file["camera_matrix"])
         self.distortion_coeffs = np.array(yaml_file["distortion_coeffs"])
 

@@ -18,7 +18,7 @@ Calculates the FPS of video.
 
 from statistics import mean
 from time import perf_counter
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from peekingduck.nodes.abstract_node import AbstractNode
 
@@ -48,7 +48,7 @@ class Node(AbstractNode):
             instantaneous FPS .
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.count = 0

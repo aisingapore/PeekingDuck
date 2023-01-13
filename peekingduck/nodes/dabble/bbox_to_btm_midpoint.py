@@ -14,7 +14,7 @@
 
 """Converts bounding boxes to a single point of reference."""
 
-from typing import Any, Dict, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from peekingduck.nodes.abstract_node import AbstractNode
 
@@ -40,7 +40,7 @@ class Node(AbstractNode):
         None.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.img_size = None
 

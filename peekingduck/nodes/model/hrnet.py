@@ -63,7 +63,7 @@ class Node(AbstractNode):
         https://arxiv.org/abs/1908.07919
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = hrnet_model.HRNetModel(self.config)
 

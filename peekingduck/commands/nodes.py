@@ -16,7 +16,7 @@
 
 import math
 from pathlib import Path
-from typing import Tuple
+from typing import Optional, Tuple
 
 import click
 
@@ -34,7 +34,7 @@ from peekingduck.declarative_loader import PEEKINGDUCK_NODE_TYPES
     required=False,
     type=click.Choice(["ASC", "DESC"]),
 )
-def nodes(type_name: str = None, order: str = "ASC") -> None:
+def nodes(type_name: Optional[str] = None, order: str = "ASC") -> None:
     """Lists available nodes in PeekingDuck. When no argument is given, all
     available nodes will be listed. When the node type is given as an argument,
     all available nodes in the specified node type will be listed.

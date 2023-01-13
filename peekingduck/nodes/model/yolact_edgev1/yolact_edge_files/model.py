@@ -89,9 +89,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, Iterable, List, Optional, Tuple, Union
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, nn
 
 from peekingduck.nodes.model.yolact_edgev1.yolact_edge_files.backbone import (
     MobileNetV2Backbone,
@@ -292,9 +291,10 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
     Args:
         in_channels (int): The input feature size.
         out_channels (int): The output feature size (must be a multiple of 4).
-        aspect_ratios (List[List]): A list of lists of priorbox aspect ratios
+        aspect_ratios (Optional[Iterable[Any]]): A list of lists of priorbox aspect ratios
             (one list per scale).
-        scales (List[int]): A list of priorbox scales relative to this layer's convsize.
+        scales (Optional[Iterable[List[int]]]): A list of priorbox scales relative
+            to this layer's convsize.
             For instance: If this layer has convouts of size 30x30 for an image
             of size 600x600, the 'default' (scale of 1) for this layer would
             produce bounding boxes with an area of 20x20px. If the scale is .5
@@ -308,11 +308,11 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         self,
         in_channels: int,
         out_channels: int = 1024,
-        aspect_ratios: Iterable[Any] = None,
-        scales: Iterable[List[int]] = None,
+        aspect_ratios: Optional[Iterable[Any]] = None,
+        scales: Optional[Iterable[List[int]]] = None,
         parent: Optional[Callable] = None,  # PredictionModule
         index: int = 0,
-        input_size: int = None,
+        input_size: Optional[int] = None,
     ) -> None:
 
         super().__init__()

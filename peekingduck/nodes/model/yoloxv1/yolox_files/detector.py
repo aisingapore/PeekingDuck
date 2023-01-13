@@ -105,14 +105,14 @@ class Detector:  # pylint: disable=too-many-instance-attributes
         """
 
         # Store the original image size to normalize bbox later
-        image_size = image.shape[:2]
+        image_size = (image.shape[0], image.shape[1])
         image, scale = self._preprocess(image)
 
         model_format = self.model_format
         if model_format == "pytorch":
-            image = torch.from_numpy(image).unsqueeze(0).to(self.device)
-            image = image.half() if self.half else image.float()
-            prediction = self.yolox(image)[0]
+            image_tensor = torch.from_numpy(image).unsqueeze(0).to(self.device)
+            image_tensor = image_tensor.half() if self.half else image_tensor.float()
+            prediction = self.yolox(image_tensor)[0]
         elif model_format == "tensorrt":
             image = image[np.newaxis, :]
             res_arr = self.yolox(image)
@@ -120,6 +120,7 @@ class Detector:  # pylint: disable=too-many-instance-attributes
             prediction = torch.from_numpy(pred).to(self.device)
         else:
             self.logger.error(f"Unknown model format: {model_format}")
+            raise NotImplementedError
 
         bboxes, classes, scores = self._postprocess(
             prediction, scale, image_size, self.class_names

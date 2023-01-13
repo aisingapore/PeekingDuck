@@ -18,7 +18,7 @@ import logging
 import textwrap
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.nodes.output.utils.csvlogger import CSVLogger
@@ -48,7 +48,7 @@ class Node(AbstractNode):
             Interval between each log, in terms of seconds.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.logger = logging.getLogger(__name__)

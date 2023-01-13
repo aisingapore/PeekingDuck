@@ -54,7 +54,7 @@ Modifications include:
   - Remove output_padding in Conv2DTranspose function call
 """
 
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 import numpy as np
 import torch
@@ -98,13 +98,13 @@ class DLASeg(nn.Module):
         self.last_level = last_level
         self.base = DLA([1, 1, 1, 2, 2, 1], [16, 32, 64, 128, 256, 512])
         channels = self.base.channels
-        scales = [2 ** i for i in range(len(channels[self.first_level :]))]
+        scales = [2**i for i in range(len(channels[self.first_level :]))]
         self.dla_up = DLAUp(self.first_level, channels[self.first_level :], scales)
 
         self.ida_up = IDAUp(
             channels[self.first_level : self.last_level],
             channels[self.first_level],
-            [2 ** i for i in range(self.last_level - self.first_level)],
+            [2**i for i in range(self.last_level - self.first_level)],
         )
 
         self.heads = heads
@@ -287,7 +287,7 @@ class DLAUp(nn.Module):
         start_level (int): The starting stage of this upsample network.
         channels (List[int]): List of number of channels at various stages.
         scales (List[int]): Scale factors at various stages.
-        in_channels (List[int]): Number of channels in the input image at
+        in_channels (Optional[List[int]]): Number of channels in the input image at
             various stages.
     """
 
@@ -296,7 +296,7 @@ class DLAUp(nn.Module):
         start_level: int,
         channels: List[int],
         scales: List[int],
-        in_channels: List[int] = None,
+        in_channels: Optional[List[int]] = None,
     ) -> None:
         super().__init__()
         self.start_level = start_level

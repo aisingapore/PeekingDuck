@@ -73,7 +73,7 @@ class Node(RequirementCheckerMixin, AbstractNode):
         Code adapted from https://github.com/rwightman/posenet-python
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.check_requirements("use_jit")
 

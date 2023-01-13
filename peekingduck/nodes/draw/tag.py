@@ -15,7 +15,7 @@
 """Draws a tag (from :term:`obj_attrs`) above each bounding box."""
 
 import copy
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.nodes.base import ThresholdCheckerMixin
@@ -93,7 +93,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         tag's color.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.check_bounds("tag_color", "[0, 255]")
         self.attr_keys = []

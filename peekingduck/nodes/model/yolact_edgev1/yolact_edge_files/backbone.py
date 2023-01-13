@@ -44,10 +44,10 @@ Modifications include:
 - Refactor and formatting
 """
 
-from typing import Callable, List, Any, Tuple, Union, Optional
 from functools import partial
-import torch.nn as nn
-from torch import Tensor
+from typing import Any, Callable, List, Optional, Tuple, Union
+
+from torch import Tensor, nn
 
 
 class Bottleneck(nn.Module):  # pylint: disable=too-many-instance-attributes
@@ -348,7 +348,7 @@ class MobileNetV2Backbone(nn.Module):
         ):
             raise ValueError(
                 "inverted_residual_setting should be non-empty "
-                "or a 4-element list, got {}".format(inverted_residual_setting)
+                f"or a 4-element list, got {inverted_residual_setting}"
             )
 
         input_channel = self._make_divisible(input_channel * width_mult, round_nearest)

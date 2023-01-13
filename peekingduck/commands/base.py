@@ -24,7 +24,7 @@ class AliasedGroup(click.Group):
     subcommands/subgroups can have aliases.
     """
 
-    def __init__(self, *args: Any, **kwargs: Dict[str, Any]) -> None:
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self._aliases: Dict[str, str] = {}
         self._commands: Dict[str, List[str]] = {}
@@ -88,9 +88,10 @@ class AliasedGroup(click.Group):
 
     def resolve_command(
         self, ctx: click.Context, args: List[Any]
-    ) -> Tuple[str, click.Command, List[Any]]:
+    ) -> Tuple[Optional[str], click.Command, List[Any]]:
         """Resolves the full command name."""
         _, cmd, args = super().resolve_command(ctx, args)
+        assert cmd is not None
         return cmd.name, cmd, args
 
     def _make_alias(self, aliases: List[str], decorator: Callable) -> Callable:

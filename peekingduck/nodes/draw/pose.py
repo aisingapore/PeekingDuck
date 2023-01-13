@@ -16,7 +16,7 @@
 Draws keypoints on a detected pose.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.nodes.base import ThresholdCheckerMixin
@@ -79,7 +79,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
        .. [1] Colors with asterisk indicates PeekingDuck's in-house colors.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self._validate_configs()
 
