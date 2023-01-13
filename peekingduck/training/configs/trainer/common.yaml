@@ -64,7 +64,7 @@ global_train_params:
     model_name: ${model.model_name}
     debug: ${debug}
     debug_epochs: 2
-    classification_type: ${data_module.data_set.classification_type}
+    classification_type: ${data_module.dataset.classification_type}
     monitored_metric:
         monitor: val_MulticlassAccuracy
         mode: max

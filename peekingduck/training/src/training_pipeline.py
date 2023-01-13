@@ -19,7 +19,7 @@ import logging
 from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
-from src.data_module.base import DataModule
+from src.data.base import DataModule
 from src.model.base import Model
 from src.trainer.base import Trainer
 from src.utils.general_utils import choose_torch_device
@@ -47,8 +47,8 @@ def run(cfg: DictConfig) -> None:
     callbacks = instantiate(cfg.callbacks.callbacks)
     metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
     metrics_obj = metrics_adapter.setup(
-        task=cfg.data_module.data_set.classification_type,
-        num_classes=cfg.data_module.data_set.num_classes,
+        task=cfg.data_module.dataset.classification_type,
+        num_classes=cfg.data_module.dataset.num_classes,
         metrics=cfg.metrics.evaluate,
     )
 

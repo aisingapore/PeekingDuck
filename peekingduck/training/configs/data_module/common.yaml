@@ -1,5 +1,5 @@
 defaults:
-      - data_set: common
+      - dataset: common
       - resample: train_test_split
       - transform:
               - train
@@ -8,7 +8,7 @@ defaults:
               - pytorch
 
 module:
-      _target_: src.data_module.data_module.ImageClassificationDataModule
+      _target_: src.data.data_module.ImageClassificationDataModule
       _recursive_: False
 
 debug: ${debug}
