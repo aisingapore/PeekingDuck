@@ -75,7 +75,9 @@ class OpenCVTracker:  # pylint: disable=too-few-public-methods
         """
         tracker = cv2.legacy.TrackerMOSSE_create()
         tracker.init(frame, bbox)
-        self.tracks[self.next_track_id] = Track(tracker, bbox)
+        self.tracks[self.next_track_id] = Track(
+            tracker, (bbox[0], bbox[1], bbox[2], bbox[3])
+        )
         self.next_track_id += 1
         self.is_initialized = True
 

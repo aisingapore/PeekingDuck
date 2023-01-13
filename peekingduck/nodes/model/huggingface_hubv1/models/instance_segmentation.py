@@ -131,4 +131,9 @@ class InstanceSegmentationModel(base.HuggingFaceModel):
             )
         bboxes = xyxy2xyxyn(result["boxes"], *image_shape)
         classes = np.array([self.adaptor.id2label[int(i)] for i in result["labels"]])
-        return bboxes, classes, result["scores"], result["masks"].squeeze(1)
+        return (
+            bboxes.cpu().detach().numpy(),
+            classes,
+            result["scores"].cpu().detach().numpy(),
+            result["masks"].squeeze(1).cpu().detach().numpy(),
+        )

@@ -95,7 +95,7 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
             scores (np.ndarray): array of scores
             masks (np.ndarray): array of detected masks
         """
-        img_shape = image.shape[:2]
+        img_shape = (image.shape[0], image.shape[1])
         processed_images = self._preprocess(image)
         # run network, assumes batch size of 1 for peekingduck inference
         network_output = self.mask_rcnn(processed_images)[0]
@@ -210,8 +210,8 @@ class Detector:  # pylint: disable=too-few-public-methods,too-many-instance-attr
                 scores = self.filtered_output["scores"].cpu().numpy()
 
                 # Binarize mask's pixel values by confidence score
-                masks = self.filtered_output["masks"] > self.mask_threshold
-                masks = masks.squeeze(1).cpu().numpy().astype(np.uint8)
+                masks_tensor = self.filtered_output["masks"] > self.mask_threshold
+                masks = masks_tensor.squeeze(1).cpu().numpy().astype(np.uint8)
 
         return bboxes, labels, scores, masks
 

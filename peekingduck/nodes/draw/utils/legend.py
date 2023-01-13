@@ -37,6 +37,8 @@ LEGEND_LEFT_X = 15
 class Legend:  # pylint: disable=too-many-instance-attributes, too-few-public-methods
     """Legend class that uses available info to draw legend box on frame"""
 
+    frame: np.ndarray
+
     def __init__(
         self,
         items: List[str],
@@ -50,7 +52,6 @@ class Legend:  # pylint: disable=too-many-instance-attributes, too-few-public-me
         self.font_size = font["size"]
         self.font_thickness = font["thickness"]
 
-        self.frame = None
         self.legend_starting_y = 0
         self.legend_width = 0
         self.legend_height = 0
