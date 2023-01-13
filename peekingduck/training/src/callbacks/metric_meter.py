@@ -35,7 +35,7 @@ this is the average score of all batches in 1 epoch.
 from collections import defaultdict
 
 from src.callbacks.base import Callback
-from src.trainer.default_trainer import Trainer
+from src.trainer.base import Trainer
 
 # TODO:
 # 1. Add support for other metrics such as accuracy, precision, recall, f1, etc.

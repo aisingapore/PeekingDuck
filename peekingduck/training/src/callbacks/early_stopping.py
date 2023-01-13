@@ -30,7 +30,7 @@ TODO:
         may need to inherit the `pipeline_config` and use it to initiate the attributes.
 """
 from src.callbacks.base import Callback
-from src.trainer.default_trainer import Trainer
+from src.trainer.base import Trainer
 from src.utils.callback_utils import init_improvement
 
 

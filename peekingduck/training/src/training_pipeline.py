@@ -21,7 +21,6 @@ from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
 from src.model.model import ImageClassificationModel
-from src.trainer.default_trainer import Trainer
 from src.utils.general_utils import choose_torch_device
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -40,7 +39,7 @@ def run(cfg: DictConfig) -> None:
     data_module.prepare_data()
     data_module.setup(stage="fit")
     train_loader = data_module.get_train_dataloader()
-    valid_loader = data_module.get_valid_dataloader()
+    validation_loader = data_module.get_valid_dataloader()
 
     callbacks = instantiate(cfg.callbacks.callbacks)
     metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
@@ -51,14 +50,15 @@ def run(cfg: DictConfig) -> None:
     )
 
     model = ImageClassificationModel(cfg.model).to(cfg.device)
-    trainer = Trainer(
+    trainer = instantiate(cfg.trainer.global_train_params.framework[cfg.framework][0])
+    trainer.setup(
         cfg.trainer,
         model=model,
         callbacks=callbacks,
         metrics=metrics_obj,
         device=cfg.device,
     )
-    history = trainer.fit(train_loader, valid_loader)
+    trainer.fit(train_loader, validation_loader)
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")

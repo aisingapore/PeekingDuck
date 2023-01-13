@@ -17,7 +17,7 @@ import pandas as pd
 import time
 import torch
 
-from abc import ABC, abstractmethod
+
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 from tabulate import tabulate
@@ -27,6 +27,7 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
 
+from src.trainer.base import Trainer
 from src.callbacks.base import Callback
 from src.model.base import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
@@ -49,19 +50,21 @@ def get_sigmoid_softmax(
         return getattr(torch.nn, "Softmax")(dim=1)
 
 
-class Trainer(ABC):
+class pytorchTrainer(Trainer):
     """Object used to facilitate training."""
 
-    def __init__(
-        self,
-        pipeline_config: DictConfig,
-        model: Model,
-        callbacks: List[Callback] = None,
-        metrics: Union[MetricCollection, List[str]] = None,  # TODO py/tf
-        device: str = "cpu",
-    ) -> None:
+    def __init__(self) -> None:
         """Initialize the trainer."""
+        self.logger = logger
 
+    def setup(self, 
+            pipeline_config: DictConfig,
+            model: Model,
+            callbacks: List[Callback] = None,
+            metrics: Union[MetricCollection, List[str]] = None,  # TODO py/tf
+            device: str = "cpu",
+        ) -> None:
+        """Called when the trainer begins."""
         self.pipeline_config = pipeline_config
         self.train_params = self.pipeline_config.global_train_params
         self.model = model
@@ -70,15 +73,6 @@ class Trainer(ABC):
 
         self.callbacks = callbacks
         self.metrics = metrics
-
-        self.logger = logger
-
-        self._initialize()  # init non init attributes, etc
-
-        print(self.__dict__)
-
-    def _initialize(self) -> None:
-        """Called when the trainer begins."""
 
         self.optimizer = self.get_optimizer(
             model=self.model,
@@ -115,7 +109,7 @@ class Trainer(ABC):
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
-        self._on_fit_start(fold=fold)  # startup
+        self._fit_setup(fold=fold)  # startup
 
         epochs = self.train_params.epochs
         if self.train_params.debug:
@@ -139,19 +133,18 @@ class Trainer(ABC):
 
             self.current_epoch += 1
 
-        self._on_fit_end()  # shutdown
+        self._fit_teardown()  # shutdown
         # FIXME: here is finish fitting, whether to call it on train end or on fit end?
         # Currently only history uses on_trainer_end.
-        for callback in self.callbacks:  # TODO
-            callback.on_trainer_end(self)
+        self._invoke_callbacks("on_trainer_end")
         return self.history
 
-    def _on_fit_start(self, fold: int) -> None:  # TODO rename
+    def _fit_setup(self, fold: int) -> None:  # TODO rename
         self.logger.info(f"Fold {fold} started")
         self.best_valid_loss = np.inf
         self.current_fold = fold
 
-    def _on_fit_end(self) -> None:  # TODO rename
+    def _fit_teardown(self) -> None:  # TODO rename
         free_gpu_memory(
             self.optimizer,
             self.scheduler,

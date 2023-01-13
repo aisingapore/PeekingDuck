@@ -12,25 +12,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
-from src.metrics.base import MetricsAdapter
+from abc import ABC, abstractmethod
 
-class tensorflowMetrics(MetricsAdapter):
-    def __init__(self) -> None:
-        pass
+class Trainer(ABC):
+    """Object used to facilitate training."""
 
-    def setup(self,
-            task: str = "multiclass",
-            num_classes: int = 2,
-            metrics: List[str] = None,
-            framework: str = "pytorch",
-        ) -> List:
+    @abstractmethod
+    def setup(self):
+        """"""
+        # raise NotImplementedError
 
-        self.num_classes = num_classes
-        self.task = task
-        self.framework = framework
-        self.metrics = metrics
-        return []
-
-    def create_collection(self):
-        raise NotImplementedError
+    @abstractmethod
+    def fit(self, train_loader, validation_loader):
+        """Fit method"""

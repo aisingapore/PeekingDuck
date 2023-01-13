@@ -12,25 +12,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
-from src.metrics.base import MetricsAdapter
+from src.trainer.base import Trainer
 
-class tensorflowMetrics(MetricsAdapter):
+import logging
+from configs import LOGGER_NAME
+
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+
+class tensorflowTrainer(Trainer):
+
     def __init__(self) -> None:
-        pass
+        raise NotImplementedError
 
-    def setup(self,
-            task: str = "multiclass",
-            num_classes: int = 2,
-            metrics: List[str] = None,
-            framework: str = "pytorch",
-        ) -> List:
+    def setup(self) -> None:
+        raise NotImplementedError
 
-        self.num_classes = num_classes
-        self.task = task
-        self.framework = framework
-        self.metrics = metrics
-        return []
-
-    def create_collection(self):
+    def fit(self):
         raise NotImplementedError
