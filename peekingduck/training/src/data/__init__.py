@@ -12,13 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import pytest
-
-from hydra import initialize, compose
-
-
-def test_with_initialize() -> None:
-    with initialize(version_base=None, config_path="../configs"):
-        # config is relative to a module
-        cfg = compose(config_name="config", overrides=["framework=tensorflow"])
-        assert cfg.framework == "tensorflow"
+"""
+A modular Python framework for Computer Vision Training.
+"""
