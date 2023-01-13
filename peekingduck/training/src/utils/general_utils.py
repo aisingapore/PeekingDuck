@@ -214,23 +214,31 @@ def return_list_of_files(
         directory = Path(directory)
 
     if extensions is None and return_string:
-        return [f.as_posix() for f in directory.resolve().glob("**/*") if f.is_file()]
+        return [
+            f.as_posix()
+            for f in directory.resolve().glob("[!__]*/**/[!__]*")
+            if f.is_file()
+        ]
 
     if extensions is None and not return_string:
-        return [f for f in directory.resolve().glob("**/*") if f.is_file()]
+        return [f for f in directory.resolve().glob("[!__]*/**/[!__]*") if f.is_file()]
 
     if return_string:
         list_of_files = sorted(
             [
                 path.as_posix()
                 for path in filter(
-                    lambda path: path.suffix in extensions, directory.glob("**/*")
+                    lambda path: path.suffix in extensions,
+                    directory.glob("[!__]*/**/[!__]*"),
                 )
             ]
         )
     else:
         list_of_files = sorted(
-            filter(lambda path: path.suffix in extensions, directory.glob("**/*"))
+            filter(
+                lambda path: path.suffix in extensions,
+                directory.glob("[!__]*/**/[!__]*"),
+            )
         )
     return list_of_files
 

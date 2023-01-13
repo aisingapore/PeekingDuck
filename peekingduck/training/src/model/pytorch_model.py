@@ -37,10 +37,10 @@ class ImageClassificationModel(Model):
     it can be used for any image classification by just modifying the head.
     """
 
-    def __init__(self, model_config: DictConfig) -> None:
-        super().__init__(model_config)
+    def __init__(self, cfg: DictConfig) -> None:
+        super().__init__(cfg)
 
-        self.adapter = self.model_config.adapter  # leave out the adapter first
+        self.adapter = self.model_config.adapter
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.model = self.create_model()
@@ -136,32 +136,6 @@ class ImageClassificationModel(Model):
         y = self.model(inputs)
         print(f"X: {inputs.shape}, Y: {y.shape}")
         print("Forward Pass Successful")
-
-
-# class MNISTModel(Model):
-#     """MNIST Model."""
-
-#     def __init__(self, pipeline_config: DictConfig) -> None:
-#         super().__init__(pipeline_config)
-#         self.pipeline_config = pipeline_config
-#         self.create_model()
-
-#     def create_model(self) -> MNISTModel:
-#         self.conv1 = nn.Conv2d(1, 10, kernel_size=5)
-#         self.conv2 = nn.Conv2d(10, 20, kernel_size=5)
-#         self.conv2_drop = nn.Dropout2d(p=self.pipeline_config.model.dropout)
-#         self.fc1 = nn.Linear(320, 50)
-#         self.fc2 = nn.Linear(50, self.pipeline_config.model.num_classes)
-#         return self
-
-#     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-#         inputs = F.relu(F.max_pool2d(self.conv1(inputs), 2))
-#         inputs = F.relu(F.max_pool2d(self.conv2_drop(self.conv2(inputs)), 2))
-#         inputs = inputs.view(-1, 320)
-#         inputs = F.relu(self.fc1(inputs))
-#         inputs = F.dropout(inputs, training=self.training)
-#         inputs = self.fc2(inputs)
-#         return inputs
 
 
 # if __name__ == "__main__":

@@ -20,7 +20,8 @@ from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
 from src.data_module.base import DataModule
-from src.model.model import ImageClassificationModel
+from src.model.base import Model
+from src.trainer.base import Trainer
 from src.utils.general_utils import choose_torch_device
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -30,11 +31,13 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    cfg.device = choose_torch_device()  # TODO tensorflow
-    logger.info(f"Using device: {cfg.device}")
+    if cfg.framework == "pytorch":
+        cfg.device = choose_torch_device()  # TODO tensorflow
+        logger.info(f"Using device: {cfg.device}")
 
     data_module: DataModule = instantiate(
-        cfg.data_module.module, cfg=cfg.data_module, _recursive_=False
+        config=cfg.data_module.module,
+        cfg=cfg.data_module,
     )
     data_module.prepare_data()
     data_module.setup(stage="fit")
@@ -49,8 +52,10 @@ def run(cfg: DictConfig) -> None:
         metrics=cfg.metrics.evaluate,
     )
 
-    model = ImageClassificationModel(cfg.model).to(cfg.device)
-    trainer = instantiate(cfg.trainer.global_train_params.framework[cfg.framework][0])
+    model: Model = instantiate(
+        config=cfg.model.model_type, cfg=cfg.model, _recursive_=False
+    ).to(cfg.device)
+    trainer: Trainer = instantiate(cfg.trainer.global_train_params.framework[cfg.framework][0])
     trainer.setup(
         cfg.trainer,
         model=model,

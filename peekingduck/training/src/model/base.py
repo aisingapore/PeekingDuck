@@ -22,18 +22,16 @@ from torch import nn
 from torchinfo.model_statistics import ModelStatistics
 from omegaconf import DictConfig
 
-# from configs.base_params import PipelineConfig
-
 
 class Model(ABC, nn.Module):
     """Model Base Class."""
 
-    def __init__(self, pipeline_config: DictConfig) -> None:
+    def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
         self.backbone: Optional[nn.Module]
         self.head: Optional[nn.Module]
         self.model: nn.Module
-        self.model_config = pipeline_config
+        self.model_config = cfg
 
     @abstractmethod
     def create_model(self) -> nn.Module:
