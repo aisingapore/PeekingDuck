@@ -93,24 +93,24 @@ class Node(AbstractNode):
 
     @staticmethod
     def _get_group_bbox_coords(
-        large_groups: List[int], bboxes: List[np.ndarray], obj_groups: List[int]
-    ) -> List[np.ndarray]:
+        large_groups: List[int], bboxes: np.ndarray, obj_groups: List[int]
+    ) -> np.ndarray:
         """For bboxes that belong to the same large group, get the coordinates of
         a large bbox that combines all these individual bboxes. Repeat for all large
         groups.
         """
         group_bboxes = []
         bboxes = np.array(bboxes)
-        obj_groups = np.array(obj_groups)
+        obj_groups_arr = np.array(obj_groups)
         for group in large_groups:
             # filter relevant bboxes, select top-left and bot-right corners
             group_bbox = np.array([1.0, 1.0, 0.0, 0.0])
-            selected_bboxes = bboxes[obj_groups == group]
+            selected_bboxes = bboxes[obj_groups_arr == group]
             group_bbox[:2] = np.amin(selected_bboxes, axis=0)[:2]
             group_bbox[2:] = np.amax(selected_bboxes, axis=0)[2:]
             group_bboxes.append(group_bbox)
 
-        return group_bboxes
+        return np.array(group_bboxes)
 
     @staticmethod
     def _get_group_tags(large_groups: List[int], tag: str) -> List[str]:
