@@ -139,7 +139,11 @@ class TestPose:
 
         keypoints = np.random.rand(1, 17, 2)  # keypoints shape for 1 person
         keypoint_scores = np.random.rand(1, 17)  # keypoint_scores shape for 1 person
-        # keypoint_conns shape for 1 person, cast to object
+        # keypoint_conns shape for 1 person
+        # Cast to dtype=object to ensure that the mocked input keypoint_conns
+        # has the same type as the output from a pose estimation model.
+        # This ensures that we are testing conditions similar to running an
+        # actual pipeline instead of mocking a "nice" input for draw.pose.
         keypoint_conns = np.random.rand(1, 15, 2, 2).astype(object)
         inputs = {
             "keypoints": keypoints,
