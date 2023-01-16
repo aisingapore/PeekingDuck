@@ -18,7 +18,7 @@
 PoseNet auxiliary functions (compiled with numba jit)
 """
 
-from typing import List, Tuple, cast
+from typing import List, Tuple
 
 import numpy as np
 from numba import jit_module
@@ -69,10 +69,8 @@ def is_within_nms_radius(
         radius (int): The radius/distance to check for.
         point (np.ndarray): The specified point to check.
     """
-    return cast(
-        bool,
-        existing_coords.shape[0] > 0
-        and np.any(np.sum((existing_coords - point) ** 2, axis=1) <= radius),
+    return existing_coords.shape[0] > 0 and np.any(  # type: ignore
+        np.sum((existing_coords - point) ** 2, axis=1) <= radius
     )
 
 
