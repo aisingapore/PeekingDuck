@@ -151,8 +151,8 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.score = score
 
         self.kalman_filter: KalmanFilter
-        self.mean = np.empty((8,))
-        self.covariance = np.empty((8, 8))
+        self.mean = np.empty(0)
+        self.covariance = np.empty((0, 8))
 
         self.is_activated = False
         self.tracklet_len = 0
@@ -170,7 +170,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         """The current position in bounding box format `(top left x,
         top left y, width, height)`.
         """
-        if self.mean is None:
+        if self.mean.size == 0:
             return self._tlwh.copy()
         ret = self.mean[:4].copy()
         ret[2] *= ret[3]
