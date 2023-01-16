@@ -30,7 +30,6 @@ import yaml
 from peekingduck.config_loader import ConfigLoader
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.pipeline import Pipeline
-from peekingduck.utils.deprecation import deprecate
 from peekingduck.utils.detect_id_mapper import obj_det_change_class_name_to_id
 
 PEEKINGDUCK_NODE_TYPES = ["input", "augment", "model", "draw", "dabble", "output"]
@@ -101,8 +100,7 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
     ) -> Dict[str, Any]:
         """Update value of a nested dictionary of varying depth using recursion"""
         for key, value in dict_update.items():
-            # Replace "detect_ids" with "detect" in code below
-            if key not in dict_orig and key != "detect_ids":
+            if key not in dict_orig:
                 self.logger.warning(
                     f"Config for node {node_name} does not have the key: {key}"
                 )
@@ -115,10 +113,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
             # `value` below will not be a Dict since the keys are not `callbacks`
             if key == "detect":
                 value = self._change_class_name_to_id(node_name, cast(List[Any], value))
-            elif key == "detect_ids":
-                key, value = self._handle_detect_ids_deprecation(
-                    node_name, cast(List[Any], value)
-                )
 
             dict_orig[key] = value
             self.logger.info(
@@ -137,64 +131,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
                 break
 
         return custom_name
-
-    def _handle_detect_ids_deprecation(
-        self, node_name: str, value: List[Any]
-    ) -> Tuple[str, List[int]]:
-        """Supports `detect: ['person']` instead of `detect_ids: ['person']`."""
-        deprecate(
-            "`detect_ids` is deprecated and will be removed in future. "
-            "Please use `detect` instead.",
-            4,
-        )
-        value = self._change_class_name_to_id(node_name, value)
-        key = "detect"
-        return key, value
-
-    def _handle_input_node_deprecation(
-        self, nodes: List[Union[str, Dict[str, Any]]]
-    ) -> List[Union[str, Dict[str, Any]]]:
-        """dotw 2022-03-16: Temporary code to convert existing `input.live` and
-        `input.recorded` into new `input.visual`. To be removed in subsequent
-        versions.
-        """
-
-        # dotw 2022-03-17: Temporary helper methods
-        def input_node_deprecation_warning(
-            name: str, config: Union[str, Dict[str, Any]]
-        ) -> None:
-            deprecate(
-                f"`{name}` deprecated and will be removed in the future. "
-                "Please use `input.visual` instead.",
-                4,
-            )
-            self.logger.warning(f"convert `{name}` to `input.visual`: {config}")
-
-        upgraded_nodes = []
-        for node in nodes:
-            if isinstance(node, str):
-                if node in ["input.live", "input.recorded"]:
-                    input_node_deprecation_warning(node, "input.visual")
-                    if node == "input.live":
-                        node = {"input.visual": {"source": 0}}
-                    else:
-                        self.logger.error("input.recorded with no parameters error!")
-                        node = "input.visual"
-            else:
-                if "input.live" in node:
-                    node_config = node.pop("input.live")
-                    if "input_source" in node_config:
-                        node_config["source"] = node_config.pop("input_source")
-                    node["input.visual"] = node_config
-                    input_node_deprecation_warning("input.live", node_config)
-                if "input.recorded" in node:
-                    node_config = node.pop("input.recorded")
-                    if "input_dir" in node_config:
-                        node_config["source"] = node_config.pop("input_dir")
-                    node["input.visual"] = node_config
-                    input_node_deprecation_warning("input.recorded", node_config)
-            upgraded_nodes.append(node)
-        return upgraded_nodes
 
     def _init_node(
         self,
@@ -272,10 +208,8 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
         if nodes is None:
             raise ValueError(f"{pipeline_path} does not contain any nodes!")
 
-        upgraded_nodes = self._handle_input_node_deprecation(nodes)
-
         self.logger.info("Successfully loaded pipeline file.")
-        return NodeList(upgraded_nodes)
+        return NodeList(nodes)
 
     @staticmethod
     def _change_class_name_to_id(node_name: str, value: List[Any]) -> List[int]:

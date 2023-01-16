@@ -64,12 +64,7 @@ def main(
     """
     if config_path is None:
         pkd_dir = Path(__file__).resolve().parent
-        if (pkd_dir / "pipeline_config.yml").is_file():
-            config_path = str(pkd_dir / "pipeline_config.yml")
-        elif (pkd_dir / "run_config.yml").is_file():
-            config_path = str(pkd_dir / "run_config.yml")
-        else:
-            config_path = str(pkd_dir / "pipeline_config.yml")
+        config_path = str(pkd_dir / "pipeline_config.yml")
         nodes_parent_dir = pkd_dir.name
     else:
         nodes_parent_dir = "src"
