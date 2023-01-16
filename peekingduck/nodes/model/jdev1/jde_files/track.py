@@ -149,8 +149,8 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.score = score
 
         self.kalman_filter: KalmanFilter
-        self.mean = np.empty((8,))
-        self.covariance = np.empty((8, 8))
+        self.mean = np.empty(0)
+        self.covariance = np.empty((0, 8))
 
         self.is_activated = False
         self.tracklet_len = 0
@@ -168,7 +168,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         """The current position in bounding box format `(top left x,
         top left y, width, height)`.
         """
-        if self.mean is None:
+        if self.mean.size == 0:
             return self._tlwh.copy()
         ret = self.mean[:4].copy()
         ret[2] *= ret[3]
@@ -207,6 +207,23 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.frame_id = frame_id
         self.start_frame = frame_id
 
+    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
+        """Re-activates STrack.
+
+        Args:
+            new_track (STrack): New STrack.
+            frame_id (int): Current frame ID.
+        """
+        self.mean, self.covariance = self.kalman_filter.update(
+            self.mean, self.covariance, tlwh2xyah(new_track.tlwh)
+        )
+
+        self.update_features(new_track.curr_feat)
+        self.tracklet_len = 0
+        self.state = TrackState.TRACKED
+        self.is_activated = True
+        self.frame_id = frame_id
+
     def update(
         self, new_track: "STrack", frame_id: int, update_feature: bool = True
     ) -> None:
@@ -230,23 +247,6 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.score = new_track.score
         if update_feature:
             self.update_features(new_track.curr_feat)
-
-    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
-        """Re-activates STrack.
-
-        Args:
-            new_track (STrack): New STrack.
-            frame_id (int): Current frame ID.
-        """
-        self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, tlwh2xyah(new_track.tlwh)
-        )
-
-        self.update_features(new_track.curr_feat)
-        self.tracklet_len = 0
-        self.state = TrackState.TRACKED
-        self.is_activated = True
-        self.frame_id = frame_id
 
     def update_features(self, feat: np.ndarray) -> None:
         """Updates the features (embeddings).
