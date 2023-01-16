@@ -61,7 +61,7 @@ def create_pipeline_yaml(nodes):
         yaml.dump(nodes, outfile, default_flow_style=False)
 
 
-def setup():
+def prepare_environment():
     sys.path.append(str(Path.cwd() / MODULE_DIR))
     PKD_NODE_DIR.mkdir(parents=True)
     create_pipeline_yaml(NODES)
@@ -96,7 +96,7 @@ def replace_pipeline(node):
 
 @pytest.fixture
 def runner(request):
-    setup()
+    prepare_environment()
     with mock.patch(
         "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
         wraps=replace_declarativeloader_get_pipeline,
@@ -134,7 +134,7 @@ def test_node_end():
 
 @pytest.fixture
 def runner_with_nodes(test_input_node, test_node_end):
-    setup()
+    prepare_environment()
     instantiated_nodes = [test_input_node, test_node_end]
     test_runner = Runner(
         pipeline_path=PIPELINE_PATH,
@@ -184,7 +184,7 @@ class TestRunner:
             )
 
     def test_init_with_updated_packages(self):
-        setup()
+        prepare_environment()
         with mock.patch.object(RequirementChecker, "n_update", 1), mock.patch(
             "peekingduck.declarative_loader.DeclarativeLoader.get_pipeline",
             wraps=get_pipeline_with_default_node_names,
