@@ -161,7 +161,9 @@ class TestBboxTransforms:
         expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
 
         if isinstance(to_bbox, torch.Tensor):
-            torch.testing.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
+            torch.testing.assert_close(
+                to_bbox, expected_bbox, atol=ATOL, rtol=RTOL, check_dtype=False
+            )
         else:
             npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
 
@@ -179,6 +181,8 @@ class TestBboxTransforms:
         expected_bbox = expand_dim(convert_type(expected_bbox), num_dims)
 
         if isinstance(to_bbox, torch.Tensor):
-            torch.testing.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
+            torch.testing.assert_close(
+                to_bbox, expected_bbox, atol=ATOL, rtol=RTOL, check_dtype=False
+            )
         else:
             npt.assert_allclose(to_bbox, expected_bbox, atol=ATOL, rtol=RTOL)
