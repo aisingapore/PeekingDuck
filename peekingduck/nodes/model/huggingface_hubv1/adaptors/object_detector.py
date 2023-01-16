@@ -54,7 +54,7 @@ class ObjectDetector(base.HuggingFaceAdaptor):
             - scores: Detections confidence score.
         """
         target_sizes = torch.tensor([target_size], device=device)
-        result = self.extractor.post_process(
+        result = self.extractor.post_process_object_detection(
             outputs=outputs, target_sizes=target_sizes
         )[0]
         return result
