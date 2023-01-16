@@ -44,8 +44,6 @@ class ImageClassificationModel(Model):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.model = self.create_model()
-
-        # self.model.apply(self._init_weights) # activate if init weights
         print(f"Successfully created model: {self.model_config.model_name}")
 
     def _concat_backbone_and_head(self, last_layer_name) -> nn.Module:
@@ -116,35 +114,3 @@ class ImageClassificationModel(Model):
         features = self.forward_features(inputs)
         outputs = self.forward_head(features)
         return outputs
-        # return self.model(inputs)
-
-    def _init_weights(self, module: nn.Module) -> None:
-        """Initialize the weights of the model."""
-        if isinstance(module, nn.Conv2d):
-            nn.init.kaiming_normal_(module.weight, mode="fan_out", nonlinearity="relu")
-            if module.bias is not None:
-                nn.init.constant_(module.bias, 0)
-        elif isinstance(module, nn.BatchNorm2d):
-            nn.init.constant_(module.weight, 1)
-            nn.init.constant_(module.bias, 0)
-        elif isinstance(module, nn.Linear):
-            nn.init.normal_(module.weight, 0, 0.01)
-            nn.init.constant_(module.bias, 0)
-
-    def forward_pass(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the model."""
-        y = self.model(inputs)
-        print(f"X: {inputs.shape}, Y: {y.shape}")
-        print("Forward Pass Successful")
-
-
-# if __name__ == "__main__":
-#     seed_all(42)
-
-#     pipeline_config = Cifar10PipelineConfig()
-
-#     model = ImageClassificationModel(pipeline_config).to(pipeline_config.device)
-#     print(model.model_summary(device=pipeline_config.device))
-
-#     inputs = torch.randn(1, 3, 224, 224).to(pipeline_config.device)
-#     model.forward_pass(inputs)

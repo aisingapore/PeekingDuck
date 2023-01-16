@@ -55,7 +55,14 @@ def run(cfg: DictConfig) -> None:
     model: Model = instantiate(
         config=cfg.model.model_type, cfg=cfg.model, _recursive_=False
     ).to(cfg.device)
-    trainer: Trainer = instantiate(cfg.trainer.global_train_params.framework[cfg.framework][0])
+
+    # show model summary
+    inputs, _ = next(iter(train_loader))
+    model.model_summary(inputs.shape)
+
+    trainer: Trainer = instantiate(
+        cfg.trainer.global_train_params.framework[cfg.framework][0]
+    )
     trainer.setup(
         cfg.trainer,
         model=model,

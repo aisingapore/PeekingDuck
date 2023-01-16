@@ -57,13 +57,14 @@ class pytorchTrainer(Trainer):
         """Initialize the trainer."""
         self.logger = logger
 
-    def setup(self, 
-            pipeline_config: DictConfig,
-            model: Model,
-            callbacks: List[Callback] = None,
-            metrics: Union[MetricCollection, List[str]] = None,  # TODO py/tf
-            device: str = "cpu",
-        ) -> None:
+    def setup(
+        self,
+        pipeline_config: DictConfig,
+        model: Model,
+        callbacks: List[Callback] = None,
+        metrics: Union[MetricCollection, List[str]] = None,  # TODO py/tf
+        device: str = "cpu",
+    ) -> None:
         """Called when the trainer begins."""
         self.pipeline_config = pipeline_config
         self.train_params = self.pipeline_config.global_train_params
