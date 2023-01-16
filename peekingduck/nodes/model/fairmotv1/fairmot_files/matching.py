@@ -107,11 +107,11 @@ def embedding_distance(
     Returns:
         np.ndarray: Cost matrix of distance.
     """
-    cost_matrix = np.zeros((len(tracks), len(detections)), dtype=np.float)
+    cost_matrix = np.zeros((len(tracks), len(detections)), dtype=float)
     if cost_matrix.size == 0:
         return cost_matrix
-    det_features = np.asarray([track.curr_feat for track in detections], dtype=np.float)
-    track_features = np.asarray([track.smooth_feat for track in tracks], dtype=np.float)
+    det_features = np.asarray([track.curr_feat for track in detections], dtype=float)
+    track_features = np.asarray([track.smooth_feat for track in tracks], dtype=float)
     # Normalized features
     cost_matrix = np.maximum(0.0, cdist(track_features, det_features, metric))
 
@@ -161,13 +161,13 @@ def ious(xyxys_1: List[np.ndarray], xyxys_2: List[np.ndarray]) -> np.ndarray:
     Returns:
         np.ndarray: Matrix of IoU values.
     """
-    iou_values = np.zeros((len(xyxys_1), len(xyxys_2)), dtype=np.float)
+    iou_values = np.zeros((len(xyxys_1), len(xyxys_2)), dtype=float)
     if iou_values.size == 0:
         return iou_values
 
     return bbox_ious(
-        np.ascontiguousarray(xyxys_1, dtype=np.float),
-        np.ascontiguousarray(xyxys_2, dtype=np.float),
+        np.ascontiguousarray(xyxys_1, dtype=float),
+        np.ascontiguousarray(xyxys_2, dtype=float),
     )
 
 

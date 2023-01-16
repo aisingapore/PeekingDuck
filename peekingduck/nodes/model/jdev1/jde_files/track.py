@@ -145,7 +145,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         feat: np.ndarray,
         buffer_size: int = 30,
     ) -> None:
-        self._tlwh = np.asarray(tlwh, dtype=np.float)
+        self._tlwh = np.asarray(tlwh, dtype=float)
         self.score = score
 
         self.kalman_filter: KalmanFilter
