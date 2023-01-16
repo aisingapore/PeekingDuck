@@ -7,7 +7,7 @@ myst-parser == 0.18.1
 pylint == 2.15.10
 pytest == 7.2.0
 pytest-lazy-fixture == 0.6.3    # can remove if/when https://docs.pytest.org/en/7.1.x/proposals/parametrize_with_fixtures.html gets implemented
-scikit-image == 0.17.2
+scikit-image == 0.18.0
 sphinx-autodoc-typehints == 1.20.1
 sphinx-rtd-theme == 1.1.1
 texttable == 1.6.7  # for pretty print scripts/check_links.py output

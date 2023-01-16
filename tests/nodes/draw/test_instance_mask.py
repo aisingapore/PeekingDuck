@@ -20,7 +20,7 @@ import cv2
 import numpy as np
 import pytest
 import yaml
-from skimage.measure import compare_ssim as ssim
+from skimage.metrics import structural_similarity as ssim
 
 from peekingduck.nodes.draw.instance_mask import Node
 from tests.conftest import PKD_DIR, TEST_DATA_DIR, TEST_IMAGES_DIR
