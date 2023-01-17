@@ -1,6 +1,11 @@
+device: "cpu"
+project_name: "cifar10"
+debug: True
+framework: "pytorch" # 'pytorch' | 'tensorflow'
+
 defaults:
   - use_case: common
-  - data_module: ${use_case}
+  - data_module: cifar10
   - model: ${use_case}
   - trainer: ${use_case}
   - callbacks: ${use_case}
@@ -8,11 +13,6 @@ defaults:
   - stores: ${use_case}
   - _self_
   - override hydra/job_logging: custom
-
-device: "cpu"
-project_name: "CIFAR-10"
-debug: True
-framework: "pytorch" # 'pytorch' | 'tensorflow'
 
 hydra:
   run:

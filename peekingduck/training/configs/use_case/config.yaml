@@ -1,0 +1,5 @@
+device: "cpu"
+project_name: "rsna"
+debug: True
+framework: "pytorch" # 'pytorch' | 'tensorflow'
+

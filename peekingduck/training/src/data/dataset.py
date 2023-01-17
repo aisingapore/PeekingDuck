@@ -75,9 +75,6 @@ class ImageClassificationDataset(Dataset):
             return image, target
         elif self.stage == "test":
             return image
-        elif self.stage == "gradcam":
-            # get image id as well to show on matplotlib image!
-            return image, target, self.image_ids[index]
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 

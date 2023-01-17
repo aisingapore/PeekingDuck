@@ -252,7 +252,6 @@ def create_dataframe_with_image_info(
     data_list = []
 
     for image_path in tqdm(image_dir):  # image_path is the full abs path
-        image_id = image_path.stem  # image_id is the filename without extension
 
         # get the label
         # assumes that the image_dir is structured as follows:
@@ -265,19 +264,18 @@ def create_dataframe_with_image_info(
         #       - image4.jpg
         #   - class3
         #       - ...
-        # print(image_path)
+
         class_name = image_path.parents[0].name
-        # print(class_name)
         class_id = int(class_name_to_id[class_name])
 
         image_path = image_path.as_posix()
         width, height = imagesize.get(image_path)
 
-        data_list.append([image_id, image_path, class_id, class_name, width, height])
+        data_list.append([image_path, class_id, class_name, width, height])
 
-    df = pd.DataFrame(
+    df = pd.DataFrame(  # image_path_col_name
         data_list,
-        columns=["image_id", "image_path", "class_id", "class_name", "width", "height"],
+        columns=["image_path", "class_id", "class_name", "width", "height"],
     )
     if save_path is not None:
         df.to_csv(save_path, index=False)
@@ -329,29 +327,6 @@ def choose_autocast(precision):
     if precision == "autocast" or precision == "float16":
         return autocast
     return nullcontext
-
-
-def return_filepath(
-    image_id: str,
-    folder: Path,
-    extension: str = "jpg",
-) -> str:
-    """Add a new column image_path to the train and test csv.
-
-    Note:
-        We can call the images easily in __getitem__ in Dataset.
-        If the image_id has extension already, then there is no need to add the extension.
-
-    Args:
-        image_id (str): The unique image id: 1000015157.jpg
-        folder (Path): The data folder.
-        extension (str): The extension of the image. Defaults to "jpg".
-
-    Returns:
-        image_path (str): The path to the image.
-    """
-    image_path = Path.joinpath(folder, f"{image_id}.{extension}").as_posix()
-    return image_path
 
 
 def get_mean_rgb_values(image: np.ndarray) -> Tuple[float, float, float]:
