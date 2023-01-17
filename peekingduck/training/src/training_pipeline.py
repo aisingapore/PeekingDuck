@@ -35,42 +35,46 @@ def run(cfg: DictConfig) -> None:
         cfg.device = choose_torch_device()  # TODO tensorflow
         logger.info(f"Using device: {cfg.device}")
 
-    data_module: DataModule = instantiate(
-        config=cfg.data_module.module,
-        cfg=cfg.data_module,
-    )
-    data_module.prepare_data()
-    data_module.setup(stage="fit")
-    train_loader = data_module.get_train_dataloader()
-    validation_loader = data_module.get_valid_dataloader()
+        data_module: DataModule = instantiate(
+            config=cfg.data_module.module,
+            cfg=cfg.data_module,
+        )
+        data_module.prepare_data()
+        data_module.setup(stage="fit")
+        train_loader = data_module.get_train_dataloader()
+        validation_loader = data_module.get_valid_dataloader()
 
-    callbacks = instantiate(cfg.callbacks.callbacks)
-    metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
-    metrics_obj = metrics_adapter.setup(
-        task=cfg.data_module.dataset.classification_type,
-        num_classes=cfg.data_module.dataset.num_classes,
-        metrics=cfg.metrics.evaluate,
-    )
+        callbacks = instantiate(cfg.callbacks.callbacks)
+        metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
+        metrics_obj = metrics_adapter.setup(
+            task=cfg.data_module.dataset.classification_type,
+            num_classes=cfg.data_module.dataset.num_classes,
+            metrics=cfg.metrics.evaluate,
+        )
 
-    model: Model = instantiate(
-        config=cfg.model.model_type, cfg=cfg.model, _recursive_=False
-    ).to(cfg.device)
+        model: Model = instantiate(
+            config=cfg.model.model_type, cfg=cfg.model, _recursive_=False
+        ).to(cfg.device)
 
-    # show model summary
-    inputs, _ = next(iter(train_loader))
-    model.model_summary(inputs.shape)
+        # show model summary
+        inputs, _ = next(iter(train_loader))
+        model.model_summary(inputs.shape)
 
-    trainer: Trainer = instantiate(
-        cfg.trainer.global_train_params.framework[cfg.framework][0]
-    )
-    trainer.setup(
-        cfg.trainer,
-        model=model,
-        callbacks=callbacks,
-        metrics=metrics_obj,
-        device=cfg.device,
-    )
-    trainer.fit(train_loader, validation_loader)
+        trainer: Trainer = instantiate(
+            cfg.trainer.global_train_params.framework[cfg.framework][0]
+        )
+        trainer.setup(
+            cfg.trainer,
+            model=model,
+            callbacks=callbacks,
+            metrics=metrics_obj,
+            device=cfg.device,
+        )
+        trainer.fit(train_loader, validation_loader)
+
+    elif cfg.framework == "tensorflow":
+            raise NotImplementedError
+
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")
