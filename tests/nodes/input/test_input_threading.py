@@ -117,7 +117,6 @@ def test_input_threading():
             cwd=PKD_ROOT_DIR,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            bufsize=1,
         )
         st = perf_counter()
         while True:
