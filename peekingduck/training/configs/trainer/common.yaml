@@ -60,10 +60,10 @@ scheduler_params:
 global_train_params:
     epochs: 15 # 10 when not debug
     use_amp: False
-    patience: 7
+    patience: 3
     model_name: ${model.model_name}
     debug: ${debug}
-    debug_epochs: 2
+    debug_epochs: 15
     classification_type: ${data_module.dataset.classification_type}
     monitored_metric:
         monitor: val_MulticlassAccuracy
