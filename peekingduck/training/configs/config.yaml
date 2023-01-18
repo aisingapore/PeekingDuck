@@ -1,11 +1,11 @@
 device: "cpu"
-project_name: "cifar10"
+project_name: "cifar10" #rsna | cifar10
 debug: True
 framework: "pytorch" # 'pytorch' | 'tensorflow'
 
 defaults:
   - use_case: common
-  - data_module: cifar10
+  - data_module: cifar10 #rsna | cifar10
   - model: ${use_case}
   - trainer: ${use_case}
   - callbacks: ${use_case}

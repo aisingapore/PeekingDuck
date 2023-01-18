@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright 2023 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,8 +16,8 @@ import logging
 
 from omegaconf import OmegaConf, DictConfig
 import hydra
-from hydra import initialize, compose
 from hydra.core.hydra_config import HydraConfig
+
 from src.training_pipeline import run
 
 logger: logging.Logger = logging.getLogger(__name__)
@@ -28,10 +29,6 @@ logger: logging.Logger = logging.getLogger(__name__)
     config_name="config",
 )
 def main(cfg: DictConfig) -> None:
-    # with initialize(version_base=None, config_path="configs/use_case"):
-    #     # config is relative to a module
-    #     overrides = compose(config_name="config")
-    # logger.info(OmegaConf.to_yaml(overrides))
     logger.info(OmegaConf.to_yaml(cfg))
     logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
     run(cfg)

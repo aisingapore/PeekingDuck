@@ -101,7 +101,9 @@ class ImageClassificationDataModule(DataModule):
             )
         logger.info(df.head())
         self.train_df = df
-        self.train_df, self.valid_df = self.cross_validation_split(df)
+        self.train_df, self.valid_df = self.cross_validation_split(
+            df, stratify_by=self.cfg.dataset.stratify_by
+        )
 
         if self.cfg.debug:
             num_debug_samples = self.cfg.num_debug_samples
@@ -132,10 +134,15 @@ class ImageClassificationDataModule(DataModule):
             )
 
     def cross_validation_split(
-        self, df: pd.DataFrame, fold: Optional[int] = None
+        self,
+        df: pd.DataFrame,
+        fold: Optional[int] = None,
+        stratify_by: Optional[list] = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into train and validation dataframes."""
         resample_strategy = self.cfg.resample.resample_strategy
-        train_df, valid_df = instantiate(resample_strategy, df)
-
-        return train_df, valid_df
+        resample_func = instantiate(resample_strategy)
+        if stratify_by is not None:
+            logger.info(f"stratify_by: {stratify_by}")
+            return resample_func(df, stratify=df[stratify_by])
+        return resample_func(df)

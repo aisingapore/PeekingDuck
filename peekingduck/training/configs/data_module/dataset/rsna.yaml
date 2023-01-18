@@ -7,9 +7,7 @@ test_dir: "./${.root_dir}/${project_name}"
 train_csv: "./${.root_dir}/${project_name}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "cancer"
-# stratify_by:
-#   - "patient_id"
-#   - ${.target_col_name}
+stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
 num_classes: 2
 class_name_to_id:
