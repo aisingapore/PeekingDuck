@@ -1,4 +1,4 @@
-device: "cpu"
+device: "auto"
 project_name: "cifar10" #rsna | cifar10
 debug: True
 framework: "pytorch" # 'pytorch' | 'tensorflow'

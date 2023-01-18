@@ -29,9 +29,14 @@ TODO:
     1. As usual, the issue is attributes/args such as mode is defined in `pipeline_config`,
         may need to inherit the `pipeline_config` and use it to initiate the attributes.
 """
+import logging
+
 from src.callbacks.base import Callback
 from src.trainer.base import Trainer
 from src.utils.callback_utils import init_improvement
+from configs import LOGGER_NAME
+
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
 class EarlyStopping(Callback):
@@ -74,14 +79,14 @@ class EarlyStopping(Callback):
             self.patience_counter = 0
         else:
             self.patience_counter += 1
-            print(
+            logger.info(
                 f"Early Stopping Counter {self.patience_counter} out of {self.patience}"
             )
 
             if self.patience_counter >= self.patience:
                 self.stop = True
                 trainer.stop = self.stop
-                print("Early Stopping!")
+                logger.info("Early Stopping!")
 
     def should_stop(self):
         """The actual algorithm of early stopping.

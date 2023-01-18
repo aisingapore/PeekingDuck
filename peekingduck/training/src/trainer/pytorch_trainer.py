@@ -116,14 +116,11 @@ class pytorchTrainer(Trainer):
         if self.train_params. debug:
             epochs = self.train_params.debug_epochs
         # implement
-        print("THIS IS A EPOCHS", epochs)
         for epoch in range(1, epochs + 1):
-            print("THIS IS A EPOCH", epoch)
             self._run_train_epoch(train_loader, epoch)
             self._run_validation_epoch(validation_loader, epoch)
 
             if self.stop:  # from early stopping
-                print("THIS RAN")
                 break  # Early Stopping
 
             if self.scheduler is not None:
