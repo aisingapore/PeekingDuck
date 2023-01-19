@@ -1,6 +1,6 @@
-evaluate: ['accuracy', 'precision', 'recall', 'auroc', 'multiclass_calibration_error']
-adapter: 
-    pytorch: 
-      - _target_: src.metrics.pytorch_metrics.torchMetrics
-    tensorflow:
-      - _target_: src.metrics.tensorflow_metrics.tensorflowMetrics
+evaluate: ["accuracy", "precision", "recall", "auroc", "multiclass_calibration_error"]
+adapter:
+  pytorch:
+    _target_: src.metrics.pytorch_metrics.torchMetrics
+  tensorflow:
+    _target_: src.metrics.tensorflow_metrics.tensorflowMetrics
