@@ -29,6 +29,7 @@ from src.utils.general_utils import (
     download_to,
     extract_file,
     return_list_of_files,
+    stratified_sample_df,
 )
 
 import logging
@@ -71,6 +72,7 @@ class ImageClassificationDataModule(DataModule):
         test_dir: Path = Path(self.cfg.dataset.test_dir)
         class_name_to_id: Dict[str, int] = self.cfg.dataset.class_name_to_id
         train_csv: str = self.cfg.dataset.train_csv
+        stratify_by = self.cfg.dataset.stratify_by
 
         if self.cfg.dataset.download:
             logger.info(f"downloading from {url} to {blob_file} in {root_dir}")
@@ -101,15 +103,25 @@ class ImageClassificationDataModule(DataModule):
             )
         logger.info(df.head())
         self.train_df = df
-        self.train_df, self.valid_df = self.cross_validation_split(df)
+        self.train_df, self.valid_df = self.cross_validation_split(
+            df, stratify_by=stratify_by
+        )
 
         if self.cfg.debug:
             num_debug_samples = self.cfg.num_debug_samples
             logger.debug(
                 f"Debug mode is on, using {num_debug_samples} images for training."
             )
-            self.train_df = self.train_df.sample(num_debug_samples)
-            self.valid_df = self.valid_df.sample(num_debug_samples)
+            if stratify_by is None:
+                self.train_df = self.train_df.sample(num_debug_samples)
+                self.valid_df = self.valid_df.sample(num_debug_samples)
+            else:
+                self.train_df = stratified_sample_df(
+                    self.train_df, stratify_by, num_debug_samples
+                )
+                self.valid_df = stratified_sample_df(
+                    self.valid_df, stratify_by, num_debug_samples
+                )
 
         logger.info(self.train_df.info())
 
@@ -132,10 +144,15 @@ class ImageClassificationDataModule(DataModule):
             )
 
     def cross_validation_split(
-        self, df: pd.DataFrame, fold: Optional[int] = None
+        self,
+        df: pd.DataFrame,
+        fold: Optional[int] = None,
+        stratify_by: Optional[list] = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into train and validation dataframes."""
         resample_strategy = self.cfg.resample.resample_strategy
-        train_df, valid_df = instantiate(resample_strategy, df)
-
-        return train_df, valid_df
+        resample_func = instantiate(resample_strategy)
+        if stratify_by is not None:
+            logger.info(f"stratify_by: {stratify_by}")
+            return resample_func(df, stratify=df[stratify_by])
+        return resample_func(df)

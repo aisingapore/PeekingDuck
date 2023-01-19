@@ -2,11 +2,12 @@ download: False
 url: "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"
 blob_file: "cifar10.zip"
 root_dir: "data"
-train_dir: "./${.root_dir}"
-test_dir: "./${.root_dir}"
+train_dir: "./${.root_dir}/${project_name}"
+test_dir: "./${.root_dir}/${project_name}"
 train_csv: "./${.root_dir}/${project_name}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "class_id"
+stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
 num_classes: 10
 class_name_to_id:

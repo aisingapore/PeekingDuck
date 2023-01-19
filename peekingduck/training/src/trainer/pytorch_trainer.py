@@ -96,7 +96,7 @@ class pytorchTrainer(Trainer):
         self.best_valid_score = (
             -np.inf if self.monitored_metric["mode"] == "max" else np.inf
         )
-        self.patience_counter = self.train_params.patience  # Early Stopping Counter
+
         self.current_epoch = 1
         self.epoch_dict = {}
         self.batch_dict = {}
@@ -113,7 +113,7 @@ class pytorchTrainer(Trainer):
         self._fit_setup(fold=fold)  # startup
 
         epochs = self.train_params.epochs
-        if self.train_params.debug:
+        if self.train_params. debug:
             epochs = self.train_params.debug_epochs
         # implement
         for epoch in range(1, epochs + 1):

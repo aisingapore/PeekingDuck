@@ -58,18 +58,18 @@ scheduler_params:
         verbose: False
 
 global_train_params:
-    epochs: 10 # 10 when not debug
+    epochs: 15 # 10 when not debug
     use_amp: False
     patience: 3
     model_name: ${model.model_name}
     debug: ${debug}
-    debug_epochs: 2
+    debug_epochs: 15
     classification_type: ${data_module.dataset.classification_type}
     monitored_metric:
         monitor: val_MulticlassAccuracy
         mode: max
     framework:
         pytorch:
-            - _target_: src.trainer.pytorch_trainer.pytorchTrainer
+            _target_: src.trainer.pytorch_trainer.pytorchTrainer
         tensorflow:
-            - _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
+            _target_: src.trainer.tensorflow_trainer.tensorflowTrainer

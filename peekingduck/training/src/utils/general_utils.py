@@ -443,3 +443,10 @@ def init_logger(
     logger.addHandler(file_handler)
     logger.propagate = False
     return logger
+
+
+def stratified_sample_df(df, col, n_samples):
+    n = min(n_samples, df[col].value_counts().min())
+    df_ = df.groupby(col).apply(lambda x: x.sample(n))
+    df_.index = df_.index.droplevel(0)
+    return df_

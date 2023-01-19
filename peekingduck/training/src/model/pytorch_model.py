@@ -20,6 +20,7 @@ import sys
 
 sys.path.insert(1, os.getcwd())
 
+import logging
 import copy
 import timm
 import torch
@@ -30,6 +31,10 @@ from omegaconf import DictConfig
 
 from src.model.base import Model
 from src.utils.general_utils import seed_all, rsetattr
+
+from configs import LOGGER_NAME
+
+logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 # TODO: Follow timm's creation of head and backbone
 class ImageClassificationModel(Model):
@@ -44,7 +49,7 @@ class ImageClassificationModel(Model):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.model = self.create_model()
-        print(f"Successfully created model: {self.model_config.model_name}")
+        logger.info(f"Successfully created model: {self.model_config.model_name}")
 
     def _concat_backbone_and_head(self, last_layer_name) -> nn.Module:
         """Concatenate the backbone and head of the model."""
