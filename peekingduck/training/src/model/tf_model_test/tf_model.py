@@ -3,6 +3,9 @@ import numpy as np
 import os
 import tensorflow as tf
 
+# final check of the GPU
+print("devices:", tf.config.list_physical_devices())
+
 # download dataset
 _URL = "https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip"
 path_to_zip = tf.keras.utils.get_file("cats_and_dogs.zip", origin=_URL, extract=True)
@@ -55,7 +58,7 @@ data_augmentation = tf.keras.Sequential([
   tf.keras.layers.RandomFlip('horizontal'),
   tf.keras.layers.RandomRotation(0.2),
 ])
-
+"""
 for image, _ in train_dataset.take(1):
   plt.figure(figsize=(10, 10))
   first_image = image[0]
@@ -65,6 +68,7 @@ for image, _ in train_dataset.take(1):
     plt.imshow(augmented_image[0] / 255)
     plt.axis('off')
 plt.show()
+"""
 
 # Rescale pixel values
 preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
@@ -119,7 +123,7 @@ model.summary()
 len(model.trainable_variables)
 
 # prepare for training
-initial_epochs = 10
+initial_epochs = 2
 loss0, accuracy0 = model.evaluate(validation_dataset)
 print("initial loss: {:.2f}".format(loss0))
 print("initial accuracy: {:.2f}".format(accuracy0))
