@@ -45,7 +45,7 @@ def run(cfg: DictConfig) -> None:
         validation_loader = data_module.get_valid_dataloader()
 
         callbacks = instantiate(cfg.callbacks.callbacks)
-        metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework][0])
+        metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework])
         metrics_obj = metrics_adapter.setup(
             task=cfg.data_module.dataset.classification_type,
             num_classes=cfg.data_module.dataset.num_classes,
@@ -61,7 +61,7 @@ def run(cfg: DictConfig) -> None:
         model.model_summary(inputs.shape)
 
         trainer: Trainer = instantiate(
-            cfg.trainer.global_train_params.framework[cfg.framework][0]
+            cfg.trainer.global_train_params.framework[cfg.framework]
         )
         trainer.setup(
             cfg.trainer,

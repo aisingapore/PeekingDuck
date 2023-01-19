@@ -70,6 +70,6 @@ global_train_params:
         mode: max
     framework:
         pytorch:
-            - _target_: src.trainer.pytorch_trainer.pytorchTrainer
+            _target_: src.trainer.pytorch_trainer.pytorchTrainer
         tensorflow:
-            - _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
+            _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
