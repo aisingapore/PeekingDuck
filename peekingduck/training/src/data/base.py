@@ -29,7 +29,7 @@ class DataModule(ABC):
         """"""
 
     @abstractmethod
-    def get_valid_dataloader(self):
+    def get_validation_dataloader(self):
         """"""
 
 

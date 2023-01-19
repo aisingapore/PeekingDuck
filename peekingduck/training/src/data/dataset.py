@@ -68,7 +68,7 @@ class ImageClassificationDataset(Dataset):
         # Get target for all modes except for test dataset.
         # If test, replace target with dummy ones as placeholder.
         target = self.targets[index] if self.stage != "test" else torch.ones(1)
-        target = self.apply_target_transforms(target)
+        # target = self.apply_target_transforms(target)
 
         # TODO: consider stage to be private since it is only used internally.
         if self.stage in ["train", "valid", "debug"]:

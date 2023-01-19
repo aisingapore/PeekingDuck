@@ -42,7 +42,7 @@ def run(cfg: DictConfig) -> None:
         data_module.prepare_data()
         data_module.setup(stage="fit")
         train_loader = data_module.get_train_dataloader()
-        validation_loader = data_module.get_valid_dataloader()
+        validation_loader = data_module.get_validation_dataloader()
 
         callbacks = instantiate(cfg.callbacks.callbacks)
         metrics_adapter = instantiate(cfg.metrics.adapter[cfg.framework])
