@@ -57,10 +57,16 @@ class ImageClassificationDataModule(DataModule):
             self.train_dataset,
         )
 
-    def get_valid_dataloader(self):
+    def get_validation_dataloader(self):
         """ """
         return self.dataset_loader.valid_dataloader(
             self.valid_dataset,
+        )
+
+    def get_test_dataloader(self):
+        """ """
+        return self.dataset_loader.test_dataloader(
+            self.test_dataset,
         )
 
     def prepare_data(self):
@@ -89,7 +95,7 @@ class ImageClassificationDataModule(DataModule):
         logger.info(f"Total number of test images: {len(test_images)}")
 
         if Path(train_csv).exists():
-            # TODO: this step is assumed to be done by user where
+            # this step is assumed to be done by user where
             # image_path is inside the csv.
             df: pd.DataFrame = pd.read_csv(train_csv)
         else:
@@ -103,8 +109,11 @@ class ImageClassificationDataModule(DataModule):
             )
         logger.info(df.head())
         self.train_df = df
-        self.train_df, self.valid_df = self.cross_validation_split(
+        self.train_df, self.test_df = self.cross_validation_split(
             df, stratify_by=stratify_by
+        )
+        self.train_df, self.valid_df = self.cross_validation_split(
+            self.train_df, stratify_by=stratify_by
         )
 
         if self.cfg.debug:
@@ -129,6 +138,7 @@ class ImageClassificationDataModule(DataModule):
         """ """
         train_transforms = self.transforms.train_transforms
         valid_transforms = self.transforms.valid_transforms
+        test_transforms = self.transforms.test_transforms
         if stage == "fit":
             self.train_dataset = ImageClassificationDataset(
                 self.cfg,
@@ -141,6 +151,12 @@ class ImageClassificationDataModule(DataModule):
                 df=self.valid_df,
                 stage="valid",
                 transforms=valid_transforms,
+            )
+            self.test_dataset = ImageClassificationDataset(
+                self.cfg,
+                df=self.test_df,
+                stage="test",
+                transforms=test_transforms,
             )
 
     def cross_validation_split(
