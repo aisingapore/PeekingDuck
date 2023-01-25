@@ -21,11 +21,12 @@ logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 class tensorflowTrainer(Trainer):
 
-    def __init__(self) -> None:
+    def __init__(self, framework: str = "tensorflow") -> None:
+        self.framework = framework
         raise NotImplementedError
 
     def setup(self) -> None:
         raise NotImplementedError
 
-    def fit(self):
+    def train(self):
         raise NotImplementedError
