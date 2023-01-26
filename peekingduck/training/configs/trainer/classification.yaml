@@ -1,75 +1,62 @@
-# PipelineConfig:
-#   data: DataConfig = Data()
-#   resample: ResamplingConfig = Resampling()
-#   data_module: DataModuleConfig = DataModuleParams()
-#   transforms: TransformConfig = AugmentationParams()
-#   model: ModelConfig = ModelParams()
-#   # stores: StoresConfig = Stores()
-#   # global_train_params: TrainConfig = GlobalTrainParams()
-#   # optimizer_params: OptimizerConfig = OptimizerParams()
-#   # scheduler_params: SchedulerConfig = SchedulerParams()
-#   # criterion_params: CriterionConfig = CriterionParams()
-#   callback_params: CallbackConfig = CallbackParams()
+pytorch:
+    stores:
+        project_name: ${project_name}
+        unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
+        logs_dir: "" # Path = field(init=False)
+        model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
 
-#   device: field(init=False)
-#   seed: 1992
-#   all_params: Dict[str, Any] = field(default_factory=dict)
+    criterion_params:
+        train_criterion: "CrossEntropyLoss"
+        valid_criterion: "CrossEntropyLoss"
+        train_criterion_params:
+            weight: null
+            size_average: null
+            ignore_index: -100
+            reduce: null
+            reduction: "mean"
+            label_smoothing: 0.0
+        valid_criterion_params:
+            weight: null
+            size_average: null
+            ignore_index: -100
+            reduce: null
+            reduction: "mean"
+            label_smoothing: 0.0
 
-stores:
-    project_name: ${project_name}
-    unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
-    logs_dir: "" # Path = field(init=False)
-    model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
-
-criterion_params:
-    train_criterion: "CrossEntropyLoss"
-    valid_criterion: "CrossEntropyLoss"
-    train_criterion_params:
-        weight: null
-        size_average: null
-        ignore_index: -100
-        reduce: null
-        reduction: "mean"
-        label_smoothing: 0.0
-    valid_criterion_params:
-        weight: null
-        size_average: null
-        ignore_index: -100
-        reduce: null
-        reduction: "mean"
-        label_smoothing: 0.0
-
-optimizer_params:
-    optimizer: "AdamW"
     optimizer_params:
-        lr: 0.0003 # bs: 32 -> lr = 3e-4
-        betas: [0.9, 0.999]
-        amsgrad: False
-        weight_decay: 0.000001
-        eps: 0.00000001
+        optimizer: "AdamW"
+        optimizer_params:
+            lr: 0.0003 # bs: 32 -> lr = 3e-4
+            betas: [0.9, 0.999]
+            amsgrad: False
+            weight_decay: 0.000001
+            eps: 0.00000001
 
-scheduler_params:
-    scheduler: "CosineAnnealingWarmRestarts" # Debug
     scheduler_params:
-        T_0: 10
-        T_mult: 1
-        eta_min: 0.000001
-        last_epoch: -1
-        verbose: False
+        scheduler: "CosineAnnealingWarmRestarts" # Debug
+        scheduler_params:
+            T_0: 10
+            T_mult: 1
+            eta_min: 0.000001
+            last_epoch: -1
+            verbose: False
 
-global_train_params:
-    epochs: 50
-    use_amp: False
-    patience: 3
-    model_name: ${model[${framework}].model_name}
-    debug: ${debug}
-    debug_epochs: 3
-    classification_type: ${data_module.dataset.classification_type}
-    monitored_metric:
-        monitor: val_MulticlassAccuracy
-        mode: max
-    framework:
-        pytorch:
+    global_train_params:
+        epochs: 50
+        use_amp: False
+        patience: 3
+        model_name: ${model[${framework}].model_name}
+        debug: ${debug}
+        debug_epochs: 3
+        classification_type: ${data_module.dataset.classification_type}
+        monitored_metric:
+            monitor: val_MulticlassAccuracy
+            mode: max
+        trainer:
             _target_: src.trainer.pytorch_trainer.pytorchTrainer
-        tensorflow:
-            _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
+
+
+tensorflow:
+    global_train_params:
+        trainer:
+                _target_: src.trainer.tensorflow_trainer.tensorflowTrainer

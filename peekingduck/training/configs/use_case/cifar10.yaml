@@ -1,5 +1,5 @@
 device: "cpu"
-project_name: "rsna"
+project_name: "cifar10"
 debug: True
 framework: "pytorch" # 'pytorch' | 'tensorflow'
 
