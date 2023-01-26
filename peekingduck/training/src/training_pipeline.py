@@ -44,10 +44,10 @@ def run(cfg: DictConfig) -> None:
     validation_loader = data_module.get_validation_dataloader()
 
     trainer: Trainer = instantiate(
-        cfg.trainer.global_train_params.framework[cfg.framework], cfg.framework
+        cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
     )
     trainer.setup(
-        cfg.trainer,
+        cfg.trainer[cfg.framework],
         cfg.model,
         cfg.callbacks,
         cfg.metrics,
