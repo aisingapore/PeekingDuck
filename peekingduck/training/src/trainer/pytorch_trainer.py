@@ -75,16 +75,16 @@ class pytorchTrainer(Trainer):
         self.model_artifacts_dir = self.pipeline_config.stores.model_artifacts_dir
         self.device = device
 
-        self.callbacks = instantiate(callbacks_config.callbacks)
-        metrics_adapter = instantiate(metrics_config.adapter[self.framework])
+        self.callbacks = instantiate(callbacks_config[self.framework])
+        metrics_adapter = instantiate(metrics_config[self.framework].adapter)
         self.metrics = metrics_adapter.setup(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
-            metrics=metrics_config.evaluate,
+            metrics=metrics_config[self.framework].evaluate,
         )
 
         self.model: Model = instantiate(
-            config=model_config.model_type, cfg=model_config, _recursive_=False
+            config=model_config[self.framework].model_type, cfg=model_config[self.framework], _recursive_=False
         ).to(self.device)
 
 
