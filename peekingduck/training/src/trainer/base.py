@@ -23,5 +23,5 @@ class Trainer(ABC):
         # raise NotImplementedError
 
     @abstractmethod
-    def fit(self, train_loader, validation_loader):
+    def train(self, train_loader, validation_loader):
         """Fit method"""
