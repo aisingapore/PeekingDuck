@@ -1,0 +1,38 @@
+download: False
+url: ""
+blob_file: "vegfru.zip"
+root_dir: "data"
+train_dir: "./${.root_dir}/${project_name}"
+test_dir: "./${.root_dir}/${project_name}"
+train_csv: "./${.root_dir}/${project_name}/train.csv"
+image_path_col_name: "image_path"
+target_col_name: "class_id"
+stratify_by: "class_name"
+classification_type: "multiclass"
+num_classes: 25
+class_name_to_id:
+  0: 0
+  1: 1
+  2: 2
+  3: 3
+  4: 4
+  5: 5
+  6: 6
+  7: 7
+  8: 8
+  9: 9
+  10: 10
+  11: 11
+  12: 12
+  13: 13
+  14: 14
+  15: 15
+  16: 16
+  17: 17
+  18: 18
+  19: 19
+  20: 20
+  21: 21
+  22: 22
+  23: 23
+  24: 24

@@ -17,3 +17,4 @@ matplotlib
 torchinfo
 timm
 tabulate
+wandb
