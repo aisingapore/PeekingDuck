@@ -1,0 +1,9 @@
+pytorch:
+  evaluate:
+    ["accuracy", "precision", "recall", "auroc", "multiclass_calibration_error"]
+  adapter:
+    _target_: src.metrics.pytorch_metrics.torchMetrics
+
+tensorflow:
+  adapter:
+    _target_: src.metrics.tensorflow_metrics.tensorflowMetrics
