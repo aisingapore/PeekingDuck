@@ -72,7 +72,7 @@ class MetricMeter(Callback):
         # this loss is the average loss over the entire epoch
 
         average_score = self.metrics_dict["train_loss"]["average_score"]
-        trainer.epoch_dict["train_loss"] = average_score  # FIXME hardcoded
+        trainer.epoch_dict['train']["train_loss"] = average_score  # FIXME hardcoded
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
     def on_train_batch_end(self, trainer) -> None:
@@ -81,7 +81,7 @@ class MetricMeter(Callback):
     def on_valid_loader_end(self, trainer) -> None:
         # this loss is the average loss over the entire epoch
         average_score = self.metrics_dict["valid_loss"]["average_score"]
-        trainer.epoch_dict["valid_loss"] = average_score  # FIXME hardcoded
+        trainer.epoch_dict['validation']["valid_loss"] = average_score  # FIXME hardcoded
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
     def on_valid_batch_end(self, trainer) -> None:

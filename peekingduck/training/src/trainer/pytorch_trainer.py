@@ -56,6 +56,25 @@ class pytorchTrainer(Trainer):
         """Initialize the trainer."""
         self.framework = framework
         self.logger = logger
+        self.device = None
+
+        self.pipeline_config = None
+        
+        self.callbacks = None
+        self.metrics = None
+        self.model = None
+        self.optimizer = None
+        self.scheduler = None
+
+        self.train_params = None
+        self.model_artifacts_dir = None
+        self.monitored_metric = None
+        self.best_valid_score = None
+        self.current_epoch = None
+        self.epoch_dict = None
+        self.batch_dict = None
+        self.history_dict = None
+
 
     def setup(
         self,
@@ -109,8 +128,14 @@ class pytorchTrainer(Trainer):
 
         self.current_epoch = 1
         self.epoch_dict = {}
+        self.epoch_dict['train'] = {}
+        self.epoch_dict['validation'] = {}
+        
         self.batch_dict = {}
+
         self.history_dict = {}
+        self.history_dict['train'] = {}
+        self.history_dict['validation'] = {}
         self._invoke_callbacks("on_trainer_start")
 
     def train(
@@ -162,10 +187,10 @@ class pytorchTrainer(Trainer):
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
-            self.history_dict["valid_trues"],
-            self.history_dict["valid_logits"],
-            self.history_dict["valid_preds"],
-            self.history_dict["valid_probs"],
+            self.history_dict['validation']["valid_trues"],
+            self.history_dict['validation']["valid_logits"],
+            self.history_dict['validation']["valid_preds"],
+            self.history_dict['validation']["valid_probs"],
         )
 
     def _run_train_epoch(self, train_loader: DataLoader, epoch: int) -> None:
@@ -226,11 +251,11 @@ class pytorchTrainer(Trainer):
         )
         self.logger.info(
             f"\n[RESULT]: Train. Epoch {epoch}:"
-            f"\nAvg Train Summary Loss: {self.epoch_dict['train_loss']:.3f}"
+            f"\nAvg Train Summary Loss: {self.epoch_dict['train']['train_loss']:.3f}"
             f"\nLearning Rate: {curr_lr:.5f}"
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
-        self.history_dict = {**self.epoch_dict}
+        self.history_dict['train'] = {**self.epoch_dict['train']}
         self._invoke_callbacks("on_train_epoch_end")
 
     def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
@@ -308,13 +333,13 @@ class pytorchTrainer(Trainer):
         )
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
-            f"\nAvg Val Summary Loss: {self.epoch_dict['valid_loss']:.3f}"
+            f"\nAvg Val Summary Loss: {self.epoch_dict['validation']['valid_loss']:.3f}"
             f"\nAvg Val Accuracy: {valid_metrics_dict['val_MulticlassAccuracy']:.3f}"
             f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_MulticlassAUROC']:.3f}"
             f"\nTime Elapsed: {valid_elapsed_time}\n"
         )
         # here self.epoch_dict only has valid_loss, we update the rest
-        self.epoch_dict.update(
+        self.epoch_dict['validation'].update(
             {
                 "valid_trues": valid_trues,
                 "valid_logits": valid_logits,
@@ -323,10 +348,10 @@ class pytorchTrainer(Trainer):
                 "valid_elapsed_time": valid_elapsed_time,
             }
         )  # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
-        self.epoch_dict.update(valid_metrics_dict)
+        self.epoch_dict['validation'].update(valid_metrics_dict)
         # temporary stores current valid epochs info
         # FIXME: so now valid epoch dict and valid history dict are the same lol.
-        self.valid_history_dict = {**self.epoch_dict, **valid_metrics_dict}
+        self.history_dict['validation'] = {**self.epoch_dict['validation'], **valid_metrics_dict}
 
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.

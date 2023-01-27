@@ -153,7 +153,7 @@ class ModelCheckpoint(Callback):
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
-        valid_score = trainer.epoch_dict.get(self.monitor)
+        valid_score = trainer.epoch_dict['validation'].get(self.monitor)
 
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_valid_score
