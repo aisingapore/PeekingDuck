@@ -49,7 +49,7 @@ class ImageClassificationDataModule(DataModule):
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
         self.transforms = ImageClassificationTransforms(cfg)
-        self.dataset_loader = DataAdapter(cfg.data_adapter)
+        self.dataset_loader = DataAdapter(cfg.data_adapter[cfg.framework])
 
     def get_train_dataloader(self):
         """ """

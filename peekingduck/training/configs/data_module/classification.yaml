@@ -5,7 +5,7 @@ defaults:
               - train
               - test
       - data_adapter:
-              - pytorch
+              - adapter
 
 module:
       _target_: src.data.data_module.ImageClassificationDataModule

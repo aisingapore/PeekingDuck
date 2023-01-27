@@ -5,11 +5,12 @@ defaults:
               - train
               - test
       - data_adapter:
-              - pytorch
+              - adapter
 
 module:
       _target_: src.data.data_module.ImageClassificationDataModule
       _recursive_: False
 
+framework: ${framework}
 debug: ${debug}
 num_debug_samples: 300
