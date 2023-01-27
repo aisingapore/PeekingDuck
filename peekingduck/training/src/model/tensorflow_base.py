@@ -12,14 +12,25 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Tuple, Type
 from abc import ABC, abstractmethod
+
+import tensorflow as tf
 
 class Model(ABC):
     """Model Base Class for TensorFlow."""
     
     def __init__(self) -> None:
         self.model_config = None
-    
+        self.train_dataset = None
+        self.valid_dataset = None
+        self.model_name: str
+        self.input_shape: Tuple[int, int, int]
+        self.learning_rate: float
+        self.optimizer: Type[tf.keras.optimizers.Optimizer]
+        self.loss: Type[tf.keras.losses.Loss]
+        self.metrics: list
+
     @abstractmethod
     def create_base(self):
         """Create pre-trained base model."""
@@ -31,11 +42,15 @@ class Model(ABC):
         raise NotImplementedError
         
     @abstractmethod
-    def create_model(self):
-        """Create model with the base and the head."""
-        raise NotImplementedError
+    def build_model(self):
+        """Build the model with base and head"""
         
     @abstractmethod
     def compile_model(self):
         """Compile model with optimizer, loss and metrics."""
+        raise NotImplementedError
+    
+    @abstractmethod
+    def create_model(self):
+        """Create model with the build and compile methods."""
         raise NotImplementedError

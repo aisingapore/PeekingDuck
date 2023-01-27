@@ -1,11 +1,15 @@
 import logging
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 import numpy as np
 import os
-import tensorflow as tf
-from configs import LOGGER_NAME
 
-logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+print(os.getcwd())
+
+import tensorflow as tf
+# from configs import LOGGER_NAME
+
+logger = logging.getLogger("TF_test")  # pylint: disable=invalid-name
+logging.basicConfig(level=logging.INFO)
 
 # download dataset
 _URL = "https://storage.googleapis.com/mledu-datasets/cats_and_dogs_filtered.zip"
@@ -26,10 +30,10 @@ validation_dataset = tf.keras.utils.image_dataset_from_directory(
     validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE
 )
 
+"""
 # show sample images
 class_names = train_dataset.class_names
 
-"""
 plt.figure(figsize=(10, 10))
 for images, labels in train_dataset.take(1):
     for i in range(9):
@@ -83,32 +87,34 @@ preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
 
 # Create the base model from the pre-trained model MobileNet V2
 IMG_SHAPE = IMG_SIZE + (3,)
+print(IMG_SHAPE)
 base_model = tf.keras.applications.MobileNetV2(
     input_shape=IMG_SHAPE, include_top=False, weights="imagenet"
 )
-
 image_batch, label_batch = next(iter(train_dataset))
 feature_batch = base_model(image_batch)
+logger.info(image_batch.shape)
+logger.info(label_batch.shape)
 logger.info(feature_batch.shape)
 
 # freeze the base
 base_model.trainable = False
 
 # check architecture
-base_model.summary()
+# base_model.summary()
 
 # add classification head
 global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
-feature_batch_average = global_average_layer(feature_batch)
-logger.info(feature_batch_average.shape)
+# feature_batch_average = global_average_layer(feature_batch)
+# logger.info(feature_batch_average.shape)
 
 # convert to a single prediction per image
 prediction_layer = tf.keras.layers.Dense(1)
-prediction_batch = prediction_layer(feature_batch_average)
-logger.info(prediction_batch.shape)
+# prediction_batch = prediction_layer(feature_batch_average)
+# logger.info(prediction_batch.shape)
 
 # build the model
-inputs = tf.keras.Input(shape=(160, 160, 3))
+inputs = tf.keras.Input(shape=IMG_SHAPE)
 x = data_augmentation(inputs)
 x = preprocess_input(x)
 x = base_model(x, training=False)
@@ -119,6 +125,10 @@ model = tf.keras.Model(inputs, outputs)
 
 # compile model
 base_learning_rate = 0.0001
+
+loss=tf.keras.losses.BinaryCrossentropy(from_logits=True)
+print(type(loss))
+
 model.compile(
     optimizer=tf.keras.optimizers.Adam(learning_rate=base_learning_rate),
     loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
@@ -126,6 +136,7 @@ model.compile(
 )
 
 model.summary()
+print(type(model))
 
 # trainable variables, weights and biases, tf.Variable
 len(model.trainable_variables)
@@ -152,6 +163,7 @@ val_acc = history.history["val_accuracy"]
 loss = history.history["loss"]
 val_loss = history.history["val_loss"]
 
+"""
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(acc, label="Training Accuracy")
@@ -170,3 +182,4 @@ plt.ylim([0, 1.0])
 plt.title("Training and Validation Loss")
 plt.xlabel("epoch")
 plt.show()
+"""
