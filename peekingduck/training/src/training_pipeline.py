@@ -23,6 +23,7 @@ from src.data.base import DataModule
 from src.model.base import Model
 from src.trainer.base import Trainer
 from src.utils.general_utils import choose_torch_device
+from src.model_analysis.weights_biases import WeightsAndBiases
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
@@ -43,6 +44,8 @@ def run(cfg: DictConfig) -> None:
     train_loader = data_module.get_train_dataloader()
     validation_loader = data_module.get_validation_dataloader()
 
+    wandb = WeightsAndBiases(cfg.model_analysis)
+
     trainer: Trainer = instantiate(
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
     )
@@ -54,9 +57,8 @@ def run(cfg: DictConfig) -> None:
         cfg.data_module,
         device=cfg.device,
     )
-    trainer.train(train_loader, validation_loader)
-
-
+    history = trainer.train(train_loader, validation_loader)
+    # wandb.log_history(history)
 
     end_time = perf_counter()
     logger.debug(f"Run time = {end_time - start_time:.2f} sec")

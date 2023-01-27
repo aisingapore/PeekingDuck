@@ -26,6 +26,7 @@ from typing import Any, DefaultDict, Dict, List
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
+import wandb
 
 
 class History(Callback):
@@ -59,6 +60,7 @@ class History(Callback):
 
     def _update(self, history: Dict[str, Any]) -> None:
         """Updates the history object with the latest metrics."""
+        wandb.log(history)
         for key in history:
             if key not in self.history:
                 self.history[key] = [history.get(key)]

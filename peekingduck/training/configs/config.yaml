@@ -10,6 +10,7 @@ defaults:
   - trainer: ${use_case}
   - callbacks: ${use_case}
   - metrics: ${use_case}
+  - model_analysis: ${use_case}
   - stores: ${use_case}
   - _self_
   - override hydra/job_logging: custom
