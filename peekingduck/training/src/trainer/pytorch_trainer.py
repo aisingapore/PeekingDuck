@@ -17,19 +17,17 @@ import pandas as pd
 import time
 import torch
 
-
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, Optional, Union
 from tabulate import tabulate
 
 from tqdm.auto import tqdm
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
-from torchmetrics import MetricCollection
 from hydra.utils import instantiate
 
 from src.trainer.base import Trainer
-from src.callbacks.base import Callback
+from src.callbacks.base import init_callbacks
 from src.model.base import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
@@ -74,8 +72,7 @@ class pytorchTrainer(Trainer):
 
         self.model_artifacts_dir = self.pipeline_config.stores.model_artifacts_dir
         self.device = device
-
-        self.callbacks = instantiate(callbacks_config[self.framework])
+        self.callbacks = init_callbacks(callbacks_config[self.framework])
         metrics_adapter = instantiate(metrics_config[self.framework].adapter)
         self.metrics = metrics_adapter.setup(
             task=data_config.dataset.classification_type,

@@ -24,6 +24,7 @@ from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List
 
 from src.callbacks.base import Callback
+from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
 
 
@@ -32,7 +33,7 @@ class History(Callback):
 
     def __init__(self) -> None:
         """Constructor class for History Class."""
-        super().__init__()
+        super().__init__(order=CallbackOrder.HISTORY)
         self.history: DefaultDict[str, List[Any]]
 
     def on_trainer_start(

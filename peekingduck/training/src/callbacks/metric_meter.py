@@ -35,6 +35,7 @@ this is the average score of all batches in 1 epoch.
 from collections import defaultdict
 
 from src.callbacks.base import Callback
+from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
 
 # TODO:
@@ -52,7 +53,7 @@ class MetricMeter(Callback):
     stats_to_track = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
 
     def __init__(self, float_precision: int = 3, stats_to_track=[]) -> None:
-        super().__init__()
+        super().__init__(order=CallbackOrder.METRICMETER)
         self.float_precision = float_precision
         self.reset()
 

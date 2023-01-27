@@ -13,11 +13,39 @@
 # limitations under the License.
 
 from __future__ import annotations
-
-from typing import Any, TYPE_CHECKING  # This solves circular import type hinting.
+from typing import List, Any, TYPE_CHECKING  # This solves circular import type hinting.
+from omegaconf import DictConfig
+import src.callbacks as Callbacks
 
 if TYPE_CHECKING:
     from src.trainer import Trainer
+
+def init_callbacks(callbacks):
+    """Method to initialise the callbacks.
+    Args:
+        callbacks: The list of callbacks from configs->callbacks->classification/detection/segmentation.
+    """
+    cb_list = []
+    for cb in callbacks:
+        if type(cb) is DictConfig:
+            for cbk, cbv in cb.items():
+                cb_list.append( getattr(Callbacks, cbk)(**cbv) )
+        elif type(cb) is str:
+            cb_list.append( getattr(Callbacks, cb)() )
+        else:
+            raise TypeError
+    return sort_callbacks(cb_list)
+
+
+def sort_callbacks(callbacks: List) -> List:
+    """Method to sort callbacks.
+    Args:
+        callbacks: List of callbacks.
+    Returns:
+        Callbacks sorted according to callback order.
+    """
+    callbacks = sorted(callbacks, key=lambda callback: callback.order.value)
+    return callbacks
 
 
 # pylint: disable=line-too-long, too-many-public-methods
@@ -33,8 +61,9 @@ class Callback:
         - https://github.com/Atharva-Phatak/torchflare/tree/main/torchflare
     """
 
-    def __init__(self) -> None:
+    def __init__(self, order):
         """Constructor for Callback base class."""
+        self.order = order
 
     @property
     def state_key(self) -> str:
@@ -85,11 +114,11 @@ class Callback:
     def on_train_loader_start(self, trainer: Trainer) -> None:
         """Called when the train loader begins."""
 
-    def on_valid_loader_start(self, trainer: Trainer) -> None:
-        """Called when the validation loader begins."""
-
     def on_train_loader_end(self, trainer: Trainer) -> None:
         """Called when the train loader ends."""
+
+    def on_valid_loader_start(self, trainer: Trainer) -> None:
+        """Called when the validation loader begins."""
 
     def on_valid_loader_end(self, trainer: Trainer) -> None:
         """Called when the validation loader ends."""
@@ -123,3 +152,6 @@ class Callback:
 
     def on_inference_end(self, trainer: Trainer) -> None:
         """Called when the inference ends."""
+
+
+

@@ -30,8 +30,9 @@ TODO:
         may need to inherit the `pipeline_config` and use it to initiate the attributes.
 """
 import logging
-
 from src.callbacks.base import Callback
+from src.callbacks.order import CallbackOrder
+
 from src.trainer.base import Trainer
 from src.utils.callback_utils import init_improvement
 from configs import LOGGER_NAME
@@ -53,7 +54,7 @@ class EarlyStopping(Callback):
     def __init__(
         self, mode: str, monitor: str, patience: int = 3, min_delta: float = 1e-6
     ) -> None:
-        super().__init__()
+        super().__init__(order=CallbackOrder.EARLYSTOPPING)
         self.mode = mode
         self.monitor = monitor
         self.patience = patience

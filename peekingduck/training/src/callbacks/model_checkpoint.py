@@ -86,6 +86,7 @@ from typing import Any, Dict
 import torch
 
 from src.callbacks.base import Callback
+from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
 from src.utils.callback_utils import init_improvement
 
@@ -117,7 +118,7 @@ class ModelCheckpoint(Callback):
         min_delta: float = 1e-6,
     ) -> None:
         """Constructor for ModelCheckpoint class."""
-        super().__init__()
+        super().__init__(order=CallbackOrder.METRICMETER)
 
         if monitor.startswith("train_") or monitor.startswith("val_"):
             self.monitor = monitor

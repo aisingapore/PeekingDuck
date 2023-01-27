@@ -1,23 +1,17 @@
 pytorch:
-  - _target_: src.callbacks.history.History  
-  - _target_: src.callbacks.metric_meter.MetricMeter
-  - _target_: src.callbacks.model_checkpoint.ModelCheckpoint
-    mode: 'max'
-    monitor: 'val_MulticlassAccuracy'
-  - _target_: src.callbacks.early_stopping.EarlyStopping
-    mode: 'max'
-    monitor: 'val_MulticlassAccuracy'
-    patience: ${trainer.pytorch.global_train_params.patience}
-    min_delta: 0.000001 # 1e-6
+  - EarlyStopping:
+      mode: 'max'
+      monitor: 'val_MulticlassAccuracy'
+      patience: ${trainer.pytorch.global_train_params.patience}
+      min_delta: 0.000001 # 1e-6
+  - History
+  - MetricMeter
+  - ModelCheckpoint:
+      mode: 'max'
+      monitor: 'val_MulticlassAccuracy'
 
 tensorflow:
-  - _target_: src.callbacks.history.History  
-  - _target_: src.callbacks.metric_meter.MetricMeter
-  - _target_: src.callbacks.model_checkpoint.ModelCheckpoint
-    mode: 'max'
-    monitor: 'val_MulticlassAccuracy'
-  - _target_: src.callbacks.early_stopping.EarlyStopping
-    mode: 'max'
-    monitor: 'val_MulticlassAccuracy'
-    patience: ${trainer.tensorflow.global_train_params.patience}
-    min_delta: 0.000001 # 1e-6
+  - History: null
+  - MetricMeter: null
+  - ModelCheckpoint: null
+  - EarlyStopping: null
