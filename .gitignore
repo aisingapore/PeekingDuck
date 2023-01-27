@@ -158,3 +158,4 @@ docs/source/nodes
 peekingduck/training/.gitignore
 **/outputs
 **/multirun
+**/wandb
