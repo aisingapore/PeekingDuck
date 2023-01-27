@@ -67,7 +67,7 @@ class pytorchTrainer(Trainer):
         device: str = "cpu",
     ) -> None:
         """Called when the trainer begins."""
-        self.pipeline_config = pipeline_config
+        self.pipeline_config = pipeline_config[self.framework]
         self.train_params = self.pipeline_config.global_train_params
 
         self.model_artifacts_dir = self.pipeline_config.stores.model_artifacts_dir

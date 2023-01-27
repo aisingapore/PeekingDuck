@@ -47,7 +47,7 @@ def run(cfg: DictConfig) -> None:
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
     )
     trainer.setup(
-        cfg.trainer[cfg.framework],
+        cfg.trainer,
         cfg.model,
         cfg.callbacks,
         cfg.metrics,
