@@ -446,6 +446,10 @@ def init_logger(
 
 
 def stratified_sample_df(df, col, n_samples):
+    """Stratified by `col` for `n_samples` samples minimun.
+    Returns:
+         df_: stratified sampled dataframe
+    """
     n = min(n_samples, df[col].value_counts().min())
     df_ = df.groupby(col).apply(lambda x: x.sample(n))
     df_.index = df_.index.droplevel(0)

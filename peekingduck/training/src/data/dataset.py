@@ -20,10 +20,15 @@ from omegaconf import DictConfig
 import albumentations as A
 import cv2
 import pandas as pd
-import torch
-import torchvision.transforms as T
-from torch.utils.data import Dataset
 
+from .. import config
+
+if config.TORCH_AVAILABLE:
+    import torch
+    import torchvision.transforms as T
+    from torch.utils.data import Dataset
+else:
+    raise ImportError("Called a torch-specific function but torch is not installed.")
 
 TransformTypes = Optional[Union[A.Compose, T.Compose]]
 

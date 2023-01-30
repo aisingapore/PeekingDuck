@@ -1,7 +1,7 @@
 test:
   - _target_: torchvision.transforms.ToPILImage
   - _target_: torchvision.transforms.Resize
-    size: 64
+    size: 32
   - _target_: torchvision.transforms.ToTensor
   - _target_: torchvision.transforms.Normalize
     mean: [0.485, 0.456, 0.406]

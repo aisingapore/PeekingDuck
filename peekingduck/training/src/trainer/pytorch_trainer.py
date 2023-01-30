@@ -28,6 +28,7 @@ from hydra.utils import instantiate
 
 from src.trainer.base import Trainer
 from src.callbacks.base import init_callbacks
+from src.callbacks.events import EVENTS
 from src.model.pytorch_base import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
@@ -136,7 +137,7 @@ class pytorchTrainer(Trainer):
         self.history_dict = {}
         self.history_dict["train"] = {}
         self.history_dict["validation"] = {}
-        self._invoke_callbacks("on_trainer_start")
+        self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
 
     def train(
         self,
@@ -168,12 +169,14 @@ class pytorchTrainer(Trainer):
                 else:
                     self.scheduler.step()
 
+            self.epoch_dict["train"]["epoch"] = self.current_epoch
+            self.epoch_dict["validation"]["epoch"] = self.current_epoch
             self.current_epoch += 1
 
         self._train_teardown()  # shutdown
         # FIXME: here is finish fitting, whether to call it on train end or on fit end?
         # Currently only history uses on_trainer_end.
-        self._invoke_callbacks("on_trainer_end")
+        self._invoke_callbacks(EVENTS.ON_TRAINER_END.value)
         return self.history
 
     def _train_setup(self, inputs, fold: int) -> None:  # TODO rename
@@ -242,9 +245,9 @@ class pytorchTrainer(Trainer):
 
             _y_train_pred = torch.argmax(_y_train_prob, dim=1)
 
-            self._invoke_callbacks("on_train_batch_end")
+            self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
 
-        self._invoke_callbacks("on_train_loader_end")
+        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
         # total time elapsed for this epoch
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
@@ -256,7 +259,7 @@ class pytorchTrainer(Trainer):
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
         self.history_dict["train"] = {**self.epoch_dict["train"]}
-        self._invoke_callbacks("on_train_epoch_end")
+        self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.
@@ -307,7 +310,7 @@ class pytorchTrainer(Trainer):
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
-                self._invoke_callbacks("on_valid_batch_end")
+                self._invoke_callbacks(EVENTS.ON_VALID_BATCH_END.value)
                 # For OOF score and other computation.
                 # TODO: Consider giving numerical example. Consider rolling back to targets.cpu().numpy() if torch fails.
                 valid_trues.extend(targets.cpu())
@@ -325,7 +328,7 @@ class pytorchTrainer(Trainer):
             valid_trues, valid_preds, valid_probs
         )
 
-        self._invoke_callbacks("on_valid_loader_end")
+        self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)
 
         # total time elapsed for this epoch
         valid_elapsed_time = time.strftime(
@@ -358,7 +361,7 @@ class pytorchTrainer(Trainer):
 
         # TODO: after valid epoch ends, for example, we need to call
         # our History callback to save the metrics into a list.
-        self._invoke_callbacks("on_valid_epoch_end")
+        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
 
     def _invoke_callbacks(self, event_name: str) -> None:
         """Invoke the callbacks."""
