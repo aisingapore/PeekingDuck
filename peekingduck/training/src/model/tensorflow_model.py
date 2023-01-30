@@ -17,8 +17,10 @@ import logging
 
 # import matplotlib.pyplot as plt
 import tensorflow as tf
+from omegaconf import DictConfig
 
-from src.model.tensorflow_base import Model
+# from src.model.tensorflow_base import Model
+from tensorflow_base import Model  # for testing only
 
 logger = logging.getLogger("TF_test")  # pylint: disable=invalid-name
 logging.basicConfig(level=logging.INFO)
@@ -33,7 +35,8 @@ class ImageClassificationModel(Model):
         self.input_shape = (160, 160, 3)
         self.learning_rate = 0.0001
         self.optimizer = tf.keras.optimizers.Adam(learning_rate=self.learning_rate)
-        self.loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        # self.loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+        self.loss = tf.keras.losses.CategoricalCrossentropy()
         self.metrics = ["accuracy"]
         self.__init_data()
         self.create_model()
@@ -50,6 +53,7 @@ class ImageClassificationModel(Model):
         PATH = os.path.join(os.path.dirname(path_to_zip), "cats_and_dogs_filtered")
 
         train_dir = os.path.join(PATH, "train")
+        print(train_dir)
         validation_dir = os.path.join(PATH, "validation")
 
         BATCH_SIZE = 32
@@ -57,10 +61,18 @@ class ImageClassificationModel(Model):
 
         # assign train and validation datasets to the instance
         self.train_dataset = tf.keras.utils.image_dataset_from_directory(
-            train_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE
+            train_dir,
+            shuffle=True,
+            batch_size=BATCH_SIZE,
+            image_size=IMG_SIZE,
+            label_mode="categorical",
         )
         self.validation_dataset = tf.keras.utils.image_dataset_from_directory(
-            validation_dir, shuffle=True, batch_size=BATCH_SIZE, image_size=IMG_SIZE
+            validation_dir,
+            shuffle=True,
+            batch_size=BATCH_SIZE,
+            image_size=IMG_SIZE,
+            label_mode="categorical",
         )
 
     def data_processing(self, inputs):
@@ -89,10 +101,11 @@ class ImageClassificationModel(Model):
     def create_head(self, inputs):
         # create the pooling and prediction layers
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
-        prediction_layer = tf.keras.layers.Dense(1)
+        # prediction_layer = tf.keras.layers.Dense(1)
+        prediction_layer = tf.keras.layers.Dense(2, activation="softmax")
         # chain up the layers
         x = global_average_layer(inputs)
-        x = tf.keras.layers.Dropout(0.2)(x)
+        # x = tf.keras.layers.Dropout(0.2)(x)
         outputs = prediction_layer(x)
         return outputs
 
@@ -118,7 +131,6 @@ class ImageClassificationModel(Model):
         self.compile_model()
 
 
-"""
 classification_model = ImageClassificationModel()
 
 # prepare for training
@@ -143,6 +155,7 @@ val_acc = history.history["val_accuracy"]
 loss = history.history["loss"]
 val_loss = history.history["val_loss"]
 
+"""
 plt.figure(figsize=(8, 8))
 plt.subplot(2, 1, 1)
 plt.plot(acc, label="Training Accuracy")

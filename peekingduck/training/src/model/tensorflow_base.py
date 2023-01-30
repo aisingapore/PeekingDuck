@@ -16,10 +16,12 @@ from typing import Tuple, Type
 from abc import ABC, abstractmethod
 
 import tensorflow as tf
+from omegaconf import DictConfig
+
 
 class Model(ABC):
     """Model Base Class for TensorFlow."""
-    
+
     def __init__(self) -> None:
         self.model_config = None
         self.train_dataset = None
@@ -35,21 +37,21 @@ class Model(ABC):
     def create_base(self):
         """Create pre-trained base model."""
         raise NotImplementedError
-        
+
     @abstractmethod
     def create_head(self):
         """Create head of the model."""
         raise NotImplementedError
-        
+
     @abstractmethod
     def build_model(self):
         """Build the model with base and head"""
-        
+
     @abstractmethod
     def compile_model(self):
         """Compile model with optimizer, loss and metrics."""
         raise NotImplementedError
-    
+
     @abstractmethod
     def create_model(self):
         """Create model with the build and compile methods."""
