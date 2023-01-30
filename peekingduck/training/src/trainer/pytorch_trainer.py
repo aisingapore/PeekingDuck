@@ -29,7 +29,7 @@ from hydra.utils import instantiate
 from src.trainer.base import Trainer
 from src.callbacks.base import init_callbacks
 from src.callbacks.events import EVENTS
-from src.model.base import Model
+from src.model.pytorch_base import Model
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
 import logging
@@ -60,7 +60,7 @@ class pytorchTrainer(Trainer):
         self.device = None
 
         self.pipeline_config = None
-        
+
         self.callbacks = None
         self.metrics = None
         self.model = None
@@ -80,7 +80,6 @@ class pytorchTrainer(Trainer):
         self.epoch_dict = None
         self.batch_dict = None
         self.history_dict = None
-
 
     def setup(
         self,
@@ -106,9 +105,10 @@ class pytorchTrainer(Trainer):
         )
 
         self.model: Model = instantiate(
-            config=model_config[self.framework].model_type, cfg=model_config[self.framework], _recursive_=False
+            config=model_config[self.framework].model_type,
+            cfg=model_config[self.framework],
+            _recursive_=False,
         ).to(self.device)
-
 
         self.optimizer = self.get_optimizer(
             model=self.model,
@@ -134,40 +134,40 @@ class pytorchTrainer(Trainer):
 
         self.current_epoch = 1
         self.epoch_dict = {}
-        self.epoch_dict['train'] = {}
-        self.epoch_dict['validation'] = {}
-        
+        self.epoch_dict["train"] = {}
+        self.epoch_dict["validation"] = {}
+
         self.batch_dict = {}
 
         self.history_dict = {}
-        self.history_dict['train'] = {}
-        self.history_dict['validation'] = {}
+        self.history_dict["train"] = {}
+        self.history_dict["validation"] = {}
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
 
     def _set_dataloaders(
         self,
         train_dl: DataLoader,
-        validation_dl: DataLoader
+        validation_dl: DataLoader,
     ) -> None:
         """Initialise Dataloader Variables"""
         self.train_loader = train_dl
         self.validation_loader = validation_dl
 
-    def _train_setup(self, inputs, fold: int) -> None:  # TODO rename
+    def _train_setup(self, inputs, fold: int) -> None:
         self.logger.info(f"Fold {fold} started")
         # show model summary
         self.model.model_summary(inputs.shape)
         self.best_valid_loss = np.inf
         self.current_fold = fold
 
-    def _train_teardown(self) -> None:  # TODO rename
+    def _train_teardown(self) -> None:
         free_gpu_memory(
             self.optimizer,
             self.scheduler,
-            self.history_dict['validation']["valid_trues"],
-            self.history_dict['validation']["valid_logits"],
-            self.history_dict['validation']["valid_preds"],
-            self.history_dict['validation']["valid_probs"],
+            self.history_dict["validation"]["valid_trues"],
+            self.history_dict["validation"]["valid_logits"],
+            self.history_dict["validation"]["valid_preds"],
+            self.history_dict["validation"]["valid_probs"],
         )
 
     def _run_epochs(self) -> None:
@@ -263,6 +263,8 @@ class pytorchTrainer(Trainer):
             f"\nLearning Rate: {curr_lr:.5f}"
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
+        self.history_dict["train"] = {**self.epoch_dict["train"]}
+        self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
         """Validate the model on the validation set for one epoch.

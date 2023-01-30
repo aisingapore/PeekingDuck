@@ -29,7 +29,7 @@ import torchvision
 from torch import nn
 from omegaconf import DictConfig
 
-from src.model.base import Model
+from src.model.pytorch_base import Model
 from src.utils.general_utils import seed_all, rsetattr
 
 from configs import LOGGER_NAME

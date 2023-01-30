@@ -2,8 +2,8 @@ defaults:
       - dataset: cifar10
       - resample: train_test_split
       - transform:
-              - train
-              - test
+              - train_cifar10
+              - test_cifar10
       - data_adapter:
               - adapter
 
