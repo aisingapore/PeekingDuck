@@ -255,8 +255,6 @@ class pytorchTrainer(Trainer):
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
         )
-        self.history_dict['train'] = {**self.epoch_dict['train']}
-        self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
         self.logger.info(
             f"\n[RESULT]: Train. Epoch {epoch}:"
             f"\nAvg Train Summary Loss: {self.epoch_dict['train']['train_loss']:.3f}"
