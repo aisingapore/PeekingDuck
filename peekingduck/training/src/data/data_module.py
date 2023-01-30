@@ -118,7 +118,7 @@ class ImageClassificationDataModule(DataModule):
 
         if self.cfg.debug:
             num_debug_samples = self.cfg.num_debug_samples
-            logger.debug(
+            logger.info(
                 f"Debug mode is on, using {num_debug_samples} images for training."
             )
             if stratify_by is None:
