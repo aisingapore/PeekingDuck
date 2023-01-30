@@ -61,7 +61,7 @@ class EarlyStopping(Callback):
         self.min_delta = min_delta
 
     def on_trainer_start(self, trainer: Trainer) -> None:
-        self.improvement, self.best_valid_score = init_improvement(
+        self.improvement, self.best_val_score = init_improvement(
             mode=self.mode, min_delta=self.min_delta
         )
         self.patience_counter = 0
@@ -71,10 +71,10 @@ class EarlyStopping(Callback):
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         valid_score = trainer.epoch_dict['validation'].get(self.monitor)
         if self.improvement(
-            curr_epoch_score=valid_score, curr_best_score=self.best_valid_score
+            curr_epoch_score=valid_score, curr_best_score=self.best_val_score
         ):
-            # update self.best_valid_score
-            self.best_valid_score = valid_score
+            # update self.best_val_score
+            self.best_val_score = valid_score
 
             # reset patience counter
             self.patience_counter = 0

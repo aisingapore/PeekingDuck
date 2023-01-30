@@ -38,9 +38,9 @@ TODO:
   arguments in `__init__` is redundant. However, we can still keep it as
   it seems clear to the advanced users that this is a callback that can
   take in these arguments.
-  Now, the `best_valid_score` is initiated from the `mode` argument, if we use our
+  Now, the `best_val_score` is initiated from the `mode` argument, if we use our
   `pipeline_config`, then we can define it as
-  self.best_valid_score = -math.inf if trainer.monitored_metric["mode"] == "max" else math.inf
+  self.best_val_score = -math.inf if trainer.monitored_metric["mode"] == "max" else math.inf
 
 2. A corollary is if we need to put `model_artifacts_dir` in the argument here as well?
   Currently we just `trainer.pipeline_config.stores.model_artifacts_dir` to get it.
@@ -135,7 +135,7 @@ class ModelCheckpoint(Callback):
 
     def on_trainer_start(self, trainer: Trainer) -> None:
         """Initialize the best score as either -inf or inf depending on mode."""
-        self.improvement, self.best_valid_score = init_improvement(
+        self.improvement, self.best_val_score = init_improvement(
             mode=self.mode, min_delta=self.min_delta
         )
         self.state_dict = {
@@ -156,7 +156,7 @@ class ModelCheckpoint(Callback):
         valid_score = trainer.epoch_dict['validation'].get(self.monitor)
 
         if self.improvement(
-            curr_epoch_score=valid_score, curr_best_score=self.best_valid_score
+            curr_epoch_score=valid_score, curr_best_score=self.best_val_score
         ):
             model_artifacts_path = (
                 Path(self.model_artifacts_dir)
@@ -166,13 +166,13 @@ class ModelCheckpoint(Callback):
                 .as_posix()
             )
 
-            self.best_valid_score = valid_score
+            self.best_val_score = valid_score
 
             self.state_dict["model_state_dict"] = trainer.model.state_dict()
             self.state_dict["optimizer_state_dict"] = trainer.optimizer.state_dict()
             self.state_dict["scheduler_state_dict"] = trainer.scheduler.state_dict()
             self.state_dict["epoch"] = trainer.current_epoch
-            self.state_dict["best_score"] = self.best_valid_score
+            self.state_dict["best_score"] = self.best_val_score
             # self.state_dict["oof_trues"] = trainer.history_dict["valid_trues"]
             # self.state_dict["oof_preds"] = trainer.history_dict["valid_preds"]
             # self.state_dict["oof_probs"] = trainer.history_dict["valid_probs"]
