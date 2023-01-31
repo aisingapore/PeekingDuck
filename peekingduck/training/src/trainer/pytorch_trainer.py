@@ -474,7 +474,7 @@ class pytorchTrainer(Trainer):
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
-            
+
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
         self._train_setup(inputs, fold=fold)  # startup

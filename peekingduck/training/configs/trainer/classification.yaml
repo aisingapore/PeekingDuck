@@ -44,7 +44,7 @@ pytorch:
     global_train_params:
         epochs: 50
         use_amp: False
-        patience: 3
+        patience: 7
         model_name: ${model.pytorch.model_name}
         debug: ${debug}
         debug_epochs: 3

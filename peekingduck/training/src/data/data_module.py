@@ -48,8 +48,10 @@ class ImageClassificationDataModule(DataModule):
     ) -> None:
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
-        self.transforms = ImageClassificationTransforms(cfg)
-        self.dataset_loader = DataAdapter(cfg.data_adapter[cfg.framework])
+        self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
+            cfg
+        )
+        self.dataset_loader: DataAdapter = DataAdapter(cfg.data_adapter[cfg.framework])
 
     def get_train_dataloader(self):
         """ """
@@ -69,7 +71,7 @@ class ImageClassificationDataModule(DataModule):
             self.test_dataset,
         )
 
-    def prepare_data(self):
+    def prepare_data(self) -> None:
         """ """
         url: str = self.cfg.dataset.url
         blob_file: str = self.cfg.dataset.blob_file
@@ -109,11 +111,11 @@ class ImageClassificationDataModule(DataModule):
             )
         logger.info(df.head())
         self.train_df = df
-        self.train_df, self.test_df = self.cross_validation_split(
-            df, stratify_by=stratify_by
+        self.train_df, self.test_df = self._cross_validation_split(
+            self.cfg.resample.resample_strategy, df, stratify_by=stratify_by
         )
-        self.train_df, self.valid_df = self.cross_validation_split(
-            self.train_df, stratify_by=stratify_by
+        self.train_df, self.valid_df = self._cross_validation_split(
+            self.cfg.resample.resample_strategy, self.train_df, stratify_by=stratify_by
         )
 
         if self.cfg.debug:
@@ -159,16 +161,18 @@ class ImageClassificationDataModule(DataModule):
                 transforms=test_transforms,
             )
 
-    def cross_validation_split(
-        self,
+    @staticmethod
+    def _cross_validation_split(
+        resample_strategy: DictConfig,
         df: pd.DataFrame,
         fold: Optional[int] = None,
         stratify_by: Optional[list] = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into train and validation dataframes."""
-        resample_strategy = self.cfg.resample.resample_strategy
         resample_func = instantiate(resample_strategy)
-        if stratify_by is not None:
-            logger.info(f"stratify_by: {stratify_by}")
-            return resample_func(df, stratify=df[stratify_by])
-        return resample_func(df)
+
+        if stratify_by is None:
+            return resample_func(df)
+
+        logger.info(f"stratify_by: {stratify_by}")
+        return resample_func(df, stratify=df[stratify_by])
