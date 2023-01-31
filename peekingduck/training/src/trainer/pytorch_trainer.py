@@ -17,6 +17,7 @@ import pandas as pd
 import time
 import torch
 
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 from tabulate import tabulate
@@ -75,6 +76,8 @@ class pytorchTrainer(Trainer):
         self.train_loader = None
         self.validation_loader = None
 
+        self.stop_training = False
+        self.history = defaultdict(list)
         self.epochs = None
         self.current_epoch = None
         self.epoch_dict = None
@@ -182,7 +185,7 @@ class pytorchTrainer(Trainer):
             self._run_train_epoch(self.train_loader, epoch)
             self._run_validation_epoch(self.validation_loader, epoch)
 
-            if self.stop:  # from early stopping
+            if self.stop_training:  # from early stopping
                 break  # Early Stopping
 
             if self.scheduler is not None:
@@ -211,6 +214,7 @@ class pytorchTrainer(Trainer):
 
         # Iterate over train batches
         for _, batch in enumerate(train_bar, start=1):
+            self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_START.value)
             # unpack - note that if BCEWithLogitsLoss, dataset should do view(-1,1) and not here.
             inputs, targets = batch
             inputs = inputs.to(self.device, non_blocking=True)
@@ -251,6 +255,8 @@ class pytorchTrainer(Trainer):
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
 
         self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
+
+        self.history_dict["train"] = {**self.epoch_dict["train"]}
         # total time elapsed for this epoch
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
@@ -261,7 +267,6 @@ class pytorchTrainer(Trainer):
             f"\nLearning Rate: {curr_lr:.5f}"
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
-        self.history_dict["train"] = {**self.epoch_dict["train"]}
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
@@ -283,10 +288,12 @@ class pytorchTrainer(Trainer):
 
         valid_bar = tqdm(validation_loader)
 
-        valid_logits, valid_trues, valid_preds, valid_probs = [], [], [], []
+        valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
 
         with torch.no_grad():  # TODO
             for _step, batch in enumerate(valid_bar, start=1):
+                self._invoke_callbacks(EVENTS.ON_VALID_BATCH_START.value)
+
                 # unpack
                 inputs, targets = batch
                 inputs = inputs.to(self.device, non_blocking=True)
@@ -350,7 +357,6 @@ class pytorchTrainer(Trainer):
         # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
         self.epoch_dict['validation'].update(valid_metrics_dict)
         self.history_dict['validation'] = {**self.epoch_dict['validation'], **valid_metrics_dict}
-        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
             f"\nAvg Val Summary Loss: {self.epoch_dict['validation']['valid_loss']:.3f}"
@@ -358,6 +364,7 @@ class pytorchTrainer(Trainer):
             f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_MulticlassAUROC']:.3f}"
             f"\nTime Elapsed: {valid_elapsed_time}\n"
         )
+        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
 
     def _invoke_callbacks(self, event_name: str) -> None:
         """Invoke the callbacks."""
