@@ -26,8 +26,8 @@ Logic:
     5. If the patience is 0, we stop the training.
 
 TODO:
-    1. As usual, the issue is attributes/args such as mode is defined in `pipeline_config`,
-        may need to inherit the `pipeline_config` and use it to initiate the attributes.
+    1. As usual, the issue is attributes/args such as mode is defined in `trainer_config`,
+        may need to inherit the `trainer_config` and use it to initiate the attributes.
 """
 import logging
 from src.callbacks.base import Callback

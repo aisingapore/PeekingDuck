@@ -39,11 +39,11 @@ TODO:
   it seems clear to the advanced users that this is a callback that can
   take in these arguments.
   Now, the `best_val_score` is initiated from the `mode` argument, if we use our
-  `pipeline_config`, then we can define it as
+  `trainer_config`, then we can define it as
   self.best_val_score = -math.inf if trainer.monitored_metric["mode"] == "max" else math.inf
 
 2. A corollary is if we need to put `model_artifacts_dir` in the argument here as well?
-  Currently we just `trainer.pipeline_config.stores.model_artifacts_dir` to get it.
+  Currently we just `trainer.trainer_config.stores.model_artifacts_dir` to get it.
 
 3. Support for `save_top_k` and `save_every_n_epochs` can be added.
 
@@ -52,7 +52,7 @@ TODO:
 5. Currently initiating attributes in `__init__` and `on_train_start`, I think it may not
     be the best practice? But otherwise it makes sense to initiate some "when trainer starts".
 
-6. Put all callbacks to pipeline_config.callbacks.
+6. Put all callbacks to trainer_config.callbacks.
 
 FIXME:
 
@@ -149,7 +149,7 @@ class ModelCheckpoint(Callback):
             "oof_scores": None,
             "oof_logits": None,
         }
-        self.model_artifacts_dir = trainer.pipeline_config.stores.model_artifacts_dir
+        self.model_artifacts_dir = trainer.trainer_config.stores.model_artifacts_dir
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
