@@ -41,13 +41,13 @@ logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
-    pipeline_config: DictConfig,
+    trainer_config: DictConfig,
 ) -> Union[torch.nn.Sigmoid, torch.nn.Softmax]:
     """Get the sigmoid or softmax function depending on loss function."""
-    if pipeline_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
+    if trainer_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
         return getattr(torch.nn, "Sigmoid")()
 
-    if pipeline_config.criterion_params.train_criterion == "CrossEntropyLoss":
+    if trainer_config.criterion_params.train_criterion == "CrossEntropyLoss":
         return getattr(torch.nn, "Softmax")(dim=1)
 
 
@@ -60,7 +60,7 @@ class pytorchTrainer(Trainer):
         self.logger = logger
         self.device = None
 
-        self.pipeline_config = None
+        self.trainer_config = None
 
         self.callbacks = None
         self.metrics = None
@@ -86,7 +86,7 @@ class pytorchTrainer(Trainer):
 
     def setup(
         self,
-        pipeline_config: DictConfig,
+        trainer_config: DictConfig,
         model_config: DictConfig,
         callbacks_config: DictConfig,
         metrics_config: DictConfig,
@@ -94,10 +94,10 @@ class pytorchTrainer(Trainer):
         device: str = "cpu",
     ) -> None:
         """Called when the trainer begins."""
-        self.pipeline_config = pipeline_config[self.framework]
-        self.train_params = self.pipeline_config.global_train_params
+        self.trainer_config = trainer_config[self.framework]
+        self.train_params = self.trainer_config.global_train_params
 
-        self.model_artifacts_dir = self.pipeline_config.stores.model_artifacts_dir
+        self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
         metrics_adapter = instantiate(metrics_config[self.framework].adapter)
@@ -115,11 +115,11 @@ class pytorchTrainer(Trainer):
 
         self.optimizer = self.get_optimizer(
             model=self.model,
-            optimizer_params=self.pipeline_config.optimizer_params,
+            optimizer_params=self.trainer_config.optimizer_params,
         )
         self.scheduler = self.get_scheduler(
             optimizer=self.optimizer,
-            scheduler_params=self.pipeline_config.scheduler_params,
+            scheduler_params=self.trainer_config.scheduler_params,
         )
 
         if self.train_params.use_amp:  # TODO
@@ -216,12 +216,11 @@ class pytorchTrainer(Trainer):
         # Iterate over train batches
         for _, batch in enumerate(train_bar, start=1):
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_START.value)
+
             # unpack - note that if BCEWithLogitsLoss, dataset should do view(-1,1) and not here.
             inputs, targets = batch
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
-
-            _batch_size = inputs.shape[0]  # TODO unused for now
 
             with torch.cuda.amp.autocast(  # TODO
                 enabled=self.train_params.use_amp,
@@ -232,9 +231,10 @@ class pytorchTrainer(Trainer):
                 curr_batch_train_loss = self.compute_criterion(
                     targets,
                     logits,
-                    criterion_params=self.pipeline_config.criterion_params,
+                    criterion_params=self.trainer_config.criterion_params,
                     stage="train",
                 )
+
             self.optimizer.zero_grad()  # reset gradients
 
             if self.scaler is not None:
@@ -247,10 +247,7 @@ class pytorchTrainer(Trainer):
 
             # Update loss metric, every batch is diff
             self.batch_dict["train_loss"] = curr_batch_train_loss.item()
-            # train_bar.set_description(f"Train. {metric_monitor}")
-
-            _y_train_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
-
+            _y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             _y_train_pred = torch.argmax(_y_train_prob, dim=1)
 
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
@@ -310,13 +307,13 @@ class pytorchTrainer(Trainer):
                 _batch_size = inputs.shape[0]
 
                 # TODO: Refer to my RANZCR notes on difference between Softmax and Sigmoid with examples.
-                y_valid_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
+                y_valid_prob = get_sigmoid_softmax(self.trainer_config)(logits)
                 y_valid_pred = torch.argmax(y_valid_prob, axis=1)
 
                 curr_batch_val_loss = self.compute_criterion(
                     targets,
                     logits,
-                    criterion_params=self.pipeline_config.criterion_params,
+                    criterion_params=self.trainer_config.criterion_params,
                     stage="valid",
                 )
                 # Update loss metric, every batch is diff
