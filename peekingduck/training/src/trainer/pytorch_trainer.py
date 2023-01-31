@@ -212,6 +212,7 @@ class pytorchTrainer(Trainer):
 
         train_bar = tqdm(train_loader)
 
+        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_START.value)
         # Iterate over train batches
         for _, batch in enumerate(train_bar, start=1):
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_START.value)
@@ -289,6 +290,8 @@ class pytorchTrainer(Trainer):
         valid_bar = tqdm(validation_loader)
 
         valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
+        
+        self._invoke_callbacks(EVENTS.ON_VALID_LOADER_START.value)
 
         with torch.no_grad():  # TODO
             for _step, batch in enumerate(valid_bar, start=1):
@@ -390,15 +393,15 @@ class pytorchTrainer(Trainer):
             mode (str, optional): [description]. Defaults to "valid".
         """
 
-        self.train_metrics = self.metrics.clone(prefix="train_")
-        self.valid_metrics = self.metrics.clone(prefix="val_")
+        train_metrics = self.metrics.clone(prefix="train_")
+        valid_metrics = self.metrics.clone(prefix="val_")
 
         # FIXME: currently train and valid give same results, since this func call takes in
         # y_trues, etc from valid_one_epoch.
-        train_metrics_results = self.train_metrics(y_probs, y_trues.flatten())
+        train_metrics_results = train_metrics(y_probs, y_trues.flatten())
         train_metrics_results_df = pd.DataFrame.from_dict([train_metrics_results])
 
-        valid_metrics_results = self.valid_metrics(y_probs, y_trues.flatten())
+        valid_metrics_results = valid_metrics(y_probs, y_trues.flatten())
         valid_metrics_results_df = pd.DataFrame.from_dict([valid_metrics_results])
 
         # TODO: relinquish this logging duty to a callback or for now in train_one_epoch and valid_one_epoch.
