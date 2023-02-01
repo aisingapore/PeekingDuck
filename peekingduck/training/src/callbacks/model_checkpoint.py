@@ -144,10 +144,10 @@ class ModelCheckpoint(Callback):
             "scheduler_state_dict": None,
             "epoch": None,
             "best_score": None,
-            "oof_trues": None,
-            "oof_preds": None,
-            "oof_scores": None,
-            "oof_logits": None,
+            # "oof_trues": None,
+            # "oof_preds": None,
+            # "oof_scores": None,
+            # "oof_logits": None,
         }
         self.model_artifacts_dir = trainer.trainer_config.stores.model_artifacts_dir
 
