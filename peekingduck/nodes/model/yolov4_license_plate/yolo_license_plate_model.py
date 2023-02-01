@@ -16,6 +16,7 @@
 License Plate detection model with model types: yolov4 and yolov4tiny
 """
 
+import locale
 import logging
 from typing import Any, Dict, Tuple
 
@@ -37,7 +38,10 @@ class YOLOLicensePlateModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["iou_threshold", "score_threshold"], "[0, 1]")
 
         model_dir = self.download_weights()
-        with open(model_dir / self.weights["classes_file"]) as infile:
+        with open(
+            model_dir / self.weights["classes_file"],
+            encoding=locale.getpreferredencoding(False),
+        ) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
         self.detector = Detector(

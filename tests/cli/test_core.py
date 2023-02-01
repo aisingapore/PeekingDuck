@@ -123,7 +123,7 @@ def init_msg(node_name):
     return f"Initializing {node_name} node..."
 
 
-def setup(custom_config_path=False):
+def prepare_environment(custom_config_path=False):
     sys.path.append(str(MODULE_DIR))
 
     relative_node_dir = CUSTOM_TYPE_NODE_DIR.relative_to(CUSTOM_TYPE_NODE_DIR.parts[0])
@@ -205,7 +205,7 @@ class TestCliCore:
                 TestCase().assertDictEqual(DEFAULT_YML, yaml.safe_load(infile))
 
     def test_run_default(self):
-        setup()
+        prepare_environment()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = CliRunner().invoke(cli, ["run"])
             assert_msg_in_logs("Successfully loaded pipeline file.", captured.records)
@@ -214,7 +214,7 @@ class TestCliCore:
             assert result.exit_code == 0
 
     def test_run_custom_config_path(self):
-        setup(True)
+        prepare_environment(True)
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             result = CliRunner().invoke(
                 cli, ["run", "--config_path", CUSTOM_PIPELINE_PATH]
@@ -225,7 +225,7 @@ class TestCliCore:
             assert result.exit_code == 0
 
     def test_run_custom_config(self):
-        setup()
+        prepare_environment()
         node_name = ".".join(PKD_NODE.split(".")[1:])
         config_update_value = "'do_resizing': True"
         config_update_cli = (
@@ -246,7 +246,7 @@ class TestCliCore:
             assert result.exit_code == 0
 
     def test_run_num_iter(self):
-        setup()
+        prepare_environment()
         with TestCase.assertLogs("peekingduck.cli.logger") as captured:
             n = 50  # run test for 50 iterations
             result = CliRunner().invoke(cli, ["run", "--num_iter", n])
@@ -261,7 +261,7 @@ class TestCliCore:
         """Checks that verify install runs the basic object detection
         pipeline.
         """
-        setup()
+        prepare_environment()
         result = CliRunner().invoke(cli, ["verify-install"])
 
         verification_pipeline_str = (

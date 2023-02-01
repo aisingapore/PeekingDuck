@@ -15,6 +15,7 @@
 """Python package requirements checker."""
 
 import importlib
+import locale
 import logging
 import subprocess
 import sys
@@ -104,7 +105,7 @@ def check_requirements(
     Returns:
         (:obj:`int`): The number of packages updated.
     """
-    with open(requirements_path) as infile:
+    with open(requirements_path, encoding=locale.getpreferredencoding(False)) as infile:
         requirements = list(_parse_requirements(infile, identifier, flags))
 
     n_update = 0

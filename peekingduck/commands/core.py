@@ -14,12 +14,13 @@
 
 """Core PeekingDuck CLI commands."""
 
+import locale
 import logging
 import os
 import tempfile
 from pathlib import Path
 from time import perf_counter
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 import click
 import yaml
@@ -164,7 +165,7 @@ def _create_custom_folder(custom_folder_name: str) -> None:
 
 
 def _create_pipeline_config_yml(
-    default_nodes: List[Union[str, Dict[str, Any]]] = None,
+    default_nodes: Optional[List[Union[str, Dict[str, Any]]]] = None,
     default_path: Path = Path("pipeline_config.yml"),
 ) -> None:
     """Initializes the declarative *pipeline_config.yml*.
@@ -189,5 +190,7 @@ def _create_pipeline_config_yml(
         ]
     default_yml = dict(nodes=default_nodes)
 
-    with open(default_path, "w") as yml_file:
+    with open(
+        default_path, "w", encoding=locale.getpreferredencoding(False)
+    ) as yml_file:
         yaml.dump(default_yml, yml_file, default_flow_style=False)

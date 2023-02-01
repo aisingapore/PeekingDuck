@@ -19,7 +19,7 @@ Draws instance segmentation masks.
 import colorsys
 from pydoc import locate
 from random import randint
-from typing import Any, Callable, Dict, List, Tuple, cast
+from typing import Any, Callable, Dict, List, Optional, Tuple, cast
 
 import cv2
 import numpy as np
@@ -121,7 +121,7 @@ class Node(AbstractNode, ThresholdCheckerMixin):
             +-----------+------------------------------------------------------------+-----------+-----------+
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
         self.class_instance_colors: Dict[str, List[Tuple[int, int, int]]] = {}
@@ -397,7 +397,7 @@ class Node(AbstractNode, ThresholdCheckerMixin):
         self,
         masks: np.ndarray,
         image: np.ndarray,
-        index: int = None,
+        index: Optional[int] = None,
     ) -> np.ndarray:
         """Draws contours around instance segmentation masks. If 'index' is
         given, only the contour of the mask with the given index is drawn."""

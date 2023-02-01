@@ -14,7 +14,7 @@
 
 """Counts the number of detected objects within a boundary."""
 
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from shapely.geometry.polygon import Point
 
@@ -52,7 +52,7 @@ class Node(AbstractNode):
             values or % of resolution as a fraction between [0, 1].
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.zones = [self._create_zone(zone) for zone in self.zones]  # type: ignore
         self.zone_polygon_points = [zone.polygon_points for zone in self.zones]

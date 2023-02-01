@@ -21,7 +21,7 @@ import logging
 import sys
 from pathlib import Path
 from time import perf_counter
-from typing import List
+from typing import List, Optional
 
 from peekingduck.declarative_loader import DeclarativeLoader, NodeList
 from peekingduck.nodes.abstract_node import AbstractNode
@@ -57,11 +57,11 @@ class Runner:
 
     def __init__(  # pylint: disable=too-many-arguments
         self,
-        pipeline_path: Path = None,
-        config_updates_cli: str = None,
-        custom_nodes_parent_subdir: str = None,
-        num_iter: int = None,
-        nodes: List[AbstractNode] = None,
+        pipeline_path: Optional[Path] = None,
+        config_updates_cli: Optional[str] = None,
+        custom_nodes_parent_subdir: Optional[str] = None,
+        num_iter: Optional[int] = None,
+        nodes: Optional[List[AbstractNode]] = None,
     ) -> None:
         self.logger = logging.getLogger(__name__)
         try:

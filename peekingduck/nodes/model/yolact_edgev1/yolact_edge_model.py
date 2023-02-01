@@ -14,6 +14,7 @@
 
 """YolactEdge models"""
 
+import locale
 import logging
 from typing import Any, Dict, List, Tuple
 
@@ -34,7 +35,10 @@ class YolactEdgeModel(ThresholdCheckerMixin, WeightsDownloaderMixin):
         self.check_bounds(["input_size", "max_num_detections"], "[1 , +inf)")
 
         model_dir = self.download_weights()
-        with open(model_dir / self.weights["classes_file"]) as infile:
+        with open(
+            model_dir / self.weights["classes_file"],
+            encoding=locale.getpreferredencoding(False),
+        ) as infile:
             class_names = [line.strip() for line in infile.readlines()]
 
         self.detect_ids = self.config["detect"]

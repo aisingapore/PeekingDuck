@@ -44,7 +44,7 @@ Modifications include:
 
 from abc import ABC, abstractmethod
 from collections import deque
-from typing import Deque, List
+from typing import Deque, List, Optional
 
 import numpy as np
 import torch
@@ -145,17 +145,18 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         feat: np.ndarray,
         buffer_size: int = 30,
     ) -> None:
-        self._tlwh = np.asarray(tlwh, dtype=np.float)
+        self._tlwh = np.asarray(tlwh, dtype=float)
         self.score = score
 
         self.kalman_filter: KalmanFilter
-        self.mean = None
-        self.covariance = None
+        self.mean = np.empty(0)
+        # 8 is the size of Kalman Filter's state space.
+        self.covariance = np.empty((0, 8))
 
         self.is_activated = False
         self.tracklet_len = 0
 
-        self.smooth_feat = None
+        self.smooth_feat: Optional[np.ndarray] = None
         self.update_features(feat)
         self.features = deque([], maxlen=buffer_size)
         self.alpha = 0.9
@@ -168,7 +169,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         """The current position in bounding box format `(top left x,
         top left y, width, height)`.
         """
-        if self.mean is None:
+        if self.mean.size == 0:
             return self._tlwh.copy()
         ret = self.mean[:4].copy()
         ret[2] *= ret[3]
@@ -207,6 +208,23 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.frame_id = frame_id
         self.start_frame = frame_id
 
+    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
+        """Re-activates STrack.
+
+        Args:
+            new_track (STrack): New STrack.
+            frame_id (int): Current frame ID.
+        """
+        self.mean, self.covariance = self.kalman_filter.update(
+            self.mean, self.covariance, tlwh2xyah(new_track.tlwh)
+        )
+
+        self.update_features(new_track.curr_feat)
+        self.tracklet_len = 0
+        self.state = TrackState.TRACKED
+        self.is_activated = True
+        self.frame_id = frame_id
+
     def update(
         self, new_track: "STrack", frame_id: int, update_feature: bool = True
     ) -> None:
@@ -230,23 +248,6 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
         self.score = new_track.score
         if update_feature:
             self.update_features(new_track.curr_feat)
-
-    def re_activate(self, new_track: "STrack", frame_id: int) -> None:
-        """Re-activates STrack.
-
-        Args:
-            new_track (STrack): New STrack.
-            frame_id (int): Current frame ID.
-        """
-        self.mean, self.covariance = self.kalman_filter.update(
-            self.mean, self.covariance, tlwh2xyah(new_track.tlwh)
-        )
-
-        self.update_features(new_track.curr_feat)
-        self.tracklet_len = 0
-        self.state = TrackState.TRACKED
-        self.is_activated = True
-        self.frame_id = frame_id
 
     def update_features(self, feat: np.ndarray) -> None:
         """Updates the features (embeddings).

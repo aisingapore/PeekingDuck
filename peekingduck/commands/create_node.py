@@ -16,6 +16,7 @@
 
 import logging
 from pathlib import Path
+from typing import Optional
 
 import click
 
@@ -73,10 +74,10 @@ logger = logging.getLogger("peekingduck.cli")  # pylint: disable=invalid-name
     required=False,
 )
 def create_node(
-    node_subdir: str = None,
-    node_type: str = None,
-    node_name: str = None,
-    config_path: str = None,
+    node_subdir: Optional[str] = None,
+    node_type: Optional[str] = None,
+    node_name: Optional[str] = None,
+    config_path: Optional[str] = None,
 ) -> None:
     """Automates the creation of a new custom node.
 
