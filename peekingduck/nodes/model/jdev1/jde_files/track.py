@@ -150,6 +150,7 @@ class STrack(BaseTrack):  # pylint: disable=too-many-instance-attributes
 
         self.kalman_filter: KalmanFilter
         self.mean = np.empty(0)
+        # 8 is the size of Kalman Filter's state space.
         self.covariance = np.empty((0, 8))
 
         self.is_activated = False
