@@ -1,7 +1,7 @@
 pytorch:
     adapter: "torchvision"
     task: "classification"
-    model_name: "resnet18" # resnet18 efficientnet_v2_s vgg11
+    model_name: "vgg16" # resnet18 efficientnet_v2_s vgg11-19  https://pytorch.org/vision/stable/models.html#classification
     model_type:
         _target_: src.model.pytorch_model.ImageClassificationModel
     num_classes: ${data_module.dataset.num_classes}
