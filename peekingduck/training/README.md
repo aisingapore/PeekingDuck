@@ -16,6 +16,11 @@ To use vegfru dataset
 python ./peekingduck/training/main.py data_module=vegfru project_name=vegfru
 ```
 
+To use vegfru5 dataset
+```sh
+python ./peekingduck/training/main.py data_module=vegfru5 project_name=vegfru5 debug=True
+```
+
 log in to wandb
 ```sh
 wandb login

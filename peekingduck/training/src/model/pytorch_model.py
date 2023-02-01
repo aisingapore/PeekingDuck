@@ -62,6 +62,7 @@ class ImageClassificationModel(Model):
         """Create the model sequentially."""
         self.backbone = self.load_backbone()
         last_layer_name, _, in_features = self.get_last_layer()
+        logger.info(f"last_layer_name: {last_layer_name}. in_features: {in_features}")
         rsetattr(self.backbone, last_layer_name, nn.Identity())
         self.head = self.modify_head(in_features)
         model = self._concat_backbone_and_head(last_layer_name)

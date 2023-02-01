@@ -10,7 +10,7 @@ pytorch:
 
   valid:
     batch_size: 32
-    shuffle: True
+    shuffle: False
     pin_memory: True
     drop_last: False
 
@@ -26,17 +26,13 @@ tensorflow:
   train:
     batch_size: 32
     shuffle: True
-    pin_memory: True
-    drop_last: False
+
 
   valid:
     batch_size: 32
     shuffle: True
-    pin_memory: True
-    drop_last: False
+
 
   test:
     batch_size: 1
     shuffle: False
-    pin_memory: True
-    drop_last: False

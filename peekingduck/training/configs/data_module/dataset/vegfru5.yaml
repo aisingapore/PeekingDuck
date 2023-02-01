@@ -1,0 +1,19 @@
+download: False
+url: ""
+blob_file: "vegfru.zip"
+root_dir: "data"
+train_dir: "./${.root_dir}/vegfru"
+test_dir: "./${.root_dir}/vegfru"
+train_csv: "./${.root_dir}/vegfru/vegfru5.csv"
+image_path_col_name: "image_path"
+target_col_name: "class_id"
+stratify_by: "class_id"
+classification_type: "multiclass"
+num_classes: 5
+class_name_to_id:
+  "garlic": 0
+  "cattail": 1
+  "soybean": 2
+  "red_cabbage": 3
+  "mung_bean_sprouts": 4
+

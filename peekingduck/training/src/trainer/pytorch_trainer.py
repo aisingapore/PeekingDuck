@@ -17,6 +17,7 @@ import pandas as pd
 import time
 import torch
 
+from collections import defaultdict
 from pathlib import Path
 from typing import Any, Dict, Optional, Union
 from tabulate import tabulate
@@ -40,13 +41,13 @@ logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
-    pipeline_config: DictConfig,
+    trainer_config: DictConfig,
 ) -> Union[torch.nn.Sigmoid, torch.nn.Softmax]:
     """Get the sigmoid or softmax function depending on loss function."""
-    if pipeline_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
+    if trainer_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
         return getattr(torch.nn, "Sigmoid")()
 
-    if pipeline_config.criterion_params.train_criterion == "CrossEntropyLoss":
+    if trainer_config.criterion_params.train_criterion == "CrossEntropyLoss":
         return getattr(torch.nn, "Softmax")(dim=1)
 
 
@@ -59,7 +60,7 @@ class pytorchTrainer(Trainer):
         self.logger = logger
         self.device = None
 
-        self.pipeline_config = None
+        self.trainer_config = None
 
         self.callbacks = None
         self.metrics = None
@@ -75,6 +76,8 @@ class pytorchTrainer(Trainer):
         self.train_loader = None
         self.validation_loader = None
 
+        self.stop_training = False
+        self.history = defaultdict(list)
         self.epochs = None
         self.current_epoch = None
         self.epoch_dict = None
@@ -83,7 +86,7 @@ class pytorchTrainer(Trainer):
 
     def setup(
         self,
-        pipeline_config: DictConfig,
+        trainer_config: DictConfig,
         model_config: DictConfig,
         callbacks_config: DictConfig,
         metrics_config: DictConfig,
@@ -91,10 +94,10 @@ class pytorchTrainer(Trainer):
         device: str = "cpu",
     ) -> None:
         """Called when the trainer begins."""
-        self.pipeline_config = pipeline_config[self.framework]
-        self.train_params = self.pipeline_config.global_train_params
+        self.trainer_config = trainer_config[self.framework]
+        self.train_params = self.trainer_config.global_train_params
 
-        self.model_artifacts_dir = self.pipeline_config.stores.model_artifacts_dir
+        self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
         metrics_adapter = instantiate(metrics_config[self.framework].adapter)
@@ -112,11 +115,11 @@ class pytorchTrainer(Trainer):
 
         self.optimizer = self.get_optimizer(
             model=self.model,
-            optimizer_params=self.pipeline_config.optimizer_params,
+            optimizer_params=self.trainer_config.optimizer_params,
         )
         self.scheduler = self.get_scheduler(
             optimizer=self.optimizer,
-            scheduler_params=self.pipeline_config.scheduler_params,
+            scheduler_params=self.trainer_config.scheduler_params,
         )
 
         if self.train_params.use_amp:  # TODO
@@ -182,7 +185,7 @@ class pytorchTrainer(Trainer):
             self._run_train_epoch(self.train_loader, epoch)
             self._run_validation_epoch(self.validation_loader, epoch)
 
-            if self.stop:  # from early stopping
+            if self.stop_training:  # from early stopping
                 break  # Early Stopping
 
             if self.scheduler is not None:
@@ -209,14 +212,15 @@ class pytorchTrainer(Trainer):
 
         train_bar = tqdm(train_loader)
 
+        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_START.value)
         # Iterate over train batches
         for _, batch in enumerate(train_bar, start=1):
+            self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_START.value)
+
             # unpack - note that if BCEWithLogitsLoss, dataset should do view(-1,1) and not here.
             inputs, targets = batch
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
-
-            _batch_size = inputs.shape[0]  # TODO unused for now
 
             with torch.cuda.amp.autocast(  # TODO
                 enabled=self.train_params.use_amp,
@@ -227,9 +231,10 @@ class pytorchTrainer(Trainer):
                 curr_batch_train_loss = self.compute_criterion(
                     targets,
                     logits,
-                    criterion_params=self.pipeline_config.criterion_params,
+                    criterion_params=self.trainer_config.criterion_params,
                     stage="train",
                 )
+
             self.optimizer.zero_grad()  # reset gradients
 
             if self.scaler is not None:
@@ -242,15 +247,14 @@ class pytorchTrainer(Trainer):
 
             # Update loss metric, every batch is diff
             self.batch_dict["train_loss"] = curr_batch_train_loss.item()
-            # train_bar.set_description(f"Train. {metric_monitor}")
-
-            _y_train_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
-
+            _y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             _y_train_pred = torch.argmax(_y_train_prob, dim=1)
 
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
 
         self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
+
+        self.history_dict["train"] = {**self.epoch_dict["train"]}
         # total time elapsed for this epoch
         train_time_elapsed = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - train_start_time)
@@ -261,7 +265,6 @@ class pytorchTrainer(Trainer):
             f"\nLearning Rate: {curr_lr:.5f}"
             f"\nTime Elapsed: {train_time_elapsed}\n"
         )
-        self.history_dict["train"] = {**self.epoch_dict["train"]}
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
@@ -283,10 +286,14 @@ class pytorchTrainer(Trainer):
 
         valid_bar = tqdm(validation_loader)
 
-        valid_logits, valid_trues, valid_preds, valid_probs = [], [], [], []
+        valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
+        
+        self._invoke_callbacks(EVENTS.ON_VALID_LOADER_START.value)
 
         with torch.no_grad():  # TODO
             for _step, batch in enumerate(valid_bar, start=1):
+                self._invoke_callbacks(EVENTS.ON_VALID_BATCH_START.value)
+
                 # unpack
                 inputs, targets = batch
                 inputs = inputs.to(self.device, non_blocking=True)
@@ -300,13 +307,13 @@ class pytorchTrainer(Trainer):
                 _batch_size = inputs.shape[0]
 
                 # TODO: Refer to my RANZCR notes on difference between Softmax and Sigmoid with examples.
-                y_valid_prob = get_sigmoid_softmax(self.pipeline_config)(logits)
+                y_valid_prob = get_sigmoid_softmax(self.trainer_config)(logits)
                 y_valid_pred = torch.argmax(y_valid_prob, axis=1)
 
                 curr_batch_val_loss = self.compute_criterion(
                     targets,
                     logits,
-                    criterion_params=self.pipeline_config.criterion_params,
+                    criterion_params=self.trainer_config.criterion_params,
                     stage="valid",
                 )
                 # Update loss metric, every batch is diff
@@ -350,7 +357,6 @@ class pytorchTrainer(Trainer):
         # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
         self.epoch_dict['validation'].update(valid_metrics_dict)
         self.history_dict['validation'] = {**self.epoch_dict['validation'], **valid_metrics_dict}
-        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
             f"\nAvg Val Summary Loss: {self.epoch_dict['validation']['valid_loss']:.3f}"
@@ -358,6 +364,7 @@ class pytorchTrainer(Trainer):
             f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_MulticlassAUROC']:.3f}"
             f"\nTime Elapsed: {valid_elapsed_time}\n"
         )
+        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
 
     def _invoke_callbacks(self, event_name: str) -> None:
         """Invoke the callbacks."""
@@ -383,15 +390,15 @@ class pytorchTrainer(Trainer):
             mode (str, optional): [description]. Defaults to "valid".
         """
 
-        self.train_metrics = self.metrics.clone(prefix="train_")
-        self.valid_metrics = self.metrics.clone(prefix="val_")
+        train_metrics = self.metrics.clone(prefix="train_")
+        valid_metrics = self.metrics.clone(prefix="val_")
 
         # FIXME: currently train and valid give same results, since this func call takes in
         # y_trues, etc from valid_one_epoch.
-        train_metrics_results = self.train_metrics(y_probs, y_trues.flatten())
+        train_metrics_results = train_metrics(y_probs, y_trues.flatten())
         train_metrics_results_df = pd.DataFrame.from_dict([train_metrics_results])
 
-        valid_metrics_results = self.valid_metrics(y_probs, y_trues.flatten())
+        valid_metrics_results = valid_metrics(y_probs, y_trues.flatten())
         valid_metrics_results_df = pd.DataFrame.from_dict([valid_metrics_results])
 
         # TODO: relinquish this logging duty to a callback or for now in train_one_epoch and valid_one_epoch.
@@ -474,7 +481,7 @@ class pytorchTrainer(Trainer):
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
-            
+
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
         self._train_setup(inputs, fold=fold)  # startup

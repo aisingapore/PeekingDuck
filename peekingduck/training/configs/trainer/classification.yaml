@@ -26,7 +26,7 @@ pytorch:
     optimizer_params:
         optimizer: "AdamW"
         optimizer_params:
-            lr: 0.0003 # bs: 32 -> lr = 3e-4
+            lr: 0.003 # bs: 32 -> lr = 3e-4
             betas: [0.9, 0.999]
             amsgrad: False
             weight_decay: 0.000001
@@ -35,7 +35,7 @@ pytorch:
     scheduler_params:
         scheduler: "CosineAnnealingWarmRestarts" # Debug
         scheduler_params:
-            T_0: 10
+            T_0: 3
             T_mult: 1
             eta_min: 0.000001
             last_epoch: -1
@@ -44,7 +44,7 @@ pytorch:
     global_train_params:
         epochs: 50
         use_amp: False
-        patience: 3
+        patience: 9
         model_name: ${model.pytorch.model_name}
         debug: ${debug}
         debug_epochs: 3

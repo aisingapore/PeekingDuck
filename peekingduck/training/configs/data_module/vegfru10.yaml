@@ -1,5 +1,5 @@
 defaults:
-      - dataset: vegfru
+      - dataset: vegfru10
       - resample: train_test_split
       - transform:
               - train
@@ -13,4 +13,4 @@ module:
 
 framework: ${framework}
 debug: ${debug}
-num_debug_samples: 50
+num_debug_samples: 25
