@@ -10,11 +10,10 @@ pytorch:
     # You typically want _self_ somewhere after the schema (base_config)
 
 tensorflow:
-    adapter: "torchvision"
     task: "classification"
-    model_name: "resnet18" # resnet18 efficientnet_v2_s
+    model_name: "MobileNetV2" # resnet18 efficientnet_v2_s
     model_type:
-        _target_: src.model.pytorch_model.ImageClassificationModel
+        _target_: src.model.tensorflow_model.ImageClassificationModel
     num_classes: ${data_module.dataset.num_classes}
     device: ${device}
     pretrained: True
