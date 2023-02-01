@@ -1,5 +1,5 @@
 defaults:
-      - dataset: vegfru5
+      - dataset: vegfru20
       - resample: train_test_split
       - transform:
               - train

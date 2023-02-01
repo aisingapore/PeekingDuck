@@ -135,6 +135,8 @@ class ImageClassificationDataModule(DataModule):
                 )
 
         logger.info(self.train_df.info())
+        # self.train_df.to_csv("train_df.csv")
+        # self.valid_df.to_csv("valid_df.csv")
 
     def setup(self, stage: str):
         """ """
