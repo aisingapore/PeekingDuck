@@ -162,6 +162,8 @@ class ImageClassificationDataModule(DataModule):
                 stage="test",
                 transforms=test_transforms,
             )
+            if self.cfg.framework == "tensorflow":
+                pass
 
     @staticmethod
     def _cross_validation_split(

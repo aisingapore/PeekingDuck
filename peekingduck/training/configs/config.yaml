@@ -1,11 +1,11 @@
 device: "auto"
-project_name: "cifar10" #rsna | cifar10 | vegfru | vegfru5
+project_name: "cifar10" #rsna | cifar10 | vegfru | vegfru5 | vegfru20
 debug: True
 framework: "pytorch" # 'pytorch' | 'tensorflow'
 
 defaults:
   - use_case: classification # classification | detection | segmentation
-  - data_module: cifar10 #rsna | cifar10 | vegfru | vegfru5
+  - data_module: cifar10 #rsna | cifar10 | vegfru | vegfru5 | vegfru20
   - model: ${use_case}
   - trainer: ${use_case}
   - callbacks: ${use_case}

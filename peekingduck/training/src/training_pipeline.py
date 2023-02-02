@@ -44,7 +44,7 @@ def run(cfg: DictConfig) -> None:
     train_loader = data_module.get_train_dataloader()
     validation_loader = data_module.get_validation_dataloader()
 
-    wandb = WeightsAndBiases(cfg.model_analysis)
+    model_analysis = WeightsAndBiases(cfg.model_analysis)
 
     trainer: Trainer = instantiate(
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
@@ -61,4 +61,6 @@ def run(cfg: DictConfig) -> None:
     # wandb.log_history(history)
 
     end_time = perf_counter()
-    logger.debug(f"Run time = {end_time - start_time:.2f} sec")
+    run_time = f"Run time = {end_time - start_time:.2f} sec"
+    logger.debug(run_time)
+    model_analysis.log({"run_time": run_time})

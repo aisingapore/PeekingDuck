@@ -15,6 +15,7 @@
 
 from pathlib import Path
 from typing import Optional, Tuple, Union
+import numpy as np
 from omegaconf import DictConfig
 
 import albumentations as A
@@ -29,6 +30,13 @@ if config.TORCH_AVAILABLE:
     from torch.utils.data import Dataset
 else:
     raise ImportError("Called a torch-specific function but torch is not installed.")
+
+if config.TF_AVAILABLE:
+    import tensorflow as tf
+else:
+    raise ImportError(
+        "Called a tensorflow-specific function but tensorflow is not installed."
+    )
 
 TransformTypes = Optional[Union[A.Compose, T.Compose]]
 
@@ -106,9 +114,71 @@ class ImageClassificationDataset(Dataset):
         """
         return torch.tensor(target, dtype=dtype)
 
-    # @classmethod
-    # def from_df(
-    #     self,
-    #     cfg: DictConfig,
-    # ):
-    #     """Creates an instance of the dataset class from a dataframe."""
+
+class Generator(object):
+    def __init__(self, batch_size, name_x, name_y):
+
+        data_f = None  # h5py.File(open_directory, "r")
+
+        self.x = data_f[name_x]
+        self.y = data_f[name_y]
+
+        if len(self.x.shape) == 4:
+            self.shape_x = (None, self.x.shape[1], self.x.shape[2], self.x.shape[3])
+
+        if len(self.x.shape) == 3:
+            self.shape_x = (None, self.x.shape[1], self.x.shape[2])
+
+        if len(self.y.shape) == 4:
+            self.shape_y = (None, self.y.shape[1], self.y.shape[2], self.y.shape[3])
+
+        if len(self.y.shape) == 3:
+            self.shape_y = (None, self.y.shape[1], self.y.shape[2])
+
+        self.num_samples = self.x.shape[0]
+        self.batch_size = batch_size
+        self.epoch_size = self.num_samples // self.batch_size + 1 * (
+            self.num_samples % self.batch_size != 0
+        )
+
+        self.pointer = 0
+        self.sample_nums = np.arange(0, self.num_samples)
+        np.random.shuffle(self.sample_nums)
+
+    def data_generator(self):
+
+        for batch_num in range(self.epoch_size):
+
+            x = []
+            y = []
+
+            for elem_num in range(self.batch_size):
+
+                sample_num = self.sample_nums[self.pointer]
+
+                x += [self.x[sample_num]]
+                y += [self.y[sample_num]]
+
+                self.pointer += 1
+
+                if self.pointer == self.num_samples:
+                    self.pointer = 0
+                    np.random.shuffle(self.sample_nums)
+                    break
+
+            x = np.array(x, dtype=np.float32)
+            y = np.array(y, dtype=np.float32)
+
+            yield x, y
+
+    def get_dataset(self):
+        dataset = tf.data.Dataset.from_generator(
+            self.data_generator,
+            output_signature=(
+                tf.TensorSpec(shape=(), dtype=tf.int32),
+                tf.RaggedTensorSpec(shape=(2, None), dtype=tf.int32),
+            ),
+        )
+        dataset = dataset.prefetch(1)
+
+        return dataset
