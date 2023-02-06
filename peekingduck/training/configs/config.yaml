@@ -18,3 +18,6 @@ defaults:
 hydra:
   run:
     dir: "outputs/${project_name}/${stores.unique_id}"
+  sweep:
+    dir: outputs/${project_name}/${stores.unique_id}
+    subdir: ${hydra.job.num}
