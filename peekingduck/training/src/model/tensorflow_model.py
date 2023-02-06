@@ -14,52 +14,50 @@
 
 import logging
 
-# import matplotlib.pyplot as plt
 import tensorflow as tf
 from omegaconf import DictConfig
 
-# from src.model.tensorflow_base import Model
-from tensorflow_base import TFModel  # for testing only
+# from src.model.tensorflow_base import TFModel
+from tensorflow_base import TFModelFactory  # for testing
 
 
-# logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("TF_model")  # pylint: disable=invalid-name
+logging.basicConfig(level=logging.INFO)
 
 
-class TFClassificationModel(TFModel):
+class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
 
     def __init__(self, model_cfg: DictConfig) -> None:
-        super().__init__(model_cfg)
-        # TO DO: move to config file
+        # self.model_cfg = model_cfg
+        self.model_name = model_cfg.model_name
         self.input_shape = (
-            160,
-            160,
+            model_cfg.image_size,
+            model_cfg.image_size,
             3,
         )
-        self.num_classes = 2
-        self.model = self.build_model()
-        logger.info("model built!")
+        self.num_classes = self.model_config.num_classes
+        # self.model = self.create_model()
+        # logger.info("model built!")
 
-    def data_processing(self, inputs):
-        data_augmentation = tf.keras.Sequential(
-            [
-                tf.keras.layers.RandomFlip("horizontal"),
-                tf.keras.layers.RandomRotation(0.2),
-            ]
-        )
-        preprocess_input = getattr(
-            tf.keras.applications, "mobilenet_v2"
-        ).preprocess_input
-        x = data_augmentation(inputs)
-        outputs = preprocess_input(x)
-        return outputs
+    # def data_processing(self, inputs):
+    #     data_augmentation = tf.keras.Sequential(
+    #         [
+    #             tf.keras.layers.RandomFlip("horizontal"),
+    #             tf.keras.layers.RandomRotation(0.2),
+    #         ]
+    #     )
+    #     preprocess_input = getattr(
+    #         tf.keras.applications, "mobilenet_v2"
+    #     ).preprocess_input
+    #     x = data_augmentation(inputs)
+    #     outputs = preprocess_input(x)
+    #     return outputs
 
     def create_base(self):
         base_model = getattr(tf.keras.applications, self.model_name)(
             input_shape=self.input_shape, include_top=False, weights="imagenet"
         )
-        # freeze the base
         # To-do: allow user to unfreeze certain number of layers for fine-tuning
         base_model.trainable = False
         return base_model
@@ -73,18 +71,12 @@ class TFClassificationModel(TFModel):
         outputs = prediction_layer(x)
         return outputs
 
-    def build_model(self):
+    def create_model(self):
         inputs = tf.keras.Input(shape=self.input_shape)
-        x = self.data_processing(inputs)
-        x = self.create_base()(x, training=False)  # disable batch norm for base model
+        # x = self.data_processing(inputs)
+        # disable batch norm for base model
+        x = self.create_base()(inputs, training=False)
         outputs = self.create_head(x)
         model = tf.keras.Model(inputs, outputs)
+        logger.info("model created!")
         return model
-
-    # def build_model(self, inputs):
-    #     x = self.create_base()(
-    #         inputs, training=False
-    #     )  # disable batch norm for base model
-    #     outputs = self.create_head(x)
-    #     model = tf.keras.Model(inputs, outputs)
-    #     return model
