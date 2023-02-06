@@ -17,8 +17,9 @@ import logging
 import tensorflow as tf
 from omegaconf import DictConfig
 
-# from src.model.tensorflow_base import TFModel
-from src.model.tensorflow_base import TFModelFactory  # for testing
+from src.model.tensorflow_base import TFModelFactory
+
+# from tensorflow_base import TFModelFactory  # for testing
 
 
 logger = logging.getLogger("TF_model")  # pylint: disable=invalid-name
@@ -70,13 +71,12 @@ class TFClassificationModelFactory(TFModelFactory):
     def create_model(self, model_cfg: DictConfig):
         self.model_cfg = model_cfg
         self.model_name = self.model_cfg.model_name
-        # print("IMAGE SIZE: ", int(self.model_cfg.image_size))
         self.input_shape = (
             int(self.model_cfg.image_size),
             int(self.model_cfg.image_size),
             3,
         )
-        self.num_classes = self.model_config.num_classes
+        self.num_classes = self.model_cfg.num_classes
         inputs = tf.keras.Input(shape=self.input_shape)
         # x = self.data_processing(inputs)
         # disable batch norm for base model

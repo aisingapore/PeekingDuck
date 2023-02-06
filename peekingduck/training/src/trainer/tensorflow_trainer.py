@@ -23,8 +23,8 @@ from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
-class tensorflowTrainer(Trainer):
 
+class tensorflowTrainer(Trainer):
     def __init__(self, framework: str = "tensorflow") -> None:
         self.framework = framework
         self.model = None
@@ -46,43 +46,75 @@ class tensorflowTrainer(Trainer):
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
 
-
         tf_model_factory = instantiate(model_config[self.framework].model_type)
         self.model = tf_model_factory.create_model(model_config[self.framework])
         # self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
 
         # scheduler
         decay_steps = 1000
-        initial_learning_rate=0.001
-        self.scheduler = tf.keras.optimizers.schedules.CosineDecay(initial_learning_rate, decay_steps)
+        initial_learning_rate = 0.001
+        self.scheduler = tf.keras.optimizers.schedules.CosineDecay(
+            initial_learning_rate, decay_steps
+        )
 
         # init_optimizer
-        adam = tf.keras.optimizers.Adam(learning_rate=self.scheduler, beta_1=0.9, beta_2=0.999, amsgrad=False, weight_decay=None, name='Adam')
+        adam = tf.keras.optimizers.Adam(
+            learning_rate=self.scheduler,
+            beta_1=0.9,
+            beta_2=0.999,
+            # amsgrad=False,
+            # weight_decay=None,
+            name="Adam",
+        )
         self.opt = adam
 
-        # loss    
+        # loss
         scce = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
         self.loss = scce
 
         # metric
-        acc = tf.keras.metrics.Accuracy(name='accuracy', dtype=None)
-        precision = tf.keras.metrics.Precision(thresholds=None, top_k=None, class_id=None, name=None, dtype=None)
-        recall = tf.keras.metrics.Recall(thresholds=None, top_k=None, class_id=None, name=None, dtype=None)
-        auroc = tf.keras.metrics.AUC(num_thresholds=200, curve='ROC', summation_method='interpolation', name=None, dtype=None, thresholds=None, multi_label=False, num_labels=None, label_weights=None, from_logits=False)
+        acc = tf.keras.metrics.Accuracy(name="accuracy", dtype=None)
+        precision = tf.keras.metrics.Precision(
+            thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+        )
+        recall = tf.keras.metrics.Recall(
+            thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+        )
+        auroc = tf.keras.metrics.AUC(
+            num_thresholds=200,
+            curve="ROC",
+            summation_method="interpolation",
+            name=None,
+            dtype=None,
+            thresholds=None,
+            multi_label=False,
+            num_labels=None,
+            label_weights=None,
+            from_logits=False,
+        )
         self.metrics = [acc, precision, recall, auroc]
 
         # callback
-        es = tf.keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True, monitor="val_acc")
+        es = tf.keras.callbacks.EarlyStopping(
+            patience=3, restore_best_weights=True, monitor="val_acc"
+        )
         self.callbacks = [es]
 
-        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics) 
-
+        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
         # self.model.fit(train_dl, val_dl)
         BATCH_SIZE = 32
         EPOCHS = 10
 
-        history = self.model.fit(train_dl, batch_size = BATCH_SIZE, epochs= EPOCHS, validation_data=val_dl, callbacks=self.callbacks)
-        
+        self.model.summary()
+
+        history = self.model.fit(
+            train_dl,
+            batch_size=BATCH_SIZE,
+            epochs=EPOCHS,
+            validation_data=val_dl,
+            callbacks=self.callbacks,
+        )
+
         return history

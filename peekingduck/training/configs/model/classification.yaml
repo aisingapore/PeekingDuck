@@ -15,6 +15,6 @@ tensorflow:
     model_type:
         _target_: src.model.tensorflow_model.TFClassificationModelFactory
     num_classes: ${data_module.dataset.num_classes}
-    image_size: ${data_module.transform.train.size}
+    image_size: ${data_module.dataset.image_size}
     device: ${device}
     pretrained: True
