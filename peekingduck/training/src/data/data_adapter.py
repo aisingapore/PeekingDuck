@@ -16,6 +16,7 @@
 from torch.utils.data import DataLoader
 
 from src.data.base import AbstractDataAdapter
+from src.data.dataset import ImageDataGenerator
 
 
 class DataAdapter(AbstractDataAdapter):
@@ -26,6 +27,8 @@ class DataAdapter(AbstractDataAdapter):
         self.loader = None
         if cfg.adapter_type == "pytorch":
             self.loader = DataLoader
+        if cfg.adapter_type == "tensorflow":
+            self.loader = ImageDataGenerator().flow_from_dataframe
 
     def train_dataloader(self, dataset):
         return self.loader(

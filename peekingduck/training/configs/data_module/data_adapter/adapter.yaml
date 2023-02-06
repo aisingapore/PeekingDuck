@@ -26,13 +26,35 @@ tensorflow:
   train:
     batch_size: 32
     shuffle: True
-
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_name}
+    target_size: (32,32)
+    color_mode: "rgb"
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "training"
 
   valid:
     batch_size: 32
     shuffle: True
-
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_name}
+    target_size: (32,32)
+    color_mode: "rgb"
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "validation"
 
   test:
     batch_size: 1
     shuffle: False
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_name}
+    target_size: (32,32)
+    color_mode: "rgb"
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "validation"
