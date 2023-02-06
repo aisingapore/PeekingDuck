@@ -23,7 +23,7 @@ from torchinfo.model_statistics import ModelStatistics
 from omegaconf import DictConfig
 
 
-class Model(ABC, nn.Module):
+class PTModel(ABC, nn.Module):
     """Model Base Class."""
 
     def __init__(self, cfg: DictConfig) -> None:

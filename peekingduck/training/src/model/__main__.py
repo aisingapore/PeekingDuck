@@ -1,17 +1,15 @@
 import os
-
 import logging
+from typing import Tuple
 
 import matplotlib.pyplot as plt
-import numpy as np
-
 import tensorflow as tf
 from omegaconf import DictConfig
 import hydra
 
 # from hydra.core.hydra_config import HydraConfig
 
-from tensorflow_model import ClassificationModelBuilder
+from tensorflow_model import TFClassificationModel
 
 logger = logging.getLogger("TF_test")
 
@@ -20,6 +18,11 @@ class Dataset:
     def __init__(self):
         # self.train_dataset = None
         # self.validation_dataset = None
+        self.input_shape: Tuple[int, int, int] = (
+            160,
+            160,
+            3,
+        )
         self.init_data()
 
     def init_data(self) -> None:
@@ -55,22 +58,39 @@ class Dataset:
             label_mode="categorical",
         )
 
-        # data_augmentation = tf.keras.Sequential(
-        #     [
-        #         tf.keras.layers.RandomFlip("horizontal"),
-        #         tf.keras.layers.RandomRotation(0.2),
-        #     ]
-        # )
+    # def data_processing(self):
 
-        # for image, _ in self.train_dataset.take(1):
-        #     plt.figure(figsize=(10, 10))
-        #     first_image = image[0]
-        #     for i in range(9):
-        #         ax = plt.subplot(3, 3, i + 1)
-        #         augmented_image = data_augmentation(tf.expand_dims(first_image, 0))
-        #         plt.imshow(augmented_image[0] / 255)
-        #         plt.axis("off")
-        # plt.show()
+    #     inputs = tf.keras.Input(shape=self.input_shape)
+    #     data_augmentation = tf.keras.Sequential(
+    #         [
+    #             tf.keras.layers.RandomFlip("horizontal"),
+    #             tf.keras.layers.RandomRotation(0.2),
+    #         ]
+    #     )
+    #     preprocess_input = getattr(
+    #         tf.keras.applications, "mobilenet_v2"
+    #     ).preprocess_input
+    #     # preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
+    #     x = data_augmentation(inputs)
+    #     outputs = preprocess_input(x)
+    #     return outputs
+
+    # data_augmentation = tf.keras.Sequential(
+    #     [
+    #         tf.keras.layers.RandomFlip("horizontal"),
+    #         tf.keras.layers.RandomRotation(0.2),
+    #     ]
+    # )
+
+    # for image, _ in self.train_dataset.take(1):
+    #     plt.figure(figsize=(10, 10))
+    #     first_image = image[0]
+    #     for i in range(9):
+    #         ax = plt.subplot(3, 3, i + 1)
+    #         augmented_image = data_augmentation(tf.expand_dims(first_image, 0))
+    #         plt.imshow(augmented_image[0] / 255)
+    #         plt.axis("off")
+    # plt.show()
 
 
 testing_dataset = Dataset()
@@ -82,10 +102,13 @@ logger.info(label_batch.shape)
 
 class TestTrainer:
     def __init__(self, model_cfg: DictConfig, dataset):
-        self.config = model_cfg
+        self.model_config = model_cfg
         self.dataset = dataset
-        self.model_builder = ClassificationModelBuilder(self.config)
-        self.model = self.model_builder.model
+        # self.inputs = dataset.data_processing()
+        # self.input_shape = dataset.input_shape
+        # self.model_builder = ClassificationModelBuilder(self.model_config)
+        # self.model = self.model_builder.model
+        self.model = TFClassificationModel(self.model_config).model
         self.train_dataset = self.dataset.train_dataset
         self.validation_dataset = self.dataset.validation_dataset
         self.learning_rate = 0.0001
@@ -93,6 +116,13 @@ class TestTrainer:
         self.loss = tf.keras.losses.CategoricalCrossentropy()
         self.metrics = ["accuracy"]
         self.compile_model()
+
+    # def post_build_model(self):
+    #     inputs = tf.keras.Input(shape=self.model.input_shape)
+    #     x = self.data_processing(inputs)
+    #     outputs = self.model(x)
+    #     # update the model to include the preprocessing layers
+    #     self.model = tf.keras.Model(inputs, outputs)
 
     def compile_model(self):
         self.model.compile(

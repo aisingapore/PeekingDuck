@@ -29,7 +29,7 @@ import torchvision
 from torch import nn
 from omegaconf import DictConfig
 
-from src.model.pytorch_base import Model
+from src.model.pytorch_base import PTModel
 from src.utils.general_utils import seed_all, rsetattr
 
 from configs import LOGGER_NAME
@@ -37,7 +37,7 @@ from configs import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 # TODO: Follow timm's creation of head and backbone
-class ImageClassificationModel(Model):
+class PTClassificationModel(PTModel):
     """A generic image classification model. This is generic in the sense that
     it can be used for any image classification by just modifying the head.
     """

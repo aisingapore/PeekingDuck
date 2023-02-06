@@ -12,24 +12,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Tuple
 from abc import ABC, abstractmethod
 
 from omegaconf import DictConfig
 
 
-class Model(ABC):
+class TFModel(ABC):
     """Model Base Class for TensorFlow."""
 
     def __init__(self, model_cfg: DictConfig) -> None:
-        self.cfg = model_cfg
-        self.model_name = self.cfg.model_name
-        # TO DO: move to config
-        self.input_shape: Tuple[int, int, int] = (
-            160,
-            160,
-            3,
-        )
+        self.model_cfg = model_cfg
+        self.model_name = self.model_cfg.model_name
 
     @abstractmethod
     def create_base(self):

@@ -19,21 +19,26 @@ import tensorflow as tf
 from omegaconf import DictConfig
 
 # from src.model.tensorflow_base import Model
-from tensorflow_base import Model  # for testing only
+from tensorflow_base import TFModel  # for testing only
 
 
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("TF_model")  # pylint: disable=invalid-name
 
 
-class ClassificationModelBuilder(Model):
+class TFClassificationModel(TFModel):
     """Generic TensorFlow image classification model."""
 
     def __init__(self, model_cfg: DictConfig) -> None:
         super().__init__(model_cfg)
         # TO DO: move to config file
+        self.input_shape = (
+            160,
+            160,
+            3,
+        )
         self.num_classes = 2
-        self.build_model()
+        self.model = self.build_model()
         logger.info("model built!")
 
     def data_processing(self, inputs):
@@ -43,9 +48,8 @@ class ClassificationModelBuilder(Model):
                 tf.keras.layers.RandomRotation(0.2),
             ]
         )
-        # preprocess_input = tf.keras.applications.mobilenet_v2.preprocess_input
         preprocess_input = getattr(
-            tf.keras.applications, self.cfg.preprocess
+            tf.keras.applications, "mobilenet_v2"
         ).preprocess_input
         x = data_augmentation(inputs)
         outputs = preprocess_input(x)
@@ -74,4 +78,13 @@ class ClassificationModelBuilder(Model):
         x = self.data_processing(inputs)
         x = self.create_base()(x, training=False)  # disable batch norm for base model
         outputs = self.create_head(x)
-        self.model = tf.keras.Model(inputs, outputs)
+        model = tf.keras.Model(inputs, outputs)
+        return model
+
+    # def build_model(self, inputs):
+    #     x = self.create_base()(
+    #         inputs, training=False
+    #     )  # disable batch norm for base model
+    #     outputs = self.create_head(x)
+    #     model = tf.keras.Model(inputs, outputs)
+    #     return model
