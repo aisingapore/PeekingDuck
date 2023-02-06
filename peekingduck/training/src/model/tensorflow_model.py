@@ -18,7 +18,7 @@ import tensorflow as tf
 from omegaconf import DictConfig
 
 # from src.model.tensorflow_base import TFModel
-from tensorflow_base import TFModelFactory  # for testing
+from src.model.tensorflow_base import TFModelFactory  # for testing
 
 
 logger = logging.getLogger("TF_model")  # pylint: disable=invalid-name
@@ -28,15 +28,11 @@ logging.basicConfig(level=logging.INFO)
 class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
 
-    def __init__(self, model_cfg: DictConfig) -> None:
-        # self.model_cfg = model_cfg
-        self.model_name = model_cfg.model_name
-        self.input_shape = (
-            model_cfg.image_size,
-            model_cfg.image_size,
-            3,
-        )
-        self.num_classes = self.model_config.num_classes
+    def __init__(self) -> None:
+        self.model_cfg = None
+        self.model_name = None
+        self.input_shape = None
+        self.num_classes = None
         # self.model = self.create_model()
         # logger.info("model built!")
 
@@ -71,7 +67,16 @@ class TFClassificationModelFactory(TFModelFactory):
         outputs = prediction_layer(x)
         return outputs
 
-    def create_model(self):
+    def create_model(self, model_cfg: DictConfig):
+        self.model_cfg = model_cfg
+        self.model_name = self.model_cfg.model_name
+        # print("IMAGE SIZE: ", int(self.model_cfg.image_size))
+        self.input_shape = (
+            int(self.model_cfg.image_size),
+            int(self.model_cfg.image_size),
+            3,
+        )
+        self.num_classes = self.model_config.num_classes
         inputs = tf.keras.Input(shape=self.input_shape)
         # x = self.data_processing(inputs)
         # disable batch norm for base model

@@ -47,9 +47,9 @@ class tensorflowTrainer(Trainer):
         self.trainer_config = trainer_config[self.framework]
 
 
-        # tf_model = instantiate(model_config[self.framework].model_type, model_config[self.framework])
-        # self.model = tf_model.create_model(model_config[self.framework])
-        self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
+        tf_model_factory = instantiate(model_config[self.framework].model_type)
+        self.model = tf_model_factory.create_model(model_config[self.framework])
+        # self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
 
         # scheduler
         decay_steps = 1000

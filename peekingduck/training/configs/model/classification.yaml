@@ -11,9 +11,9 @@ pytorch:
 
 tensorflow:
     task: "classification"
-    model_name: "MobileNetV2" # ResNet50 efficientnet_v2_s MobileNetV2
+    model_name: "ResNet50" # ResNet50 efficientnet_v2_s MobileNetV2
     model_type:
-        _target_: src.model.tensorflow_model.ImageClassificationModel
+        _target_: src.model.tensorflow_model.TFClassificationModelFactory
     num_classes: ${data_module.dataset.num_classes}
     image_size: ${data_module.transform.train.size}
     device: ${device}
