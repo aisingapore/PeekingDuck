@@ -1,7 +1,7 @@
 device: "auto"
 project_name: "cifar10" #rsna | cifar10 | vegfru | vegfru5 | vegfru20
 debug: True
-framework: "tensorflow" # 'pytorch' | 'tensorflow'
+framework: "pytorch" # 'pytorch' | 'tensorflow'
 
 defaults:
   - use_case: classification # classification | detection | segmentation
