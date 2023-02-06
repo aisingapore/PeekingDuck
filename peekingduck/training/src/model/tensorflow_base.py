@@ -14,15 +14,9 @@
 
 from abc import ABC, abstractmethod
 
-from omegaconf import DictConfig
 
-
-class TFModel(ABC):
+class TFModelFactory(ABC):
     """Model Base Class for TensorFlow."""
-
-    def __init__(self, model_cfg: DictConfig) -> None:
-        self.model_cfg = model_cfg
-        self.model_name = self.model_cfg.model_name
 
     @abstractmethod
     def create_base(self):
@@ -35,6 +29,6 @@ class TFModel(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def build_model(self):
+    def create_model(self):
         """Build the model with base and head"""
         raise NotImplementedError
