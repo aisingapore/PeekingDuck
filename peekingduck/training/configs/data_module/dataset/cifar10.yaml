@@ -7,6 +7,7 @@ test_dir: "./${.root_dir}/${project_name}"
 train_csv: "./${.root_dir}/${project_name}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "class_name" #class_id
+target_col_id: "class_id"
 stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
 num_classes: 10
@@ -22,3 +23,14 @@ class_name_to_id:
   horse: 7
   ship: 8
   truck: 9
+classes:
+  - airplane
+  - automobile
+  - bird
+  - cat
+  - deer
+  - dog
+  - frog
+  - horse
+  - ship
+  - truck

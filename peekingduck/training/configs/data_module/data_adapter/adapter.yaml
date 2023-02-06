@@ -28,21 +28,25 @@ tensorflow:
     shuffle: True
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
-    target_size: (32,32)
+    target_size:
+      - 32
+      - 32
     color_mode: "rgb"
-    classes: ${data_module.dataset.class_name_to_id}
+    classes: ${data_module.dataset.classes}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "training"
 
   valid:
     batch_size: 32
-    shuffle: True
+    shuffle: False
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
-    target_size: (32,32)
+    target_size:
+      - 32
+      - 32
     color_mode: "rgb"
-    classes: ${data_module.dataset.class_name_to_id}
+    classes: ${data_module.dataset.classes}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "validation"
@@ -52,9 +56,11 @@ tensorflow:
     shuffle: False
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
-    target_size: (32,32)
+    target_size:
+      - 32
+      - 32
     color_mode: "rgb"
-    classes: ${data_module.dataset.class_name_to_id}
+    classes: ${data_module.dataset.classes}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "validation"
