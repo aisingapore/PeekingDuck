@@ -47,9 +47,10 @@ class tensorflowTrainer(Trainer):
         self.trainer_config = trainer_config[self.framework]
 
 
-        tf_model = instantiate(model_config[self.framework].model_type, model_config[self.framework])
-        self.model = tf_model.create_model(model_config[self.framework])
-       
+        # tf_model = instantiate(model_config[self.framework].model_type, model_config[self.framework])
+        # self.model = tf_model.create_model(model_config[self.framework])
+        self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
+
         # scheduler
         decay_steps = 1000
         initial_learning_rate=0.001
@@ -61,7 +62,7 @@ class tensorflowTrainer(Trainer):
 
         # loss    
         scce = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-        self.loss = [scce]
+        self.loss = scce
 
         # metric
         acc = tf.keras.metrics.Accuracy(name='accuracy', dtype=None)
@@ -74,7 +75,7 @@ class tensorflowTrainer(Trainer):
         es = tf.keras.callbacks.EarlyStopping(patience=3, restore_best_weights=True, monitor="val_acc")
         self.callbacks = [es]
 
-        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics, callback=self.callbacks) 
+        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics) 
 
 
     def train(self, train_dl, val_dl):
@@ -82,6 +83,6 @@ class tensorflowTrainer(Trainer):
         BATCH_SIZE = 32
         EPOCHS = 10
 
-        history = self.model.fit(train_dl, batch_size = BATCH_SIZE, epochs= EPOCHS, validation_data=val_dl)
+        history = self.model.fit(train_dl, batch_size = BATCH_SIZE, epochs= EPOCHS, validation_data=val_dl, callbacks=self.callbacks)
         
         return history
