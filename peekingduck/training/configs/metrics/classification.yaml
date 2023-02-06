@@ -5,5 +5,7 @@ pytorch:
     _target_: src.metrics.pytorch_metrics.torchMetrics
 
 tensorflow:
+  evaluate:
+    ["accuracy", "precision", "recall", "auroc"]
   adapter:
     _target_: src.metrics.tensorflow_metrics.tensorflowMetrics

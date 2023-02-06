@@ -58,57 +58,42 @@ class tensorflowTrainer(Trainer):
         )
 
         # init_optimizer
-        adam = tf.keras.optimizers.Adam(
+        # adam = tf.keras.optimizers.Adam(
+        adam = tf.keras.optimizers.legacy.Adam(
             learning_rate=self.scheduler,
             beta_1=0.9,
             beta_2=0.999,
-            # amsgrad=False,
-            # weight_decay=None,
             name="Adam",
         )
         self.opt = adam
 
         # loss
-        scce = tf.keras.losses.SparseCategoricalCrossentropy(from_logits=False)
-        self.loss = scce
+        cce = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
+        self.loss = cce
 
         # metric
-        acc = tf.keras.metrics.Accuracy(name="accuracy", dtype=None)
-        precision = tf.keras.metrics.Precision(
-            thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+        metrics_adapter = instantiate(metrics_config[self.framework].adapter)
+        metrics_adapter.setup(
+            task=data_config.dataset.classification_type,
+            num_classes=data_config.dataset.num_classes,
+            metrics=metrics_config[self.framework].evaluate,
         )
-        recall = tf.keras.metrics.Recall(
-            thresholds=None, top_k=None, class_id=None, name=None, dtype=None
-        )
-        auroc = tf.keras.metrics.AUC(
-            num_thresholds=200,
-            curve="ROC",
-            summation_method="interpolation",
-            name=None,
-            dtype=None,
-            thresholds=None,
-            multi_label=False,
-            num_labels=None,
-            label_weights=None,
-            from_logits=False,
-        )
-        self.metrics = [acc, precision, recall, auroc]
+        self.metrics = metrics_adapter.create_collection()
 
         # callback
         es = tf.keras.callbacks.EarlyStopping(
-            patience=3, restore_best_weights=True, monitor="val_acc"
+            patience=3, restore_best_weights=True, monitor="accuracy"
         )
         self.callbacks = [es]
 
-        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
+        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
+        self.model.compile(optimizer = self.opt,loss=self.loss, metrics=["accuracy"]) 
 
     def train(self, train_dl, val_dl):
-        # self.model.fit(train_dl, val_dl)
         BATCH_SIZE = 32
         EPOCHS = 10
 
         self.model.summary()
-
         history = self.model.fit(
             train_dl,
             batch_size=BATCH_SIZE,
