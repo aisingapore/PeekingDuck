@@ -20,7 +20,6 @@ from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
 from src.data.base import DataModule
-from src.model.pytorch_base import Model
 from src.trainer.base import Trainer
 from src.utils.general_utils import choose_torch_device
 from src.model_analysis.weights_biases import WeightsAndBiases
