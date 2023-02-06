@@ -19,7 +19,12 @@ from src.metrics.base import MetricsAdapter
 
 class torchMetrics(MetricsAdapter):
     def __init__(self) -> None:
-        pass
+        self.metrics_collection = None
+        self.num_classes = None
+        self.task = None
+        self.framework = None
+        self.metrics = None
+
 
     def setup(self,
             task: str = "multiclass",
@@ -32,7 +37,6 @@ class torchMetrics(MetricsAdapter):
         self.task = task
         self.framework = framework
         self.metrics = metrics
-        return self.create_collection()
 
     def accuracy(self):
         return Accuracy(
