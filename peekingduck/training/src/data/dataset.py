@@ -115,6 +115,20 @@ class ImageClassificationDataset(Dataset):
         return torch.tensor(target, dtype=dtype)
 
 
+class ImageDataGenerator(tf.keras.preprocessing.image.ImageDataGenerator):
+    def __init__(self):
+        super().__init__(
+            rotation_range=10,
+            width_shift_range=0.2,
+            height_shift_range=0.2,
+            zoom_range=[0.95, 1.05],
+            shear_range=0.5,
+            fill_mode="wrap",
+            horizontal_flip=True,
+            vertical_flip=True,
+        )
+
+
 class Generator(object):
     def __init__(self, batch_size, name_x, name_y):
 

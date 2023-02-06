@@ -39,8 +39,8 @@ pytorch:
         scheduler_params:
             max_lr: 1e-3 # (float or list)
             # total_steps: epochs * steps_per_epoch # (int) Simple relation : total_steps = epochs * steps_per_epoch
-            epochs: 25 # (int)
-            steps_per_epoch: 32 # (int)
+            epochs: 5 # (int)
+            steps_per_epoch: 1109 # (int)
             # pct_start: 0.3 # (float)
             anneal_strategy: 'cos' # (str)
             # cycle_momentum: True # (bool)
@@ -63,10 +63,10 @@ pytorch:
     global_train_params:
         epochs: 50
         use_amp: False
-        patience: 9
+        patience: 1
         model_name: ${model.pytorch.model_name}
         debug: ${debug}
-        debug_epochs: 25
+        debug_epochs: 2
         classification_type: ${data_module.dataset.classification_type}
         monitored_metric:
             monitor: val_MulticlassAccuracy

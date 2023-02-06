@@ -51,28 +51,32 @@ class ImageClassificationDataModule(DataModule):
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg
         )
-        self.dataset_loader: DataAdapter = DataAdapter(cfg.data_adapter[cfg.framework])
+        self.dataset_loader: DataAdapter = None  # Setup in self.setup()
 
     def get_train_dataloader(self):
         """ """
+        assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
             self.train_dataset,
         )
 
     def get_validation_dataloader(self):
         """ """
+        assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.valid_dataloader(
             self.valid_dataset,
         )
 
     def get_test_dataloader(self):
         """ """
+        assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(
             self.test_dataset,
         )
 
     def prepare_data(self) -> None:
-        """ """
+        """Step 2 after __init__()
+        Load the dataframe from user-defined csv file"""
         url: str = self.cfg.dataset.url
         blob_file: str = self.cfg.dataset.blob_file
         root_dir: Path = Path(self.cfg.dataset.root_dir)
@@ -139,31 +143,38 @@ class ImageClassificationDataModule(DataModule):
         # self.valid_df.to_csv("valid_df.csv")
 
     def setup(self, stage: str):
-        """ """
+        """Step 3 after prepare()"""
         train_transforms = self.transforms.train_transforms
         valid_transforms = self.transforms.valid_transforms
         test_transforms = self.transforms.test_transforms
         if stage == "fit":
-            self.train_dataset = ImageClassificationDataset(
-                self.cfg,
-                df=self.train_df,
-                stage="train",
-                transforms=train_transforms,
-            )
-            self.valid_dataset = ImageClassificationDataset(
-                self.cfg,
-                df=self.valid_df,
-                stage="valid",
-                transforms=valid_transforms,
-            )
-            self.test_dataset = ImageClassificationDataset(
-                self.cfg,
-                df=self.test_df,
-                stage="test",
-                transforms=test_transforms,
-            )
+            if self.cfg.framework == "pytorch":
+                self.train_dataset = ImageClassificationDataset(
+                    self.cfg,
+                    df=self.train_df,
+                    stage="train",
+                    transforms=train_transforms,
+                )
+                self.valid_dataset = ImageClassificationDataset(
+                    self.cfg,
+                    df=self.valid_df,
+                    stage="valid",
+                    transforms=valid_transforms,
+                )
+                self.test_dataset = ImageClassificationDataset(
+                    self.cfg,
+                    df=self.test_df,
+                    stage="test",
+                    transforms=test_transforms,
+                )
             if self.cfg.framework == "tensorflow":
-                pass
+                self.train_dataset = self.train_df
+                self.valid_dataset = self.valid_df
+                self.test_dataset = self.test_df
+
+        self.dataset_loader: DataAdapter = DataAdapter(
+            self.cfg.data_adapter[self.cfg.framework]
+        )
 
     @staticmethod
     def _cross_validation_split(
