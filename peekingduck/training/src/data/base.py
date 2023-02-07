@@ -25,11 +25,11 @@ class DataModule(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def get_train_dataloader(self):
+    def get_train_dataset(self):
         """"""
 
     @abstractmethod
-    def get_validation_dataloader(self):
+    def get_validation_dataset(self):
         """"""
 
 

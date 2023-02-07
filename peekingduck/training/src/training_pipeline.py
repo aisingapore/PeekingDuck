@@ -31,8 +31,9 @@ def run(cfg: DictConfig) -> None:
 
     start_time = perf_counter()
 
-    cfg.device = choose_torch_device()  # TODO tensorflow
-    logger.info(f"Using device: {cfg.device}")
+    if cfg.framework == "pytorch":
+        cfg.device = choose_torch_device()  # TODO tensorflow
+        logger.info(f"Using device: {cfg.device}")
 
     data_module: DataModule = instantiate(
         config=cfg.data_module.module,
@@ -40,8 +41,8 @@ def run(cfg: DictConfig) -> None:
     )
     data_module.prepare_data()
     data_module.setup(stage="fit")
-    train_loader = data_module.get_train_dataloader()
-    validation_loader = data_module.get_validation_dataloader()
+    train_loader = data_module.get_train_dataset()
+    validation_loader = data_module.get_validation_dataset()
 
     model_analysis = WeightsAndBiases(cfg.model_analysis)
 
