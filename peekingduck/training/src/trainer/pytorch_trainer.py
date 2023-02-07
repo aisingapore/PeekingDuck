@@ -31,6 +31,7 @@ from src.trainer.base import Trainer
 from src.callbacks.base import init_callbacks
 from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
+from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
 import logging
@@ -100,8 +101,7 @@ class pytorchTrainer(Trainer):
         self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
-        metrics_adapter = instantiate(metrics_config[self.framework].adapter)
-        metrics_adapter.setup(
+        metrics_adapter = PytorchMetrics(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
             metrics=metrics_config[self.framework].evaluate,

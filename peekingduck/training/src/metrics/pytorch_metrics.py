@@ -14,66 +14,62 @@
 
 from torchmetrics import AUROC, Accuracy, MetricCollection, Precision, Recall
 from torchmetrics.classification import MulticlassCalibrationError
-from typing import List
+from typing import List, Dict
+from omegaconf import DictConfig
 from src.metrics.base import MetricsAdapter
 
-class torchMetrics(MetricsAdapter):
-    def __init__(self) -> None:
+
+class PytorchMetrics(MetricsAdapter):
+    def __init__(
+        self,
+        task: str = "multiclass",
+        num_classes: int = 2,
+        metrics: List[str] = None,
+    ) -> None:
         self.metrics_collection = None
-        self.num_classes = None
-        self.task = None
-        self.framework = None
-        self.metrics = None
-
-
-    def setup(self,
-            task: str = "multiclass",
-            num_classes: int = 2,
-            metrics: List[str] = None,
-            framework: str = "pytorch",
-        ) -> MetricCollection:
-
         self.num_classes = num_classes
         self.task = task
-        self.framework = framework
         self.metrics = metrics
-
-    def accuracy(self):
-        return Accuracy(
-            task=self.task, num_classes=self.num_classes
-        )
-
-    def precision(self):
-        return  Precision(
-            task=self.task, num_classes=self.num_classes, average="macro"
-        )
-
-    def recall(self):
-        return  Recall(
-            task=self.task, num_classes=self.num_classes, average="macro"
-        )
-
-    def f1_score(self):
-        pass
-
-    def auroc(self):
-        return AUROC(
-            task=self.task, num_classes=self.num_classes, average="macro"
-        )
-
-    def multiclass_calibration_error(self):
-        return  MulticlassCalibrationError(
-            num_classes=self.num_classes
-        )
-
-    def create_collection(self):
-
-        metricList = {}
+        self.metricList = {}
         for metric in self.metrics:
             try:
-                metricList[metric] = getattr(self, metric)()
+                if type(metric) is DictConfig:
+                    for mkey, mval in metric.items():
+                        self.metricList[metric] = getattr(self, mkey)(mval)
+                elif type(metric) is str:
+                    self.metricList[metric] = getattr(self, metric)()
+                else:
+                    raise TypeError
             except NotImplementedError:
-                pass
+                raise NotImplementedError
 
-        self.metrics_collection = MetricCollection(list(metricList.values()))
+        for metric in self.metrics:
+            try:
+                self.metricList[metric] = getattr(self, metric)()
+            except NotImplementedError:
+                raise NotImplementedError
+
+    def accuracy(self, parameters: Dict = {}):
+        return Accuracy(task=self.task, num_classes=self.num_classes, **parameters)
+
+    def precision(self, parameters: Dict = {}):
+        return Precision(
+            task=self.task, num_classes=self.num_classes, average="macro", **parameters
+        )
+
+    def recall(self, parameters: Dict = {}):
+        return Recall(
+            task=self.task, num_classes=self.num_classes, average="macro", **parameters
+        )
+
+    def auroc(self, parameters: Dict = {}):
+        return AUROC(
+            task=self.task, num_classes=self.num_classes, average="macro", **parameters
+        )
+
+    def multiclass_calibration_error(self, parameters: Dict = {}):
+        return MulticlassCalibrationError(num_classes=self.num_classes, **parameters)
+
+    def get_metrics(self) -> MetricCollection:
+        self.metrics_collection = MetricCollection(list(self.metricList.values()))
         return self.metrics_collection

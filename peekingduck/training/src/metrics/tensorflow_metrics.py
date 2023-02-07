@@ -12,46 +12,41 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
 import tensorflow as tf
+
+from typing import List, Dict
+from omegaconf import DictConfig
 from src.metrics.base import MetricsAdapter
 
-class tensorflowMetrics(MetricsAdapter):
-    def __init__(self) -> None:
-        pass
-
-    def setup(self,
-            task: str = "multiclass",
-            num_classes: int = 2,
+class TensorflowMetrics(MetricsAdapter):
+    def __init__(self,
             metrics: List[str] = None,
-            framework: str = "pytorch",
-        ) -> None:
-
-        self.num_classes = num_classes
-        self.task = task
-        self.framework = framework
-        self.metrics = metrics
+    ) -> None:
         self.metrics_collection = []
-
-    def accuracy(self):
-        return tf.keras.metrics.Accuracy(name='accuracy', dtype=None)
-
-    def precision(self):
-        return  tf.keras.metrics.Precision(thresholds=None, top_k=None, class_id=None, name=None, dtype=None)
-
-    def recall(self):
-        return  tf.keras.metrics.Recall(thresholds=None, top_k=None, class_id=None, name=None, dtype=None)
-
-    def f1_score(self):
-        pass
-
-    def auroc(self):
-        return tf.keras.metrics.AUC(num_thresholds=200, curve='ROC', summation_method='interpolation', name=None, dtype=None, thresholds=None, multi_label=False, num_labels=None, label_weights=None, from_logits=False)
-
-    def create_collection(self) -> List[tf.keras.metrics.Metric]:
+        self.metrics = metrics
         for metric in self.metrics:
             try:
-                self.metrics_collection.append(getattr(self, metric)())
+                if type(metric) is DictConfig:
+                    for mkey, mval in metric.items():
+                        self.metrics_collection.append( getattr(self, mkey)(mval) )
+                elif type(metric) is str:
+                    self.metrics_collection.append( getattr(self, metric)() )
+                else:
+                    raise TypeError
             except NotImplementedError:
-                pass
+                raise NotImplementedError
+
+    def accuracy(self, parameters: Dict = {}):
+        return tf.keras.metrics.Accuracy(name='accuracy', **parameters)
+
+    def precision(self, parameters: Dict = {}):
+        return  tf.keras.metrics.Precision(**parameters)
+
+    def recall(self, parameters: Dict = {}):
+        return  tf.keras.metrics.Recall(**parameters)
+
+    def auroc(self, parameters: Dict = {}):
+        return tf.keras.metrics.AUC(**parameters)
+
+    def get_metrics(self) -> List[tf.keras.metrics.Metric]:
         return self.metrics_collection

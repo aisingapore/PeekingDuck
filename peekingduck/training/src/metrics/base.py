@@ -19,10 +19,8 @@ from abc import ABC, abstractmethod
 class MetricsAdapter(ABC):
     """Base class for metrics adapter."""
 
-    @abstractmethod
     def setup(self) -> None:
         """setup"""
 
-    @abstractmethod
-    def create_collection(self, metrics):
+    def get_metrics(self, metrics):
         """"""
