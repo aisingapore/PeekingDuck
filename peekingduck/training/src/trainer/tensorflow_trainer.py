@@ -16,10 +16,12 @@ from sklearn.metrics import log_loss
 from src.trainer.base import Trainer
 from hydra.utils import instantiate
 from omegaconf import DictConfig
-from src.optimizers.adapter import OptimizersAdapter
-from src.optimizers.schedules import OptimizerSchedules
 import tensorflow as tf
 import logging
+
+from src.optimizers.adapter import OptimizersAdapter
+from src.optimizers.schedules import OptimizerSchedules
+from src.model.tensorflow_model import TFClassificationModelFactory
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -47,14 +49,18 @@ class tensorflowTrainer(Trainer):
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
 
-        tf_model_factory = instantiate(model_config[self.framework].model_type)
-        self.model = tf_model_factory.create_model(model_config[self.framework])
-        # self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
+        # tf_model_factory = instantiate(model_config[self.framework].model_type)
+        # self.model = tf_model_factory.create_model(model_config[self.framework])
+        self.model = TFClassificationModelFactory.create_model(
+            model_config[self.framework]
+        )
 
         # scheduler
         optimizer_schedule = OptimizerSchedules()
         if self.trainer_config.lr_schedule_params.schedule is None:
-            self.scheduler = self.trainer_config.lr_schedule_params.schedule_params.learning_rate
+            self.scheduler = (
+                self.trainer_config.lr_schedule_params.schedule_params.learning_rate
+            )
         else:
             self.scheduler = getattr(
                 optimizer_schedule, self.trainer_config.lr_schedule_params.schedule

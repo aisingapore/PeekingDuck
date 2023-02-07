@@ -22,66 +22,56 @@ from src.model.tensorflow_base import TFModelFactory
 # from tensorflow_base import TFModelFactory  # for testing
 
 
-logger = logging.getLogger("TF_model")  # pylint: disable=invalid-name
+logger = logging.getLogger("TF Model")  # pylint: disable=invalid-name
 logging.basicConfig(level=logging.INFO)
 
 
 class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
 
-    def __init__(self) -> None:
-        self.model_cfg = None
-        self.model_name = None
-        self.input_shape = None
-        self.num_classes = None
-        # self.model = self.create_model()
-        # logger.info("model built!")
+    # def __init__(self) -> None:
+    #     self.model_cfg = None
+    #     self.model_name = None
+    #     self.input_shape = None
+    #     self.num_classes = None
 
-    # def data_processing(self, inputs):
-    #     data_augmentation = tf.keras.Sequential(
-    #         [
-    #             tf.keras.layers.RandomFlip("horizontal"),
-    #             tf.keras.layers.RandomRotation(0.2),
-    #         ]
-    #     )
-    #     preprocess_input = getattr(
-    #         tf.keras.applications, "mobilenet_v2"
-    #     ).preprocess_input
-    #     x = data_augmentation(inputs)
-    #     outputs = preprocess_input(x)
-    #     return outputs
-
-    def create_base(self):
-        base_model = getattr(tf.keras.applications, self.model_name)(
-            input_shape=self.input_shape, include_top=False, weights="imagenet"
+    @classmethod
+    def create_base(cls, model_name, input_shape):
+        base_model = getattr(tf.keras.applications, model_name)(
+            input_shape=input_shape, include_top=False, weights="imagenet"
         )
         # To-do: allow user to unfreeze certain number of layers for fine-tuning
         base_model.trainable = False
         return base_model
 
-    def create_head(self, inputs):
+    @classmethod
+    def create_head(cls, inputs, num_classes):
         # create the pooling and prediction layers
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
-        prediction_layer = tf.keras.layers.Dense(self.num_classes, activation="softmax")
+        prediction_layer = tf.keras.layers.Dense(num_classes, activation="softmax")
         # chain up the layers
         x = global_average_layer(inputs)
         outputs = prediction_layer(x)
         return outputs
 
-    def create_model(self, model_cfg: DictConfig):
-        self.model_cfg = model_cfg
-        self.model_name = self.model_cfg.model_name
-        self.input_shape = (
-            int(self.model_cfg.image_size),
-            int(self.model_cfg.image_size),
+    @classmethod
+    def create_model(cls, model_cfg: DictConfig):
+        # cls.model_cfg = model_cfg
+        # cls.model_name = cls.model_cfg.model_name
+
+        model_name = model_cfg.model_name
+        input_shape = (
+            int(model_cfg.image_size),
+            int(model_cfg.image_size),
             3,
         )
-        self.num_classes = self.model_cfg.num_classes
-        inputs = tf.keras.Input(shape=self.input_shape)
+        num_classes = model_cfg.num_classes
+
+        inputs = tf.keras.Input(shape=input_shape)
         # x = self.data_processing(inputs)
         # disable batch norm for base model
-        x = self.create_base()(inputs, training=False)
-        outputs = self.create_head(x)
+        x = cls.create_base(model_name, input_shape)(inputs, training=False)
+        outputs = cls.create_head(x, num_classes)
         model = tf.keras.Model(inputs, outputs)
         logger.info("model created!")
         return model
