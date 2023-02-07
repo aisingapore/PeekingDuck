@@ -62,7 +62,7 @@ class ImageClassificationDataset(Dataset):
 
         self.image_path = df[cfg.dataset.image_path_col_name].values
         self.targets = (
-            df[cfg.dataset.target_col_name].values if stage != "test" else None
+            df[cfg.dataset.target_col_id].values if stage != "test" else None
         )
 
     def __len__(self) -> int:

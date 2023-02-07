@@ -10,8 +10,8 @@ target_col_name: "class_name" #class_id
 target_col_id: "class_id"
 stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
-num_classes: 10
 image_size: 32
+num_classes: 10
 class_name_to_id:
   airplane: 0
   automobile: 1

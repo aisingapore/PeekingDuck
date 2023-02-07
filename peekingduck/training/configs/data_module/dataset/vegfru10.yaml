@@ -6,9 +6,11 @@ train_dir: "./${.root_dir}/vegfru"
 test_dir: "./${.root_dir}/vegfru"
 train_csv: "./${.root_dir}/vegfru/vegfru10.csv"
 image_path_col_name: "image_path"
-target_col_name: "class_id"
+target_col_name: "class_name"
+target_col_id: "class_id"
 stratify_by: "class_id"
 classification_type: "multiclass"
+image_size: 224
 num_classes: 10
 class_name_to_id:
   "garlic": 0

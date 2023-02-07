@@ -6,9 +6,11 @@ train_dir: "./${.root_dir}/${project_name}"
 test_dir: "./${.root_dir}/${project_name}"
 train_csv: "./${.root_dir}/${project_name}/vegfru_all.csv"
 image_path_col_name: "image_path"
-target_col_name: "class_id"
+target_col_name: "class_name"
+target_col_id: "class_id"
 stratify_by: "class_name"
 classification_type: "multiclass"
+image_size: 32
 num_classes: 25
 class_name_to_id:
   "alliaceous": 0

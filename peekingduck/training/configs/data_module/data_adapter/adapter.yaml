@@ -29,10 +29,10 @@ tensorflow:
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
     target_size:
-      - 32
-      - 32
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
     color_mode: "rgb"
-    classes: ${data_module.dataset.classes}
+    classes: ${data_module.dataset.class_name_to_id}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "training"
@@ -43,10 +43,10 @@ tensorflow:
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
     target_size:
-      - 32
-      - 32
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
     color_mode: "rgb"
-    classes: ${data_module.dataset.classes}
+    classes: ${data_module.dataset.class_name_to_id}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "validation"
@@ -57,10 +57,10 @@ tensorflow:
     x_col: ${data_module.dataset.image_path_col_name}
     y_col: ${data_module.dataset.target_col_name}
     target_size:
-      - 32
-      - 32
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
     color_mode: "rgb"
-    classes: ${data_module.dataset.classes}
+    classes: ${data_module.dataset.class_name_to_id}
     class_mode: "categorical"
     interpolation: "nearest"
     subset: "validation"
