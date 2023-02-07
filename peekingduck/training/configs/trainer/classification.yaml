@@ -75,6 +75,24 @@ pytorch:
             _target_: src.trainer.pytorch_trainer.pytorchTrainer
 
 tensorflow:
+    lr_schedule_params:
+        schedule: null
+        schedule_params:
+            learning_rate: 0.003
+        # schedule: "PiecewiseConstantDecay"
+        # schedule_params:
+        #     values: [1.0, 0.5, 0.1]
+        #     boundaries: [100000, 110000]
+        #     name: None
+    optimizer_params:
+        # optimizer: "SGD"
+        # optimizer_params:
+        #     name: 'SGD'
+        optimizer: "Adam"
+        optimizer_params:
+            beta_1: 0.9
+            beta_2: 0.999
+            name: "Adam"
     global_train_params:
         trainer:
             _target_: src.trainer.tensorflow_trainer.tensorflowTrainer

@@ -16,7 +16,8 @@ from sklearn.metrics import log_loss
 from src.trainer.base import Trainer
 from hydra.utils import instantiate
 from omegaconf import DictConfig
-
+from src.optimizers.adapter import OptimizersAdapter
+from src.optimizers.schedules import OptimizerSchedules
 import tensorflow as tf
 import logging
 from configs import LOGGER_NAME
@@ -51,21 +52,19 @@ class tensorflowTrainer(Trainer):
         # self.model = tf.keras.applications.ResNet50(input_shape=(32, 32, 3), classes=10, include_top=True, weights=None)
 
         # scheduler
-        decay_steps = 1000
-        initial_learning_rate = 0.001
-        self.scheduler = tf.keras.optimizers.schedules.CosineDecay(
-            initial_learning_rate, decay_steps
-        )
+        optimizer_schedule = OptimizerSchedules()
+        if self.trainer_config.lr_schedule_params.schedule is None:
+            self.scheduler = self.trainer_config.lr_schedule_params.schedule_params.learning_rate
+        else:
+            self.scheduler = getattr(
+                optimizer_schedule, self.trainer_config.lr_schedule_params.schedule
+            )(self.trainer_config.lr_schedule_params.schedule_params)
 
         # init_optimizer
-        # adam = tf.keras.optimizers.Adam(
-        adam = tf.keras.optimizers.legacy.Adam(
-            learning_rate=self.scheduler,
-            beta_1=0.9,
-            beta_2=0.999,
-            name="Adam",
-        )
-        self.opt = adam
+        optimizer_adapter = OptimizersAdapter()
+        self.opt = getattr(
+            optimizer_adapter, self.trainer_config.optimizer_params.optimizer
+        )(self.scheduler, self.trainer_config.optimizer_params.optimizer_params)
 
         # loss
         cce = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
@@ -82,16 +81,15 @@ class tensorflowTrainer(Trainer):
 
         # callback
         es = tf.keras.callbacks.EarlyStopping(
-            patience=3, restore_best_weights=True, monitor="accuracy"
+            patience=20, restore_best_weights=True, monitor="accuracy"
         )
         self.callbacks = [es]
 
-        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
-        self.model.compile(optimizer = self.opt,loss=self.loss, metrics=["accuracy"]) 
+        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
         BATCH_SIZE = 32
-        EPOCHS = 10
+        EPOCHS = 100
 
         self.model.summary()
         history = self.model.fit(
