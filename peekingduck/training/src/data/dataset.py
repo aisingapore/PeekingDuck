@@ -61,9 +61,7 @@ class ImageClassificationDataset(Dataset):
         self.transforms = transforms
 
         self.image_path = df[cfg.dataset.image_path_col_name].values
-        self.targets = (
-            df[cfg.dataset.target_col_id].values if stage != "test" else None
-        )
+        self.targets = df[cfg.dataset.target_col_id].values if stage != "test" else None
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
@@ -118,11 +116,12 @@ class ImageClassificationDataset(Dataset):
 class ImageDataGenerator(tf.keras.preprocessing.image.ImageDataGenerator):
     def __init__(self):
         super().__init__(
+            rescale=1./255.,
             rotation_range=10,
             width_shift_range=0.2,
             height_shift_range=0.2,
             zoom_range=[0.95, 1.05],
-            shear_range=0.5,
+            shear_range=0.1,
             fill_mode="wrap",
             horizontal_flip=True,
             vertical_flip=True,

@@ -53,14 +53,14 @@ class ImageClassificationDataModule(DataModule):
         )
         self.dataset_loader: DataAdapter = None  # Setup in self.setup()
 
-    def get_train_dataloader(self):
+    def get_train_dataset(self):
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
             self.train_dataset,
         )
 
-    def get_validation_dataloader(self):
+    def get_validation_dataset(self):
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.valid_dataloader(
