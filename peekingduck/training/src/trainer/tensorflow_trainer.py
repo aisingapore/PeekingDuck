@@ -13,15 +13,17 @@
 # limitations under the License.
 
 from sklearn.metrics import log_loss
-from src.trainer.base import Trainer
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 import tensorflow as tf
 import logging
 
+from src.trainer.base import Trainer
 from src.optimizers.adapter import OptimizersAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.model.tensorflow_model import TFClassificationModelFactory
+from src.losses.adapter import TensorFlowLossAdapter
+from src.metrics.tensorflow_metrics import TensorflowMetrics
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -73,17 +75,16 @@ class tensorflowTrainer(Trainer):
         )(self.scheduler, self.trainer_config.optimizer_params.optimizer_params)
 
         # loss
-        cce = tf.keras.losses.CategoricalCrossentropy(from_logits=False)
-        self.loss = cce
+        loss_adapter = TensorFlowLossAdapter()
+        self.loss = getattr(loss_adapter, self.trainer_config.loss_params.loss_func)(
+            self.trainer_config.loss_params.loss_params
+        )
 
         # metric
-        metrics_adapter = instantiate(metrics_config[self.framework].adapter)
-        metrics_adapter.setup(
-            task=data_config.dataset.classification_type,
-            num_classes=data_config.dataset.num_classes,
+        metrics_adapter = TensorflowMetrics(
             metrics=metrics_config[self.framework].evaluate,
         )
-        self.metrics = metrics_adapter.create_collection()
+        self.metrics = metrics_adapter.get_metrics()
 
         # callback
         es = tf.keras.callbacks.EarlyStopping(
@@ -94,14 +95,10 @@ class tensorflowTrainer(Trainer):
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
-        BATCH_SIZE = 32
-        EPOCHS = 100
-
         self.model.summary()
         history = self.model.fit(
             train_dl,
-            batch_size=BATCH_SIZE,
-            epochs=EPOCHS,
+            epochs=self.trainer_config.global_train_params.epochs,
             validation_data=val_dl,
             callbacks=self.callbacks,
         )

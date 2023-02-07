@@ -1,11 +1,24 @@
 pytorch:
   evaluate:
-    ["accuracy", "precision", "recall", "auroc", "multiclass_calibration_error"]
-  adapter:
-    _target_: src.metrics.pytorch_metrics.torchMetrics
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "auroc"
+    - "multiclass_calibration_error"
 
 tensorflow:
   evaluate:
-    ["accuracy", "precision", "recall", "auroc"]
-  adapter:
-    _target_: src.metrics.tensorflow_metrics.tensorflowMetrics
+    - "accuracy"
+    - "precision" # thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+    - "recall" # thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+    - auroc:
+        num_thresholds: 3
+        # curve: 'ROC'
+        # summation_method: 'interpolation'
+        # name: None
+        # dtype: None
+        # thresholds: None
+        # multi_label: False
+        # num_labels: None
+        # label_weights: None
+        # from_logits: False

@@ -52,24 +52,27 @@ import tensorflow as tf
 
 class OptimizerSchedules:
 
-    def __init__(self) -> None:
-        pass
-
-    def PiecewiseConstantDecay(self, parameters):
+    @staticmethod
+    def PiecewiseConstantDecay(parameters):
         return tf.keras.optimizers.schedules.PiecewiseConstantDecay(**parameters)
 
-    def ExponentialDecay(self, parameters):
+    @staticmethod
+    def ExponentialDecay(parameters):
         return tf.keras.optimizers.schedules.ExponentialDecay(**parameters)
 
-    def CosineDecay(self, parameters):
+    @staticmethod
+    def CosineDecay(parameters):
         return tf.keras.optimizers.schedules.CosineDecay(**parameters)
 
-    def InverseTimeDecay(self, parameters):
+    @staticmethod
+    def InverseTimeDecay(parameters):
         return tf.keras.optimizers.schedules.InverseTimeDecay(**parameters)
 
-    def PolynomialDecay(self, parameters):
+    @staticmethod
+    def PolynomialDecay(parameters):
         return tf.keras.optimizers.schedules.PolynomialDecay(**parameters)
 
-    def CosineDecayRestarts(self, parameters):
+    @staticmethod
+    def CosineDecayRestarts(parameters):
         return tf.keras.optimizers.schedules.CosineDecayRestarts(**parameters)
 

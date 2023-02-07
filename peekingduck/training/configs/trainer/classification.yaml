@@ -76,14 +76,14 @@ pytorch:
 
 tensorflow:
     lr_schedule_params:
-        schedule: null
-        schedule_params:
-            learning_rate: 0.003
-        # schedule: "PiecewiseConstantDecay"
+        # schedule: null
         # schedule_params:
-        #     values: [1.0, 0.5, 0.1]
-        #     boundaries: [100000, 110000]
-        #     name: None
+        #     learning_rate: 0.003
+        schedule: "PiecewiseConstantDecay"
+        schedule_params:
+            values: [1.0, 0.5, 0.1]
+            boundaries: [100000, 110000]
+            name: None
     optimizer_params:
         # optimizer: "SGD"
         # optimizer_params:
@@ -93,6 +93,13 @@ tensorflow:
             beta_1: 0.9
             beta_2: 0.999
             name: "Adam"
+    loss_params:
+        loss_func: "CategoricalCrossentropy"
+        loss_params:
+            from_logits: False
     global_train_params:
+        epochs: 25
+        debug: ${debug}
+        debug_epochs: 15
         trainer:
             _target_: src.trainer.tensorflow_trainer.tensorflowTrainer

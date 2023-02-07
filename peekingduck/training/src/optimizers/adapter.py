@@ -5,15 +5,12 @@ from tensorflow.keras.optimizers.schedules import LearningRateSchedule
 
 class OptimizersAdapter:
 
-    def __init__(self) -> None:
-        pass
-
-    def Adam(self, learning_rate: LearningRateSchedule, parameters):
-        print("HELLOOOOO:", parameters)
+    @staticmethod
+    def Adam(learning_rate: LearningRateSchedule, parameters):
         return tf.keras.optimizers.Adam(learning_rate=learning_rate, **parameters)
 
-
-    def SGD(self, learning_rate: LearningRateSchedule, parameters):
+    @staticmethod
+    def SGD(learning_rate: LearningRateSchedule, parameters):
         # Parameters
             # learning_rate=0.01,
             # momentum=0.0,
