@@ -76,14 +76,21 @@ pytorch:
 
 tensorflow:
     lr_schedule_params:
+        schedule: "CosineDecayRestarts"
+        schedule_params:
+            initial_learning_rate: 0.003
+            first_decay_steps: 10
+            t_mul: 2.0
+            m_mul: 1.0
+            alpha: 0.0
         # schedule: null
         # schedule_params:
         #     learning_rate: 0.003
-        schedule: "PiecewiseConstantDecay"
-        schedule_params:
-            values: [1.0, 0.5, 0.1]
-            boundaries: [100000, 110000]
-            name: None
+        # schedule: "PiecewiseConstantDecay"
+        # schedule_params:
+        #     values: [1.0, 0.5, 0.1]
+        #     boundaries: [100000, 110000]
+        #     name: None
     optimizer_params:
         # optimizer: "SGD"
         # optimizer_params:
@@ -98,7 +105,7 @@ tensorflow:
         loss_params:
             from_logits: False
     global_train_params:
-        epochs: 25
+        epochs: 100
         debug: ${debug}
         debug_epochs: 15
         trainer:

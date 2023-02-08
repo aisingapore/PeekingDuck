@@ -1,29 +1,52 @@
-
-
 import tensorflow as tf
 from tensorflow.keras.optimizers.schedules import LearningRateSchedule
 
+
 class OptimizersAdapter:
+    # @staticmethod
+    # def Adadelta(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Adadelta(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def Adafactor(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Adafactor(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def Adagrad(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Adagrad(learning_rate=learning_rate, **parameters)
 
     @staticmethod
     def Adam(learning_rate: LearningRateSchedule, parameters):
         return tf.keras.optimizers.Adam(learning_rate=learning_rate, **parameters)
 
+    # @staticmethod # This is not released yet for tf-macos==2.10
+    # def AdamW(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     # return tf.keras.optimizers.experimental.AdamW(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def Adamax(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Adamax(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def Ftrl(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Ftrl(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def Nadam(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.Nadam(learning_rate=learning_rate, **parameters)
+
+    # @staticmethod
+    # def RMSprop(learning_rate: LearningRateSchedule, parameters):
+    #     raise NotImplementedError
+    #     return tf.keras.optimizers.RMSprop(learning_rate=learning_rate, **parameters)
+
     @staticmethod
     def SGD(learning_rate: LearningRateSchedule, parameters):
-        # Parameters
-            # learning_rate=0.01,
-            # momentum=0.0,
-            # nesterov=False,
-            # amsgrad=False,
-            # weight_decay=None,
-            # clipnorm=None,
-            # clipvalue=None,
-            # global_clipnorm=None,
-            # use_ema=False,
-            # ema_momentum=0.99,
-            # ema_overwrite_frequency=None,
-            # jit_compile=True,
-            # name='SGD',
-            # **kwargs
-        return tf.keras.optimizers.experimental.SGD(learning_rate=learning_rate, **parameters)
+        return tf.keras.optimizers.SGD(learning_rate=learning_rate, **parameters)

@@ -8,11 +8,14 @@ pytorch:
 
 tensorflow:
   evaluate:
-    - "accuracy"
-    - "precision" # thresholds=None, top_k=None, class_id=None, name=None, dtype=None
-    - "recall" # thresholds=None, top_k=None, class_id=None, name=None, dtype=None
+    - "categorical_accuracy"
+    - precision: # top_k=None, class_id=None, name=None, dtype=None
+        thresholds: 0.5
+    - recall: # top_k=None, class_id=None, name=None, dtype=None
+        thresholds: 0.5
     - auroc:
-        num_thresholds: 3
+        from_logits: False
+        # num_thresholds: 3
         # curve: 'ROC'
         # summation_method: 'interpolation'
         # name: None

@@ -36,8 +36,16 @@ class TensorflowMetrics(MetricsAdapter):
             except NotImplementedError:
                 raise NotImplementedError
 
+
+
     def accuracy(self, parameters: Dict = {}):
-        return tf.keras.metrics.Accuracy(name='accuracy', **parameters)
+        return tf.keras.metrics.Accuracy(**parameters)
+
+    def categorical_accuracy(self, parameters: Dict = {}):
+        return tf.keras.metrics.CategoricalAccuracy(**parameters)
+
+    def sparse_categorical_accuracy(self, parameters: Dict = {}):
+        return tf.keras.metrics.SparseCategoricalAccuracy(**parameters)
 
     def precision(self, parameters: Dict = {}):
         return  tf.keras.metrics.Precision(**parameters)

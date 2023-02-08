@@ -58,25 +58,22 @@ class tensorflowTrainer(Trainer):
         )
 
         # scheduler
-        optimizer_schedule = OptimizerSchedules()
         if self.trainer_config.lr_schedule_params.schedule is None:
             self.scheduler = (
                 self.trainer_config.lr_schedule_params.schedule_params.learning_rate
             )
         else:
             self.scheduler = getattr(
-                optimizer_schedule, self.trainer_config.lr_schedule_params.schedule
+                OptimizerSchedules, self.trainer_config.lr_schedule_params.schedule
             )(self.trainer_config.lr_schedule_params.schedule_params)
 
         # init_optimizer
-        optimizer_adapter = OptimizersAdapter()
         self.opt = getattr(
-            optimizer_adapter, self.trainer_config.optimizer_params.optimizer
+            OptimizersAdapter, self.trainer_config.optimizer_params.optimizer
         )(self.scheduler, self.trainer_config.optimizer_params.optimizer_params)
 
         # loss
-        loss_adapter = TensorFlowLossAdapter()
-        self.loss = getattr(loss_adapter, self.trainer_config.loss_params.loss_func)(
+        self.loss = getattr(TensorFlowLossAdapter, self.trainer_config.loss_params.loss_func)(
             self.trainer_config.loss_params.loss_params
         )
 
@@ -88,17 +85,23 @@ class tensorflowTrainer(Trainer):
 
         # callback
         es = tf.keras.callbacks.EarlyStopping(
-            patience=20, restore_best_weights=True, monitor="accuracy"
+            patience=20, restore_best_weights=True, monitor="categorical_accuracy"
         )
         self.callbacks = [es]
 
+        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
         self.model.summary()
+
+        self.epochs = self.trainer_config.global_train_params.epochs
+        if self.trainer_config.global_train_params.debug:
+            self.epochs = self.trainer_config.global_train_params.debug_epochs
+
         history = self.model.fit(
             train_dl,
-            epochs=self.trainer_config.global_train_params.epochs,
+            epochs=self.epochs,
             validation_data=val_dl,
             callbacks=self.callbacks,
         )
