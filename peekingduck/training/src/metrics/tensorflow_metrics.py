@@ -36,8 +36,6 @@ class TensorflowMetrics(MetricsAdapter):
             except NotImplementedError:
                 raise NotImplementedError
 
-
-
     def accuracy(self, parameters: Dict = {}):
         return tf.keras.metrics.Accuracy(**parameters)
 

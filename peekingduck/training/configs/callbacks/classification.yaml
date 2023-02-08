@@ -1,17 +1,27 @@
 pytorch:
-  - EarlyStopping:
-      mode: 'max'
-      monitor: 'val_MulticlassAccuracy'
-      patience: ${trainer.pytorch.global_train_params.patience}
-      min_delta: 0.000001 # 1e-6
-  - History
-  - MetricMeter
-  - ModelCheckpoint:
-      mode: 'max'
-      monitor: 'val_MulticlassAccuracy'
+    - EarlyStopping:
+        mode: 'max'
+        monitor: 'val_MulticlassAccuracy'
+        patience: ${trainer.pytorch.global_train_params.patience}
+        min_delta: 0.000001 # 1e-6
+    - History
+    - MetricMeter
+    - ModelCheckpoint:
+        mode: 'max'
+        monitor: 'val_MulticlassAccuracy'
 
 tensorflow:
-  - History: null
-  - MetricMeter: null
-  - ModelCheckpoint: null
-  - EarlyStopping: null
+    - History
+    - EarlyStopping:
+        patience: 25
+        restore_best_weights: True
+        monitor: "categorical_accuracy"
+    - ProgbarLogger:
+        count_mode: "steps"
+    - ModelCheckpoint:
+        filepath: "./outputs/${project_name}/${stores.unique_id}/"
+        save_weights_only: True
+        monitor: 'categorical_accuracy'
+        mode: 'max'
+        save_best_only: True
+        save_freq: 'epoch'

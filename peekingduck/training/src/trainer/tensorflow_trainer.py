@@ -24,6 +24,7 @@ from src.optimizers.schedules import OptimizerSchedules
 from src.model.tensorflow_model import TFClassificationModelFactory
 from src.losses.adapter import TensorFlowLossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
+from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -51,8 +52,7 @@ class tensorflowTrainer(Trainer):
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
 
-        # tf_model_factory = instantiate(model_config[self.framework].model_type)
-        # self.model = tf_model_factory.create_model(model_config[self.framework])
+        # create model
         self.model = TFClassificationModelFactory.create_model(
             model_config[self.framework]
         )
@@ -73,9 +73,9 @@ class tensorflowTrainer(Trainer):
         )(self.scheduler, self.trainer_config.optimizer_params.optimizer_params)
 
         # loss
-        self.loss = getattr(TensorFlowLossAdapter, self.trainer_config.loss_params.loss_func)(
-            self.trainer_config.loss_params.loss_params
-        )
+        self.loss = getattr(
+            TensorFlowLossAdapter, self.trainer_config.loss_params.loss_func
+        )(self.trainer_config.loss_params.loss_params)
 
         # metric
         metrics_adapter = TensorflowMetrics(
@@ -84,12 +84,12 @@ class tensorflowTrainer(Trainer):
         self.metrics = metrics_adapter.get_metrics()
 
         # callback
-        es = tf.keras.callbacks.EarlyStopping(
-            patience=20, restore_best_weights=True, monitor="categorical_accuracy"
+        callbacks_adapter = TensorFlowCallbacksAdapter(
+            callbacks=callbacks_config[self.framework],
         )
-        self.callbacks = [es]
+        self.callbacks = callbacks_adapter.get_callbacks()
 
-        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
+        # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
