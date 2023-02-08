@@ -106,7 +106,7 @@ class pytorchTrainer(Trainer):
             num_classes=data_config.dataset.num_classes,
             metrics=metrics_config[self.framework].evaluate,
         )
-        self.metrics = metrics_adapter.create_collection()
+        self.metrics = metrics_adapter.get_metrics()
 
         self.model: PTModel = instantiate(
             config=model_config[self.framework].model_type,
@@ -223,11 +223,6 @@ class pytorchTrainer(Trainer):
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
 
-            # with torch.cuda.amp.autocast(  # TODO
-            #     enabled=self.train_params.use_amp,
-            #     dtype=torch.float16,
-            #     cache_enabled=True,
-            # ):
             logits = self.model(inputs)  # Forward pass logits
             curr_batch_train_loss = self.compute_criterion(
                 targets,
@@ -237,12 +232,6 @@ class pytorchTrainer(Trainer):
             )
 
             self.optimizer.zero_grad()  # reset gradients
-
-            # if self.scaler is not None:
-            #     self.scaler.scale(curr_batch_train_loss).backward()
-            #     self.scaler.step(self.optimizer)
-            #     self.scaler.update()
-            # else:
             curr_batch_train_loss.backward()  # Backward pass
             self.optimizer.step()  # Update weights using the optimizer
 
