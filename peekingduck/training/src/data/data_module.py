@@ -21,7 +21,7 @@ from hydra.utils import instantiate
 import pandas as pd
 
 from src.data.base import DataModule
-from src.data.dataset import ImageClassificationDataset
+from src.data.dataset import PTImageClassificationDataset
 from src.data.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
@@ -49,7 +49,7 @@ class ImageClassificationDataModule(DataModule):
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
-            cfg
+            cfg.transform[cfg.framework]
         )
         self.dataset_loader: DataAdapter = None  # Setup in self.setup()
 
@@ -58,6 +58,7 @@ class ImageClassificationDataModule(DataModule):
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
             self.train_dataset,
+            transforms=self.train_transforms,
         )
 
     def get_validation_dataset(self):
@@ -65,6 +66,7 @@ class ImageClassificationDataModule(DataModule):
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.valid_dataloader(
             self.valid_dataset,
+            transforms=self.valid_transforms,
         )
 
     def get_test_dataloader(self):
@@ -72,6 +74,7 @@ class ImageClassificationDataModule(DataModule):
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(
             self.test_dataset,
+            transforms=self.test_transforms,
         )
 
     def prepare_data(self) -> None:
@@ -144,28 +147,28 @@ class ImageClassificationDataModule(DataModule):
 
     def setup(self, stage: str):
         """Step 3 after prepare()"""
-        train_transforms = self.transforms.train_transforms
-        valid_transforms = self.transforms.valid_transforms
-        test_transforms = self.transforms.test_transforms
+        self.train_transforms = self.transforms.train_transforms
+        self.valid_transforms = self.transforms.valid_transforms
+        self.test_transforms = self.transforms.test_transforms
         if stage == "fit":
             if self.cfg.framework == "pytorch":
-                self.train_dataset = ImageClassificationDataset(
+                self.train_dataset = PTImageClassificationDataset(
                     self.cfg,
                     df=self.train_df,
                     stage="train",
-                    transforms=train_transforms,
+                    transforms=self.train_transforms,
                 )
-                self.valid_dataset = ImageClassificationDataset(
+                self.valid_dataset = PTImageClassificationDataset(
                     self.cfg,
                     df=self.valid_df,
                     stage="valid",
-                    transforms=valid_transforms,
+                    transforms=self.valid_transforms,
                 )
-                self.test_dataset = ImageClassificationDataset(
+                self.test_dataset = PTImageClassificationDataset(
                     self.cfg,
                     df=self.test_df,
                     stage="test",
-                    transforms=test_transforms,
+                    transforms=self.test_transforms,
                 )
             if self.cfg.framework == "tensorflow":
                 self.train_dataset = self.train_df

@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from pyparsing import util
 from omegaconf import DictConfig
 from time import perf_counter
 import logging
@@ -24,7 +23,7 @@ from src.trainer.base import Trainer
 from src.utils.general_utils import choose_torch_device
 from src.model_analysis.weights_biases import WeightsAndBiases
 
-logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
 def run(cfg: DictConfig) -> None:
@@ -32,7 +31,7 @@ def run(cfg: DictConfig) -> None:
         "pytorch",
         "tensorflow",
     ], f"Unsupported framework {cfg.framework}"
-    start_time = perf_counter()
+    start_time: float = perf_counter()
 
     if cfg.framework == "pytorch":
         cfg.device = choose_torch_device()
@@ -62,7 +61,7 @@ def run(cfg: DictConfig) -> None:
     train_loader = data_module.get_train_dataset()
     validation_loader = data_module.get_validation_dataset()
 
-    model_analysis = WeightsAndBiases(cfg.model_analysis)
+    model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
 
     trainer: Trainer = instantiate(
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
@@ -78,7 +77,7 @@ def run(cfg: DictConfig) -> None:
     history = trainer.train(train_loader, validation_loader)
     # wandb.log_history(history)
 
-    end_time = perf_counter()
-    run_time = f"Run time = {end_time - start_time:.2f} sec"
-    logger.debug(run_time)
-    model_analysis.log({"run_time": run_time})
+    end_time: float = perf_counter()
+    run_time: str = f"Run time = {end_time - start_time:.2f} sec"
+    logger.info(run_time)
+    model_analysis.log({"run_time": end_time - start_time})

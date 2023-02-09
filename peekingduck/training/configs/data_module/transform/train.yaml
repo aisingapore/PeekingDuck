@@ -1,8 +1,24 @@
-train:
-  - _target_: torchvision.transforms.ToPILImage
-  - _target_: torchvision.transforms.RandomResizedCrop
-    size: ${data_module.dataset.image_size}
-  - _target_: torchvision.transforms.ToTensor
-  - _target_: torchvision.transforms.Normalize
-    mean: [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]
-    std: [0.24703225141799082, 0.24348516474564, 0.26158783926049628]
+pytorch:
+  train:
+    - _target_: albumentations.augmentations.crops.transforms.RandomResizedCrop
+      height: ${data_module.dataset.image_size}
+      width: ${data_module.dataset.image_size}
+      scale: [0.8, 1]
+      ratio: [1, 1]
+    - _target_: albumentations.augmentations.geometric.transforms.Flip
+    - _target_: albumentations.augmentations.transforms.Normalize
+      mean: [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]
+      std: [0.24703225141799082, 0.24348516474564, 0.26158783926049628]
+    - _target_: albumentations.pytorch.transforms.ToTensorV2
+
+tensorflow:
+  train:
+    - _target_: albumentations.augmentations.crops.transforms.RandomResizedCrop
+      height: ${data_module.dataset.image_size}
+      width: ${data_module.dataset.image_size}
+      scale: [0.8, 1]
+      ratio: [1, 1]
+    - _target_: albumentations.augmentations.geometric.transforms.Flip
+    - _target_: albumentations.augmentations.transforms.Normalize
+      mean: [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]
+      std: [0.24703225141799082, 0.24348516474564, 0.26158783926049628]

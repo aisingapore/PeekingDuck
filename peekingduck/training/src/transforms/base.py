@@ -24,8 +24,8 @@ class Transforms(ABC):
     and torchvision transforms.
     """
 
-    def __init__(self, pipeline_config: DictConfig) -> None:
-        self.pipeline_config: DictConfig = pipeline_config
+    def __init__(self, cfg: DictConfig) -> None:
+        self.cfg: DictConfig = cfg
 
     @property
     @abstractmethod

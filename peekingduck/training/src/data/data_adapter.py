@@ -16,7 +16,7 @@
 from torch.utils.data import DataLoader
 
 from src.data.base import AbstractDataAdapter
-from src.data.dataset import ImageDataGenerator
+from src.data.dataset import TFImageClassificationDataset
 
 
 class DataAdapter(AbstractDataAdapter):
@@ -28,22 +28,43 @@ class DataAdapter(AbstractDataAdapter):
         if cfg.adapter_type == "pytorch":
             self.loader = DataLoader
         if cfg.adapter_type == "tensorflow":
-            self.loader = ImageDataGenerator().flow_from_dataframe
+            self.loader = TFImageClassificationDataset
 
-    def train_dataloader(self, dataset):
-        return self.loader(
-            dataset,
-            **self.cfg.train,
-        )
+    def train_dataloader(self, dataset, transforms):
+        if self.cfg.adapter_type == "pytorch":
+            return self.loader(
+                dataset,
+                **self.cfg.train,
+            )
+        if self.cfg.adapter_type == "tensorflow":
+            return self.loader(
+                dataset,
+                transforms=transforms,
+                **self.cfg.train,
+            )
 
-    def valid_dataloader(self, dataset):
-        return self.loader(
-            dataset,
-            **self.cfg.valid,
-        )
+    def valid_dataloader(self, dataset, transforms):
+        if self.cfg.adapter_type == "pytorch":
+            return self.loader(
+                dataset,
+                **self.cfg.valid,
+            )
+        if self.cfg.adapter_type == "tensorflow":
+            return self.loader(
+                dataset,
+                transforms=transforms,
+                **self.cfg.valid,
+            )
 
-    def test_dataloader(self, dataset):
-        return self.loader(
-            dataset,
-            **self.cfg.test,
-        )
+    def test_dataloader(self, dataset, transforms):
+        if self.cfg.adapter_type == "pytorch":
+            return self.loader(
+                dataset,
+                **self.cfg.test,
+            )
+        if self.cfg.adapter_type == "tensorflow":
+            return self.loader(
+                dataset,
+                transforms=transforms,
+                **self.cfg.test,
+            )

@@ -14,7 +14,8 @@
 
 
 """Transforms for data augmentation."""
-import torchvision.transforms as T
+# import torchvision.transforms as T
+import albumentations as A
 
 from omegaconf import DictConfig
 from hydra.utils import instantiate
@@ -25,22 +26,22 @@ from src.transforms.base import Transforms
 class ImageClassificationTransforms(Transforms):
     """General Image Classification Transforms."""
 
-    def __init__(self, pipeline_config: DictConfig) -> None:
-        super().__init__(pipeline_config)
-        self.pipeline_config: DictConfig = pipeline_config
+    def __init__(self, cfg: DictConfig) -> None:
+        super().__init__(cfg)
+        self.cfg: DictConfig = cfg
 
     @property
-    def train_transforms(self) -> T.Compose:
-        return T.Compose(instantiate(self.pipeline_config.transform.train))
+    def train_transforms(self):
+        return A.Compose(instantiate(self.cfg.train))
 
     @property
-    def valid_transforms(self) -> T.Compose:
-        return T.Compose(instantiate(self.pipeline_config.transform.train))
+    def valid_transforms(self):
+        return A.Compose(instantiate(self.cfg.test))
 
     @property
-    def test_transforms(self) -> T.Compose:
-        return T.Compose(instantiate(self.pipeline_config.transform.train))
+    def test_transforms(self):
+        return A.Compose(instantiate(self.cfg.test))
 
     @property
-    def debug_transforms(self) -> T.Compose:
-        return self.pipeline_config.transforms.debug_transforms
+    def debug_transforms(self):
+        return self.cfg.transforms.debug_transforms
