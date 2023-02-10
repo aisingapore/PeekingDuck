@@ -19,62 +19,22 @@ from omegaconf import DictConfig
 
 class TensorFlowCallbacksAdapter:
 
-    def __init__(self,
-            callbacks: List[str] = None,
-    ) -> None:
-        self.callbacks_list = []
-        self.callbacks = callbacks
-        for cb in self.callbacks:
+    def get_callback(self, callback_name, parameters: DictConfig = {}):
+        return getattr(tf.keras.callbacks, callback_name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.callbacks, callback_name)
+ 
+
+    def create_list(self, callbacks: List[str] = None) -> List[tf.keras.callbacks.Callback]:
+        callbacks_list = []
+        for cb in callbacks:
             try:
                 if type(cb) is DictConfig:
                     for cbkey, cbval in cb.items():
-                        self.callbacks_list.append( getattr(self, cbkey)(cbval) )
+                        callbacks_list.append( self.get_callback(cbkey, cbval) )
                 elif type(cb) is str:
-                    self.callbacks_list.append( getattr(self, cb)() )
+                    callbacks_list.append( self.get_callback(cb) )
                 else:
                     raise TypeError
             except NotImplementedError:
                 raise NotImplementedError
-
-    # def BackupAndRestore(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.BackupAndRestore(**parameters)
-
-    # def BaseLogger(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.BaseLogger(**parameters)
-
-    # def CSVLogger(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.CSVLogger(**parameters)
-
-    def EarlyStopping(self, parameters: DictConfig = {}):
-        return tf.keras.callbacks.EarlyStopping(**parameters)
-
-    def History(self, parameters: DictConfig = {}):
-        return tf.keras.callbacks.History(**parameters)
-
-    # def LambdaCallback(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.LambdaCallback(**parameters)
-
-    # def LearningRateScheduler(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.LearningRateScheduler(**parameters)
-
-    def ModelCheckpoint(self, parameters: DictConfig = {}):
-        return tf.keras.callbacks.ModelCheckpoint(**parameters)
-
-    def ProgbarLogger(self, parameters: DictConfig = {}):
-        return tf.keras.callbacks.ProgbarLogger(**parameters)
-
-    # def ReduceLROnPlateau(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.ReduceLROnPlateau(**parameters)
-
-    # def RemoteMonitor(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.RemoteMonitor(**parameters)
-
-    # def TensorBoard(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.TensorBoard(**parameters)
-
-    # def TerminateOnNaN(self, parameters: DictConfig):
-    #     return tf.keras.callbacks.TerminateOnNaN(**parameters)
-
-
-    def get_callbacks(self) -> List[tf.keras.callbacks.Callback]:
-        return self.callbacks_list
+                
+        return callbacks_list

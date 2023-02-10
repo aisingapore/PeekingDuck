@@ -1,27 +1,17 @@
 pytorch:
-  evaluate:
-    - "accuracy"
-    - "precision"
-    - "recall"
-    - "auroc"
+    # Options: Accuracy | Precision | Recall | AUROC
+    - "Accuracy"
+    - "Precision"
+    - "Recall"
+    - "AUROC"
     - "multiclass_calibration_error"
 
 tensorflow:
-  evaluate:
-    - "categorical_accuracy"
-    - precision: # top_k=None, class_id=None, name=None, dtype=None
-        thresholds: 0.5
-    - recall: # top_k=None, class_id=None, name=None, dtype=None
-        thresholds: 0.5
-    - auroc:
-        from_logits: False
-        # num_thresholds: 3
-        # curve: 'ROC'
-        # summation_method: 'interpolation'
-        # name: None
-        # dtype: None
-        # thresholds: None
-        # multi_label: False
-        # num_labels: None
-        # label_weights: None
-        # from_logits: False
+    # Options: Accuracy | Precision | Recall | AUC
+    - "CategoricalAccuracy"
+    - Precision:
+          thresholds: 0.5
+    - Recall:
+          thresholds: 0.5
+    - AUC:
+          from_logits: False

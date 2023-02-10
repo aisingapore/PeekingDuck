@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import List
 from sklearn.metrics import log_loss
 from hydra.utils import instantiate
 from omegaconf import DictConfig
@@ -78,19 +79,16 @@ class tensorflowTrainer(Trainer):
         )(self.trainer_config.loss_params.loss_params)
 
         # metric
-        metrics_adapter = TensorflowMetrics(
-            metrics=metrics_config[self.framework].evaluate,
-        )
-        self.metrics = metrics_adapter.get_metrics()
+        metrics_adapter = TensorflowMetrics()
+        self.metrics = metrics_adapter.get_metrics(metrics=metrics_config[self.framework])
 
         # callback
-        callbacks_adapter = TensorFlowCallbacksAdapter(
-            callbacks=callbacks_config[self.framework],
-        )
-        self.callbacks = callbacks_adapter.get_callbacks()
-
+        callbacks_adapter = TensorFlowCallbacksAdapter()
+        self.callbacks: List = callbacks_adapter.create_list(callbacks=callbacks_config[self.framework])
+        print(self.callbacks)
         # compile model
-        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
+        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
+        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=['categorical_accuracy'])
 
     def train(self, train_dl, val_dl):
         self.model.summary()

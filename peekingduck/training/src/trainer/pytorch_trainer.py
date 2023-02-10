@@ -104,7 +104,7 @@ class pytorchTrainer(Trainer):
         metrics_adapter = PytorchMetrics(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
-            metrics=metrics_config[self.framework].evaluate,
+            metrics=metrics_config[self.framework],
         )
         self.metrics = metrics_adapter.get_metrics()
 
