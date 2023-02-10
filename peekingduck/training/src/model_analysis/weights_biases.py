@@ -20,7 +20,10 @@ import pandas as pd
 class WeightsAndBiases:
     def __init__(self, cfg: DictConfig):
         self.cfg: DictConfig = cfg
-        wandb.init(project=cfg.project, entity="peekingduck", config=cfg)
+        if cfg.debug:
+            wandb.init(mode="disabled")
+        else:
+            wandb.init(project=cfg.project, entity="peekingduck", config=cfg)
         # wandb.config = cfg
 
     def watch(self, model):

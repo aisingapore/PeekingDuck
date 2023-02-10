@@ -13,7 +13,6 @@
 # limitations under the License.
 
 
-from pathlib import Path
 from typing import Optional, Tuple, Union
 import numpy as np
 from omegaconf import DictConfig
@@ -41,7 +40,7 @@ else:
 TransformTypes = Optional[Union[A.Compose, T.Compose]]
 
 
-class ImageClassificationDataset(Dataset):
+class PTImageClassificationDataset(Dataset):
     """Template for Image Classification Dataset."""
 
     def __init__(
@@ -70,7 +69,7 @@ class ImageClassificationDataset(Dataset):
     def __getitem__(
         self, index: int
     ) -> Union[torch.FloatTensor, Union[torch.FloatTensor, torch.LongTensor]]:
-        """ """
+        """Generate one batch of data"""
         image_path = self.image_path[index]
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -91,7 +90,7 @@ class ImageClassificationDataset(Dataset):
 
     def apply_image_transforms(
         self, image: torch.Tensor, dtype: torch.dtype = torch.float32
-    ) -> torch.Tensor:
+    ):
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
             image = self.transforms(image=image)["image"]
@@ -99,7 +98,7 @@ class ImageClassificationDataset(Dataset):
             image = self.transforms(image)
         else:
             image = torch.from_numpy(image).permute(2, 0, 1)  # convert HWC to CHW
-        return torch.tensor(image, dtype=dtype)
+        return image
 
     # pylint: disable=no-self-use # not yet!
     def apply_target_transforms(
@@ -113,10 +112,102 @@ class ImageClassificationDataset(Dataset):
         return torch.tensor(target, dtype=dtype)
 
 
+class TFImageClassificationDataset(tf.keras.utils.Sequence):
+    """Template for Image Classification Dataset."""
+
+    def __init__(
+        self,
+        df,
+        # cfg: DictConfig,
+        stage: str = "train",
+        batch_size=1,
+        num_classes=2,
+        target_size=(32, 32),
+        shuffle=False,
+        transforms=None,
+        num_channels=3,
+        x_col="",
+        y_col="",
+        **kwargs,
+    ) -> None:
+        """"""
+
+        self.df = df
+        self.stage = stage
+        self.transforms = transforms
+        self.batch_size = batch_size
+        self.num_classes = num_classes
+        self.dim = target_size
+        self.num_channels = num_channels
+        self.shuffle = shuffle
+
+        self.list_IDs = df[x_col].values
+        self.targets = df[y_col].values if stage != "test" else None
+        self.on_epoch_end()
+
+    def __len__(self) -> int:
+        """Denotes the number of batches per epoch"""
+        return int(np.floor(len(self.list_IDs) / self.batch_size))
+
+    def __getitem__(self, index: int):
+        """Generate one batch of data"""
+        # Generate indexes of the batch
+        indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
+
+        # Find list of IDs
+        list_IDs_temp = [self.list_IDs[k] for k in indexes]
+
+        # Generate data
+        X, y = self._data_generation(list_IDs_temp, indexes)
+
+        # TODO: consider stage to be private since it is only used internally.
+        if self.stage in ["train", "valid", "debug"]:
+            return X, y
+        elif self.stage == "test":
+            return X
+        else:
+            raise ValueError(f"Invalid stage {self.stage}.")
+
+    def _load_image(self, image_path):
+        image = cv2.imread(image_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        return self.apply_image_transforms(image)
+
+    def _data_generation(self, list_IDs_temp, indexes):
+        "Generates data containing batch_size samples"  # X : (n_samples, *dim, n_channels)
+        # Initialization
+        X = np.empty((self.batch_size, *self.dim, self.num_channels))
+        y = np.empty((self.batch_size), dtype=int)
+
+        # Generate data
+        for i, ID in enumerate(list_IDs_temp):
+            # Store sample
+            X[i] = self._load_image(ID)
+
+        # Store class
+        y = self.targets[indexes]
+
+        return X, tf.keras.utils.to_categorical(y, num_classes=self.num_classes)
+
+    def apply_image_transforms(self, image, dtype=np.float32):
+        """Apply transforms to the image."""
+        if self.transforms and isinstance(self.transforms, A.Compose):
+            image = self.transforms(image=image)["image"]
+        elif self.transforms and isinstance(self.transforms, T.Compose):
+            image = self.transforms(image)
+        return image
+
+    def on_epoch_end(self):
+        "Updates indexes after each epoch"
+        self.indexes = np.arange(len(self.list_IDs))
+        if self.shuffle == True:
+            np.random.shuffle(self.indexes)
+
+
 class ImageDataGenerator(tf.keras.preprocessing.image.ImageDataGenerator):
     def __init__(self):
         super().__init__(
-            rescale=1./255.,
+            rescale=1.0 / 255.0,
             rotation_range=10,
             width_shift_range=0.2,
             height_shift_range=0.2,
