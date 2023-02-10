@@ -21,10 +21,10 @@ from src.metrics.base import MetricsAdapter
 class TensorflowMetrics(MetricsAdapter):
 
     def get_metric(self, metric_name: str, parameters: DictConfig = {}):
-        return getattr(tf.keras.metrics, metric_name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.metrics, metric_name)
+        return getattr(tf.keras.metrics, metric_name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.metrics, metric_name)()
 
 
-    def get_metrics(self, metrics: List = None) -> List[tf.keras.metrics.Metric]:
+    def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
         metrics_collection = []
         for metric in metrics:
             try:

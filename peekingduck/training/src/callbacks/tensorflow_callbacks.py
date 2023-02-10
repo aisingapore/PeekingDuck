@@ -23,7 +23,7 @@ class TensorFlowCallbacksAdapter:
         return getattr(tf.keras.callbacks, callback_name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.callbacks, callback_name)
  
 
-    def create_list(self, callbacks: List[str] = None) -> List[tf.keras.callbacks.Callback]:
+    def get_callbacks(self, callbacks: List[str] = None) -> List[tf.keras.callbacks.Callback]:
         callbacks_list = []
         for cb in callbacks:
             try:

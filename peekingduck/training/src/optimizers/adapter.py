@@ -1,8 +1,6 @@
-import tensorflow as tf
-from tensorflow.keras.optimizers.schedules import LearningRateSchedule
+"""
+    Optimizer Class Adapter for Tensorflow
 
-
-class OptimizersAdapter:
     # @staticmethod
     # def Adadelta(learning_rate: LearningRateSchedule, parameters):
     #     raise NotImplementedError
@@ -20,7 +18,7 @@ class OptimizersAdapter:
 
     @staticmethod
     def Adam(learning_rate: LearningRateSchedule, parameters):
-        return tf.keras.optimizers.Adam(learning_rate=learning_rate, **parameters)
+        return .Adam(learning_rate=learning_rate, **parameters)
 
     # @staticmethod # This is not released yet for tf-macos==2.10
     # def AdamW(learning_rate: LearningRateSchedule, parameters):
@@ -50,3 +48,17 @@ class OptimizersAdapter:
     @staticmethod
     def SGD(learning_rate: LearningRateSchedule, parameters):
         return tf.keras.optimizers.SGD(learning_rate=learning_rate, **parameters)
+
+
+"""
+
+import tensorflow as tf
+
+from omegaconf import DictConfig
+
+
+class OptimizersAdapter:
+
+    @staticmethod
+    def get_optimizer(name: str, learning_rate: tf.keras.optimizers.schedules.LearningRateSchedule, parameters: DictConfig = {}):
+        return getattr(tf.keras.optimizers, name)(learning_rate, **parameters) if len(parameters) > 0 else getattr(tf.keras.optimizers, name)(learning_rate)

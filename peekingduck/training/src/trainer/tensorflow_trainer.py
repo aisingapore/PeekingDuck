@@ -64,31 +64,36 @@ class tensorflowTrainer(Trainer):
                 self.trainer_config.lr_schedule_params.schedule_params.learning_rate
             )
         else:
-            self.scheduler = getattr(
-                OptimizerSchedules, self.trainer_config.lr_schedule_params.schedule
-            )(self.trainer_config.lr_schedule_params.schedule_params)
+            self.scheduler = OptimizerSchedules.get_scheduler(
+                self.trainer_config.lr_schedule_params.schedule,
+                self.trainer_config.lr_schedule_params.schedule_params,
+            )
 
         # init_optimizer
-        self.opt = getattr(
-            OptimizersAdapter, self.trainer_config.optimizer_params.optimizer
-        )(self.scheduler, self.trainer_config.optimizer_params.optimizer_params)
+        self.opt = OptimizersAdapter.get_optimizer(
+            self.trainer_config.optimizer_params.optimizer,
+            self.scheduler,
+            self.trainer_config.optimizer_params.optimizer_params,
+        )
 
         # loss
-        self.loss = getattr(
-            TensorFlowLossAdapter, self.trainer_config.loss_params.loss_func
-        )(self.trainer_config.loss_params.loss_params)
+        self.loss = TensorFlowLossAdapter.get_loss_func(
+            self.trainer_config.loss_params.loss_func,
+            self.trainer_config.loss_params.loss_params,
+        )
 
         # metric
-        metrics_adapter = TensorflowMetrics()
-        self.metrics = metrics_adapter.get_metrics(metrics=metrics_config[self.framework])
+        self.metrics: List = TensorflowMetrics().get_metrics(
+            metrics=metrics_config[self.framework]
+        )
 
         # callback
-        callbacks_adapter = TensorFlowCallbacksAdapter()
-        self.callbacks: List = callbacks_adapter.create_list(callbacks=callbacks_config[self.framework])
-        print(self.callbacks)
+        self.callbacks: List = TensorFlowCallbacksAdapter().get_callbacks(
+            callbacks=callbacks_config[self.framework]
+        )
+        
         # compile model
-        # self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
-        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=['categorical_accuracy'])
+        self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
         self.model.summary()
