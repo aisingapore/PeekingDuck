@@ -19,40 +19,22 @@ from omegaconf import DictConfig
 from src.metrics.base import MetricsAdapter
 
 class TensorflowMetrics(MetricsAdapter):
-    def __init__(self,
-            metrics: List[str] = None,
-    ) -> None:
-        self.metrics_collection = []
-        self.metrics = metrics
-        for metric in self.metrics:
+
+    def get_metric(self, metric_name, parameters: Dict = {}):
+        return getattr(tf.keras.metrics, metric_name)(**parameters)
+
+
+    def get_metrics(self, metrics: List) -> List[tf.keras.metrics.Metric]:
+        metrics_collection = []
+        for metric in metrics:
             try:
                 if type(metric) is DictConfig:
                     for mkey, mval in metric.items():
-                        self.metrics_collection.append( getattr(self, mkey)(mval) )
+                        metrics_collection.append( self.get_metric(mkey, mval) )
                 elif type(metric) is str:
-                    self.metrics_collection.append( getattr(self, metric)() )
+                    metrics_collection.append( self.get_metric(metric) )
                 else:
                     raise TypeError
             except NotImplementedError:
                 raise NotImplementedError
-
-    def accuracy(self, parameters: Dict = {}):
-        return tf.keras.metrics.Accuracy(**parameters)
-
-    def categorical_accuracy(self, parameters: Dict = {}):
-        return tf.keras.metrics.CategoricalAccuracy(**parameters)
-
-    def sparse_categorical_accuracy(self, parameters: Dict = {}):
-        return tf.keras.metrics.SparseCategoricalAccuracy(**parameters)
-
-    def precision(self, parameters: Dict = {}):
-        return  tf.keras.metrics.Precision(**parameters)
-
-    def recall(self, parameters: Dict = {}):
-        return  tf.keras.metrics.Recall(**parameters)
-
-    def auroc(self, parameters: Dict = {}):
-        return tf.keras.metrics.AUC(**parameters)
-
-    def get_metrics(self) -> List[tf.keras.metrics.Metric]:
-        return self.metrics_collection
+        return metrics_collection
