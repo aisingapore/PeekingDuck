@@ -14,11 +14,20 @@
 
 
 """Transforms for data augmentation."""
-# import torchvision.transforms as T
+import operator
 import albumentations as A
-
+from albumentations.core.transforms_interface import ImageOnlyTransform
 from omegaconf import DictConfig
 from hydra.utils import instantiate
+
+from .. import config
+
+if config.TF_AVAILABLE:
+    import tensorflow as tf
+else:
+    raise ImportError(
+        "Called a tensorflow-specific function but tensorflow is not installed."
+    )
 
 from src.transforms.base import Transforms
 
@@ -45,3 +54,25 @@ class ImageClassificationTransforms(Transforms):
     @property
     def debug_transforms(self):
         return self.cfg.transforms.debug_transforms
+
+
+class TFPreprocessImage(ImageOnlyTransform):
+    """Preprocessed numpy.array or a tf.Tensor with type float32. The images are converted from RGB to BGR,
+        then each color channel is zero-centered with respect to the ImageNet dataset, without scaling.
+    Args:
+        p (float): probability of applying the transform. Default: 0.5.
+    Targets:
+        image
+    Image types:
+        uint8, float32
+    """
+
+    def __init__(self, preprocessor="", always_apply: bool = True, p: float = 1):
+        super().__init__(always_apply, p)
+        self.preprocessor: str = preprocessor
+
+    def apply(self, img, **params):
+        return operator.attrgetter(self.preprocessor)(tf)(img)
+
+    def get_transform_init_args_names(self):
+        return "preprocessor"
