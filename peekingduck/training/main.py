@@ -28,11 +28,10 @@ logger: logging.Logger = logging.getLogger(__name__)
     config_path="configs",
     config_name="config",
 )
-def main(cfg: DictConfig) -> None:    
-    logger.info(OmegaConf.to_yaml(cfg))
+def main(cfg: DictConfig) -> None:
+    logger.debug(OmegaConf.to_yaml(cfg))
     logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
     run(cfg)
-
 
 
 if __name__ == "__main__":

@@ -35,7 +35,7 @@ from src.utils.general_utils import (
 import logging
 from configs import LOGGER_NAME
 
-logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
 class ImageClassificationDataModule(DataModule):

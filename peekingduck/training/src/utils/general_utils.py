@@ -30,11 +30,19 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
-import torch
-import torchvision.transforms.functional as F
-from torch import autocast
 from contextlib import nullcontext
 from tqdm import tqdm
+from .. import config
+
+if config.TORCH_AVAILABLE:
+    import torch
+    from torch import Tensor
+    from torch import autocast
+    from torch.utils.data import Dataset
+    import torchvision.transforms as T
+    import torchvision.transforms.functional as F
+else:
+    raise ImportError("Called a torch-specific function but torch is not installed.")
 
 
 ## set and get attribute dynamically
@@ -314,7 +322,7 @@ def choose_torch_device() -> str:
 def choose_precision(device) -> str:
     """Returns an appropriate precision for the given torch device"""
     if device.type == "cuda":
-        device_name = torch.cuda.get_device_name(device)
+        device_name: str = torch.cuda.get_device_name(device)
         if not ("GeForce GTX 1660" in device_name or "GeForce GTX 1650" in device_name):
             return "float16"
     return "float32"
@@ -327,6 +335,26 @@ def choose_autocast(precision):
     if precision == "autocast" or precision == "float16":
         return autocast
     return nullcontext
+
+
+def set_tensorflow_device():
+    if config.TF_AVAILABLE:
+        import tensorflow as tf
+    else:
+        raise ImportError(
+            "Called a tensorflow-specific function but tensorflow is not installed."
+        )
+
+    gpus = tf.config.list_physical_devices("GPU")
+    if gpus:
+        # Restrict TensorFlow to only use the first GPU
+        try:
+            tf.config.set_visible_devices(gpus[0], "GPU")
+            logical_gpus = tf.config.list_logical_devices("GPU")
+            return f"{len(gpus)} Physical GPUs, {len(logical_gpus)} Logical GPU"
+        except RuntimeError as e:
+            # Visible devices must be set before GPUs have been initialized
+            print(e)
 
 
 def get_mean_rgb_values(image: np.ndarray) -> Tuple[float, float, float]:
@@ -371,26 +399,6 @@ def plot_channel_distribution(
     fig.data[0].marker.line.color = "rgb(0, 0, 0)"
     fig.data[0].marker.line.width = 0.5
     return fig
-
-
-def set_device(cuda: Optional[bool] = None) -> torch.device:
-    """Set the device for computation.
-    Args:
-        cuda (bool): Determine whether to use GPU or not (if available).
-    Returns:
-        Device that will be use for compute.
-    """
-    # the "and" clause is to ensure that user really wants to use GPU when it is available
-    # and also when user wants to use GPU when it is not available, maybe log a msg?
-    if cuda is None:
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    else:
-        device = torch.device("cuda" if (torch.cuda.is_available() and cuda) else "cpu")
-    # TODO: unsure why need to set floattensor.
-    # torch.set_default_tensor_type("torch.FloatTensor")
-    # if device.type == "cuda":  # pragma: no cover, simple tensor type setting
-    #     torch.set_default_tensor_type("torch.cuda.FloatTensor")
-    return device
 
 
 plt.rcParams["savefig.bbox"] = "tight"

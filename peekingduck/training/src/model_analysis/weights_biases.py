@@ -18,21 +18,20 @@ import pandas as pd
 
 
 class WeightsAndBiases:
-    def __init__(self, cfg: DictConfig):
+    def __init__(self, cfg: DictConfig) -> None:
         self.cfg: DictConfig = cfg
         if cfg.debug:
             wandb.init(mode="disabled")
         else:
             wandb.init(project=cfg.project, entity="peekingduck", config=cfg)
-        # wandb.config = cfg
 
-    def watch(self, model):
+    def watch(self, model) -> None:
         wandb.watch(model)
 
-    def log(self, loss):
+    def log(self, loss) -> None:
         wandb.log(loss)
 
-    def log_history(self, history):
+    def log_history(self, history) -> None:
         selected_history = {
             key: history[key]
             for key in [
@@ -50,8 +49,8 @@ class WeightsAndBiases:
         for row_dict in df.to_dict(orient="records"):
             wandb.log(row_dict)
 
-    def log_training_loss(self, loss):
+    def log_training_loss(self, loss) -> None:
         wandb.log({"train_loss": loss})
 
-    def log_validation_loss(self, loss):
+    def log_validation_loss(self, loss) -> None:
         wandb.log({"val_loss": loss})

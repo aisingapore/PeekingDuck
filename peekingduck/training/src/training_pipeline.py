@@ -20,7 +20,7 @@ from configs import LOGGER_NAME
 
 from src.data.base import DataModule
 from src.trainer.base import Trainer
-from src.utils.general_utils import choose_torch_device
+from src.utils.general_utils import choose_torch_device, set_tensorflow_device
 from src.model_analysis.weights_biases import WeightsAndBiases
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -37,20 +37,7 @@ def run(cfg: DictConfig) -> None:
         cfg.device = choose_torch_device()
         logger.info(f"Using device: {cfg.device}")
     if cfg.framework == "tensorflow":
-        import tensorflow as tf
-
-        gpus = tf.config.list_physical_devices("GPU")
-        if gpus:
-            # Restrict TensorFlow to only use the first GPU
-            try:
-                tf.config.set_visible_devices(gpus[0], "GPU")
-                logical_gpus = tf.config.list_logical_devices("GPU")
-                logger.info(
-                    f"{len(gpus)} Physical GPUs, {len(logical_gpus)} Logical GPU"
-                )
-            except RuntimeError as e:
-                # Visible devices must be set before GPUs have been initialized
-                logger.error(e)
+        logger.info(set_tensorflow_device())
 
     data_module: DataModule = instantiate(
         config=cfg.data_module.module,
