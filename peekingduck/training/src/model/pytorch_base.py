@@ -89,6 +89,8 @@ class PTModel(ABC, nn.Module):
 
         NOTE:
             This is only correct if the last layer is a linear layer and is the head.
+            Does not work with timm's vgg16 as the last layer is a flatten layer ('Identity()') with no 'in_features' attribute.
+            (Only the second last layer is 'Linear')
             The easy way for timm is actually to use the `reset_classifier` method to
             remove the head and then add a new head.
         """

@@ -48,6 +48,7 @@ class PTClassificationModel(PTModel):
         self.adapter = self.model_config.adapter
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
+        self.weights = self.model_config.weights
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
@@ -77,14 +78,10 @@ class PTClassificationModel(PTModel):
         """
         if self.adapter == "torchvision":
             backbone = getattr(torchvision.models, self.model_name)(
-                pretrained=self.pretrained
+                weights=self.weights
             )
         elif self.adapter == "timm":
-            backbone = timm.create_model(
-                self.model_name,
-                pretrained=self.pretrained,
-                # in_chans=3
-            )
+            backbone = timm.create_model(self.model_name, pretrained=self.pretrained)
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
         return backbone

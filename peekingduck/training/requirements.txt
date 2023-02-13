@@ -7,7 +7,7 @@ pandas
 numpy
 scikit-learn
 torch
-torchvision
+torchvision >= 0.13
 torchinfo
 tensorflow
 tqdm

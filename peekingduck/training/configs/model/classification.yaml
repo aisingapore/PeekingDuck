@@ -1,12 +1,16 @@
 pytorch:
-    adapter: "torchvision"
+    adapter: "torchvision" # torchvision or timm
     task: "classification"
-    model_name: "resnet18" # resnet18 efficientnet_v2_s vgg11-19 vgg16 mobilenet_v3_small  https://pytorch.org/vision/stable/models.html#classification
+    # model name references:
+    # https://pytorch.org/vision/stable/models.html#classification
+    # https://huggingface.co/docs/timm/reference/models#timm.list_models
+    model_name: "vgg16" # resnet18 efficientnet_v2_s vgg11-19 vgg16 mobilenet_v3_small
+    weights: "DEFAULT" # updated since torchvision v0.13. Refer to official doc for customized values.
+    pretrained: True # for timm only
     model_type:
         _target_: src.model.pytorch_model.PTClassificationModel
     num_classes: ${data_module.dataset.num_classes}
     device: ${device}
-    pretrained: True
     unfreeze_all_layers: True
     # You typically want _self_ somewhere after the schema (base_config)
 
