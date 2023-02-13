@@ -14,8 +14,8 @@ pytorch:
 tensorflow:
     # Options: EarlyStopping | ModelCheckpoint | ProgbarLogger | BackupAndRestore | BaseLogger | CSVLogger | LambdaCallback | LearningRateScheduler | ReduceLROnPlateau | RemoteMonitor | TensorBoard | TerminateOnNaN
     - EarlyStopping:
-        patience: 25
+        patience: 5
         restore_best_weights: True
-        monitor: "categorical_accuracy"
+        monitor: "val_categorical_accuracy"
 
 

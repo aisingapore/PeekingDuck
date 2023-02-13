@@ -62,7 +62,7 @@ def run(cfg: DictConfig) -> None:
         device=cfg.device,
     )
     history = trainer.train(train_loader, validation_loader)
-    # wandb.log_history(history)
+    model_analysis.log_history(history)
 
     end_time: float = perf_counter()
     run_time: str = f"Run time = {end_time - start_time:.2f} sec"

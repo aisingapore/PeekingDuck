@@ -462,3 +462,9 @@ def stratified_sample_df(df, col, n_samples):
     df_ = df.groupby(col).apply(lambda x: x.sample(n))
     df_.index = df_.index.droplevel(0)
     return df_
+
+
+def merge_dict_of_list(dol1, dol2):
+    result = dict(dol1, **dol2)
+    result.update((k, dol1[k] + dol2[k]) for k in set(dol1).intersection(dol2))
+    return result

@@ -19,4 +19,4 @@ tensorflow:
     # - _target_: albumentations.augmentations.transforms.Normalize
     #   mean: [103.939, 116.779, 123.68]
     #   std: [1, 1, 1]
-  preprocess_image: tensorflow.keras.applications.vgg16.preprocess_input
+

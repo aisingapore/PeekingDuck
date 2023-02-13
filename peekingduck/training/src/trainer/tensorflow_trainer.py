@@ -26,6 +26,7 @@ from src.model.tensorflow_model import TFClassificationModelFactory
 from src.losses.adapter import TensorFlowLossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
+from src.utils.general_utils import merge_dict_of_list
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -91,7 +92,7 @@ class tensorflowTrainer(Trainer):
         self.callbacks: List = TensorFlowCallbacksAdapter().get_callbacks(
             callbacks=callbacks_config[self.framework]
         )
-        
+
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
@@ -102,11 +103,29 @@ class tensorflowTrainer(Trainer):
         if self.trainer_config.global_train_params.debug:
             self.epochs = self.trainer_config.global_train_params.debug_epochs
 
-        history = self.model.fit(
+        feature_extraction_history = self.model.fit(
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
             callbacks=self.callbacks,
         )
-
+        # Unfreeze the base model
+        self.model.trainable = True
+        # print(self.model_config)
+        for layer in self.model.get_layer("vgg16").layers[:-4]:
+            layer.trainable = False
+            print(layer.name)
+        self.model.summary()
+        self.model.compile(
+            optimizer=tf.keras.optimizers.Adam(1e-5),
+            loss=self.loss,
+            metrics=self.metrics,
+        )
+        fine_tuning_history = self.model.fit(
+            train_dl,
+            epochs=self.epochs,
+            validation_data=val_dl,
+            callbacks=self.callbacks,
+        )
+        history = merge_dict_of_list(feature_extraction_history.history, fine_tuning_history.history)
         return history

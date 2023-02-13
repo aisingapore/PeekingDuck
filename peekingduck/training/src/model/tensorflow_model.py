@@ -49,8 +49,10 @@ class TFClassificationModelFactory(TFModelFactory):
         # create the pooling and prediction layers
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         prediction_layer = tf.keras.layers.Dense(num_classes, activation="softmax")
+        dropout = tf.keras.layers.Dropout(0.3)
         # chain up the layers
         x = global_average_layer(inputs)
+        x = dropout(x)
         outputs = prediction_layer(x)
         return outputs
 

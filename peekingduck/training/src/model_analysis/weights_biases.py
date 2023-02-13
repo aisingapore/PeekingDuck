@@ -23,7 +23,12 @@ class WeightsAndBiases:
         if cfg.debug:
             wandb.init(mode="disabled")
         else:
-            wandb.init(project=cfg.project, entity="peekingduck", config=cfg)
+            wandb.init(
+                project=cfg.project,
+                entity="peekingduck",
+                config=cfg,
+                name=f"{cfg.framework}",
+            )
 
     def watch(self, model) -> None:
         wandb.watch(model)
@@ -32,22 +37,24 @@ class WeightsAndBiases:
         wandb.log(loss)
 
     def log_history(self, history) -> None:
-        selected_history = {
-            key: history[key]
-            for key in [
-                "train_loss",
-                "valid_loss",
-                "valid_elapsed_time",
-                "val_MulticlassAccuracy",
-                "val_MulticlassPrecision",
-                "val_MulticlassRecall",
-                "val_MulticlassAUROC",
-            ]
-        }
+        # selected_history = {
+        #     key: history[key]
+        #     for key in [
+        #         "train_loss",
+        #         "valid_loss",
+        #         "valid_elapsed_time",
+        #         "val_MulticlassAccuracy",
+        #         "val_MulticlassPrecision",
+        #         "val_MulticlassRecall",
+        #         "val_MulticlassAUROC",
+        #     ]
+        # }
+        if self.cfg.framework == "tensorflow":
+            selected_history = history
 
-        df: pd.DataFrame = pd.DataFrame(selected_history)
-        for row_dict in df.to_dict(orient="records"):
-            wandb.log(row_dict)
+            df: pd.DataFrame = pd.DataFrame(selected_history)
+            for row_dict in df.to_dict(orient="records"):
+                wandb.log(row_dict)
 
     def log_training_loss(self, loss) -> None:
         wandb.log({"train_loss": loss})

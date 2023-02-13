@@ -60,14 +60,14 @@ class TFPreprocessImage(ImageOnlyTransform):
     """Preprocessed numpy.array or a tf.Tensor with type float32. The images are converted from RGB to BGR,
         then each color channel is zero-centered with respect to the ImageNet dataset, without scaling.
     Args:
-        p (float): probability of applying the transform. Default: 0.5.
+        p (float): probability of applying the transform. Default: 1.
     Targets:
         image
     Image types:
         uint8, float32
     """
 
-    def __init__(self, preprocessor="", always_apply: bool = True, p: float = 1):
+    def __init__(self, preprocessor="", always_apply: bool = True, p: float = 1) -> None:
         super().__init__(always_apply, p)
         self.preprocessor: str = preprocessor
 
