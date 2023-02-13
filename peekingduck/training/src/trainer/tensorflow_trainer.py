@@ -120,7 +120,7 @@ class tensorflowTrainer(Trainer):
         if self.model_config.unfreeze_layers > 0:
             for layer in self.model.get_layer(
                 str(self.model_config.model_name).lower()
-            ).layers[: -abs(self.model_config.fine_tune_params.unfreeze_layers)]:
+            ).layers[: -abs(self.model_config.unfreeze_layers)]:
                 layer.trainable = False  # Freeze layer
 
         self.model.summary()
