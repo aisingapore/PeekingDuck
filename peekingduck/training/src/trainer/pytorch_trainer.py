@@ -37,11 +37,6 @@ from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 
-import logging
-from configs import LOGGER_NAME
-
-logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
-
 
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
@@ -61,7 +56,6 @@ class pytorchTrainer(Trainer):
     def __init__(self, framework: str = "pytorch") -> None:
         """Initialize the trainer."""
         self.framework = framework
-        self.logger = logger
         self.device = None
 
         self.trainer_config = None
@@ -87,6 +81,13 @@ class pytorchTrainer(Trainer):
         self.epoch_dict = None
         self.batch_dict = None
         self.history_dict = None
+        self.metrics_dict = None
+
+        self.current_fold = None
+        self.train_start_time = None
+        self.train_time_elapsed = None
+        self.valid_elapsed_time = None
+        self.valid_elapsed_time = None
 
     def setup(
         self,
@@ -150,6 +151,10 @@ class pytorchTrainer(Trainer):
         self.history_dict = {}
         self.history_dict["train"] = {}
         self.history_dict["validation"] = {}
+
+        self.metrics_dict = {}
+        self.metrics_dict["train"] = {}
+        self.metrics_dict["validation"] = {}
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
 
     def _set_dataloaders(
@@ -161,12 +166,10 @@ class pytorchTrainer(Trainer):
         self.train_loader = train_dl
         self.validation_loader = validation_dl
 
-    def _train_setup(self, inputs, fold: int) -> None:
-        self.logger.info(f"Fold {fold} started")
+    def _train_setup(self, inputs) -> None:
         # show model summary
         self.model.model_summary(inputs.shape)
         self.best_valid_loss = np.inf
-        self.current_fold = fold
 
     def _train_teardown(self) -> None:
         free_gpu_memory(
@@ -185,8 +188,9 @@ class pytorchTrainer(Trainer):
 
         # implement
         for epoch in range(1, self.epochs + 1):
-            self._run_train_epoch(self.train_loader, epoch)
-            self._run_validation_epoch(self.validation_loader, epoch)
+            self.curr_epoch = epoch
+            self._run_train_epoch(self.train_loader)
+            self._run_validation_epoch(self.validation_loader)
 
             if self.stop_training:  # from early stopping
                 break  # Early Stopping
@@ -200,16 +204,16 @@ class pytorchTrainer(Trainer):
                 else:
                     self.scheduler.step()
 
-            self.epoch_dict["train"]["epoch"] = epoch
-            self.epoch_dict["validation"]["epoch"] = epoch
+            self.epoch_dict["train"]["epoch"] = self.curr_epoch
+            self.epoch_dict["validation"]["epoch"] = self.curr_epoch
             self.current_epoch += 1
 
-    def _run_train_epoch(self, train_loader: DataLoader, epoch: int) -> None:
+    def _run_train_epoch(self, train_loader: DataLoader) -> None:
         """Train one epoch of the model."""
-        train_start_time = time.time()
+        self.train_start_time = time.time()
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_START.value)
 
-        curr_lr = LossAdapter.get_lr(self.optimizer)
+        self.curr_lr = LossAdapter.get_lr(self.optimizer)
         # set to train mode
         self.model.train()
 
@@ -257,7 +261,7 @@ class pytorchTrainer(Trainer):
             torch.vstack(train_probs),
         )
 
-        train_metrics_dict, train_metrics_df = PytorchMetrics.get_classification_metrics(
+        _, self.metrics_dict["train"]["train_metrics_df"] = PytorchMetrics.get_classification_metrics(
             self.metrics,
             train_trues,
             train_preds,
@@ -265,26 +269,16 @@ class pytorchTrainer(Trainer):
             "train",
         )
 
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
-        )
-
         self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
 
         self.history_dict["train"] = {**self.epoch_dict["train"]}
         # total time elapsed for this epoch
-        train_time_elapsed = time.strftime(
-            "%H:%M:%S", time.gmtime(time.time() - train_start_time)
-        )
-        self.logger.info(
-            f"\n[RESULT]: Train. Epoch {epoch}:"
-            f"\nAvg Train Summary Loss: {self.epoch_dict['train']['train_loss']:.3f}"
-            f"\nLearning Rate: {curr_lr:.5f}"
-            f"\nTime Elapsed: {train_time_elapsed}\n"
+        self.train_time_elapsed = time.strftime(
+            "%H:%M:%S", time.gmtime(time.time() - self.train_start_time)
         )
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
-    def _run_validation_epoch(self, validation_loader: DataLoader, epoch: int) -> None:
+    def _run_validation_epoch(self, validation_loader: DataLoader) -> None:
         """Validate the model on the validation set for one epoch.
         Args:
             validation_loader (torch.utils.data.DataLoader): The validation set dataloader.
@@ -352,7 +346,7 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        valid_metrics_dict, valid_metrics_df = PytorchMetrics.get_classification_metrics(
+        self.metrics_dict["validation"]["valid_metrics_dict"], self.metrics_dict["validation"]["valid_metrics_df"] = PytorchMetrics.get_classification_metrics(
             self.metrics,
             valid_trues,
             valid_preds,
@@ -360,14 +354,10 @@ class pytorchTrainer(Trainer):
             "val",
         )
 
-        self.logger.info(
-            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
-        )
-
         self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)
 
         # total time elapsed for this epoch
-        valid_elapsed_time = time.strftime(
+        self.valid_elapsed_time = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - val_start_time)
         )
         self.epoch_dict["validation"].update(
@@ -376,22 +366,15 @@ class pytorchTrainer(Trainer):
                 "valid_logits": valid_logits,
                 "valid_preds": valid_preds,
                 "valid_probs": valid_probs,
-                "valid_elapsed_time": valid_elapsed_time,
+                "valid_elapsed_time": self.valid_elapsed_time,
             }
         )
         # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
-        self.epoch_dict["validation"].update(valid_metrics_dict)
+        self.epoch_dict["validation"].update(self.metrics_dict["validation"]["valid_metrics_dict"])
         self.history_dict["validation"] = {
             **self.epoch_dict["validation"],
-            **valid_metrics_dict,
+            **self.metrics_dict["validation"]["valid_metrics_dict"],
         }
-        self.logger.info(
-            f"\n[RESULT]: Validation. Epoch {epoch}:"
-            f"\nAvg Val Summary Loss: {self.epoch_dict['validation']['valid_loss']:.3f}"
-            f"\nAvg Val Accuracy: {valid_metrics_dict['val_MulticlassAccuracy']:.3f}"
-            f"\nAvg Val Macro AUROC: {valid_metrics_dict['val_MulticlassAUROC']:.3f}"
-            f"\nTime Elapsed: {valid_elapsed_time}\n"
-        )
         self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
 
     def _invoke_callbacks(self, event_name: str) -> None:
@@ -409,11 +392,12 @@ class pytorchTrainer(Trainer):
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
+        self.current_fold = fold
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
 
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
-        self._train_setup(inputs, fold=fold)  # startup
+        self._train_setup(inputs)  # startup
         self._run_epochs()
         self._train_teardown()  # shutdown
 

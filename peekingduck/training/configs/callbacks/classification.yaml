@@ -1,5 +1,6 @@
 pytorch:
     # Options: EarlyStopping | History | MetricMeter | ModelCheckpoint
+    - Logger
     - EarlyStopping:
         mode: 'max'
         monitor: 'val_MulticlassAccuracy'
