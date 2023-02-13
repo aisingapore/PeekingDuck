@@ -101,12 +101,18 @@ class pytorchTrainer(Trainer):
         self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
-        metrics_adapter = PytorchMetrics(
+        # metrics_adapter: PytorchMetrics = PytorchMetrics(
+        #     task=data_config.dataset.classification_type,
+        #     num_classes=data_config.dataset.num_classes,
+        #     metrics=metrics_config[self.framework],
+        # )
+        # self.metrics = metrics_adapter.get_metrics()
+
+        self.metrics = PytorchMetrics.get_metrics(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
-            metrics=metrics_config[self.framework],
+            metric_list=metrics_config[self.framework],
         )
-        self.metrics = metrics_adapter.get_metrics()
 
         self.model: PTModel = instantiate(
             config=model_config[self.framework].model_type,
@@ -277,7 +283,7 @@ class pytorchTrainer(Trainer):
         valid_bar = tqdm(validation_loader)
 
         valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
-        
+
         self._invoke_callbacks(EVENTS.ON_VALID_LOADER_START.value)
 
         with torch.no_grad():  # TODO
@@ -335,7 +341,7 @@ class pytorchTrainer(Trainer):
         valid_elapsed_time = time.strftime(
             "%H:%M:%S", time.gmtime(time.time() - val_start_time)
         )
-        self.epoch_dict['validation'].update(
+        self.epoch_dict["validation"].update(
             {
                 "valid_trues": valid_trues,
                 "valid_logits": valid_logits,
@@ -346,7 +352,10 @@ class pytorchTrainer(Trainer):
         )
         # FIXME: potential difficulty in debugging since epoch_dict is called in metrics meter
         self.epoch_dict["validation"].update(valid_metrics_dict)
-        self.history_dict["validation"] = {**self.epoch_dict["validation"], **valid_metrics_dict}
+        self.history_dict["validation"] = {
+            **self.epoch_dict["validation"],
+            **valid_metrics_dict,
+        }
         self.logger.info(
             f"\n[RESULT]: Validation. Epoch {epoch}:"
             f"\nAvg Val Summary Loss: {self.epoch_dict['validation']['valid_loss']:.3f}"
@@ -461,7 +470,6 @@ class pytorchTrainer(Trainer):
         """
         for param_group in optimizer.param_groups:
             return param_group["lr"]
-
 
     def train(
         self,

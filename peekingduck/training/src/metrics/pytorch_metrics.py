@@ -12,6 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+
+import inspect
+import torchmetrics
+from torchmetrics.classification.stat_scores import (
+    MulticlassStatScores,
+)  # for type hinting, referenced from PyTorch Lightning source code
 from torchmetrics import AUROC, Accuracy, MetricCollection, Precision, Recall
 from torchmetrics.classification import MulticlassCalibrationError
 from typing import List, Dict
@@ -20,56 +26,34 @@ from src.metrics.base import MetricsAdapter
 
 
 class PytorchMetrics(MetricsAdapter):
-    def __init__(
-        self,
-        task: str = "multiclass",
-        num_classes: int = 2,
-        metrics: List[str] = None,
-    ) -> None:
-        self.metrics_collection = None
-        self.num_classes = num_classes
-        self.task = task
-        self.metrics = metrics
-        self.metricList = {}
-        for metric in self.metrics:
-            try:
-                if type(metric) is DictConfig:
-                    for mkey, mval in metric.items():
-                        self.metricList[metric] = getattr(self, mkey)(mval)
-                elif type(metric) is str:
-                    self.metricList[metric] = getattr(self, metric)()
-                else:
-                    raise TypeError
-            except NotImplementedError:
-                raise NotImplementedError
+    @classmethod
+    def get_metrics(cls, task, num_classes, metric_list: list) -> MetricCollection:
+        metric_collection_list = []
 
-        for metric in self.metrics:
-            try:
-                self.metricList[metric] = getattr(self, metric)()
-            except NotImplementedError:
-                raise NotImplementedError
+        for metric in metric_list:
+            metric_collection_list.append(cls.get_metric(task, num_classes, metric))
+        metrics_collection: MetricCollection = MetricCollection(metric_collection_list)
+        return metrics_collection
 
-    def accuracy(self, parameters: Dict = {}):
-        return Accuracy(task=self.task, num_classes=self.num_classes, **parameters)
+    @classmethod
+    def get_metric(
+        cls, task: str, num_classes: int, metric
+    ) -> MulticlassStatScores:  # the metric can be a dict or list
+        """
+        Refer to TorchMetrics implementation
+        """
+        if type(metric) is str:
+            torch_metric = getattr(torchmetrics, metric)(
+                num_classes=num_classes, task=task
+            )
 
-    def precision(self, parameters: Dict = {}):
-        return Precision(
-            task=self.task, num_classes=self.num_classes, average="macro", **parameters
-        )
+        elif type(metric) is DictConfig:
+            for metric_name, metric_params in metric.items():
+                torch_metric = getattr(torchmetrics, metric_name)(
+                    num_classes=num_classes, task=task, **metric_params
+                )
 
-    def recall(self, parameters: Dict = {}):
-        return Recall(
-            task=self.task, num_classes=self.num_classes, average="macro", **parameters
-        )
+        else:
+            raise TypeError
 
-    def auroc(self, parameters: Dict = {}):
-        return AUROC(
-            task=self.task, num_classes=self.num_classes, average="macro", **parameters
-        )
-
-    def multiclass_calibration_error(self, parameters: Dict = {}):
-        return MulticlassCalibrationError(num_classes=self.num_classes, **parameters)
-
-    def get_metrics(self) -> MetricCollection:
-        self.metrics_collection = MetricCollection(list(self.metricList.values()))
-        return self.metrics_collection
+        return torch_metric
