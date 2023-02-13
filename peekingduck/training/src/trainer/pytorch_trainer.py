@@ -106,13 +106,6 @@ class pytorchTrainer(Trainer):
         self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
-        # metrics_adapter: PytorchMetrics = PytorchMetrics(
-        #     task=data_config.dataset.classification_type,
-        #     num_classes=data_config.dataset.num_classes,
-        #     metrics=metrics_config[self.framework],
-        # )
-        # self.metrics = metrics_adapter.get_metrics()
-
         self.metrics = PytorchMetrics.get_metrics(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
@@ -334,11 +327,37 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        _, valid_metrics_dict = PytorchMetrics.get_classification_metrics(
+        (
+            _,
+            train_metrics_df,
+            valid_metrics_dict,
+            valid_metrics_df,
+        ) = PytorchMetrics.get_classification_metrics(
             self.metrics,
             valid_trues,
             valid_preds,
             valid_probs,
+        )
+
+        self.logger.info(
+            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
+        )
+        self.logger.info(
+            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
+        )
+
+        self.logger.info(
+            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
+        )
+        self.logger.info(
+            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
+        )
+
+        self.logger.info(
+            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
+        )
+        self.logger.info(
+            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
         )
 
         self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)

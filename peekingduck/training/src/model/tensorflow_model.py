@@ -37,12 +37,12 @@ class TFClassificationModelFactory(TFModelFactory):
     #     self.num_classes = None
 
     @classmethod
-    def create_base(cls, model_name, input_shape):
+    def create_base(cls, model_name, input_shape, trainable):
         base_model = getattr(tf.keras.applications, model_name)(
             input_shape=input_shape, include_top=False, weights="imagenet"
         )
         # To-do: allow user to unfreeze certain number of layers for fine-tuning
-        base_model.trainable = False
+        base_model.trainable = trainable
         return base_model
 
     @classmethod
@@ -71,9 +71,12 @@ class TFClassificationModelFactory(TFModelFactory):
         num_classes = model_cfg.num_classes
         dropout_rate = model_cfg.dropout_rate
         inputs = tf.keras.Input(shape=input_shape)
+        trainable = True if model_cfg.unfreeze_layers == -1 else False
+        
         # x = self.data_processing(inputs)
         # disable batch norm for base model
-        x = cls.create_base(model_name, input_shape)(inputs, training=False)
+        
+        x = cls.create_base(model_name, input_shape, trainable)(inputs, training=False)
         outputs = cls.create_head(x, num_classes, dropout_rate)
         model = tf.keras.Model(inputs, outputs)
         logger.info("model created!")

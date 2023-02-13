@@ -87,7 +87,7 @@ tensorflow:
         #     alpha: 0.0
         schedule: null
         schedule_params:
-            learning_rate: 0.003
+            learning_rate: 0.00001
         # schedule: "PiecewiseConstantDecay"
         # schedule_params:
         #     values: [1.0, 0.5, 0.1]
