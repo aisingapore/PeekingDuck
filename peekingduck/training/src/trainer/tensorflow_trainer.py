@@ -23,7 +23,7 @@ from src.trainer.base import Trainer
 from src.optimizers.adapter import OptimizersAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.model.tensorflow_model import TFClassificationModelFactory
-from src.losses.adapter import TensorFlowLossAdapter
+from src.losses.adapter import LossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
@@ -49,15 +49,16 @@ class tensorflowTrainer(Trainer):
         callbacks_config: DictConfig,
         metrics_config: DictConfig,
         data_config: DictConfig,
-        device: str = "cpu",
+        device: str,
     ) -> None:
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
-
+        self.model_config = model_config[self.framework]
+        self.metrics_config = metrics_config[self.framework]
+        self.callbacks_config = callbacks_config[self.framework]
+        
         # create model
-        self.model = TFClassificationModelFactory.create_model(
-            model_config[self.framework]
-        )
+        self.model = TFClassificationModelFactory.create_model(self.model_config)
 
         # scheduler
         if self.trainer_config.lr_schedule_params.schedule is None:
@@ -78,19 +79,19 @@ class tensorflowTrainer(Trainer):
         )
 
         # loss
-        self.loss = TensorFlowLossAdapter.get_loss_func(
+        self.loss = LossAdapter.get_tensorflow_loss_func(
             self.trainer_config.loss_params.loss_func,
             self.trainer_config.loss_params.loss_params,
         )
 
         # metric
         self.metrics: List = TensorflowMetrics().get_metrics(
-            metrics=metrics_config[self.framework]
+            metrics=self.metrics_config
         )
 
         # callback
         self.callbacks: List = TensorFlowCallbacksAdapter().get_callbacks(
-            callbacks=callbacks_config[self.framework]
+            callbacks=self.callbacks_config
         )
 
         # compile model
@@ -109,23 +110,36 @@ class tensorflowTrainer(Trainer):
             validation_data=val_dl,
             callbacks=self.callbacks,
         )
+
         # Unfreeze the base model
         self.model.trainable = True
-        # print(self.model_config)
-        for layer in self.model.get_layer("vgg16").layers[:-4]:
-            layer.trainable = False
-            print(layer.name)
+
+        for layer in self.model.get_layer(
+            str(self.model_config.model_name).lower()
+        ).layers[: -abs(self.model_config.fine_tune_params.unfreeze_layers)]:
+            layer.trainable = False  # Freeze layer
+
         self.model.summary()
+
+        optimizer = OptimizersAdapter.get_tensorflow_optimizer(
+            self.trainer_config.optimizer_params.optimizer,
+            self.trainer_config.fine_tune_params.optimizer_learning_rate,
+            self.trainer_config.optimizer_params.optimizer_params,
+        )
+
         self.model.compile(
-            optimizer=tf.keras.optimizers.Adam(1e-5),
+            optimizer=optimizer,
             loss=self.loss,
             metrics=self.metrics,
         )
+
         fine_tuning_history = self.model.fit(
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
             callbacks=self.callbacks,
         )
-        history = merge_dict_of_list(feature_extraction_history.history, fine_tuning_history.history)
+        history = merge_dict_of_list(
+            feature_extraction_history.history, fine_tuning_history.history
+        )
         return history

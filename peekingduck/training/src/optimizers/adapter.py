@@ -51,14 +51,23 @@
 
 
 """
-
+import torch
 import tensorflow as tf
-
+from typing import Any, Dict
 from omegaconf import DictConfig
 
 
 class OptimizersAdapter:
 
     @staticmethod
-    def get_optimizer(name: str, learning_rate: tf.keras.optimizers.schedules.LearningRateSchedule, parameters: DictConfig = {}):
+    def get_tensorflow_optimizer(name: str, learning_rate: tf.keras.optimizers.schedules.LearningRateSchedule, parameters: DictConfig = {}):
         return getattr(tf.keras.optimizers, name)(learning_rate, **parameters) if len(parameters) > 0 else getattr(tf.keras.optimizers, name)(learning_rate)
+
+    @staticmethod
+    def get_pytorch_optimizer(model, optimizer_params: Dict[str, Any],) -> torch.optim.Optimizer:
+        """Get the optimizer for the model.
+        Note:
+            Do not invoke self.model directly in this call as it may affect model initalization.
+            https://stackoverflow.com/questions/70107044/can-i-define-a-method-as-an-attribute
+        """
+        return getattr(torch.optim, optimizer_params.optimizer)(model.parameters(), **optimizer_params.optimizer_params)

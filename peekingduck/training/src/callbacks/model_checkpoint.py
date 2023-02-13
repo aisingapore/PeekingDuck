@@ -170,7 +170,7 @@ class ModelCheckpoint(Callback):
 
             self.state_dict["model_state_dict"] = trainer.model.state_dict()
             self.state_dict["optimizer_state_dict"] = trainer.optimizer.state_dict()
-            self.state_dict["scheduler_state_dict"] = trainer.scheduler.state_dict()
+            self.state_dict["scheduler_state_dict"] = trainer.scheduler.state_dict() if not trainer.scheduler is None else None
             self.state_dict["epoch"] = trainer.current_epoch
             self.state_dict["best_score"] = self.best_val_score
             # self.state_dict["oof_trues"] = trainer.history_dict["valid_trues"]

@@ -27,12 +27,28 @@ Scheduler Class to interact with Tensorflow
 
 """
 
+from typing import Any, Dict
 from omegaconf import DictConfig
 import tensorflow as tf
+import torch
+
 
 class OptimizerSchedules:
+    @staticmethod
+    def get_tensorflow_scheduler(name, parameters: DictConfig = {}):
+        return (
+            getattr(tf.keras.optimizers.schedules, name)(**parameters)
+            if len(parameters) > 0
+            else getattr(tf.keras.optimizers.schedules, name)()
+        )
 
     @staticmethod
-    def get_scheduler(name, parameters: DictConfig = {}):
-        return getattr(tf.keras.optimizers.schedules, name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.optimizers.schedules, name)()
-
+    def get_pytorch_scheduler(
+        optimizer: torch.optim.Optimizer,
+        scheduler: str,
+        parameters: DictConfig = {}
+    ) -> torch.optim.lr_scheduler:
+        """Get the scheduler for the optimizer."""
+        return getattr(torch.optim.lr_scheduler, scheduler)(
+            optimizer=optimizer, **parameters
+        )

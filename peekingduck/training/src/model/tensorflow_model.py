@@ -16,6 +16,7 @@ import logging
 
 import tensorflow as tf
 from omegaconf import DictConfig
+from torch import dropout
 
 from src.model.tensorflow_base import TFModelFactory
 
@@ -45,11 +46,11 @@ class TFClassificationModelFactory(TFModelFactory):
         return base_model
 
     @classmethod
-    def create_head(cls, inputs, num_classes):
+    def create_head(cls, inputs, num_classes, dropout_rate):
         # create the pooling and prediction layers
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
         prediction_layer = tf.keras.layers.Dense(num_classes, activation="softmax")
-        dropout = tf.keras.layers.Dropout(0.3)
+        dropout = tf.keras.layers.Dropout(dropout_rate)
         # chain up the layers
         x = global_average_layer(inputs)
         x = dropout(x)
@@ -68,12 +69,12 @@ class TFClassificationModelFactory(TFModelFactory):
             3,
         )
         num_classes = model_cfg.num_classes
-
+        dropout_rate = model_cfg.dropout_rate
         inputs = tf.keras.Input(shape=input_shape)
         # x = self.data_processing(inputs)
         # disable batch norm for base model
         x = cls.create_base(model_name, input_shape)(inputs, training=False)
-        outputs = cls.create_head(x, num_classes)
+        outputs = cls.create_head(x, num_classes, dropout_rate)
         model = tf.keras.Model(inputs, outputs)
         logger.info("model created!")
         return model

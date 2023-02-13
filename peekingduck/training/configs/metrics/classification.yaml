@@ -1,9 +1,9 @@
 pytorch:
     # Options: Accuracy | Precision | Recall | AUROC
-    - "Accuracy"
-    - "Precision"
-    - "Recall"
-    - "AUROC"
+    - "accuracy"
+    - "precision"
+    - "recall"
+    - "auroc"
     - "multiclass_calibration_error"
 
 tensorflow:
