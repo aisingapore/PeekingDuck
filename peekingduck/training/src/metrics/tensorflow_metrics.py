@@ -25,17 +25,17 @@ class TensorflowMetrics(MetricsAdapter):
 
 
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
-        return [ self.get_metric(self._validate_config(m)) for m in metrics]
+        return [ self.get_metric(**self._validate_config(m)) for m in metrics]
 
 
     def _validate_config(self, metric):
         try:
-
+            print("HALO METRIC", metric)
             if type(metric) is DictConfig:
                 for mkey, mval in metric.items():
-                    return mkey, mval
+                    return {"metric_name": mkey, "parameters": mval}
             elif type(metric) is str:
-                return metric
+                return {"metric_name": metric}
             else:
                 raise TypeError
 

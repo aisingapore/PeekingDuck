@@ -332,8 +332,15 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        _, valid_metrics_dict = self.metrics_adapter.get_classification_metrics(
+        _, train_metrics_df, valid_metrics_dict, valid_metrics_df = self.metrics_adapter.get_classification_metrics(
             self.metrics, valid_trues, valid_preds, valid_probs,
+        )
+
+        self.logger.info(
+            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
+        )
+        self.logger.info(
+            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
         )
 
         self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)

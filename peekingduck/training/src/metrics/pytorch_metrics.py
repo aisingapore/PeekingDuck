@@ -80,7 +80,7 @@ class PytorchMetrics(MetricsAdapter):
 
     @staticmethod
     def get_classification_metrics(
-        metrics,
+        metrics: MetricCollection,
         y_trues: torch.Tensor,
         y_preds: torch.Tensor,
         y_probs: torch.Tensor,
@@ -105,12 +105,4 @@ class PytorchMetrics(MetricsAdapter):
         valid_metrics_results = valid_metrics(y_probs, y_trues.flatten())
         valid_metrics_results_df = pd.DataFrame.from_dict([valid_metrics_results])
 
-        # TODO: relinquish this logging duty to a callback or for now in train_one_epoch and valid_one_epoch.
-        # self.logger.info(
-        #     f"\ntrain_metrics:\n{tabulate(train_metrics_results_df, headers='keys', tablefmt='psql')}\n"
-        # )
-        # self.logger.info(
-        #     f'\nvalid_metrics:\n{tabulate(valid_metrics_results_df, headers="keys", tablefmt="psql")}\n'
-        # )
-
-        return train_metrics_results, valid_metrics_results
+        return train_metrics_results, train_metrics_results_df, valid_metrics_results, valid_metrics_results_df

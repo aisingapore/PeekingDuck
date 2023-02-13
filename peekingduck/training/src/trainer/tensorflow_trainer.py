@@ -56,7 +56,7 @@ class tensorflowTrainer(Trainer):
         self.model_config = model_config[self.framework]
         self.metrics_config = metrics_config[self.framework]
         self.callbacks_config = callbacks_config[self.framework]
-        
+
         # create model
         self.model = TFClassificationModelFactory.create_model(self.model_config)
 
@@ -72,7 +72,7 @@ class tensorflowTrainer(Trainer):
             )
 
         # init_optimizer
-        self.opt = OptimizersAdapter.get_optimizer(
+        self.opt = OptimizersAdapter.get_tensorflow_optimizer(
             self.trainer_config.optimizer_params.optimizer,
             self.scheduler,
             self.trainer_config.optimizer_params.optimizer_params,
@@ -111,13 +111,17 @@ class tensorflowTrainer(Trainer):
             callbacks=self.callbacks,
         )
 
+        if self.model_config.unfreeze_layers <= 0:
+            return feature_extraction_history.history
+        
         # Unfreeze the base model
         self.model.trainable = True
 
-        for layer in self.model.get_layer(
-            str(self.model_config.model_name).lower()
-        ).layers[: -abs(self.model_config.fine_tune_params.unfreeze_layers)]:
-            layer.trainable = False  # Freeze layer
+        if self.model_config.unfreeze_layers > 0:
+            for layer in self.model.get_layer(
+                str(self.model_config.model_name).lower()
+            ).layers[: -abs(self.model_config.fine_tune_params.unfreeze_layers)]:
+                layer.trainable = False  # Freeze layer
 
         self.model.summary()
 
