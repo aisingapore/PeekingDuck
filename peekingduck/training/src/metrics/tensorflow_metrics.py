@@ -18,15 +18,17 @@ from typing import List
 from omegaconf import DictConfig
 from src.metrics.base import MetricsAdapter
 
+
 class TensorflowMetrics(MetricsAdapter):
-
     def get_metric(self, metric_name: str, parameters: DictConfig = {}):
-        return getattr(tf.keras.metrics, metric_name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.metrics, metric_name)()
-
+        return (
+            getattr(tf.keras.metrics, metric_name)(**parameters)
+            if len(parameters) > 0
+            else getattr(tf.keras.metrics, metric_name)()
+        )
 
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
-        return [ self.get_metric(**self._validate_config(m)) for m in metrics]
-
+        return [self.get_metric(**self._validate_config(m)) for m in metrics]
 
     def _validate_config(self, metric):
         try:
