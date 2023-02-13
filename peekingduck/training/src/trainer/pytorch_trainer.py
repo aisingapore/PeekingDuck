@@ -27,6 +27,9 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from hydra.utils import instantiate
 
+from src.optimizers.schedules import OptimizerSchedules
+from src.losses.adapter import LossAdapter
+from src.optimizers.adapter import OptimizersAdapter
 from src.trainer.base import Trainer
 from src.callbacks.base import init_callbacks
 from src.callbacks.events import EVENTS
@@ -96,8 +99,10 @@ class pytorchTrainer(Trainer):
     ) -> None:
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
+        self.model_config = model_config[self.framework]
+        self.callbacks_config = callbacks_config[self.framework]
+        self.metrics_config = metrics_config[self.framework]
         self.train_params = self.trainer_config.global_train_params
-
         self.model_artifacts_dir = self.trainer_config.stores.model_artifacts_dir
         self.device = device
         self.callbacks = init_callbacks(callbacks_config[self.framework])
@@ -114,26 +119,26 @@ class pytorchTrainer(Trainer):
             metric_list=metrics_config[self.framework],
         )
 
+        # create model
         self.model: PTModel = instantiate(
-            config=model_config[self.framework].model_type,
-            cfg=model_config[self.framework],
+            config=self.model_config.model_type,
+            cfg=self.model_config,
             _recursive_=False,
         ).to(self.device)
 
-        self.optimizer = self.get_optimizer(
+        # init_optimizer
+        self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
             model=self.model,
             optimizer_params=self.trainer_config.optimizer_params,
         )
-        self.scheduler = self.get_scheduler(
-            optimizer=self.optimizer,
-            scheduler_params=self.trainer_config.scheduler_params,
-        )
 
-        if self.train_params.use_amp:  # TODO
-            # https://pytorch.org/docs/stable/notes/amp_examples.html
-            self.scaler = torch.cuda.amp.GradScaler()
-        else:
-            self.scaler = None
+        # scheduler
+        if not self.trainer_config.scheduler_params.scheduler is None:
+            self.scheduler = OptimizerSchedules.get_pytorch_scheduler(
+                optimizer=self.optimizer,
+                scheduler=self.trainer_config.scheduler_params.scheduler,
+                parameters=self.trainer_config.scheduler_params.scheduler_params,
+            )
 
         self.monitored_metric = self.train_params.monitored_metric
 
@@ -181,14 +186,12 @@ class pytorchTrainer(Trainer):
         )
 
     def _run_epochs(self) -> None:
-
         self.epochs = self.train_params.epochs
         if self.train_params.debug:
             self.epochs = self.train_params.debug_epochs
 
         # implement
         for epoch in range(1, self.epochs + 1):
-
             self._run_train_epoch(self.train_loader, epoch)
             self._run_validation_epoch(self.validation_loader, epoch)
 
@@ -213,7 +216,7 @@ class pytorchTrainer(Trainer):
         train_start_time = time.time()
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_START.value)
 
-        curr_lr = self.get_lr(self.optimizer)
+        curr_lr = LossAdapter.get_lr(self.optimizer)
         # set to train mode
         self.model.train()
 
@@ -230,7 +233,7 @@ class pytorchTrainer(Trainer):
             targets = targets.to(self.device, non_blocking=True)
 
             logits = self.model(inputs)  # Forward pass logits
-            curr_batch_train_loss = self.compute_criterion(
+            curr_batch_train_loss = LossAdapter.compute_criterion(
                 targets,
                 logits,
                 criterion_params=self.trainer_config.criterion_params,
@@ -306,7 +309,7 @@ class pytorchTrainer(Trainer):
                 y_valid_prob = get_sigmoid_softmax(self.trainer_config)(logits)
                 y_valid_pred = torch.argmax(y_valid_prob, axis=1)
 
-                curr_batch_val_loss = self.compute_criterion(
+                curr_batch_val_loss = LossAdapter.compute_criterion(
                     targets,
                     logits,
                     criterion_params=self.trainer_config.criterion_params,
@@ -331,8 +334,11 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        _, valid_metrics_dict = self._get_classification_metrics(
-            valid_trues, valid_preds, valid_probs
+        _, valid_metrics_dict = PytorchMetrics.get_classification_metrics(
+            self.metrics,
+            valid_trues,
+            valid_preds,
+            valid_probs,
         )
 
         self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)
@@ -372,104 +378,6 @@ class pytorchTrainer(Trainer):
                 getattr(callback, event_name)(self)
             except NotImplementedError:
                 pass
-
-    def _get_classification_metrics(
-        self,
-        y_trues: torch.Tensor,
-        y_preds: torch.Tensor,
-        y_probs: torch.Tensor,
-        # mode: str = "valid",
-    ):
-        """[summary]
-        # https://ghnreigns.github.io/reighns-ml-website/supervised_learning/classification/breast_cancer_wisconsin/Stage%206%20-%20Modelling%20%28Preprocessing%20and%20Spot%20Checking%29/
-        Args:
-            y_trues (torch.Tensor): dtype=[torch.int64], shape=(num_samples, 1); (May be float if using BCEWithLogitsLoss)
-            y_preds (torch.Tensor): dtype=[torch.int64], shape=(num_samples, 1);
-            y_probs (torch.Tensor): dtype=[torch.float32], shape=(num_samples, num_classes);
-            mode (str, optional): [description]. Defaults to "valid".
-        """
-
-        train_metrics = self.metrics.clone(prefix="train_")
-        valid_metrics = self.metrics.clone(prefix="val_")
-
-        # FIXME: currently train and valid give same results, since this func call takes in
-        # y_trues, etc from valid_one_epoch.
-        train_metrics_results = train_metrics(y_probs, y_trues.flatten())
-        train_metrics_results_df = pd.DataFrame.from_dict([train_metrics_results])
-
-        valid_metrics_results = valid_metrics(y_probs, y_trues.flatten())
-        valid_metrics_results_df = pd.DataFrame.from_dict([valid_metrics_results])
-
-        # TODO: relinquish this logging duty to a callback or for now in train_one_epoch and valid_one_epoch.
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(train_metrics_results_df, headers='keys', tablefmt='psql')}\n"
-        )
-        self.logger.info(
-            f'\nvalid_metrics:\n{tabulate(valid_metrics_results_df, headers="keys", tablefmt="psql")}\n'
-        )
-        return train_metrics_results, valid_metrics_results
-
-    @staticmethod
-    def get_optimizer(
-        model,
-        optimizer_params: Dict[str, Any],
-    ) -> torch.optim.Optimizer:
-        """Get the optimizer for the model.
-        Note:
-            Do not invoke self.model directly in this call as it may affect model initalization.
-            https://stackoverflow.com/questions/70107044/can-i-define-a-method-as-an-attribute
-        """
-        return getattr(torch.optim, optimizer_params.optimizer)(
-            model.parameters(), **optimizer_params.optimizer_params
-        )
-
-    @staticmethod
-    def get_scheduler(
-        optimizer: torch.optim.Optimizer,
-        scheduler_params: Dict[str, Any],
-    ) -> torch.optim.lr_scheduler:
-        """Get the scheduler for the optimizer."""
-        return getattr(torch.optim.lr_scheduler, scheduler_params.scheduler)(
-            optimizer=optimizer, **scheduler_params.scheduler_params
-        )
-
-    @staticmethod
-    def compute_criterion(
-        y_trues: torch.Tensor,
-        y_logits: torch.Tensor,
-        criterion_params: Dict[str, Any],
-        stage: str,
-    ) -> torch.Tensor:
-        """Train Loss Function.
-        Note that we can evaluate train and validation fold with different loss functions.
-        The below example applies for CrossEntropyLoss.
-        Args:
-            y_trues ([type]): Input - N,C) where N = number of samples and C = number of classes.
-            y_logits ([type]): If containing class indices, shape (N) where each value is
-                $0 \leq \text{targets}[i] \leq C-10≤targets[i]≤C-1$.
-                If containing class probabilities, same shape as the input.
-            stage (str): train or valid, sometimes people use different loss functions for
-                train and valid.
-        """
-
-        if stage == "train":
-            loss_fn = getattr(torch.nn, criterion_params.train_criterion)(
-                **criterion_params.train_criterion_params
-            )
-        elif stage == "valid":
-            loss_fn = getattr(torch.nn, criterion_params.valid_criterion)(
-                **criterion_params.valid_criterion_params
-            )
-        loss = loss_fn(y_logits, y_trues)
-        return loss
-
-    @staticmethod
-    def get_lr(optimizer: torch.optim) -> float:
-        """Get the learning rate of optimizer for the current epoch.
-        Note learning rate can be different for different layers, hence the for loop.
-        """
-        for param_group in optimizer.param_groups:
-            return param_group["lr"]
 
     def train(
         self,

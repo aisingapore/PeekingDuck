@@ -26,7 +26,7 @@ pytorch:
     optimizer_params:
         optimizer: "AdamW"
         optimizer_params:
-            lr: 0.003 # bs: 32 -> lr = 3e-4
+            lr: 0.00001 # bs: 32 -> lr = 3e-4
             betas: [0.9, 0.999]
             amsgrad: False
             weight_decay: 0.01 # 0.000001
@@ -34,15 +34,17 @@ pytorch:
 
     scheduler_params:
         # https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863
-
-        scheduler: "OneCycleLR" # Debug 
+        scheduler: null
         scheduler_params:
-            max_lr: 1e-3 # (float or list)
+
+        # scheduler: "OneCycleLR" # Debug 
+        # scheduler_params:
+        #     max_lr: 1e-3 # (float or list)
             # total_steps: epochs * steps_per_epoch # (int) Simple relation : total_steps = epochs * steps_per_epoch
-            epochs: 5 # (int)
-            steps_per_epoch: 1109 # (int)
+            # epochs: 5 # (int)
+            # steps_per_epoch: 1109 # (int)
             # pct_start: 0.3 # (float)
-            anneal_strategy: 'cos' # (str)
+            # anneal_strategy: 'cos' # (str)
             # cycle_momentum: True # (bool)
             # base_momentum: 0.85 # (float or list)
             # max_momentum: 0.95 # (float or list)
@@ -100,6 +102,8 @@ tensorflow:
             beta_1: 0.9
             beta_2: 0.999
             name: "Adam"
+    fine_tune_params:
+        optimizer_learning_rate: 1e-5
     loss_params:
         loss_func: "CategoricalCrossentropy"
         loss_params:
@@ -107,6 +111,6 @@ tensorflow:
     global_train_params:
         epochs: 100
         debug: ${debug}
-        debug_epochs: 15
+        debug_epochs: 30
         trainer:
             _target_: src.trainer.tensorflow_trainer.tensorflowTrainer

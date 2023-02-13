@@ -25,16 +25,19 @@ class TensorflowMetrics(MetricsAdapter):
 
 
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
-        metrics_collection = []
-        for metric in metrics:
-            try:
-                if type(metric) is DictConfig:
-                    for mkey, mval in metric.items():
-                        metrics_collection.append( self.get_metric(mkey, mval) )
-                elif type(metric) is str:
-                    metrics_collection.append( self.get_metric(metric) )
-                else:
-                    raise TypeError
-            except NotImplementedError:
-                raise NotImplementedError
-        return metrics_collection
+        return [ self.get_metric(self._validate_config(m)) for m in metrics]
+
+
+    def _validate_config(self, metric):
+        try:
+
+            if type(metric) is DictConfig:
+                for mkey, mval in metric.items():
+                    return mkey, mval
+            elif type(metric) is str:
+                return metric
+            else:
+                raise TypeError
+
+        except NotImplementedError:
+            raise NotImplementedError
