@@ -214,6 +214,7 @@ class pytorchTrainer(Trainer):
         self.model.train()
 
         train_bar = tqdm(train_loader)
+        train_trues, train_logits, train_preds, train_probs = [], [], [], []
 
         self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_START.value)
         # Iterate over train batches
@@ -239,10 +240,34 @@ class pytorchTrainer(Trainer):
 
             # Update loss metric, every batch is diff
             self.batch_dict["train_loss"] = curr_batch_train_loss.item()
-            _y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
-            _y_train_pred = torch.argmax(_y_train_prob, dim=1)
+            y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
+            y_train_pred = torch.argmax(y_train_prob, dim=1)
 
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
+            
+            train_trues.extend(targets.cpu())
+            train_logits.extend(logits.cpu())
+            train_probs.extend(y_train_prob.cpu())
+            train_preds.extend(y_train_pred.cpu())
+
+        train_trues, train_logits,  train_preds,  train_probs = (
+            torch.vstack(train_trues),
+            torch.vstack(train_logits),
+            torch.vstack(train_preds),
+            torch.vstack(train_probs),
+        )
+
+        train_metrics_dict, train_metrics_df = PytorchMetrics.get_classification_metrics(
+            self.metrics,
+            train_trues,
+            train_preds,
+            train_probs,
+            "train",
+        )
+
+        self.logger.info(
+            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
+        )
 
         self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
 
@@ -327,35 +352,14 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        (
-            _,
-            train_metrics_df,
-            valid_metrics_dict,
-            valid_metrics_df,
-        ) = PytorchMetrics.get_classification_metrics(
+        valid_metrics_dict, valid_metrics_df = PytorchMetrics.get_classification_metrics(
             self.metrics,
             valid_trues,
             valid_preds,
             valid_probs,
+            "val",
         )
 
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
-        )
-        self.logger.info(
-            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
-        )
-
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
-        )
-        self.logger.info(
-            f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
-        )
-
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(train_metrics_df, headers='keys', tablefmt='psql')}\n"
-        )
         self.logger.info(
             f'\nvalid_metrics:\n{tabulate(valid_metrics_df, headers="keys", tablefmt="psql")}\n'
         )

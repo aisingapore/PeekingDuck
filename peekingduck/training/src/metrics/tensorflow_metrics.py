@@ -30,7 +30,6 @@ class TensorflowMetrics(MetricsAdapter):
 
     def _validate_config(self, metric):
         try:
-            print("HALO METRIC", metric)
             if type(metric) is DictConfig:
                 for mkey, mval in metric.items():
                     return {"metric_name": mkey, "parameters": mval}
