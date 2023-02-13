@@ -1,17 +1,25 @@
 pytorch:
-    # Options: Accuracy | Precision | Recall | AUROC
-    - "accuracy"
-    - "precision"
-    - "recall"
-    - "auroc"
-    - "multiclass_calibration_error"
+      # Options: Accuracy | Precision | Recall | AUROC | CalibrationError
+      - Accuracy:
+              average: "micro"
+
+      - Precision:
+              average: "macro"
+
+      - Recall
+
+      - AUROC:
+              average: "weighted"
+
+      - CalibrationError:
+              norm: "l1"
 
 tensorflow:
-    # Options: Accuracy | Precision | Recall | AUC
-    - "CategoricalAccuracy"
-    - Precision:
-          thresholds: 0.5
-    - Recall:
-          thresholds: 0.5
-    - AUC:
-          from_logits: False
+      # Options: Accuracy | Precision | Recall | AUC
+      - "CategoricalAccuracy"
+      - Precision:
+              thresholds: 0.5
+      - Recall:
+              thresholds: 0.5
+      - AUC:
+              from_logits: False
