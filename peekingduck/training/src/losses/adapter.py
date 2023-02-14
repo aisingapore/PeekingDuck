@@ -37,7 +37,7 @@ class LossAdapter:
             y_logits ([type]): If containing class indices, shape (N) where each value is
                 $0 \leq \text{targets}[i] \leq C-10≤targets[i]≤C-1$.
                 If containing class probabilities, same shape as the input.
-            stage (str): train or valid, sometimes people use different loss functions for
+            stage (str): train or validation, sometimes people use different loss functions for
                 train and valid.
         """
 
@@ -45,7 +45,7 @@ class LossAdapter:
             loss_fn = getattr(torch.nn, criterion_params.train_criterion)(
                 **criterion_params.train_criterion_params
             )
-        elif stage == "valid":
+        elif stage == "validation":
             loss_fn = getattr(torch.nn, criterion_params.valid_criterion)(
                 **criterion_params.valid_criterion_params
             )

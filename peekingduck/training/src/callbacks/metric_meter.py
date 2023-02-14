@@ -74,7 +74,7 @@ class MetricMeter(Callback):
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
     def on_train_batch_end(self, trainer) -> None:
-        self._update("train_loss", trainer.batch_dict["train_loss"])
+        self._update("train_loss", trainer.epoch_dict['train']["batch_loss"])
 
     def on_valid_loader_end(self, trainer) -> None:
         # this loss is the average loss over the entire epoch
@@ -82,7 +82,7 @@ class MetricMeter(Callback):
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
     def on_valid_batch_end(self, trainer) -> None:
-        self._update("valid_loss", trainer.batch_dict["valid_loss"])
+        self._update("valid_loss", trainer.epoch_dict['validation']["batch_loss"])
 
     def _update(self, metric_name, metric_score) -> None:
         """To check PyTorch's code for updating the loss meter."""

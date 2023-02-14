@@ -153,7 +153,7 @@ class ModelCheckpoint(Callback):
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
-        valid_score = trainer.epoch_dict['validation'].get(self.monitor)
+        valid_score = trainer.epoch_dict["validation"]["metrics"].get(self.monitor)
 
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_val_score
@@ -170,12 +170,16 @@ class ModelCheckpoint(Callback):
 
             self.state_dict["model_state_dict"] = trainer.model.state_dict()
             self.state_dict["optimizer_state_dict"] = trainer.optimizer.state_dict()
-            self.state_dict["scheduler_state_dict"] = trainer.scheduler.state_dict() if not trainer.scheduler is None else None
+            self.state_dict["scheduler_state_dict"] = (
+                trainer.scheduler.state_dict()
+                if not trainer.scheduler is None
+                else None
+            )
             self.state_dict["epoch"] = trainer.current_epoch
             self.state_dict["best_score"] = self.best_val_score
-            # self.state_dict["oof_trues"] = trainer.history_dict["valid_trues"]
-            # self.state_dict["oof_preds"] = trainer.history_dict["valid_preds"]
-            # self.state_dict["oof_probs"] = trainer.history_dict["valid_probs"]
-            # self.state_dict["oof_logits"] = trainer.history_dict["valid_logits"]
+            # self.state_dict["oof_trues"] = trainer.epoch_dict["valid_trues"]
+            # self.state_dict["oof_preds"] = trainer.epoch_dict["valid_preds"]
+            # self.state_dict["oof_probs"] = trainer.epoch_dict["valid_probs"]
+            # self.state_dict["oof_logits"] = trainer.epoch_dict["valid_logits"]
             self.state_dict["model_artifacts_path"] = model_artifacts_path
             self.save_checkpoint(self.state_dict, model_artifacts_path)

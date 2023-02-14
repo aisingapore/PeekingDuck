@@ -69,7 +69,7 @@ class EarlyStopping(Callback):
         trainer.stop_training = self.stop  # assign to trainer
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
-        valid_score = trainer.epoch_dict['validation'].get(self.monitor)
+        valid_score = trainer.epoch_dict["validation"]["metrics"].get(self.monitor)
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_val_score
         ):

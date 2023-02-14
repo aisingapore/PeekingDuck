@@ -29,7 +29,6 @@ from src.metrics.base import MetricsAdapter
 
 
 class PytorchMetrics(MetricsAdapter):
-
     @classmethod
     def get_metric(
         cls, task: str, num_classes: int, metric
@@ -55,11 +54,11 @@ class PytorchMetrics(MetricsAdapter):
 
     @classmethod
     def get_metrics(cls, task, num_classes, metric_list: list) -> MetricCollection:
-
-        metric_collection_list = [cls.get_metric(task, num_classes, metric) for metric in metric_list]
+        metric_collection_list = [
+            cls.get_metric(task, num_classes, metric) for metric in metric_list
+        ]
         metrics_collection: MetricCollection = MetricCollection(metric_collection_list)
         return metrics_collection
-
 
     @staticmethod
     def get_classification_metrics(
@@ -69,7 +68,9 @@ class PytorchMetrics(MetricsAdapter):
         y_probs: torch.Tensor,
         prefix: str = "train",
     ):
-        """[summary]
+        """
+        Calculate metrics
+        [summary]
         # https://ghnreigns.github.io/reighns-ml-website/supervised_learning/classification/breast_cancer_wisconsin/Stage%206%20-%20Modelling%20%28Preprocessing%20and%20Spot%20Checking%29/
         Args:
             y_trues (torch.Tensor): dtype=[torch.int64], shape=(num_samples, 1); (May be float if using BCEWithLogitsLoss)
@@ -77,10 +78,5 @@ class PytorchMetrics(MetricsAdapter):
             y_probs (torch.Tensor): dtype=[torch.float32], shape=(num_samples, num_classes);
             mode (str, optional): [description]. Defaults to "valid".
         """
-        
         epoch_metrics = metrics.clone(prefix=str(prefix) + "_")
-        
-        results = epoch_metrics(y_probs, y_trues.flatten())
-        results_df = pd.DataFrame.from_dict([results])
-
-        return results, results_df
+        return epoch_metrics(y_probs, y_trues.flatten())
