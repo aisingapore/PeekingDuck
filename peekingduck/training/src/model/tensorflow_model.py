@@ -20,21 +20,12 @@ from torch import dropout
 
 from src.model.tensorflow_base import TFModelFactory
 
-# from tensorflow_base import TFModelFactory  # for testing
-
-
 logger = logging.getLogger("TF Model")  # pylint: disable=invalid-name
 logging.basicConfig(level=logging.INFO)
 
 
 class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
-
-    # def __init__(self) -> None:
-    #     self.model_cfg = None
-    #     self.model_name = None
-    #     self.input_shape = None
-    #     self.num_classes = None
 
     @classmethod
     def create_base(cls, model_name, input_shape, trainable):
@@ -49,8 +40,8 @@ class TFClassificationModelFactory(TFModelFactory):
     def create_head(cls, inputs, num_classes, dropout_rate):
         # create the pooling and prediction layers
         global_average_layer = tf.keras.layers.GlobalAveragePooling2D()
-        prediction_layer = tf.keras.layers.Dense(num_classes, activation="softmax")
         dropout = tf.keras.layers.Dropout(dropout_rate)
+        prediction_layer = tf.keras.layers.Dense(num_classes, activation="softmax")
         # chain up the layers
         x = global_average_layer(inputs)
         x = dropout(x)
@@ -72,10 +63,10 @@ class TFClassificationModelFactory(TFModelFactory):
         dropout_rate = model_cfg.dropout_rate
         inputs = tf.keras.Input(shape=input_shape)
         trainable = True if model_cfg.unfreeze_layers == -1 else False
-        
+
         # x = self.data_processing(inputs)
         # disable batch norm for base model
-        
+
         x = cls.create_base(model_name, input_shape, trainable)(inputs, training=False)
         outputs = cls.create_head(x, num_classes, dropout_rate)
         model = tf.keras.Model(inputs, outputs)

@@ -49,6 +49,10 @@ class PTClassificationModel(PTModel):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
+        self.unfreeze_backbone: str = self.model_config.unfreeze_backbone
+        self.unfreeze_backbone_modules: DictConfig = (
+            self.model_config.unfreeze_backbone_modules
+        )
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
@@ -62,6 +66,23 @@ class PTClassificationModel(PTModel):
     def create_model(self) -> nn.Module:
         """Create the model sequentially."""
         self.backbone = self.load_backbone()
+        # show the available backbone modules
+        logger.info(
+            f"Available modules in the backbone are {[module for module in self.backbone._modules]}"
+        )
+        # unfreeze backbone based on the config
+        if self.unfreeze_backbone == "all":
+            self.unfreeze_full_backbone(self.backbone)
+        elif self.unfreeze_backbone == "none":
+            pass  # torch default setting for param.requires_grad is True
+        elif self.unfreeze_backbone == "partial":
+            self.unfreeze_partial_backbone(
+                self.backbone, self.unfreeze_backbone_modules
+            )
+        else:
+            raise ValueError(
+                f"Unfreeze setting '{self.unfreeze_backbone}' is not supported"
+            )
         if self.adapter == "torchvision":
             last_layer_name, _, in_features = self.get_last_layer()
             logger.info(
@@ -91,6 +112,9 @@ class PTClassificationModel(PTModel):
             backbone = timm.create_model(self.model_name, pretrained=self.pretrained)
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
+        # freeze the backbone by default
+        self.freeze_full_backbone(backbone)
+
         return backbone
 
     def modify_head(self, in_features: int = None) -> nn.Module:

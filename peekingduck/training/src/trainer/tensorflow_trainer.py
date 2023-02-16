@@ -113,15 +113,16 @@ class tensorflowTrainer(Trainer):
 
         if self.model_config.unfreeze_layers <= 0:
             return feature_extraction_history.history
-        
+
         # Unfreeze the base model
         self.model.trainable = True
 
         if self.model_config.unfreeze_layers > 0:
+            # get into the layers within the backbone and unfreeze
             for layer in self.model.get_layer(
                 str(self.model_config.model_name).lower()
             ).layers[: -abs(self.model_config.unfreeze_layers)]:
-                layer.trainable = False  # Freeze layer
+                layer.trainable = False  # Freeze layers up to the number
 
         self.model.summary()
 
