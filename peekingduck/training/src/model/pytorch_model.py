@@ -54,15 +54,16 @@ class PTClassificationModel(PTModel):
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
-    def _concat_backbone_and_head(self, last_layer_name) -> nn.Module:
+    def _concat_backbone_and_head(self, backbone, head, last_layer_name) -> nn.Module:
         """Concatenate the backbone and head of the model."""
-        model = copy.deepcopy(self.backbone)
-        head = copy.deepcopy(self.head)
-        rsetattr(model, last_layer_name, head)
-        return model
+        # model = copy.deepcopy(self.backbone)
+        # head = copy.deepcopy(self.head)
+        rsetattr(backbone, last_layer_name, head)
+        return backbone
 
     def create_model(self) -> nn.Module:
         """Create the model sequentially."""
+
         self.backbone = self.load_backbone()
 
         if self.adapter == "torchvision":
@@ -71,12 +72,30 @@ class PTClassificationModel(PTModel):
                 f"last_layer_name: {last_layer_name}. in_features: {in_features}"
             )
             rsetattr(self.backbone, last_layer_name, nn.Identity())
-            self.head = self.modify_head(in_features)
-            model = self._concat_backbone_and_head(last_layer_name)
-        elif self.adapter == "timm":
-            model = copy.deepcopy(self.backbone)
-            model.reset_classifier(num_classes=self.model_config.num_classes)
+            # create the head
+            head = self.modify_head(in_features)
+            # attach the head
+            model = self._concat_backbone_and_head(self.backbone, head, last_layer_name)
 
+        elif self.adapter == "timm":
+            self.backbone.reset_classifier(num_classes=self.model_config.num_classes)
+            model = self.backbone
+        else:
+            raise ValueError(f"Adapter {self.adapter} not supported.")
+
+        # self.backbone = self.load_backbone()
+
+        # if self.adapter == "torchvision":
+        #     last_layer_name, _, in_features = self.get_last_layer()
+        #     logger.info(
+        #         f"last_layer_name: {last_layer_name}. in_features: {in_features}"
+        #     )
+        #     rsetattr(self.backbone, last_layer_name, nn.Identity())
+        #     self.head = self.modify_head(in_features)
+        #     model = self._concat_backbone_and_head(last_layer_name)
+        # elif self.adapter == "timm":
+        #     model = copy.deepcopy(self.backbone)
+        #     model.reset_classifier(num_classes=self.model_config.num_classes)
         # show the available modules to unfreeze
         logger.info(
             f"Available modules to be unfroze are {[module for module in self.backbone._modules]}"
@@ -137,11 +156,14 @@ class PTClassificationModel(PTModel):
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward pass of the model based on the adapter"""
-        if self.adapter == "torchvision":
-            features = self.forward_features(inputs)
-            outputs = self.forward_head(features)
-        elif self.adapter == "timm":
-            outputs = self.model(inputs)
-        else:
-            raise ValueError(f"Adapter {self.adapter} not supported.")
+        # if self.adapter == "torchvision":
+        #     features = self.forward_features(inputs)
+        #     outputs = self.forward_head(features)
+        # elif self.adapter == "timm":
+        #     outputs = self.model(inputs)
+        # else:
+        #     raise ValueError(f"Adapter {self.adapter} not supported.")
+
+        outputs = self.model(inputs)
+
         return outputs
