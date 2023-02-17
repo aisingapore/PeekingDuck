@@ -33,11 +33,12 @@ def run(cfg: DictConfig) -> None:
     ], f"Unsupported framework {cfg.framework}"
     start_time: float = perf_counter()
 
-    if cfg.framework == "pytorch":
-        cfg.device = choose_torch_device()
-        logger.info(f"Using device: {cfg.device}")
-    if cfg.framework == "tensorflow":
-        logger.info(set_tensorflow_device())
+    if cfg.device == "auto":
+        if cfg.framework == "pytorch":
+            cfg.device = choose_torch_device()
+            logger.info(f"Using device: {cfg.device}")
+        if cfg.framework == "tensorflow":
+            logger.info(set_tensorflow_device())
 
     data_module: DataModule = instantiate(
         config=cfg.data_module.module,
