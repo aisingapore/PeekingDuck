@@ -164,7 +164,9 @@ class pytorchTrainer(Trainer):
         print("model:\n\n", self.model)
         # show model summary
         print("model summary:\n\n")
-        self.model.model_summary(inputs.shape)
+        self.model.model_summary(inputs.shape, device=self.device)
+        # required for MPS, otherwise the torchvision will change the model back to cpu
+        # reference: https://github.com/TylerYep/torchinfo
 
     def _train_teardown(self) -> None:
         free_gpu_memory(
