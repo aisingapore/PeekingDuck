@@ -89,12 +89,12 @@ class PTModel(ABC, nn.Module):
 
         NOTE:
             Only correct if the last layer is a linear layer and is the head.
+            Used by torchvision models.
             Does not work with timm's (e.g. vgg16) as the last layer is a
             flatten layer ('Identity()') with no 'in_features' attribute.
             (Only the second last layer is 'Linear')
         """
         # propagate through the model to get the last layer name
-
         for name, _param in self.backbone.named_modules():
             last_layer_name = name
         last_layer_attributes = last_layer_name.split(".")  # + ['in_features']
@@ -104,18 +104,18 @@ class PTModel(ABC, nn.Module):
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features
 
-    def freeze_full_backbone(self, backbone):
-        for param in backbone.parameters():
+    def freeze_all_params(self, model):
+        for param in model.parameters():
             param.requires_grad = False
 
-    def unfreeze_full_backbone(self, backbone):
-        for param in backbone.parameters():
+    def unfreeze_all_params(self, model):
+        for param in model.parameters():
             param.requires_grad = True
 
-    def unfreeze_partial_backbone(self, backbone, unfreeze_backbone_modules):
-        for module_name, unfreeze_layers in unfreeze_backbone_modules.items():
-            # print(module_name, unfreeze_layers)
-            # print(getattr(backbone, module_name))
-
-            for param in getattr(backbone, module_name)[-unfreeze_layers:].parameters():
+    def unfreeze_partial_params(self, model, unfreeze_module_dict: DictConfig):
+        for module_name, num_layers in unfreeze_module_dict.items():
+            # convert negative values from config to zero, which will unfreeze all layers below
+            num_layers = max(num_layers, 0)
+            # unfreeze from num_layers to last layer within each module
+            for param in getattr(model, module_name)[-num_layers:].parameters():
                 param.requires_grad = True

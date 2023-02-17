@@ -49,10 +49,8 @@ class PTClassificationModel(PTModel):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
-        self.unfreeze_backbone: str = self.model_config.unfreeze_backbone
-        self.unfreeze_backbone_modules: DictConfig = (
-            self.model_config.unfreeze_backbone_modules
-        )
+        self.unfreeze: str = self.model_config.unfreeze
+        self.unfreeze_modules: DictConfig = self.model_config.unfreeze_modules
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
@@ -66,23 +64,7 @@ class PTClassificationModel(PTModel):
     def create_model(self) -> nn.Module:
         """Create the model sequentially."""
         self.backbone = self.load_backbone()
-        # show the available backbone modules
-        logger.info(
-            f"Available modules in the backbone are {[module for module in self.backbone._modules]}"
-        )
-        # unfreeze backbone based on the config
-        if self.unfreeze_backbone == "all":
-            self.unfreeze_full_backbone(self.backbone)
-        elif self.unfreeze_backbone == "none":
-            pass  # torch default setting for param.requires_grad is True
-        elif self.unfreeze_backbone == "partial":
-            self.unfreeze_partial_backbone(
-                self.backbone, self.unfreeze_backbone_modules
-            )
-        else:
-            raise ValueError(
-                f"Unfreeze setting '{self.unfreeze_backbone}' is not supported"
-            )
+
         if self.adapter == "torchvision":
             last_layer_name, _, in_features = self.get_last_layer()
             logger.info(
@@ -94,7 +76,22 @@ class PTClassificationModel(PTModel):
         elif self.adapter == "timm":
             model = copy.deepcopy(self.backbone)
             model.reset_classifier(num_classes=self.model_config.num_classes)
-            print("model and backbone!\n\n\n", model, self.backbone)
+
+        # show the available modules to unfreeze
+        logger.info(
+            f"Available modules to be unfroze are {[module for module in self.backbone._modules]}"
+        )
+
+        # unfreeze the model parameters based on the config
+        if self.unfreeze == "none":
+            pass
+        elif self.unfreeze == "all":
+            self.unfreeze_all_params(model)
+        elif self.unfreeze == "partial":
+            self.unfreeze_partial_params(model, self.unfreeze_modules)
+        else:
+            raise ValueError(f"Unfreeze setting '{self.unfreeze}' is not supported")
+
         return model
 
     def load_backbone(self) -> nn.Module:
@@ -113,8 +110,7 @@ class PTClassificationModel(PTModel):
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
         # freeze the backbone by default
-        self.freeze_full_backbone(backbone)
-
+        self.freeze_all_params(backbone)
         return backbone
 
     def modify_head(self, in_features: int = None) -> nn.Module:
@@ -140,5 +136,12 @@ class PTClassificationModel(PTModel):
         return outputs
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        outputs = self.model(inputs)
+        """Forward pass of the model based on the adapter"""
+        if self.adapter == "torchvision":
+            features = self.forward_features(inputs)
+            outputs = self.forward_head(features)
+        elif self.adapter == "timm":
+            outputs = self.model(inputs)
+        else:
+            raise ValueError(f"Adapter {self.adapter} not supported.")
         return outputs

@@ -86,7 +86,6 @@ class pytorchTrainer(Trainer):
         self.valid_elapsed_time = None
         self.train_elapsed_time = None
 
-
     def setup(
         self,
         trainer_config: DictConfig,
@@ -134,10 +133,12 @@ class pytorchTrainer(Trainer):
 
         # scheduler
         if not self.trainer_config.scheduler_params.scheduler is None:
-            self.scheduler: torch.optim.lr_scheduler = OptimizerSchedules.get_pytorch_scheduler(
-                optimizer=self.optimizer,
-                scheduler=self.trainer_config.scheduler_params.scheduler,
-                parameters=self.trainer_config.scheduler_params.scheduler_params,
+            self.scheduler: torch.optim.lr_scheduler = (
+                OptimizerSchedules.get_pytorch_scheduler(
+                    optimizer=self.optimizer,
+                    scheduler=self.trainer_config.scheduler_params.scheduler,
+                    parameters=self.trainer_config.scheduler_params.scheduler_params,
+                )
             )
 
         # Metric to optimize, either min or max.
@@ -159,7 +160,10 @@ class pytorchTrainer(Trainer):
 
     def _train_setup(self, inputs) -> None:
         self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
+        # print out model
+        print("model:\n\n", self.model)
         # show model summary
+        print("model summary:\n\n")
         self.model.model_summary(inputs.shape)
 
     def _train_teardown(self) -> None:
@@ -219,7 +223,7 @@ class pytorchTrainer(Trainer):
             inputs, targets = batch
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
-    
+
             # Forward pass logits
             logits = self.model(inputs)
 
@@ -235,18 +239,18 @@ class pytorchTrainer(Trainer):
             self.optimizer.step()  # Update weights using the optimizer
 
             # Update loss metric, every batch is diff
-            self.epoch_dict['train']["batch_loss"] = curr_batch_train_loss.item()
+            self.epoch_dict["train"]["batch_loss"] = curr_batch_train_loss.item()
             y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             y_train_pred = torch.argmax(y_train_prob, dim=1)
 
             self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
-            
+
             train_trues.extend(targets.cpu())
             train_logits.extend(logits.cpu())
             train_probs.extend(y_train_prob.cpu())
             train_preds.extend(y_train_pred.cpu())
 
-        train_trues, train_logits,  train_preds,  train_probs = (
+        train_trues, train_logits, train_preds, train_probs = (
             torch.vstack(train_trues),
             torch.vstack(train_logits),
             torch.vstack(train_preds),
@@ -260,7 +264,7 @@ class pytorchTrainer(Trainer):
             "train",
         )
 
-        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)        
+        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
         self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader) -> None:
@@ -306,7 +310,7 @@ class pytorchTrainer(Trainer):
                     stage="validation",
                 )
                 # Update loss metric, every batch is diff
-                self.epoch_dict['validation']["batch_loss"] = curr_batch_val_loss.item()
+                self.epoch_dict["validation"]["batch_loss"] = curr_batch_val_loss.item()
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
@@ -324,7 +328,9 @@ class pytorchTrainer(Trainer):
             torch.vstack(valid_preds),
             torch.vstack(valid_probs),
         )
-        self.epoch_dict["validation"]["metrics"] = PytorchMetrics.get_classification_metrics(
+        self.epoch_dict["validation"][
+            "metrics"
+        ] = PytorchMetrics.get_classification_metrics(
             self.metrics,
             valid_trues,
             valid_preds,

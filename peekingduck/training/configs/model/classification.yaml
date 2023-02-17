@@ -7,14 +7,14 @@ pytorch:
     model_name: "vgg16" # resnet18 efficientnet_v2_s vgg11-19 vgg16 mobilenet_v3_small
     weights: "DEFAULT" # updated since torchvision v0.13. Refer to official doc for customized values.
     pretrained: True # for timm only
-    unfreeze_backbone: "partial" # all (unfreeze all backbone layers) | none (freeze all backbone layers) | partial (Last N Layers)
-    unfreeze_backbone_modules: # module name followed by the number of the last layers within the module to unfreeze. Only applicable when unfreeze setting is "partial"
+    unfreeze: "partial" # all (unfreeze all backbone layers) | none (freeze all backbone layers) | partial (Last N Layers)
+    unfreeze_modules: # module name followed by the number of the last layers within the module to unfreeze. Only applicable when unfreeze setting is "partial"
+        # -1 (freeze all layers within the module) | int (last N layers)
         features: 3
     model_type:
         _target_: src.model.pytorch_model.PTClassificationModel
     num_classes: ${data_module.dataset.num_classes}
     device: ${device}
-    # unfreeze_all_layers: True
     # You typically want _self_ somewhere after the schema (base_config)
 
 tensorflow:
