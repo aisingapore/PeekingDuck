@@ -49,6 +49,10 @@ class PTClassificationModel(PTModel):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
+        self.unfreeze_backbone: str = self.model_config.unfreeze_backbone
+        self.unfreeze_backbone_modules: DictConfig = (
+            self.model_config.unfreeze_backbone_modules
+        )
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
@@ -62,11 +66,35 @@ class PTClassificationModel(PTModel):
     def create_model(self) -> nn.Module:
         """Create the model sequentially."""
         self.backbone = self.load_backbone()
-        last_layer_name, _, in_features = self.get_last_layer()
-        logger.info(f"last_layer_name: {last_layer_name}. in_features: {in_features}")
-        rsetattr(self.backbone, last_layer_name, nn.Identity())
-        self.head = self.modify_head(in_features)
-        model = self._concat_backbone_and_head(last_layer_name)
+        # show the available backbone modules
+        logger.info(
+            f"Available modules in the backbone are {[module for module in self.backbone._modules]}"
+        )
+        # unfreeze backbone based on the config
+        if self.unfreeze_backbone == "all":
+            self.unfreeze_full_backbone(self.backbone)
+        elif self.unfreeze_backbone == "none":
+            pass  # torch default setting for param.requires_grad is True
+        elif self.unfreeze_backbone == "partial":
+            self.unfreeze_partial_backbone(
+                self.backbone, self.unfreeze_backbone_modules
+            )
+        else:
+            raise ValueError(
+                f"Unfreeze setting '{self.unfreeze_backbone}' is not supported"
+            )
+        if self.adapter == "torchvision":
+            last_layer_name, _, in_features = self.get_last_layer()
+            logger.info(
+                f"last_layer_name: {last_layer_name}. in_features: {in_features}"
+            )
+            rsetattr(self.backbone, last_layer_name, nn.Identity())
+            self.head = self.modify_head(in_features)
+            model = self._concat_backbone_and_head(last_layer_name)
+        elif self.adapter == "timm":
+            model = copy.deepcopy(self.backbone)
+            model.reset_classifier(num_classes=self.model_config.num_classes)
+            print("model and backbone!\n\n\n", model, self.backbone)
         return model
 
     def load_backbone(self) -> nn.Module:
@@ -84,16 +112,13 @@ class PTClassificationModel(PTModel):
             backbone = timm.create_model(self.model_name, pretrained=self.pretrained)
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
+        # freeze the backbone by default
+        self.freeze_full_backbone(backbone)
+
         return backbone
 
     def modify_head(self, in_features: int = None) -> nn.Module:
-        """Modify the head of the model.
-
-        NOTE/TODO:
-            This part is very tricky, to modify the head,
-            the penultimate layer of the backbone is taken, but different
-            models will have different names for the penultimate layer.
-        """
+        """Modify the head of the model."""
         # fully connected
         out_features = self.model_config.num_classes
         head = nn.Linear(in_features=in_features, out_features=out_features)
@@ -101,19 +126,19 @@ class PTClassificationModel(PTModel):
 
     def forward_features(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward pass of the model up to the penultimate layer to get
-        feature embeddings.
+        feature embeddings. Only works for torchvision backbone.
         """
         features = self.backbone(inputs)
         return features
 
     def forward_head(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the model up to the head to get predictions."""
+        """Forward pass of the model up to the head to get predictions.
+        Only works for torchvision backbone.
+        """
         # nn.AdaptiveAvgPool2d(1)(inputs) is used by both timm and torchvision
         outputs = self.head(inputs)
         return outputs
 
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Forward pass of the model."""
-        features = self.forward_features(inputs)
-        outputs = self.forward_head(features)
+        outputs = self.model(inputs)
         return outputs

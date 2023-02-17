@@ -88,19 +88,34 @@ class PTModel(ABC, nn.Module):
         """Get the last layer information of a PyTorch Model.
 
         NOTE:
-            This is only correct if the last layer is a linear layer and is the head.
-            Does not work with timm's vgg16 as the last layer is a flatten layer ('Identity()') with no 'in_features' attribute.
+            Only correct if the last layer is a linear layer and is the head.
+            Does not work with timm's (e.g. vgg16) as the last layer is a
+            flatten layer ('Identity()') with no 'in_features' attribute.
             (Only the second last layer is 'Linear')
-            The easy way for timm is actually to use the `reset_classifier` method to
-            remove the head and then add a new head.
         """
         # propagate through the model to get the last layer name
+
         for name, _param in self.backbone.named_modules():
             last_layer_name = name
-
         last_layer_attributes = last_layer_name.split(".")  # + ['in_features']
         # reduce applies to a list recursively and reduce it to a single value
         linear_layer = functools.reduce(getattr, last_layer_attributes, self.backbone)
         in_features = linear_layer.in_features
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features
+
+    def freeze_full_backbone(self, backbone):
+        for param in backbone.parameters():
+            param.requires_grad = False
+
+    def unfreeze_full_backbone(self, backbone):
+        for param in backbone.parameters():
+            param.requires_grad = True
+
+    def unfreeze_partial_backbone(self, backbone, unfreeze_backbone_modules):
+        for module_name, unfreeze_layers in unfreeze_backbone_modules.items():
+            # print(module_name, unfreeze_layers)
+            # print(getattr(backbone, module_name))
+
+            for param in getattr(backbone, module_name)[-unfreeze_layers:].parameters():
+                param.requires_grad = True
