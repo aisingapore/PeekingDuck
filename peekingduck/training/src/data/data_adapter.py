@@ -15,12 +15,11 @@
 
 from torch.utils.data import DataLoader
 
-from src.data.base import AbstractDataAdapter
 from src.data.dataset import TFImageClassificationDataset
 
 
-class DataAdapter(AbstractDataAdapter):
-    """"""
+class DataAdapter:
+    """Adapter for different framework"""
 
     def __init__(self, cfg):
         self.cfg = cfg
@@ -43,7 +42,7 @@ class DataAdapter(AbstractDataAdapter):
                 **self.cfg.train,
             )
 
-    def valid_dataloader(self, dataset, transforms):
+    def validation_dataloader(self, dataset, transforms):
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
                 dataset,

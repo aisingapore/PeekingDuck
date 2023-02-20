@@ -20,8 +20,8 @@ from omegaconf import DictConfig
 from hydra.utils import instantiate
 import pandas as pd
 
-from src.data.base import DataModule
 from src.data.dataset import PTImageClassificationDataset
+from src.data.base import AbstractDataAdapter
 from src.data.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
@@ -38,7 +38,7 @@ from configs import LOGGER_NAME
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-class ImageClassificationDataModule(DataModule):
+class ImageClassificationDataModule:
     """Data module for generic image classification dataset."""
 
     def __init__(
@@ -51,7 +51,7 @@ class ImageClassificationDataModule(DataModule):
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg.transform[cfg.framework]
         )
-        self.dataset_loader: DataAdapter = None  # Setup in self.setup()
+        self.dataset_loader: AbstractDataAdapter = None  # Setup in self.setup()
 
     def get_train_dataset(self):
         """ """
@@ -64,7 +64,7 @@ class ImageClassificationDataModule(DataModule):
     def get_validation_dataset(self):
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
-        return self.dataset_loader.valid_dataloader(
+        return self.dataset_loader.validation_dataloader(
             self.valid_dataset,
             transforms=self.valid_transforms,
         )
@@ -175,7 +175,7 @@ class ImageClassificationDataModule(DataModule):
                 self.valid_dataset = self.valid_df
                 self.test_dataset = self.test_df
 
-        self.dataset_loader: DataAdapter = DataAdapter(
+        self.dataset_loader: AbstractDataAdapter = DataAdapter(
             self.cfg.data_adapter[self.cfg.framework]
         )
 

@@ -13,33 +13,38 @@
 # limitations under the License.
 
 
-from abc import ABC, abstractmethod
+from typing import Protocol
 
 
-class DataModule(ABC):
-    """Base class for custom data module."""
+class DataModule(Protocol):
+    """Base class for custom framework agnostic data module."""
 
-    @abstractmethod
-    def setup(self) -> None:
-        """setup"""
-        raise NotImplementedError
+    def prepare_data(
+        self,
+    ) -> None:
+        """Post init. Misc function to download, prepare raw data before setup"""
 
-    @abstractmethod
+    def setup(self, stage: str) -> None:
+        """setup function"""
+
     def get_train_dataset(self):
-        """"""
+        """return training dataset"""
 
-    @abstractmethod
     def get_validation_dataset(self):
-        """"""
+        """return validation dataset"""
+
+    def get_test_dataset(self):
+        """return test dataset"""
 
 
-class AbstractDataAdapter(ABC):
-    """"""
+class AbstractDataAdapter(Protocol):
+    """Base class for data adapter"""
 
-    @abstractmethod
     def train_dataloader(self, dataset):
-        raise NotImplementedError
+        """Adapter for training dataset"""
 
-    @abstractmethod
-    def valid_dataloader(self, dataset):
-        raise NotImplementedError
+    def validation_dataloader(self, dataset):
+        """Adapter for validation dataset"""
+
+    def test_dataloader(self, dataset):
+        """Adapter for test dataset"""
