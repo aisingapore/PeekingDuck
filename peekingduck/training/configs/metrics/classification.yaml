@@ -2,15 +2,11 @@ pytorch:
       # Options: Accuracy | Precision | Recall | AUROC | CalibrationError
       - Accuracy:
               average: "micro"
-
       - Precision:
               average: "macro"
-
       - Recall
-
       - AUROC:
               average: "weighted"
-
       - CalibrationError:
               norm: "l1"
 
@@ -23,3 +19,5 @@ tensorflow:
               thresholds: 0.5
       - AUC:
               from_logits: False
+              multi_label: True
+              num_labels: 25

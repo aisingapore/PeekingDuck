@@ -147,7 +147,7 @@ class pytorchTrainer(Trainer):
             -np.inf if self.monitored_metric["mode"] == "max" else np.inf
         )
 
-        self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
+        self._invoke_callbacks(EVENTS.TRAINER_START.value)
 
     def _set_dataloaders(
         self,
@@ -159,7 +159,7 @@ class pytorchTrainer(Trainer):
         self.validation_loader = validation_dl
 
     def _train_setup(self, inputs) -> None:
-        self._invoke_callbacks(EVENTS.ON_TRAINER_START.value)
+        self._invoke_callbacks(EVENTS.TRAINER_START.value)
         # print out model
         print("model:\n\n", self.model)
         # show model summary
@@ -177,7 +177,7 @@ class pytorchTrainer(Trainer):
             self.epoch_dict["validation"]["valid_preds"],
             self.epoch_dict["validation"]["valid_probs"],
         )
-        self._invoke_callbacks(EVENTS.ON_TRAINER_END.value)
+        self._invoke_callbacks(EVENTS.TRAINER_END.value)
 
     def _run_epochs(self) -> None:
         self.epochs = self.train_params.epochs
@@ -207,7 +207,7 @@ class pytorchTrainer(Trainer):
 
     def _run_train_epoch(self, train_loader: DataLoader) -> None:
         """Train one epoch of the model."""
-        self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_START.value)
+        self._invoke_callbacks(EVENTS.TRAIN_EPOCH_START.value)
 
         self.curr_lr = LossAdapter.get_lr(self.optimizer)
         # set to train mode
@@ -216,10 +216,10 @@ class pytorchTrainer(Trainer):
         train_bar = tqdm(train_loader)
         train_trues, train_logits, train_preds, train_probs = [], [], [], []
 
-        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_START.value)
+        self._invoke_callbacks(EVENTS.TRAIN_LOADER_START.value)
         # Iterate over train batches
         for _, batch in enumerate(train_bar, start=1):
-            self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_START.value)
+            self._invoke_callbacks(EVENTS.TRAIN_BATCH_START.value)
 
             # unpack - note that if BCEWithLogitsLoss, dataset should do view(-1,1) and not here.
             inputs, targets = batch
@@ -245,7 +245,7 @@ class pytorchTrainer(Trainer):
             y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             y_train_pred = torch.argmax(y_train_prob, dim=1)
 
-            self._invoke_callbacks(EVENTS.ON_TRAIN_BATCH_END.value)
+            self._invoke_callbacks(EVENTS.TRAIN_BATCH_END.value)
 
             train_trues.extend(targets.cpu())
             train_logits.extend(logits.cpu())
@@ -266,8 +266,8 @@ class pytorchTrainer(Trainer):
             "train",
         )
 
-        self._invoke_callbacks(EVENTS.ON_TRAIN_LOADER_END.value)
-        self._invoke_callbacks(EVENTS.ON_TRAIN_EPOCH_END.value)
+        self._invoke_callbacks(EVENTS.TRAIN_LOADER_END.value)
+        self._invoke_callbacks(EVENTS.TRAIN_EPOCH_END.value)
 
     def _run_validation_epoch(self, validation_loader: DataLoader) -> None:
         """Validate the model on the validation set for one epoch.
@@ -281,15 +281,15 @@ class pytorchTrainer(Trainer):
                 valid_preds (np.ndarray): The predicted labels for each validation set. shape = (num_samples, 1)
                 valid_probs (np.ndarray): The predicted probabilities for each validation set. shape = (num_samples, num_classes)
         """
-        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_START.value)
+        self._invoke_callbacks(EVENTS.VALID_EPOCH_START.value)
         self.model.eval()  # set to eval mode
         valid_bar = tqdm(validation_loader)
         valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
-        self._invoke_callbacks(EVENTS.ON_VALID_LOADER_START.value)
+        self._invoke_callbacks(EVENTS.VALID_LOADER_START.value)
 
         with torch.no_grad():  # TODO
             for _step, batch in enumerate(valid_bar, start=1):
-                self._invoke_callbacks(EVENTS.ON_VALID_BATCH_START.value)
+                self._invoke_callbacks(EVENTS.VALID_BATCH_START.value)
 
                 # unpack
                 inputs, targets = batch
@@ -316,7 +316,7 @@ class pytorchTrainer(Trainer):
 
                 # valid_bar.set_description(f"Validation. {metric_monitor}")
 
-                self._invoke_callbacks(EVENTS.ON_VALID_BATCH_END.value)
+                self._invoke_callbacks(EVENTS.VALID_BATCH_END.value)
                 # For OOF score and other computation.
                 # TODO: Consider giving numerical example. Consider rolling back to targets.cpu().numpy() if torch fails.
                 valid_trues.extend(targets.cpu())
@@ -340,7 +340,7 @@ class pytorchTrainer(Trainer):
             "val",
         )
 
-        self._invoke_callbacks(EVENTS.ON_VALID_LOADER_END.value)
+        self._invoke_callbacks(EVENTS.VALID_LOADER_END.value)
 
         self.epoch_dict["validation"].update(
             {
@@ -351,7 +351,7 @@ class pytorchTrainer(Trainer):
                 "valid_elapsed_time": self.valid_elapsed_time,
             }
         )
-        self._invoke_callbacks(EVENTS.ON_VALID_EPOCH_END.value)
+        self._invoke_callbacks(EVENTS.VALID_EPOCH_END.value)
 
     def _invoke_callbacks(self, event_name: str) -> None:
         """Invoke the callbacks."""
