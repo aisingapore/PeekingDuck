@@ -50,7 +50,7 @@ class PTClassificationModel(PTModel):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
-        self.unfreeze: str = self.model_config.unfreeze
+        # self.unfreeze: str = self.model_config.unfreeze
         self.fine_tune_modules: DictConfig = self.model_config.fine_tune_modules
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
@@ -102,7 +102,7 @@ class PTClassificationModel(PTModel):
             f"Available modules to be unfroze are {[module for module in self.backbone._modules]}"
         )
 
-        set_trainable_layers(model, self.model_config.fine_tune_modules)
+        # set_trainable_layers(model, self.model_config.fine_tune_modules)
 
         # unfreeze the model parameters based on the config
         # if self.unfreeze == "none":

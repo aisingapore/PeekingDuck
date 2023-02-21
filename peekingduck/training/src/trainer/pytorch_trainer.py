@@ -35,6 +35,7 @@ from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
+from src.utils.pt_model_utils import set_trainable_layers
 
 
 # TODO: clean up val vs valid naming confusions.
@@ -374,6 +375,20 @@ class pytorchTrainer(Trainer):
 
         self._train_setup(inputs)  # startup
         self._run_epochs()
-        self._train_teardown()  # shutdown
 
+        # fine-tune the model
+
+        if self.model_config.fine_tune == False:
+            pass
+
+        elif self.model_config.fine_tune == True:
+            # set fine-tune layers
+            set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
+            print("model summary for fine-tuning!")
+            self.model.model_summary(inputs.shape, device=self.device)
+            # run epoch
+            print("Start fine-tuning!!!")
+            self._run_epochs()
+
+        self._train_teardown()  # shutdown
         return self.history
