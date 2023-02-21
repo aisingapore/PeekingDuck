@@ -48,7 +48,7 @@ class TFClassificationModelFactory(TFModelFactory):
         # model = tf.keras.Model(inputs, outputs)
 
         model = getattr(tf.keras.applications, model_name)(
-            input_shape=input_shape, include_top=True, weights="imagenet"
+            include_top=True, weights="imagenet"
         )
         # exclude the existing prediction layer
         x = model.layers[-2].output

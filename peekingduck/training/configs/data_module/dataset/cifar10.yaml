@@ -10,7 +10,7 @@ target_col_name: "class_name" #class_id
 target_col_id: "class_id"
 stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
-image_size: 32
+image_size: 224 # for tensorflow this needs to meet the requirement of the corresponding model input size
 num_classes: 10
 class_name_to_id:
   airplane: 0
