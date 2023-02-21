@@ -16,10 +16,9 @@ import tensorflow as tf
 
 from typing import List
 from omegaconf import DictConfig
-from src.metrics.base import MetricsAdapter
 
 
-class TensorflowMetrics(MetricsAdapter):
+class TensorflowMetrics:
     def get_metric(self, metric_name: str, parameters: DictConfig = {}):
         return (
             getattr(tf.keras.metrics, metric_name)(**parameters)
