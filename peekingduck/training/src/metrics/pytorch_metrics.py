@@ -25,10 +25,9 @@ from torchmetrics import AUROC, Accuracy, MetricCollection, Precision, Recall
 from torchmetrics.classification import MulticlassCalibrationError
 from typing import List, Dict
 from omegaconf import DictConfig
-from src.metrics.base import MetricsAdapter
 
 
-class PytorchMetrics(MetricsAdapter):
+class PytorchMetrics:
     @classmethod
     def get_metric(
         cls, task: str, num_classes: int, metric
