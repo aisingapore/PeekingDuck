@@ -19,16 +19,16 @@ class TFModelFactory(ABC):
     """Model Base Class for TensorFlow."""
 
     @abstractmethod
-    def create_base(self):
-        """Create pre-trained base model."""
-        raise NotImplementedError
-
-    @abstractmethod
-    def create_head(self):
-        """Create head of the model."""
-        raise NotImplementedError
-
-    @abstractmethod
     def create_model(self):
         """Build the model with base and head"""
         raise NotImplementedError
+
+    # @abstractmethod
+    # def create_base(self):
+    #     """Create pre-trained base model."""
+    #     raise NotImplementedError
+
+    # @abstractmethod
+    # def create_head(self):
+    #     """Create head of the model."""
+    #     raise NotImplementedError

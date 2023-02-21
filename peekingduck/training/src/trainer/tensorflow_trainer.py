@@ -27,6 +27,7 @@ from src.losses.adapter import LossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
+from src.utils.tf_model_utils import set_trainable_layers
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -98,7 +99,11 @@ class tensorflowTrainer(Trainer):
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
     def train(self, train_dl, val_dl):
-        self.model.summary()
+        self.model.summary(expand_nested=True)
+
+        # test setting
+        set_trainable_layers(self.model, self.model_config.fine_tune_layers)
+        self.model.summary(expand_nested=True)
 
         self.epochs = self.trainer_config.global_train_params.epochs
         if self.trainer_config.global_train_params.debug:
@@ -111,40 +116,50 @@ class tensorflowTrainer(Trainer):
             callbacks=self.callbacks,
         )
 
-        if self.model_config.unfreeze_layers <= 0:
+        # if self.model_config.unfreeze_layers <= 0:
+        #     return feature_extraction_history.history
+
+        # # Unfreeze the base model
+        # self.model.trainable = True
+        # # cannot set to False, otherwise the layer.trainable attribute will not work.
+
+        # if self.model_config.unfreeze_layers > 0:
+        #     # get into the layers within the backbone and unfreeze
+        #     for layer in self.model.get_layer(
+        #         str(self.model_config.model_name).lower()
+        #     ).layers[: -abs(self.model_config.unfreeze_layers)]:
+        #         layer.trainable = False  # Freeze layers up to the number
+
+        # return the current history if no fine_tune required. Continue training otherwise
+        if self.model_config.fine_tune == False:
             return feature_extraction_history.history
+        elif self.model_config.fine_tune == True:
 
-        # Unfreeze the base model
-        self.model.trainable = True
+            set_trainable_layers(self.model, self.model_config.fine_tune_layers)
 
-        if self.model_config.unfreeze_layers > 0:
-            # get into the layers within the backbone and unfreeze
-            for layer in self.model.get_layer(
-                str(self.model_config.model_name).lower()
-            ).layers[: -abs(self.model_config.unfreeze_layers)]:
-                layer.trainable = False  # Freeze layers up to the number
+            self.model.summary()
 
-        self.model.summary()
+            optimizer = OptimizersAdapter.get_tensorflow_optimizer(
+                self.trainer_config.optimizer_params.optimizer,
+                self.trainer_config.fine_tune_params.optimizer_learning_rate,
+                self.trainer_config.optimizer_params.optimizer_params,
+            )
 
-        optimizer = OptimizersAdapter.get_tensorflow_optimizer(
-            self.trainer_config.optimizer_params.optimizer,
-            self.trainer_config.fine_tune_params.optimizer_learning_rate,
-            self.trainer_config.optimizer_params.optimizer_params,
-        )
+            self.model.compile(
+                optimizer=optimizer,
+                loss=self.loss,
+                metrics=self.metrics,
+            )
 
-        self.model.compile(
-            optimizer=optimizer,
-            loss=self.loss,
-            metrics=self.metrics,
-        )
-
-        fine_tuning_history = self.model.fit(
-            train_dl,
-            epochs=self.epochs,
-            validation_data=val_dl,
-            callbacks=self.callbacks,
-        )
-        history = merge_dict_of_list(
-            feature_extraction_history.history, fine_tuning_history.history
-        )
+            fine_tuning_history = self.model.fit(
+                train_dl,
+                epochs=self.epochs,
+                validation_data=val_dl,
+                callbacks=self.callbacks,
+            )
+            history = merge_dict_of_list(
+                feature_extraction_history.history, fine_tuning_history.history
+            )
+        else:
+            logger.error(f"Unknown fine_tune setting '{self.model_config.fine_tune}'")
         return history
