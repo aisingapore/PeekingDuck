@@ -31,6 +31,7 @@ from omegaconf import DictConfig
 
 from src.model.pytorch_base import PTModel
 from src.utils.general_utils import seed_all, rsetattr
+from src.utils.pt_model_utils import set_trainable_layers
 
 from configs import LOGGER_NAME
 
@@ -50,7 +51,7 @@ class PTClassificationModel(PTModel):
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
         self.unfreeze: str = self.model_config.unfreeze
-        self.unfreeze_modules: DictConfig = self.model_config.unfreeze_modules
+        self.fine_tune_modules: DictConfig = self.model_config.fine_tune_modules
         self.model = self.create_model()
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
@@ -101,15 +102,17 @@ class PTClassificationModel(PTModel):
             f"Available modules to be unfroze are {[module for module in self.backbone._modules]}"
         )
 
+        set_trainable_layers(model, self.model_config.fine_tune_modules)
+
         # unfreeze the model parameters based on the config
-        if self.unfreeze == "none":
-            pass
-        elif self.unfreeze == "all":
-            self.unfreeze_all_params(model)
-        elif self.unfreeze == "partial":
-            self.unfreeze_partial_params(model, self.unfreeze_modules)
-        else:
-            raise ValueError(f"Unfreeze setting '{self.unfreeze}' is not supported")
+        # if self.unfreeze == "none":
+        #     pass
+        # elif self.unfreeze == "all":
+        #     self.unfreeze_all_params(model)
+        # elif self.unfreeze == "partial":
+        #     self.unfreeze_partial_params(model, self.unfreeze_modules)
+        # else:
+        #     raise ValueError(f"Unfreeze setting '{self.unfreeze}' is not supported")
 
         return model
 

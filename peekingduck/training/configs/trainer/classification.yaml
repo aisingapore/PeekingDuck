@@ -24,35 +24,35 @@ pytorch:
             label_smoothing: 0.0
 
     optimizer_params:
-        optimizer: "AdamW"
+        optimizer: "Adam"
         optimizer_params:
             lr: 0.00001 # bs: 32 -> lr = 3e-4
             betas: [0.9, 0.999]
             amsgrad: False
-            weight_decay: 0.01 # 0.000001
-            eps: 0.00000001
+            # weight_decay: 0.01 # 0.000001
+            eps: 0.0000007
 
     scheduler_params:
         # https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863
         scheduler: null
         scheduler_params: null
 
-        # scheduler: "OneCycleLR" # Debug 
+        # scheduler: "OneCycleLR" # Debug
         # scheduler_params:
         #     max_lr: 1e-3 # (float or list)
-            # total_steps: epochs * steps_per_epoch # (int) Simple relation : total_steps = epochs * steps_per_epoch
-            # epochs: 5 # (int)
-            # steps_per_epoch: 1109 # (int)
-            # pct_start: 0.3 # (float)
-            # anneal_strategy: 'cos' # (str)
-            # cycle_momentum: True # (bool)
-            # base_momentum: 0.85 # (float or list)
-            # max_momentum: 0.95 # (float or list)
-            # div_factor: 25.0 # (float)
-            # final_div_factor: 10000.0 # (float)
-            # three_phase: False # (bool)
-            # last_epoch: -1 # (int)
-            # verbose: False # (bool)
+        # total_steps: epochs * steps_per_epoch # (int) Simple relation : total_steps = epochs * steps_per_epoch
+        # epochs: 5 # (int)
+        # steps_per_epoch: 1109 # (int)
+        # pct_start: 0.3 # (float)
+        # anneal_strategy: 'cos' # (str)
+        # cycle_momentum: True # (bool)
+        # base_momentum: 0.85 # (float or list)
+        # max_momentum: 0.95 # (float or list)
+        # div_factor: 25.0 # (float)
+        # final_div_factor: 10000.0 # (float)
+        # three_phase: False # (bool)
+        # last_epoch: -1 # (int)
+        # verbose: False # (bool)
 
         # scheduler: "CosineAnnealingWarmRestarts" # Debug
         # scheduler_params:
@@ -100,6 +100,7 @@ tensorflow:
         optimizer_params:
             beta_1: 0.9
             beta_2: 0.999
+            epsilon: 0.0000007
             name: "Adam"
     fine_tune_params:
         optimizer_learning_rate: 1e-5
