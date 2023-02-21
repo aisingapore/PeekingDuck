@@ -48,3 +48,13 @@ class AbstractDataAdapter(Protocol):
 
     def test_dataloader(self, dataset):
         """Adapter for test dataset"""
+
+
+class AbstractDataSet(Protocol):
+    """Base class for dataset"""
+
+    def __len__(self) -> int:
+        """Dataset length"""
+
+    def __getitem__(self, index: int):
+        """Dataset get item by index"""

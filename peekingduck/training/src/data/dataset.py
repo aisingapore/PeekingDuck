@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Optional, Tuple, Union
+from typing import Any, Optional, Tuple, Union
 import numpy as np
 from omegaconf import DictConfig
 
@@ -71,7 +71,7 @@ class PTImageClassificationDataset(Dataset):
         self, index: int
     ) -> Union[torch.FloatTensor, Union[torch.FloatTensor, torch.LongTensor]]:
         """Generate one batch of data"""
-        image_path = self.image_path[index]
+        image_path: str = self.image_path[index]
         image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image: Tensor = self.apply_image_transforms(image)
@@ -89,9 +89,7 @@ class PTImageClassificationDataset(Dataset):
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 
-    def apply_image_transforms(
-        self, image: torch.Tensor, dtype: torch.dtype = torch.float32
-    ) -> Tensor:
+    def apply_image_transforms(self, image: torch.Tensor) -> Tensor:
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
             image: Tensor = self.transforms(image=image)["image"]
@@ -143,7 +141,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
 
         self.list_IDs = df[x_col].values
         self.targets = df[y_col].values if stage != "test" else None
-        self.on_epoch_end()
+        self._on_epoch_end()
 
     def __len__(self) -> int:
         """Denotes the number of batches per epoch"""
@@ -155,7 +153,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
 
         # Find list of IDs
-        list_IDs_temp = [self.list_IDs[k] for k in indexes]
+        list_IDs_temp: list[Any | None] = [self.list_IDs[k] for k in indexes]
 
         # Generate data
         X, y = self._data_generation(list_IDs_temp, indexes)
@@ -168,8 +166,8 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 
-    def _load_image(self, image_path):
-        image = cv2.imread(image_path)  # BGR
+    def load_image(self, image_path):
+        image: np.ndarray[int, np.dtype[np.generic]] = cv2.imread(image_path)  # BGR
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         image = self.apply_image_transforms(image)
@@ -186,14 +184,14 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
             # Store sample
-            X[i] = self._load_image(ID)
+            X[i] = self.load_image(ID)
 
         # Store class
         y = self.targets[indexes]
 
         return X, tf.keras.utils.to_categorical(y, num_classes=self.num_classes)
 
-    def apply_image_transforms(self, image, dtype=np.float32):
+    def apply_image_transforms(self, image):
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
             image = self.transforms(image=image)["image"]
@@ -201,7 +199,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
             image = self.transforms(image)
         return image
 
-    def on_epoch_end(self) -> None:
+    def _on_epoch_end(self) -> None:
         "Updates indexes after each epoch"
         self.indexes = np.arange(len(self.list_IDs))
         if self.shuffle == True:

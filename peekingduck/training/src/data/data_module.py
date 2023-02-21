@@ -14,12 +14,14 @@
 
 
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
-from omegaconf import DictConfig
+from albumentations import Compose
 from hydra.utils import instantiate
+from omegaconf import DictConfig
 import pandas as pd
 
+from src.data.base import AbstractDataSet
 from src.data.dataset import PTImageClassificationDataset
 from src.data.base import AbstractDataAdapter
 from src.data.data_adapter import DataAdapter
@@ -51,7 +53,7 @@ class ImageClassificationDataModule:
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg.transform[cfg.framework]
         )
-        self.dataset_loader: AbstractDataAdapter = None  # Setup in self.setup()
+        self.dataset_loader: AbstractDataAdapter | None = None  # Setup in self.setup()
 
     def get_train_dataset(self):
         """ """
@@ -87,7 +89,7 @@ class ImageClassificationDataModule:
         test_dir: Path = Path(self.cfg.dataset.test_dir)
         class_name_to_id: Dict[str, int] = self.cfg.dataset.class_name_to_id
         train_csv: str = self.cfg.dataset.train_csv
-        stratify_by = self.cfg.dataset.stratify_by
+        stratify_by: List[Any] = self.cfg.dataset.stratify_by
 
         if self.cfg.dataset.download:
             logger.info(f"downloading from {url} to {blob_file} in {root_dir}")
@@ -117,7 +119,11 @@ class ImageClassificationDataModule:
                 save_path=train_csv,
             )
         logger.info(df.head())
-        self.train_df = df
+
+        self.train_df: pd.DataFrame = df
+        self.test_df: pd.DataFrame
+        self.valid_df: pd.DataFrame
+
         self.train_df, self.test_df = self._cross_validation_split(
             self.cfg.resample.resample_strategy, df, stratify_by=stratify_by
         )
@@ -126,7 +132,7 @@ class ImageClassificationDataModule:
         )
 
         if self.cfg.debug:
-            num_debug_samples = self.cfg.num_debug_samples
+            num_debug_samples: int = self.cfg.num_debug_samples
             logger.info(
                 f"Debug mode is on, using {num_debug_samples} images for training."
             )
@@ -142,29 +148,27 @@ class ImageClassificationDataModule:
                 )
 
         logger.info(self.train_df.info())
-        # self.train_df.to_csv("train_df.csv")
-        # self.valid_df.to_csv("valid_df.csv")
 
-    def setup(self, stage: str):
+    def setup(self, stage: str) -> None:
         """Step 3 after prepare()"""
-        self.train_transforms = self.transforms.train_transforms
-        self.valid_transforms = self.transforms.valid_transforms
-        self.test_transforms = self.transforms.test_transforms
+        self.train_transforms: Compose = self.transforms.train_transforms
+        self.valid_transforms: Compose = self.transforms.valid_transforms
+        self.test_transforms: Compose = self.transforms.test_transforms
         if stage == "fit":
             if self.cfg.framework == "pytorch":
-                self.train_dataset = PTImageClassificationDataset(
+                self.train_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
                     df=self.train_df,
                     stage="train",
                     transforms=self.train_transforms,
                 )
-                self.valid_dataset = PTImageClassificationDataset(
+                self.valid_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
                     df=self.valid_df,
                     stage="valid",
                     transforms=self.valid_transforms,
                 )
-                self.test_dataset = PTImageClassificationDataset(
+                self.test_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
                     df=self.test_df,
                     stage="test",

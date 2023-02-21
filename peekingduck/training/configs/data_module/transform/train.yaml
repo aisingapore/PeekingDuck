@@ -18,6 +18,7 @@ tensorflow:
       width: ${data_module.dataset.image_size}
       scale: [0.9, 1]
       ratio: [1, 1]
+    # refer to https://www.tensorflow.org/api_docs/python/tf/keras/applications/vgg16/preprocess_input
     - _target_: src.transforms.augmentations.TFPreprocessImage
       preprocessor: keras.applications.vgg16.preprocess_input
       p: 1.

@@ -13,4 +13,4 @@ module:
 
 framework: ${framework}
 debug: ${debug}
-num_debug_samples: 100
+num_debug_samples: 25

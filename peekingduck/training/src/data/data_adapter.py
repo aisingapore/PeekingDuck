@@ -12,9 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
+from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 
+# from src.data.base import AbstractDataSet
 from src.data.dataset import TFImageClassificationDataset
 
 
@@ -22,8 +23,8 @@ class DataAdapter:
     """Adapter for different framework"""
 
     def __init__(self, cfg):
-        self.cfg = cfg
-        self.loader = None
+        self.cfg: DictConfig = cfg
+        self.loader: None = None
         if cfg.adapter_type == "pytorch":
             self.loader = DataLoader
         if cfg.adapter_type == "tensorflow":

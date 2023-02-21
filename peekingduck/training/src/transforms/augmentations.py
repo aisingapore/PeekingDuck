@@ -40,15 +40,15 @@ class ImageClassificationTransforms(Transforms):
         self.cfg: DictConfig = cfg
 
     @property
-    def train_transforms(self):
+    def train_transforms(self) -> A.Compose:
         return A.Compose(instantiate(self.cfg.train))
 
     @property
-    def valid_transforms(self):
+    def valid_transforms(self) -> A.Compose:
         return A.Compose(instantiate(self.cfg.test))
 
     @property
-    def test_transforms(self):
+    def test_transforms(self) -> A.Compose:
         return A.Compose(instantiate(self.cfg.test))
 
     @property
@@ -59,6 +59,7 @@ class ImageClassificationTransforms(Transforms):
 class TFPreprocessImage(ImageOnlyTransform):
     """Preprocessed numpy.array or a tf.Tensor with type float32. The images are converted from RGB to BGR,
         then each color channel is zero-centered with respect to the ImageNet dataset, without scaling.
+        Refer to https://www.tensorflow.org/api_docs/python/tf/keras/applications/vgg16/preprocess_input
     Args:
         p (float): probability of applying the transform. Default: 1.
     Targets:
@@ -67,11 +68,13 @@ class TFPreprocessImage(ImageOnlyTransform):
         uint8, float32
     """
 
-    def __init__(self, preprocessor="", always_apply: bool = True, p: float = 1) -> None:
+    def __init__(
+        self, preprocessor="", always_apply: bool = True, p: float = 1
+    ) -> None:
         super().__init__(always_apply, p)
         self.preprocessor: str = preprocessor
 
-    def apply(self, img, **params):
+    def apply(self, img, **kwargs):
         return operator.attrgetter(self.preprocessor)(tf)(img)
 
     def get_transform_init_args_names(self):
