@@ -162,7 +162,7 @@ class pytorchTrainer(Trainer):
     def _train_setup(self, inputs) -> None:
         self._invoke_callbacks(EVENTS.TRAINER_START.value)
         # print out model
-        print("model:\n\n", self.model)
+        print("model:\n\n", self.model.model)
         # show model summary
         print("model summary:\n\n")
         self.model.model_summary(inputs.shape, device=self.device)
@@ -372,7 +372,6 @@ class pytorchTrainer(Trainer):
         self.current_fold = fold
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
-
         self._train_setup(inputs)  # startup
         self._run_epochs()
 
@@ -384,11 +383,23 @@ class pytorchTrainer(Trainer):
         elif self.model_config.fine_tune == True:
             # set fine-tune layers
             set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
-            print("model summary for fine-tuning!")
+            # need to re-init optimizer to update the newly unfrozen parameters
+            self.optimizer: torch.optim.Optimizer = (
+                OptimizersAdapter.get_pytorch_optimizer(
+                    model=self.model,
+                    optimizer_params=self.trainer_config.optimizer_params,
+                )
+            )
+
+            print("\n\nmodel summary for fine-tuning:\n")
             self.model.model_summary(inputs.shape, device=self.device)
+
             # run epoch
-            print("Start fine-tuning!!!")
+            print("\n\nStart fine-tuning!\n")
             self._run_epochs()
+
+        else:
+            raise ValueError("value error for fine_tune!")
 
         self._train_teardown()  # shutdown
         return self.history

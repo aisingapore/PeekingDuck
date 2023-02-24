@@ -26,7 +26,7 @@ pytorch:
     optimizer_params:
         optimizer: "Adam"
         optimizer_params:
-            lr: 0.00001 # bs: 32 -> lr = 3e-4
+            lr: 1e-5 # bs: 32 -> lr = 3e-4
             betas: [0.9, 0.999]
             amsgrad: False
             # weight_decay: 0.01 # 0.000001
@@ -63,11 +63,11 @@ pytorch:
         #     verbose: False
 
     global_train_params:
-        epochs: 50
-        patience: 1
+        epochs: 10
+        patience: 3
         model_name: ${model.pytorch.model_name}
         debug: ${debug}
-        debug_epochs: 10
+        debug_epochs: 1
         classification_type: ${data_module.dataset.classification_type}
         monitored_metric:
             monitor: val_MulticlassAccuracy
@@ -109,8 +109,8 @@ tensorflow:
         loss_params:
             from_logits: False
     global_train_params:
-        epochs: 50
+        epochs: 10
         debug: ${debug}
-        debug_epochs: 10
+        debug_epochs: 3
         trainer:
             _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
