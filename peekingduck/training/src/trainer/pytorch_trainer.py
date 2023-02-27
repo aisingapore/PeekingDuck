@@ -161,13 +161,16 @@ class pytorchTrainer(Trainer):
 
     def _train_setup(self, inputs) -> None:
         self._invoke_callbacks(EVENTS.TRAINER_START.value)
-        # print out model
-        print("model:\n\n", self.model.model)
+        self.train_summary(inputs)
+
+    def train_summary(self, inputs, finetune=False):
+        # show model layer details
+        if not finetune: print("Model Layer Details:\n", self.model.model)
         # show model summary
-        print("model summary:\n\n")
-        self.model.model_summary(inputs.shape, device=self.device)
-        # required for MPS, otherwise the torchvision will change the model back to cpu
+        print("\n\nModel Summary:\n")
+        # device parameter required for MPS, otherwise the torchvision will change the model back to cpu
         # reference: https://github.com/TylerYep/torchinfo
+        self.model.model_summary(inputs.shape, device=self.device)
 
     def _train_teardown(self) -> None:
         free_gpu_memory(
@@ -375,12 +378,8 @@ class pytorchTrainer(Trainer):
         self._train_setup(inputs)  # startup
         self._run_epochs()
 
-        # fine-tune the model
-
-        if self.model_config.fine_tune == False:
-            pass
-
-        elif self.model_config.fine_tune == True:
+        # fine-tuning
+        if self.model_config.fine_tune:
             # set fine-tune layers
             set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
             # need to re-init optimizer to update the newly unfrozen parameters
@@ -391,15 +390,12 @@ class pytorchTrainer(Trainer):
                 )
             )
 
-            print("\n\nmodel summary for fine-tuning:\n")
-            self.model.model_summary(inputs.shape, device=self.device)
+            print("\n\nModel Summary for fine-tuning:\n")
+            self.train_summary(inputs, finetune=True)
 
             # run epoch
             print("\n\nStart fine-tuning!\n")
             self._run_epochs()
-
-        else:
-            raise ValueError("value error for fine_tune!")
 
         self._train_teardown()  # shutdown
         return self.history

@@ -65,6 +65,8 @@ def run(cfg: DictConfig) -> None:
 
     if cfg.view_only:
         trainer = init_trainer(cfg)
+        inputs, _ = next(iter(train_loader))
+        trainer.train_summary(inputs)
     else:
         model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
         trainer = init_trainer(cfg)
