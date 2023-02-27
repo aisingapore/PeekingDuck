@@ -20,6 +20,7 @@ import src.callbacks as Callbacks
 if TYPE_CHECKING:
     from src.trainer import Trainer
 
+
 def init_callbacks(callbacks):
     """Method to initialise the callbacks.
     Args:
@@ -29,9 +30,9 @@ def init_callbacks(callbacks):
     for cb in callbacks:
         if type(cb) is DictConfig:
             for cbk, cbv in cb.items():
-                cb_list.append( getattr(Callbacks, cbk)(**cbv) )
+                cb_list.append(getattr(Callbacks, cbk)(**cbv))
         elif type(cb) is str:
-            cb_list.append( getattr(Callbacks, cb)() )
+            cb_list.append(getattr(Callbacks, cb)())
         else:
             raise TypeError
     return sort_callbacks(cb_list)
@@ -152,6 +153,3 @@ class Callback:
 
     def on_inference_end(self, trainer: Trainer) -> None:
         """Called when the inference ends."""
-
-
-
