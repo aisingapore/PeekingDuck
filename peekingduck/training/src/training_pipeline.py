@@ -25,6 +25,20 @@ from src.model_analysis.weights_biases import WeightsAndBiases
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
+def init_trainer(cfg) -> Trainer:
+    trainer: Trainer = instantiate(
+        cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
+    )
+    trainer.setup(
+        cfg.trainer,
+        cfg.model,
+        cfg.callbacks,
+        cfg.metrics,
+        cfg.data_module,
+        device=cfg.device,
+    )
+    return trainer
+
 
 def run(cfg: DictConfig) -> None:
     assert cfg.framework in [
@@ -49,23 +63,15 @@ def run(cfg: DictConfig) -> None:
     train_loader = data_module.get_train_dataset()
     validation_loader = data_module.get_validation_dataset()
 
-    model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
+    if cfg.view_only:
+        trainer = init_trainer(cfg)
+    else:
+        model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
+        trainer = init_trainer(cfg)
+        history = trainer.train(train_loader, validation_loader)
+        model_analysis.log_history(history)
 
-    trainer: Trainer = instantiate(
-        cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
-    )
-    trainer.setup(
-        cfg.trainer,
-        cfg.model,
-        cfg.callbacks,
-        cfg.metrics,
-        cfg.data_module,
-        device=cfg.device,
-    )
-    history = trainer.train(train_loader, validation_loader)
-    model_analysis.log_history(history)
-
-    end_time: float = perf_counter()
-    run_time: str = f"Run time = {end_time - start_time:.2f} sec"
-    logger.info(run_time)
-    model_analysis.log({"run_time": end_time - start_time})
+        end_time: float = perf_counter()
+        run_time: str = f"Run time = {end_time - start_time:.2f} sec"
+        logger.info(run_time)
+        model_analysis.log({"run_time": end_time - start_time})

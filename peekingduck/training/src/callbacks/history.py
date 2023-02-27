@@ -47,12 +47,11 @@ class History(Callback):
 
     def on_train_epoch_end(self, trainer: Trainer) -> None:
         """Method to update history object at the end of every epoch."""
-        self._update(history=trainer.epoch_dict['train'])
+        self._update(history=trainer.epoch_dict["train"])
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to update history object at the end of every epoch."""
-        self._update(history=trainer.epoch_dict['validation'])
-        
+        self._update(history=trainer.epoch_dict["validation"])
 
     def on_trainer_end(self, trainer: Trainer) -> None:
         """Method assigns accumulated history to history attribute
