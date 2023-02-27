@@ -404,7 +404,7 @@ def plot_channel_distribution(
 plt.rcParams["savefig.bbox"] = "tight"
 
 
-def show(imgs):
+def show(imgs) -> None:
     if not isinstance(imgs, list):
         imgs = [imgs]
     fig, axs = plt.subplots(ncols=len(imgs), squeeze=False)
@@ -433,7 +433,7 @@ def init_logger(
         logging.Logger: The logger object.
     """
     if module_name is None:
-        logger = logging.getLogger(__name__)
+        logger: logging.Logger = logging.getLogger(__name__)
     else:
         # get module name, useful for multi-module logging
         logger = logging.getLogger(module_name)
