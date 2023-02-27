@@ -29,14 +29,18 @@ from omegaconf import DictConfig
 import tensorflow as tf
 import torch
 
-class LossAdapter:
 
+class LossAdapter:
     @staticmethod
     def get_tensorflow_loss_func(name, parameters: DictConfig = {}):
-        return getattr(tf.keras.losses, name)(**parameters) if len(parameters) > 0 else getattr(tf.keras.losses, name)()
+        return (
+            getattr(tf.keras.losses, name)(**parameters)
+            if len(parameters) > 0
+            else getattr(tf.keras.losses, name)()
+        )
 
     @staticmethod
-    def compute_criterion( # for pytorch trainer
+    def compute_criterion(  # for pytorch trainer
         y_trues: torch.Tensor,
         y_logits: torch.Tensor,
         criterion_params: Dict[str, Any],
@@ -66,10 +70,9 @@ class LossAdapter:
         return loss
 
     @staticmethod
-    def get_lr(optimizer: torch.optim) -> float: # for pytorch trainer
+    def get_lr(optimizer: torch.optim) -> float:  # for pytorch trainer
         """Get the learning rate of optimizer for the current epoch.
         Note learning rate can be different for different layers, hence the for loop.
         """
         for param_group in optimizer.param_groups:
             return param_group["lr"]
-

@@ -14,6 +14,7 @@
 
 from abc import ABC, abstractmethod
 
+
 class Trainer(ABC):
     """Object used to facilitate training."""
 
