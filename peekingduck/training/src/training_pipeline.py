@@ -25,6 +25,7 @@ from src.model_analysis.weights_biases import WeightsAndBiases
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
+
 def init_trainer(cfg) -> Trainer:
     trainer: Trainer = instantiate(
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
