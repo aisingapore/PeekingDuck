@@ -1,5 +1,5 @@
 pytorch:
-    adapter: "torchvision" # torchvision or timm
+    adapter: "torchvision" # torchvision | timm
     task: "classification"
     # model name references:
     # https://pytorch.org/vision/stable/models.html#classification
@@ -8,17 +8,14 @@ pytorch:
     weights: "DEFAULT" # for torchvision >= 0.13. Refer to official doc for customized values.
     pretrained: True # for timm only
     fine_tune: True
-    # unfreeze: "partial" # all (unfreeze all layers) | none (unfreeze the classifier only) | partial (unfreeze the classifier and part of the backbone)
-    fine_tune_modules: # valid when unfreeze == "partial". module name followed by the number of the last layers within the module to unfreeze.
-        # pre_logits: ["fc2"]
+    # valid when unfreeze == "partial". module name followed by the number of the last layers within the module to unfreeze.
+    fine_tune_modules:
         features: 7
         classifier: 7
-
     model_type:
         _target_: src.model.pytorch_model.PTClassificationModel
     num_classes: ${data_module.dataset.num_classes}
     device: ${device}
-    # You typically want _self_ somewhere after the schema (base_config)
 
 tensorflow:
     task: "classification"
@@ -29,9 +26,8 @@ tensorflow:
     image_size: ${data_module.dataset.image_size}
     device: ${device}
     pretrained: True
-    # unfreeze_layers: -1 # -1 (All) | int (Last N Layers) | 0 (Freeze All)
     fine_tune: True # True or False
-    # fine_tune_layers: ["prediction_modified", "fc1", "fc2", "block5_conv3"] # prediction layer need to be included. If not, the weights will not be updated
+    # prediction layer need to be included. If not, the weights will not be updated
     fine_tune_layers:
         [
             "prediction_modified",
@@ -41,4 +37,3 @@ tensorflow:
             "block5_conv2",
             "block5_conv1",
         ]
-    dropout_rate: 0.3

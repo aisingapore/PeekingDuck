@@ -31,16 +31,3 @@ def set_trainable_layers(model, trainable_layer_name_list: List[str]) -> None:
             layer.trainable = False
         else:
             layer.trainable = True
-
-    # confirm the trainable layers
-    trainable_layer_list = [
-        layer.name for layer in model.layers if layer.trainable == True
-    ]
-    print(f"\nThe trainable layers are {trainable_layer_list}\n")
-
-
-# def set_fine_tune_layers(
-#     model, prediction_layer_name: str, trainable_layer_name_list: List[str]
-# ):
-#     trainable_layer_name_list.append(prediction_layer_name)
-#     set_trainable_layers(model, trainable_layer_name_list)

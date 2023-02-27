@@ -98,8 +98,13 @@ class tensorflowTrainer(Trainer):
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
-    def train(self, train_dl, val_dl):
+    def train_summary(self, inputs=None):
+        """Print model summary"""
+        print("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
+
+    def train(self, train_dl, val_dl):
+        self.train_summary()
 
         self.epochs = self.trainer_config.global_train_params.epochs
         if self.trainer_config.global_train_params.debug:
@@ -112,22 +117,6 @@ class tensorflowTrainer(Trainer):
             callbacks=self.callbacks,
         )
 
-        # if self.model_config.unfreeze_layers <= 0:
-        #     return feature_extraction_history.history
-
-        # # Unfreeze the base model
-        # self.model.trainable = True
-        # # cannot set to False, otherwise the layer.trainable attribute will not work.
-
-        # if self.model_config.unfreeze_layers > 0:
-        #     # get into the layers within the backbone and unfreeze
-        #     for layer in self.model.get_layer(
-        #         str(self.model_config.model_name).lower()
-        #     ).layers[: -abs(self.model_config.unfreeze_layers)]:
-        #         layer.trainable = False  # Freeze layers up to the number
-
-        # return the current history if no fine_tune required. Continue training otherwise
-
         assert isinstance(
             self.model_config.fine_tune, bool
         ), f"Unknown fine_tune setting '{self.model_config.fine_tune}'"
@@ -138,7 +127,7 @@ class tensorflowTrainer(Trainer):
         # self.model_config.fine_tune true
         set_trainable_layers(self.model, self.model_config.fine_tune_layers)
 
-        self.model.summary()
+        self.train_summary()
 
         optimizer = OptimizersAdapter.get_tensorflow_optimizer(
             self.trainer_config.optimizer_params.optimizer,

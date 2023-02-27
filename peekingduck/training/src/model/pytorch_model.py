@@ -66,9 +66,6 @@ class PTClassificationModel(PTModel):
 
         if self.adapter == "torchvision":
             last_layer_name, _, in_features = self.get_last_layer()
-            logger.info(
-                f"last_layer_name: {last_layer_name}. in_features: {in_features}"
-            )
 
             # create and reset the classifier layer
             head = self.create_head(in_features)
@@ -80,10 +77,6 @@ class PTClassificationModel(PTModel):
             model = self.backbone
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
-
-        logger.info(
-            f"Available modules to be unfroze are {[module for module in self.backbone._modules]}"
-        )
 
         return model
 

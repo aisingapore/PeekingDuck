@@ -165,7 +165,8 @@ class pytorchTrainer(Trainer):
 
     def train_summary(self, inputs, finetune=False):
         # show model layer details
-        if not finetune: print("Model Layer Details:\n", self.model.model)
+        if not finetune:
+            print("Model Layer Details:\n", self.model.model)
         # show model summary
         print("\n\nModel Summary:\n")
         # device parameter required for MPS, otherwise the torchvision will change the model back to cpu

@@ -140,7 +140,8 @@ def extract_file(destination_dir: Path, blob_file: str) -> None:
 class HyperParameters:
     """PyTorch Lightning/D2L style to save attributes.
 
-    See https://github.com/Lightning-AI/lightning/blob/master/src/pytorch_lightning/core/mixins/hparams_mixin.py"""
+    See https://github.com/Lightning-AI/lightning/blob/master/src/pytorch_lightning/core/mixins/hparams_mixin.py
+    """
 
     def save_hyperparameters(self, ignore: Optional[List[Any]] = None):
         """Save function arguments into class attributes.
@@ -260,7 +261,6 @@ def create_dataframe_with_image_info(
     data_list = []
 
     for image_path in tqdm(image_dir):  # image_path is the full abs path
-
         # get the label
         # assumes that the image_dir is structured as follows:
         # train_dir
