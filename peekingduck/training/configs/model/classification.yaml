@@ -1,17 +1,18 @@
 pytorch:
-    adapter: "timm" # torchvision or timm
+    adapter: "torchvision" # torchvision or timm
     task: "classification"
     # model name references:
     # https://pytorch.org/vision/stable/models.html#classification
     # https://huggingface.co/docs/timm/reference/models#timm.list_models
     model_name: "vgg16" # resnet18 efficientnet_v2_s vgg11-19 vgg16 mobilenet_v3_small
-    weights: "DEFAULT" # updated since torchvision v0.13. Refer to official doc for customized values.
+    weights: "DEFAULT" # for torchvision >= 0.13. Refer to official doc for customized values.
     pretrained: True # for timm only
     fine_tune: True
-    unfreeze: "partial" # all (unfreeze all layers) | none (unfreeze the classifier only) | partial (unfreeze the classifier and part of the backbone)
+    # unfreeze: "partial" # all (unfreeze all layers) | none (unfreeze the classifier only) | partial (unfreeze the classifier and part of the backbone)
     fine_tune_modules: # valid when unfreeze == "partial". module name followed by the number of the last layers within the module to unfreeze.
-        pre_logits: ["fc1", "fc2"]
-        features: 3
+        # pre_logits: ["fc2"]
+        features: 7
+        classifier: 7
 
     model_type:
         _target_: src.model.pytorch_model.PTClassificationModel
@@ -30,5 +31,14 @@ tensorflow:
     pretrained: True
     # unfreeze_layers: -1 # -1 (All) | int (Last N Layers) | 0 (Freeze All)
     fine_tune: True # True or False
-    fine_tune_layers: ["prediction_modified", "fc1", "fc2", "block5_conv3"] # prediction layer need to be included. If not, the weights will not be updated
+    # fine_tune_layers: ["prediction_modified", "fc1", "fc2", "block5_conv3"] # prediction layer need to be included. If not, the weights will not be updated
+    fine_tune_layers:
+        [
+            "prediction_modified",
+            "fc2",
+            "fc1",
+            "block5_conv3",
+            "block5_conv2",
+            "block5_conv1",
+        ]
     dropout_rate: 0.3

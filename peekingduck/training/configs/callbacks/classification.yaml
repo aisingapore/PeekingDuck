@@ -2,21 +2,19 @@ pytorch:
     # Options: EarlyStopping | History | MetricMeter | ModelCheckpoint
     - Logger
     - EarlyStopping:
-        mode: 'max'
-        monitor: 'val_MulticlassAccuracy'
-        patience: ${trainer.pytorch.global_train_params.patience}
-        min_delta: 0.000001 # 1e-6
+          mode: "max"
+          monitor: "val_MulticlassAccuracy"
+          patience: ${trainer.pytorch.global_train_params.patience}
+          min_delta: 0.000001 # 1e-6
     - History
     - MetricMeter
     - ModelCheckpoint:
-        mode: 'max'
-        monitor: 'val_MulticlassAccuracy'
+          mode: "max"
+          monitor: "val_MulticlassAccuracy"
 
 tensorflow:
     # Options: EarlyStopping | ModelCheckpoint | ProgbarLogger | BackupAndRestore | BaseLogger | CSVLogger | LambdaCallback | LearningRateScheduler | ReduceLROnPlateau | RemoteMonitor | TensorBoard | TerminateOnNaN
     - EarlyStopping:
-        patience: 5
-        restore_best_weights: True
-        monitor: "val_categorical_accuracy"
-
-
+          patience: 3
+          restore_best_weights: True
+          monitor: "val_categorical_accuracy"

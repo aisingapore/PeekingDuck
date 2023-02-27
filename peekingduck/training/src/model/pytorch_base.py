@@ -45,10 +45,10 @@ class PTModel(ABC, nn.Module):
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward pass of the model."""
 
-    def load_backbone(self) -> nn.Module:
+    def create_backbone(self) -> nn.Module:
         """Load the backbone of the model."""
 
-    def modify_head(self) -> nn.Module:
+    def create_head(self) -> nn.Module:
         """Modify the head of the model."""
 
     def _init_weights(self, module: nn.Module) -> None:
@@ -104,18 +104,10 @@ class PTModel(ABC, nn.Module):
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features
 
-    def freeze_all_params(self, model):
-        for param in model.parameters():
-            param.requires_grad = False
-
-    def unfreeze_all_params(self, model):
-        for param in model.parameters():
-            param.requires_grad = True
-
-    def unfreeze_partial_params(self, model, unfreeze_module_dict: DictConfig):
-        for module_name, num_layers in unfreeze_module_dict.items():
-            # convert negative values from config to zero, which will unfreeze all layers below
-            num_layers = max(num_layers, 0)
-            # unfreeze from num_layers to last layer within each module
-            for param in getattr(model, module_name)[-num_layers:].parameters():
-                param.requires_grad = True
+    # def unfreeze_partial_params(self, model, unfreeze_module_dict: DictConfig):
+    #     for module_name, num_layers in unfreeze_module_dict.items():
+    #         # convert negative values from config to zero, which will unfreeze all layers below
+    #         num_layers = max(num_layers, 0)
+    #         # unfreeze from num_layers to last layer within each module
+    #         for param in getattr(model, module_name)[-num_layers:].parameters():
+    #             param.requires_grad = True
