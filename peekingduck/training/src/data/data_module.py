@@ -46,7 +46,7 @@ class ImageClassificationDataModule:
     def __init__(
         self,
         cfg: DictConfig,
-        **kwargs: dict[str, Any],
+        **kwargs: Dict[str, Any],
     ) -> None:
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
