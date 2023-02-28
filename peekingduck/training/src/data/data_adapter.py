@@ -12,17 +12,19 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Union
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
+from albumentations import Compose
 
-# from src.data.base import AbstractDataSet
+from src.data.base import AbstractDataSet
 from src.data.dataset import TFImageClassificationDataset
 
 
 class DataAdapter:
     """Adapter for different framework"""
 
-    def __init__(self, cfg):
+    def __init__(self, cfg: DictConfig) -> None:
         self.cfg: DictConfig = cfg
         self.loader: None = None
         if cfg.adapter_type == "pytorch":
@@ -30,7 +32,9 @@ class DataAdapter:
         if cfg.adapter_type == "tensorflow":
             self.loader = TFImageClassificationDataset
 
-    def train_dataloader(self, dataset, transforms):
+    def train_dataloader(
+        self, dataset: AbstractDataSet, transforms: Compose
+    ) -> Union[Any, None]:
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
                 dataset,
@@ -43,7 +47,9 @@ class DataAdapter:
                 **self.cfg.train,
             )
 
-    def validation_dataloader(self, dataset, transforms):
+    def validation_dataloader(
+        self, dataset: AbstractDataSet, transforms: Compose
+    ) -> Union[Any, None]:
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
                 dataset,
@@ -56,7 +62,9 @@ class DataAdapter:
                 **self.cfg.valid,
             )
 
-    def test_dataloader(self, dataset, transforms):
+    def test_dataloader(
+        self, dataset: AbstractDataSet, transforms: Compose
+    ) -> Union[Any, None]:
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
                 dataset,
