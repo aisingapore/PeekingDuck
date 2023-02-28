@@ -15,7 +15,7 @@
 
 """Transforms for data augmentation."""
 import operator
-from typing import Any, Literal
+from typing import Any, Dict, Literal
 
 import albumentations as A
 from albumentations.core.transforms_interface import ImageOnlyTransform
@@ -76,7 +76,7 @@ class TFPreprocessImage(ImageOnlyTransform):
         super().__init__(always_apply, p)
         self.preprocessor: str = preprocessor
 
-    def apply(self, img: list, **kwargs: dict[str, Any]) -> Any:
+    def apply(self, img: list, **kwargs: Dict[str, Any]) -> Any:
         return operator.attrgetter(self.preprocessor)(tf)(img)
 
     def get_transform_init_args_names(self) -> Literal["preprocessor"]:
