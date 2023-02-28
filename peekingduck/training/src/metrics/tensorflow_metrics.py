@@ -14,13 +14,13 @@
 
 import tensorflow as tf
 
-from typing import List
+from typing import List, Union
 from omegaconf import DictConfig
 
 
 class TensorflowMetrics:
     def get_metric(
-        self, metric_name: str, parameters: DictConfig | dict = {}
+        self, metric_name: str, parameters: Union[DictConfig, dict] = {}
     ) -> tf.keras.metrics.Metric:
         return (
             getattr(tf.keras.metrics, metric_name)(**parameters)

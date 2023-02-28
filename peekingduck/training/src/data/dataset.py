@@ -56,9 +56,9 @@ class PTImageClassificationDataset(Dataset):
 
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
-        self.df: pd.DataFrame | None = df
+        self.df: Union[pd.DataFrame, None] = df
         self.stage: str = stage
-        self.transforms: A.Compose | None = transforms
+        self.transforms: Union[A.Compose, None] = transforms
 
         self.image_path = df[cfg.dataset.image_path_col_name].values
         self.targets = df[cfg.dataset.target_col_id].values if stage != "test" else None
@@ -135,7 +135,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         self.transforms = transforms
         self.batch_size: int = batch_size
         self.num_classes: int = num_classes
-        self.dim: list | tuple = target_size
+        self.dim: Union[list, tuple] = target_size
         self.num_channels: int = num_channels
         self.shuffle: bool = shuffle
 
@@ -153,7 +153,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
 
         # Find list of IDs
-        list_IDs_temp: list[Any | None] = [self.list_IDs[k] for k in indexes]
+        list_IDs_temp: list[Any, None] = [self.list_IDs[k] for k in indexes]
 
         # Generate data
         X, y = self._data_generation(list_IDs_temp, indexes)

@@ -14,13 +14,13 @@
 
 import tensorflow as tf
 
-from typing import List
+from typing import List, Union
 from omegaconf import DictConfig
 
 
 class TensorFlowCallbacksAdapter:
     def get_callback(
-        self, callback_name: str, parameters: DictConfig | dict = {}
+        self, callback_name: str, parameters: Union[DictConfig, dict] = {}
     ) -> tf.keras.callbacks.Callback:
         return (
             getattr(tf.keras.callbacks, callback_name)(**parameters)
@@ -29,7 +29,7 @@ class TensorFlowCallbacksAdapter:
         )
 
     def get_callbacks(
-        self, callbacks: List[str] | None = None
+        self, callbacks: Union[List[str], None] = None
     ) -> List[tf.keras.callbacks.Callback]:
         callbacks_list = []
         for cb in callbacks:

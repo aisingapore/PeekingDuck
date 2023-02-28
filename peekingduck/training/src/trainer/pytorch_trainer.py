@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import logging
 import numpy as np
 import pandas as pd
 import torch
@@ -35,7 +36,9 @@ from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
 from src.utils.pt_model_utils import set_trainable_layers
+from configs import LOGGER_NAME
 
+logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
@@ -162,12 +165,12 @@ class pytorchTrainer(Trainer):
         self._invoke_callbacks(EVENTS.TRAINER_START.value)
         self.train_summary(inputs)
 
-    def train_summary(self, inputs, finetune=False):
+    def train_summary(self, inputs, finetune: bool = False):
         # show model layer details
         if not finetune:
-            print("Model Layer Details:\n", self.model.model)
+            logger.info(f"Model Layer Details:\n{self.model.model}")
         # show model summary
-        print("\n\nModel Summary:\n")
+        logger.info("\n\nModel Summary:\n")
         # device parameter required for MPS, otherwise the torchvision will change the model back to cpu
         # reference: https://github.com/TylerYep/torchinfo
         self.model.model_summary(inputs.shape, device=self.device)

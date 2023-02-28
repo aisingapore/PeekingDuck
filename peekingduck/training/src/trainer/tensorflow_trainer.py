@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, List
+from typing import Any, List, Union
 from sklearn.metrics import log_loss
 from hydra.utils import instantiate
 from omegaconf import DictConfig
@@ -41,8 +41,8 @@ class tensorflowTrainer(Trainer):
         self.scheduler = None
         self.opt = None
         self.loss = None
-        self.metrics: List | None = None
-        self.callbacks: List | None = None
+        self.metrics: Union[List, None] = None
+        self.callbacks: Union[List, None] = None
 
     def setup(
         self,
@@ -97,14 +97,14 @@ class tensorflowTrainer(Trainer):
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
-    def train_summary(self) -> None:
+    def train_summary(self, inputs: None = None) -> None:
         """Print model summary"""
         logger.info("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
 
     def train(
         self, train_dl: AbstractDataAdapter, val_dl: AbstractDataAdapter
-    ) -> Any | dict:
+    ) -> Union[Any, dict]:
         self.train_summary()
 
         self.epochs = self.trainer_config.global_train_params.epochs

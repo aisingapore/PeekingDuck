@@ -14,7 +14,7 @@
 
 
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from albumentations import Compose
 from hydra.utils import instantiate
@@ -53,7 +53,9 @@ class ImageClassificationDataModule:
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg.transform[cfg.framework]
         )
-        self.dataset_loader: AbstractDataAdapter | None = None  # Setup in self.setup()
+        self.dataset_loader: Union[
+            AbstractDataAdapter, None
+        ] = None  # Setup in self.setup()
 
     def get_train_dataset(self) -> AbstractDataAdapter:
         """ """
@@ -96,10 +98,10 @@ class ImageClassificationDataModule:
             download_to(url, blob_file, root_dir)
             extract_file(root_dir, blob_file)
 
-        train_images: List[str] | List[Path] = return_list_of_files(
+        train_images: Union[List[str], List[Path]] = return_list_of_files(
             train_dir, extensions=[".jpg", ".png", ".jpeg"], return_string=False
         )
-        test_images: List[str] | List[Path] = return_list_of_files(
+        test_images: Union[List[str], List[Path]] = return_list_of_files(
             test_dir, extensions=[".jpg", ".png", ".jpeg"], return_string=False
         )
         logger.info(f"Total number of images: {len(train_images)}")
@@ -179,9 +181,7 @@ class ImageClassificationDataModule:
                 self.valid_dataset = self.valid_df
                 self.test_dataset = self.test_df
 
-        self.dataset_loader = DataAdapter(
-            self.cfg.data_adapter[self.cfg.framework]
-        )
+        self.dataset_loader = DataAdapter(self.cfg.data_adapter[self.cfg.framework])
 
     @staticmethod
     def _cross_validation_split(
