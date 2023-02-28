@@ -15,6 +15,8 @@
 
 """Transforms for data augmentation."""
 import operator
+from typing import Any, Literal
+
 import albumentations as A
 from albumentations.core.transforms_interface import ImageOnlyTransform
 from omegaconf import DictConfig
@@ -52,7 +54,7 @@ class ImageClassificationTransforms(Transforms):
         return A.Compose(instantiate(self.cfg.test))
 
     @property
-    def debug_transforms(self):
+    def debug_transforms(self) -> A.Compose:
         return self.cfg.transforms.debug_transforms
 
 
@@ -69,13 +71,13 @@ class TFPreprocessImage(ImageOnlyTransform):
     """
 
     def __init__(
-        self, preprocessor="", always_apply: bool = True, p: float = 1
+        self, preprocessor: str = "", always_apply: bool = True, p: float = 1
     ) -> None:
         super().__init__(always_apply, p)
         self.preprocessor: str = preprocessor
 
-    def apply(self, img, **kwargs):
+    def apply(self, img: list, **kwargs: dict[str, Any]) -> Any:
         return operator.attrgetter(self.preprocessor)(tf)(img)
 
-    def get_transform_init_args_names(self):
+    def get_transform_init_args_names(self) -> Literal["preprocessor"]:
         return "preprocessor"

@@ -19,7 +19,9 @@ from omegaconf import DictConfig
 
 
 class TensorFlowCallbacksAdapter:
-    def get_callback(self, callback_name, parameters: DictConfig = {}):
+    def get_callback(
+        self, callback_name: str, parameters: DictConfig | dict = {}
+    ) -> tf.keras.callbacks.Callback:
         return (
             getattr(tf.keras.callbacks, callback_name)(**parameters)
             if len(parameters) > 0
@@ -27,7 +29,7 @@ class TensorFlowCallbacksAdapter:
         )
 
     def get_callbacks(
-        self, callbacks: List[str] = None
+        self, callbacks: List[str] | None = None
     ) -> List[tf.keras.callbacks.Callback]:
         callbacks_list = []
         for cb in callbacks:

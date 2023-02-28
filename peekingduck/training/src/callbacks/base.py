@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from src.trainer import Trainer
 
 
-def init_callbacks(callbacks):
+def init_callbacks(callbacks) -> List:
     """Method to initialise the callbacks.
     Args:
         callbacks: The list of callbacks from configs->callbacks->classification/detection/segmentation.
@@ -62,7 +62,7 @@ class Callback:
         - https://github.com/Atharva-Phatak/torchflare/tree/main/torchflare
     """
 
-    def __init__(self, order):
+    def __init__(self, order) -> None:
         """Constructor for Callback base class."""
         self.order = order
 

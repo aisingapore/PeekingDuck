@@ -19,7 +19,9 @@ from omegaconf import DictConfig
 
 
 class TensorflowMetrics:
-    def get_metric(self, metric_name: str, parameters: DictConfig = {}):
+    def get_metric(
+        self, metric_name: str, parameters: DictConfig | dict = {}
+    ) -> tf.keras.metrics.Metric:
         return (
             getattr(tf.keras.metrics, metric_name)(**parameters)
             if len(parameters) > 0
@@ -29,7 +31,7 @@ class TensorflowMetrics:
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
         return [self.get_metric(**self._validate_config(m)) for m in metrics]
 
-    def _validate_config(self, metric):
+    def _validate_config(self, metric: tf.keras.metrics.Metric):
         try:
             if type(metric) is DictConfig:
                 for mkey, mval in metric.items():

@@ -28,7 +28,7 @@ class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
 
     @classmethod
-    def create_model(cls, model_cfg: DictConfig):
+    def create_model(cls, model_cfg: DictConfig) -> tf.keras.Model:
         model_name = model_cfg.model_name
         input_shape = (
             int(model_cfg.image_size),
@@ -47,7 +47,7 @@ class TFClassificationModelFactory(TFModelFactory):
         # outputs = cls.create_head(x, num_classes, dropout_rate)
         # model = tf.keras.Model(inputs, outputs)
 
-        model = getattr(tf.keras.applications, model_name)(
+        model: tf.keras.Model = getattr(tf.keras.applications, model_name)(
             include_top=True, weights="imagenet"
         )
         # exclude the existing prediction layer

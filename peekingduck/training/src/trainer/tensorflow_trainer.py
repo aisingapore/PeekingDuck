@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import List
+from typing import Any, List
 from sklearn.metrics import log_loss
 from hydra.utils import instantiate
 from omegaconf import DictConfig
@@ -20,6 +20,7 @@ import tensorflow as tf
 import logging
 
 from src.trainer.base import Trainer
+from src.data.base import AbstractDataAdapter
 from src.optimizers.adapter import OptimizersAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.model.tensorflow_model import TFClassificationModelFactory
@@ -40,8 +41,8 @@ class tensorflowTrainer(Trainer):
         self.scheduler = None
         self.opt = None
         self.loss = None
-        self.metrics = None
-        self.callbacks = None
+        self.metrics: List | None = None
+        self.callbacks: List | None = None
 
     def setup(
         self,
@@ -86,24 +87,24 @@ class tensorflowTrainer(Trainer):
         )
 
         # metric
-        self.metrics: List = TensorflowMetrics().get_metrics(
-            metrics=self.metrics_config
-        )
+        self.metrics = TensorflowMetrics().get_metrics(metrics=self.metrics_config)
 
         # callback
-        self.callbacks: List = TensorFlowCallbacksAdapter().get_callbacks(
+        self.callbacks = TensorFlowCallbacksAdapter().get_callbacks(
             callbacks=self.callbacks_config
         )
 
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
-    def train_summary(self, inputs=None):
+    def train_summary(self) -> None:
         """Print model summary"""
-        print("\n\nModel Summary:\n")
+        logger.info("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
 
-    def train(self, train_dl, val_dl):
+    def train(
+        self, train_dl: AbstractDataAdapter, val_dl: AbstractDataAdapter
+    ) -> Any | dict:
         self.train_summary()
 
         self.epochs = self.trainer_config.global_train_params.epochs
@@ -147,7 +148,7 @@ class tensorflowTrainer(Trainer):
             validation_data=val_dl,
             callbacks=self.callbacks,
         )
-        history = merge_dict_of_list(
+        history: dict = merge_dict_of_list(
             feature_extraction_history.history, fine_tuning_history.history
         )
 

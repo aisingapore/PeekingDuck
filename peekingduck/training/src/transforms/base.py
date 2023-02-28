@@ -29,28 +29,28 @@ class Transforms(ABC):
 
     @property
     @abstractmethod
-    def train_transforms(self):
+    def train_transforms(self) -> Any:
         """Get the training transforms."""
 
     @property
     @abstractmethod
-    def valid_transforms(self):
+    def valid_transforms(self) -> Any:
         """Get the validation transforms."""
 
     @property
-    def test_transforms(self):
+    def test_transforms(self) -> Any:
         """Get the test transforms."""
 
     @property
-    def gradcam_transforms(self):
+    def gradcam_transforms(self) -> Any:
         """Get the gradcam transforms."""
 
     @property
-    def debug_transforms(self):
+    def debug_transforms(self) -> Any:
         """Get the debug transforms."""
 
     @property
-    def test_time_augmentations(self):
+    def test_time_augmentations(self) -> Any:
         """Get the test time augmentations."""
 
     def __call__(self, *args: Any, **kwargs: Any) -> Any:

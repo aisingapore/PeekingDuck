@@ -14,30 +14,37 @@
 
 from omegaconf import DictConfig, ListConfig
 
+from src.model.pytorch_base import PTModel
 
-def unfreeze_all_params(model) -> None:
+
+def unfreeze_all_params(model: PTModel) -> None:
     for param in model.parameters():
         param.requires_grad = True
 
 
-def freeze_all_params(model) -> None:
+def freeze_all_params(model: PTModel) -> None:
     for param in model.parameters():
         param.requires_grad = False
 
 
-def set_trainable_layers(model, trainable_module_name_dict: DictConfig) -> None:
+def set_trainable_layers(
+    model: PTModel, trainable_module_name_dict: DictConfig
+) -> None:
     """
     Set the trainable layers within a pytorch model.
     The model can be a backbone or a complete model.
     """
     for module_name, trainable_layers in trainable_module_name_dict.items():
         # change the trainable state within the module based on the value type
+        module_name_str: str = str(module_name)
         if type(trainable_layers) is int:
-            for param in getattr(model, module_name)[-trainable_layers:].parameters():
+            for param in getattr(model, module_name_str)[
+                -trainable_layers:
+            ].parameters():
                 param.requires_grad = True
         elif type(trainable_layers) is ListConfig:
             # get the module
-            module = getattr(model, module_name)
+            module = getattr(model, module_name_str)
             for layer_name in trainable_layers:
                 # get each layer within the module
                 layer = getattr(module, layer_name)

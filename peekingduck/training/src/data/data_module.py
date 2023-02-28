@@ -46,7 +46,7 @@ class ImageClassificationDataModule:
     def __init__(
         self,
         cfg: DictConfig,
-        **kwargs,
+        **kwargs: dict[str, Any],
     ) -> None:
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
@@ -55,7 +55,7 @@ class ImageClassificationDataModule:
         )
         self.dataset_loader: AbstractDataAdapter | None = None  # Setup in self.setup()
 
-    def get_train_dataset(self):
+    def get_train_dataset(self) -> AbstractDataAdapter:
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
@@ -63,7 +63,7 @@ class ImageClassificationDataModule:
             transforms=self.train_transforms,
         )
 
-    def get_validation_dataset(self):
+    def get_validation_dataset(self) -> AbstractDataAdapter:
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.validation_dataloader(
@@ -71,7 +71,7 @@ class ImageClassificationDataModule:
             transforms=self.valid_transforms,
         )
 
-    def get_test_dataloader(self):
+    def get_test_dataloader(self) -> AbstractDataAdapter:
         """ """
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(
@@ -113,7 +113,7 @@ class ImageClassificationDataModule:
             # TODO: only invoke this if images are store in the following format
             # train_dir
             #   - class1 ...
-            df: pd.DataFrame = create_dataframe_with_image_info(
+            df = create_dataframe_with_image_info(
                 train_images,
                 class_name_to_id,
                 save_path=train_csv,
@@ -179,7 +179,7 @@ class ImageClassificationDataModule:
                 self.valid_dataset = self.valid_df
                 self.test_dataset = self.test_df
 
-        self.dataset_loader: AbstractDataAdapter = DataAdapter(
+        self.dataset_loader = DataAdapter(
             self.cfg.data_adapter[self.cfg.framework]
         )
 
