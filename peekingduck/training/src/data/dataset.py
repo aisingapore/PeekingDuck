@@ -132,7 +132,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
 
         self.df: pd.DataFrame = df
         self.stage: str = stage
-        self.transforms = transforms
+        self.transforms: Optional[Any] = transforms
         self.batch_size: int = batch_size
         self.num_classes: int = num_classes
         self.dim: Union[list, tuple] = target_size
@@ -148,9 +148,19 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         return int(np.floor(len(self.list_IDs) / self.batch_size))
 
     def __getitem__(self, index: int):
-        """Generate one batch of data"""
+        """Generate one batch of data
+
+        Args:
+            index (int): index of the image to return.
+
+        Returns:
+            (Dict):
+                Outputs dictionary with the keys `labels`.
+        """
         # Generate indexes of the batch
-        indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
+        indexes: np.ndarray[Any, np.dtype[np.signedinteger]] = self.indexes[
+            index * self.batch_size : (index + 1) * self.batch_size
+        ]
 
         # Find list of IDs
         list_IDs_temp: list[Any, None] = [self.list_IDs[k] for k in indexes]
@@ -158,7 +168,6 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         # Generate data
         X, y = self._data_generation(list_IDs_temp, indexes)
 
-        # TODO: consider stage to be private since it is only used internally.
         if self.stage in ["train", "valid", "debug"]:
             return X, y
         elif self.stage == "test":
@@ -166,7 +175,16 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 
-    def load_image(self, image_path):
+    def load_image(self, image_path: str) -> np.ndarray[int, np.dtype[np.generic]]:
+        """Load image from `image_path`
+
+        Args:
+            image_path (str): image path to load.
+
+        Returns:
+            (ndarray):
+                Outputs image in numpy array.
+        """
         image: np.ndarray[int, np.dtype[np.generic]] = cv2.imread(image_path)  # BGR
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
@@ -179,7 +197,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         "Generates data containing batch_size samples"  # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.num_channels))
-        y = np.empty((self.batch_size), dtype=int)
+        y: np.ndarray[Any, np.dtype] = np.empty((self.batch_size), dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):
