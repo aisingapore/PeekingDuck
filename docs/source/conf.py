@@ -40,7 +40,7 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
-    "sphinx_tabs.tabs"
+    "sphinx_tabs.tabs",
 ]
 myst_heading_anchors = 2
 
