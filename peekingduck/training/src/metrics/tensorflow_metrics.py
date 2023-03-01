@@ -31,17 +31,13 @@ class TensorflowMetrics:
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
         return [self.get_metric(**self._validate_config(m)) for m in metrics]
 
-    def _validate_config(
-        self, metric: tf.keras.metrics.Metric
-    ) -> Optional[Dict[str, Any]]:
-        try:
-            if type(metric) is DictConfig:
-                for mkey, mval in metric.items():
-                    return {"metric_name": mkey, "parameters": mval}
-            elif type(metric) is str:
-                return {"metric_name": metric}
-            else:
-                raise TypeError
+    def _validate_config(self, metric: tf.keras.metrics.Metric) -> Dict[str, Any]:
+        if type(metric) is DictConfig:
+            for mkey, mval in metric.items():
+                return {"metric_name": mkey, "parameters": mval}
+        elif type(metric) is str:
+            return {"metric_name": metric}
+        else:
+            raise TypeError
 
-        except NotImplementedError:
-            raise NotImplementedError
+        return {}
