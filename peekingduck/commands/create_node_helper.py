@@ -15,6 +15,7 @@
 """Helper functions for the create node CLI command."""
 
 import functools
+import locale
 import logging
 import re
 from pathlib import Path
@@ -42,12 +43,13 @@ def create_config_and_script_files(created_paths: Dict[str, Path]) -> None:
         "nodes",
         "node_template",
     )
-    with open(template_paths["config"]) as template_file, open(
-        created_paths["config"], "w"
+    encoding = locale.getpreferredencoding(False)
+    with open(template_paths["config"], encoding=encoding) as template_file, open(
+        created_paths["config"], "w", encoding=encoding
     ) as outfile:
         outfile.write(template_file.read())
-    with open(template_paths["script"]) as template_file, open(
-        created_paths["script"], "w"
+    with open(template_paths["script"], encoding=encoding) as template_file, open(
+        created_paths["script"], "w", encoding=encoding
     ) as outfile:
         lines = template_file.readlines()
         start = -1

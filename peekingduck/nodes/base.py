@@ -31,6 +31,7 @@ from peekingduck.utils.requirement_checker import RequirementChecker, check_requ
 
 BASE_URL = "https://storage.googleapis.com/peekingduck/models"
 PEEKINGDUCK_WEIGHTS_SUBDIR = "peekingduck_weights"
+TIMEOUT = 60  # seconds
 
 
 class RequirementCheckerMixin:  # pylint: disable=too-few-public-methods
@@ -288,6 +289,7 @@ class WeightsDownloaderMixin:
         """
         with open(destination_dir / filename, "wb") as outfile, requests.get(
             f"{BASE_URL}/{self.model_subdir}/{self.config['model_format']}/{filename}",
+            timeout=TIMEOUT,
             stream=True,
         ) as response:
             for chunk in tqdm(response.iter_content(chunk_size=32768)):
@@ -308,7 +310,7 @@ class WeightsDownloaderMixin:
 
         os.remove(zip_path)
 
-    def _find_paths(self, model_type_subdirs: List[str] = None) -> Path:
+    def _find_paths(self, model_type_subdirs: Optional[List[str]] = None) -> Path:
         """Constructs the `peekingduck_weights` directory path and the model
         sub-directory path.
 
@@ -347,7 +349,9 @@ class WeightsDownloaderMixin:
         return parent_dir / self.config["model_format"]
 
     def _get_weights_checksum(self) -> str:
-        with requests.get(f"{BASE_URL}/weights_checksums.json") as response:
+        with requests.get(
+            f"{BASE_URL}/weights_checksums.json", timeout=TIMEOUT
+        ) as response:
             checksums = response.json()
         self.logger.debug(f"weights_checksums: {checksums[self.model_subdir]}")
         return checksums[self.model_subdir][self.config["model_format"]][
@@ -381,7 +385,9 @@ class WeightsDownloaderMixin:
         return True
 
     @staticmethod
-    def sha256sum(path: Path, hash_func: "hashlib._Hash" = None) -> "hashlib._Hash":
+    def sha256sum(
+        path: Path, hash_func: Optional["hashlib._Hash"] = None
+    ) -> "hashlib._Hash":
         """Hashes the specified file/directory using SHA256. Reads the file in
         chunks to be more memory efficient.
 

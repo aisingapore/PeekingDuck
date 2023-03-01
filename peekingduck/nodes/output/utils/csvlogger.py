@@ -17,6 +17,7 @@ Utils for CSV logging
 """
 
 import csv
+import locale
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List
@@ -32,7 +33,12 @@ class CSVLogger:
         self.headers.insert(0, "Time")
         self.file_path = file_path
         self.logging_interval = logging_interval
-        self.csv_file = open(self.file_path, mode="a+", newline="")
+        self.csv_file = open(  # pylint: disable=consider-using-with
+            self.file_path,
+            mode="a+",
+            encoding=locale.getpreferredencoding(False),
+            newline="",
+        )
         self.writer = csv.DictWriter(self.csv_file, fieldnames=self.headers)
         self.last_write = datetime.now()
 

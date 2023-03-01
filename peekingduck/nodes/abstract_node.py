@@ -20,7 +20,7 @@ import collections.abc
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from typeguard import check_type
 
@@ -43,7 +43,7 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
 
     def __init__(
         self,
-        config: Dict[str, Any] = None,
+        config: Optional[Dict[str, Any]] = None,
         node_path: str = "",
         pkd_base_dir: Path = Path(__file__).resolve().parents[1],
         **kwargs: Any,
@@ -131,14 +131,13 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
 
     def _change_class_name_to_id(self) -> None:
         """Convert class names to class IDs for object detection nodes, if any"""
-        if not any(key in self.config for key in ("detect", "detect_ids")):
+        key = "detect"
+        if key not in self.config:
             return
         if self.node_name not in {"model.yolo_face", "model.huggingface_hub"}:
-            key = "detect" if hasattr(self, "detect") else "detect_ids"
             current_ids = self.config[key]
             updated_ids = obj_det_change_class_name_to_id(self.node_name, current_ids)
-            # replace "detect_ids" with new "detect"
-            self.config["detect"] = updated_ids
+            self.config[key] = updated_ids
             self.detect = updated_ids
 
     def _check_type(
@@ -177,6 +176,6 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
                     )
         return dict_orig
 
-    def _get_config_types(self) -> Dict[str, Any]:  # pylint: disable=no-self-use
+    def _get_config_types(self) -> Dict[str, Any]:
         """Returns dictionary mapping the node's config keys to respective types."""
         return {}

@@ -86,7 +86,7 @@ class Node(ThresholdCheckerMixin, AbstractNode):
         "object_detection": models.ObjectDetectionModel,
     }
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.check_valid_choice("task", {"instance_segmentation", "object_detection"})
         self.model = self.model_constructor[self.config["task"]](self.config)

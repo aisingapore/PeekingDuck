@@ -16,7 +16,7 @@
 Displays selected information from preceding nodes in a legend box.
 """
 
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
 
 from peekingduck.nodes.abstract_node import AbstractNode
 from peekingduck.nodes.draw.utils.legend import Legend
@@ -74,7 +74,7 @@ class Node(AbstractNode):
         of this node.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.legend = Legend(self.show, self.position, self.box_opacity, self.font)
         if not self.show:

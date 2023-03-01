@@ -72,7 +72,7 @@ class Node(AbstractNode):
             threshold will be kept in output.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
         self.model = movenet_model.MoveNetModel(self.config)
 

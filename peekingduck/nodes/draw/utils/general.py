@@ -54,7 +54,7 @@ def project_points_onto_original_image(
     if len(points) == 0:
         return np.empty(0)
 
-    points = points.reshape((-1, 2))
+    points = points.reshape((-1, 2)).astype(float)
 
     return np.rint(points * image_size).astype(int)
 

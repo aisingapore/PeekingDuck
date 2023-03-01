@@ -16,10 +16,11 @@
 Loads configurations for individual nodes.
 """
 
+import locale
+import logging
 from pathlib import Path
 from typing import Any, Dict
 
-import logging
 import yaml
 
 
@@ -57,7 +58,7 @@ class ConfigLoader:  # pylint: disable=too-few-public-methods
         """
         file_path = self._get_config_path(node_name)
 
-        with open(file_path) as file:
+        with open(file_path, encoding=locale.getpreferredencoding(False)) as file:
             node_config = yaml.safe_load(file)
 
         # some models require the knowledge of where the root is for loading

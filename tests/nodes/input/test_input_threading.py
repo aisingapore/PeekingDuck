@@ -106,7 +106,7 @@ def test_input_threading():
             yaml.dump(nodes, outfile, default_flow_style=False)
 
         # run input live test
-        num_sec = 60  # to run test for 60 seconds max
+        num_sec = 30  # to run test for 30 seconds max
         avg_fps = 0
         # Technotes 2022-06-20:
         # previous `cmd = ["python", PKD_ROOT_DIR.name]` and `.Popen(... cwd=PKD_RUN_DIR, ...)`
@@ -117,7 +117,6 @@ def test_input_threading():
             cwd=PKD_ROOT_DIR,
             stdout=subprocess.PIPE,
             stderr=subprocess.STDOUT,
-            bufsize=1,
         )
         st = perf_counter()
         while True:
@@ -150,6 +149,11 @@ def test_input_threading():
         print(f"avg_fps_1={avg_fps_1}, avg_fps_2={avg_fps_2}, res={res}")
         return res
 
-    results = [run_url_test(url) for url in URL_LIST]
-    print(f"results={results}")
-    assert any(results)
+    for url in URL_LIST:
+        result = run_url_test(url)
+        print(f"result={result}")
+        # Early exit if a test case passes
+        if result:
+            return
+    # None of the test cases passed, trigger test failure
+    assert False

@@ -1,21 +1,20 @@
-bandit == 1.7.0
-black == 21.9b0
-coverage == 5.5
-importlib-metadata < 5; python_version < "3.8"  # fix for https://github.com/PyCQA/bandit/issues/951
-mypy == 0.910
-pylint == 2.7.4
-pytest == 6.2.3
+bandit == 1.6.0
+beautifulsoup4 == 4.11.1
+black == 22.12.0
+coverage == 7.0.5
+mypy == 0.991
+myst-parser == 0.18.1
+pylint == 2.15.10
+pytest == 7.2.0
 pytest-lazy-fixture == 0.6.3    # can remove if/when https://docs.pytest.org/en/7.1.x/proposals/parametrize_with_fixtures.html gets implemented
-scikit-image == 0.17.2
-types-PyYAML == 5.4.3
-types-requests == 2.25.0
-types-setuptools == 57.4.2
-types-six == 0.1.7
-beautifulsoup4
-myst-parser
-sphinx-autodoc-typehints
-sphinx-rtd-theme
-texttable # for pretty print scripts/check_links.py output
+scikit-image == 0.18.0
+sphinx-autodoc-typehints == 1.20.1
+sphinx-rtd-theme == 1.1.1
+texttable == 1.6.7  # for pretty print scripts/check_links.py output
+types-PyYAML == 6.0.12.2
+types-requests == 2.28.11.7
+types-setuptools == 65.6.0.3
+types-six == 1.16.21.4
 
 # optional requirements
 lap == 0.4.0

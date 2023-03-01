@@ -43,12 +43,11 @@ Modifications include:
 - Modified docstrings
 """
 
-from typing import Any, Callable, Tuple, List
+from typing import Any, Callable, List, Tuple
 
 import torch
-import torch.nn as nn
 import torch.nn.functional as F
-from torch import Tensor
+from torch import Tensor, nn
 
 
 class FastBaseTransform(torch.nn.Module):

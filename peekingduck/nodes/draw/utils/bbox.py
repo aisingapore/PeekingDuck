@@ -15,7 +15,7 @@
 
 """Functions for drawing bounding box related UI components."""
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -39,20 +39,25 @@ from peekingduck.nodes.draw.utils.general import (
 )
 
 
-def draw_bboxes(
+def draw_bboxes(  # pylint: disable=too-many-arguments
     frame: np.ndarray,
-    bboxes: List[List[float]],
+    bboxes: np.ndarray,
     bbox_labels: List[str],
     show_labels: bool,
-    color_choice: Tuple[int, int, int] = None,
+    bbox_scores: List[float],
+    show_scores: bool,
+    color_choice: Optional[Tuple[int, int, int]] = None,
 ) -> None:
     """Draws bboxes onto an image frame.
 
     Args:
         frame (np.ndarray): Image of current frame.
-        bboxes (List[List[float]]): Bounding box coordinates.
-        color (Tuple[int, int, int]): Color used for bounding box.
+        bboxes (np.ndarray): Bounding box coordinates.
         bbox_labels (List[str]): Labels of object detected.
+        bbox_scores (List[float]): Prediction scores of object detected.
+        show_labels: whether to show the object labels.
+        show_scores: whether to show the prediction score.
+        color (Optional[Tuple[int, int, int]]): Color used for bounding box.
     """
     image_size = get_image_size(frame)
     # Get unique label color indexes
@@ -63,21 +68,28 @@ def draw_bboxes(
             color = color_choice
         else:
             color = PRIMARY_PALETTE[color_idx[bbox_labels[i]] % TOTAL_COLORS]
-        if show_labels:
-            _draw_bbox(frame, bbox, image_size, color, bbox_labels[i])
-        else:
-            _draw_bbox(frame, bbox, image_size, color)
+        _draw_bbox(
+            frame,
+            bbox,
+            image_size,
+            color,
+            bbox_labels[i] if show_labels else None,
+            bbox_scores[i] if show_scores else None,
+        )
 
 
-def _draw_bbox(
+def _draw_bbox(  # pylint: disable=too-many-arguments
     frame: np.ndarray,
     bbox: np.ndarray,
     image_size: Tuple[int, int],
     color: Tuple[int, int, int],
-    bbox_label: str = None,
+    bbox_label: Optional[str],
+    bbox_score: Optional[float],
 ) -> None:
     """Draws a single bounding box."""
     top_left, bottom_right = project_points_onto_original_image(bbox, image_size)
+    bottom_left = (top_left[0], bottom_right[1])
+
     cv2.rectangle(
         frame,
         (top_left[0], top_left[1]),
@@ -88,6 +100,10 @@ def _draw_bbox(
 
     if bbox_label:
         _draw_label(frame, top_left, bbox_label, color, BLACK)
+
+    if bbox_score:
+        bbox_score_str = f"{bbox_score:0.2f}"
+        _draw_score(frame, bottom_left, bbox_score_str, color, BLACK)
 
 
 def _draw_label(
@@ -117,6 +133,41 @@ def _draw_label(
         frame,
         bbox_label,
         (top_left[0], top_left[1] - 6),
+        FONT_HERSHEY_SIMPLEX,
+        NORMAL_FONTSCALE,
+        text_color,
+        THICK,
+        LINE_AA,
+    )
+
+
+# draw score function
+def _draw_score(
+    frame: np.ndarray,
+    bottom_left: Tuple[int, int],
+    bbox_score_str: str,
+    bg_color: Tuple[int, int, int],
+    text_color: Tuple[int, int, int],
+) -> None:
+    """Draws prediction score at bottom left of bbox."""
+    # get label size
+    (text_width, text_height), baseline = cv2.getTextSize(
+        bbox_score_str, FONT_HERSHEY_SIMPLEX, NORMAL_FONTSCALE, THICK
+    )
+    # put filled text rectangle
+    cv2.rectangle(
+        frame,
+        (bottom_left[0], bottom_left[1]),
+        (bottom_left[0] + text_width, bottom_left[1] - text_height - baseline),
+        bg_color,
+        FILLED,
+    )
+
+    # put text above rectangle
+    cv2.putText(
+        frame,
+        bbox_score_str,
+        (bottom_left[0], bottom_left[1] - 6),
         FONT_HERSHEY_SIMPLEX,
         NORMAL_FONTSCALE,
         text_color,

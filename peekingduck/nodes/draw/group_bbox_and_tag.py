@@ -16,7 +16,7 @@
 Draws large bounding boxes with tags, over identified groups of bounding boxes.
 """
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 import numpy as np
 
@@ -62,7 +62,7 @@ class Node(AbstractNode):
         using the ``groups`` key of :term:`obj_attrs`.
     """
 
-    def __init__(self, config: Dict[str, Any] = None, **kwargs: Any) -> None:
+    def __init__(self, config: Optional[Dict[str, Any]] = None, **kwargs: Any) -> None:
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
@@ -82,7 +82,7 @@ class Node(AbstractNode):
         group_tags = self._get_group_tags(inputs["large_groups"], self.tag)
 
         # show labels set to False to reduce clutter on display
-        draw_bboxes(inputs["img"], group_bboxes, [], False, TOMATO)
+        draw_bboxes(inputs["img"], group_bboxes, [], False, [], False, TOMATO)
         draw_tags(inputs["img"], group_bboxes, group_tags, TOMATO)
 
         return {}
@@ -93,24 +93,24 @@ class Node(AbstractNode):
 
     @staticmethod
     def _get_group_bbox_coords(
-        large_groups: List[int], bboxes: List[np.ndarray], obj_groups: List[int]
-    ) -> List[np.ndarray]:
+        large_groups: List[int], bboxes: np.ndarray, obj_groups: List[int]
+    ) -> np.ndarray:
         """For bboxes that belong to the same large group, get the coordinates of
         a large bbox that combines all these individual bboxes. Repeat for all large
         groups.
         """
         group_bboxes = []
         bboxes = np.array(bboxes)
-        obj_groups = np.array(obj_groups)
+        obj_groups_arr = np.array(obj_groups)
         for group in large_groups:
             # filter relevant bboxes, select top-left and bot-right corners
             group_bbox = np.array([1.0, 1.0, 0.0, 0.0])
-            selected_bboxes = bboxes[obj_groups == group]
+            selected_bboxes = bboxes[obj_groups_arr == group]
             group_bbox[:2] = np.amin(selected_bboxes, axis=0)[:2]
             group_bbox[2:] = np.amax(selected_bboxes, axis=0)[2:]
             group_bboxes.append(group_bbox)
 
-        return group_bboxes
+        return np.array(group_bboxes)
 
     @staticmethod
     def _get_group_tags(large_groups: List[int], tag: str) -> List[str]:
