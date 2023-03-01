@@ -39,6 +39,8 @@ extensions = [
     "sphinx.ext.napoleon",
     "sphinx.ext.viewcode",
     "sphinx_autodoc_typehints",
+    "sphinx_copybutton",
+    "sphinx_tabs.tabs"
 ]
 myst_heading_anchors = 2
 
@@ -75,6 +77,7 @@ html_style = "css/pkdk.css"
 html_logo = "assets/peekingduck.png"
 html_sidebars = {"**": ["globaltoc.html", "searchbox.html"]}
 html_theme_options = {"logo_only": True}
+html_js_files = ["js/pkdk.js"]
 
 autosummary_mock_imports = [
     "dabble.statisticsv1",

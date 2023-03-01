@@ -132,7 +132,7 @@ class tensorflowTrainer(Trainer):
 
         optimizer = OptimizersAdapter.get_tensorflow_optimizer(
             self.trainer_config.optimizer_params.optimizer,
-            self.trainer_config.fine_tune_params.optimizer_learning_rate,
+            self.trainer_config.optimizer_params.finetune_learning_rate,
             self.trainer_config.optimizer_params.optimizer_params,
         )
 

@@ -102,8 +102,7 @@ tensorflow:
             beta_2: 0.999
             epsilon: 0.0000007
             name: "Adam"
-    fine_tune_params:
-        optimizer_learning_rate: 1e-5
+        finetune_learning_rate: 1e-5
     loss_params:
         loss_func: "CategoricalCrossentropy"
         loss_params:
