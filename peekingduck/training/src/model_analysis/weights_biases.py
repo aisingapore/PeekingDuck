@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Dict
+
 import wandb
 from omegaconf import DictConfig
 import pandas as pd
@@ -30,25 +32,13 @@ class WeightsAndBiases:
                 name=f"{cfg.framework}",
             )
 
-    def watch(self, model) -> None:
+    def watch(self, model: Any) -> None:
         wandb.watch(model)
 
-    def log(self, loss) -> None:
+    def log(self, loss: Dict[str, Any]) -> None:
         wandb.log(loss)
 
-    def log_history(self, history) -> None:
-        # selected_history = {
-        #     key: history[key]
-        #     for key in [
-        #         "train_loss",
-        #         "valid_loss",
-        #         "valid_elapsed_time",
-        #         "val_MulticlassAccuracy",
-        #         "val_MulticlassPrecision",
-        #         "val_MulticlassRecall",
-        #         "val_MulticlassAUROC",
-        #     ]
-        # }
+    def log_history(self, history: Dict[str, Any]) -> None:
         if self.cfg.framework == "tensorflow":
             selected_history = history
 
@@ -56,8 +46,8 @@ class WeightsAndBiases:
             for row_dict in df.to_dict(orient="records"):
                 wandb.log(row_dict)
 
-    def log_training_loss(self, loss) -> None:
+    def log_training_loss(self, loss: Dict[str, Any]) -> None:
         wandb.log({"train_loss": loss})
 
-    def log_validation_loss(self, loss) -> None:
+    def log_validation_loss(self, loss: Dict[str, Any]) -> None:
         wandb.log({"val_loss": loss})

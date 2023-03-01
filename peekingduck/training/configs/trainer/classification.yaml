@@ -74,7 +74,7 @@ pytorch:
             monitor: val_MulticlassAccuracy
             mode: max
         trainer:
-            _target_: src.trainer.pytorch_trainer.pytorchTrainer
+            _target_: src.trainer.pytorch_trainer.PytorchTrainer
 
 tensorflow:
     lr_schedule_params:
@@ -114,4 +114,4 @@ tensorflow:
         debug: ${debug}
         debug_epochs: 3
         trainer:
-            _target_: src.trainer.tensorflow_trainer.tensorflowTrainer
+            _target_: src.trainer.tensorflow_trainer.TensorflowTrainer

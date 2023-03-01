@@ -14,7 +14,7 @@
 
 import tensorflow as tf
 
-from typing import List, Union
+from typing import Any, Dict, List, Optional, Union
 from omegaconf import DictConfig
 
 
@@ -31,7 +31,9 @@ class TensorflowMetrics:
     def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
         return [self.get_metric(**self._validate_config(m)) for m in metrics]
 
-    def _validate_config(self, metric: tf.keras.metrics.Metric):
+    def _validate_config(
+        self, metric: tf.keras.metrics.Metric
+    ) -> Optional[Dict[str, Any]]:
         try:
             if type(metric) is DictConfig:
                 for mkey, mval in metric.items():

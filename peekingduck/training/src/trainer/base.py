@@ -12,17 +12,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from abc import ABC, abstractmethod
+from typing import Any, Dict, Protocol
+
+from src.data.data_adapter import DataAdapter
 
 
-class Trainer(ABC):
+class Trainer(Protocol):
     """Object used to facilitate training."""
 
-    @abstractmethod
-    def setup(self):
+    def setup(self) -> None:
         """"""
-        # raise NotImplementedError
 
-    @abstractmethod
-    def train(self, train_loader, validation_loader):
+    def train(
+        self, train_loader: DataAdapter, validation_loader: DataAdapter
+    ) -> Dict[str, Any]:
         """Fit method"""

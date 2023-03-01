@@ -31,7 +31,7 @@ class PTModel(ABC, nn.Module):
         self.backbone: Optional[nn.Module]
         self.head: Optional[nn.Module]
         self.model: nn.Module
-        self.model_config = cfg
+        self.model_config: DictConfig = cfg
 
     @abstractmethod
     def create_model(self) -> nn.Module:
@@ -103,11 +103,3 @@ class PTModel(ABC, nn.Module):
         in_features = linear_layer.in_features
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features
-
-    # def unfreeze_partial_params(self, model, unfreeze_module_dict: DictConfig):
-    #     for module_name, num_layers in unfreeze_module_dict.items():
-    #         # convert negative values from config to zero, which will unfreeze all layers below
-    #         num_layers = max(num_layers, 0)
-    #         # unfreeze from num_layers to last layer within each module
-    #         for param in getattr(model, module_name)[-num_layers:].parameters():
-    #             param.requires_grad = True

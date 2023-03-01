@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Any, Dict
 from omegaconf import DictConfig
 from time import perf_counter
 import logging
@@ -65,13 +66,13 @@ def run(cfg: DictConfig) -> None:
     validation_loader = data_module.get_validation_dataset()
 
     if cfg.view_only:
-        trainer = init_trainer(cfg)
+        trainer: Trainer = init_trainer(cfg)
         inputs, _ = next(iter(train_loader))
         trainer.train_summary(inputs)
     else:
         model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
         trainer = init_trainer(cfg)
-        history = trainer.train(train_loader, validation_loader)
+        history: Dict[str, Any] = trainer.train(train_loader, validation_loader)
         model_analysis.log_history(history)
 
         end_time: float = perf_counter()
