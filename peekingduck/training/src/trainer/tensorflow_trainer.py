@@ -19,7 +19,6 @@ from omegaconf import DictConfig
 import tensorflow as tf
 import logging
 
-from src.trainer.base import Trainer
 from src.data.data_adapter import DataAdapter
 from src.optimizers.adapter import OptimizersAdapter
 from src.optimizers.schedules import OptimizerSchedules
@@ -34,7 +33,7 @@ from configs import LOGGER_NAME
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-class tensorflowTrainer(Trainer):
+class TensorflowTrainer:
     def __init__(self, framework: str = "tensorflow") -> None:
         self.framework = framework
         self.model = None

@@ -33,6 +33,7 @@ so add up all the metric scores of all batches and divide by the cumulative coun
 this is the average score of all batches in 1 epoch.
 """
 from collections import defaultdict
+from typing import Any
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -52,7 +53,7 @@ class MetricMeter(Callback):
     # this must same as.
     stats_to_track = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
 
-    def __init__(self, float_precision: int = 3, stats_to_track=[]) -> None:
+    def __init__(self, float_precision: int = 3, stats_to_track: list = []) -> None:
         super().__init__(order=CallbackOrder.METRICMETER)
         self.float_precision = float_precision
         self.reset()
@@ -75,20 +76,20 @@ class MetricMeter(Callback):
         ]
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
-    def on_train_batch_end(self, trainer) -> None:
+    def on_train_batch_end(self, trainer: Trainer) -> None:
         self._update("train_loss", trainer.epoch_dict["train"]["batch_loss"])
 
-    def on_valid_loader_end(self, trainer) -> None:
+    def on_valid_loader_end(self, trainer: Trainer) -> None:
         # this loss is the average loss over the entire epoch
         trainer.epoch_dict["validation"]["valid_loss"] = self.metrics_dict[
             "valid_loss"
         ]["average_score"]
         self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
 
-    def on_valid_batch_end(self, trainer) -> None:
+    def on_valid_batch_end(self, trainer: Trainer) -> None:
         self._update("valid_loss", trainer.epoch_dict["validation"]["batch_loss"])
 
-    def _update(self, metric_name, metric_score) -> None:
+    def _update(self, metric_name: str, metric_score: Any) -> None:
         """To check PyTorch's code for updating the loss meter."""
         metric = self.metrics_dict[metric_name]
 
@@ -119,7 +120,7 @@ class AverageLossMeter(MetricMeter):
         super().__init__()
         self.reset()
 
-    def reset(self):
+    def reset(self) -> None:
         """To check PyTorch's code for resetting the loss meter."""
 
         self.curr_batch_avg_loss = 0
@@ -127,7 +128,7 @@ class AverageLossMeter(MetricMeter):
         self.running_total_loss = 0
         self.count = 0
 
-    def update(self, curr_batch_avg_loss: float, batch_size: str):
+    def update(self, curr_batch_avg_loss: float, batch_size: int) -> None:
         """To check PyTorch's code for updating the loss meter.
         Args:
             curr_batch_avg_loss (float): _description_

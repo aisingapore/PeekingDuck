@@ -89,7 +89,7 @@ class EarlyStopping(Callback):
                 trainer.stop_training = self.stop
                 logger.info("Early Stopping!")
 
-    def should_stop(self):
+    def should_stop(self) -> None:
         """The actual algorithm of early stopping.
         Consider shifting the stop logic here.
         """

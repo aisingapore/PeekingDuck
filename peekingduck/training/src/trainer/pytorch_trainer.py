@@ -14,7 +14,6 @@
 
 import logging
 import numpy as np
-import pandas as pd
 import torch
 
 from collections import defaultdict
@@ -26,6 +25,7 @@ from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from hydra.utils import instantiate
 
+from src.data.data_adapter import DataAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.losses.adapter import LossAdapter
 from src.optimizers.adapter import OptimizersAdapter
@@ -40,6 +40,7 @@ from configs import LOGGER_NAME
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
+
 # TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
     trainer_config: DictConfig,
@@ -52,7 +53,7 @@ def get_sigmoid_softmax(
         return getattr(torch.nn, "Softmax")(dim=1)
 
 
-class pytorchTrainer(Trainer):
+class PytorchTrainer:
     """Object used to facilitate training."""
 
     def __init__(self, framework: str = "pytorch") -> None:
@@ -371,8 +372,8 @@ class pytorchTrainer(Trainer):
 
     def train(
         self,
-        train_loader: DataLoader,
-        validation_loader: DataLoader,
+        train_loader: DataAdapter,
+        validation_loader: DataAdapter,
         fold: Optional[int] = None,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""

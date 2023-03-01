@@ -17,7 +17,9 @@ from typing import List
 import tensorflow as tf
 
 
-def set_trainable_layers(model, trainable_layer_name_list: List[str]) -> None:
+def set_trainable_layers(
+    model: tf.keras.Model, trainable_layer_name_list: List[str]
+) -> None:
     """Set the layers in the model to be trainable.
     If a layer is not included in the list, it will be freezed.
     """
