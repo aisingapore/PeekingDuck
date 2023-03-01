@@ -26,6 +26,10 @@ We are using the yaml syntax for the config file
 Data
 ====
 
+.. raw:: html
+
+   <h4>Default Values</h4>
+
 .. tabs::
 
    .. tab:: Cifar10
@@ -250,67 +254,44 @@ Model Analysis
 
 .. raw:: html
 
-   <div class="install">
-     <div class="pkd-expandable training-pytorch">
-        <h4>Pytorch</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Pytorch</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-     
-     </div>
-     <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Tensorflow</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-     </div>
+   <h4>Default Values</h4>
+   <div class="wy-table-responsive">
+        <table class="docutils align-default">
+            <thead>
+                <tr class="row-odd">
+                    <th class="head"><p>Key</p></th>
+                    <th class="head"><p>Value</p></th>
+                    <th class="head"><p>Description</p></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>entity</td>
+                    <td>"peekingduck"</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>project</td>
+                    <td>"${project_name}"</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>run_name</td>
+                    <td>"${stores.unique_id}"</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>framework</td>
+                    <td>"${framework}"</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td>debug</td>
+                    <td>${debug}</td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
    </div>
 
 
@@ -320,67 +301,24 @@ Trainer
 .. raw:: html
 
    <div class="install">
-     <div class="pkd-expandable training-pytorch">
+      <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Pytorch</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-     
-     </div>
-     <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Tensorflow</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
 
-     </div>
+.. include:: /training_pipeline/02_configuring_training_parameters/trainer/pytorch_config.rst
+
+.. raw:: html
+
    </div>
+      <div class="pkd-expandable training-tensorflow">
+        <h4>Tensorflow</h4>
+
+.. include:: /training_pipeline/02_configuring_training_parameters/trainer/tensorflow_config.rst
+
+.. raw:: html
+
+   </div></div>
+
+
 
 Metrics
 =======
@@ -390,6 +328,7 @@ Metrics
    <div class="install">
      <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
+        # Options: Accuracy | Precision | Recall | AUROC | CalibrationError
         <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -452,6 +391,8 @@ Metrics
      </div>
      <div class="pkd-expandable training-tensorflow">
         <h4>Tensorflow</h4>
+        <p># Options: Accuracy | Precision | Recall | AUC</p>
+        <p>Check out the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/metrics">TensorFlow v2 Metrics</a> documentation for more details</p>
         <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -524,7 +465,7 @@ Callbacks
      <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
         <p>The table below shows the default values:</p>
-        <p>These are the onlky available callbacks as of v1.0: EarlyStopping | History | MetricMeter | ModelCheckpoint</p>
+        <p>These are the only available callbacks as of v1.0:<br>EarlyStopping | History | MetricMeter | ModelCheckpoint</p>
         <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -642,65 +583,21 @@ Store
 
 .. raw:: html
 
-   <div class="install">
-     <div class="pkd-expandable training-pytorch">
-        <h4>Pytorch</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Pytorch</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-     
-     </div>
-     <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th class="head"><p>Tensorflow</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
-                    </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                    </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-     </div>
+   <div class="wy-table-responsive">
+        <table class="docutils align-default">
+            <thead>
+                <tr class="row-odd">
+                    <th class="head"><p>Key</p></th>
+                    <th class="head"><p>Value</p></th>
+                    <th class="head"><p>Description</p></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="row-even">
+                    <td><p><span class="blue">unique_id</span></p></td>
+                    <td><p>${now:%Y%m%d_%H%M%S}</p></td>
+                    <td></td>
+                </tr>
+            </tbody>
+        </table>
    </div>

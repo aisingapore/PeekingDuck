@@ -11,5 +11,5 @@ Use Cases
 .. toctree::
    :maxdepth: 3
 
-   /training_pipeline/02a_image_classification
-   /training_pipeline/02b_object_detection
+   /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
+   /training_pipeline/02_configuring_training_parameters/use_case/02b_object_detection
