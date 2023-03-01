@@ -12,25 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-import inspect
 import torchmetrics
 from torchmetrics.classification.stat_scores import (
     MulticlassStatScores,
 )  # for type hinting, referenced from PyTorch Lightning source code
-import pandas as pd
-import tabulate
+from torchmetrics import MetricCollection
+
 import torch
-from torchmetrics import AUROC, Accuracy, MetricCollection, Precision, Recall
-from torchmetrics.classification import MulticlassCalibrationError
-from typing import List, Dict
+from typing import Any, List, Dict, Union
 from omegaconf import DictConfig
 
 
 class PytorchMetrics:
     @classmethod
     def get_metric(
-        cls, task: str, num_classes: int, metric
+        cls, task: str, num_classes: int, metric: Union[str, DictConfig]
     ) -> MulticlassStatScores:  # the metric can be a dict or list
         """
         Refer to TorchMetrics implementation
@@ -52,7 +48,9 @@ class PytorchMetrics:
         return torch_metric
 
     @classmethod
-    def get_metrics(cls, task, num_classes, metric_list: list) -> MetricCollection:
+    def get_metrics(
+        cls, task: str, num_classes: int, metric_list: list
+    ) -> MetricCollection:
         metric_collection_list = [
             cls.get_metric(task, num_classes, metric) for metric in metric_list
         ]
@@ -66,7 +64,7 @@ class PytorchMetrics:
         y_preds: torch.Tensor,
         y_probs: torch.Tensor,
         prefix: str = "train",
-    ):
+    ) -> Any:
         """
         Calculate metrics
         [summary]

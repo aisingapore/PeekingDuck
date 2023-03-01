@@ -84,7 +84,7 @@ class PTModel(ABC, nn.Module):
             )
         return torchinfo.summary(self.model, input_size=input_size, **kwargs)
 
-    def get_last_layer(self) -> Tuple[list, int, nn.Module]:
+    def get_last_layer(self) -> Tuple[str, nn.Module, nn.Module]:
         """Get the last layer information of a PyTorch Model.
 
         NOTE:

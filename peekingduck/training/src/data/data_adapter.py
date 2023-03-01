@@ -29,7 +29,7 @@ class DataAdapter:
     cfg: DictConfig = field()
     loader: Any = field(init=False)
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if self.cfg.adapter_type == "pytorch":
             self.loader = DataLoader
         if self.cfg.adapter_type == "tensorflow":
