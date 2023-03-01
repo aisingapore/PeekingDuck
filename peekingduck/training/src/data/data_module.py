@@ -23,7 +23,6 @@ import pandas as pd
 
 from src.data.base import AbstractDataSet
 from src.data.dataset import PTImageClassificationDataset
-from src.data.base import AbstractDataAdapter
 from src.data.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
@@ -48,33 +47,30 @@ class ImageClassificationDataModule:
         cfg: DictConfig,
         **kwargs: Dict[str, Any],
     ) -> None:
-        super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg.transform[cfg.framework]
         )
-        self.dataset_loader: Union[
-            AbstractDataAdapter, None
-        ] = None  # Setup in self.setup()
+        self.dataset_loader: Union[DataAdapter, None] = None  # Setup in self.setup()
 
-    def get_train_dataset(self) -> AbstractDataAdapter:
-        """ """
+    def get_train_dataset(self) -> DataAdapter:
+        """Return training data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
             self.train_dataset,
             transforms=self.train_transforms,
         )
 
-    def get_validation_dataset(self) -> AbstractDataAdapter:
-        """ """
+    def get_validation_dataset(self) -> DataAdapter:
+        """Return validation data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.validation_dataloader(
             self.valid_dataset,
             transforms=self.valid_transforms,
         )
 
-    def get_test_dataloader(self) -> AbstractDataAdapter:
-        """ """
+    def get_test_dataloader(self) -> DataAdapter:
+        """Return test data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(
             self.test_dataset,

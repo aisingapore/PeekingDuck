@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Protocol
+from typing import Any, Protocol
 
 
 class DataModule(Protocol):
@@ -27,27 +27,14 @@ class DataModule(Protocol):
     def setup(self, stage: str) -> None:
         """setup function"""
 
-    def get_train_dataset(self):
+    def get_train_dataset(self) -> Any:
         """return training dataset"""
 
-    def get_validation_dataset(self):
+    def get_validation_dataset(self) -> Any:
         """return validation dataset"""
 
-    def get_test_dataset(self):
+    def get_test_dataset(self) -> Any:
         """return test dataset"""
-
-
-class AbstractDataAdapter(Protocol):
-    """Base class for data adapter"""
-
-    def train_dataloader(self, dataset):
-        """Adapter for training dataset"""
-
-    def validation_dataloader(self, dataset):
-        """Adapter for validation dataset"""
-
-    def test_dataloader(self, dataset):
-        """Adapter for test dataset"""
 
 
 class AbstractDataSet(Protocol):
@@ -56,5 +43,5 @@ class AbstractDataSet(Protocol):
     def __len__(self) -> int:
         """Dataset length"""
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Any:
         """Dataset get item by index"""

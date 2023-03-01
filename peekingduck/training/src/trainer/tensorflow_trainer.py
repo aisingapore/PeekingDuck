@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, List, Union
+from typing import Any, List, Optional, Union
 from sklearn.metrics import log_loss
 from hydra.utils import instantiate
 from omegaconf import DictConfig
@@ -20,7 +20,7 @@ import tensorflow as tf
 import logging
 
 from src.trainer.base import Trainer
-from src.data.base import AbstractDataAdapter
+from src.data.data_adapter import DataAdapter
 from src.optimizers.adapter import OptimizersAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.model.tensorflow_model import TFClassificationModelFactory
@@ -41,8 +41,8 @@ class tensorflowTrainer(Trainer):
         self.scheduler = None
         self.opt = None
         self.loss = None
-        self.metrics: Union[List, None] = None
-        self.callbacks: Union[List, None] = None
+        self.metrics: Optional[List] = None
+        self.callbacks: Optional[List] = None
 
     def setup(
         self,
@@ -106,9 +106,7 @@ class tensorflowTrainer(Trainer):
         logger.info("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
 
-    def train(
-        self, train_dl: AbstractDataAdapter, val_dl: AbstractDataAdapter
-    ) -> Union[Any, dict]:
+    def train(self, train_dl: DataAdapter, val_dl: DataAdapter) -> Union[Any, dict]:
         self.train_summary()
 
         self.epochs = self.trainer_config.global_train_params.epochs

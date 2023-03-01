@@ -388,19 +388,6 @@ def get_mean_rgb_values(image: np.ndarray) -> Tuple[float, float, float]:
     return r_mean, g_mean, b_mean
 
 
-def plot_channel_distribution(
-    channel_values: List[np.ndarray],
-    group_labels: List[str],
-    colors: List[str],
-    title: str,
-) -> None:
-    fig = ff.create_distplot(channel_values, group_labels=group_labels, colors=colors)
-    fig.update_layout(showlegend=False, template="plotly_dark", title=title)
-    fig.data[0].marker.line.color = "rgb(0, 0, 0)"
-    fig.data[0].marker.line.width = 0.5
-    return fig
-
-
 plt.rcParams["savefig.bbox"] = "tight"
 
 
