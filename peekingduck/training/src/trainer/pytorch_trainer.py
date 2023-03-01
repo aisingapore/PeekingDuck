@@ -122,6 +122,7 @@ class pytorchTrainer(Trainer):
         )
 
         # create model
+        torch.manual_seed(self.train_params.manual_seed)
         self.model: PTModel = instantiate(
             config=self.model_config.model_type,
             cfg=self.model_config,

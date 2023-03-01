@@ -58,6 +58,10 @@ class tensorflowTrainer(Trainer):
         self.model_config = model_config[self.framework]
         self.metrics_config = metrics_config[self.framework]
         self.callbacks_config = callbacks_config[self.framework]
+        self.train_params = self.trainer_config.global_train_params
+
+        # Set Seed        
+        tf.random.set_seed(self.train_params.manual_seed)
 
         # create model
         self.model = TFClassificationModelFactory.create_model(self.model_config)
@@ -97,7 +101,7 @@ class tensorflowTrainer(Trainer):
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
-    def train_summary(self, inputs: None = None) -> None:
+    def train_summary(self, **kwargs) -> None:
         """Print model summary"""
         logger.info("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
@@ -124,6 +128,8 @@ class tensorflowTrainer(Trainer):
 
         if not self.model_config.fine_tune:
             return feature_extraction_history.history
+
+        print("\n\nStart fine-tuning!\n")
 
         # self.model_config.fine_tune true
         set_trainable_layers(self.model, self.model_config.fine_tune_layers)
