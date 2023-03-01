@@ -36,9 +36,7 @@ from .. import config
 
 if config.TORCH_AVAILABLE:
     import torch
-    from torch import Tensor
     from torch import autocast
-    from torch.utils.data import Dataset
     import torchvision.transforms as T
     import torchvision.transforms.functional as F
 else:

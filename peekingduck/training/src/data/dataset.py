@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Any, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 import numpy as np
 from omegaconf import DictConfig
 
@@ -38,7 +38,7 @@ else:
         "Called a tensorflow-specific function but tensorflow is not installed."
     )
 
-TransformTypes = Optional[A.Compose]
+TransformTypes = Optional[Union[A.Compose, T.Compose]]
 
 
 class PTImageClassificationDataset(Dataset):
@@ -47,7 +47,7 @@ class PTImageClassificationDataset(Dataset):
     def __init__(
         self,
         cfg: DictConfig,
-        df: pd.DataFrame = None,
+        df: pd.DataFrame,
         stage: str = "train",
         transforms: TransformTypes = None,
         **kwargs,
@@ -56,20 +56,20 @@ class PTImageClassificationDataset(Dataset):
 
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
-        self.df: Union[pd.DataFrame, None] = df
+        self.df: pd.DataFrame = df
         self.stage: str = stage
-        self.transforms: Union[A.Compose, None] = transforms
+        self.transforms: TransformTypes = transforms
 
         self.image_path = df[cfg.dataset.image_path_col_name].values
         self.targets = df[cfg.dataset.target_col_id].values if stage != "test" else None
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
-        return len(self.df)
+        return len(self.df.index)
 
     def __getitem__(
         self, index: int
-    ) -> Union[torch.FloatTensor, Union[torch.FloatTensor, torch.LongTensor]]:
+    ) -> Union[torch.FloatTensor, torch.FloatTensor, torch.LongTensor]:
         """Generate one batch of data"""
         image_path: str = self.image_path[index]
         image = cv2.imread(image_path)
@@ -92,7 +92,7 @@ class PTImageClassificationDataset(Dataset):
     def apply_image_transforms(self, image: torch.Tensor) -> Tensor:
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
-            image: Tensor = self.transforms(image=image)["image"]
+            image = self.transforms(image=image)["image"]
         elif self.transforms and isinstance(self.transforms, T.Compose):
             image = self.transforms(image)
         else:
@@ -118,26 +118,26 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         self,
         df: pd.DataFrame,
         stage: str = "train",
-        batch_size=1,
-        num_classes=2,
-        target_size=(32, 32),
-        shuffle=False,
-        transforms=None,
-        num_channels=3,
+        batch_size: int = 1,
+        num_classes: int = 2,
+        target_size: Union[list, tuple] = (32, 32),
+        shuffle: bool = False,
+        transforms: TransformTypes = None,
+        num_channels: int = 3,
         x_col="",
         y_col="",
         **kwargs,
     ) -> None:
         """"""
 
-        self.df: pd.DataFrame = df
-        self.stage: str = stage
-        self.transforms: Optional[Any] = transforms
-        self.batch_size: int = batch_size
-        self.num_classes: int = num_classes
-        self.dim: Union[list, tuple] = target_size
-        self.num_channels: int = num_channels
-        self.shuffle: bool = shuffle
+        self.df = df
+        self.stage = stage
+        self.transforms = transforms
+        self.batch_size = batch_size
+        self.num_classes = num_classes
+        self.dim = target_size
+        self.num_channels = num_channels
+        self.shuffle = shuffle
 
         self.list_IDs = df[x_col].values
         self.targets = df[y_col].values if stage != "test" else None
@@ -163,7 +163,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         ]
 
         # Find list of IDs
-        list_IDs_temp: list[Any, None] = [self.list_IDs[k] for k in indexes]
+        list_IDs_temp: List[Any] = [self.list_IDs[k] for k in indexes]
 
         # Generate data
         X, y = self._data_generation(list_IDs_temp, indexes)
@@ -175,7 +175,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 
-    def load_image(self, image_path: str):
+    def load_image(self, image_path: str) -> Any:
         """Load image from `image_path`
 
         Args:
@@ -193,7 +193,11 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
             then each color channel is zero-centered with respect to the ImageNet dataset, without scaling. """
         return image
 
-    def _data_generation(self, list_IDs_temp, indexes):
+    def _data_generation(
+        self,
+        list_IDs_temp: List[Any],
+        indexes: np.ndarray[Any, np.dtype[np.signedinteger]],
+    ) -> Any:
         "Generates data containing batch_size samples"  # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.num_channels))
@@ -209,7 +213,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
 
         return X, tf.keras.utils.to_categorical(y, num_classes=self.num_classes)
 
-    def apply_image_transforms(self, image):
+    def apply_image_transforms(self, image: Any) -> Any:
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
             image = self.transforms(image=image)["image"]

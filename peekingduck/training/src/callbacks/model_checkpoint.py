@@ -144,6 +144,7 @@ class ModelCheckpoint(Callback):
             "scheduler_state_dict": None,
             "epoch": None,
             "best_score": None,
+            "model_artifacts_path": None,
             # "oof_trues": None,
             # "oof_preds": None,
             # "oof_scores": None,
@@ -182,4 +183,4 @@ class ModelCheckpoint(Callback):
             # self.state_dict["oof_probs"] = trainer.epoch_dict["valid_probs"]
             # self.state_dict["oof_logits"] = trainer.epoch_dict["valid_logits"]
             self.state_dict["model_artifacts_path"] = model_artifacts_path
-            self.save_checkpoint(self.state_dict, model_artifacts_path)
+            self.save_checkpoint(self.state_dict, Path(model_artifacts_path))

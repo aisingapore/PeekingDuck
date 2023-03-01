@@ -24,7 +24,7 @@ Loss functions Class to interact with Tensorflow
 
 """
 
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from omegaconf import DictConfig
 import tensorflow as tf
 import torch
@@ -32,7 +32,7 @@ import torch
 
 class LossAdapter:
     @staticmethod
-    def get_tensorflow_loss_func(name, parameters: DictConfig = {}):
+    def get_tensorflow_loss_func(name: str, parameters: Optional[DictConfig] = {}):
         return (
             getattr(tf.keras.losses, name)(**parameters)
             if len(parameters) > 0

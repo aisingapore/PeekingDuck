@@ -28,9 +28,7 @@ class TensorFlowCallbacksAdapter:
             else getattr(tf.keras.callbacks, callback_name)
         )
 
-    def get_callbacks(
-        self, callbacks: Optional[List[str]] = None
-    ) -> List[tf.keras.callbacks.Callback]:
+    def get_callbacks(self, callbacks: List[str]) -> List[tf.keras.callbacks.Callback]:
         callbacks_list = []
         for cb in callbacks:
             try:

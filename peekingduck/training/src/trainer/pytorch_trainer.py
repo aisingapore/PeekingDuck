@@ -66,11 +66,11 @@ class PytorchTrainer:
         self.callbacks_config = None
         self.metrics_config = None
 
-        self.callbacks = None
-        self.metrics = None
-        self.model = None
-        self.optimizer = None
-        self.scheduler = None
+        self.callbacks: list = None
+        self.metrics: MetricCollection = None
+        self.model: PTModel = None
+        self.optimizer: torch.optim.Optimizer = None
+        self.scheduler: torch.optim.lr_scheduler = None
 
         self.train_params = None
         self.model_artifacts_dir = None
@@ -113,10 +113,10 @@ class PytorchTrainer:
         self.best_valid_loss = np.inf
 
         # init callbacks
-        self.callbacks: List = init_callbacks(callbacks_config[self.framework])
+        self.callbacks = init_callbacks(callbacks_config[self.framework])
 
         # init metrics collection
-        self.metrics: MetricCollection = PytorchMetrics.get_metrics(
+        self.metrics = PytorchMetrics.get_metrics(
             task=data_config.dataset.classification_type,
             num_classes=data_config.dataset.num_classes,
             metric_list=metrics_config[self.framework],
@@ -124,26 +124,24 @@ class PytorchTrainer:
 
         # create model
         torch.manual_seed(self.train_params.manual_seed)
-        self.model: PTModel = instantiate(
+        self.model = instantiate(
             config=self.model_config.model_type,
             cfg=self.model_config,
             _recursive_=False,
         ).to(self.device)
 
         # init_optimizer
-        self.optimizer: torch.optim.Optimizer = OptimizersAdapter.get_pytorch_optimizer(
+        self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
             model=self.model,
             optimizer_params=self.trainer_config.optimizer_params,
         )
 
         # scheduler
         if not self.trainer_config.scheduler_params.scheduler is None:
-            self.scheduler: torch.optim.lr_scheduler = (
-                OptimizerSchedules.get_pytorch_scheduler(
-                    optimizer=self.optimizer,
-                    scheduler=self.trainer_config.scheduler_params.scheduler,
-                    parameters=self.trainer_config.scheduler_params.scheduler_params,
-                )
+            self.scheduler = OptimizerSchedules.get_pytorch_scheduler(
+                optimizer=self.optimizer,
+                scheduler=self.trainer_config.scheduler_params.scheduler,
+                parameters=self.trainer_config.scheduler_params.scheduler_params,
             )
 
         # Metric to optimize, either min or max.
