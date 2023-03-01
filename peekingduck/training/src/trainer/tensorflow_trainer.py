@@ -60,7 +60,7 @@ class tensorflowTrainer(Trainer):
         self.callbacks_config = callbacks_config[self.framework]
         self.train_params = self.trainer_config.global_train_params
 
-        # Set Seed        
+        # Set Seed
         tf.random.set_seed(self.train_params.manual_seed)
 
         # create model
@@ -127,7 +127,7 @@ class tensorflowTrainer(Trainer):
         if not self.model_config.fine_tune:
             return feature_extraction_history.history
 
-        print("\n\nStart fine-tuning!\n")
+        logger.info("\n\nStart fine-tuning!\n")
 
         # self.model_config.fine_tune true
         set_trainable_layers(self.model, self.model_config.fine_tune_layers)

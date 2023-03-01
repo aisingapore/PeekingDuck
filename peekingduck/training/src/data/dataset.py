@@ -175,7 +175,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         else:
             raise ValueError(f"Invalid stage {self.stage}.")
 
-    def load_image(self, image_path: str) -> np.ndarray[int, np.dtype[np.generic]]:
+    def load_image(self, image_path: str):
         """Load image from `image_path`
 
         Args:
