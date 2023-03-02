@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict
+from typing import Any, Dict, Union
 
 import wandb
 from omegaconf import DictConfig
@@ -21,14 +21,14 @@ import pandas as pd
 
 class WeightsAndBiases:
     def __init__(self, cfg: DictConfig) -> None:
-        self.cfg: DictConfig = cfg
+        self.cfg = cfg
         if cfg.debug:
             wandb.init(mode="disabled")
         else:
             wandb.init(
                 project=cfg.project,
                 entity="peekingduck",
-                config=cfg,
+                config=Dict(cfg),
                 name=f"{cfg.framework}",
             )
 

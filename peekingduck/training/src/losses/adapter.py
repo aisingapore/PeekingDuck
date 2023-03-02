@@ -24,15 +24,17 @@ Loss functions Class to interact with Tensorflow
 
 """
 
-from typing import Any, Dict, Optional
-from omegaconf import DictConfig
+from typing import Any, Dict, List, Optional
+
 import tensorflow as tf
 import torch
 
 
 class LossAdapter:
     @staticmethod
-    def get_tensorflow_loss_func(name: str, parameters: Optional[DictConfig] = {}):
+    def get_tensorflow_loss_func(
+        name: str, parameters: List[Any]
+    ) -> tf.keras.losses.Loss:
         return (
             getattr(tf.keras.losses, name)(**parameters)
             if len(parameters) > 0
@@ -70,9 +72,9 @@ class LossAdapter:
         return loss
 
     @staticmethod
-    def get_lr(optimizer: torch.optim) -> float:  # for pytorch trainer
+    def get_lr(optimizer: torch.optim.Optimizer) -> float:  # for pytorch trainer
         """Get the learning rate of optimizer for the current epoch.
         Note learning rate can be different for different layers, hence the for loop.
         """
-        for param_group in optimizer.param_groups:
-            return param_group["lr"]
+        # for param_group in optimizer.param_groups:
+        return optimizer.param_groups[-1]["lr"]

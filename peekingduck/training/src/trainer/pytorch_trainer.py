@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, DefaultDict, Dict, List, Optional, Union
 from torchmetrics import MetricCollection
 
 from tqdm.auto import tqdm
@@ -46,11 +46,18 @@ def get_sigmoid_softmax(
     trainer_config: DictConfig,
 ) -> Union[torch.nn.Sigmoid, torch.nn.Softmax]:
     """Get the sigmoid or softmax function depending on loss function."""
+    assert trainer_config.criterion_params.train_criterion in [
+        "BCEWithLogitsLoss",
+        "CrossEntropyLoss",
+    ], f"Unsupported loss function {trainer_config.criterion_params.train_criterion}"
+
     if trainer_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
-        return getattr(torch.nn, "Sigmoid")()
+        loss_func = getattr(torch.nn, "Sigmoid")()
 
     if trainer_config.criterion_params.train_criterion == "CrossEntropyLoss":
-        return getattr(torch.nn, "Softmax")(dim=1)
+        loss_func = getattr(torch.nn, "Softmax")(dim=1)
+
+    return loss_func
 
 
 class PytorchTrainer:
@@ -58,37 +65,37 @@ class PytorchTrainer:
 
     def __init__(self, framework: str = "pytorch") -> None:
         """Initialize the trainer."""
-        self.framework = framework
-        self.device = None
+        self.framework: str = framework
+        self.device: str = "cpu"
 
-        self.trainer_config = None
-        self.model_config = None
-        self.callbacks_config = None
-        self.metrics_config = None
+        self.trainer_config: DictConfig
+        self.model_config: DictConfig
+        self.callbacks_config: DictConfig
+        self.metrics_config: DictConfig
 
-        self.callbacks: list = None
-        self.metrics: MetricCollection = None
-        self.model: PTModel = None
-        self.optimizer: torch.optim.Optimizer = None
-        self.scheduler: torch.optim.lr_scheduler = None
+        self.callbacks: list = []
+        self.metrics: MetricCollection
+        self.model: PTModel
+        self.optimizer: torch.optim.Optimizer
+        self.scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None
 
-        self.train_params = None
-        self.model_artifacts_dir = None
-        self.monitored_metric = None
-        self.best_val_score = None
-        self.best_valid_loss = None
+        self.train_params: Dict[str, Any]
+        self.model_artifacts_dir: str
+        self.monitored_metric: Any
+        self.best_val_score: Any
+        self.best_valid_loss: Any
 
-        self.train_loader = None
-        self.validation_loader = None
+        self.train_loader: Any
+        self.validation_loader: Any
 
-        self.stop_training = False
-        self.history = defaultdict(list)
-        self.epochs = None
-        self.current_epoch = None
-        self.current_fold = None
-        self.epoch_dict = {}
-        self.valid_elapsed_time = None
-        self.train_elapsed_time = None
+        self.stop_training: bool = False
+        self.history: DefaultDict[Any, List] = defaultdict(list)
+        self.epochs: int
+        self.current_epoch: int
+        self.current_fold: int = 0
+        self.epoch_dict: Dict = {}
+        self.valid_elapsed_time: str = ""
+        self.train_elapsed_time: str = ""
 
     def setup(
         self,
@@ -161,11 +168,11 @@ class PytorchTrainer:
         self.train_loader = train_dl
         self.validation_loader = validation_dl
 
-    def _train_setup(self, inputs) -> None:
+    def _train_setup(self, inputs: torch.Tensor) -> None:
         self._invoke_callbacks(EVENTS.TRAINER_START.value)
         self.train_summary(inputs)
 
-    def train_summary(self, inputs, finetune: bool = False):
+    def train_summary(self, inputs: torch.Tensor, finetune: bool = False) -> None:
         # show model layer details
         if not finetune:
             logger.info(f"Model Layer Details:\n{self.model.model}")
@@ -221,7 +228,10 @@ class PytorchTrainer:
         self.model.train()
 
         train_bar = tqdm(train_loader)
-        train_trues, train_logits, train_preds, train_probs = [], [], [], []
+        train_trues: List[torch.Tensor] = []
+        train_logits: List[torch.Tensor] = []
+        train_preds: List[torch.Tensor] = []
+        train_probs: List[torch.Tensor] = []
 
         self._invoke_callbacks(EVENTS.TRAIN_LOADER_START.value)
         # Iterate over train batches
@@ -233,6 +243,9 @@ class PytorchTrainer:
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
 
+            # reset gradients
+            self.optimizer.zero_grad()
+
             # Forward pass logits
             logits = self.model(inputs)
 
@@ -242,12 +255,10 @@ class PytorchTrainer:
                 criterion_params=self.trainer_config.criterion_params,
                 stage="train",
             )
-
-            self.optimizer.zero_grad()  # reset gradients
             curr_batch_train_loss.backward()  # Backward pass
-            self.optimizer.step()  # Update weights using the optimizer
+            self.optimizer.step()  # Adjust learning weights
 
-            # Update loss metric, every batch is diff
+            # Compute the loss metrics and its gradients
             self.epoch_dict["train"]["batch_loss"] = curr_batch_train_loss.item()
             y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             y_train_pred = torch.argmax(y_train_prob, dim=1)
@@ -259,17 +270,22 @@ class PytorchTrainer:
             train_probs.extend(y_train_prob.cpu())
             train_preds.extend(y_train_pred.cpu())
 
-        train_trues, train_logits, train_preds, train_probs = (
-            torch.vstack(train_trues),
-            torch.vstack(train_logits),
-            torch.vstack(train_preds),
-            torch.vstack(train_probs),
+        (
+            train_trues_tensor,
+            train_logits_tensor,
+            train_preds_tensor,
+            train_probs_tensor,
+        ) = (
+            torch.vstack(tensors=train_trues),
+            torch.vstack(tensors=train_logits),
+            torch.vstack(tensors=train_preds),
+            torch.vstack(tensors=train_probs),
         )
         self.epoch_dict["train"]["metrics"] = PytorchMetrics.get_classification_metrics(
             self.metrics,
-            train_trues,
-            train_preds,
-            train_probs,
+            train_trues_tensor,
+            train_preds_tensor,
+            train_probs_tensor,
             "train",
         )
 
@@ -291,10 +307,14 @@ class PytorchTrainer:
         self._invoke_callbacks(EVENTS.VALID_EPOCH_START.value)
         self.model.eval()  # set to eval mode
         valid_bar = tqdm(validation_loader)
-        valid_trues, valid_logits, valid_preds, valid_probs = [], [], [], []
+        valid_trues: List[torch.Tensor] = []
+        valid_logits: List[torch.Tensor] = []
+        valid_preds: List[torch.Tensor] = []
+        valid_probs: List[torch.Tensor] = []
+
         self._invoke_callbacks(EVENTS.VALID_LOADER_START.value)
 
-        with torch.no_grad():  # TODO
+        with torch.no_grad():
             for _step, batch in enumerate(valid_bar, start=1):
                 self._invoke_callbacks(EVENTS.VALID_BATCH_START.value)
 
@@ -310,7 +330,7 @@ class PytorchTrainer:
                 _batch_size = inputs.shape[0]
 
                 y_valid_prob = get_sigmoid_softmax(self.trainer_config)(logits)
-                y_valid_pred = torch.argmax(y_valid_prob, axis=1)
+                y_valid_pred = torch.argmax(y_valid_prob, dim=1)
 
                 curr_batch_val_loss = LossAdapter.compute_criterion(
                     targets,
@@ -331,19 +351,24 @@ class PytorchTrainer:
                 valid_preds.extend(y_valid_pred.cpu())
                 valid_probs.extend(y_valid_prob.cpu())
 
-        valid_trues, valid_logits, valid_preds, valid_probs = (
-            torch.vstack(valid_trues),
-            torch.vstack(valid_logits),
-            torch.vstack(valid_preds),
-            torch.vstack(valid_probs),
+        (
+            valid_trues_tensor,
+            valid_logits_tensor,
+            valid_preds_tensor,
+            valid_probs_tensor,
+        ) = (
+            torch.vstack(tensors=valid_trues),
+            torch.vstack(tensors=valid_logits),
+            torch.vstack(tensors=valid_preds),
+            torch.vstack(tensors=valid_probs),
         )
         self.epoch_dict["validation"][
             "metrics"
         ] = PytorchMetrics.get_classification_metrics(
             self.metrics,
-            valid_trues,
-            valid_preds,
-            valid_probs,
+            valid_trues_tensor,
+            valid_preds_tensor,
+            valid_probs_tensor,
             "val",
         )
 
@@ -351,10 +376,10 @@ class PytorchTrainer:
 
         self.epoch_dict["validation"].update(
             {
-                "valid_trues": valid_trues,
-                "valid_logits": valid_logits,
-                "valid_preds": valid_preds,
-                "valid_probs": valid_probs,
+                "valid_trues": valid_trues_tensor,
+                "valid_logits": valid_logits_tensor,
+                "valid_preds": valid_preds_tensor,
+                "valid_probs": valid_probs_tensor,
                 "valid_elapsed_time": self.valid_elapsed_time,
             }
         )
@@ -372,7 +397,7 @@ class PytorchTrainer:
         self,
         train_loader: DataAdapter,
         validation_loader: DataAdapter,
-        fold: Optional[int] = None,
+        fold: int = 0,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
         self.current_fold = fold
@@ -386,11 +411,9 @@ class PytorchTrainer:
             # set fine-tune layers
             set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
             # need to re-init optimizer to update the newly unfrozen parameters
-            self.optimizer: torch.optim.Optimizer = (
-                OptimizersAdapter.get_pytorch_optimizer(
-                    model=self.model,
-                    optimizer_params=self.trainer_config.optimizer_params,
-                )
+            self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
+                model=self.model,
+                optimizer_params=self.trainer_config.optimizer_params,
             )
 
             print("\n\nModel Summary for fine-tuning:\n")

@@ -38,7 +38,7 @@ class PytorchMetrics:
 
         elif type(metric) is DictConfig:
             for metric_name, metric_params in metric.items():
-                torch_metric = getattr(torchmetrics, metric_name)(
+                torch_metric = getattr(torchmetrics, str(metric_name))(
                     num_classes=num_classes, task=task, **metric_params
                 )
 

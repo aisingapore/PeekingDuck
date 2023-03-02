@@ -8,13 +8,14 @@ numpy
 scikit-learn
 torch
 torchvision
+torchmetrics
+timm
 torchinfo
 tqdm
-torchmetrics
 albumentations
 imagesize
 matplotlib
-torchinfo
-timm
 tabulate
 wandb
+tensorflow-macos
+tensorflow-metal

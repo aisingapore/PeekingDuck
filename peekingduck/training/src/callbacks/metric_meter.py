@@ -33,7 +33,7 @@ so add up all the metric scores of all batches and divide by the cumulative coun
 this is the average score of all batches in 1 epoch.
 """
 from collections import defaultdict
-from typing import Any
+from typing import Any, Dict, List
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -51,7 +51,7 @@ class MetricMeter(Callback):
     """
 
     # this must same as.
-    stats_to_track = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
+    stats_to_track: List[str] = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
 
     def __init__(self, float_precision: int = 3, stats_to_track: list = []) -> None:
         super().__init__(order=CallbackOrder.METRICMETER)
@@ -60,11 +60,11 @@ class MetricMeter(Callback):
 
     def reset(self) -> None:
         """To check PyTorch's code for resetting the metric monitor."""
-        self.metrics_dict = defaultdict(
+        self.metrics_dict: defaultdict = defaultdict(
             lambda: {
-                "cumulative_metric_score": 0,
-                "cumulative_count": 0,
-                "average_score": 0,
+                "cumulative_metric_score": 0.0,
+                "cumulative_count": 0.0,
+                "average_score": 0.0,
             }
         )
 
@@ -123,10 +123,10 @@ class AverageLossMeter(MetricMeter):
     def reset(self) -> None:
         """To check PyTorch's code for resetting the loss meter."""
 
-        self.curr_batch_avg_loss = 0
-        self.avg = 0
-        self.running_total_loss = 0
-        self.count = 0
+        self.curr_batch_avg_loss = 0.0
+        self.avg = 0.0
+        self.running_total_loss = 0.0
+        self.count = 0.0
 
     def update(self, curr_batch_avg_loss: float, batch_size: int) -> None:
         """To check PyTorch's code for updating the loss meter.
