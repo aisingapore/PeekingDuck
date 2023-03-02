@@ -53,7 +53,9 @@ class PTClassificationModel(PTModel):
 
         logger.info(f"Successfully created model: {self.model_config.model_name}")
 
-    def _concat_backbone_and_head(self, backbone, head, last_layer_name) -> nn.Module:
+    def _concat_backbone_and_head(
+        self, backbone: nn.Module, head: nn.Module, last_layer_name: str
+    ) -> nn.Module:
         """Concatenate the backbone and head of the model."""
 
         rsetattr(backbone, last_layer_name, head)
@@ -73,7 +75,7 @@ class PTClassificationModel(PTModel):
             model = self.backbone
 
         elif self.adapter == "timm":
-            self.backbone.reset_classifier(num_classes=self.model_config.num_classes)
+            self.backbone.reset_classifier(num_classes=self.model_config.num_classes)  # type: ignore
             model = self.backbone
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
@@ -101,7 +103,7 @@ class PTClassificationModel(PTModel):
 
         return backbone
 
-    def create_head(self, in_features: int = None) -> nn.Module:
+    def create_head(self, in_features: int) -> nn.Module:
         """Modify the head of the model."""
         # fully connected
         out_features = self.model_config.num_classes

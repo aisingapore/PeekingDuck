@@ -15,7 +15,7 @@
 import logging
 import time
 import pandas as pd
-from tabulate import tabulate
+from tabulate import tabulate  # type: ignore
 from src.trainer.base import Trainer
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -29,9 +29,9 @@ class Logger(Callback):
     def __init__(self) -> None:
         """Constructor for Logger class."""
         super().__init__(order=CallbackOrder.LOGGER)
-        self.logger = logger
-        self.train_elapsed_time = None
-        self.valid_elapsed_time = None
+        self.logger: logging.Logger = logger
+        self.train_elapsed_time: str = ""
+        self.valid_elapsed_time: str = ""
 
     def on_trainer_start(self, trainer: Trainer) -> None:
         self.logger.info(f"Fold {trainer.current_fold} started")

@@ -75,8 +75,8 @@ class OptimizersAdapter:
     def get_tensorflow_optimizer(
         name: str,
         learning_rate: tf.keras.optimizers.schedules.LearningRateSchedule,
-        parameters: DictConfig = {},
-    ):
+        parameters: DictConfig,
+    ) -> tf.keras.optimizers.Optimizer:
         return (
             getattr(tf.keras.optimizers, name)(learning_rate, **parameters)
             if len(parameters) > 0
@@ -85,7 +85,7 @@ class OptimizersAdapter:
 
     @staticmethod
     def get_pytorch_optimizer(
-        model,
+        model: torch.nn.Module,
         optimizer_params: Dict[str, Any],
     ) -> torch.optim.Optimizer:
         """Get the optimizer for the model.

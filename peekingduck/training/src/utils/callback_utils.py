@@ -20,22 +20,22 @@ TODO:
 import math
 from functools import partial
 import torch
-from typing import Callable, Tuple
+from typing import Any, Callable, Tuple
 
 
 def _is_min(
     curr_epoch_score: torch.Tensor, curr_best_score: torch.Tensor, min_delta: float
 ) -> bool:
-    return curr_epoch_score <= (curr_best_score - min_delta)
+    return curr_epoch_score <= (curr_best_score - min_delta)  # type: ignore
 
 
 def _is_max(
     curr_epoch_score: torch.Tensor, curr_best_score: torch.Tensor, min_delta: float
 ) -> bool:
-    return curr_epoch_score >= (curr_best_score + min_delta)
+    return curr_epoch_score >= (curr_best_score + min_delta)  # type: ignore
 
 
-def init_improvement(mode: str, min_delta: float) -> Tuple[Callable, torch.Tensor]:
+def init_improvement(mode: str, min_delta: float) -> Tuple[Callable[..., Any], float]:
     """Get the scoring function and the best value according to mode.
 
     Args:
@@ -44,7 +44,7 @@ def init_improvement(mode: str, min_delta: float) -> Tuple[Callable, torch.Tenso
 
     Returns:
         improvement (Callable): Function to check if the score is an improvement.
-        best_score (torch.Tensor): Initialize the best score as either -inf or inf depending on mode.
+        best_score (float): Initialize the best score as either -inf or inf depending on mode.
     """
     if mode == "min":
         improvement = partial(_is_min, min_delta=min_delta)

@@ -13,7 +13,12 @@
 # limitations under the License.
 
 from __future__ import annotations
-from typing import List, Any, TYPE_CHECKING  # This solves circular import type hinting.
+from typing import (
+    List,
+    Any,
+    TYPE_CHECKING,
+    Union,
+)  # This solves circular import type hinting.
 from omegaconf import DictConfig
 import src.callbacks as Callbacks
 
@@ -21,7 +26,7 @@ if TYPE_CHECKING:
     from src.trainer import Trainer
 
 
-def init_callbacks(callbacks) -> List:
+def init_callbacks(callbacks: List[Union[DictConfig, str]]) -> List:
     """Method to initialise the callbacks.
     Args:
         callbacks: The list of callbacks from configs->callbacks->classification/detection/segmentation.
@@ -30,7 +35,7 @@ def init_callbacks(callbacks) -> List:
     for cb in callbacks:
         if type(cb) is DictConfig:
             for cbk, cbv in cb.items():
-                cb_list.append(getattr(Callbacks, cbk)(**cbv))
+                cb_list.append(getattr(Callbacks, str(cbk))(**cbv))
         elif type(cb) is str:
             cb_list.append(getattr(Callbacks, cb)())
         else:
@@ -62,7 +67,7 @@ class Callback:
         - https://github.com/Atharva-Phatak/torchflare/tree/main/torchflare
     """
 
-    def __init__(self, order) -> None:
+    def __init__(self, order: int) -> None:
         """Constructor for Callback base class."""
         self.order = order
 

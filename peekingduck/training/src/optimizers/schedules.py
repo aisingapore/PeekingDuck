@@ -48,7 +48,9 @@ import torch
 
 class OptimizerSchedules:
     @staticmethod
-    def get_tensorflow_scheduler(name, parameters: DictConfig = {}):
+    def get_tensorflow_scheduler(
+        name: str, parameters: DictConfig
+    ) -> tf.keras.optimizers.schedules.LearningRateSchedule:
         return (
             getattr(tf.keras.optimizers.schedules, name)(**parameters)
             if len(parameters) > 0
@@ -57,8 +59,8 @@ class OptimizerSchedules:
 
     @staticmethod
     def get_pytorch_scheduler(
-        optimizer: torch.optim.Optimizer, scheduler: str, parameters: DictConfig = {}
-    ) -> torch.optim.lr_scheduler:
+        optimizer: torch.optim.Optimizer, scheduler: str, parameters: DictConfig
+    ) -> torch.optim.lr_scheduler._LRScheduler:
         """Get the scheduler for the optimizer."""
         return getattr(torch.optim.lr_scheduler, scheduler)(
             optimizer=optimizer, **parameters

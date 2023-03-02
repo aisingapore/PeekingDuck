@@ -38,44 +38,62 @@ class DataAdapter:
     def train_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        assert self.cfg.adapter_type in [
+            "pytorch",
+            "tensorflow",
+        ], f"Unsupported framework {self.cfg.adapter_type}"
+
         if self.cfg.adapter_type == "pytorch":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 **self.cfg.train,
             )
         if self.cfg.adapter_type == "tensorflow":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 transforms=transforms,
                 **self.cfg.train,
             )
+        return loader
 
     def validation_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        assert self.cfg.adapter_type in [
+            "pytorch",
+            "tensorflow",
+        ], f"Unsupported framework {self.cfg.adapter_type}"
+
         if self.cfg.adapter_type == "pytorch":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 **self.cfg.valid,
             )
         if self.cfg.adapter_type == "tensorflow":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 transforms=transforms,
                 **self.cfg.valid,
             )
+        return loader
 
     def test_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        assert self.cfg.adapter_type in [
+            "pytorch",
+            "tensorflow",
+        ], f"Unsupported framework {self.cfg.adapter_type}"
+
         if self.cfg.adapter_type == "pytorch":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 **self.cfg.test,
             )
         if self.cfg.adapter_type == "tensorflow":
-            return self.loader(
+            loader = self.loader(
                 dataset,
                 transforms=transforms,
                 **self.cfg.test,
             )
+        return loader

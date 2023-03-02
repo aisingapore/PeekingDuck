@@ -13,7 +13,7 @@
 # limitations under the License.
 
 
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 from omegaconf import DictConfig
 
@@ -50,7 +50,7 @@ class PTImageClassificationDataset(Dataset):
         df: pd.DataFrame,
         stage: str = "train",
         transforms: TransformTypes = None,
-        **kwargs,
+        **kwargs: Dict[str, Any],
     ) -> None:
         """"""
 
@@ -67,14 +67,12 @@ class PTImageClassificationDataset(Dataset):
         """Return the length of the dataset."""
         return len(self.df.index)
 
-    def __getitem__(
-        self, index: int
-    ) -> Union[torch.FloatTensor, torch.FloatTensor, torch.LongTensor]:
+    def __getitem__(self, index: int) -> Union[Tuple, Any]:
         """Generate one batch of data"""
         image_path: str = self.image_path[index]
-        image = cv2.imread(image_path)
+        image: Tensor = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image: Tensor = self.apply_image_transforms(image)
+        image = self.apply_image_transforms(image)
 
         # Get target for all modes except for test dataset.
         # If test, replace target with dummy ones as placeholder.
@@ -124,9 +122,9 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         shuffle: bool = False,
         transforms: TransformTypes = None,
         num_channels: int = 3,
-        x_col="",
-        y_col="",
-        **kwargs,
+        x_col: str = "",
+        y_col: str = "",
+        **kwargs: Dict[str, Any],
     ) -> None:
         """"""
 
@@ -147,7 +145,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         """Denotes the number of batches per epoch"""
         return int(np.floor(len(self.list_IDs) / self.batch_size))
 
-    def __getitem__(self, index: int):
+    def __getitem__(self, index: int) -> Union[Tuple, Any]:
         """Generate one batch of data
 
         Args:

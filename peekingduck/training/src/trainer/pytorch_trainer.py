@@ -46,11 +46,18 @@ def get_sigmoid_softmax(
     trainer_config: DictConfig,
 ) -> Union[torch.nn.Sigmoid, torch.nn.Softmax]:
     """Get the sigmoid or softmax function depending on loss function."""
+    assert trainer_config.criterion_params.train_criterion in [
+        "BCEWithLogitsLoss",
+        "CrossEntropyLoss",
+    ], f"Unsupported loss function {trainer_config.criterion_params.train_criterion}"
+
     if trainer_config.criterion_params.train_criterion == "BCEWithLogitsLoss":
-        return getattr(torch.nn, "Sigmoid")()
+        loss_func = getattr(torch.nn, "Sigmoid")()
 
     if trainer_config.criterion_params.train_criterion == "CrossEntropyLoss":
-        return getattr(torch.nn, "Softmax")(dim=1)
+        loss_func = getattr(torch.nn, "Softmax")(dim=1)
+
+    return loss_func
 
 
 class PytorchTrainer:
@@ -58,37 +65,37 @@ class PytorchTrainer:
 
     def __init__(self, framework: str = "pytorch") -> None:
         """Initialize the trainer."""
-        self.framework = framework
-        self.device = None
+        self.framework: str = framework
+        self.device: str = "cpu"
 
-        self.trainer_config = None
-        self.model_config = None
-        self.callbacks_config = None
-        self.metrics_config = None
+        self.trainer_config: DictConfig
+        self.model_config: DictConfig
+        self.callbacks_config: DictConfig
+        self.metrics_config: DictConfig
 
-        self.callbacks: list = None
-        self.metrics: MetricCollection = None
-        self.model: PTModel = None
-        self.optimizer: torch.optim.Optimizer = None
-        self.scheduler: torch.optim.lr_scheduler = None
+        self.callbacks: list = []
+        self.metrics: MetricCollection
+        self.model: PTModel
+        self.optimizer: torch.optim.Optimizer
+        self.scheduler: Optional[torch.optim.lr_scheduler._LRScheduler] = None
 
-        self.train_params = None
-        self.model_artifacts_dir = None
-        self.monitored_metric = None
-        self.best_val_score = None
-        self.best_valid_loss = None
+        self.train_params: Dict[str, Any]
+        self.model_artifacts_dir: str
+        self.monitored_metric: Any
+        self.best_val_score: Any
+        self.best_valid_loss: Any
 
-        self.train_loader = None
-        self.validation_loader = None
+        self.train_loader: Any
+        self.validation_loader: Any
 
-        self.stop_training = False
-        self.history = defaultdict(list)
-        self.epochs = None
-        self.current_epoch = None
-        self.current_fold = None
-        self.epoch_dict = {}
-        self.valid_elapsed_time = None
-        self.train_elapsed_time = None
+        self.stop_training: bool = False
+        self.history: defaultdict[Any, List] = defaultdict(list)
+        self.epochs: int
+        self.current_epoch: int
+        self.current_fold: int = 0
+        self.epoch_dict: Dict = {}
+        self.valid_elapsed_time: str = ""
+        self.train_elapsed_time: str = ""
 
     def setup(
         self,
@@ -161,11 +168,11 @@ class PytorchTrainer:
         self.train_loader = train_dl
         self.validation_loader = validation_dl
 
-    def _train_setup(self, inputs) -> None:
+    def _train_setup(self, inputs: torch.Tensor) -> None:
         self._invoke_callbacks(EVENTS.TRAINER_START.value)
         self.train_summary(inputs)
 
-    def train_summary(self, inputs, finetune: bool = False):
+    def train_summary(self, inputs: torch.Tensor, finetune: bool = False) -> None:
         # show model layer details
         if not finetune:
             logger.info(f"Model Layer Details:\n{self.model.model}")
@@ -233,6 +240,9 @@ class PytorchTrainer:
             inputs = inputs.to(self.device, non_blocking=True)
             targets = targets.to(self.device, non_blocking=True)
 
+            # reset gradients
+            self.optimizer.zero_grad()
+
             # Forward pass logits
             logits = self.model(inputs)
 
@@ -242,12 +252,10 @@ class PytorchTrainer:
                 criterion_params=self.trainer_config.criterion_params,
                 stage="train",
             )
-
-            self.optimizer.zero_grad()  # reset gradients
             curr_batch_train_loss.backward()  # Backward pass
-            self.optimizer.step()  # Update weights using the optimizer
+            self.optimizer.step()  # Adjust learning weights
 
-            # Update loss metric, every batch is diff
+            # Compute the loss metrics and its gradients
             self.epoch_dict["train"]["batch_loss"] = curr_batch_train_loss.item()
             y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
             y_train_pred = torch.argmax(y_train_prob, dim=1)
@@ -386,7 +394,7 @@ class PytorchTrainer:
             # set fine-tune layers
             set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
             # need to re-init optimizer to update the newly unfrozen parameters
-            self.optimizer: torch.optim.Optimizer = (
+            self.optimizer = (
                 OptimizersAdapter.get_pytorch_optimizer(
                     model=self.model,
                     optimizer_params=self.trainer_config.optimizer_params,
