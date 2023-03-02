@@ -45,31 +45,13 @@ class PTModel(ABC, nn.Module):
     def forward(self, inputs: torch.Tensor) -> torch.Tensor:
         """Forward pass of the model."""
 
+    @abstractmethod
     def create_backbone(self) -> nn.Module:
         """Load the backbone of the model."""
 
+    @abstractmethod
     def create_head(self) -> nn.Module:
         """Modify the head of the model."""
-
-    def _init_weights(self, module: nn.Module) -> None:
-        """Initialize the weights of the model.
-
-        Note need to be private since it is only used internally.
-        """
-
-    def extract_embeddings(self, inputs: torch.Tensor) -> torch.Tensor:
-        """Extract the embeddings from the model.
-
-        NOTE:
-            Users can use feature embeddings to do metric learning or clustering,
-            as well as other tasks.
-
-        Sample Implementation:
-            ```python
-            def extract_embeddings(self, inputs: torch.Tensor) -> torch.Tensor:
-                return self.backbone(inputs)
-            ```
-        """
 
     def model_summary(
         self, input_size: Optional[Tuple[int, int, int, int]] = None, **kwargs: Any
@@ -84,7 +66,7 @@ class PTModel(ABC, nn.Module):
             )
         return torchinfo.summary(self.model, input_size=input_size, **kwargs)
 
-    def get_last_layer(self) -> Tuple[str, nn.Module, nn.Module]:
+    def get_last_layer(self) -> Tuple[Any, Optional[nn.Module], Any]:
         """Get the last layer information of a PyTorch Model.
 
         NOTE:
@@ -95,11 +77,11 @@ class PTModel(ABC, nn.Module):
             (Only the second last layer is 'Linear')
         """
         # propagate through the model to get the last layer name
-        for name, _param in self.backbone.named_modules():
+        for name, _ in getattr(self.backbone, "named_modules")():
             last_layer_name = name
         last_layer_attributes = last_layer_name.split(".")  # + ['in_features']
         # reduce applies to a list recursively and reduce it to a single value
         linear_layer = functools.reduce(getattr, last_layer_attributes, self.backbone)
-        in_features = linear_layer.in_features
+        in_features = getattr(linear_layer, "in_features")
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features
