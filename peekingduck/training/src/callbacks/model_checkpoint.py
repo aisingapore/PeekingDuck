@@ -144,7 +144,7 @@ class ModelCheckpoint(Callback):
             "scheduler_state_dict": None,
             "epoch": None,
             "best_score": None,
-            "model_artifacts_path": None,
+            "model_artifacts_path": "",
             # "oof_trues": None,
             # "oof_preds": None,
             # "oof_scores": None,

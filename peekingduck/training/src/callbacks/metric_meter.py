@@ -33,7 +33,7 @@ so add up all the metric scores of all batches and divide by the cumulative coun
 this is the average score of all batches in 1 epoch.
 """
 from collections import defaultdict
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -51,7 +51,7 @@ class MetricMeter(Callback):
     """
 
     # this must same as.
-    stats_to_track: list[str] = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
+    stats_to_track: List[str] = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
 
     def __init__(self, float_precision: int = 3, stats_to_track: list = []) -> None:
         super().__init__(order=CallbackOrder.METRICMETER)

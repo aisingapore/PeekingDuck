@@ -17,7 +17,7 @@ import numpy as np
 import torch
 
 from collections import defaultdict
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, DefaultDict, Dict, List, Optional, Union
 from torchmetrics import MetricCollection
 
 from tqdm.auto import tqdm
@@ -89,7 +89,7 @@ class PytorchTrainer:
         self.validation_loader: Any
 
         self.stop_training: bool = False
-        self.history: defaultdict[Any, List] = defaultdict(list)
+        self.history: DefaultDict[Any, List] = defaultdict(list)
         self.epochs: int
         self.current_epoch: int
         self.current_fold: int = 0
