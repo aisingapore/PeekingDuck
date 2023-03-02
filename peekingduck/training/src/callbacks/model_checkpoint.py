@@ -150,7 +150,7 @@ class ModelCheckpoint(Callback):
             # "oof_scores": None,
             # "oof_logits": None,
         }
-        self.model_artifacts_dir = trainer.trainer_config.stores.model_artifacts_dir
+        self.model_artifacts_dir = trainer.model_artifacts_dir
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
