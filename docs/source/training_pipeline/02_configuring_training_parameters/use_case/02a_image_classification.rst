@@ -2,13 +2,20 @@
 
 .. raw:: html
 
-   <script>
-
-   </script>
+   <style>
+        .wy-table-responsive table td ul li{
+            list-style-type: none;
+        }
+   </style>
 
 *********************
 Image Classification
 *********************
+
+.. toctree::
+   :maxdepth: 3
+
+   /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
 
 .. raw:: html
 
@@ -26,162 +33,486 @@ We are using the yaml syntax for the config file
 Data
 ====
 
+
 .. raw:: html
 
-   <h4>Default Values</h4>
+   <h4>Train Test Split</h4>
+
+   This is a statement about Train Test Split
+
+   <div class="wy-table-responsive">
+        <table class="docutils align-default">
+            <thead>
+                <tr class="row-odd">
+                    <th colspan="2" class="head"><p>Key</p></th>
+                    <th class="head"><p>Value</p></th>
+                    <th class="head"><p>Description</p></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2"><code class="xref"><span class="pre">resample_strategy</span></code></td>
+                    <td><p></p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><code class="xref"><span class="pre">_target_</span></code></td>
+                    <td><p>sklearn.model_selection.train_test_split</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><code class="xref"><span class="pre">_partial_</span></code></td>
+                    <td><p>True</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><code class="xref"><span class="pre">test_size</span></code></td>
+                    <td><p>0.125</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><code class="xref"><span class="pre">shuffle</span></code></td>
+                    <td><p>True</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><code class="xref"><span class="pre">random_state</span></code></td>
+                    <td><p>${random_state}</p></td>
+                    <td><p></p></td>
+                </tr>
+
+            </tbody>
+        </table>
+   </div>
+
+.. raw:: html
+
+   <div class="install">
+     <input type="radio" name="framework" id="training-framework3" class="training-framework-py" checked="checked">
+     <label for="training-framework-py">Pytorch</label>
+     <input type="radio" name="framework" id="training-framework4" class="training-framework-tf">
+     <label for="training-framework-tf">Tensorflow</label>
+   </div>
+   <br><br>
+
+.. raw:: html
+
+   <div class="install">
+      <div class="pkd-expandable training-pytorch">
+        <h4>Pytorch</h4>
+
+.. include:: /training_pipeline/02_configuring_training_parameters/data_module/pytorch_config.rst
+
+.. raw:: html
+
+   </div>
+      <div class="pkd-expandable training-tensorflow">
+        <h4>Tensorflow</h4>
+
+.. include:: /training_pipeline/02_configuring_training_parameters/data_module/tensorflow_config.rst
+
+.. raw:: html
+
+   </div></div>
+
+.. raw:: html
+
+   <h4>Default Datasets</h4>
 
 .. tabs::
 
    .. tab:: Cifar10
 
-      .. tabs::
+      This is a statement about Cifar10
 
-         .. tab:: General
+      .. raw:: html
 
-            Hello welcome to statquest, this is josh stammer and today...
-
-            .. raw:: html
-
-                <div class="wy-table-responsive">
-                    <table class="docutils align-default">
-                        <thead>
-                            <tr class="row-odd">
-                                <th class="head"><p>Cifar10</p></th>
-                                <th class="head"><p>Context</p></th>
-                                <th class="head"><p>Example</p></th>
-                                
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="row-even">
-                                <td><p><span class="blue">Blue</span></p></td>
-                                <td><p>Current folder</p></td>
-                                <td><p><span class="blue">[~user/src]</span></p></td>
-                                <td><p><span class="blue">[~user/src]</span></p></td>
-                            </tr>
-                            <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                                <td><p>User input: what you type in</p></td>
-                                <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                                <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                            </tr>
-                            <tr class="row-even"><td><p>Black</p></td>
-                                <td><p>PeekingDuck’s output</p></td>
-                                <td><p>peekingduck, version v1.2.0</p></td>
-                                <td><p>peekingduck, version v1.2.0</p></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-         .. tab:: Dataset
-
-            The closest star to us.
-
-         .. tab:: Train Test Split
-
-            The second closest star to us.
-
-         .. tab:: Transform
-
-            The North Star.
+         <div class="wy-table-responsive">
+            <table class="docutils align-default">
+                <thead>
+                    <tr class="row-odd">
+                        <th class="head"><p>Key</p></th>
+                        <th class="head"><p>Value</p></th>
+                        <th class="head"><p>Description</p></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="xref"><span class="pre">download</span></code></td>
+                        <td><p>False</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">url</span></code></td>
+                        <td><p>"https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">blob_file</span></code></td>
+                        <td><p>"cifar10.zip"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">root_dir</span></code></td>
+                        <td><p>"data"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_dir</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">test_dir</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_csv</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}/train.csv"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
+                        <td><p>"image_path"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_name</span></code></td>
+                        <td><p>"class_name" #class_id</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_id</span></code></td>
+                        <td><p>"class_id"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">stratify_by</span></code></td>
+                        <td><p>"${.target_col_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">classification_type</span></code></td>
+                        <td><p>"multiclass"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_size</span></code></td>
+                        <td><p>224</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
+                        <td><p>10</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
+                        <td><ul>
+                                <li>airplane: 0</li>
+                                <li>automobile: 1</li>
+                                <li>bird: 2</li>
+                                <li>cat: 3</li>
+                                <li>deer: 4</li>
+                                <li>dog: 5</li>
+                                <li>frog: 6</li>
+                                <li>horse: 7</li>
+                                <li>ship: 8</li>
+                                <li>truck: 9</li>
+                        </ul></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">classes</span></code></td>
+                        <td><ul>
+                                <li>- airplane</li>
+                                <li>- automobile</li>
+                                <li>- bird</li>
+                                <li>- cat</li>
+                                <li>- deer</li>
+                                <li>- dog</li>
+                                <li>- frog</li>
+                                <li>- horse</li>
+                                <li>- ship</li>
+                                <li>- truck</li>
+                        </ul></td>
+                        <td><p></p></td>
+                    </tr>
+                </tbody>
+            </table>
+         </div>
 
    .. tab:: Vegfru
 
-      .. tabs::
+      This is a statement about Vegfru
 
-         .. tab:: General
+      .. raw:: html
 
-            .. raw:: html
-
-                <div class="wy-table-responsive">
-                    <table class="docutils align-default">
-                        <thead>
-                            <tr class="row-odd">
-                                <th class="head"><p>Vegfru</p></th>
-                                <th class="head"><p>Context</p></th>
-                                <th class="head"><p>Example</p></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="row-even">
-                                <td><p><span class="blue">Blue</span></p></td>
-                                <td><p>Current folder</p></td>
-                                <td><p><span class="blue">[~user/src]</span></p></td>
-                            </tr>
-                            <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                                <td><p>User input: what you type in</p></td>
-                                <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                            </tr>
-                            <tr class="row-even"><td><p>Black</p></td>
-                                <td><p>PeekingDuck’s output</p></td>
-                                <td><p>peekingduck, version v1.2.0</p></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-         .. tab:: Dataset
-
-            The closest star to us.
-
-         .. tab:: Train Test Split
-
-            The second closest star to us.
-
-         .. tab:: Transform
-
-            The North Star.
+         <div class="wy-table-responsive">
+            <table class="docutils align-default">
+                <thead>
+                    <tr class="row-odd">
+                        <th class="head"><p>Key</p></th>
+                        <th class="head"><p>VegFru5</p></th>
+                        <th class="head"><p>VegFru15</p></th>
+                        <th class="head"><p>VegFru25</p></th>
+                        <th class="head"><p>Description</p></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="xref"><span class="pre">download</span></code></td>
+                        <td colspan="3"><p>False</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">url</span></code></td>
+                        <td colspan="3"><p>""</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">blob_file</span></code></td>
+                        <td colspan="3"><p>"vegfru.zip"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">root_dir</span></code></td>
+                        <td colspan="3"><p>"data"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_dir</span></code></td>
+                        <td colspan="3"><p>"./${.root_dir}/vegfru"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">test_dir</span></code></td>
+                        <td colspan="3"><p>"./${.root_dir}/vegfru"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_csv</span></code></td>
+                        <td><p>"./${.root_dir}/vegfru/vegfru5.csv"</p></td>
+                        <td><p>"./${.root_dir}/vegfru/vegfru15.csv"</p></td>
+                        <td><p>"./${.root_dir}/vegfru/train.csv"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
+                        <td colspan="3"><p>"image_path"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_name</span></code></td>
+                        <td colspan="3"><p>"class_name"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_id</span></code></td>
+                        <td colspan="3"><p>"class_id"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">stratify_by</span></code></td>
+                        <td><p>class_id</p></td>
+                        <td><p>class_id</p></td>
+                        <td><p>class_name</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">classification_type</span></code></td>
+                        <td colspan="3"><p>"multiclass"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_size</span></code></td>
+                        <td colspan="3"><p>224</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
+                        <td><p>5</p></td>
+                        <td><p>15</p></td>
+                        <td><p>25</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
+                        <td><ul>
+                                <li>"garlic": 0</li>
+                                <li>"cattail": 1</li>
+                                <li>"soybean": 2</li>
+                                <li>"red_cabbage": 3</li>
+                                <li>"mung_bean_sprouts": 4</li>
+                        </ul></td>
+                        <td><ul>
+                                <li>"garlic": 0</li>
+                                <li>"cattail": 1</li>
+                                <li>"soybean": 2</li>
+                                <li>"red_cabbage": 3</li>
+                                <li>"mung_bean_sprouts": 4</li>
+                                <li>"pakchoi": 5</li>
+                                <li>"eggplant": 6</li>
+                                <li>"chrysanthemum": 7</li>
+                                <li>"snake_gourd": 8</li>
+                                <li>"nameko": 9</li>
+                                <li>"mustard": 10</li>
+                                <li>"Lily": 11</li>
+                                <li>"beetroot": 12</li>
+                                <li>"kudzu": 13</li>
+                                <li>"fallopia_multiflora": 14</li>
+                        </ul></td>
+                        <td><ul>
+                                <li>"alliaceous": 0</li>
+                                <li>"aquatic_vegetable": 1</li>
+                                <li>"beans": 2</li>
+                                <li>"brassia_olreacea": 3</li>
+                                <li>"bug_seedling": 4</li>
+                                <li>"cabbage": 5</li>
+                                <li>"eggplant": 6</li>
+                                <li>"green_leafy_vegatable": 7</li>
+                                <li>"melon": 8</li>
+                                <li>"mushroom": 9</li>
+                                <li>"mustard": 10</li>
+                                <li>"perennial": 11</li>
+                                <li>"root_vegetable": 12</li>
+                                <li>"tuber_vagetable": 13</li>
+                                <li>"wild_vegetable": 14</li>
+                                <li>"berry_fruit": 15</li>
+                                <li>"citrus_fruit": 16</li>
+                                <li>"collective_fruit": 17</li>
+                                <li>"cucurbites": 18</li>
+                                <li>"drupe": 19</li>
+                                <li>"litchies": 20</li>
+                                <li>"nut_fruit": 21</li>
+                                <li>"persimmons_and_jujubes_fruit": 22</li>
+                                <li>"pome": 23</li>
+                                <li>"other_fruit": 24</li>
+                        </ul></td>
+                        <td><p></p></td>
+                    </tr>
+                </tbody>
+            </table>
+         </div>
 
    .. tab:: RSNA
 
-      .. tabs::
+      This is a statement about RSNA
 
-         .. tab:: General
+      .. raw:: html
 
-            .. raw:: html
+         <div class="wy-table-responsive">
+            <table class="docutils align-default">
+                <thead>
+                    <tr class="row-odd">
+                        <th class="head"><p>Key</p></th>
+                        <th class="head"><p>Value</p></th>
+                        <th class="head"><p>Description</p></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><code class="xref"><span class="pre">download</span></code></td>
+                        <td><p>False</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">url</span></code></td>
+                        <td><p>"https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">blob_file</span></code></td>
+                        <td><p>"rsna.zip"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">root_dir</span></code></td>
+                        <td><p>"data"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_dir</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">test_dir</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">train_csv</span></code></td>
+                        <td><p>"./${.root_dir}/${project_name}/train.csv"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
+                        <td><p>"image_path"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_name</span></code></td>
+                        <td><p>"class_name" #class_name cancer</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">target_col_id</span></code></td>
+                        <td><p>"class_id"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">stratify_by</span></code></td>
+                        <td><p>"${.target_col_name}"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">classification_type</span></code></td>
+                        <td><p>"multiclass"</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_size</span></code></td>
+                        <td><p>224</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
+                        <td><p>2</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
+                        <td><ul>
+                            <li>benign: 0</li>
+                            <li>malignant: 1</li>
+                        </ul></td>
+                        <td><p></p></td>
+                    </tr>
+                </tbody>
+            </table>
+         </div>
 
-                <div class="wy-table-responsive">
-                    <table class="docutils align-default">
-                        <thead>
-                            <tr class="row-odd">
-                                <th class="head"><p>RSNA</p></th>
-                                <th class="head"><p>Context</p></th>
-                                <th class="head"><p>Example</p></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr class="row-even">
-                                <td><p><span class="blue">Blue</span></p></td>
-                                <td><p>Current folder</p></td>
-                                <td><p><span class="blue">[~user/src]</span></p></td>
-                            </tr>
-                            <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                                <td><p>User input: what you type in</p></td>
-                                <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
-                            </tr>
-                            <tr class="row-even"><td><p>Black</p></td>
-                                <td><p>PeekingDuck’s output</p></td>
-                                <td><p>peekingduck, version v1.2.0</p></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-
-         .. tab:: Dataset
-
-            The closest star to us.
-
-         .. tab:: Train Test Split
-
-            The second closest star to us.
-
-         .. tab:: Transform
-
-            The North Star.
 
 
 Model
 =====
+
+.. raw:: html
+
+   <div class="install">
+     <input type="radio" name="framework" id="training-framework5" class="training-framework-py" checked="checked">
+     <label for="training-framework-py">Pytorch</label>
+     <input type="radio" name="framework" id="training-framework6" class="training-framework-tf">
+     <label for="training-framework-tf">Tensorflow</label>
+   </div>
+   <br><br>
 
 .. raw:: html
 
@@ -192,24 +523,72 @@ Model
             <table class="docutils align-default">
                 <thead>
                     <tr class="row-odd">
-                        <th class="head"><p>Pytorch</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
+                        <th class="head"><p>Key</p></th>
+                        <th class="head"><p>Value</p></th>
+                        <th class="head"><p>Description</p></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">adapter</span></code></td>
+                        <td><p>"timm"</p</td>
+                        <td><p></p></td>
                     </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">task</span></code></td>
+                        <td><p>"classification"</p</td>
+                        <td><p></p></td>
                     </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">model_name</span></code></td>
+                        <td><p>"vgg16"</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">weights</span></code></td>
+                        <td><p>"DEFAULT"</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">pretrained</span></code></td>
+                        <td><p>True</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune</span></code></td>
+                        <td><p>True</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune_modules</span></code></td>
+                        <td><p></p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune_modules</span></code>.features</td>
+                        <td><p>7</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune_modules</span></code>.pre_logits</td>
+                        <td><p>[
+                                "fc1",
+                                "act1",
+                                "drop",
+                                "fc2",
+                                "act2",
+                            ]</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
+                        <td><p>${data_module.dataset.num_classes}</p</td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">device</span></code></td>
+                        <td><p>${device}</p</td>
+                        <td><p></p></td>
                     </tr>
                 </tbody>
             </table>
@@ -222,24 +601,58 @@ Model
             <table class="docutils align-default">
                 <thead>
                     <tr class="row-odd">
-                        <th class="head"><p>Tensorflow</p></th>
-                        <th class="head"><p>Context</p></th>
-                        <th class="head"><p>Example</p></th>
+                        <th class="head"><p>Key</p></th>
+                        <th class="head"><p>Value</p></th>
+                        <th class="head"><p>Description</p></th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr class="row-even">
-                        <td><p><span class="blue">Blue</span></p></td>
-                        <td><p>Current folder</p></td>
-                        <td><p><span class="blue">[~user/src]</span></p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">task</span></code></td>
+                        <td><p>"classification"</p></td>
+                        <td><p></p></td>
                     </tr>
-                    <tr class="row-odd"><td><p><span class="green">Green</span></p></td>
-                        <td><p>User input: what you type in</p></td>
-                        <td><p>&gt; <span class="green">peekingduck --version</span></p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">model_name</span></code></td>
+                        <td><p>"VGG16"</p></td>
+                        <td><p></p></td>
                     </tr>
-                    <tr class="row-even"><td><p>Black</p></td>
-                        <td><p>PeekingDuck’s output</p></td>
-                        <td><p>peekingduck, version v1.2.0</p></td>
+                    <tr>
+                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
+                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">image_size</span></code></td>
+                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">device</span></code></td>
+                        <td><p>${device}</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">pretrained</span></code></td>
+                        <td><p>True</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune</span></code></td>
+                        <td><p>True</p></td>
+                        <td><p></p></td>
+                    </tr>
+                    <tr>
+                        <td><code class="xref"><span class="pre">fine_tune_layers</span></code></td>
+                        <td><p>[
+                            "prediction_modified",
+                            "fc2",
+                            "fc1",
+                            "block5_conv3",
+                            "block5_conv2",
+                            "block5_conv1",
+                        ]</p></td>
+                        <td><p></p></td>
                     </tr>
                 </tbody>
             </table>
@@ -301,6 +714,16 @@ Trainer
 .. raw:: html
 
    <div class="install">
+     <input type="radio" name="framework" id="training-framework7" class="training-framework-py" checked="checked">
+     <label for="training-framework-py">Pytorch</label>
+     <input type="radio" name="framework" id="training-framework8" class="training-framework-tf">
+     <label for="training-framework-tf">Tensorflow</label>
+   </div>
+   <br><br>
+
+.. raw:: html
+
+   <div class="install">
       <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
 
@@ -322,6 +745,16 @@ Trainer
 
 Metrics
 =======
+
+.. raw:: html
+
+   <div class="install">
+     <input type="radio" name="framework" id="training-framework9" class="training-framework-py" checked="checked">
+     <label for="training-framework-py">Pytorch</label>
+     <input type="radio" name="framework" id="training-framework10" class="training-framework-tf">
+     <label for="training-framework-tf">Tensorflow</label>
+   </div>
+   <br><br>
 
 .. raw:: html
 
@@ -462,6 +895,16 @@ Callbacks
 .. raw:: html
 
    <div class="install">
+     <input type="radio" name="framework" id="training-framework11" class="training-framework-py" checked="checked">
+     <label for="training-framework-py">Pytorch</label>
+     <input type="radio" name="framework" id="training-framework12" class="training-framework-tf">
+     <label for="training-framework-tf">Tensorflow</label>
+   </div>
+   <br><br>
+
+.. raw:: html
+
+   <div class="install">
      <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
         <p>The table below shows the default values:</p>
@@ -583,6 +1026,7 @@ Store
 
 .. raw:: html
 
+   <h4>Default Values</h4>
    <div class="wy-table-responsive">
         <table class="docutils align-default">
             <thead>
@@ -594,7 +1038,7 @@ Store
             </thead>
             <tbody>
                 <tr class="row-even">
-                    <td><p><span class="blue">unique_id</span></p></td>
+                    <td><p><span class="">unique_id</span></p></td>
                     <td><p>${now:%Y%m%d_%H%M%S}</p></td>
                     <td></td>
                 </tr>
