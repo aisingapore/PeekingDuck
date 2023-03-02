@@ -278,8 +278,8 @@ class PytorchTrainer:
         ) = (
             torch.vstack(tensors=train_trues),
             torch.vstack(tensors=train_logits),
-            torch.vstack(tensors=train_probs),
             torch.vstack(tensors=train_preds),
+            torch.vstack(tensors=train_probs),
         )
         self.epoch_dict["train"]["metrics"] = PytorchMetrics.get_classification_metrics(
             self.metrics,
@@ -365,7 +365,7 @@ class PytorchTrainer:
         self.epoch_dict["validation"][
             "metrics"
         ] = PytorchMetrics.get_classification_metrics(
-            self.metrics_tensor,
+            self.metrics,
             valid_trues_tensor,
             valid_preds_tensor,
             valid_probs_tensor,
@@ -376,10 +376,10 @@ class PytorchTrainer:
 
         self.epoch_dict["validation"].update(
             {
-                "valid_trues": valid_trues,
-                "valid_logits": valid_logits,
-                "valid_preds": valid_preds,
-                "valid_probs": valid_probs,
+                "valid_trues": valid_trues_tensor,
+                "valid_logits": valid_logits_tensor,
+                "valid_preds": valid_preds_tensor,
+                "valid_probs": valid_probs_tensor,
                 "valid_elapsed_time": self.valid_elapsed_time,
             }
         )
