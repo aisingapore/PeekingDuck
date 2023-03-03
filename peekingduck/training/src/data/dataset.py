@@ -156,9 +156,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
                 Outputs dictionary with the keys `labels`.
         """
         # Generate indexes of the batch
-        indexes: np.ndarray[Any, np.dtype[np.signedinteger]] = self.indexes[
-            index * self.batch_size : (index + 1) * self.batch_size
-        ]
+        indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
 
         # Find list of IDs
         list_IDs_temp: List[Any] = [self.list_IDs[k] for k in indexes]
@@ -183,7 +181,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
             (ndarray):
                 Outputs image in numpy array.
         """
-        image: np.ndarray[int, np.dtype[np.generic]] = cv2.imread(image_path)  # BGR
+        image = cv2.imread(image_path)  # BGR
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         image = self.apply_image_transforms(image)
@@ -194,12 +192,12 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
     def _data_generation(
         self,
         list_IDs_temp: List[Any],
-        indexes: np.ndarray[Any, np.dtype[np.signedinteger]],
+        indexes: np.ndarray,
     ) -> Any:
         "Generates data containing batch_size samples"  # X : (n_samples, *dim, n_channels)
         # Initialization
         X = np.empty((self.batch_size, *self.dim, self.num_channels))
-        y: np.ndarray[Any, np.dtype] = np.empty((self.batch_size), dtype=int)
+        y = np.empty((self.batch_size), dtype=int)
 
         # Generate data
         for i, ID in enumerate(list_IDs_temp):

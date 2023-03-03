@@ -4,7 +4,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Adapter</p>
+         <p>Configuration for Data Adapter to pipeline the dataset to the model.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -18,12 +18,7 @@
                     <tr>
                         <td colspan="3"><code class="xref"><span class="pre">adapter_type</span></code></td>
                         <td><p>"tensorflow"</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="3"><code class="xref"><span class="pre">scale</span></code></td>
-                        <td><p>255.</p></td>
-                        <td><p></p></td>
+                        <td><p>framework</p></td>
                     </tr>
                     <tr>
                         <td colspan="3"><code class="xref"><span class="pre">train</span></code></td>
@@ -289,7 +284,7 @@
       .. raw:: html 
 
          <h5>Train</h5>
-         <p>This is a sentence describing Train</p>
+         <p>Transformation to be applied to training dataset.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -303,7 +298,7 @@
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
                         <td><p>albumentations.augmentations.crops.transforms.RandomResizedCrop</p></td>
-                        <td><p></p></td>
+                        <td><p>Torchvision's variant of crop a random part of the input and rescale it to some size.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -356,7 +351,7 @@
          </div>
 
          <h5>Test</h5>
-         <p>This is a sentence describing Train</p>
+         <p>Transformation to be applied to test and validation dataset.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>

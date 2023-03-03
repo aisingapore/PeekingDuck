@@ -1,6 +1,5 @@
 pytorch:
   adapter_type: "pytorch"
-  scale: 1.
 
   train:
     batch_size: 32
@@ -22,7 +21,6 @@ pytorch:
 
 tensorflow:
   adapter_type: "tensorflow"
-  scale: 255.
 
   train:
     batch_size: 32
