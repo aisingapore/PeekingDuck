@@ -145,12 +145,12 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">download</span></code></td>
                         <td><p>False</p></td>
-                        <td><p></p></td>
+                        <td><p>Download from url below</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">url</span></code></td>
                         <td><p>"https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"</p></td>
-                        <td><p></p></td>
+                        <td><p>URL to download dataset</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">blob_file</span></code></td>
@@ -269,12 +269,12 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">download</span></code></td>
                         <td colspan="3"><p>False</p></td>
-                        <td><p></p></td>
+                        <td><p>Download from url below</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">url</span></code></td>
                         <td colspan="3"><p>""</p></td>
-                        <td><p></p></td>
+                        <td><p>URL to download dataset</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">blob_file</span></code></td>
@@ -420,12 +420,12 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">download</span></code></td>
                         <td><p>False</p></td>
-                        <td><p></p></td>
+                        <td><p>Download from url below</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">url</span></code></td>
-                        <td><p>"https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"</p></td>
                         <td><p></p></td>
+                        <td><p>URL to download dataset</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">blob_file</span></code></td>

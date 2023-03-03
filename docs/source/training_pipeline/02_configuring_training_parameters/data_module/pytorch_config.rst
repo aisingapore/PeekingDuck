@@ -4,7 +4,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Adapter</p>
+         <p>Configuration for Data Adapter to pipeline the dataset to the model.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -18,12 +18,7 @@
                     <tr>
                         <td><code class="xref"><span class="pre">adapter_type</span></code></td>
                         <td><p>"pytorch"</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><code class="xref"><span class="pre">scale</span></code></td>
-                        <td><p>1.</p></td>
-                        <td><p></p></td>
+                        <td><p>framework</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">train</span></code></td>
