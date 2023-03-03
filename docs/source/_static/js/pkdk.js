@@ -1,9 +1,9 @@
 
 // Script for Training Pipeline Pages
 $(window).on("load", function (e) {
-    var framework_btn_py = $('#training-framework-py');
+    var framework_btn_py = $('.training-framework-py');
     var content_py = $('.training-pytorch');
-    var framework_btn_tf = $('#training-framework-tf');
+    var framework_btn_tf = $('.training-framework-tf');
     var content_tf = $('.training-tensorflow');
     
     content_py.show();
