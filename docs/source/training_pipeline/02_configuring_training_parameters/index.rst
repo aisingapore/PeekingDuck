@@ -4,10 +4,6 @@
 Configuring Training Parameters
 *******************************
 
-
-Use Cases
-=========
-
 .. toctree::
    :maxdepth: 3
 
