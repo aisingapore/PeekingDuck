@@ -278,7 +278,7 @@
       .. raw:: html 
 
          <h5>Train</h5>
-         <p>This is a sentence describing Train</p>
+         <p>Transformation to be applied to training dataset.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -292,7 +292,7 @@
                     <tr>
                         <td colspan="2"><span>_target_</span></td>
                         <td><p>albumentations.augmentations.crops.transforms.RandomResizedCrop</p></td>
-                        <td><p></p></td>
+                        <td><p>Torchvision's variant of crop a random part of the input and rescale it to some size.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -345,7 +345,7 @@
          </div>
 
          <h5>Test</h5>
-         <p>This is a sentence describing Train</p>
+         <p>Transformation to be applied to test and validation dataset.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>

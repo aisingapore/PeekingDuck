@@ -38,7 +38,7 @@ Data
 
    <h4>Train Test Split</h4>
 
-   This is a statement about Train Test Split
+   Split arrays or matrices into random train and test subsets.
 
    <div class="wy-table-responsive">
         <table class="docutils align-default">
@@ -59,31 +59,31 @@ Data
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">_target_</span></code></td>
                     <td><p>sklearn.model_selection.train_test_split</p></td>
-                    <td><p></p></td>
+                    <td><p>Quick utility that wraps input validation, next(ShuffleSplit().split(X, y)), and application to input data into a single call for splitting (and optionally subsampling) data into a one-liner.</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">_partial_</span></code></td>
                     <td><p>True</p></td>
-                    <td><p></p></td>
+                    <td><p>Partial initialization of function to allow stratify in dataset.</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">test_size</span></code></td>
                     <td><p>0.125</p></td>
-                    <td><p></p></td>
+                    <td><p>If float, should be between 0.0 and 1.0 and represent the proportion of the dataset to include in the test split. If int, represents the absolute number of test samples. If None, the value is set to the complement of the train size. If train_size is also None, it will be set to 0.25.</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">shuffle</span></code></td>
                     <td><p>True</p></td>
-                    <td><p></p></td>
+                    <td><p>Whether or not to shuffle the data before splitting.</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">random_state</span></code></td>
                     <td><p>${random_state}</p></td>
-                    <td><p></p></td>
+                    <td><p>Controls the shuffling applied to the data before applying the split. Pass an int for reproducible output across multiple function calls.</p></td>
                 </tr>
 
             </tbody>
@@ -128,7 +128,7 @@ Data
 
    .. tab:: Cifar10
 
-      This is a statement about Cifar10
+      https://www.cs.toronto.edu/~kriz/cifar.html. The CIFAR-10 dataset consists of 60000 32x32 colour images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. The dataset is divided into five training batches and one test batch, each with 10000 images. The test batch contains exactly 1000 randomly-selected images from each class. The training batches contain the remaining images in random order, but some training batches may contain more images from one class than another. Between them, the training batches contain exactly 5000 images from each class.
 
       .. raw:: html
 
@@ -180,37 +180,37 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
                         <td><p>"image_path"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to image path. Allow absolute path or relative path.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_name</span></code></td>
-                        <td><p>"class_name" #class_id</p></td>
-                        <td><p></p></td>
+                        <td><p>"class_name"</p></td>
+                        <td><p>csv file column name to target string.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_id</span></code></td>
                         <td><p>"class_id"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to target integer.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">stratify_by</span></code></td>
                         <td><p>"${.target_col_name}"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to be stratify by.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">classification_type</span></code></td>
                         <td><p>"multiclass"</p></td>
-                        <td><p></p></td>
+                        <td><p>Task type.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">image_size</span></code></td>
                         <td><p>224</p></td>
-                        <td><p></p></td>
+                        <td><p>resized image pixel size.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">num_classes</span></code></td>
                         <td><p>10</p></td>
-                        <td><p></p></td>
+                        <td><p>number of classes.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
@@ -226,7 +226,7 @@ Data
                                 <li>ship: 8</li>
                                 <li>truck: 9</li>
                         </ul></td>
-                        <td><p></p></td>
+                        <td><p>dict mapping between target `string` and `integer`.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">classes</span></code></td>
@@ -242,7 +242,7 @@ Data
                                 <li>- ship</li>
                                 <li>- truck</li>
                         </ul></td>
-                        <td><p></p></td>
+                        <td><p>list of classes name</p></td>
                     </tr>
                 </tbody>
             </table>
@@ -250,7 +250,7 @@ Data
 
    .. tab:: Vegfru
 
-      This is a statement about Vegfru
+      Based on dataset from https://github.com/ustc-vim/vegfru. For the paper "VegFru: A Domain-Specific Dataset for Fine-grained Visual Categorization".
 
       .. raw:: html
 
@@ -306,41 +306,41 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
                         <td colspan="3"><p>"image_path"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to image path. Allow absolute path or relative path.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_name</span></code></td>
                         <td colspan="3"><p>"class_name"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to target string.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_id</span></code></td>
                         <td colspan="3"><p>"class_id"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to target integer.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">stratify_by</span></code></td>
                         <td><p>class_id</p></td>
                         <td><p>class_id</p></td>
                         <td><p>class_name</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to be stratify by.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">classification_type</span></code></td>
                         <td colspan="3"><p>"multiclass"</p></td>
-                        <td><p></p></td>
+                        <td><p>Task type.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">image_size</span></code></td>
                         <td colspan="3"><p>224</p></td>
-                        <td><p></p></td>
+                        <td><p>image pixel size.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">num_classes</span></code></td>
                         <td><p>5</p></td>
                         <td><p>15</p></td>
                         <td><p>25</p></td>
-                        <td><p></p></td>
+                        <td><p>number of classes.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
@@ -395,7 +395,7 @@ Data
                                 <li>"pome": 23</li>
                                 <li>"other_fruit": 24</li>
                         </ul></td>
-                        <td><p></p></td>
+                        <td><p>dict mapping between target `string` and `integer`.</p></td>
                     </tr>
                 </tbody>
             </table>
@@ -403,7 +403,7 @@ Data
 
    .. tab:: RSNA
 
-      This is a statement about RSNA
+      https://www.kaggle.com/competitions/rsna-breast-cancer-detection/data. The goal of this dataset is to identify cases of breast cancer in mammograms from screening exams. It is important to identify cases of cancer for obvious reasons, but false positives also have downsides for patients. As millions of women get mammograms each year, a useful machine learning tool could help a great many people.
 
       .. raw:: html
 
@@ -455,37 +455,37 @@ Data
                     <tr>
                         <td><code class="xref"><span class="pre">image_path_col_name</span></code></td>
                         <td><p>"image_path"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to image path. Allow absolute path or relative path.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_name</span></code></td>
                         <td><p>"class_name" #class_name cancer</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to target string.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_id</span></code></td>
                         <td><p>"class_id"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to target integer.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">stratify_by</span></code></td>
                         <td><p>"${.target_col_name}"</p></td>
-                        <td><p></p></td>
+                        <td><p>csv file column name to be stratify by.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">classification_type</span></code></td>
                         <td><p>"multiclass"</p></td>
-                        <td><p></p></td>
+                        <td><p>Task type.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">image_size</span></code></td>
                         <td><p>224</p></td>
-                        <td><p></p></td>
+                        <td><p>resized image pixel size.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">num_classes</span></code></td>
                         <td><p>2</p></td>
-                        <td><p></p></td>
+                        <td><p>number of classes.</p></td>
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">class_name_to_id</span></code></td>
@@ -493,7 +493,7 @@ Data
                             <li>benign: 0</li>
                             <li>malignant: 1</li>
                         </ul></td>
-                        <td><p></p></td>
+                        <td><p>dict mapping between target `string` and `integer`.</p></td>
                     </tr>
                 </tbody>
             </table>
