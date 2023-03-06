@@ -6,10 +6,10 @@ hydra-core
 pandas
 numpy
 scikit-learn
-torch
+torch < 1.13 -f https://download.pytorch.org/whl/cu102 # pytorch 1.13 deprecated cuda 10.2, which is the only compatible version with 
 torchvision >= 0.13
 torchinfo
-tensorflow
+tensorflow < 2.11 # 2.11 on cuda will encounter issue with the official CUDA installation guide during the training stage.
 tqdm
 torchmetrics
 albumentations
