@@ -20,5 +20,14 @@ If you have already collected your own dataset, the following section describes 
 
 `image_path`, `class_id` and  `class_name` are required columns in the `csv` file.
 
-Example function to extract images path: PeekingDuck/general_utils.py at feat-training · (github.com)
++-------------------+------------------+-----------------------+
+| Columns           | Data type        | Description           |
++===================+==================+=======================+
+| `image_path`      | `string`         | path to image file    |
++-------------------+------------------+-----------------------+
+| `class_id`        | `integer`        | image class           |
++-------------------+------------------+-----------------------+
+| `class_name`      | `string`         | image class name      |
++-------------------+------------------+-----------------------+
 
+Example function to extract images path: PeekingDuck/general_utils.py at feat-training · (github.com)
