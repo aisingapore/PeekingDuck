@@ -106,9 +106,9 @@ class TensorflowTrainer:
     def train(self, train_dl: DataAdapter, val_dl: DataAdapter) -> Union[Any, dict]:
         self.train_summary()
 
-        self.epochs = self.trainer_config.global_train_params.epochs
-        if self.trainer_config.global_train_params.debug:
-            self.epochs = self.trainer_config.global_train_params.debug_epochs
+        self.epochs = self.train_params.epochs
+        if self.train_params.debug:
+            self.epochs = self.train_params.debug_epochs
 
         feature_extraction_history = self.model.fit(
             train_dl,
