@@ -47,7 +47,7 @@ class MyDataset(torch.utils.data.Dataset):
     def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
         return self.data[index], self.targets[index]
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.data)
 
 
