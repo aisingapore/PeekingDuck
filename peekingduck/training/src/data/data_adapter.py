@@ -26,10 +26,15 @@ from src.data.dataset import TFImageClassificationDataset
 class DataAdapter:
     """Adapter for different framework"""
 
-    cfg: DictConfig = field()
+    cfg: DictConfig
     loader: Any = field(init=False)
 
     def __post_init__(self) -> None:
+        assert self.cfg.adapter_type in [
+            "pytorch",
+            "tensorflow",
+        ], f"Unsupported framework {self.cfg.adapter_type}"
+
         if self.cfg.adapter_type == "pytorch":
             self.loader = DataLoader
         if self.cfg.adapter_type == "tensorflow":
@@ -38,11 +43,6 @@ class DataAdapter:
     def train_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
-        assert self.cfg.adapter_type in [
-            "pytorch",
-            "tensorflow",
-        ], f"Unsupported framework {self.cfg.adapter_type}"
-
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,
@@ -59,11 +59,6 @@ class DataAdapter:
     def validation_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
-        assert self.cfg.adapter_type in [
-            "pytorch",
-            "tensorflow",
-        ], f"Unsupported framework {self.cfg.adapter_type}"
-
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,
@@ -80,11 +75,6 @@ class DataAdapter:
     def test_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
-        assert self.cfg.adapter_type in [
-            "pytorch",
-            "tensorflow",
-        ], f"Unsupported framework {self.cfg.adapter_type}"
-
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,

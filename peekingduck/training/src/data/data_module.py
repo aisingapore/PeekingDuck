@@ -52,6 +52,7 @@ class ImageClassificationDataModule:
             cfg.transform[cfg.framework]
         )
         self.dataset_loader: Union[DataAdapter, None] = None  # Setup in self.setup()
+        self.kwargs = kwargs
 
     def get_train_dataset(self) -> DataAdapter:
         """Return training data loader adapter"""
