@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+from typing import Tuple
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -43,7 +44,7 @@ class MyDataset(torch.utils.data.Dataset):
         self.data = torch.randn((100, 10))
         self.targets = torch.randn((100, 1))
 
-    def __getitem__(self, index: int) -> tuple[torch.Tensor, torch.Tensor]:
+    def __getitem__(self, index: int) -> Tuple[torch.Tensor, torch.Tensor]:
         return self.data[index], self.targets[index]
 
     def __len__(self):
