@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 
 print("GPU available:\n\n", torch.cuda.is_available())
 print("CUDA version:\n\n", torch.version.cuda)
-print("cudnn version:", torch.backends.cudnn.version())
+# print("cudnn version:", torch.backends.cudnn.version())
 
 
 # Define the model
