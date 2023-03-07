@@ -21,9 +21,9 @@ import albumentations as A
 import cv2
 import pandas as pd
 
-from .. import config
+from src.config import TORCH_AVAILABLE, TF_AVAILABLE
 
-if config.TORCH_AVAILABLE:
+if TORCH_AVAILABLE:
     import torch
     from torch import Tensor
     from torch.utils.data import Dataset
@@ -31,7 +31,7 @@ if config.TORCH_AVAILABLE:
 else:
     raise ImportError("Called a torch-specific function but torch is not installed.")
 
-if config.TF_AVAILABLE:
+if TF_AVAILABLE:
     import tensorflow as tf
 else:
     raise ImportError(
@@ -137,13 +137,14 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         self.num_channels = num_channels
         self.shuffle = shuffle
 
-        self.list_IDs = df[x_col].values
+        self.image_paths = df[x_col].values
         self.targets = df[y_col].values if stage != "test" else None
+        self.kwargs = kwargs
         self._on_epoch_end()
 
     def __len__(self) -> int:
         """Denotes the number of batches per epoch"""
-        return int(np.floor(len(self.list_IDs) / self.batch_size))
+        return int(np.floor(len(self.image_paths) / self.batch_size))
 
     def __getitem__(self, index: int) -> Union[Tuple, Any]:
         """Generate one batch of data
@@ -159,10 +160,10 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         indexes = self.indexes[index * self.batch_size : (index + 1) * self.batch_size]
 
         # Find list of IDs
-        list_IDs_temp: List[Any] = [self.list_IDs[k] for k in indexes]
+        image_paths_temp: List[Any] = [self.image_paths[k] for k in indexes]
 
         # Generate data
-        X, y = self._data_generation(list_IDs_temp, indexes)
+        X, y = self._data_generation(image_paths_temp, indexes)
 
         if self.stage in ["train", "valid", "debug"]:
             return X, y
@@ -219,6 +220,6 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
 
     def _on_epoch_end(self) -> None:
         "Updates indexes after each epoch"
-        self.indexes = np.arange(len(self.list_IDs))
-        if self.shuffle == True:
+        self.indexes = np.arange(len(self.image_paths))
+        if self.shuffle:
             np.random.shuffle(self.indexes)

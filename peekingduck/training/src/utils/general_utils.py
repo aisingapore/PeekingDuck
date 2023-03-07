@@ -32,12 +32,11 @@ import pandas as pd
 import requests
 from contextlib import nullcontext
 from tqdm import tqdm
-from .. import config
+from src.config import TORCH_AVAILABLE, TF_AVAILABLE
 
-if config.TORCH_AVAILABLE:
+if TORCH_AVAILABLE:
     import torch
     from torch import autocast
-    import torchvision.transforms as T
     import torchvision.transforms.functional as F
 else:
     raise ImportError("Called a torch-specific function but torch is not installed.")
@@ -65,10 +64,10 @@ class State(dict):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(kwargs)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key, value) -> None:
         """Setattr method.
 
         Args:
@@ -326,7 +325,7 @@ def choose_precision(device) -> str:
     return "float32"
 
 
-def choose_autocast(precision):
+def choose_autocast(precision: str):
     """Returns an autocast context or nullcontext for the given precision string"""
     # float16 currently requires autocast to avoid errors like:
     # 'expected scalar type Half but found Float'
@@ -335,8 +334,8 @@ def choose_autocast(precision):
     return nullcontext
 
 
-def set_tensorflow_device():
-    if config.TF_AVAILABLE:
+def set_tensorflow_device() -> Optional[str]:
+    if TF_AVAILABLE:
         import tensorflow as tf
     else:
         raise ImportError(

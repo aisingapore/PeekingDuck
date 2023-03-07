@@ -72,14 +72,13 @@ class PTClassificationModel(PTModel):
             # create and reset the classifier layer
             head = self.create_head(in_features)
             rsetattr(self.backbone, last_layer_name, head)
-            model = self.backbone
 
         elif self.adapter == "timm":
             self.backbone.reset_classifier(num_classes=self.model_config.num_classes)  # type: ignore
-            model = self.backbone
         else:
             raise ValueError(f"Adapter {self.adapter} not supported.")
 
+        model = self.backbone
         return model
 
     def create_backbone(self) -> nn.Module:
