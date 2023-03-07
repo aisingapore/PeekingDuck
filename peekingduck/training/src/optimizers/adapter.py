@@ -86,7 +86,7 @@ class OptimizersAdapter:
     @staticmethod
     def get_pytorch_optimizer(
         model: torch.nn.Module,
-        optimizer: Dict[str, Any],
+        optimizer: str,
         optimizer_params: Dict[str, Any],
     ) -> torch.optim.Optimizer:
         """Get the optimizer for the model.
