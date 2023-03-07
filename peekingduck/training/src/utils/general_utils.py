@@ -410,7 +410,7 @@ def init_logger(
     """Initialize logger and save to file.
     Consider having more log_file paths to save, eg: debug.log, error.log, etc.
     Args:
-        log_file (str): Where to save the log file. Defaults to Path(LOGS_DIR, "info.log").
+        log_file (str): Where to save the log file.
         module_name (Optional[str]): Module name to be used in logger. Defaults to None.
         level (int): Logging level. Defaults to logging.INFO.
     Returns:

@@ -874,7 +874,7 @@ Trainer
      <button class="training-framework-btn training-framework-tf">Tensorflow</button>
    </div>
    <br><br>
-   <p>The trainer class will make use of this configs.</p>
+   <p>The trainer class will make use of these configs.</p>
 
 .. raw:: html
 
@@ -1025,52 +1025,52 @@ Metrics
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">CategoricalAccuracy</span></code></td>
                         <td></td>
-                        <td></td>
+                        <td>Calculates how often predictions match one-hot labels.</td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">Precision</span></code></td>
                         <td></td>
-                        <td></td>
+                        <td>Computes the precision of the predictions with respect to the labels.</td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">thresholds</span></code></td>
                         <td>0.5</td>
-                        <td></td>
+                        <td>(Optional) A float value, or a Python list/tuple of float threshold values in [0, 1]. A threshold is compared with prediction values to determine the truth value of predictions (i.e., above the threshold is true, below is false). If used with a loss function that sets from_logits=True (i.e. no sigmoid applied to predictions), thresholds should be set to 0. One metric value is generated for each threshold value. If neither thresholds nor top_k are set, the default is to calculate precision with thresholds=0.5.</td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">Recall</span></code></td>
                         <td></td>
-                        <td></td>
+                        <td>Computes the recall of the predictions with respect to the labels.</td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">thresholds</span></code></td>
                         <td>0.5</td>
-                        <td></td>
+                        <td>(Optional) A float value, or a Python list/tuple of float threshold values in [0, 1]. A threshold is compared with prediction values to determine the truth value of predictions (i.e., above the threshold is true, below is false). If used with a loss function that sets from_logits=True (i.e. no sigmoid applied to predictions), thresholds should be set to 0. One metric value is generated for each threshold value. If neither thresholds nor top_k are set, the default is to calculate recall with thresholds=0.5.</td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">AUC</span></code></td>
                         <td></td>
-                        <td></td>
+                        <td>Approximates the AUC (Area under the curve) of the ROC or PR curves.</td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">from_logits</span></code></td>
                         <td>False</td>
-                        <td></td>
+                        <td>boolean indicating whether the predictions (y_pred in update_state) are probabilities or sigmoid logits. As a rule of thumb, when using a keras loss, the from_logits constructor argument of the loss should match the AUC from_logits constructor argument.</td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">multi_label</span></code></td>
                         <td>True</td>
-                        <td></td>
+                        <td>boolean indicating whether multilabel data should be treated as such, wherein AUC is computed separately for each label and then averaged across labels, or (when False) if the data should be flattened into a single label before AUC computation. In the latter case, when multilabel data is passed to AUC, each label-prediction pair is treated as an individual data point. Should be set to False for multi-class data.</td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">num_labels</span></code></td>
                         <td>${data_module.dataset.num_classes}</td>
-                        <td></td>
+                        <td>(Optional) The number of labels, used when multi_label is True. If num_labels is not specified, then state variables get created on the first call to update_state.</td>
                     </tr>
                 </tbody>
             </table>
