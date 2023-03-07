@@ -18,31 +18,31 @@
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">global_train_params</span></code></td>
                         <td><p></p></td>
-                        <td><p></p></td>
+                        <td><p>Global trainer parameters</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">manual_seed</span></code></td>
                         <td><p>${random_state}</p></td>
-                        <td><p></p></td>
+                        <td><p>Random seed. Default value will reference directly from main config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">epochs</span></code></td>
                         <td><p>10</p></td>
-                        <td><p></p></td>
+                        <td><p>Number of epochs to train</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">debug</span></code></td>
                         <td><p>${debug}</p></td>
-                        <td><p></p></td>
+                        <td><p>Flag for checking if debug is set to True of False. Reference directly from main config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">debug_epochs</span></code></td>
                         <td><p>3</p></td>
-                        <td><p></p></td>
+                        <td><p>When debug is set to True, this value will be used for training.</p></td>
                     </tr>
                 </tbody>
             </table>

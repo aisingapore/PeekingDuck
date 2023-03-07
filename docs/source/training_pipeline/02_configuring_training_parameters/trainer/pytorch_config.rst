@@ -4,7 +4,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Store</p>
+         <p>Global trainer parameters.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -24,43 +24,43 @@
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">manual_seed</span></code></p></td>
                         <td><p>${random_state}</p></td>
-                        <td><p></p></td>
+                        <td><p>Random seed. Default value will reference directly from main config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">epochs</span></code></p></td>
                         <td><p>10</p></td>
-                        <td><p></p></td>
+                        <td><p>Number of epochs to train</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">patience</span></code></p></td>
                         <td><p>3</p></td>
-                        <td><p></p></td>
+                        <td><p>Main reference value for early stopping patience count.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">model_name</span></code></p></td>
                         <td><p>${model.pytorch.model_name}</p></td>
-                        <td><p></p></td>
+                        <td><p>Use for printing to logs. Default value will reference directly from model config.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">debug</span></code></p></td>
                         <td><p>${debug}</p></td>
-                        <td><p></p></td>
+                        <td><p>Flag for checking if debug is set to True of False. Reference directly from main config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">debug_epochs</span></code></p></td>
                         <td><p>3</p></td>
-                        <td><p></p></td>
+                        <td><p>When debug is set to True, this value will be used for training.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td colspan="2"><p><code class="xref"><span class="pre">classification_type</span></code></p></td>
                         <td><p>${data_module.dataset.classification_type}</p></td>
-                        <td><p></p></td>
+                        <td><p>Used in initializing PyTorch metrics. Values can be: 'binary', 'multiclass' or 'multilabel'. Default value references from dataset config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -73,14 +73,16 @@
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">monitor</span></code></p></td>
                         <td><p>val_MulticlassAccuracy</p></td>
-                        <td><p></p></td>
+                        <td><p>The metric used for monitoring the best validation score. This should be one of the keys in metrics list with a 'val_' prefix.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">mode</span></code></p></td>
                         <td><p>max</p></td>
-                        <td><p></p></td>
+                        <td><p>"min" | "max"
+                            <br>In min mode, training will stop when the quantity monitored has stopped decreasing.
+                            <br>In "max" mode it will stop when the quantity monitored has stopped increasing.</p></td>
                     </tr>
                 </tbody>
             </table>
@@ -91,7 +93,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Optimizer</p>
+         <p>These parameters will be used for initializing the optimizer.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -155,7 +157,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Scheduler</p>
+         <p>These parameters will be used for initializing the scheduler.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -169,7 +171,7 @@
                     <tr class="row-even">
                         <td colspan="2"><code class="xref"><span class="pre">scheduler_params</span></code></td>
                         <td><p></p></td>
-                        <td><p></p></td>
+                        <td><p>Scheduler parameters</p></td>
                     </tr>
                     <tr class="row-even">
                         <td><p></p></td>
@@ -204,8 +206,8 @@
                 <tbody>
                     <tr>
                         <td colspan="3"><p><code class="xref"><span class="pre">criterion_params</span></code></p></td>
-                        <td><p>"CrossEntropyLoss"</p></td>
                         <td><p></p></td>
+                        <td><p>Loss function parameters</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -324,7 +326,7 @@
 
       .. raw:: html 
 
-         <p>This is a sentence describing Store</p>
+         <p></p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -338,7 +340,7 @@
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">stores</span></code></td>
                         <td><p>${project_name}</p></td>
-                        <td><p></p></td>
+                        <td><p>Stores parameters</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>

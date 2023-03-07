@@ -7,8 +7,6 @@ pytorch:
       - Recall
       - AUROC:
               average: "weighted"
-      - CalibrationError:
-              norm: "l1"
 
 tensorflow:
       # Options: Accuracy | Precision | Recall | AUC

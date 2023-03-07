@@ -35,14 +35,6 @@ Image Classification
 
    /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
 
-.. raw:: html
-
-   <div class="install">
-     <strong>Framework</strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br><br>
 
 We are using the yaml syntax for the config file
 
@@ -69,7 +61,7 @@ Main Config
                 <tr>
                     <td colspan="3"><code class="xref"><span class="pre">project_name</span></code></td>
                     <td><p>"cifar10"</p></td>
-                    <td><p>rsna | cifar10 | vegfru | vegfru5 | vegfru20</p></td>
+                    <td><p>rsna | cifar10 | vegfru5 | vegfru15 | vegfru25 | "your-project-name" </p></td>
                 </tr>
                 <tr>
                     <td colspan="3"><code class="xref"><span class="pre">debug</span></code></td>
@@ -106,7 +98,7 @@ Main Config
                     <td><p></p></td>
                     <td colspan="2"><code class="xref"><span class="pre">data_module</span></code></td>
                     <td><p>cifar10</p></td>
-                    <td><p>rsna | cifar10 | vegfru | vegfru5 | vegfru20</p></td>
+                    <td><p>rsna | cifar10 | vegfru5 | vegfru15 | vegfru25 | "main-data_module-filename"</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
@@ -148,12 +140,12 @@ Main Config
                     <td><p></p></td>
                     <td colspan="2"><code class="xref"><span class="pre">override hydra/job_logging</span></code></td>
                     <td><p>custom</p></td>
-                    <td><p>Do not change</p></td>
+                    <td><p></p></td>
                 </tr>
                 <tr>
                     <td colspan="3"><code class="xref"><span class="pre">hydra</span></code></td>
                     <td><p></p></td>
-                    <td><p>Do not change</p></td>
+                    <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
@@ -882,6 +874,7 @@ Trainer
      <button class="training-framework-btn training-framework-tf">Tensorflow</button>
    </div>
    <br><br>
+   <p>The trainer class will make use of this configs.</p>
 
 .. raw:: html
 
@@ -924,13 +917,12 @@ Metrics
         <h4>Pytorch</h4>
         <p></p>
         <p>Refer to <a href="https://torchmetrics.readthedocs.io/en/stable/all-metrics.html">Torch Metrics</a> documentation for more metrics you can use and their details.</p>
-        <p>These are the only available metrics currently:
+        <p>These are the default values:
         <ul>
             <li>Accuracy</li>
             <li>Precision</li>
             <li>Recall</li>
             <li>AUROC</li>
-            <li>CalibrationError</li>
         </ul>
         </p>
         <p>The table below shows the default values:</p>
@@ -1002,17 +994,6 @@ Metrics
                             <br>weighted: Calculates statistics for each label and computes weighted average using their support
                             "none" or None: Calculates statistic for each label and applies no reduction
                         </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">CalibrationError</span></code></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">norm</span></code></td>
-                        <td>"l1"</td>
-                        <td></td>
                     </tr>
                 </tbody>
             </table>
@@ -1148,29 +1129,23 @@ Callbacks
                     </tr>
                     <tr class="row-even">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mode</span></code></td>
-                        <td>"max"</td>
-                        <td>"min" or "max"
-                        <br><br>In min mode, training will stop when the quantity monitored has stopped decreasing.
-                        <br>In "max" mode it will stop when the quantity monitored has stopped increasing.</td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">monitor</span></code></td>
-                        <td>"val_MulticlassAccuracy"</td>
-                        <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
                         <td><code class="xref"><span class="pre">patience</span></code></td>
                         <td>${trainer.pytorch.global_train_params.patience}</td>
                         <td>Number of epochs with no improvement after which training will be stopped.</td>
                     </tr>
                     <tr class="row-odd">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">min_delta</span></code></td>
-                        <td>0.000001</td>
-                        <td>Minimum change in the monitored quantity to qualify as an improvement.</td>
+                        <td><code class="xref"><span class="pre">monitor</span></code></td>
+                        <td>${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
+                        <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
+                    </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">mode</span></code></td>
+                        <td>${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
+                        <td>"min" or "max"
+                        <br><br>In min mode, training will stop when the quantity monitored has stopped decreasing.
+                        <br>In "max" mode it will stop when the quantity monitored has stopped increasing.</td>
                     </tr>
                     <tr class="row-even">
                         <td colspan="2"><code class="xref"><span class="pre">History</span></code></td>
@@ -1198,21 +1173,21 @@ Callbacks
                         <td></td>
                         <td>Callback to save the model or model weights at some frequency.</td>
                     </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">monitor</span></code></td>
+                        <td>${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
+                        <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
+                    </tr>
                     <tr class="row-odd">
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">mode</span></code></td>
-                        <td>"max"</td>
+                        <td>${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
                         <td>
                             "max" or "min"<br>
                             <br>In "min" mode, training will stop when the quantity monitored has stopped decreasing
                             <br>in "max" mode it will stop when the quantity monitored has stopped increasing.                        
                         </td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">monitor</span></code></td>
-                        <td>"val_MulticlassAccuracy"</td>
-                        <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
                     </tr>
                 </tbody>
             </table>
