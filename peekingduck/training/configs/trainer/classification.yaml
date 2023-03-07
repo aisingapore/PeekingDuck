@@ -1,67 +1,4 @@
 pytorch:
-    stores:
-        project_name: ${project_name}
-        unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
-        logs_dir: "" # Path = field(init=False)
-        model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
-
-    criterion_params:
-        train_criterion: "CrossEntropyLoss"
-        valid_criterion: "CrossEntropyLoss"
-        train_criterion_params:
-            weight: null
-            size_average: null
-            ignore_index: -100
-            reduce: null
-            reduction: "mean"
-            label_smoothing: 0.0
-        valid_criterion_params:
-            weight: null
-            size_average: null
-            ignore_index: -100
-            reduce: null
-            reduction: "mean"
-            label_smoothing: 0.0
-
-    optimizer_params:
-        optimizer: "Adam"
-        optimizer_params:
-            lr: 1e-5 # bs: 32 -> lr = 3e-4
-            betas: [0.9, 0.999]
-            amsgrad: False
-            # weight_decay: 0.01 # 0.000001
-            eps: 0.0000007
-
-    scheduler_params:
-        # https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863
-        scheduler: null
-        scheduler_params: null
-
-        # scheduler: "OneCycleLR" # Debug
-        # scheduler_params:
-        #     max_lr: 1e-3 # (float or list)
-        # total_steps: epochs * steps_per_epoch # (int) Simple relation : total_steps = epochs * steps_per_epoch
-        # epochs: 5 # (int)
-        # steps_per_epoch: 1109 # (int)
-        # pct_start: 0.3 # (float)
-        # anneal_strategy: 'cos' # (str)
-        # cycle_momentum: True # (bool)
-        # base_momentum: 0.85 # (float or list)
-        # max_momentum: 0.95 # (float or list)
-        # div_factor: 25.0 # (float)
-        # final_div_factor: 10000.0 # (float)
-        # three_phase: False # (bool)
-        # last_epoch: -1 # (int)
-        # verbose: False # (bool)
-
-        # scheduler: "CosineAnnealingWarmRestarts" # Debug
-        # scheduler_params:
-        #     T_0: 3
-        #     T_mult: 1
-        #     eta_min: 0.000001
-        #     last_epoch: -1
-        #     verbose: False
-
     global_train_params:
         manual_seed: ${random_state}
         epochs: 10
@@ -75,39 +12,42 @@ pytorch:
             mode: max
         trainer:
             _target_: src.trainer.pytorch_trainer.PytorchTrainer
-
-tensorflow:
-    lr_schedule_params:
-        # schedule: "CosineDecayRestarts"
-        # schedule_params:
-        #     initial_learning_rate: 0.003
-        #     first_decay_steps: 10
-        #     t_mul: 2.0
-        #     m_mul: 1.0
-        #     alpha: 0.0
-        schedule: null
-        schedule_params:
-            learning_rate: 0.00001
-        # schedule: "PiecewiseConstantDecay"
-        # schedule_params:
-        #     values: [1.0, 0.5, 0.1]
-        #     boundaries: [100000, 110000]
-        #     name: None
     optimizer_params:
-        # optimizer: "SGD"
-        # optimizer_params:
-        #     name: 'SGD'
         optimizer: "Adam"
         optimizer_params:
-            beta_1: 0.9
-            beta_2: 0.999
-            epsilon: 0.0000007
-            name: "Adam"
-        finetune_learning_rate: 1e-5
-    loss_params:
-        loss_func: "CategoricalCrossentropy"
-        loss_params:
-            from_logits: False
+            lr: 1e-5
+            betas: [0.9, 0.999]
+            amsgrad: False
+            eps: 0.0000007
+        finetune_params:
+            lr: 1e-5
+    scheduler_params:
+        scheduler: null
+        scheduler_params: null
+    criterion_params:
+        train_criterion: "CrossEntropyLoss"
+        train_criterion_params:
+            weight: null
+            size_average: null
+            ignore_index: -100
+            reduce: null
+            reduction: "mean"
+            label_smoothing: 0.0
+        valid_criterion: "CrossEntropyLoss"
+        valid_criterion_params:
+            weight: null
+            size_average: null
+            ignore_index: -100
+            reduce: null
+            reduction: "mean"
+            label_smoothing: 0.0
+    stores:
+        project_name: ${project_name}
+        unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
+        model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
+
+
+tensorflow:
     global_train_params:
         manual_seed: ${random_state}
         epochs: 10
@@ -115,3 +55,19 @@ tensorflow:
         debug_epochs: 3
         trainer:
             _target_: src.trainer.tensorflow_trainer.TensorflowTrainer
+    optimizer_params:
+        optimizer: "Adam"
+        optimizer_params:
+            beta_1: 0.9
+            beta_2: 0.999
+            epsilon: 0.0000007
+            name: "Adam"
+        finetune_learning_rate: 1e-5
+    lr_schedule_params:
+        schedule: null
+        schedule_params:
+            learning_rate: 1e-5
+    loss_params:
+        loss_func: "CategoricalCrossentropy"
+        loss_params:
+            from_logits: False

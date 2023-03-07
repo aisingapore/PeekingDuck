@@ -140,7 +140,8 @@ class PytorchTrainer:
         # init_optimizer
         self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
             model=self.model,
-            optimizer_params=self.trainer_config.optimizer_params,
+            optimizer=self.trainer_config.optimizer_params.optimizer,
+            optimizer_params=self.trainer_config.optimizer_params.optimizer_params,
         )
 
         # scheduler
@@ -413,7 +414,8 @@ class PytorchTrainer:
             # need to re-init optimizer to update the newly unfrozen parameters
             self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
                 model=self.model,
-                optimizer_params=self.trainer_config.optimizer_params,
+                optimizer=self.trainer_config.optimizer_params.optimizer,
+                optimizer_params=self.trainer_config.optimizer_params.finetune_params,
             )
 
             print("\n\nModel Summary for fine-tuning:\n")

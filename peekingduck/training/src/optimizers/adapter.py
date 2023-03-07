@@ -86,6 +86,7 @@ class OptimizersAdapter:
     @staticmethod
     def get_pytorch_optimizer(
         model: torch.nn.Module,
+        optimizer: Dict[str, Any],
         optimizer_params: Dict[str, Any],
     ) -> torch.optim.Optimizer:
         """Get the optimizer for the model.
@@ -93,7 +94,7 @@ class OptimizersAdapter:
             Do not invoke self.model directly in this call as it may affect model initalization.
             https://stackoverflow.com/questions/70107044/can-i-define-a-method-as-an-attribute
         """
-        return getattr(torch.optim, optimizer_params.optimizer)(
+        return getattr(torch.optim, optimizer)(
             filter(lambda p: p.requires_grad, model.parameters()),
-            **optimizer_params.optimizer_params
+            **optimizer_params
         )
