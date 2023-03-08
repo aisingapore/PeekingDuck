@@ -53,6 +53,8 @@ tensorflow:
         epochs: 10
         debug: ${debug}
         debug_epochs: 3
+        monitored_metric:
+            monitor: "val_categorical_accuracy"
         trainer:
             _target_: src.trainer.tensorflow_trainer.TensorflowTrainer
     optimizer_params:

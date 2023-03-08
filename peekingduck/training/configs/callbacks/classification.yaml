@@ -16,4 +16,4 @@ tensorflow:
     - EarlyStopping:
           patience: 3
           restore_best_weights: True
-          monitor: ${trainer.pytorch.global_train_params.monitored_metric.monitor}
+          monitor: ${trainer.tensorflow.global_train_params.monitored_metric.monitor}
