@@ -27,13 +27,13 @@ class DataModule(Protocol):
     def setup(self, stage: str) -> None:
         """setup function"""
 
-    def get_train_dataset(self) -> Any:
+    def get_train_dataloader(self) -> Any:
         """return training dataset"""
 
-    def get_validation_dataset(self) -> Any:
+    def get_validation_dataloader(self) -> Any:
         """return validation dataset"""
 
-    def get_test_dataset(self) -> Any:
+    def get_test_dataloader(self) -> Any:
         """return test dataset"""
 
 

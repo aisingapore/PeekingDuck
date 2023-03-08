@@ -62,8 +62,8 @@ def run(cfg: DictConfig) -> None:
     )
     data_module.prepare_data()
     data_module.setup(stage="fit")
-    train_loader = data_module.get_train_dataset()
-    validation_loader = data_module.get_validation_dataset()
+    train_loader = data_module.get_train_dataloader()
+    validation_loader = data_module.get_validation_dataloader()
 
     if cfg.view_only:
         trainer: Trainer = init_trainer(cfg)
