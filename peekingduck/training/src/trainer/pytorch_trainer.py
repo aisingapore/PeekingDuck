@@ -34,7 +34,7 @@ from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
-from src.utils.pt_model_utils import set_trainable_layers
+from src.utils.pt_model_utils import set_trainable_layers, unfreeze_all_params
 from configs import LOGGER_NAME
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -408,8 +408,13 @@ class PytorchTrainer:
 
         # fine-tuning
         if self.model_config.fine_tune:
-            # set fine-tune layers
-            set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
+            if self.model_config.fine_tune_all:
+                unfreeze_all_params(self.model.model)
+            else:
+                # set fine-tune layers
+                set_trainable_layers(
+                    self.model.model, self.model_config.fine_tune_modules
+                )
             # need to re-init optimizer to update the newly unfrozen parameters
             self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
                 model=self.model,

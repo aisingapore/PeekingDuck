@@ -8,7 +8,7 @@ pytorch:
     weights: "DEFAULT" # for torchvision >= 0.13. Refer to official doc for customized values.
     pretrained: True # for timm only
     fine_tune: True
-    # valid when unfreeze == "partial". module name followed by the number of the last layers within the module to unfreeze.
+    fine_tune_all: True # fine tune the entire model
     fine_tune_modules:
         features: 7
         pre_logits: ["fc1", "act1", "drop", "fc2", "act2"]
@@ -28,6 +28,7 @@ tensorflow:
     device: ${device}
     pretrained: True
     fine_tune: True # True or False
+    fine_tune_all: True # fine tune the entire model
     # prediction layer need to be included. If not, the weights will not be updated
     fine_tune_layers:
         [

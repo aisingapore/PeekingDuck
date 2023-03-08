@@ -17,6 +17,16 @@ from typing import List
 import tensorflow as tf
 
 
+def unfreeze_all_layers(model: tf.keras.Model) -> None:
+    for layer in model.layers:
+        layer.trainable = True
+
+
+def freeze_all_layers(model: tf.keras.Model) -> None:
+    for layer in model.layers:
+        layer.trainable = False
+
+
 def set_trainable_layers(
     model: tf.keras.Model, trainable_layer_name_list: List[str]
 ) -> None:
