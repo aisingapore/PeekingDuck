@@ -25,7 +25,7 @@ from src.losses.adapter import LossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
-from src.utils.tf_model_utils import set_trainable_layers
+from src.utils.tf_model_utils import set_trainable_layers, unfreeze_all_layers
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -126,8 +126,10 @@ class TensorflowTrainer:
 
         logger.info("\n\nStart fine-tuning!\n")
 
-        # self.model_config.fine_tune true
-        set_trainable_layers(self.model, self.model_config.fine_tune_layers)
+        if self.model_config.fine_tune_all:
+            unfreeze_all_layers(self.model)
+        else:
+            set_trainable_layers(self.model, self.model_config.fine_tune_layers)
 
         self.train_summary()
 
