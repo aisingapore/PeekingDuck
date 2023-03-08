@@ -41,7 +41,7 @@ class TFClassificationModelFactory(TFModelFactory):
         x = model.layers[-2].output
         # create the new prediction layer
         predictions = tf.keras.layers.Dense(
-            num_classes, activation="softmax", name=prediction_layer_name
+            num_classes, activation=model_cfg.activation, name=prediction_layer_name
         )(x)
         # Create new model with modified classification layer
         model = tf.keras.Model(inputs=model.inputs, outputs=predictions)

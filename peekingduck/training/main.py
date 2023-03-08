@@ -14,7 +14,7 @@
 # limitations under the License.
 import logging
 
-from omegaconf import OmegaConf, DictConfig, errors
+from omegaconf import OmegaConf, DictConfig
 import hydra
 from hydra.core.hydra_config import HydraConfig
 
@@ -29,6 +29,7 @@ logger: logging.Logger = logging.getLogger(__name__)
     config_name="config",
 )
 def main(cfg: DictConfig) -> None:
+    """main"""
     logger.debug(OmegaConf.to_yaml(cfg))
     logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
     run(cfg)

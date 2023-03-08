@@ -15,15 +15,9 @@
 """Model Interface that follows the Strategy Pattern."""
 from __future__ import annotations
 
-import os
-import sys
-
-sys.path.insert(1, os.getcwd())
-
 import logging
 import timm
 import torch
-import torch.nn.functional as F
 import torchvision
 from torch import nn
 from omegaconf import DictConfig
@@ -48,7 +42,6 @@ class PTClassificationModel(PTModel):
         self.model_name = self.model_config.model_name
         self.pretrained = self.model_config.pretrained
         self.weights = self.model_config.weights
-        self.fine_tune_modules: DictConfig = self.model_config.fine_tune_modules
         self.model = self.create_model()
 
         logger.info(f"Successfully created model: {self.model_config.model_name}")

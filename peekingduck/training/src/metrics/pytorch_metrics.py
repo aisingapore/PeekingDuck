@@ -19,11 +19,13 @@ from torchmetrics.classification.stat_scores import (
 from torchmetrics import MetricCollection
 
 import torch
-from typing import Any, List, Dict, Union
+from typing import Any, Union
 from omegaconf import DictConfig
 
 
 class PytorchMetrics:
+    """pytorch metrics"""
+
     @classmethod
     def get_metric(
         cls, task: str, num_classes: int, metric: Union[str, DictConfig]
@@ -31,19 +33,19 @@ class PytorchMetrics:
         """
         Refer to TorchMetrics implementation
         """
-        if type(metric) is str:
+        if isinstance(metric, str):
             torch_metric = getattr(torchmetrics, metric)(
                 num_classes=num_classes, task=task
             )
 
-        elif type(metric) is DictConfig:
+        elif isinstance(metric, DictConfig):
             for metric_name, metric_params in metric.items():
                 torch_metric = getattr(torchmetrics, str(metric_name))(
                     num_classes=num_classes, task=task, **metric_params
                 )
 
         else:
-            raise TypeError
+            raise TypeError(f"Unknown metric type {type(metric)}")
 
         return torch_metric
 

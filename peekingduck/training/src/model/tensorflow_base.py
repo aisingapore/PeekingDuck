@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from abc import ABC, abstractmethod
+from omegaconf import DictConfig
 import tensorflow as tf
 
 
@@ -20,6 +21,6 @@ class TFModelFactory(ABC):
     """Model Base Class for TensorFlow."""
 
     @abstractmethod
-    def create_model(self) -> tf.keras.Model:
+    def create_model(self, model_cfg: DictConfig) -> tf.keras.Model:
         """Build the model with base and head"""
         raise NotImplementedError

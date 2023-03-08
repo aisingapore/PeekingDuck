@@ -33,10 +33,10 @@ def init_callbacks(callbacks: List[Union[DictConfig, str]]) -> List:
     """
     cb_list = []
     for cb in callbacks:
-        if type(cb) is DictConfig:
+        if isinstance(cb, DictConfig):
             for cbk, cbv in cb.items():
                 cb_list.append(getattr(Callbacks, str(cbk))(**cbv))
-        elif type(cb) is str:
+        elif isinstance(cb, str):
             cb_list.append(getattr(Callbacks, cb)())
         else:
             raise TypeError

@@ -50,7 +50,7 @@ class PTModel(ABC, nn.Module):
         """Load the backbone of the model."""
 
     @abstractmethod
-    def create_head(self) -> nn.Module:
+    def create_head(self, in_features: int) -> nn.Module:
         """Modify the head of the model."""
 
     def model_summary(

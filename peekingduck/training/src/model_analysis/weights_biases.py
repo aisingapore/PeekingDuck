@@ -12,7 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict, Union
+from typing import Any, Dict
 
 import wandb
 from omegaconf import DictConfig
@@ -20,6 +20,8 @@ import pandas as pd
 
 
 class WeightsAndBiases:
+    """Model analysis using Weights and Biases"""
+
     def __init__(self, cfg: DictConfig) -> None:
         self.cfg = cfg
         if cfg.debug:
@@ -28,17 +30,20 @@ class WeightsAndBiases:
             wandb.init(
                 project=cfg.project,
                 entity="peekingduck",
-                config=Dict(cfg),
+                config=dict(cfg),
                 name=f"{cfg.framework}",
             )
 
     def watch(self, model: Any) -> None:
+        """wandb watch model"""
         wandb.watch(model)
 
     def log(self, loss: Dict[str, Any]) -> None:
+        """wandb log"""
         wandb.log(loss)
 
     def log_history(self, history: Dict[str, Any]) -> None:
+        """wandb log tensorflow history"""
         if self.cfg.framework == "tensorflow":
             selected_history = history
 
@@ -47,7 +52,9 @@ class WeightsAndBiases:
                 wandb.log(row_dict)
 
     def log_training_loss(self, loss: Dict[str, Any]) -> None:
+        """log training loss"""
         wandb.log({"train_loss": loss})
 
     def log_validation_loss(self, loss: Dict[str, Any]) -> None:
+        """log validation loss"""
         wandb.log({"val_loss": loss})

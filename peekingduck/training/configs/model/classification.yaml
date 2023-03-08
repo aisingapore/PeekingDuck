@@ -23,6 +23,7 @@ tensorflow:
     model_type:
         _target_: src.model.tensorflow_model.TFClassificationModelFactory
     num_classes: ${data_module.dataset.num_classes}
+    activation: "softmax"
     image_size: ${data_module.dataset.image_size}
     device: ${device}
     pretrained: True

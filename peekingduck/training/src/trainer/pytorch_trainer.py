@@ -29,7 +29,6 @@ from src.data.data_adapter import DataAdapter
 from src.optimizers.schedules import OptimizerSchedules
 from src.losses.adapter import LossAdapter
 from src.optimizers.adapter import OptimizersAdapter
-from src.trainer.base import Trainer
 from src.callbacks.base import init_callbacks
 from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
@@ -418,11 +417,11 @@ class PytorchTrainer:
                 optimizer_params=self.trainer_config.optimizer_params.finetune_params,
             )
 
-            print("\n\nModel Summary for fine-tuning:\n")
+            logger.info("\n\nModel Summary for fine-tuning:\n")
             self.train_summary(inputs, finetune=True)
 
             # run epoch
-            print("\n\nStart fine-tuning!\n")
+            logger.info("\n\nStart fine-tuning:\n")
             self._run_epochs()
 
         self._train_teardown()  # shutdown

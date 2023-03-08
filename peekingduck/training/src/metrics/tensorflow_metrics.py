@@ -19,23 +19,29 @@ from omegaconf import DictConfig
 
 
 class TensorflowMetrics:
+    """tensorflow metrics"""
+
     def get_metric(
-        self, metric_name: str, parameters: Union[DictConfig, dict] = {}
+        self, metric_name: str, parameters: Optional[Union[DictConfig, Dict]] = None
     ) -> tf.keras.metrics.Metric:
         return (
             getattr(tf.keras.metrics, metric_name)(**parameters)
-            if len(parameters) > 0
+            if parameters is not None and len(parameters) > 0
             else getattr(tf.keras.metrics, metric_name)()
         )
 
-    def get_metrics(self, metrics: List = []) -> List[tf.keras.metrics.Metric]:
-        return [self.get_metric(**self._validate_config(m)) for m in metrics]
+    def get_metrics(self, metrics: List) -> List[Any]:
+        return (
+            [self.get_metric(**self._validate_config(metric)) for metric in metrics]
+            if len(metrics) > 0
+            else []
+        )
 
     def _validate_config(self, metric: tf.keras.metrics.Metric) -> Dict[str, Any]:
-        if type(metric) is DictConfig:
+        if isinstance(metric, DictConfig):
             for mkey, mval in metric.items():
                 return {"metric_name": mkey, "parameters": mval}
-        elif type(metric) is str:
+        elif isinstance(metric, str):
             return {"metric_name": metric}
         else:
             raise TypeError
