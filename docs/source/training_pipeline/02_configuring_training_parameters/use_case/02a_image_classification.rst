@@ -45,7 +45,7 @@ Overview
 .. raw:: html
     
     <pre>
-        peekingduck/training/configs
+        peekingduck/training/configs/
           ├── callbacks/
           │      └── classification.yaml
           ├── data_module/
