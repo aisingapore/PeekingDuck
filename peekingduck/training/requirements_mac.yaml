@@ -1,0 +1,28 @@
+name: pkd-training
+channels:
+  - defaults
+  - conda-forge
+  - apple
+dependencies:
+  - python=3.8
+  - pip
+  - pip:
+    - ipykernel
+    - nbformat
+    - black
+    - pydantic
+    - hydra-core
+    - pandas
+    - numpy
+    - scikit-learn
+    - torch
+    - torchvision
+    - torchmetrics
+    - timm
+    - torchinfo
+    - tqdm
+    - albumentations
+    - imagesize
+    - matplotlib
+    - tabulate
+    - wandb

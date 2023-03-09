@@ -174,11 +174,11 @@ Install PeekingDuck Training Pipeline
 
          .. code-block:: bash
 
-            » conda create -n pkd python=3.8
-            » conda activate pkd
+            » conda create --name pkd-training python=3.8
+            » conda activate pkd-training
+            » conda env update --file peekingduck/training/requirements_mac.yaml --name pkd-training
             » git clone <PeekdingDuck repository>
             » cd PeekdingDuck
-            » conda install --file peekingduck/training/requirements_mac.txt
 
       Install TensorFlow
 
