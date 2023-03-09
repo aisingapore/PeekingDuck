@@ -17,5 +17,3 @@ imagesize
 matplotlib
 tabulate
 wandb
-tensorflow-macos
-tensorflow-metal

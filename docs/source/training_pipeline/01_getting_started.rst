@@ -1,8 +1,8 @@
 .. include:: /include/substitution.rst
 
-***************
-Getting Started
-***************
+********
+Overview
+********
 
 ==============
  Introduction 
@@ -53,20 +53,28 @@ How training pipeline works
 
 **Overview Diagram**
 
+#. Organize your data with the required format 
+#. Place them at the designated directory
+#. Personalise your training if necessary 
+#. Execute from the terminal
 
-**Sequence Diagram (Training Loop)**
+
+**Component Diagram**
+
+.. image:: /assets/diagrams/C4_Diagram-L4_Simplified_Overview.png
+
+
 
 
 
 ----------
 
-=====================================
+================
+ Getting Started
+================
+
 Install PeekingDuck Training Pipeline
-=====================================
-
-
-OS
---
+-------------------------------------
 
 .. tabs::
 
@@ -150,21 +158,79 @@ OS
 
    .. tab:: Mac 
     
-      **Intel Chip**
+      Platform:
+         - MacOS Intel Chip or MacOS M1/M2 chip
+      Prerequisite:
+         - `Git <https://github.com/git-guides/install-git>`_
+         - `Miniforge <https://github.com/conda-forge/miniforge>`_
 
-      **M1/M2 Chip**
+         On macOS, you can install miniforge with Homebrew by running
+
+         .. code-block:: bash
+      
+            » brew install miniforge
+
+      Install requirements
+
+         .. code-block:: bash
+
+            » conda create -n pkd python=3.8
+            » conda activate pkd
+            » git clone <PeekdingDuck repository>
+            » cd PeekdingDuck
+            » conda install --file peekingduck/training/requirements_mac.txt
+
+      Install TensorFlow
+
+         .. code-block:: bash
+
+            » bash .peekingduck/training/scripts/install_tensorflow_macos.sh
+
+
+         
 
 
 
 Setting up Weights & Biases
 ---------------------------
 
+We recommend using the cloud host from Weights and Biases as it’s easier to get started. You may refer to the official guide for setting up an account. In a nutshell, follow the 3 steps below:
+Sign up for a free account at https://wandb.ai/site and then login to your wandb account.
+(if not yet installed via requirements.txt) Install the wandb library on your machine in a Python 3 environment using pip.
+Login to the wandb library on your machine. You will find your API key here: https://wandb.ai/authorize.
 
-----------
 
-========================
+
+Quick Start
+------------
+
+**Tensorflow**
+
+.. code-block:: bash
+
+   » python  ./peekingduck/training/main.py  \
+   » framework=tensorflow \
+   » data_module=vegfru5 \
+   » model.tensorflow.model_name=VGG16  \
+   » trainer.tensorflow.global_train_params.debug_epochs=10
+
+
+**Pytorch**
+
+.. code-block:: bash
+
+   » python  ./peekingduck/training/main.py  \
+   » framework=pytorch \
+   » data_module=vegfru5 \
+   » model.pytorch.model_name=vgg16  \
+   » trainer.pytorch.global_train_params.debug_epochs=10
+
+
+When you manage to run either of the commands without any errors, the next section you can find out more about how to customise the config files to train on your own dataset.
+
+
 Verify Training Pipeline
-========================
+-------------------------------------
 
 
 PyTorch
@@ -178,3 +244,5 @@ TensorFlow
 ----------
 
 [what value the user should get]
+
+
