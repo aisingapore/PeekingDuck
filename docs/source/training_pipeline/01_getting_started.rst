@@ -162,7 +162,7 @@ Install PeekingDuck Training Pipeline
          - MacOS Intel Chip or MacOS M1/M2 chip
       Prerequisite:
          - `Git <https://github.com/git-guides/install-git>`_
-         - `Miniforge <https://github.com/conda-forge/miniforge>`_
+         - `Miniforge <https://github.com/conda-forge/miniforge#homebrew>`_
 
          On macOS, you can install miniforge with Homebrew by running
 
