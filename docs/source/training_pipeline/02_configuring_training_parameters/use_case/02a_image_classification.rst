@@ -38,6 +38,55 @@ Image Classification
 
 We are using the yaml syntax for the config file
 
+
+Overview
+===========
+
+.. raw:: html
+    
+    <pre>
+        peekingduck/training/configs
+          ├── callbacks/
+          │      └── classification.yaml
+          ├── data_module/
+          │      ├── data_adapter/
+          │      │      └── adapter.yaml
+          │      ├── dataset/
+          │      │      ├── cifar10.yaml
+          │      │      ├── rsna.yaml
+          │      │      ├── vegfru5.yaml
+          │      │      ├── vegfru15.yaml
+          │      │      └── vegfru25.yaml
+          │      ├── resample/
+          │      │      └── train_test_split.yaml
+          │      ├── transform/
+          │      │      ├── test.yaml
+          │      │      └── train.yaml
+          │      ├── cifar10.yaml
+          │      ├── rsna.yaml
+          │      ├── vegfru5.yaml
+          │      ├── vegfru15.yaml
+          │      └── vegfru25.yaml
+          ├── hydra/
+          │      └── job_logging
+          │             └── custom.yaml
+          ├── metrics/
+          │      └── classification.yaml
+          ├── model/
+          │      └── classification.yaml
+          ├── model_analysis/
+          │      └── classification.yaml
+          ├── stores/
+          │      └── classification.yaml
+          ├── trainer/
+          │      └── classification.yaml
+          └── config.yaml
+    </pre>
+
+
+    <br><br>
+
+
 Main Config
 ===========
 
