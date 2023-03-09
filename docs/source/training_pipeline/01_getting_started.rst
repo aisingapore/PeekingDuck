@@ -159,22 +159,25 @@ OS
 Setting up Weights & Biases
 ---------------------------
 
+We recommend using the cloud host from Weights and Biases as it's easier to get started. You may refer to the `official guide <https://docs.wandb.ai/quickstart>`_ for setting up an account.
+
+In a nutshell, follow the 3 steps below:
+
+1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your wandb account.
+2. (If not yet installed via requirements.txt) Pip install the wandb library on your machine in a Python 3 environment.
+4. Login to the wandb library on your machine. You will find your API key `here <https://wandb.ai/authorize>`_
 
 ----------
 
 ========================
-Verify Training Pipeline
+Test Run
 ========================
 
+To test the training pipeline with the default cifar10 dataset, use the following commands in terminal:
 
-PyTorch
--------
-
-[what value the user should get]
-
-
-
-TensorFlow
-----------
-
-[what value the user should get]
+.. code-block:: bash
+   
+   # use the default configurations to test
+   $ cd PeekdingDuck
+   $ python ./peekingduck/training/main.py debug=True framework=tensorflow
+   $ python ./peekingduck/training/main.py debug=True framework=pytorch
