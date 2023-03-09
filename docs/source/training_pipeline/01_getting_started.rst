@@ -190,26 +190,16 @@ Install PeekingDuck Training Pipeline
             bash .peekingduck/training/scripts/install_tensorflow_macos.sh
 
 
-         
-
-
-
 Setting up Weights & Biases
 ---------------------------
 
-We recommend using the cloud host from Weights and Biases as it’s easier to get started. You may refer to the official guide for setting up an account. In a nutshell, follow the 3 steps below:
-Sign up for a free account at https://wandb.ai/site and then login to your wandb account.
-(if not yet installed via requirements.txt) Install the wandb library on your machine in a Python 3 environment using pip.
-Login to the wandb library on your machine. You will find your API key here: https://wandb.ai/authorize.
+We recommend using the cloud host from Weights and Biases as it's easier to get started. You may refer to the `official guide <https://docs.wandb.ai/quickstart>`_ for setting up an account.
 
 In a nutshell, follow the 3 steps below:
 
 1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your wandb account.
 2. (If not yet installed via requirements.txt) Pip install the wandb library on your machine in a Python 3 environment.
-4. Login to the wandb library on your machine. You will find your API key `here <https://wandb.ai/authorize>`_
-We recommend using the cloud host from Weights and Biases as it's easier to get started. You may refer to the `official guide <https://docs.wandb.ai/quickstart>`_ for setting up an account.
-
-
+3. Login to the wandb library on your machine. You will find your API key `here <https://wandb.ai/authorize>`_
 
 ========
 Test Run
@@ -224,32 +214,4 @@ To test the training pipeline with the default cifar10 dataset, use the followin
    $ python ./peekingduck/training/main.py debug=True framework=tensorflow
    $ python ./peekingduck/training/main.py debug=True framework=pytorch
 
-=============
-Customization
-=============
-
-**Tensorflow**
-
-.. code-block:: bash
-
-   » python  ./peekingduck/training/main.py  \
-   » framework=tensorflow \
-   » data_module=cifar10 \
-   » model.tensorflow.model_name=VGG16  \
-   » trainer.tensorflow.global_train_params.debug_epochs=10
-
-
-**Pytorch**
-
-.. code-block:: bash
-
-   » python  ./peekingduck/training/main.py  \
-   » framework=pytorch \
-   » data_module=cifar10 \
-   » model.pytorch.model_name=vgg16  \
-   » trainer.pytorch.global_train_params.debug_epochs=10
-
-
-When you manage to run either of the commands without any errors, the next section you can find out more about how to customise the config files to train on your own dataset.
-
-
+When you manage to run either of the commands without any errors, the next section you can find out more about how to prepare your dataset to the correct format.
