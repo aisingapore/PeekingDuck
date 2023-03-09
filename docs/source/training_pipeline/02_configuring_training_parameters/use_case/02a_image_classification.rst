@@ -90,6 +90,8 @@ Overview
 Main Config
 ===========
 
+``peekingduck/training/configs/config.yaml``
+
 .. raw:: html
 
    <div class="wy-table-responsive">
@@ -242,7 +244,11 @@ Data
 
    <h4>Train Test Split</h4>
 
-   Split arrays or matrices into random train and test subsets.
+``peekingduck/training/configs/data_module/resample/train_test_split.yaml``
+
+.. raw:: html
+
+   <p>Split arrays or matrices into random train and test subsets.</p>
 
    <div class="wy-table-responsive">
         <table class="docutils align-default">
@@ -326,6 +332,8 @@ Data
 .. raw:: html
 
    <h4>Default Datasets</h4>
+
+``peekingduck/training/configs/data_module/dataset/``
 
 .. tabs::
 
@@ -707,6 +715,8 @@ Data
 Model
 =====
 
+``peekingduck/training/configs/model/classification.yaml``
+
 .. raw:: html
 
    <div class="install">
@@ -869,6 +879,8 @@ Model
 Model Analysis
 ==============
 
+``peekingduck/training/configs/model_analysis/classification.yaml``
+
 .. raw:: html
 
    <h4>Default Values</h4>
@@ -915,6 +927,8 @@ Model Analysis
 Trainer
 =======
 
+``peekingduck/training/configs/trainer/classification.yaml``
+
 .. raw:: html
 
    <div class="install">
@@ -949,6 +963,8 @@ Trainer
 
 Metrics
 =======
+
+``peekingduck/training/configs/metrics/classification.yaml``
 
 .. raw:: html
 
@@ -1132,6 +1148,8 @@ Metrics
 Callbacks
 =========
 
+``peekingduck/training/configs/callbacks/classification.yaml``
+
 .. raw:: html
 
    <div class="install">
@@ -1291,6 +1309,8 @@ Callbacks
 
 Store
 =====
+
+``peekingduck/training/configs/stores/classifications.yaml``
 
 .. raw:: html
 

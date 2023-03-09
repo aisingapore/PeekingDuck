@@ -2,6 +2,8 @@
 
    .. tab:: Adapter
 
+      ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
+
       .. raw:: html 
 
          <p>Configuration for Data Adapter to pipeline the dataset to the model.</p>
@@ -280,6 +282,9 @@
          </div>
 
    .. tab:: Transform
+
+      ``peekingduck/training/configs/data_module/transform/test.yaml``
+      ``peekingduck/training/configs/data_module/transform/train.yaml``
 
       .. raw:: html 
 
