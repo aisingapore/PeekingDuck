@@ -157,19 +157,19 @@ class ImageClassificationDataModule:
             if self.cfg.framework == "pytorch":
                 self.train_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
-                    df=self.train_df,
+                    dataframe=self.train_df,
                     stage="train",
                     transforms=self.train_transforms,
                 )
                 self.valid_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
-                    df=self.valid_df,
+                    dataframe=self.valid_df,
                     stage="valid",
                     transforms=self.valid_transforms,
                 )
                 self.test_dataset: AbstractDataSet = PTImageClassificationDataset(
                     self.cfg,
-                    df=self.test_df,
+                    dataframe=self.test_df,
                     stage="test",
                     transforms=self.test_transforms,
                 )

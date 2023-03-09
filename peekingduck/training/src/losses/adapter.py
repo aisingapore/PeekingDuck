@@ -24,7 +24,7 @@ Loss functions Class to interact with Tensorflow
 
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List
 
 import tensorflow as tf
 import torch
