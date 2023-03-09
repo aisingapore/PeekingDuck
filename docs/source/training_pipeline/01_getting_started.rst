@@ -167,24 +167,27 @@ Install PeekingDuck Training Pipeline
          On macOS, you can install miniforge with Homebrew by running
 
          .. code-block:: bash
-      
-            » brew install miniforge
+            :linenos:
+
+            brew install miniforge
 
       Install requirements
 
          .. code-block:: bash
+            :linenos:
 
-            » conda create --name pkd-training python=3.8
-            » conda activate pkd-training
-            » conda env update --file peekingduck/training/requirements_mac.yaml --name pkd-training
-            » git clone <PeekdingDuck repository>
-            » cd PeekdingDuck
+            conda create --name pkd-training python=3.8
+            conda activate pkd-training
+            conda env update --file peekingduck/training/requirements_mac.yaml --name pkd-training
+            git clone <PeekdingDuck repository>
+            cd PeekdingDuck
 
       Install TensorFlow
 
          .. code-block:: bash
-
-            » bash .peekingduck/training/scripts/install_tensorflow_macos.sh
+            :linenos:
+            
+            bash .peekingduck/training/scripts/install_tensorflow_macos.sh
 
 
          
