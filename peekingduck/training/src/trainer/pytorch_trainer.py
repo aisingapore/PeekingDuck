@@ -13,17 +13,17 @@
 # limitations under the License.
 
 import logging
+from typing import Any, DefaultDict, Dict, List, Optional, Union
+from collections import defaultdict
+
+from omegaconf import DictConfig
+from hydra.utils import instantiate
+from tqdm.auto import tqdm
 import numpy as np
 import torch
-
-from collections import defaultdict
-from typing import Any, DefaultDict, Dict, List, Optional, Union
-from torchmetrics import MetricCollection
-
-from tqdm.auto import tqdm
-from omegaconf import DictConfig
 from torch.utils.data import DataLoader
-from hydra.utils import instantiate
+from torchmetrics import MetricCollection
+from configs import LOGGER_NAME
 
 from src.data.data_adapter import DataAdapter
 from src.optimizers.schedules import OptimizerSchedules
@@ -34,13 +34,11 @@ from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
 from src.utils.general_utils import free_gpu_memory  # , init_logger
-from src.utils.pt_model_utils import set_trainable_layers
-from configs import LOGGER_NAME
+from src.utils.pt_model_utils import set_trainable_layers, unfreeze_all_params
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-# TODO: clean up val vs valid naming confusions.
 def get_sigmoid_softmax(
     trainer_config: DictConfig,
 ) -> Union[torch.nn.Sigmoid, torch.nn.Softmax]:
@@ -315,7 +313,7 @@ class PytorchTrainer:
         self._invoke_callbacks(EVENTS.VALID_LOADER_START.value)
 
         with torch.no_grad():
-            for _step, batch in enumerate(valid_bar, start=1):
+            for _, batch in enumerate(valid_bar, start=1):
                 self._invoke_callbacks(EVENTS.VALID_BATCH_START.value)
 
                 # unpack
@@ -325,9 +323,6 @@ class PytorchTrainer:
 
                 self.optimizer.zero_grad()  # reset gradients
                 logits = self.model(inputs)  # Forward pass logits
-
-                # get batch size, may not be same as params.batch_size due to whether drop_last in loader is True or False.
-                _batch_size = inputs.shape[0]
 
                 y_valid_prob = get_sigmoid_softmax(self.trainer_config)(logits)
                 y_valid_pred = torch.argmax(y_valid_prob, dim=1)
@@ -340,8 +335,6 @@ class PytorchTrainer:
                 )
                 # Update loss metric, every batch is diff
                 self.epoch_dict["validation"]["batch_loss"] = curr_batch_val_loss.item()
-
-                # valid_bar.set_description(f"Validation. {metric_monitor}")
 
                 self._invoke_callbacks(EVENTS.VALID_BATCH_END.value)
                 # For OOF score and other computation.
@@ -397,10 +390,8 @@ class PytorchTrainer:
         self,
         train_loader: DataAdapter,
         validation_loader: DataAdapter,
-        fold: int = 0,
     ) -> Dict[str, Any]:
         """Fit the model and returns the history object."""
-        self.current_fold = fold
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
         self._train_setup(inputs)  # startup
@@ -408,8 +399,13 @@ class PytorchTrainer:
 
         # fine-tuning
         if self.model_config.fine_tune:
-            # set fine-tune layers
-            set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
+            if self.model_config.fine_tune_all:
+                unfreeze_all_params(self.model.model)
+            else:
+                # set fine-tune layers
+                set_trainable_layers(
+                    self.model.model, self.model_config.fine_tune_modules
+                )
             # need to re-init optimizer to update the newly unfrozen parameters
             self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
                 model=self.model,

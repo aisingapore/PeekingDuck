@@ -16,16 +16,19 @@ import logging
 import time
 import pandas as pd
 from tabulate import tabulate  # type: ignore
+from configs import LOGGER_NAME
+
 from src.trainer.base import Trainer
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
 
-from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
 class Logger(Callback):
+    """Logger"""
+
     def __init__(self) -> None:
         """Constructor for Logger class."""
         super().__init__(order=CallbackOrder.LOGGER)

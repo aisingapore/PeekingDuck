@@ -19,8 +19,12 @@ from omegaconf import DictConfig
 
 
 class TensorFlowCallbacksAdapter:
+    """Adapter for Tensorflow callbacks"""
+
     def get_callback(
-        self, callback_name: str, parameters: Optional[Union[DictConfig, dict]] = None
+        self,
+        callback_name: str,
+        parameters: Optional[Union[DictConfig, dict, str]] = None,
     ) -> tf.keras.callbacks.Callback:
         return (
             getattr(tf.keras.callbacks, callback_name)(**parameters)

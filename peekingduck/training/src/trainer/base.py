@@ -13,6 +13,7 @@
 # limitations under the License.
 
 from typing import Any, Dict, Protocol
+from omegaconf import DictConfig
 
 from src.data.data_adapter import DataAdapter
 
@@ -20,8 +21,16 @@ from src.data.data_adapter import DataAdapter
 class Trainer(Protocol):
     """Object used to facilitate training."""
 
-    def setup(self) -> None:
-        """"""
+    def setup(
+        self,
+        trainer_config: DictConfig,
+        model_config: DictConfig,
+        callbacks_config: DictConfig,
+        metrics_config: DictConfig,
+        data_config: DictConfig,
+        device: str = "",
+    ) -> None:
+        """Setup"""
 
     def train(
         self, train_loader: DataAdapter, validation_loader: DataAdapter

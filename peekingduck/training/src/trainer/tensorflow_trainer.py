@@ -16,6 +16,7 @@ from typing import Any, Dict, List, Optional, Union
 from omegaconf import DictConfig
 import tensorflow as tf
 import logging
+from configs import LOGGER_NAME
 
 from src.data.data_adapter import DataAdapter
 from src.optimizers.adapter import OptimizersAdapter
@@ -25,8 +26,7 @@ from src.losses.adapter import LossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
-from src.utils.tf_model_utils import set_trainable_layers
-from configs import LOGGER_NAME
+from src.utils.tf_model_utils import set_trainable_layers, unfreeze_all_layers
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
@@ -48,7 +48,7 @@ class TensorflowTrainer:
         callbacks_config: DictConfig,
         metrics_config: DictConfig,
         data_config: DictConfig,
-        device: str,
+        device: str = "cpu",
     ) -> None:
         """Called when the trainer begins."""
         self.trainer_config = trainer_config[self.framework]
@@ -56,6 +56,8 @@ class TensorflowTrainer:
         self.metrics_config = metrics_config[self.framework]
         self.callbacks_config = callbacks_config[self.framework]
         self.train_params = self.trainer_config.global_train_params
+        self.data_config = data_config
+        self.device = device
 
         # Set Seed
         tf.random.set_seed(self.train_params.manual_seed)
@@ -126,8 +128,10 @@ class TensorflowTrainer:
 
         logger.info("\n\nStart fine-tuning!\n")
 
-        # self.model_config.fine_tune true
-        set_trainable_layers(self.model, self.model_config.fine_tune_layers)
+        if self.model_config.fine_tune_all:
+            unfreeze_all_layers(self.model)
+        else:
+            set_trainable_layers(self.model, self.model_config.fine_tune_layers)
 
         self.train_summary()
 

@@ -72,21 +72,81 @@ OS
 
    .. tab:: Linux
 
+      Plarform:
+         - Ubuntu 20.04 LTS / 22.04 LTS
+      Prerequisite:
+         - `Git <https://github.com/git-guides/install-git>`_
+         - `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_
+         - For CUDA GPU:
+            - `Latest Compatible Nvidia Display Driver for your system <https://www.nvidia.com/download/index.aspx>`_
+      
+      **CPU**
+
+      .. code-block:: bash
+
+         $ conda create -n pkd python=3.8
+         $ conda activate pkd
+         $ git clone <PeekdingDuck repository>
+         $ cd PeekdingDuck
+         $ pip install -r peekingduck/training/requirements.txt
+
       **CUDA GPU**
 
-      **CPU**
-        +------------------------------+
-        | paragraph                    |
-        |                              |
-        +------------------------------+
+      .. code-block:: bash
+
+         $ conda create -n pkd python=3.8
+         $ conda activate pkd
+         $ git clone <PeekdingDuck repository>
+         $ cd PeekdingDuck
+         $ pip install -r peekingduck/training/requirements.txt
+         $ conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
+         $ mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
+         && mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d \
+         && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
+         $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh && \
+         echo 'unset LD_LIBRARY_PATH'>\
+         $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
+         $ conda activate base && conda activate pkd
 
    .. tab:: Windows
 
-      **CUDA GPU**
+      Platform:
+         - Windows 11 / 10 version 2004 or higher
+      Prerequisite:
+         - `Git <https://github.com/git-guides/install-git>`_
+         - `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_
+         - For CUDA GPU:
+            - `Latest Compatible Nvidia Display Driver for your system <https://www.nvidia.com/download/index.aspx>`_
+            - `WSL2 <https://learn.microsoft.com/en-us/windows/wsl/install>`_
+            - No need to install CUDA Toolkit and cuDNN at this stage. They are bundled with PyTorch, and will be installed via conda for TensorFlow
 
       **CPU**
-        
 
+      .. code-block:: bash
+
+         $ conda create -n pkd python=3.8
+         $ conda activate pkd
+         $ git clone <PeekdingDuck repository>
+         $ cd PeekdingDuck
+         $ pip install -r peekingduck/training/requirements.txt
+
+      **CUDA GPU**
+
+      .. code-block:: bash
+
+         $ conda create -n pkd python=3.8
+         $ conda activate pkd
+         $ git clone <PeekdingDuck repository>
+         $ cd PeekdingDuck
+         $ pip install -r peekingduck/training/requirements.txt
+         $ conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
+         $ mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
+         && mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d \
+         && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
+         $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh && \
+         echo 'unset LD_LIBRARY_PATH'>\
+         $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
+         $ conda activate base && conda activate pkd
 
    .. tab:: Mac 
     

@@ -47,7 +47,7 @@ class PTImageClassificationDataset(Dataset):
     def __init__(
         self,
         cfg: DictConfig,
-        df: pd.DataFrame,
+        dataframe: pd.DataFrame,
         stage: str = "train",
         transforms: TransformTypes = None,
         **kwargs: Dict[str, Any],
@@ -56,16 +56,18 @@ class PTImageClassificationDataset(Dataset):
 
         super().__init__(**kwargs)
         self.cfg: DictConfig = cfg
-        self.df: pd.DataFrame = df
+        self.dataframe: pd.DataFrame = dataframe
         self.stage: str = stage
         self.transforms: TransformTypes = transforms
 
-        self.image_path = df[cfg.dataset.image_path_col_name].values
-        self.targets = df[cfg.dataset.target_col_id].values if stage != "test" else None
+        self.image_path = dataframe[cfg.dataset.image_path_col_name].values
+        self.targets = (
+            dataframe[cfg.dataset.target_col_id].values if stage != "test" else None
+        )
 
     def __len__(self) -> int:
         """Return the length of the dataset."""
-        return len(self.df.index)
+        return len(self.dataframe.index)
 
     def __getitem__(self, index: int) -> Union[Tuple, Any]:
         """Generate one batch of data"""
@@ -114,7 +116,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
 
     def __init__(
         self,
-        df: pd.DataFrame,
+        dataframe: pd.DataFrame,
         stage: str = "train",
         batch_size: int = 1,
         num_classes: int = 2,
@@ -128,7 +130,7 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
     ) -> None:
         """"""
 
-        self.df = df
+        self.dataframe = dataframe
         self.stage = stage
         self.transforms = transforms
         self.batch_size = batch_size
@@ -137,8 +139,8 @@ class TFImageClassificationDataset(tf.keras.utils.Sequence):
         self.num_channels = num_channels
         self.shuffle = shuffle
 
-        self.image_paths = df[x_col].values
-        self.targets = df[y_col].values if stage != "test" else None
+        self.image_paths = self.dataframe[x_col].values
+        self.targets = self.dataframe[y_col].values if stage != "test" else None
         self.kwargs = kwargs
         self._on_epoch_end()
 

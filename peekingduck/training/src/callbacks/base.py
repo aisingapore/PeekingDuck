@@ -20,6 +20,7 @@ from typing import (
     Union,
 )  # This solves circular import type hinting.
 from omegaconf import DictConfig
+
 import src.callbacks as Callbacks
 
 if TYPE_CHECKING:
@@ -32,14 +33,14 @@ def init_callbacks(callbacks: List[Union[DictConfig, str]]) -> List:
         callbacks: The list of callbacks from configs->callbacks->classification/detection/segmentation.
     """
     cb_list = []
-    for cb in callbacks:
-        if isinstance(cb, DictConfig):
-            for cbk, cbv in cb.items():
+    for callback in callbacks:
+        if isinstance(callback, DictConfig):
+            for cbk, cbv in callback.items():
                 cb_list.append(getattr(Callbacks, str(cbk))(**cbv))
-        elif isinstance(cb, str):
-            cb_list.append(getattr(Callbacks, cb)())
+        elif isinstance(callback, str):
+            cb_list.append(getattr(Callbacks, callback)())
         else:
-            raise TypeError
+            raise TypeError("Invalid callback type")
     return sort_callbacks(cb_list)
 
 
