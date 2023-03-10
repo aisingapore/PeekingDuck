@@ -176,9 +176,8 @@ Install PeekingDuck Training Pipeline
          .. code-block:: bash
             :linenos:
 
-            conda create --name pkd-training python=3.8
+            conda env create -f peekingduck/training/requirements_mac.yaml
             conda activate pkd-training
-            conda env update --file peekingduck/training/requirements_mac.yaml --name pkd-training
             git clone <PeekdingDuck repository>
             cd PeekdingDuck
 
