@@ -36,11 +36,12 @@ Image Classification
    /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
 
 
-We are using the yaml syntax for the config file
-
 
 Overview
 ===========
+
+We are using the yaml syntax for the config file. Below is the folder structure and description of how users can understand and navigate the config structure. 
+Configuration files that are not user-customizable are not included in the table below.
 
 .. raw:: html
     
@@ -83,9 +84,44 @@ Overview
           └── config.yaml
     </pre>
 
-
     <br><br>
 
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| Folder/file under `configs` folder | Description                                                                                       |
++====================================+===================================================================================================+
+| config.yaml                        | Main configuration file for high-level training settings such as                                  |
+|                                    |                                                                                                   |
+|                                    | project name, framework, debug mode, view mode, etc.                                              |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| data_module                        | Main configuration file for data module.                                                          |
+|  └── <name_of_the_dataset>.yaml    |                                                                                                   |
+|                                    | The only customizable config is `num_debug_samples`.                                              |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| data_module                        | Controls the batch size for train / test dataset, shuffling control, etc.                         |
+|  └── data_adapter                  |                                                                                                   |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| data_module                        | Contains configuration for each dataset in separate .yaml files.                                  |
+|  └── dataset                       |                                                                                                   |
+|                                    | Customization for the image size and number of classes for image classification.                  |
+|                                    |                                                                                                   |
+|                                    | User can choose to download the sample dataset when running the pipeline.                         |
+|                                    |                                                                                                   |
+|                                    | User need to create a separate .yaml file within the folder for custom dataset.                   |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| data_module                        | Controls train/test split and shuffling.                                                          |
+|  └── resample                      |                                                                                                   |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| data_module                        | Controls image augmentations / transformations for train / test, such as cropping, flipping, etc. |
+|  └── transform                     |                                                                                                   |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| model                              | Controls selection of pre-trained models and fine-tuning model settings                           |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| trainer                            | Control training related parameters including number of epochs,                                   |
+|                                    |                                                                                                   |
+|                                    | learning rate, loss funcion, metric and patience for early stopping                               |
++------------------------------------+---------------------------------------------------------------------------------------------------+
+| metrics                            | Choose training metrics to monitor during training                                                |
++------------------------------------+---------------------------------------------------------------------------------------------------+
 
 Main Config
 ===========
