@@ -89,30 +89,32 @@ Install PeekingDuck Training Pipeline
       **CPU**
 
       .. code-block:: bash
+         :linenos:
 
-         $ conda create -n pkd python=3.8
-         $ conda activate pkd
-         $ git clone <PeekdingDuck repository>
-         $ cd PeekdingDuck
-         $ pip install -r peekingduck/training/requirements.txt
+         conda create -n pkd python=3.8
+         conda activate pkd
+         git clone <PeekdingDuck repository>
+         cd PeekdingDuck
+         pip install -r peekingduck/training/requirements.txt
 
       **CUDA GPU**
 
       .. code-block:: bash
+         :linenos:
 
-         $ conda create -n pkd python=3.8
-         $ conda activate pkd
-         $ git clone <PeekdingDuck repository>
-         $ cd PeekdingDuck
-         $ pip install -r peekingduck/training/requirements.txt
-         $ conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
-         $ mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
+         conda create -n pkd python=3.8
+         conda activate pkd
+         git clone <PeekdingDuck repository>
+         cd PeekdingDuck
+         pip install -r peekingduck/training/requirements.txt
+         conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
+         mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
          && mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d \
          && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
          $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh && \
          echo 'unset LD_LIBRARY_PATH'>\
          $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
-         $ conda activate base && conda activate pkd
+         conda activate base && conda activate pkd
 
    .. tab:: Windows
 
@@ -129,30 +131,32 @@ Install PeekingDuck Training Pipeline
       **CPU**
 
       .. code-block:: bash
+         :linenos:
 
-         $ conda create -n pkd python=3.8
-         $ conda activate pkd
-         $ git clone <PeekdingDuck repository>
-         $ cd PeekdingDuck
-         $ pip install -r peekingduck/training/requirements.txt
+         conda create -n pkd python=3.8
+         conda activate pkd
+         git clone <PeekdingDuck repository>
+         cd PeekdingDuck
+         pip install -r peekingduck/training/requirements.txt
 
       **CUDA GPU**
 
       .. code-block:: bash
+         :linenos:
 
-         $ conda create -n pkd python=3.8
-         $ conda activate pkd
-         $ git clone <PeekdingDuck repository>
-         $ cd PeekdingDuck
-         $ pip install -r peekingduck/training/requirements.txt
-         $ conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
-         $ mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
+         conda create -n pkd python=3.8
+         conda activate pkd
+         git clone <PeekdingDuck repository>
+         cd PeekdingDuck
+         pip install -r peekingduck/training/requirements.txt
+         conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
+         mkdir -p $CONDA_PREFIX/etc/conda/activate.d \
          && mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d \
          && echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
          $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh && \
          echo 'unset LD_LIBRARY_PATH'>\
          $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
-         $ conda activate base && conda activate pkd
+         conda activate base && conda activate pkd
 
    .. tab:: Mac 
     
@@ -205,10 +209,11 @@ Test Run
 To test the training pipeline with the default cifar10 dataset, use the following commands in terminal:
 
 .. code-block:: bash
+   :linenos:
    
    # use the default configurations to test
-   $ cd PeekdingDuck
-   $ python ./peekingduck/training/main.py debug=True framework=tensorflow
-   $ python ./peekingduck/training/main.py debug=True framework=pytorch
+   cd PeekdingDuck
+   python ./peekingduck/training/main.py debug=True framework=tensorflow
+   python ./peekingduck/training/main.py debug=True framework=pytorch
 
 When you manage to run either of the commands without any errors, the next section you can find out more about how to prepare your dataset to the correct format.
