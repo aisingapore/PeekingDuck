@@ -61,9 +61,7 @@ How training pipeline works
 
 **Component Diagram**
 
-.. image:: /assets/diagrams/C4_Diagram-L4_Simplified_Overview.png
-
-
+.. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
 
 
 
