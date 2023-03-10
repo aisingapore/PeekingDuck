@@ -123,6 +123,30 @@ Configuration files that are not user-customizable are not included in the table
 | metrics                            | Choose training metrics to monitor during training                                                |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 
+There are two ways to change the default configuration:
+
+1. Update the parameter values inside yaml file for the respective configuration
+
+2. Pass the argument in command line.
+
+For the second option, user can pass the arguments explicitly stated in the main `config.yaml` file directly in the command line, such as follows:
+
+.. code-block:: bash
+   :linenos: 
+
+   cd PeekdingDuck
+   python ./peekingduck/training/main.py debug=True framework=tensorflow project_name=abcxyz view_only=True
+
+To change the arguments in other configuration files such as `model`, `trainer`, etc., the user would need to chain up the arguments based on the hierarchy in the yaml files. Here is one example:
+
+.. code-block:: bash
+   :linenos: 
+
+   cd PeekdingDuck
+   python ./peekingduck/training/main.py debug=True framework=pytorch model.pytorch.model_name=mobilenetv3_small_050 trainer.pytorch.global_train_params.debug_epochs=5
+
+Refer to the following sections to learn about the detailed configurations for customized training
+
 Main Config
 ===========
 

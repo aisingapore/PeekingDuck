@@ -6,8 +6,6 @@
 Training your own model
 ***********************
 
-The Training Pipeline ...
-
 .. toctree::
    :maxdepth: 2
 
