@@ -100,7 +100,7 @@ class TensorflowTrainer:
         # compile model
         self.model.compile(optimizer=self.opt, loss=self.loss, metrics=self.metrics)
 
-    def train_summary(self, inputs: Dict[str, Any]) -> None:
+    def train_summary(self, inputs: Optional[Dict[str, Any]] = None) -> None:
         """Print model summary"""
         logger.info("\n\nModel Summary:\n")
         self.model.summary(expand_nested=True)
