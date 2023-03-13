@@ -399,6 +399,9 @@ class PytorchTrainer:
 
         # fine-tuning
         if self.model_config.fine_tune:
+
+            logger.info("\n\nUnfreezing parameters, please wait...\n")
+
             if self.model_config.fine_tune_all:
                 unfreeze_all_params(self.model.model)
             else:

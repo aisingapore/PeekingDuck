@@ -17,6 +17,7 @@ from omegaconf import DictConfig
 import tensorflow as tf
 import logging
 from configs import LOGGER_NAME
+from tqdm.keras import TqdmCallback  # for progress bar
 
 from src.data.data_adapter import DataAdapter
 from src.optimizers.adapter import OptimizersAdapter
@@ -108,6 +109,8 @@ class TensorflowTrainer:
     def train(self, train_dl: DataAdapter, val_dl: DataAdapter) -> Union[Any, dict]:
         self.train_summary()
 
+        self.callbacks.append(TqdmCallback(verbose=2))
+
         self.epochs = self.train_params.epochs
         if self.train_params.debug:
             self.epochs = self.train_params.debug_epochs
@@ -116,6 +119,7 @@ class TensorflowTrainer:
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
+            verbose=0,
             callbacks=self.callbacks,
         )
 
@@ -126,7 +130,7 @@ class TensorflowTrainer:
         if not self.model_config.fine_tune:
             return feature_extraction_history.history
 
-        logger.info("\n\nStart fine-tuning!\n")
+        logger.info("\n\nUnfreezing parameters, please wait...\n")
 
         if self.model_config.fine_tune_all:
             unfreeze_all_layers(self.model)
@@ -147,10 +151,13 @@ class TensorflowTrainer:
             metrics=self.metrics,
         )
 
+        logger.info("\n\nStart fine-tuning!\n")
+
         fine_tuning_history = self.model.fit(
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
+            verbose=0,
             callbacks=self.callbacks,
         )
         history: dict = merge_dict_of_list(
