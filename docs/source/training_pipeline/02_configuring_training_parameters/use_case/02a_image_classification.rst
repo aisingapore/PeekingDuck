@@ -804,7 +804,16 @@ Model
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">adapter</span></code></td>
                         <td><p>"timm"</p</td>
-                        <td><p></p></td>
+                        <td>
+                            PeekingDuck supports pre-trained models from both <code>torchvision</code> and <code>timm</code> libraries.
+                            <br>
+                            <br><code>torchvision</code> is well established with more flexibility for customization,
+                            <br>whereas <code>timm</code> supports more pre-trained SOTA models and is easier to configure.
+                            <br>
+                            <br>There are pros and cons for each library, but it shouldn't affect the usability for PeekingDuck users.
+                            <br>
+                            <br>The user can evaluate both libraries to make a decision based on the actual model performances.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">task</span></code></td>
@@ -814,33 +823,84 @@ Model
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">model_name</span></code></td>
                         <td><p>"vgg16"</p</td>
-                        <td><p></p></td>
+                        <td>
+                            Supported model names from <code>torchvision</code> or <code>timm</code>.
+                            <br>For <code>torchvision</code>, refer to the <a href="https://pytorch.org/vision/stable/models.html#classification">official docs</a> for the list of the model.
+                            <br>Click on the links and use the class name as the model name in the configuration file.
+                            <br>For example, to use a vgg16 model, click the <a href="https://pytorch.org/vision/stable/models/vgg.html">VGG link</a>
+                            <br>and use <code>vgg16</code> as the value for the model name.
+                            <br>
+                            <br>For <code>timm</code>, use <code>timm.list_models(pretrained=True)</code> to list out all the supported models,
+                            <br>and use the string value as the value for the model name. 
+                            <br>Refer to the <a href="https://timm.fast.ai/#List-Models-with-Pretrained-Weights">official docs</a> for advanced searching.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">weights</span></code></td>
                         <td><p>"DEFAULT"</p</td>
-                        <td><p></p></td>
+                        <td>
+                            Only applicable for <code>torchvision</code> adapter.
+                            <br>
+                            <br>Set as <code>DEFAULT</code> (recommended) to use default pre-trained weights,
+                            <br>or change to alternative pre-trained weights (if supported)
+                            <br>described in the documentation for the specific model.
+                            <br>
+                            <br>Refer to <a href="https://pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v3_large.html#torchvision.models.MobileNet_V3_Large_Weights">mobilenet_v3_large</a> for an example.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">pretrained</span></code></td>
                         <td><p>True</p</td>
-                        <td><p></p></td>
+                        <td>
+                            Only applicable for <code>timm</code> adapter.
+                            <br>If set to <code>False</code>, the weights will be initialized randomly.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">fine_tune</span></code></td>
                         <td><p>True</p</td>
-                        <td><p></p></td>
+                        <td>
+                            <code>True</code> to fine-tune the model after training the classifier.
+                            <br><code>False</code> to only train the classifier.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><code class="xref"><span class="pre">fine_tune_all</span></code></td>
+                        <td><p>True</p</td>
+                        <td>
+                            Only applicable when <code>fine_tune</code> is set to <code>True</code>
+                            <br><code>True</code> to fine-tune the model after training the classifier.
+                            <br><code>False</code> to only train the classifier.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">fine_tune_modules</span></code></td>
                         <td><p></p</td>
-                        <td><p></p></td>
+                        <td><p></p>
+                            Only applicable when <code>fine_tune_all</code> is set to <code>False</code>
+                            <br>
+                            <br>Specify which block within the model to fine-tune, accessed by the name.
+                            <br>
+                            <br>The settings will depend on the selected model, since each model architecture names
+                            <br>the sub-modules differently
+                            <br>
+                            <br>The sub-keys are the name of the modules to fine-tune, which can be
+                            <br>viewed in the model print-out when setting <code>view_only</code> to <code>True</code> 
+                            <br>in the main configuration file.
+                            <br>
+                            <br>The values represent the layer/sub-modules to fine-tune, which can be an integer or a list of string.
+                            <br>For an integer "n", it sets the last "n" layer/sub-modules to fine-tune.
+                            <br>For a list of string, it sets the layer/sub-modules to fine-tune by names
+                        </td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">features</span></code></td>
                         <td><p>7</p</td>
-                        <td><p></p></td>
+                        <td>
+                            This is an example value. For "vgg16" model,
+                            <br>it will set the last <code>7</code> layers within the <code>feature</code> module as trainable
+                        </td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -850,19 +910,32 @@ Model
                                 "act1",
                                 "drop",
                                 "fc2",
-                                "act2",
+                                "act2"
                             ]</p</td>
-                        <td><p></p></td>
+                        <td>
+                            This is an example value. For "vgg16" model, 
+                            <br>it will set the <code>
+                                "fc1",
+                                "act1",
+                                "drop",
+                                "fc2",
+                                "act2"
+                            </code> modules as trainable
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">num_classes</span></code></td>
                         <td><p>${data_module.dataset.num_classes}</p</td>
-                        <td><p></p></td>
+                        <td>
+                        Should not be changed. For hydra interpolation.
+                        </td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">device</span></code></td>
                         <td><p>${device}</p</td>
-                        <td><p></p></td>
+                        <td>
+                        Should not be changed. For hydra interpolation.
+                        </td>
                     </tr>
                 </tbody>
             </table>
@@ -1050,7 +1123,7 @@ Metrics
             <li>AUROC</li>
         </ul>
         </p>
-        <p>The table below shows the default values:</p>
+        <p>The table below shows the default Descriptionvalues:</p>
         <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
