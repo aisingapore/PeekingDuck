@@ -17,3 +17,6 @@ tensorflow:
           patience: 3
           restore_best_weights: True
           monitor: ${trainer.tensorflow.global_train_params.monitored_metric.monitor}
+    - ProgbarLogger:
+          count_mode: 'steps'
+          stateful_metrics: Null
