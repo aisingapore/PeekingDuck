@@ -28,6 +28,7 @@ from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
 from src.utils.tf_model_utils import set_trainable_layers, unfreeze_all_layers
+from tqdm.keras import TqdmCallback
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
