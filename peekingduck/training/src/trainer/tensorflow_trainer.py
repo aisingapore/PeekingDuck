@@ -110,7 +110,8 @@ class TensorflowTrainer:
     def train(self, train_dl: DataAdapter, val_dl: DataAdapter) -> Union[Any, dict]:
         self.train_summary()
 
-        self.callbacks.append(TqdmCallback(verbose=2))
+        if self.callbacks:
+            self.callbacks.append(TqdmCallback(verbose=2))
 
         self.epochs = self.train_params.epochs
         if self.train_params.debug:
