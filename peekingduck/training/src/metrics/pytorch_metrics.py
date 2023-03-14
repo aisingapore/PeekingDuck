@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""pytorch metrics"""
+
 import torchmetrics
 from torchmetrics.classification.stat_scores import (
     MulticlassStatScores,
@@ -53,6 +55,7 @@ class PytorchMetrics:
     def get_metrics(
         cls, task: str, num_classes: int, metric_list: list
     ) -> MetricCollection:
+        """Get single metric object"""
         metric_collection_list = [
             cls.get_metric(task, num_classes, metric) for metric in metric_list
         ]
@@ -63,10 +66,10 @@ class PytorchMetrics:
     def get_classification_metrics(
         metrics: MetricCollection,
         y_trues: torch.Tensor,
-        y_preds: torch.Tensor,
         y_probs: torch.Tensor,
         prefix: str = "train",
     ) -> Any:
+        # pylint: disable=line-too-long
         """
         Calculate metrics
         [summary]

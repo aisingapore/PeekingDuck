@@ -14,6 +14,7 @@
 
 
 """Transforms for data augmentation."""
+
 import operator
 from typing import Any, Dict, Literal
 
@@ -22,16 +23,15 @@ from albumentations.core.transforms_interface import ImageOnlyTransform
 from omegaconf import DictConfig
 from hydra.utils import instantiate
 
-from .. import config
+from src.transforms.base import Transforms
+from src.config import TF_AVAILABLE
 
-if config.TF_AVAILABLE:
+if TF_AVAILABLE:
     import tensorflow as tf
 else:
     raise ImportError(
         "Called a tensorflow-specific function but tensorflow is not installed."
     )
-
-from src.transforms.base import Transforms
 
 
 class ImageClassificationTransforms(Transforms):
@@ -59,9 +59,12 @@ class ImageClassificationTransforms(Transforms):
 
 
 class TFPreprocessImage(ImageOnlyTransform):
-    """Preprocessed numpy.array or a tf.Tensor with type float32. The images are converted from RGB to BGR,
-        then each color channel is zero-centered with respect to the ImageNet dataset, without scaling.
-        Refer to https://www.tensorflow.org/api_docs/python/tf/keras/applications/vgg16/preprocess_input
+    """Preprocessed numpy.array or a tf.Tensor with type float32.
+        The images are converted from RGB to BGR,
+        then each color channel is zero-centered with respect to the ImageNet dataset,
+        without scaling.
+        Refer to
+        https://www.tensorflow.org/api_docs/python/tf/keras/applications/vgg16/preprocess_input
     Args:
         p (float): probability of applying the transform. Default: 1.
     Targets:
@@ -81,3 +84,7 @@ class TFPreprocessImage(ImageOnlyTransform):
 
     def get_transform_init_args_names(self) -> Literal["preprocessor"]:
         return "preprocessor"
+
+    def get_params_dependent_on_targets(self, params: Dict[str, Any]) -> Dict[str, Any]:
+        """"""
+        return params

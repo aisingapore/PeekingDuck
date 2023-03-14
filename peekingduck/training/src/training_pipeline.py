@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from typing import Any, Dict
-from omegaconf import DictConfig
-from time import perf_counter
+"""Trainer Pipeline"""
+
 import logging
+from typing import Any, Dict
+from time import perf_counter
+from omegaconf import DictConfig
 from hydra.utils import instantiate
 from configs import LOGGER_NAME
 
@@ -28,6 +30,7 @@ logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=inval
 
 
 def init_trainer(cfg: DictConfig) -> Trainer:
+    """Instantiate Trainer Pipeline"""
     trainer: Trainer = instantiate(
         cfg.trainer[cfg.framework].global_train_params.trainer, cfg.framework
     )
@@ -43,6 +46,7 @@ def init_trainer(cfg: DictConfig) -> Trainer:
 
 
 def run(cfg: DictConfig) -> None:
+    """Run the Trainer Pipeline"""
     assert cfg.framework in [
         "pytorch",
         "tensorflow",

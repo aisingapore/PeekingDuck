@@ -26,6 +26,7 @@ class TensorFlowCallbacksAdapter:
         callback_name: str,
         parameters: Optional[Union[DictConfig, dict, str]] = None,
     ) -> tf.keras.callbacks.Callback:
+        """Instantiate single callback"""
         return (
             getattr(tf.keras.callbacks, callback_name)(**parameters)
             if parameters is not None and len(parameters) > 0
@@ -35,16 +36,17 @@ class TensorFlowCallbacksAdapter:
     def get_callbacks(
         self, callbacks: List[Union[DictConfig, dict, str]]
     ) -> List[tf.keras.callbacks.Callback]:
+        """Instantiate callbacks from cfg"""
         callbacks_list = []
         for callback in callbacks:
             try:
                 if isinstance(callback, DictConfig):
                     for cbkey, cbval in callback.items():
-                        callbacks_list.append(self.get_callback(cbkey, cbval))
+                        callbacks_list.append(self.get_callback(str(cbkey), cbval))
                 elif isinstance(callback, str):
                     callbacks_list.append(self.get_callback(callback))
                 else:
-                    raise TypeError
+                    raise TypeError("Invalid callback type")
             except NotImplementedError:
                 raise NotImplementedError
 

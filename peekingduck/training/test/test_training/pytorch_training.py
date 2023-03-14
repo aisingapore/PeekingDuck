@@ -12,8 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Pytorch test script"""
+
 from typing import Tuple
-import torch
+import torch  # pylint: disable=consider-using-from-import
 import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader

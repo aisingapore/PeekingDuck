@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""pytorch trainer"""
+
 import logging
 from typing import Any, DefaultDict, Dict, List, Optional, Union
 from collections import defaultdict
@@ -20,7 +22,7 @@ from omegaconf import DictConfig
 from hydra.utils import instantiate
 from tqdm.auto import tqdm
 import numpy as np
-import torch
+import torch  # pylint: disable=consider-using-from-import
 from torch.utils.data import DataLoader
 from torchmetrics import MetricCollection
 from configs import LOGGER_NAME
@@ -57,7 +59,7 @@ def get_sigmoid_softmax(
     return loss_func
 
 
-class PytorchTrainer:
+class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-arguments
     """Object used to facilitate training."""
 
     def __init__(self, framework: str = "pytorch") -> None:
@@ -171,7 +173,7 @@ class PytorchTrainer:
         self.train_summary(inputs)
 
     def train_summary(self, inputs: torch.Tensor, finetune: bool = False) -> None:
-        # show model layer details
+        """show model layer details"""
         if not finetune:
             logger.info(f"Model Layer Details:\n{self.model.model}")
         # show model summary
@@ -227,8 +229,6 @@ class PytorchTrainer:
 
         train_bar = tqdm(train_loader)
         train_trues: List[torch.Tensor] = []
-        train_logits: List[torch.Tensor] = []
-        train_preds: List[torch.Tensor] = []
         train_probs: List[torch.Tensor] = []
 
         self._invoke_callbacks(EVENTS.TRAIN_LOADER_START.value)
@@ -259,30 +259,22 @@ class PytorchTrainer:
             # Compute the loss metrics and its gradients
             self.epoch_dict["train"]["batch_loss"] = curr_batch_train_loss.item()
             y_train_prob = get_sigmoid_softmax(self.trainer_config)(logits)
-            y_train_pred = torch.argmax(y_train_prob, dim=1)
 
             self._invoke_callbacks(EVENTS.TRAIN_BATCH_END.value)
 
             train_trues.extend(targets.cpu())
-            train_logits.extend(logits.cpu())
             train_probs.extend(y_train_prob.cpu())
-            train_preds.extend(y_train_pred.cpu())
 
         (
             train_trues_tensor,
-            train_logits_tensor,
-            train_preds_tensor,
             train_probs_tensor,
         ) = (
             torch.vstack(tensors=train_trues),
-            torch.vstack(tensors=train_logits),
-            torch.vstack(tensors=train_preds),
             torch.vstack(tensors=train_probs),
         )
         self.epoch_dict["train"]["metrics"] = PytorchMetrics.get_classification_metrics(
             self.metrics,
             train_trues_tensor,
-            train_preds_tensor,
             train_probs_tensor,
             "train",
         )
@@ -290,7 +282,9 @@ class PytorchTrainer:
         self._invoke_callbacks(EVENTS.TRAIN_LOADER_END.value)
         self._invoke_callbacks(EVENTS.TRAIN_EPOCH_END.value)
 
-    def _run_validation_epoch(self, validation_loader: DataLoader) -> None:
+    def _run_validation_epoch(
+        self, validation_loader: DataLoader
+    ) -> None:  # pylint: disable=too-many-locals
         """Validate the model on the validation set for one epoch.
         Args:
             validation_loader (torch.utils.data.DataLoader): The validation set dataloader.
@@ -360,7 +354,6 @@ class PytorchTrainer:
         ] = PytorchMetrics.get_classification_metrics(
             self.metrics,
             valid_trues_tensor,
-            valid_preds_tensor,
             valid_probs_tensor,
             "val",
         )
@@ -399,7 +392,6 @@ class PytorchTrainer:
 
         # fine-tuning
         if self.model_config.fine_tune:
-
             logger.info("\n\nUnfreezing parameters, please wait...\n")
 
             if self.model_config.fine_tune_all:

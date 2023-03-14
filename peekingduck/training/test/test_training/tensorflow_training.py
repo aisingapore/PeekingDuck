@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Tensorflow test script"""
+
 import tensorflow as tf
 
 print("TensorFlow version:", tf.__version__)

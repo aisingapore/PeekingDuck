@@ -12,13 +12,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Tensorflow Pytorch configurations"""
+
 # mypy: ignore-errors
-import importlib
+import logging
 import os
 import platform
+import importlib
 from packaging import version
 
-import logging
 from configs import LOGGER_NAME
 
 logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -80,7 +82,8 @@ if USE_TF in ENV_VARS_TRUE_AND_AUTO_VALUES and USE_TORCH not in ENV_VARS_TRUE_VA
     if TF_AVAILABLE:
         if TF_VERSION.major < 2:
             logger.info(
-                f"TensorFlow found but with version {TF_VERSION}. `datasets` requires version 2 minimum."
+                f"TensorFlow found but with version {TF_VERSION}."
+                f"`datasets` requires version 2 minimum."
             )
             TF_AVAILABLE = False
         else:

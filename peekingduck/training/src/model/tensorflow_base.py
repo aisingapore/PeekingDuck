@@ -12,11 +12,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""Abstract class for tensorflow model factory"""
+
 from abc import ABC, abstractmethod
 from omegaconf import DictConfig
 import tensorflow as tf
 
 
+# pylint: disable=too-few-public-methods
 class TFModelFactory(ABC):
     """Model Base Class for TensorFlow."""
 
