@@ -22,8 +22,8 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">manual_seed</span></code></td>
-                        <td><p>${random_state}</p></td>
+                        <td><code><span class="pre grey">manual_seed</span></code></td>
+                        <td><p class="grey">${random_state}</p></td>
                         <td><p>Random seed. Default value will reference directly from main config file.</p></td>
                     </tr>
                     <tr>
@@ -34,8 +34,8 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">debug</span></code></td>
-                        <td><p>${debug}</p></td>
+                        <td><code><span class="pre grey">debug</span></code></td>
+                        <td><p class="grey">${debug}</p></td>
                         <td><p>Flag for checking if debug is set to True of False. Reference directly from main config file.</p></td>
                     </tr>
                     <tr>

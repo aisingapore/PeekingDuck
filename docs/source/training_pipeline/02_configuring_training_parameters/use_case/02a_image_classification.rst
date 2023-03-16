@@ -218,82 +218,82 @@ Config File : ``peekingduck/training/configs/config.yaml``
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">model</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">model</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">trainer</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">trainer</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">callbacks</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">callbacks</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">metrics</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">metrics</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">model_analysis</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">model_analysis</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">stores</span></code></td>
-                    <td><p>${use_case}</p></td>
+                    <td colspan="2"><code><span class="pre grey">stores</span></code></td>
+                    <td><p class="grey">${use_case}</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">override hydra/job_logging</span></code></td>
-                    <td><p>custom</p></td>
+                    <td colspan="2"><code><span class="pre grey">override hydra/job_logging</span></code></td>
+                    <td><p class="grey">custom</p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
-                    <td colspan="3"><code class="xref"><span class="pre">hydra</span></code></td>
-                    <td><p></p></td>
-                    <td><p></p></td>
-                </tr>
-                <tr>
-                    <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">run</span></code></td>
+                    <td colspan="3"><code><span class="pre grey">hydra</span></code></td>
                     <td><p></p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td><p></p></td>
-                    <td><code class="xref"><span class="pre">dir</span></code></td>
-                    <td><p>"outputs/${project_name}/${stores.unique_id}"</p></td>
-                    <td><p></p></td>
-                </tr>
-                <tr>
-                    <td><p></p></td>
-                    <td colspan="2"><code class="xref"><span class="pre">sweep</span></code></td>
+                    <td colspan="2"><code><span class="pre grey">run</span></code></td>
                     <td><p></p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><p></p></td>
-                    <td><code class="xref"><span class="pre">dir</span></code></td>
-                    <td><p>outputs/${project_name}/${stores.unique_id}</p></td>
+                    <td><code><span class="pre grey">dir</span></code></td>
+                    <td><p class="grey">"outputs/${project_name}/${stores.unique_id}"</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td colspan="2"><code><span class="pre grey">sweep</span></code></td>
+                    <td><p></p></td>
                     <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
                     <td><p></p></td>
-                    <td><code class="xref"><span class="pre">subdir</span></code></td>
-                    <td><p>${hydra.job.num}</p></td>
+                    <td><code><span class="pre grey">dir</span></code></td>
+                    <td><p class="grey">outputs/${project_name}/${stores.unique_id}</p></td>
+                    <td><p></p></td>
+                </tr>
+                <tr>
+                    <td><p></p></td>
+                    <td><p></p></td>
+                    <td><code><span class="pre grey">subdir</span></code></td>
+                    <td><p class="grey">${hydra.job.num}</p></td>
                     <td><p></p></td>
                 </tr>
             </tbody>
@@ -355,8 +355,8 @@ Config File : ``peekingduck/training/configs/data_module/resample/train_test_spl
                 </tr>
                 <tr>
                     <td><p></p></td>
-                    <td><code class="xref"><span class="pre">random_state</span></code></td>
-                    <td><p>${random_state}</p></td>
+                    <td><code><span class="pre grey">random_state</span></code></td>
+                    <td><p class="grey">${random_state}</p></td>
                     <td><p>Controls the shuffling applied to the data before applying the split. Pass an int for reproducible output across multiple function calls.</p></td>
                 </tr>
 
@@ -744,7 +744,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
                     </tr>
                     <tr>
                         <td><code class="xref"><span class="pre">target_col_name</span></code></td>
-                        <td><p>"class_name" #class_name cancer</p></td>
+                        <td><p>"class_name"</p></td>
                         <td><p>csv file column name to target string.</p></td>
                     </tr>
                     <tr>
@@ -843,8 +843,8 @@ Model
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">task</span></code></td>
-                        <td><p>${use_case}</p></td>
+                        <td colspan="2"><code><span class="pre grey">task</span></code></td>
+                        <td><p class="grey">${use_case}</p></td>
                         <td>
                             Should not be changed. For hydra interpolation.
                         </td>
@@ -954,13 +954,13 @@ Model
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">num_classes</span></code></td>
-                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td colspan="2"><code><span class="pre grey">num_classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.num_classes}</p></td>
                         <td><p>Should not be changed. For hydra interpolation.</p></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">device</span></code></td>
-                        <td><p>${device}</p></td>
+                        <td colspan="2"><code><span class="pre grey">device</span></code></td>
+                        <td><p class="grey">${device}</p></td>
                         <td><p>Should not be changed. For hydra interpolation.</p></td>
                     </tr>
                 </tbody>
@@ -982,8 +982,8 @@ Model
                 </thead>
                 <tbody>
                     <tr>
-                        <td><code class="xref"><span class="pre">task</span></code></td>
-                        <td><p>${use_case}</p></td>
+                        <td><code><span class="pre grey">task</span></code></td>
+                        <td><p class="grey">${use_case}</p></td>
                         <td>
                             <p>Should not be changed. For hydra interpolation.</p>
                         </td>
@@ -1000,8 +1000,8 @@ Model
                         </td>
                     </tr>
                     <tr>
-                        <td><code class="xref"><span class="pre">num_classes</span></code></td>
-                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td><code><span class="pre grey">num_classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.num_classes}</p></td>
                         <td>
                             <p>Should not be changed. For hydra interpolation.</p>
                         </td>
@@ -1014,15 +1014,15 @@ Model
                         </td>
                     </tr>
                     <tr>
-                        <td><code class="xref"><span class="pre">image_size</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">image_size</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td>
                             <p>Should not be changed. For hydra interpolation.</p>
                         </td>
                     </tr>
                     <tr>
-                        <td><code class="xref"><span class="pre">device</span></code></td>
-                        <td><p>${device}</p></td>
+                        <td><code><span class="pre grey">device</span></code></td>
+                        <td><p class="grey">${device}</p></td>
                         <td>
                             <p>Should not be changed. For hydra interpolation.</p>
                         </td>
@@ -1098,23 +1098,23 @@ Config File : ``peekingduck/training/configs/model_analysis/classification.yaml`
                     <td><p></p></td>
                 </tr>
                 <tr>
-                    <td><code class="xref"><span class="pre">project</span></code></td>
-                    <td>"${project_name}"</td>
+                    <td><code><span class="pre grey">project</span></code></td>
+                    <td class="grey">"${project_name}"</td>
                     <td><p></p></td>
                 </tr>
                 <tr>
-                    <td><code class="xref"><span class="pre">run_name</span></code></td>
-                    <td>"${stores.unique_id}"</td>
+                    <td><code><span class="pre grey">run_name</span></code></td>
+                    <td class="grey">"${stores.unique_id}"</td>
                     <td><p></p></td>
                 </tr>
                 <tr>
-                    <td><code class="xref"><span class="pre">framework</span></code></td>
-                    <td>"${framework}"</td>
+                    <td><code><span class="pre grey">framework</span></code></td>
+                    <td class="grey">"${framework}"</td>
                     <td><p></p></td>
                 </tr>
                 <tr>
-                    <td><code class="xref"><span class="pre">debug</span></code></td>
-                    <td>${debug}</td>
+                    <td><code><span class="pre grey">debug</span></code></td>
+                    <td class="grey">${debug}</td>
                     <td><p></p></td>
                 </tr>
             </tbody>
@@ -1333,7 +1333,7 @@ Metrics
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">num_labels</span></code></td>
-                        <td>${data_module.dataset.num_classes}</td>
+                        <td class="grey">${data_module.dataset.num_classes}</td>
                         <td>(Optional) The number of labels, used when multi_label is True. If num_labels is not specified, then state variables get created on the first call to update_state.</td>
                     </tr>
                 </tbody>
@@ -1394,20 +1394,20 @@ Callbacks
                     </tr>
                     <tr class="row-even">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">patience</span></code></td>
-                        <td>${trainer.pytorch.global_train_params.patience}</td>
+                        <td><code><span class="pre grey">patience</span></code></td>
+                        <td class="grey">${trainer.pytorch.global_train_params.patience}</td>
                         <td>Number of epochs with no improvement after which training will be stopped.</td>
                     </tr>
                     <tr class="row-odd">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">monitor</span></code></td>
-                        <td>${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
+                        <td><code><span class="pre grey">monitor</span></code></td>
+                        <td class="grey">${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
                         <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
                     </tr>
                     <tr class="row-even">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mode</span></code></td>
-                        <td>${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
+                        <td><code><span class="pre grey">mode</span></code></td>
+                        <td class="grey">${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
                         <td>"min" or "max"
                         <br><br>In min mode, training will stop when the quantity monitored has stopped decreasing.
                         <br>In "max" mode it will stop when the quantity monitored has stopped increasing.</td>
@@ -1440,14 +1440,14 @@ Callbacks
                     </tr>
                     <tr class="row-even">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">monitor</span></code></td>
-                        <td>${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
+                        <td><code><span class="pre grey">monitor</span></code></td>
+                        <td class="grey">${trainer.pytorch.global_train_params.monitored_metric.monitor}</td>
                         <td>Name of the metric to monitor, should be one of the keys in metrics list.</td>
                     </tr>
                     <tr class="row-odd">
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mode</span></code></td>
-                        <td>${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
+                        <td><code><span class="pre grey">mode</span></code></td>
+                        <td class="grey">${trainer.pytorch.global_train_params.monitored_metric.mode}</td>
                         <td>
                             "max" or "min"<br>
                             <br>In "min" mode, training will stop when the quantity monitored has stopped decreasing
@@ -1524,8 +1524,8 @@ Config File : ``peekingduck/training/configs/stores/classifications.yaml``
             </thead>
             <tbody>
                 <tr class="row-even">
-                    <td><code class="xref"><span class="pre">unique_id</span></code></td>
-                    <td><p>${now:%Y%m%d_%H%M%S}</p></td>
+                    <td><code><span class="pre grey">unique_id</span></code></td>
+                    <td><p class="grey">${now:%Y%m%d_%H%M%S}</p></td>
                     <td>Used in:<ul>
                         <li>- Hydra run and sweep directory path</li>
                         <li>- Model analysis run_name</li>

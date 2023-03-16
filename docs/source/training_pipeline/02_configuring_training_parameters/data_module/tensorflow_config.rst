@@ -41,14 +41,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">x_col</span></code></td>
-                        <td><p>${data_module.dataset.image_path_col_name}</p></td>
+                        <td colspan="2"><code><span class="pre grey">x_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_path_col_name}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">y_col</span></code></td>
-                        <td><p>${data_module.dataset.target_col_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">y_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.target_col_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -60,15 +60,15 @@
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -79,14 +79,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">num_classes</span></code></td>
-                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td colspan="2"><code><span class="pre grey">num_classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.num_classes}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">classes</span></code></td>
-                        <td><p>${data_module.dataset.class_name_to_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.class_name_to_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -126,14 +126,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">x_col</span></code></td>
-                        <td><p>${data_module.dataset.image_path_col_name}</p></td>
+                        <td colspan="2"><code><span class="pre grey">x_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_path_col_name}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">y_col</span></code></td>
-                        <td><p>${data_module.dataset.target_col_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">y_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.target_col_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -145,15 +145,15 @@
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -164,14 +164,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">num_classes</span></code></td>
-                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td colspan="2"><code><span class="pre grey">num_classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.num_classes}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">classes</span></code></td>
-                        <td><p>${data_module.dataset.class_name_to_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.class_name_to_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -211,14 +211,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">x_col</span></code></td>
-                        <td><p>${data_module.dataset.image_path_col_name}</p></td>
+                        <td colspan="2"><code><span class="pre grey">x_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_path_col_name}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">y_col</span></code></td>
-                        <td><p>${data_module.dataset.target_col_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">y_col</span></code></td>
+                        <td><p class="grey">${data_module.dataset.target_col_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -230,15 +230,15 @@
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre"> - </span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey"> - </span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -249,14 +249,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">num_classes</span></code></td>
-                        <td><p>${data_module.dataset.num_classes}</p></td>
+                        <td colspan="2"><code><span class="pre grey">num_classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.num_classes}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">classes</span></code></td>
-                        <td><p>${data_module.dataset.class_name_to_id}</p></td>
+                        <td colspan="2"><code><span class="pre grey">classes</span></code></td>
+                        <td><p class="grey">${data_module.dataset.class_name_to_id}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -309,14 +309,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">height</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">height</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">width</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">width</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -381,14 +381,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">height</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">height</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">width</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">width</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>

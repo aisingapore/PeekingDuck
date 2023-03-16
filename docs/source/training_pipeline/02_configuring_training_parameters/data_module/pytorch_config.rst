@@ -141,14 +141,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">height</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">height</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">width</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">width</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
@@ -218,14 +218,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">height</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">height</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">width</span></code></td>
-                        <td><p>${data_module.dataset.image_size}</p></td>
+                        <td><code><span class="pre grey">width</span></code></td>
+                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
                         <td><p></p></td>
                     </tr>
                     <tr>

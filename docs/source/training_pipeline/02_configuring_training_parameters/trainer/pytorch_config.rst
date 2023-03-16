@@ -22,8 +22,8 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">manual_seed</span></code></p></td>
-                        <td><p>${random_state}</p></td>
+                        <td colspan="2"><p><code><span class="pre grey">manual_seed</span></code></p></td>
+                        <td><p class="grey">${random_state}</p></td>
                         <td><p>Random seed. Default value will reference directly from main config file.</p></td>
                     </tr>
                     <tr>
@@ -40,14 +40,14 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">model_name</span></code></p></td>
-                        <td><p>${model.pytorch.model_name}</p></td>
+                        <td colspan="2"><p><code><span class="pre grey">model_name</span></code></p></td>
+                        <td><p class="grey">${model.pytorch.model_name}</p></td>
                         <td><p>Use for printing to logs. Default value will reference directly from model config.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">debug</span></code></p></td>
-                        <td><p>${debug}</p></td>
+                        <td colspan="2"><p><code><span class="pre grey">debug</span></code></p></td>
+                        <td><p class="grey">${debug}</p></td>
                         <td><p>Flag for checking if debug is set to True of False. Reference directly from main config file.</p></td>
                     </tr>
                     <tr>
@@ -58,8 +58,8 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">classification_type</span></code></p></td>
-                        <td><p>${data_module.dataset.classification_type}</p></td>
+                        <td colspan="2"><p><code><span class="pre grey">classification_type</span></code></p></td>
+                        <td><p class="grey">${data_module.dataset.classification_type}</p></td>
                         <td><p>Used in initializing PyTorch metrics. Values can be: 'binary', 'multiclass' or 'multilabel'. Default value references from dataset config file.</p></td>
                     </tr>
                     <tr>
@@ -404,20 +404,20 @@
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">project_name</span></code></td>
-                        <td><p>${project_name}</p></td>
+                        <td><code><span class="pre grey">project_name</span></code></td>
+                        <td><p class="grey">${project_name}</p></td>
                         <td><p>For used in model artifacts directory. Reference from main config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">unique_id</span></code></td>
-                        <td><p>${stores.unique_id}</p></td>
+                        <td><code><span class="pre grey">unique_id</span></code></td>
+                        <td><p class="grey">${stores.unique_id}</p></td>
                         <td><p>For used in model artifacts directory. Reference from store config file.</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
-                        <td><code class="xref"><span class="pre">model_artifacts_dir</span></code></td>
-                        <td><p>"./outputs/${project_name}/${stores.unique_id}/"</p></td>
+                        <td><code><span class="pre grey">model_artifacts_dir</span></code></td>
+                        <td><p class="grey">"./outputs/${project_name}/${stores.unique_id}/"</p></td>
                         <td><p>The path to store the model artifacts.</p></td>
                     </tr>
                 </tbody>
