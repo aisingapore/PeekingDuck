@@ -93,7 +93,7 @@ Install PeekingDuck Training Pipeline
 
          conda create -n pkd python=3.8
          conda activate pkd
-         git clone <PeekdingDuck repository>
+         git clone <TODO: PeekdingDuck repository>
          cd PeekdingDuck
          pip install -r peekingduck/training/requirements.txt
 
@@ -104,7 +104,7 @@ Install PeekingDuck Training Pipeline
 
          conda create -n pkd python=3.8
          conda activate pkd
-         git clone <PeekdingDuck repository>
+         git clone <TODO: PeekdingDuck repository>
          cd PeekdingDuck
          pip install -r peekingduck/training/requirements.txt
          conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
@@ -135,7 +135,7 @@ Install PeekingDuck Training Pipeline
 
          conda create -n pkd python=3.8
          conda activate pkd
-         git clone <PeekdingDuck repository>
+         git clone <TODO: PeekdingDuck repository>
          cd PeekdingDuck
          pip install -r peekingduck/training/requirements.txt
 
@@ -146,7 +146,7 @@ Install PeekingDuck Training Pipeline
 
          conda create -n pkd python=3.8
          conda activate pkd
-         git clone <PeekdingDuck repository>
+         git clone <TODO: PeekdingDuck repository>
          cd PeekdingDuck
          pip install -r peekingduck/training/requirements.txt
          conda install -c conda-forge cudatoolkit=11.2.2 cudnn=8.1.0
@@ -180,7 +180,7 @@ Install PeekingDuck Training Pipeline
 
             conda env create -f peekingduck/training/requirements_mac.yaml
             conda activate pkd-training
-            git clone <PeekdingDuck repository>
+            git clone <TODO: PeekdingDuck repository>
             cd PeekdingDuck
 
       Install TensorFlow
