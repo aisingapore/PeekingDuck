@@ -2,11 +2,11 @@
 
    .. tab:: Adapter
 
-      ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
+      | Configuration for Data Adapter to pipeline the dataset to the model.
+      | Config File : ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
 
       .. raw:: html 
 
-         <p>Configuration for Data Adapter to pipeline the dataset to the model.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -283,13 +283,15 @@
 
    .. tab:: Transform
 
-      ``peekingduck/training/configs/data_module/transform/test.yaml``
-      ``peekingduck/training/configs/data_module/transform/train.yaml``
+      .. raw:: html
+      
+         <h5>Train</h5>
+         
+      | Transformation to be applied to training dataset.
+      | Config File : ``peekingduck/training/configs/data_module/transform/train.yaml``
 
       .. raw:: html 
 
-         <h5>Train</h5>
-         <p>Transformation to be applied to training dataset.</p>
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -356,7 +358,12 @@
          </div>
 
          <h5>Test</h5>
-         <p>Transformation to be applied to test and validation dataset.</p>
+
+      | Transformation to be applied to test and validation dataset.
+      | Config File : ``peekingduck/training/configs/data_module/transform/test.yaml``
+
+      .. raw:: html 
+
          <div class="wy-table-responsive">
             <table class="docutils align-default">
                 <thead>
@@ -404,3 +411,4 @@
                 </tbody>
             </table>
          </div>
+
