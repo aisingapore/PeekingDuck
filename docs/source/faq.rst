@@ -46,3 +46,10 @@ Why does the output screen flash briefly and disappear on my second run?
 If you are running PeekingDuck on the Windows Subsystem for Linux (WSL), this erroneous behavior
 may be caused by a WSL bug where the key buffer is not flushed. Please refer to this
 `GitHub issue <https://github.com/aisingapore/PeekingDuck/issues/630>`_ for more details.
+
+How to choose the pretrained model library between ``timm`` and ``torchvision`` for PyTorch adapter?
+----------------------------------------------------------------------------------------------------
+
+In general, ``torchvision`` is well established and officially supported by PyTorch with more flexibility for customization, 
+whereas ``timm`` supports more pre-trained SOTA models and the API is easier to configure.
+The user can evaluate both libraries to make a decision based on the actual model performances.

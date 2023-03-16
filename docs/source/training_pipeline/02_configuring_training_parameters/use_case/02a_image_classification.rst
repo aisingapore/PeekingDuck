@@ -834,11 +834,7 @@ Model
                         <td><p>
                             PeekingDuck supports pre-trained models from both <code>torchvision</code> and <code>timm</code> libraries.
                             <br>
-                            <br><code>torchvision</code> is well established with more flexibility for customization, whereas <code>timm</code> supports more pre-trained SOTA models and is easier to configure.
-                            <br>
-                            <br>There are pros and cons for each library, but it shouldn't affect the usability for PeekingDuck users.
-                            <br>
-                            <br>The user can evaluate both libraries to make a decision based on the actual model performances.
+                            <br>Refer to the FAQ section for choosing between the two adapters for pre-trained models
                             </p>
                         </td>
                     </tr>
