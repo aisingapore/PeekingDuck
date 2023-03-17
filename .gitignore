@@ -140,7 +140,7 @@ cython_debug/
 # Ignore all data dir except the one in tests/
 data/
 !tests/data/
-!peekingduck/training/src/data/
+!data/**/*.csv
 
 # Other likely dirs that should not be committed
 logs/
