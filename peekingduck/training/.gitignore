@@ -6,14 +6,12 @@ conf/local/**
 conf/**/*credentials*
 
 # Ignore everything in the following folders
-data/**
 logs/**
 models/**
 aisg-context/k8s/pvc/**
 aisg-context/k8s/secrets/**
 
 # Except their sub-folders
-!data/**/
 !logs/**/
 !models/**/
 !aisg-context/k8s/pvc/**/
@@ -171,4 +169,3 @@ venv.bak/
 .mypy_cache/
 
 ####################
-*.csv
