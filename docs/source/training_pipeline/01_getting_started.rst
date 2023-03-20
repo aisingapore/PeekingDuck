@@ -13,10 +13,6 @@ Overview
 You can use your own dataset to train an image classification or object detection model without writing the boilerplate codes. Simply organize your data with the required format, place them at the designated directory, execute the terminal commands, and the training pipeline will take care of the rest.
 
 
-**Target User**
-
-
-
 Features
 --------
 
