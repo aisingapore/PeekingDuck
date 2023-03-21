@@ -16,7 +16,6 @@ torchmetrics
 albumentations
 imagesize
 matplotlib
-torchinfo
 timm
 tabulate
 wandb
