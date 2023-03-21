@@ -64,19 +64,23 @@
 
 
 """
+from typing import Any, Dict
+
+from omegaconf import DictConfig
 import torch
 import tensorflow as tf
-from typing import Any, Dict
-from omegaconf import DictConfig
 
 
 class OptimizersAdapter:
+    """Optimizers Adapter"""
+
     @staticmethod
     def get_tensorflow_optimizer(
         name: str,
         learning_rate: tf.keras.optimizers.schedules.LearningRateSchedule,
         parameters: DictConfig,
     ) -> tf.keras.optimizers.Optimizer:
+        """get_tensorflow_optimizer"""
         return (
             getattr(tf.keras.optimizers, name)(learning_rate, **parameters)
             if len(parameters) > 0

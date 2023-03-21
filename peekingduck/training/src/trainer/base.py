@@ -20,6 +20,7 @@ from omegaconf import DictConfig
 from src.data.data_adapter import DataAdapter
 
 
+# pylint: disable=too-many-arguments
 class Trainer(Protocol):
     """Object used to facilitate training."""
 

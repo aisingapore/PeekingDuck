@@ -40,7 +40,6 @@ Scheduler Class to interact with Tensorflow
 
 """
 
-from typing import Any, Dict
 from omegaconf import DictConfig
 import tensorflow as tf
 import torch
@@ -51,6 +50,7 @@ class OptimizerSchedules:
     def get_tensorflow_scheduler(
         name: str, parameters: DictConfig
     ) -> tf.keras.optimizers.schedules.LearningRateSchedule:
+        """get_tensorflow_scheduler"""
         return (
             getattr(tf.keras.optimizers.schedules, name)(**parameters)
             if len(parameters) > 0

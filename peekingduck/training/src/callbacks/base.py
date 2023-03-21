@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""base"""
 
 from __future__ import annotations
 from typing import (
@@ -30,7 +31,8 @@ if TYPE_CHECKING:
 def init_callbacks(callbacks: List[Union[DictConfig, str]]) -> List:
     """Method to initialise the callbacks.
     Args:
-        callbacks: The list of callbacks from configs->callbacks->classification/detection/segmentation.
+        callbacks: The list of callbacks from
+                    configs->callbacks->classification/detection/segmentation.
     """
     cb_list = []
     for callback in callbacks:
@@ -59,13 +61,13 @@ def sort_callbacks(callbacks: List) -> List:
 class Callback:
     """Callback base class.
 
-    TODO: Torchflare sorts the callback, maybe we should look into it.
+    Torchflare sorts the callback.
     This might be because some default callbacks instantiate some global attributes
     for eg, self.model_artifacts_dir
 
     Reference:
-        - https://github.com/Lightning-AI/lightning/blob/master/src/pytorch_lightning/callbacks/callback.py
-        - https://github.com/Atharva-Phatak/torchflare/tree/main/torchflare
+    - github.com/Lightning-AI/lightning/blob/master/src/pytorch_lightning/callbacks/callback.py
+    - github.com/Atharva-Phatak/torchflare/tree/main/torchflare
     """
 
     def __init__(self, order: int) -> None:
@@ -76,14 +78,16 @@ class Callback:
     def state_key(self) -> str:
         """Identifier for the state of the callback.
         Used to store and retrieve a callback's state from the checkpoint dictionary by
-        ``checkpoint["callbacks"][state_key]``. Implementations of a callback need to provide a unique state key if 1)
-        the callback has state and 2) it is desired to maintain the state of multiple instances of that callback.
+        ``checkpoint["callbacks"][state_key]``. Implementations of a callback need to
+        provide a unique state key if
+        1) the callback has state and
+        2) it is desired to maintain the state of multiple instances of that callback.
         """
         return self.__class__.__qualname__
 
     def _generate_state_key(self, **kwargs: Any) -> str:
-        """Formats a set of key-value pairs into a state key string with the callback class name prefixed. Useful
-        for defining a :attr:`state_key`.
+        """Formats a set of key-value pairs into a state key string with the callback class name
+        prefixed. Useful for defining a :attr:`state_key`.
         Args:
             **kwargs: A set of key-value pairs. Must be serializable to :class:`str`.
         """

@@ -12,17 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""pytorch utils"""
+
 from omegaconf import DictConfig, ListConfig
 
 from src.model.pytorch_base import PTModel
 
 
 def unfreeze_all_params(model: PTModel) -> None:
+    """unfreeze_all_params"""
     for param in model.parameters():
         param.requires_grad = True
 
 
 def freeze_all_params(model: PTModel) -> None:
+    """freeze_all_params"""
     for param in model.parameters():
         param.requires_grad = False
 
@@ -53,5 +57,6 @@ def set_trainable_layers(
                     param.requires_grad = True
         else:
             raise ValueError(
-                f"The config type '{type(trainable_layers)}' for {trainable_layers} is not supported!"
+                f"The config type '{type(trainable_layers)}' "
+                f"for {trainable_layers} is not supported!"
             )

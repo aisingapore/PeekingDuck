@@ -12,7 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""general utils"""
+
 # mypy: ignore-errors
+# pylint: skip-file
 import functools
 import gc
 import inspect
@@ -25,12 +28,12 @@ import zipfile
 from pathlib import Path, PurePath
 from typing import Any, Dict, List, Optional, Tuple, Union
 
+from contextlib import nullcontext
 import imagesize
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import requests
-from contextlib import nullcontext
 from tqdm import tqdm
 from src.config import TORCH_AVAILABLE, TF_AVAILABLE
 
@@ -43,7 +46,6 @@ else:
 
 
 ## set and get attribute dynamically
-# TODO: recursive_setattr and recursive_getattr
 def rsetattr(obj, attr, val):
     pre, _, post = attr.rpartition(".")
     return setattr(rgetattr(obj, pre) if pre else obj, post, val)
