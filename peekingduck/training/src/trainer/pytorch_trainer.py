@@ -178,7 +178,8 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
             logger.info(f"Model Layer Details:\n{self.model.model}")
         # show model summary
         logger.info("\n\nModel Summary:\n")
-        # device parameter required for MPS, otherwise the torchvision will change the model back to cpu
+        # device parameter required for MPS,
+        # otherwise the torchvision will change the model back to cpu
         # reference: https://github.com/TylerYep/torchinfo
         self.model.model_summary(inputs.shape, device=self.device)
 
@@ -265,7 +266,10 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
             train_trues.extend(targets.cpu())
             train_probs.extend(y_train_prob.cpu())
 
-        (train_trues_tensor, train_probs_tensor,) = (
+        (
+            train_trues_tensor,
+            train_probs_tensor,
+        ) = (
             torch.vstack(tensors=train_trues),
             torch.vstack(tensors=train_probs),
         )
@@ -288,10 +292,14 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
         Returns:
             Dict[str, np.ndarray]:
                 valid_loss (float): The validation loss for each epoch.
-                valid_trues (np.ndarray): The ground truth labels for each validation set. shape = (num_samples, 1)
-                valid_logits (np.ndarray): The logits for each validation set. shape = (num_samples, num_classes)
-                valid_preds (np.ndarray): The predicted labels for each validation set. shape = (num_samples, 1)
-                valid_probs (np.ndarray): The predicted probabilities for each validation set. shape = (num_samples, num_classes)
+                valid_trues (np.ndarray): The ground truth labels for each validation set.
+                                            shape = (num_samples, 1)
+                valid_logits (np.ndarray): The logits for each validation set.
+                                            shape = (num_samples, num_classes)
+                valid_preds (np.ndarray): The predicted labels for each validation set.
+                                            shape = (num_samples, 1)
+                valid_probs (np.ndarray): The predicted probabilities for each validation set.
+                                            shape = (num_samples, num_classes)
         """
         self._invoke_callbacks(EVENTS.VALID_EPOCH_START.value)
         self.model.eval()  # set to eval mode
@@ -329,7 +337,6 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
 
                 self._invoke_callbacks(EVENTS.VALID_BATCH_END.value)
                 # For OOF score and other computation.
-                # TODO: Consider giving numerical example. Consider rolling back to targets.cpu().numpy() if torch fails.
                 valid_trues.extend(targets.cpu())
                 valid_logits.extend(logits.cpu())
                 valid_preds.extend(y_valid_pred.cpu())

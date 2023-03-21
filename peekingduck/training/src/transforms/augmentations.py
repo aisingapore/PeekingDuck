@@ -43,18 +43,22 @@ class ImageClassificationTransforms(Transforms):
 
     @property
     def train_transforms(self) -> A.Compose:
+        """train_transforms"""
         return A.Compose(instantiate(self.cfg.train))
 
     @property
     def valid_transforms(self) -> A.Compose:
+        """valid_transforms"""
         return A.Compose(instantiate(self.cfg.test))
 
     @property
     def test_transforms(self) -> A.Compose:
+        """test_transforms"""
         return A.Compose(instantiate(self.cfg.test))
 
     @property
     def debug_transforms(self) -> A.Compose:
+        """debug_transforms"""
         return self.cfg.transforms.debug_transforms
 
 
@@ -80,11 +84,13 @@ class TFPreprocessImage(ImageOnlyTransform):
         self.preprocessor: str = preprocessor
 
     def apply(self, img: list, **kwargs: Dict[str, Any]) -> Any:
+        """apply"""
         return operator.attrgetter(self.preprocessor)(tf)(img)
 
     def get_transform_init_args_names(self) -> Literal["preprocessor"]:
+        """get_transform_init_args_names"""
         return "preprocessor"
 
     def get_params_dependent_on_targets(self, params: Dict[str, Any]) -> Dict[str, Any]:
-        """"""
+        """get_params_dependent_on_targets"""
         return params

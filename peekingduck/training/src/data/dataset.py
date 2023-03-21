@@ -196,16 +196,15 @@ class TFImageClassificationDataset(
         Returns:
             (ndarray):
                 Outputs image in numpy array.
+            Preprocessed numpy.array or a tf.Tensor with type float32.
+            The images are converted from RGB to BGR,
+            then each color channel is zero-centered with respect to
+            the ImageNet dataset, without scaling.
         """
         image = cv2.imread(image_path)  # BGR
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
         image = self.apply_image_transforms(image)
-        """ Preprocessed numpy.array or a tf.Tensor with type float32.
-            The images are converted from RGB to BGR,
-            then each color channel is zero-centered with respect to
-            the ImageNet dataset, without scaling.
-        """
         return image
 
     # pylint: disable=invalid-name
@@ -220,9 +219,9 @@ class TFImageClassificationDataset(
         y = np.empty((self.batch_size), dtype=int)
 
         # Generate data
-        for i, id in enumerate(list_ids_temp):
+        for i, image_path in enumerate(list_ids_temp):
             # Store sample
-            X[i] = self.load_image(id)
+            X[i] = self.load_image(image_path)
 
         # Store class
         y = self.targets[indexes]

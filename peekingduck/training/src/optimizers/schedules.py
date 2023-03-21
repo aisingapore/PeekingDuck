@@ -46,6 +46,8 @@ import torch
 
 
 class OptimizerSchedules:
+    """Optimizer Schedules"""
+
     @staticmethod
     def get_tensorflow_scheduler(
         name: str, parameters: DictConfig

@@ -127,7 +127,7 @@ class ModelCheckpoint(Callback):
 
         self.mode = mode
         self.min_delta = min_delta
-        self.improvement
+        self.improvement = init_improvement(mode=self.mode, min_delta=self.min_delta)
         self.best_val_score = 0.0
         self.state_dict: Dict[str, Any] = {}
         self.model_artifacts_dir = ""

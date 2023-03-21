@@ -27,7 +27,6 @@ Logic:
 
 """
 import logging
-from typing import Any, Callable
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -59,7 +58,7 @@ class EarlyStopping(Callback):
         self.monitor = monitor
         self.patience = patience
         self.min_delta = min_delta
-        self.improvement
+        self.improvement = init_improvement(mode=self.mode, min_delta=self.min_delta)
         self.best_val_score = None
         self.patience_counter = 0
         self.stop = False
