@@ -1,0 +1,6 @@
+resample_strategy: train_test_split
+resample_params:
+  train_size: 0.9
+  test_size: 0.1
+  random_state: ${general.seed}
+  shuffle: true

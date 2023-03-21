@@ -1,0 +1,10 @@
+defaults:
+    - dataset: base
+    - resample: base
+    - transform:
+          - train
+          - valid
+          - test
+
+debug: ${general.debug}
+num_debug_samples: 500

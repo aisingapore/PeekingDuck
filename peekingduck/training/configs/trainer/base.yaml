@@ -1,0 +1,47 @@
+criterion_params:
+    train_criterion: "CrossEntropyLoss"
+    valid_criterion: "CrossEntropyLoss"
+    train_criterion_params:
+        weight: null
+        size_average: null
+        ignore_index: -100
+        reduce: null
+        reduction: "mean"
+        label_smoothing: 0.0
+    valid_criterion_params:
+        weight: null
+        size_average: null
+        ignore_index: -100
+        reduce: null
+        reduction: "mean"
+        label_smoothing: 0.0
+
+
+optimizer_params:
+    optimizer: "AdamW"
+    optimizer_params:
+        lr: 0.0003  # bs: 32 -> lr = 3e-4
+        betas: [0.9, 0.999]
+        amsgrad: False
+        weight_decay: 0.000001
+        eps: 0.00000001
+
+
+scheduler_params:
+    scheduler: "CosineAnnealingWarmRestarts"  # Debug
+    scheduler_params:
+        T_0: 10
+        T_mult: 1
+        eta_min: 0.000001
+        last_epoch: -1
+        verbose: False
+
+
+global_train_params:
+    epochs: 1  # 10 when not debug
+    use_amp: False
+    patience: 3
+    classification_type: "multiclass"
+    monitored_metric:
+        monitor: val_Accuracy
+        mode: max
