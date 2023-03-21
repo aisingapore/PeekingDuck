@@ -12,3 +12,15 @@ torch >= 1.10.0
 torchvision >= 0.11.1
 tqdm == 4.45.0
 typeguard >= 2.13.3
+pydantic
+hydra-core
+pandas
+scikit-learn
+torchinfo
+torchmetrics
+albumentations
+imagesize
+matplotlib
+timm
+tabulate
+wandb

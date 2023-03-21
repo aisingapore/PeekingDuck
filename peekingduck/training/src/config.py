@@ -47,6 +47,7 @@ if USE_TORCH in ENV_VARS_TRUE_AND_AUTO_VALUES and USE_TF not in ENV_VARS_TRUE_VA
     if TORCH_AVAILABLE:
         try:
             TORCH_VERSION = version.parse(importlib_metadata.version("torch"))
+            # pylint: disable=logging-fstring-interpolation
             logger.info(f"PyTorch version {TORCH_VERSION} available.")
         except importlib_metadata.PackageNotFoundError:
             pass
@@ -79,6 +80,7 @@ if USE_TF in ENV_VARS_TRUE_AND_AUTO_VALUES and USE_TORCH not in ENV_VARS_TRUE_VA
                 break
         else:
             TF_AVAILABLE = False
+    # pylint: disable=logging-fstring-interpolation
     if TF_AVAILABLE:
         if TF_VERSION.major < 2:
             logger.info(

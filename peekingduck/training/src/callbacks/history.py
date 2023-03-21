@@ -23,10 +23,11 @@ NOTE:
 from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List
 
+import wandb
+
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
-import wandb
 
 
 class History(Callback):

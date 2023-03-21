@@ -31,10 +31,13 @@ import torch
 
 
 class LossAdapter:
+    """Loss Adapter"""
+
     @staticmethod
     def get_tensorflow_loss_func(
         name: str, parameters: List[Any]
     ) -> tf.keras.losses.Loss:
+        """Get tensorflow loss"""
         return (
             getattr(tf.keras.losses, name)(**parameters)
             if len(parameters) > 0
@@ -48,7 +51,7 @@ class LossAdapter:
         criterion_params: Dict[str, Any],
         stage: str,
     ) -> torch.Tensor:
-        """Train Loss Function.
+        r"""Train Loss Function.
         Note that we can evaluate train and validation fold with different loss functions.
         The below example applies for CrossEntropyLoss.
         Args:

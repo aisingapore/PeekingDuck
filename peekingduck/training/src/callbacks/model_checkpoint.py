@@ -127,6 +127,10 @@ class ModelCheckpoint(Callback):
 
         self.mode = mode
         self.min_delta = min_delta
+        self.improvement = init_improvement(mode=self.mode, min_delta=self.min_delta)
+        self.best_val_score = 0.0
+        self.state_dict: Dict[str, Any] = {}
+        self.model_artifacts_dir = ""
 
     @staticmethod
     def save_checkpoint(state_dict: Dict[str, Any], model_artifacts_path: Path) -> None:
@@ -145,10 +149,6 @@ class ModelCheckpoint(Callback):
             "epoch": None,
             "best_score": None,
             "model_artifacts_path": "",
-            # "oof_trues": None,
-            # "oof_preds": None,
-            # "oof_scores": None,
-            # "oof_logits": None,
         }
         self.model_artifacts_dir = trainer.model_artifacts_dir
 
@@ -162,7 +162,8 @@ class ModelCheckpoint(Callback):
             model_artifacts_path = (
                 Path(self.model_artifacts_dir)
                 .joinpath(
-                    f"{trainer.train_params.model_name}_best_{self.monitor}_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
+                    f"{trainer.train_params.model_name}_best_{self.monitor}"
+                    f"_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
                 )
                 .as_posix()
             )
@@ -178,9 +179,5 @@ class ModelCheckpoint(Callback):
             )
             self.state_dict["epoch"] = trainer.current_epoch
             self.state_dict["best_score"] = self.best_val_score
-            # self.state_dict["oof_trues"] = trainer.epoch_dict["valid_trues"]
-            # self.state_dict["oof_preds"] = trainer.epoch_dict["valid_preds"]
-            # self.state_dict["oof_probs"] = trainer.epoch_dict["valid_probs"]
-            # self.state_dict["oof_logits"] = trainer.epoch_dict["valid_logits"]
             self.state_dict["model_artifacts_path"] = model_artifacts_path
             self.save_checkpoint(self.state_dict, Path(model_artifacts_path))

@@ -13,14 +13,13 @@
 # limitations under the License.
 
 """Callback Utils.
-
-TODO:
 1. Refactor `init_improvement` as it is referenced from torchflare.
 """
-import math
-from functools import partial
-import torch
+
 from typing import Any, Callable, Tuple
+from functools import partial
+import math
+import torch
 
 
 def _is_min(

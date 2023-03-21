@@ -25,11 +25,9 @@ Logic:
     4. If it is not, we decrement the patience.
     5. If the patience is 0, we stop the training.
 
-TODO:
-    1. As usual, the issue is attributes/args such as mode is defined in `trainer_config`,
-        may need to inherit the `trainer_config` and use it to initiate the attributes.
 """
 import logging
+
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
 
@@ -51,6 +49,7 @@ class EarlyStopping(Callback):
         min_delta (float): Minimum change in the monitored quantity to qualify as an improvement.
     """
 
+    # pylint: disable=too-many-instance-attributes
     def __init__(
         self, mode: str, monitor: str, patience: int = 3, min_delta: float = 1e-6
     ) -> None:
@@ -59,16 +58,24 @@ class EarlyStopping(Callback):
         self.monitor = monitor
         self.patience = patience
         self.min_delta = min_delta
+        self.improvement = init_improvement(mode=self.mode, min_delta=self.min_delta)
+        self.best_val_score = None
+        self.patience_counter = 0
+        self.stop = False
 
     def on_trainer_start(self, trainer: Trainer) -> None:
+        """on_trainer_start"""
         self.improvement, self.best_val_score = init_improvement(
             mode=self.mode, min_delta=self.min_delta
         )
+        assert self.improvement is not None, "on_trainer_start: Empty callable."
         self.patience_counter = 0
         self.stop = False
         trainer.stop_training = self.stop  # assign to trainer
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
+        """on_valid_epoch_end"""
+        assert self.improvement is not None, "on_valid_epoch_end: Empty callable."
         valid_score = trainer.epoch_dict["validation"]["metrics"].get(self.monitor)
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_val_score
@@ -80,6 +87,7 @@ class EarlyStopping(Callback):
             self.patience_counter = 0
         else:
             self.patience_counter += 1
+            # pylint: disable=logging-fstring-interpolation
             logger.info(
                 f"Early Stopping Counter {self.patience_counter} out of {self.patience}"
             )

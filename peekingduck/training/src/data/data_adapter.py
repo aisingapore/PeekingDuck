@@ -30,6 +30,7 @@ class DataAdapter:
     loader: Any = field(init=False)
 
     def __post_init__(self) -> None:
+        """__post_init__"""
         assert self.cfg.adapter_type in [
             "pytorch",
             "tensorflow",
@@ -43,6 +44,7 @@ class DataAdapter:
     def train_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        """train_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,
@@ -59,6 +61,7 @@ class DataAdapter:
     def validation_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        """validation_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,
@@ -75,6 +78,7 @@ class DataAdapter:
     def test_dataloader(
         self, dataset: AbstractDataSet, transforms: Compose
     ) -> Optional[Any]:
+        """test_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             loader = self.loader(
                 dataset,

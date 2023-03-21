@@ -11,11 +11,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-import tensorflow as tf
+"""Tensorflow callbacks"""
 
 from typing import List, Optional, Union
+
 from omegaconf import DictConfig
+import tensorflow as tf
 
 
 class TensorFlowCallbacksAdapter:
@@ -48,6 +49,6 @@ class TensorFlowCallbacksAdapter:
                 else:
                     raise TypeError("Invalid callback type")
             except NotImplementedError:
-                raise NotImplementedError
+                raise NotImplementedError  # pylint: disable=raise-missing-from
 
         return callbacks_list

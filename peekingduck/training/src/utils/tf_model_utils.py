@@ -11,6 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+"""tensorflow utils"""
 
 from typing import List
 
@@ -18,11 +19,13 @@ import tensorflow as tf
 
 
 def unfreeze_all_layers(model: tf.keras.Model) -> None:
+    """unfreeze_all_layers"""
     for layer in model.layers:
         layer.trainable = True
 
 
 def freeze_all_layers(model: tf.keras.Model) -> None:
+    """freeze_all_layers"""
     for layer in model.layers:
         layer.trainable = False
 

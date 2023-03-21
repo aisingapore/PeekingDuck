@@ -33,29 +33,29 @@ so add up all the metric scores of all batches and divide by the cumulative coun
 this is the average score of all batches in 1 epoch.
 """
 from collections import defaultdict
-from typing import Any, Dict, List
+from typing import Any, List
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
 
-# TODO:
-# 1. Add support for other metrics such as accuracy, precision, recall, f1, etc.
-# 2. See torchmetrics' method calls.
-
 
 class MetricMeter(Callback):
     """Monitor Metrics.
-
-    TODO: Worthfile to see https://github.com/pytorch/vision/blob/main/references/classification/utils.py
+    https://github.com/pytorch/vision/blob/main/references/classification/utils.py
     """
 
     # this must same as.
     stats_to_track: List[str] = ["train_loss", "valid_loss", "train_acc", "valid_acc"]
 
-    def __init__(self, float_precision: int = 3, stats_to_track: list = []) -> None:
+    # pylint: disable=attribute-defined-outside-init,dangerous-default-value
+    def __init__(
+        self, float_precision: int = 3, stats_to_track: List = stats_to_track
+    ) -> None:
+        """init"""
         super().__init__(order=CallbackOrder.METRICMETER)
         self.float_precision = float_precision
+        self.stats_to_track = stats_to_track
         self.reset()
 
     def reset(self) -> None:
@@ -74,19 +74,23 @@ class MetricMeter(Callback):
         trainer.epoch_dict["train"]["train_loss"] = self.metrics_dict["train_loss"][
             "average_score"
         ]
-        self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
+        # reset metrics dict since we are going to next epoch and will not want to double count
+        self.reset()
 
     def on_train_batch_end(self, trainer: Trainer) -> None:
+        """on_train_batch_end"""
         self._update("train_loss", trainer.epoch_dict["train"]["batch_loss"])
 
     def on_valid_loader_end(self, trainer: Trainer) -> None:
-        # this loss is the average loss over the entire epoch
+        """this loss is the average loss over the entire epoch"""
         trainer.epoch_dict["validation"]["valid_loss"] = self.metrics_dict[
             "valid_loss"
         ]["average_score"]
-        self.reset()  # reset metrics dict since we are going to next epoch and will not want to double count
+        # reset metrics dict since we are going to next epoch and will not want to double count
+        self.reset()
 
     def on_valid_batch_end(self, trainer: Trainer) -> None:
+        """on_valid_batch_end"""
         self._update("valid_loss", trainer.epoch_dict["validation"]["batch_loss"])
 
     def _update(self, metric_name: str, metric_score: Any) -> None:
@@ -99,6 +103,7 @@ class MetricMeter(Callback):
             metric["cumulative_metric_score"] / metric["cumulative_count"]
         )
 
+    # pylint: disable=consider-using-f-string
     def __str__(self) -> str:
         return " | ".join(
             [
@@ -112,11 +117,12 @@ class MetricMeter(Callback):
         )
 
 
-# TODO: Should we split MetricMeter to loss and metrics separately?
 class AverageLossMeter(MetricMeter):
     """Computes and stores the average and current loss."""
 
+    # pylint: disable=attribute-defined-outside-init
     def __init__(self) -> None:
+        """init"""
         super().__init__()
         self.reset()
 

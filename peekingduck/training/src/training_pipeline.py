@@ -56,7 +56,9 @@ def run(cfg: DictConfig) -> None:
     if cfg.device == "auto":
         if cfg.framework == "pytorch":
             cfg.device = choose_torch_device()
-            logger.info(f"Using device: {cfg.device}")
+            logger.info(  # pylint: disable=logging-fstring-interpolation
+                f"Using device: {cfg.device}"
+            )
         if cfg.framework == "tensorflow":
             logger.info(set_tensorflow_device())
 
