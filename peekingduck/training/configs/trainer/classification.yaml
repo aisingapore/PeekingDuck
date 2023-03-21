@@ -1,11 +1,12 @@
 pytorch:
     global_train_params:
         manual_seed: ${random_state}
-        epochs: 10
+        epochs: 3
         patience: 3
         model_name: ${model.pytorch.model_name}
         debug: ${debug}
-        debug_epochs: 3
+        debug_epochs: 2
+        fine_tune_epochs: 5
         classification_type: ${data_module.dataset.classification_type}
         monitored_metric:
             monitor: val_MulticlassAccuracy
@@ -18,9 +19,9 @@ pytorch:
             lr: 1e-5
             betas: [0.9, 0.999]
             amsgrad: False
-            eps: 0.0000007
+            eps: 7e-7
         finetune_params:
-            lr: 1e-5
+            lr: 5e-6
     scheduler_params:
         scheduler: null
         scheduler_params: null
@@ -46,13 +47,13 @@ pytorch:
         unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
         model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
 
-
 tensorflow:
     global_train_params:
         manual_seed: ${random_state}
         epochs: 10
         debug: ${debug}
         debug_epochs: 3
+        # fine_tune_epochs: 5
         monitored_metric:
             monitor: "val_categorical_accuracy"
         trainer:
@@ -62,9 +63,9 @@ tensorflow:
         optimizer_params:
             beta_1: 0.9
             beta_2: 0.999
-            epsilon: 0.0000007
+            epsilon: 7e-7
             name: "Adam"
-        finetune_learning_rate: 1e-5
+        finetune_learning_rate: 5e-6
     lr_schedule_params:
         schedule: null
         schedule_params:

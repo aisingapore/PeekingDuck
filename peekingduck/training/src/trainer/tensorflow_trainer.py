@@ -121,6 +121,11 @@ class TensorflowTrainer:  # pylint: disable=too-many-instance-attributes, too-ma
         if self.train_params.debug:
             self.epochs = self.train_params.debug_epochs
 
+        # check for correct fine-tune setting before start training
+        assert isinstance(
+            self.model_config.fine_tune, bool
+        ), f"Unknown fine_tune setting '{self.model_config.fine_tune}'"
+
         feature_extraction_history = self.model.fit(
             train_dl,
             epochs=self.epochs,
@@ -128,10 +133,6 @@ class TensorflowTrainer:  # pylint: disable=too-many-instance-attributes, too-ma
             verbose=0,
             callbacks=self.callbacks,
         )
-
-        assert isinstance(
-            self.model_config.fine_tune, bool
-        ), f"Unknown fine_tune setting '{self.model_config.fine_tune}'"
 
         if not self.model_config.fine_tune:
             return feature_extraction_history.history

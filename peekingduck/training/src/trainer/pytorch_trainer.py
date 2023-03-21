@@ -193,10 +193,24 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
         )
         self._invoke_callbacks(EVENTS.TRAINER_END.value)
 
+    def _update_epochs(self, mode: str) -> None:
+        """
+        Update the number of epochs based on the mode of training.
+        The available options are "train", "debug" and "fine_tune".
+        """
+        mode_dict = {
+            "train": self.train_params.epochs,
+            "debug": self.train_params.debug_epochs,
+            "fine-tune": self.train_params.fine_tune_epochs,
+        }
+        self.epochs = mode_dict.get(mode, None)
+        if self.epochs is None:
+            raise KeyError(f"Key '{mode}' is not valid")
+
     def _run_epochs(self) -> None:
-        self.epochs = self.train_params.epochs
-        if self.train_params.debug:
-            self.epochs = self.train_params.debug_epochs
+        # self.epochs = self.train_params.epochs
+        # if self.train_params.debug:
+        #     self.epochs = self.train_params.debug_epochs
 
         # implement
         for epoch in range(1, self.epochs + 1):
@@ -385,32 +399,45 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
         self._set_dataloaders(train_dl=train_loader, validation_dl=validation_loader)
         inputs, _ = next(iter(train_loader))
         self._train_setup(inputs)  # startup
+        if self.train_params.debug:
+            self._update_epochs("debug")
+        else:
+            self._update_epochs("train")
+
+        # check for correct fine-tune setting before start training
+        assert isinstance(
+            self.model_config.fine_tune, bool
+        ), f"Unknown fine_tune setting '{self.model_config.fine_tune}'"
+
         self._run_epochs()
 
         # fine-tuning
         if self.model_config.fine_tune:
-            logger.info("\n\nUnfreezing parameters, please wait...\n")
-
-            if self.model_config.fine_tune_all:
-                unfreeze_all_params(self.model.model)
-            else:
-                # set fine-tune layers
-                set_trainable_layers(
-                    self.model.model, self.model_config.fine_tune_modules
-                )
-            # need to re-init optimizer to update the newly unfrozen parameters
-            self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
-                model=self.model,
-                optimizer=self.trainer_config.optimizer_params.optimizer,
-                optimizer_params=self.trainer_config.optimizer_params.finetune_params,
-            )
-
-            logger.info("\n\nModel Summary for fine-tuning:\n")
-            self.train_summary(inputs, finetune=True)
-
-            # run epoch
-            logger.info("\n\nStart fine-tuning:\n")
-            self._run_epochs()
-
+            if not self.train_params.debug:  # update epochs only when not in debug mode
+                self._update_epochs("fine-tune")
+            self._fine_tune(inputs)
         self._train_teardown()  # shutdown
         return self.history
+
+    def _fine_tune(self, inputs: torch.Tensor) -> None:
+        # update the number of epochs as fine_tune
+        logger.info("\n\nUnfreezing parameters, please wait...\n")
+
+        if self.model_config.fine_tune_all:
+            unfreeze_all_params(self.model.model)
+        else:
+            # set fine-tune layers
+            set_trainable_layers(self.model.model, self.model_config.fine_tune_modules)
+        # need to re-init optimizer to update the newly unfrozen parameters
+        self.optimizer = OptimizersAdapter.get_pytorch_optimizer(
+            model=self.model,
+            optimizer=self.trainer_config.optimizer_params.optimizer,
+            optimizer_params=self.trainer_config.optimizer_params.finetune_params,
+        )
+
+        logger.info("\n\nModel Summary for fine-tuning:\n")
+        self.train_summary(inputs, finetune=True)
+
+        # run epoch
+        logger.info("\n\nStart fine-tuning:\n")
+        self._run_epochs()
