@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Callable, Union
 import timm
 import torch
 import torchvision
@@ -55,7 +56,7 @@ class PTClassificationModel(PTModel):
         rsetattr(backbone, last_layer_name, head)
         return backbone
 
-    def create_model(self) -> nn.Module:
+    def create_model(self) -> Union[nn.Module, Callable]:
         """Create the model sequentially."""
 
         backbone = self.create_backbone()
@@ -74,7 +75,7 @@ class PTClassificationModel(PTModel):
 
         return backbone
 
-    def create_backbone(self) -> nn.Module:
+    def create_backbone(self) -> Union[nn.Module, Callable]:
         """Create the backbone of the model.
 
         NOTE:
