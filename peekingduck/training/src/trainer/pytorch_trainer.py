@@ -59,7 +59,8 @@ def get_sigmoid_softmax(
     return loss_func
 
 
-class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-arguments
+# pylint: disable=too-many-instance-attributes,too-many-arguments,logging-fstring-interpolation
+class PytorchTrainer:
     """Object used to facilitate training."""
 
     def __init__(self, framework: str = "pytorch") -> None:

@@ -11,19 +11,3 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-
-"""Abstract class for tensorflow model factory"""
-
-from abc import ABC, abstractmethod
-from omegaconf import DictConfig
-import tensorflow as tf
-
-
-# pylint: disable=too-few-public-methods
-class TFModelFactory(ABC):
-    """Model Base Class for TensorFlow."""
-
-    @abstractmethod
-    def create_model(cls, model_cfg: DictConfig) -> tf.keras.Model:
-        """Build the model with base and head"""
-        raise NotImplementedError

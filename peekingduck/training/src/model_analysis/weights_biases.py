@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""model analysis"""
+
 from typing import Any, Dict
 
 import wandb
@@ -47,8 +49,8 @@ class WeightsAndBiases:
         if self.cfg.framework == "tensorflow":
             selected_history = history
 
-            df: pd.DataFrame = pd.DataFrame(selected_history)
-            for row_dict in df.to_dict(orient="records"):
+            dataframe: pd.DataFrame = pd.DataFrame(selected_history)
+            for row_dict in dataframe.to_dict(orient="records"):
                 wandb.log(row_dict)
 
     def log_training_loss(self, loss: Dict[str, Any]) -> None:

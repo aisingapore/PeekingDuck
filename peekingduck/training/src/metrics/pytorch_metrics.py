@@ -14,15 +14,16 @@
 
 """pytorch metrics"""
 
+from typing import Any, Union
+from omegaconf import DictConfig
+
+import torch
+
 import torchmetrics
 from torchmetrics.classification.stat_scores import (
     MulticlassStatScores,
 )  # for type hinting, referenced from PyTorch Lightning source code
 from torchmetrics import MetricCollection
-
-import torch
-from typing import Any, Union
-from omegaconf import DictConfig
 
 
 class PytorchMetrics:

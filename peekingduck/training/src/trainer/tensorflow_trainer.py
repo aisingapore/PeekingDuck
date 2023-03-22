@@ -78,7 +78,7 @@ class TensorflowTrainer:
                 self.trainer_config.lr_schedule_params.schedule_params.learning_rate
             )
         else:
-            self.scheduler = OptimizerSchedules.get_scheduler(
+            self.scheduler = OptimizerSchedules.get_tensorflow_scheduler(
                 self.trainer_config.lr_schedule_params.schedule,
                 self.trainer_config.lr_schedule_params.schedule_params,
             )

@@ -26,6 +26,7 @@ from src.training_pipeline import run
 logger: logging.Logger = logging.getLogger(__name__)
 
 
+# pylint: disable=no-value-for-parameter,logging-fstring-interpolation
 @hydra.main(
     version_base=None,
     config_path="configs",
@@ -38,6 +39,5 @@ def main(cfg: DictConfig) -> None:
     run(cfg)
 
 
-# pylint: disable=no-value-for-parameter
 if __name__ == "__main__":
     main()
