@@ -151,7 +151,7 @@ class AbstractNode(ABC):  # pylint: disable=too-many-instance-attributes
             if isinstance(config[key], dict):
                 self._check_type(config[key], config_types, f"{full_key}.")
             config_type = config_types.get(full_key, Any)
-            check_type(f"{self.node_name}'s `{full_key}`", config[key], config_type)
+            check_type(config[key], config_type)
 
     def _edit_config(
         self,
