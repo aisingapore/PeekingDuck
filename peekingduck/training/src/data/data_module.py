@@ -12,9 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""data module"""
 
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple, Union
+import logging
 
 from albumentations import Compose
 from hydra.utils import instantiate
@@ -33,10 +35,10 @@ from src.utils.general_utils import (
     stratified_sample_df,
 )
 
-import logging
 from configs import LOGGER_NAME
 
-logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+# pylint: disable=invalid-name,too-many-instance-attributes,logging-fstring-interpolation
+logger: logging.Logger = logging.getLogger(LOGGER_NAME)
 
 
 class ImageClassificationDataModule:
@@ -52,6 +54,16 @@ class ImageClassificationDataModule:
             cfg.transform[cfg.framework]
         )
         self.dataset_loader: Union[DataAdapter, None] = None  # Setup in self.setup()
+
+        self.train_df: pd.DataFrame
+        self.test_df: pd.DataFrame
+        self.valid_df: pd.DataFrame
+        self.train_dataset: AbstractDataSet
+        self.valid_dataset: AbstractDataSet
+        self.test_dataset: AbstractDataSet
+        self.train_transforms: Compose = self.transforms.train_transforms
+        self.valid_transforms: Compose = self.transforms.valid_transforms
+        self.test_transforms: Compose = self.transforms.test_transforms
         self.kwargs = kwargs
 
     def get_train_dataloader(self) -> DataAdapter:
@@ -109,7 +121,7 @@ class ImageClassificationDataModule:
             # image_path is inside the csv.
             df: pd.DataFrame = pd.read_csv(train_csv)
         else:
-            # TODO: only invoke this if images are store in the following format
+            # only invoke this if images are store in the following format
             # train_dir
             #   - class1 ...
             df = create_dataframe_with_image_info(
@@ -120,8 +132,6 @@ class ImageClassificationDataModule:
         logger.info(df.head())
 
         self.train_df: pd.DataFrame = df
-        self.test_df: pd.DataFrame
-        self.valid_df: pd.DataFrame
 
         self.train_df, self.test_df = self._cross_validation_split(
             self.cfg.resample.resample_strategy, df, stratify_by=stratify_by
@@ -150,9 +160,7 @@ class ImageClassificationDataModule:
 
     def setup(self, stage: str) -> None:
         """Step 3 after prepare()"""
-        self.train_transforms: Compose = self.transforms.train_transforms
-        self.valid_transforms: Compose = self.transforms.valid_transforms
-        self.test_transforms: Compose = self.transforms.test_transforms
+
         if stage == "fit":
             if self.cfg.framework == "pytorch":
                 self.train_dataset: AbstractDataSet = PTImageClassificationDataset(
@@ -184,7 +192,7 @@ class ImageClassificationDataModule:
     def _cross_validation_split(
         resample_strategy: DictConfig,
         df: pd.DataFrame,
-        fold: Optional[int] = None,
+        # fold: Optional[int] = None,
         stratify_by: Optional[list] = None,
     ) -> Tuple[pd.DataFrame, pd.DataFrame]:
         """Split the dataframe into train and validation dataframes."""

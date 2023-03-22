@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""pytorch base"""
+
 import functools
 from abc import ABC, abstractmethod
 from typing import Any, Optional, Tuple
@@ -28,8 +30,6 @@ class PTModel(ABC, nn.Module):
 
     def __init__(self, cfg: DictConfig) -> None:
         super().__init__()
-        self.backbone: Optional[nn.Module]
-        self.head: Optional[nn.Module]
         self.model: nn.Module
         self.model_config: DictConfig = cfg
 
@@ -77,11 +77,11 @@ class PTModel(ABC, nn.Module):
             (Only the second last layer is 'Linear')
         """
         # propagate through the model to get the last layer name
-        for name, _ in getattr(self.backbone, "named_modules")():
+        for name, _ in getattr(self.model, "named_modules")():
             last_layer_name = name
         last_layer_attributes = last_layer_name.split(".")  # + ['in_features']
         # reduce applies to a list recursively and reduce it to a single value
-        linear_layer = functools.reduce(getattr, last_layer_attributes, self.backbone)
+        linear_layer = functools.reduce(getattr, last_layer_attributes, self.model)
         in_features = getattr(linear_layer, "in_features")
         last_layer_name = ".".join(last_layer_attributes)
         return last_layer_name, linear_layer, in_features

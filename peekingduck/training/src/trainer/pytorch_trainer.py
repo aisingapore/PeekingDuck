@@ -297,9 +297,8 @@ class PytorchTrainer:  # pylint: disable=too-many-instance-attributes, too-many-
         self._invoke_callbacks(EVENTS.TRAIN_LOADER_END.value)
         self._invoke_callbacks(EVENTS.TRAIN_EPOCH_END.value)
 
-    def _run_validation_epoch(
-        self, validation_loader: DataLoader
-    ) -> None:  # pylint: disable=too-many-locals
+    # pylint: disable=too-many-locals
+    def _run_validation_epoch(self, validation_loader: DataLoader) -> None:
         """Validate the model on the validation set for one epoch.
         Args:
             validation_loader (torch.utils.data.DataLoader): The validation set dataloader.

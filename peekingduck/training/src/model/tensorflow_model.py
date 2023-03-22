@@ -12,6 +12,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""tensorflow models"""
+
 import logging
 
 import tensorflow as tf
@@ -20,7 +22,8 @@ from omegaconf import DictConfig
 from src.model.tensorflow_base import TFModelFactory
 from src.utils.tf_model_utils import set_trainable_layers
 
-logger = logging.getLogger("TF Model")  # pylint: disable=invalid-name
+# pylint: disable=invalid-name,too-few-public-methods
+logger = logging.getLogger("TF Model")
 logging.basicConfig(level=logging.INFO)
 
 
@@ -29,6 +32,7 @@ class TFClassificationModelFactory(TFModelFactory):
 
     @classmethod
     def create_model(cls, model_cfg: DictConfig) -> tf.keras.Model:
+        """model factory method"""
         model_name = model_cfg.model_name
         num_classes = model_cfg.num_classes
         prediction_layer_name = "prediction_modified"

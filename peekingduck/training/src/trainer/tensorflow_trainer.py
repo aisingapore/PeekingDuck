@@ -18,8 +18,8 @@ import logging
 from typing import Any, Dict, List, Optional, Union
 from omegaconf import DictConfig
 import tensorflow as tf
-from configs import LOGGER_NAME
 from tqdm.keras import TqdmCallback  # for progress bar
+from configs import LOGGER_NAME
 
 from src.data.data_adapter import DataAdapter
 from src.optimizers.adapter import OptimizersAdapter
@@ -31,10 +31,12 @@ from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 from src.utils.general_utils import merge_dict_of_list
 from src.utils.tf_model_utils import set_trainable_layers, unfreeze_all_layers
 
-logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
+# pylint:disable=too-many-instance-attributes,too-many-arguments
+# pylint:disable=logging-fstring-interpolation,invalid-name,attribute-defined-outside-init
+logger = logging.getLogger(LOGGER_NAME)
 
 
-class TensorflowTrainer:  # pylint: disable=too-many-instance-attributes, too-many-arguments
+class TensorflowTrainer:
     """Trainer class to facilitate tensorflow training."""
 
     def __init__(self, framework: str = "tensorflow") -> None:

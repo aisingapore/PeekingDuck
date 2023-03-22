@@ -83,6 +83,7 @@ class TFPreprocessImage(ImageOnlyTransform):
         super().__init__(always_apply, p)
         self.preprocessor: str = preprocessor
 
+    # pylint: disable=unused-argument
     def apply(self, img: list, **kwargs: Dict[str, Any]) -> Any:
         """apply"""
         return operator.attrgetter(self.preprocessor)(tf)(img)
