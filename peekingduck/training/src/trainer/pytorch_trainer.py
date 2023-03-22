@@ -281,10 +281,7 @@ class PytorchTrainer:
             train_trues.extend(targets.cpu())
             train_probs.extend(y_train_prob.cpu())
 
-        (
-            train_trues_tensor,
-            train_probs_tensor,
-        ) = (
+        (train_trues_tensor, train_probs_tensor,) = (
             torch.vstack(tensors=train_trues),
             torch.vstack(tensors=train_probs),
         )
