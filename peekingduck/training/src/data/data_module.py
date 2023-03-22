@@ -131,7 +131,7 @@ class ImageClassificationDataModule:
             )
         logger.info(df.head())
 
-        self.train_df: pd.DataFrame = df
+        self.train_df = df
 
         self.train_df, self.test_df = self._cross_validation_split(
             self.cfg.resample.resample_strategy, df, stratify_by=stratify_by
@@ -163,19 +163,19 @@ class ImageClassificationDataModule:
 
         if stage == "fit":
             if self.cfg.framework == "pytorch":
-                self.train_dataset: AbstractDataSet = PTImageClassificationDataset(
+                self.train_dataset = PTImageClassificationDataset(
                     self.cfg,
                     dataframe=self.train_df,
                     stage="train",
                     transforms=self.train_transforms,
                 )
-                self.valid_dataset: AbstractDataSet = PTImageClassificationDataset(
+                self.valid_dataset = PTImageClassificationDataset(
                     self.cfg,
                     dataframe=self.valid_df,
                     stage="valid",
                     transforms=self.valid_transforms,
                 )
-                self.test_dataset: AbstractDataSet = PTImageClassificationDataset(
+                self.test_dataset = PTImageClassificationDataset(
                     self.cfg,
                     dataframe=self.test_df,
                     stage="test",
