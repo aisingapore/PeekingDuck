@@ -1,5 +1,5 @@
-download: False
-url: "https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz"
+download: True
+url: "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"
 blob_file: "cifar10.zip"
 root_dir: "data"
 train_dir: "./${.root_dir}/${project_name}"
