@@ -34,6 +34,7 @@ def test_with_initialize() -> None:
 # Usage in unittest style tests is similar.
 class TestWithUnittest(unittest.TestCase):
     """test case for default dataset config"""
+
     def test_generated_config(self) -> None:
         """test gen config"""
         with initialize(version_base=None, config_path="../../configs"):
