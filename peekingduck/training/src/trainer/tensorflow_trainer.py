@@ -110,7 +110,7 @@ class TensorflowTrainer:
     def train_summary(self, inputs: Optional[Dict[str, Any]] = None) -> None:
         """Print model summary"""
         logger.info(f"\n\nModel Summary:\n{inputs}")
-        self.model.summary(expand_nested=True)
+        self.model.summary()
 
     def train(self, train_dl: DataAdapter, val_dl: DataAdapter) -> Union[Any, dict]:
         """Model Training"""
