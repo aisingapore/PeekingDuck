@@ -17,4 +17,3 @@ tensorflow:
               thresholds: 0.5
       - AUC:
               multi_label: True
-              num_labels: ${data_module.dataset.num_classes}
