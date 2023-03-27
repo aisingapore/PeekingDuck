@@ -150,7 +150,11 @@ class ModelCheckpoint(Callback):
             "best_score": None,
             "model_artifacts_path": "",
         }
-        self.model_artifacts_dir = trainer.model_artifacts_dir
+        self.model_artifacts_dir = (
+            trainer.model_artifacts_dir
+            if trainer.model_artifacts_dir is not None
+            else ""
+        )
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
         """Method to save best model depending on the monitored quantity."""
@@ -159,15 +163,6 @@ class ModelCheckpoint(Callback):
         if self.improvement(
             curr_epoch_score=valid_score, curr_best_score=self.best_val_score
         ):
-            model_artifacts_path = (
-                Path(self.model_artifacts_dir)
-                .joinpath(
-                    f"{trainer.train_params.model_name}_best_{self.monitor}"
-                    f"_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
-                )
-                .as_posix()
-            )
-
             self.best_val_score = valid_score
 
             self.state_dict["model_state_dict"] = trainer.model.state_dict()
@@ -179,5 +174,15 @@ class ModelCheckpoint(Callback):
             )
             self.state_dict["epoch"] = trainer.current_epoch
             self.state_dict["best_score"] = self.best_val_score
-            self.state_dict["model_artifacts_path"] = model_artifacts_path
-            self.save_checkpoint(self.state_dict, Path(model_artifacts_path))
+
+            if self.model_artifacts_dir != "":
+                model_artifacts_path = (
+                    Path(self.model_artifacts_dir)
+                    .joinpath(
+                        f"{trainer.train_params.model_name}_best_{self.monitor}"
+                        f"_fold_{trainer.current_fold}_epoch{trainer.current_epoch}.pt",
+                    )
+                    .as_posix()
+                )
+                self.state_dict["model_artifacts_path"] = model_artifacts_path
+                self.save_checkpoint(self.state_dict, Path(model_artifacts_path))
