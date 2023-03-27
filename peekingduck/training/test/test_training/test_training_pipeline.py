@@ -27,7 +27,10 @@ import src.training_pipeline
     "overrides, expected",
     [
         (["framework=tensorflow"], None),
-        (["framework=pytorch", "trainer.pytorch.stores.model_artifacts_dir=null"], None),
+        (
+            ["framework=pytorch", "trainer.pytorch.stores.model_artifacts_dir=null"],
+            None,
+        ),
     ],
 )
 def test_user_logic(overrides: List[str], expected: int) -> None:
