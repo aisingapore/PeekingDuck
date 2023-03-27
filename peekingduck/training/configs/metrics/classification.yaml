@@ -16,6 +16,5 @@ tensorflow:
       - Recall:
               thresholds: 0.5
       - AUC:
-              from_logits: False
               multi_label: True
               num_labels: ${data_module.dataset.num_classes}
