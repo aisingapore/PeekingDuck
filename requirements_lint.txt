@@ -2,4 +2,3 @@
 
 numpy == 1.23.5
 opencv-contrib-python >= 4.5.2.54, != 4.5.4.58, <= 4.5.5.64
-tensorflow == 2.2.0
