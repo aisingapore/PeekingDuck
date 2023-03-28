@@ -15,7 +15,7 @@
 """Trainer Pipeline"""
 
 import logging
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 from time import perf_counter
 from omegaconf import DictConfig
 from hydra.utils import instantiate
@@ -45,7 +45,7 @@ def init_trainer(cfg: DictConfig) -> Trainer:
     return trainer
 
 
-def run(cfg: DictConfig) -> None:
+def run(cfg: DictConfig) -> Optional[Dict[str, Any]]:
     """Run the Trainer Pipeline"""
     assert cfg.framework in [
         "pytorch",
@@ -70,18 +70,21 @@ def run(cfg: DictConfig) -> None:
     data_module.setup(stage="fit")
     train_loader = data_module.get_train_dataloader()
     validation_loader = data_module.get_validation_dataloader()
+    history: Optional[Dict[str, Any]] = None
 
     if cfg.view_only:
         trainer: Trainer = init_trainer(cfg)
         inputs, _ = next(iter(train_loader))
-        trainer.train_summary(inputs)
+        trainer.train_summary(inputs)  # type: ignore
     else:
         model_analysis: WeightsAndBiases = WeightsAndBiases(cfg.model_analysis)
         trainer = init_trainer(cfg)
-        history: Dict[str, Any] = trainer.train(train_loader, validation_loader)
+        history = trainer.train(train_loader, validation_loader)
         model_analysis.log_history(history)
 
         end_time: float = perf_counter()
         run_time: str = f"Run time = {end_time - start_time:.2f} sec"
         logger.info(run_time)
         model_analysis.log({"run_time": end_time - start_time})
+
+    return history
