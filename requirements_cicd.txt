@@ -11,7 +11,7 @@ scikit-image == 0.18.0
 sphinx-autodoc-typehints == 1.20.1
 sphinx-rtd-theme == 1.1.1
 sphinx-copybutton == 0.5.0
-sphinx-tabs == 3.4.1
+sphinx-tabs == 3.3.0
 texttable == 1.6.7  # for pretty print scripts/check_links.py output
 types-PyYAML == 6.0.12.2
 types-requests == 2.28.11.7
