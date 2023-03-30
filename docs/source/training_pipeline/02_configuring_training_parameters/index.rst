@@ -1,14 +1,24 @@
 .. include:: /include/substitution.rst
 
+.. _configuring_training_parameters:
+
 *******************************
 Configuring Training Parameters
 *******************************
+
+This section describes how you can configure the pipeline to suite your model training.
+This guide is written with the assumption that the user has prior knowledge of the technical terms associated with typical Machine Learning training pipelines.
+Readers will also need to have prior knowledge of the python programming language and yaml configuration files. 
+The following parts will describe the image classification section and the documentation conventions used.
+
+
+Image Classification
+====================
 
 .. toctree::
    :maxdepth: 3
 
    /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
-   /training_pipeline/02_configuring_training_parameters/use_case/02b_object_detection
 
 
 Documentation Convention
@@ -16,11 +26,9 @@ Documentation Convention
 
 .. _documentation_convention:
 
-| In the following sections, we will be talking about the training pipeline and also showing you how you can configure this tranining pipeline to run on your own dataset.
+| There will be multiple instances talking about the configuration files that you will be interacting with to change the pipeline settings.
 
-| As such, this will be multiple instances talking about the config files that you will interact with to change the pipeline settings.
-
-| These config files will be displayed in a table format, illustrated in the following table.
+| These configuration files will be displayed in a table format, illustrated in the following table.
 | The text color scheme shown is used to illustrate which of the values can be changed, and the ones that should not:
 
 .. raw:: html

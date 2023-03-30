@@ -41,6 +41,7 @@ Image Classification
    /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
 
 
+.. _config-files-overview:
 
 Overview
 ===========
@@ -208,7 +209,7 @@ Config File : ``peekingduck/training/configs/config.yaml``
                     <td><p></p></td>
                     <td colspan="2"><code class="xref"><span class="pre">use_case</span></code></td>
                     <td><p>classification</p></td>
-                    <td><p>classification | detection | segmentation</p></td>
+                    <td><p></p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
@@ -1175,15 +1176,8 @@ Metrics
      <div class="pkd-expandable training-pytorch">
         <h4>Pytorch</h4>
         <p>Refer to <a href="https://torchmetrics.readthedocs.io/en/stable/all-metrics.html">Torch Metrics</a> documentation for more metrics you can use and their details.</p>
-        <p>These are the default values:
-        <ul>
-            <li>Accuracy</li>
-            <li>Precision</li>
-            <li>Recall</li>
-            <li>AUROC</li>
-        </ul>
-        </p>
-        <p>The table below shows the default values:</p>
+        <p>Values listed here are taken from the torch metrics api. It is important to note that the values are case-sensitive.</p>
+        <p>The table below shows the default metrics:</p>
         <p>Config file : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/metrics/classification.yaml</span></code></p>
         <div class="wy-table-responsive">
             <table class="docutils align-default">
@@ -1204,13 +1198,10 @@ Metrics
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">average</span></code></td>
                         <td>"micro"</td>
-                        <td>
-                            Defines the reduction that is applied over labels. 
-                            <br>Should be one of the following:
-                            <br>micro: Sum statistics over all labels
-                            <br>macro: Calculate statistics for each label and average them
-                            <br>weighted: Calculates statistics for each label and computes weighted average using their support
-                            "none" or None: Calculates statistic for each label and applies no reduction
+                        <td>"micro": Sum statistics over all labels
+                            <br>"macro": Calculate statistics for each label and average them
+                            <br>"weighted": Calculates statistics for each label and computes weighted average using their support "none"
+                            <br>None: Calculates statistic for each label and applies no reduction
                         </td>
                     </tr>
                     <tr>
@@ -1222,13 +1213,10 @@ Metrics
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">average</span></code></td>
                         <td>"macro"</td>
-                        <td>
-                            Defines the reduction that is applied over labels. 
-                            <br>Should be one of the following:
-                            <br>micro: Sum statistics over all labels
+                        <td>micro: Sum statistics over all labels
                             <br>macro: Calculate statistics for each label and average them
-                            <br>weighted: Calculates statistics for each label and computes weighted average using their support
-                            "none" or None: Calculates statistic for each label and applies no reduction
+                            <br>weighted: Calculates statistics for each label and computes weighted average using their support "none"
+                            <br>None: Calculates statistic for each label and applies no reduction
                         </td>
                     </tr>
                     <tr>
@@ -1245,13 +1233,10 @@ Metrics
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">average</span></code></td>
                         <td>"weighted"</td>
-                        <td>
-                            Defines the reduction that is applied over labels. 
-                            <br>Should be one of the following:
-                            <br>micro: Sum statistics over all labels
+                        <td>micro: Sum statistics over all labels
                             <br>macro: Calculate statistics for each label and average them
-                            <br>weighted: Calculates statistics for each label and computes weighted average using their support
-                            "none" or None: Calculates statistic for each label and applies no reduction
+                            <br>weighted: Calculates statistics for each label and computes weighted average using their support "none"
+                            <br>None: Calculates statistic for each label and applies no reduction
                         </td>
                     </tr>
                 </tbody>
@@ -1262,15 +1247,8 @@ Metrics
      <div class="pkd-expandable training-tensorflow">
         <h4>Tensorflow</h4>
         <p>Refer to the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/metrics">TensorFlow v2 Metrics</a> documentation for more metrics you can use and their details.</p>
-        <p>Commonly used metrics:
-        <ul>
-            <li>Accuracy</li>
-            <li>Precision</li>
-            <li>Recall</li>
-            <li>AUC</li>
-        </ul>
-        </p>
-        <p>The table below shows the default values:</p>
+        <p>Values listed here are taken from the tensorflow keras metrics api. It is important to note that the values are case-sensitive.</p>
+        <p>The table below shows the default metrics:</p>
         <p>Config file : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/metrics/classification.yaml</span></code></p>
         <div class="wy-table-responsive">
             <table class="docutils align-default">
@@ -1285,52 +1263,52 @@ Metrics
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">CategoricalAccuracy</span></code></td>
                         <td></td>
-                        <td>Calculates how often predictions match one-hot labels.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">Precision</span></code></td>
                         <td></td>
-                        <td>Computes the precision of the predictions with respect to the labels.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">thresholds</span></code></td>
                         <td>0.5</td>
-                        <td>(Optional) A float value, or a Python list/tuple of float threshold values in [0, 1]. A threshold is compared with prediction values to determine the truth value of predictions (i.e., above the threshold is true, below is false). If used with a loss function that sets from_logits=True (i.e. no sigmoid applied to predictions), thresholds should be set to 0. One metric value is generated for each threshold value. If neither thresholds nor top_k are set, the default is to calculate precision with thresholds=0.5.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">Recall</span></code></td>
                         <td></td>
-                        <td>Computes the recall of the predictions with respect to the labels.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">thresholds</span></code></td>
                         <td>0.5</td>
-                        <td>(Optional) A float value, or a Python list/tuple of float threshold values in [0, 1]. A threshold is compared with prediction values to determine the truth value of predictions (i.e., above the threshold is true, below is false). If used with a loss function that sets from_logits=True (i.e. no sigmoid applied to predictions), thresholds should be set to 0. One metric value is generated for each threshold value. If neither thresholds nor top_k are set, the default is to calculate recall with thresholds=0.5.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td colspan="2"><code class="xref"><span class="pre">AUC</span></code></td>
                         <td></td>
-                        <td>Approximates the AUC (Area under the curve) of the ROC or PR curves.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">from_logits</span></code></td>
                         <td>False</td>
-                        <td>boolean indicating whether the predictions (y_pred in update_state) are probabilities or sigmoid logits. As a rule of thumb, when using a keras loss, the from_logits constructor argument of the loss should match the AUC from_logits constructor argument.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">multi_label</span></code></td>
                         <td>True</td>
-                        <td>boolean indicating whether multilabel data should be treated as such, wherein AUC is computed separately for each label and then averaged across labels, or (when False) if the data should be flattened into a single label before AUC computation. In the latter case, when multilabel data is passed to AUC, each label-prediction pair is treated as an individual data point. Should be set to False for multi-class data.</td>
+                        <td></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
                         <td><code class="xref"><span class="pre">num_labels</span></code></td>
                         <td class="grey">${data_module.dataset.num_classes}</td>
-                        <td>(Optional) The number of labels, used when multi_label is True. If num_labels is not specified, then state variables get created on the first call to update_state.</td>
+                        <td></td>
                     </tr>
                 </tbody>
             </table>
