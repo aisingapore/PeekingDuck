@@ -16,7 +16,7 @@
 This simple example demonstrates how to plug TensorFlow Datasets (TFDS) into a Keras model.
 """
 
-from typing import Any
+from typing import Any, Tuple
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
@@ -35,7 +35,7 @@ def test_tensorflow_data_module() -> None:
     )
 
     # ### Build a training pipeline
-    def normalize_img(image: tf.Tensor, label: tf.Tensor) -> tuple[Any, Any]:
+    def normalize_img(image: tf.Tensor, label: tf.Tensor) -> Tuple[Any, Any]:
         """Normalizes images: `uint8` -> `float32`."""
         return tf.cast(image, tf.float32) / 255.0, label
 
