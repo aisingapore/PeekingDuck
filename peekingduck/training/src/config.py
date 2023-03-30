@@ -64,6 +64,7 @@ if USE_TF in ENV_VARS_TRUE_AND_AUTO_VALUES and USE_TORCH not in ENV_VARS_TRUE_VA
         for package in [
             "tensorflow",
             "tensorflow-cpu",
+            "tensorflow-intel",
             "tensorflow-gpu",
             "tf-nightly",
             "tf-nightly-cpu",

@@ -24,19 +24,26 @@ import src.training_pipeline
 # Drives some user logic with the composed config.
 # In this case it calls peekingduck.training.main.add(), passing it the composed config.
 @mark.parametrize(
-    "overrides, expected",
+    "overrides, validation_loss_key, expected",
     [
-        (["framework=tensorflow"], None),
+        (["framework=tensorflow"], "val_loss", 2.2),
         (
             ["framework=pytorch", "trainer.pytorch.stores.model_artifacts_dir=null"],
-            None,
+            "valid_loss",
+            2.2,
         ),
     ],
 )
-def test_user_logic(overrides: List[str], expected: int) -> None:
+def test_user_logic(
+    overrides: List[str], validation_loss_key: str, expected: float
+) -> None:
     with initialize(version_base=None, config_path="../../configs"):
         cfg = compose(
             config_name="config",
             overrides=overrides,
         )
-        assert src.training_pipeline.run(cfg) == expected
+        history = src.training_pipeline.run(cfg)
+        assert history is not None
+        assert validation_loss_key in history
+        assert len(history[validation_loss_key]) != 0
+        assert history[validation_loss_key][-1] < expected
