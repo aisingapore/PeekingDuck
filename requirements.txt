@@ -19,8 +19,6 @@ scikit-learn
 torchinfo
 torchmetrics
 albumentations
-imagesize
 matplotlib
 timm
-tabulate
 wandb

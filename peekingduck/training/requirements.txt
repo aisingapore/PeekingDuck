@@ -14,8 +14,6 @@ tensorflow < 2.11 # 2.11 on cuda will encounter issue with the official CUDA ins
 tqdm
 torchmetrics
 albumentations
-imagesize
 matplotlib
 timm
-tabulate
 wandb

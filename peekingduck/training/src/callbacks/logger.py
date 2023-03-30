@@ -16,7 +16,6 @@
 import logging
 import time
 import pandas as pd
-from tabulate import tabulate  # type: ignore
 from configs import LOGGER_NAME
 
 from src.trainer.base import Trainer
@@ -47,9 +46,7 @@ class Logger(Callback):
     def on_train_loader_end(self, trainer: Trainer) -> None:
         """on_train_loader_end"""
         metrics_df = pd.DataFrame.from_dict([trainer.epoch_dict["train"]["metrics"]])
-        self.logger.info(
-            f"\ntrain_metrics:\n{tabulate(metrics_df, headers='keys', tablefmt='psql')}\n"
-        )
+        self.logger.info(f"\ntrain_metrics:\n{metrics_df}\n")
 
     # pylint: disable=unused-argument
     def on_train_epoch_start(self, trainer: Trainer) -> None:
@@ -75,9 +72,7 @@ class Logger(Callback):
         metrics_df = pd.DataFrame.from_dict(
             [trainer.epoch_dict["validation"]["metrics"]]
         )
-        self.logger.info(
-            f'\nvalid_metrics:\n{tabulate(metrics_df, headers="keys", tablefmt="psql")}\n'
-        )
+        self.logger.info(f"\nvalid_metrics:\n{metrics_df}\n")
 
     # pylint: disable=unused-argument
     def on_valid_epoch_start(self, trainer: Trainer) -> None:
