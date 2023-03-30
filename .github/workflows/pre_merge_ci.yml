@@ -21,6 +21,7 @@ jobs:
           pip install wheel
           pip install -r requirements.txt
           pip install -r requirements_cicd.txt
+          pip install "h5py==2.10.0"
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
