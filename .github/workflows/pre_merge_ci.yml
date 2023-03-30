@@ -25,7 +25,7 @@ jobs:
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
-        uses: GabrielBB/xvfb-action@v1.6
+        uses: coactions/setup-xvfb@v1
         with:
           run: bash ./scripts/run_tests.sh unit
       - name: Run broken link report

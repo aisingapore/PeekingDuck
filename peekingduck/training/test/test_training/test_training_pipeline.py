@@ -12,8 +12,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""test training pipeline script"""
+"""Test training pipeline script"""
 from typing import List
+import sys
 from pytest import mark
 
 from hydra import compose, initialize
@@ -21,8 +22,9 @@ from hydra import compose, initialize
 import src.training_pipeline
 
 
-# Drives some user logic with the composed config.
-# In this case it calls peekingduck.training.main.add(), passing it the composed config.
+# Drives some framework with the composed config.
+# In this case it calls src.training.training_pipeline.run(), passing it the composed config.
+@mark.skipif(sys.platform != "linux", reason="Linux tests")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -34,7 +36,7 @@ import src.training_pipeline
         ),
     ],
 )
-def test_user_logic(
+def test_training_pipeline(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
     with initialize(version_base=None, config_path="../../configs"):
