@@ -17,11 +17,13 @@ This simple example demonstrates how to plug TensorFlow Datasets (TFDS) into a K
 """
 
 from typing import Any, Tuple
+from pytest import mark
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
 
+@mark.skip(reason="Redundant tensorflow test")
 def test_tensorflow_data_module() -> None:
     """Test Tensorflow datasource"""
     # Step 1: Create your input pipeline

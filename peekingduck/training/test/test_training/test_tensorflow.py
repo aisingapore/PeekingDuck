@@ -23,6 +23,7 @@ Accelerator: GPU
 """
 ## Setup
 """
+from pytest import mark
 
 import numpy as np
 from tensorflow import keras
@@ -33,6 +34,7 @@ from tensorflow.keras import layers
 """
 
 
+@mark.skip(reason="Redundant tensorflow test")
 def test_keras_example() -> None:
     """Test simple keras model"""
     # Model / data parameters

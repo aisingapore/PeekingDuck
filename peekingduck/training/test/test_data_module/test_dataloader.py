@@ -26,7 +26,7 @@ from tensorflow.keras import layers
 from src.data.data_adapter import DataAdapter
 from src.data.data_module import ImageClassificationDataModule
 
-# from src.model_analysis.weights_biases import WeightsAndBiases
+from src.model_analysis.weights_biases import WeightsAndBiases
 from src.training_pipeline import init_trainer
 
 
@@ -110,26 +110,9 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
             "val_loss",
             3.0,
         ),
-        # (
-        #     [
-        #         "project_name=cifar10",
-        #         "data_module=cifar10",
-        #         "framework=pytorch",
-        #         "debug=True",
-        #         "device=cpu",
-        #         "data_module.dataset.image_size=32",
-        #         "data_module.dataset.download=True",
-        #         "data_module.data_adapter.pytorch.train.batch_size=32",
-        #         "data_module.data_adapter.pytorch.validation.batch_size=32",
-        #         "data_module.data_adapter.pytorch.test.batch_size=32",
-        #         "trainer.pytorch.stores.model_artifacts_dir=null",
-        #     ],
-        #     "valid_loss",
-        #     2.3,
-        # ),
     ],
 )
-def test_trainer(
+def test_tensorflow_trainer(
     overrides: List[str], validation_loss_key: str, expected: List[int]
 ) -> None:
     """Test data_module"""
@@ -183,10 +166,53 @@ def test_trainer(
         assert len(history.history[validation_loss_key]) != 0
         assert history.history[validation_loss_key][-1] < expected
 
-        # WeightsAndBiases(cfg.model_analysis)
-        # trainer = init_trainer(cfg)
-        # history = trainer.train(train_loader, validation_loader)
-        # assert history is not None
-        # assert validation_loss_key in history
-        # assert len(history[validation_loss_key]) != 0
-        # assert history[validation_loss_key][-1] < expected
+
+@mark.parametrize(
+    "overrides, validation_loss_key, expected",
+    [
+        (
+            [
+                "project_name=cifar10",
+                "data_module=cifar10",
+                "framework=pytorch",
+                "debug=True",
+                "device=cpu",
+                "data_module.dataset.image_size=32",
+                "data_module.dataset.download=True",
+                "data_module.data_adapter.pytorch.train.batch_size=32",
+                "data_module.data_adapter.pytorch.validation.batch_size=32",
+                "data_module.data_adapter.pytorch.test.batch_size=32",
+                "trainer.pytorch.stores.model_artifacts_dir=null",
+            ],
+            "valid_loss",
+            2.3,
+        ),
+    ],
+)
+def test_pytorch_trainer(
+    overrides: List[str], validation_loss_key: str, expected: List[int]
+) -> None:
+    """Test pytorch data_module"""
+    with initialize(version_base=None, config_path="../../configs"):
+        cfg = compose(
+            config_name="config",
+            overrides=overrides,
+        )
+
+        data_module = ImageClassificationDataModule(
+            cfg=cfg.data_module,
+        )
+
+        data_module.prepare_data()
+        data_module.setup(stage="fit")
+        train_loader: DataAdapter = data_module.get_train_dataloader()
+        validation_loader: DataAdapter = data_module.get_validation_dataloader()
+
+        history = None
+        WeightsAndBiases(cfg.model_analysis)
+        trainer = init_trainer(cfg)
+        history = trainer.train(train_loader, validation_loader)
+        assert history is not None
+        assert validation_loss_key in history
+        assert len(history[validation_loss_key]) != 0
+        assert history[validation_loss_key][-1] < expected
