@@ -27,6 +27,8 @@ jobs:
       - name: Run unit tests
         uses: coactions/setup-xvfb@v1
         with:
-          run: bash ./scripts/run_tests.sh unit
+          run: |
+            wandb disabled
+            bash ./scripts/run_tests.sh unit
       - name: Run broken link report
         run: python ./scripts/check_links.py
