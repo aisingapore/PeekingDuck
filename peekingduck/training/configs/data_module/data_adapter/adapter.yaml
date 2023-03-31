@@ -7,7 +7,7 @@ pytorch:
     pin_memory: True
     drop_last: False
 
-  valid:
+  validation:
     batch_size: 32
     shuffle: False
     pin_memory: True
@@ -37,7 +37,7 @@ tensorflow:
     interpolation: "nearest"
     subset: "training"
 
-  valid:
+  validation:
     batch_size: 32
     shuffle: False
     x_col: ${data_module.dataset.image_path_col_name}

@@ -34,7 +34,7 @@ class Transforms(ABC):
 
     @property
     @abstractmethod
-    def valid_transforms(self) -> Any:
+    def validation_transforms(self) -> Any:
         """Get the validation transforms."""
 
     @property

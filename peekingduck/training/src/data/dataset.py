@@ -184,7 +184,7 @@ class TFImageClassificationDataset(
 
         if self.stage in ["train", "valid", "debug"]:
             return X, y
-        # self.stage == "test"
+
         return X
 
     def load_image(self, image_path: str) -> Any:

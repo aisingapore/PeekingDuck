@@ -60,7 +60,7 @@ class LossAdapter:
                 $0 \leq \text{targets}[i] \leq C-10≤targets[i]≤C-1$.
                 If containing class probabilities, same shape as the input.
             stage (str): train or validation, sometimes people use different loss functions for
-                train and valid.
+                train and validation.
         """
 
         if stage == "train":
