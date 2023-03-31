@@ -12,21 +12,21 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Test training pipeline script"""
+""" Test data module, data adapter, data loader and dataset
+"""
+
 from typing import List
-import sys
 from pytest import mark
 
 from hydra import compose, initialize
+import torch
 
-import src.training_pipeline
+from src.data.data_adapter import DataAdapter
+from src.data.data_module import ImageClassificationDataModule
 
 
-# Drives some framework with the composed config.
-# In this case it calls src.training.training_pipeline.run(), passing it the composed config.
-@mark.skipif(sys.platform != "linux", reason="Linux tests")
 @mark.parametrize(
-    "overrides, validation_loss_key, expected",
+    "overrides, expected",
     [
         (
             [
@@ -40,8 +40,7 @@ import src.training_pipeline
                 "data_module.data_adapter.tensorflow.validation.batch_size=32",
                 "data_module.data_adapter.tensorflow.test.batch_size=32",
             ],
-            "val_loss",
-            2.2,
+            (32, 224, 224, 3),
         ),
         (
             [
@@ -51,26 +50,35 @@ import src.training_pipeline
                 "debug=True",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
-                "data_module.data_adapter.tensorflow.train.batch_size=32",
-                "data_module.data_adapter.tensorflow.validation.batch_size=32",
-                "data_module.data_adapter.tensorflow.test.batch_size=32",
+                "data_module.data_adapter.pytorch.train.batch_size=32",
+                "data_module.data_adapter.pytorch.validation.batch_size=32",
+                "data_module.data_adapter.pytorch.test.batch_size=32",
                 "trainer.pytorch.stores.model_artifacts_dir=null",
             ],
-            "valid_loss",
-            2.2,
+            torch.Size([32, 3, 32, 32]),
         ),
     ],
 )
-def test_training_pipeline(
-    overrides: List[str], validation_loss_key: str, expected: float
-) -> None:
+def test_data_module(overrides: List[str], expected: List[int]) -> None:
+    """Test data_module"""
     with initialize(version_base=None, config_path="../../configs"):
         cfg = compose(
             config_name="config",
             overrides=overrides,
         )
-        history = src.training_pipeline.run(cfg)
-        assert history is not None
-        assert validation_loss_key in history
-        assert len(history[validation_loss_key]) != 0
-        assert history[validation_loss_key][-1] < expected
+
+        data_module = ImageClassificationDataModule(
+            cfg=cfg.data_module,
+        )
+
+        data_module.prepare_data()
+        data_module.setup(stage="fit")
+        train_loader: DataAdapter = data_module.get_train_dataloader()
+        validation_loader: DataAdapter = data_module.get_validation_dataloader()
+        assert train_loader
+        inputs, _ = next(iter(train_loader))
+        assert inputs.shape == expected
+
+        assert validation_loader
+        inputs, _ = next(iter(validation_loader))
+        assert inputs.shape == expected

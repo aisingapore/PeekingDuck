@@ -12,35 +12,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""test config script"""
+"""Test config script"""
 import unittest
 
 from hydra import compose, initialize
 
 
-def test_with_initialize() -> None:
+def test_config_overrides() -> None:
     with initialize(version_base=None, config_path="../../configs"):
         """
         1. initialize will add config_path the config search path within the context
         2. The module with your configs should be importable.
            it needs to have a __init__.py (can be empty).
-        3. THe config path is relative to the file calling initialize (this file)
+        3. The config path is relative to the file calling initialize (this file)
         config is relative to a module
         """
-        cfg = compose(config_name="config", overrides=["framework=tensorflow"])
-        assert cfg.framework == "tensorflow"
+        cfg = compose(config_name="config", overrides=["framework=pytorch"])
+        assert cfg.framework == "pytorch"
 
 
 # Usage in unittest style tests is similar.
-class TestWithUnittest(unittest.TestCase):
+class TestDatasetConfig(unittest.TestCase):
     """test case for default dataset config"""
 
     def test_generated_config(self) -> None:
-        """test gen config"""
+        """test generated config"""
         with initialize(version_base=None, config_path="../../configs"):
             cfg = compose(
                 config_name="config",
-                overrides=["data_module.dataset.root_dir=data"],
+                overrides=[
+                    "project_name=CICD",
+                    "data_module=cifar10",
+                    "data_module.dataset.root_dir=data",
+                ],
             )
 
             assert cfg.data_module.dataset == {

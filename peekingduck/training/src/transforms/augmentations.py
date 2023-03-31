@@ -47,8 +47,8 @@ class ImageClassificationTransforms(Transforms):
         return A.Compose(instantiate(self.cfg.train))
 
     @property
-    def valid_transforms(self) -> A.Compose:
-        """valid_transforms"""
+    def validation_transforms(self) -> A.Compose:
+        """validation_transforms"""
         return A.Compose(instantiate(self.cfg.test))
 
     @property

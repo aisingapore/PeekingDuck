@@ -8,9 +8,14 @@ Overview
  Introduction 
 ==============
 
-This section will introduce you to the training pipeline, its features, how it works, how you can configure the parameters and how you can train on your own dataset.
-PeekingDuck offers this feature for users who intend to perform their own model training.
-Training is possible without the need to write boilerplate codes. The training pipeline supports the image classification use case as of PeekingDuck version 2.0.
+Training a custom model with custom datasets is one of the key tasks when building computer vision solutions.
+
+Peeking Duck allows you to train a custom computer vision model with your own dataset without the need to write the boilerplate codes.
+
+This section will introduce you the key features of the training pipeline and how to get started.
+The following sections will introduce you how to train your own model with your own data by customizing the training parameters.
+
+The current version of PeekingDuck supports image classification model training. Object detection are being developed and will be available in future releases.
 
 
 Features
@@ -52,19 +57,18 @@ The trained models will be saved in the output folder.
 How the training pipeline works
 ===============================
 
-.. raw:: html
+PeekingDuck training pipeline is designed with cross-platform compatibility in mind. A high-level overview of the architecture is shown here:
 
-   <h6>Overview Diagram</h6>
+.. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
+
+The general workflow when using the training pipeline is:
 
 #. Organize your data with the required format 
 #. Place them at the designated directory
 #. Personalise your training if necessary 
 #. Execute from the terminal
 
-**Component Diagram**
-
-.. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
-
+Refer to the next section to get started.
 
 
 ----------

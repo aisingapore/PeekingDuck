@@ -22,9 +22,10 @@ from albumentations import Compose
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 import pandas as pd
+from torch.utils.data import DataLoader
 
 from src.data.base import AbstractDataSet
-from src.data.dataset import PTImageClassificationDataset
+from src.data.dataset import PTImageClassificationDataset, TFImageClassificationDataset
 from src.data.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
@@ -53,20 +54,20 @@ class ImageClassificationDataModule:
         self.transforms: ImageClassificationTransforms = ImageClassificationTransforms(
             cfg.transform[cfg.framework]
         )
-        self.dataset_loader: Union[DataAdapter, None] = None  # Setup in self.setup()
+        self.dataset_loader: Optional[DataAdapter] = None  # Setup in self.setup()
 
         self.train_df: pd.DataFrame
         self.test_df: pd.DataFrame
-        self.valid_df: pd.DataFrame
+        self.validation_df: pd.DataFrame
         self.train_dataset: AbstractDataSet
-        self.valid_dataset: AbstractDataSet
+        self.validation_dataset: AbstractDataSet
         self.test_dataset: AbstractDataSet
         self.train_transforms: Compose = self.transforms.train_transforms
-        self.valid_transforms: Compose = self.transforms.valid_transforms
+        self.validation_transforms: Compose = self.transforms.validation_transforms
         self.test_transforms: Compose = self.transforms.test_transforms
         self.kwargs = kwargs
 
-    def get_train_dataloader(self) -> DataAdapter:
+    def get_train_dataloader(self) -> Union[DataLoader, TFImageClassificationDataset]:
         """Return training data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
@@ -74,15 +75,17 @@ class ImageClassificationDataModule:
             transforms=self.train_transforms,
         )
 
-    def get_validation_dataloader(self) -> DataAdapter:
+    def get_validation_dataloader(
+        self,
+    ) -> Union[DataLoader, TFImageClassificationDataset]:
         """Return validation data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.validation_dataloader(
-            self.valid_dataset,
-            transforms=self.valid_transforms,
+            self.validation_dataset,
+            transforms=self.validation_transforms,
         )
 
-    def get_test_dataloader(self) -> DataAdapter:
+    def get_test_dataloader(self) -> Union[DataLoader, TFImageClassificationDataset]:
         """Return test data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(
@@ -136,7 +139,7 @@ class ImageClassificationDataModule:
         self.train_df, self.test_df = self._cross_validation_split(
             self.cfg.resample.resample_strategy, df, stratify_by=stratify_by
         )
-        self.train_df, self.valid_df = self._cross_validation_split(
+        self.train_df, self.validation_df = self._cross_validation_split(
             self.cfg.resample.resample_strategy, self.train_df, stratify_by=stratify_by
         )
 
@@ -147,13 +150,13 @@ class ImageClassificationDataModule:
             )
             if stratify_by is None:
                 self.train_df = self.train_df.sample(num_debug_samples)
-                self.valid_df = self.valid_df.sample(num_debug_samples)
+                self.validation_df = self.validation_df.sample(num_debug_samples)
             else:
                 self.train_df = stratified_sample_df(
                     self.train_df, stratify_by, num_debug_samples
                 )
-                self.valid_df = stratified_sample_df(
-                    self.valid_df, stratify_by, num_debug_samples
+                self.validation_df = stratified_sample_df(
+                    self.validation_df, stratify_by, num_debug_samples
                 )
 
         logger.info(self.train_df.info())
@@ -169,11 +172,11 @@ class ImageClassificationDataModule:
                     stage="train",
                     transforms=self.train_transforms,
                 )
-                self.valid_dataset = PTImageClassificationDataset(
+                self.validation_dataset = PTImageClassificationDataset(
                     self.cfg,
-                    dataframe=self.valid_df,
+                    dataframe=self.validation_df,
                     stage="valid",
-                    transforms=self.valid_transforms,
+                    transforms=self.validation_transforms,
                 )
                 self.test_dataset = PTImageClassificationDataset(
                     self.cfg,
@@ -183,7 +186,7 @@ class ImageClassificationDataModule:
                 )
             if self.cfg.framework == "tensorflow":
                 self.train_dataset = self.train_df
-                self.valid_dataset = self.valid_df
+                self.validation_dataset = self.validation_df
                 self.test_dataset = self.test_df
 
         self.dataset_loader = DataAdapter(self.cfg.data_adapter[self.cfg.framework])
