@@ -6,14 +6,15 @@
 Using custom dataset
 ********************
 
+If you have already collected your own dataset, the following section describes how you can prepare your dataset, connect it to the training pipeline and use it for training a model.
+
 .. _custom_dataset:
 
 Label File Template
 ===================
 
-If you have already collected your own dataset, the following section describes how you can create the csv file needed, and use it within PeekingDuck for training.
-
-`image_path`, `class_id` and  `class_name` are required columns in the `csv` file.
+| The table below describe the columns needed to create the csv file which will be used by the training pipeline to map your images to their labels.
+| `image_path`, `class_id` and  `class_name` are required columns in the `csv` file.
 
 +-------------------+------------------+-----------------------+
 | Columns           | Data type        | Description           |
@@ -24,9 +25,6 @@ If you have already collected your own dataset, the following section describes 
 +-------------------+------------------+-----------------------+
 | `class_name`      | `string`         | image class name      |
 +-------------------+------------------+-----------------------+
-
-Example function to extract images path: :mod:`./PeekingDuck/general_utils.py` at feat-training (github.com)
-
 
 Below is an example of the csv file using the vegfru dataset:
 
@@ -49,7 +47,8 @@ Once you have prepared the csv file and have your images you can follow these 3 
 
    <h6>Step 1. Prepare the data folder as such</h6>
 
-| (It is impotant to note that <your_dataset_folder> should be the same value as your project_name value).
+(It is impotant to note that <your_dataset_folder> should be the same value as your project_name value).
+
 .. raw:: html
    
    <pre>
@@ -82,9 +81,22 @@ Once you have prepared the csv file and have your images you can follow these 3 
 
 .. raw:: html
 
-   <h6>Step 2. Create YAML file</h6>
+   <h6>Step 2. Create YAML files</h6>
 
 | Create a yaml file and give it a unique name with no spacing inside these 2 folders:
+
+.. raw:: html
+   
+   <pre>
+      PeekingDuck/peekingduck/training/configs/data_module/
+               ├── data_adapter/...
+               ├── dataset/
+               │      └── 1. &#60;dataset_filename&#62;.yaml
+               ├── resample/...
+               ├── transform/...
+               └── 2. &#60;dataset_filename&#62;.yaml
+   </pre>
+
 | Folder 1: :mod:`.peekingduck/training/configs/data_module/dataset/<dataset_filename>.yaml`
 | Add this code snippet and change the values where necessary:
 
@@ -167,7 +179,10 @@ Once you have prepared the csv file and have your images you can follow these 3 
     - override hydra/job_logging: custom
     
 
-You can now test the training pipeline with the default training parameters using the following commands in terminal:
+Testing the Pipeline
+====================
+
+You can now test the training pipeline with the default training parameters using the following commands in terminal. The training pipeline uses the VGG16 model by default:
 
 .. code-block:: bash
    :linenos:
@@ -182,8 +197,8 @@ You can now test the training pipeline with the default training parameters usin
    # Pytorch
    python ./peekingduck/training/main.py debug=True framework=pytorch
 
-View the results of each run at the specified output folder directory: :mod:`\./Peekingduck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
-You can further configure your training by referring to the guide in section 2: :ref:`configuring_training_parameters`
+| View the results of each run at the specified output folder directory: :mod:`\./Peekingduck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
+| You can further configure your training by referring to the guide in section 2: :ref:`configuring_training_parameters`
 
 
 This is the end of the documentation for the training pipeline. The next section will describe the PeekingDuck ecosystem.
