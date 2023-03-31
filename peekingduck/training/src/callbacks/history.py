@@ -23,7 +23,7 @@ NOTE:
 from collections import defaultdict
 from typing import Any, DefaultDict, Dict, List
 
-import wandb
+# import wandb
 
 from src.callbacks.base import Callback
 from src.callbacks.order import CallbackOrder
@@ -61,7 +61,7 @@ class History(Callback):
 
     def _update(self, history: Dict[str, Any]) -> None:
         """Updates the history object with the latest metrics."""
-        wandb.log(history)
+        # wandb.log(history)
         for key in history:
             if key not in self.history:
                 self.history[key] = [history.get(key)]
