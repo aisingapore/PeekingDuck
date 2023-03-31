@@ -23,7 +23,8 @@ import torch
 
 from src.data.data_adapter import DataAdapter
 from src.data.data_module import ImageClassificationDataModule
-from src.model_analysis.weights_biases import WeightsAndBiases
+
+# from src.model_analysis.weights_biases import WeightsAndBiases
 from src.training_pipeline import init_trainer
 
 
@@ -36,6 +37,7 @@ from src.training_pipeline import init_trainer
                 "data_module=cifar10",
                 "framework=tensorflow",
                 "debug=True",
+                "device=cpu",
                 "data_module.dataset.image_size=224",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.tensorflow.train.batch_size=32",
@@ -50,6 +52,7 @@ from src.training_pipeline import init_trainer
                 "data_module=cifar10",
                 "framework=pytorch",
                 "debug=True",
+                "device=cpu",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.pytorch.train.batch_size=32",
@@ -143,7 +146,7 @@ def test_trainer(
         train_loader: DataAdapter = data_module.get_train_dataloader()
         validation_loader: DataAdapter = data_module.get_validation_dataloader()
         history = None
-        WeightsAndBiases(cfg.model_analysis)
+        # WeightsAndBiases(cfg.model_analysis)
         trainer = init_trainer(cfg)
         history = trainer.train(train_loader, validation_loader)
         assert history is not None
