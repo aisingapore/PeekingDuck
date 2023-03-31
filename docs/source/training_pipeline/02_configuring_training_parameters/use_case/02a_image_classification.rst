@@ -35,16 +35,21 @@
 Image Classification
 *********************
 
-.. toctree::
-   :maxdepth: 3
-
-   /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
+* :ref:`config-files-overview`
+* :ref:`config-files-mainconfig`
+* :ref:`config-files-datamodule`
+* :ref:`config-files-model`
+* :ref:`config-files-modelanalysis`
+* :ref:`config-files-trainer`
+* :ref:`config-files-metrics`
+* :ref:`config-files-callbacks`
+* :ref:`config-files-store`
 
 
 .. _config-files-overview:
 
 Overview
-===========
+========
 
 We are using the yaml syntax for the config file. Below is the folder structure and description of how users can understand and navigate the config structure. 
 Configuration files that are not user-customizable are not included in the table below.
@@ -152,6 +157,8 @@ To change the arguments in other configuration files such as `model`, `trainer`,
    python ./peekingduck/training/main.py debug=True framework=pytorch model.pytorch.model_name=mobilenetv3_small_050 trainer.pytorch.global_train_params.debug_epochs=5
 
 Refer to the following sections to learn about the detailed configurations for customized training
+
+.. _config-files-mainconfig:
 
 Main Config
 ===========
@@ -301,6 +308,7 @@ Config File : ``peekingduck/training/configs/config.yaml``
         </table>
    </div>
 
+.. _config-files-datamodule:
 
 Data Module
 ===========
@@ -800,6 +808,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 .. _`dataset/rsna`: <TODO: add link to dataset>
 .. _`csv/rsna`: <TODO: add link to csv file>
 
+.. _config-files-model:
 
 Model
 =====
@@ -1071,6 +1080,7 @@ Model
      </div>
    </div>
 
+.. _config-files-modelanalysis:
 
 Model Analysis
 ==============
@@ -1118,6 +1128,7 @@ Config File : ``peekingduck/training/configs/model_analysis/classification.yaml`
         </table>
    </div>
 
+.. _config-files-trainer:
 
 Trainer
 =======
@@ -1156,7 +1167,7 @@ Trainer
 
    </div></div>
 
-
+.. _config-files-metrics:
 
 Metrics
 =======
@@ -1317,6 +1328,7 @@ Metrics
      </div>
    </div>
 
+.. _config-files-callbacks:
 
 Callbacks
 =========
@@ -1479,6 +1491,7 @@ Callbacks
      </div>
    </div>
 
+.. _config-files-store:
 
 Store
 =====

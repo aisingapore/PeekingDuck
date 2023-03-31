@@ -19,27 +19,32 @@ Features
 .. raw:: html
 
    <h6>TensorFlow and PyTorch Models</h6>
+
 Supports pre-trained models from both PyTorch and TensorFlow. The selection of the model can be customized in the configuration files.
 
 .. raw:: html
 
    <h6>Train on custom dataset</h6>
+
 Configure the pipeline to train on your own dataset. You can refer to :ref:`using_custom_dataset` for more details.
 
 .. raw:: html
 
    <h6>Analyze Runs</h6>
+
 The training pipeline uses Weights & Biases for tracking the performance, model versioning and visualizing the results. 
 The user has the option to setup an account on Weights & Biases to upload and view the training logs online, or on a local server to view the training logs.  Refer to the :ref:`setting-up-weights-and-biases` section below for more details.
 
 .. raw:: html
 
    <h6>Configure Training Parameters</h6>
+
 You can configure the training parameters by changing the configuration yaml files or through the command line arguments. Refer to :ref:`configuring_training_parameters` for more details.
 
 .. raw:: html
 
    <h6>Save the trained model</h6>
+
 The trained models will be saved in the output folder.
 
 
@@ -274,6 +279,6 @@ You can test the training pipeline with the default :mod:`cifar10` dataset using
    # Pytorch
    python ./peekingduck/training/main.py debug=True framework=pytorch
 
-View the results of each run at the specified output folder directory: :mod:`\./Peekingduck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`
+View the results of each run at the specified output folder directory: :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`
 
 After running either of the commands without any errors, read on to the next page to see how you can configure the parameters for a more comprehensive training.
