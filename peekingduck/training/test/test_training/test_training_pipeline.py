@@ -28,9 +28,34 @@ import src.training_pipeline
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
-        (["framework=tensorflow"], "val_loss", 2.2),
         (
-            ["framework=pytorch", "trainer.pytorch.stores.model_artifacts_dir=null"],
+            [
+                "project_name=cifar10",
+                "data_module=cifar10",
+                "framework=tensorflow",
+                "debug=True",
+                "data_module.dataset.image_size=224",
+                "data_module.dataset.download=True",
+                "data_module.data_adapter.tensorflow.train.batch_size=32",
+                "data_module.data_adapter.tensorflow.validation.batch_size=32",
+                "data_module.data_adapter.tensorflow.test.batch_size=32",
+            ],
+            "val_loss",
+            2.2,
+        ),
+        (
+            [
+                "project_name=cifar10",
+                "data_module=cifar10",
+                "framework=pytorch",
+                "debug=True",
+                "data_module.dataset.image_size=32",
+                "data_module.dataset.download=True",
+                "data_module.data_adapter.tensorflow.train.batch_size=32",
+                "data_module.data_adapter.tensorflow.validation.batch_size=32",
+                "data_module.data_adapter.tensorflow.test.batch_size=32",
+                "trainer.pytorch.stores.model_artifacts_dir=null",
+            ],
             "valid_loss",
             2.2,
         ),
