@@ -24,8 +24,8 @@ import tensorflow_datasets as tfds
 
 from src.training_pipeline import init_trainer
 from src.model.tensorflow_model import TFClassificationModelFactory
-from src.losses.adapter import LossAdapter
 
+# from src.losses.adapter import LossAdapter
 # from src.metrics.tensorflow_metrics import TensorflowMetrics
 # from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 
@@ -120,10 +120,10 @@ def test_tensorflow_model_with_loss(
         # )
 
         # loss
-        loss = LossAdapter.get_tensorflow_loss_func(
-            trainer_config.loss_params.loss_func,
-            trainer_config.loss_params.loss_params,
-        )
+        # loss = LossAdapter.get_tensorflow_loss_func(
+        #     trainer_config.loss_params.loss_func,
+        #     trainer_config.loss_params.loss_params,
+        # )
 
         # metric
         # metrics = TensorflowMetrics().get_metrics(metrics=metrics_config)
@@ -131,7 +131,7 @@ def test_tensorflow_model_with_loss(
         # compile model
         model.compile(
             optimizer=tf.keras.optimizers.Adam(0.001),
-            loss=loss,
+            loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
             metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
         )
 
