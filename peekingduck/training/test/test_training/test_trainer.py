@@ -47,7 +47,7 @@ from src.model.tensorflow_model import TFClassificationModelFactory
                 "data_module.data_adapter.tensorflow.validation.batch_size=128",
                 "data_module.data_adapter.tensorflow.test.batch_size=128",
                 "model.tensorflow.activation=null",
-                "model.tensorflow.model_name=VGG16",
+                "model.tensorflow.model_name=MobileNetV3Large",
                 "model.tensorflow.fine_tune=False",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
@@ -87,7 +87,8 @@ def test_tensorflow_model(
         def normalize_img(image: tf.Tensor, label: tf.Tensor) -> Tuple[Any, Any]:
             """Normalizes images: `uint8` -> `float32`."""
             image = tf.cast(image, tf.float32)
-            image = image * 1 / 255.0
+            image /= 127.5
+            image -= 1.0
             image = tf.image.resize(
                 image, (model_config.image_size, model_config.image_size)
             )
@@ -155,7 +156,7 @@ def test_tensorflow_model(
         assert history.history[validation_loss_key][-1] >= expected
 
 
-@mark.skip(reason="debug tensorflow test")
+# @mark.skip(reason="debug tensorflow test")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -167,13 +168,13 @@ def test_tensorflow_model(
                 "debug=True",
                 "device=cpu",
                 "data_module.dataset.download=False",
-                "data_module.dataset.image_size=224",
+                "data_module.dataset.image_size=32",
                 "data_module.dataset.num_classes=10",
                 "data_module.data_adapter.tensorflow.train.batch_size=128",
                 "data_module.data_adapter.tensorflow.validation.batch_size=128",
                 "data_module.data_adapter.tensorflow.test.batch_size=128",
                 "model.tensorflow.activation=null",
-                "model.tensorflow.model_name=VGG16",
+                "model.tensorflow.model_name=MobileNetV3Large",
                 "model.tensorflow.fine_tune=False",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
@@ -193,6 +194,14 @@ def test_tensorflow_model_with_loss(
             overrides=overrides,
         )
 
+        model_config = cfg.model[cfg.framework]
+        # metrics_config = cfg.metrics[cfg.framework]
+        # callbacks_config = cfg.callbacks[cfg.framework]
+        trainer_config = cfg.trainer[cfg.framework]
+        # data_config = cfg.data_module
+        train_params = trainer_config.global_train_params
+        epochs = train_params.epochs
+
         # """Test Tensorflow datasource"""
         # Step 1: Create your input pipeline
         # ### Load a dataset
@@ -208,8 +217,11 @@ def test_tensorflow_model_with_loss(
         def normalize_img(image: tf.Tensor, label: tf.Tensor) -> Tuple[Any, Any]:
             """Normalizes images: `uint8` -> `float32`."""
             image = tf.cast(image, tf.float32)
-            image = image * 1 / 255.0
-            image = tf.image.resize(image, (224, 224))
+            image /= 127.5
+            image -= 1.0
+            image = tf.image.resize(
+                image, (model_config.image_size, model_config.image_size)
+            )
             image = tf.image.grayscale_to_rgb(image)
             return image, label
 
@@ -224,14 +236,6 @@ def test_tensorflow_model_with_loss(
         ds_test = ds_test.batch(128)
         ds_test = ds_test.cache()
         ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
-
-        model_config = cfg.model[cfg.framework]
-        # metrics_config = cfg.metrics[cfg.framework]
-        # callbacks_config = cfg.callbacks[cfg.framework]
-        trainer_config = cfg.trainer[cfg.framework]
-        # data_config = cfg.data_module
-        train_params = trainer_config.global_train_params
-        epochs = train_params.epochs
 
         # Set Seed
         tf.random.set_seed(train_params.manual_seed)
@@ -328,7 +332,8 @@ def test_tensorflow_trainer(
         def normalize_img(image: tf.Tensor, label: tf.Tensor) -> Tuple[Any, Any]:
             """Normalizes images: `uint8` -> `float32`."""
             image = tf.cast(image, tf.float32)
-            image = image * 1 / 255.0
+            image /= 127.5
+            image -= 1.0
             image = tf.image.resize(image, (224, 224))
             image = tf.image.grayscale_to_rgb(image)
             return image, label
