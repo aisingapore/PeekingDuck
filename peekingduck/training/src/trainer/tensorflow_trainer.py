@@ -41,7 +41,7 @@ class TensorflowTrainer:
 
     def __init__(self, framework: str = "tensorflow") -> None:
         self.framework = framework
-        self.model = None
+        self.model: tf.keras.Model
         self.scheduler = None
         self.opt = None
         self.loss = None
