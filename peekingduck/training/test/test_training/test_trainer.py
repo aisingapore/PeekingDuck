@@ -25,8 +25,8 @@ import tensorflow_datasets as tfds
 from src.training_pipeline import init_trainer
 from src.model.tensorflow_model import TFClassificationModelFactory
 from src.losses.adapter import LossAdapter
-from src.metrics.tensorflow_metrics import TensorflowMetrics
 
+# from src.metrics.tensorflow_metrics import TensorflowMetrics
 # from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
 
 
@@ -42,25 +42,25 @@ from src.metrics.tensorflow_metrics import TensorflowMetrics
                 "device=cpu",
                 "data_module.dataset.download=False",
                 "data_module.dataset.image_size=224",
-                "data_module.dataset.num_classes=1",
+                "data_module.dataset.num_classes=10",
                 "data_module.data_adapter.tensorflow.train.batch_size=128",
                 "data_module.data_adapter.tensorflow.validation.batch_size=128",
                 "data_module.data_adapter.tensorflow.test.batch_size=128",
                 "model.tensorflow.activation=null",
-                "model.tensorflow.model_name=ResNet50",
+                # "model.tensorflow.model_name=ResNet50",
                 "model.tensorflow.fine_tune=False",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
-            "categorical_accuracy",
+            "val_sparse_categorical_accuracy",
             0.5,
         ),
     ],
 )
-def test_tensorflow_model(
+def test_tensorflow_model_with_loss(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
-    """Test data_module"""
+    """Test test_tensorflow_model_with_loss"""
     with initialize(version_base=None, config_path="../../configs"):
         cfg = compose(
             config_name="config",
@@ -72,7 +72,7 @@ def test_tensorflow_model(
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:400]", "test[:40]"],
+            split=["train[:1%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
@@ -100,7 +100,7 @@ def test_tensorflow_model(
         ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
 
         model_config = cfg.model[cfg.framework]
-        metrics_config = cfg.metrics[cfg.framework]
+        # metrics_config = cfg.metrics[cfg.framework]
         # callbacks_config = cfg.callbacks[cfg.framework]
         trainer_config = cfg.trainer[cfg.framework]
         # data_config = cfg.data_module
@@ -126,11 +126,13 @@ def test_tensorflow_model(
         )
 
         # metric
-        metrics = TensorflowMetrics().get_metrics(metrics=metrics_config)
+        # metrics = TensorflowMetrics().get_metrics(metrics=metrics_config)
 
         # compile model
         model.compile(
-            optimizer=tf.keras.optimizers.Adam(0.001), loss=loss, metrics=metrics
+            optimizer=tf.keras.optimizers.Adam(0.001),
+            loss=loss,
+            metrics=[tf.keras.metrics.SparseCategoricalAccuracy()],
         )
 
         history = model.fit(
@@ -139,9 +141,6 @@ def test_tensorflow_model(
             validation_data=ds_test,
             verbose="0",
         )
-
-        # dataset = ds_train.take(5)
-        # print(list(dataset.as_numpy_iterator()))
 
         assert history is not None
         assert hasattr(history, "history")
