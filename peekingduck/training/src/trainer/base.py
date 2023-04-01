@@ -14,10 +14,12 @@
 
 """Trainer class protocol"""
 
-from typing import Any, Dict, Protocol
+from typing import Any, Dict, Protocol, Union
 from omegaconf import DictConfig
 
-from src.data.data_adapter import DataAdapter
+from torch.utils.data import DataLoader
+
+from src.data.base import AbstractDataSet
 
 
 # pylint: disable=too-many-arguments
@@ -36,6 +38,9 @@ class Trainer(Protocol):
         """Setup"""
 
     def train(
-        self, train_loader: DataAdapter, validation_loader: DataAdapter
+        self,
+        train_loader: Union[DataLoader, AbstractDataSet],
+        validation_loader: Union[DataLoader, AbstractDataSet],
     ) -> Dict[str, Any]:
-        """Fit method"""
+        """Trainer train"""
+        ...

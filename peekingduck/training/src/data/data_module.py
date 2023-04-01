@@ -22,10 +22,11 @@ from albumentations import Compose
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 import pandas as pd
+
 from torch.utils.data import DataLoader
 
 from src.data.base import AbstractDataSet
-from src.data.dataset import PTImageClassificationDataset, TFImageClassificationDataset
+from src.data.dataset import PTImageClassificationDataset
 from src.data.data_adapter import DataAdapter
 from src.transforms.augmentations import ImageClassificationTransforms
 from src.utils.general_utils import (
@@ -59,15 +60,15 @@ class ImageClassificationDataModule:
         self.train_df: pd.DataFrame
         self.test_df: pd.DataFrame
         self.validation_df: pd.DataFrame
-        self.train_dataset: AbstractDataSet
-        self.validation_dataset: AbstractDataSet
-        self.test_dataset: AbstractDataSet
+        self.train_dataset: Union[AbstractDataSet, pd.DataFrame]
+        self.validation_dataset: Union[AbstractDataSet, pd.DataFrame]
+        self.test_dataset: Union[AbstractDataSet, pd.DataFrame]
         self.train_transforms: Compose = self.transforms.train_transforms
         self.validation_transforms: Compose = self.transforms.validation_transforms
         self.test_transforms: Compose = self.transforms.test_transforms
         self.kwargs = kwargs
 
-    def get_train_dataloader(self) -> Union[DataLoader, TFImageClassificationDataset]:
+    def get_train_dataloader(self) -> Union[DataLoader, AbstractDataSet]:
         """Return training data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.train_dataloader(
@@ -77,7 +78,7 @@ class ImageClassificationDataModule:
 
     def get_validation_dataloader(
         self,
-    ) -> Union[DataLoader, TFImageClassificationDataset]:
+    ) -> Union[DataLoader, AbstractDataSet]:
         """Return validation data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.validation_dataloader(
@@ -85,7 +86,7 @@ class ImageClassificationDataModule:
             transforms=self.validation_transforms,
         )
 
-    def get_test_dataloader(self) -> Union[DataLoader, TFImageClassificationDataset]:
+    def get_test_dataloader(self) -> Union[DataLoader, AbstractDataSet]:
         """Return test data loader adapter"""
         assert self.dataset_loader is not None, "call setup() before getting dataloader"
         return self.dataset_loader.test_dataloader(

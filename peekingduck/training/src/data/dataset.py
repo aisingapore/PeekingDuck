@@ -65,7 +65,9 @@ class PTImageClassificationDataset(
 
         self.image_path = dataframe[cfg.dataset.image_path_col_name].values
         self.targets = (
-            dataframe[cfg.dataset.target_col_id].values if stage != "test" else None
+            dataframe[cfg.dataset.target_col_id].values
+            if stage != "test"
+            else torch.ones(1)
         )
 
     def __len__(self) -> int:
@@ -82,7 +84,7 @@ class PTImageClassificationDataset(
         ], f"Invalid stage {self.stage}."
 
         image_path: str = self.image_path[index]
-        image: Tensor = cv2.imread(image_path)
+        image = cv2.imread(image_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = self.apply_image_transforms(image)
 
@@ -96,7 +98,7 @@ class PTImageClassificationDataset(
         # self.stage == "test"
         return image
 
-    def apply_image_transforms(self, image: torch.Tensor) -> Tensor:
+    def apply_image_transforms(self, image: Union[Tensor, Any]) -> Union[Tensor, Any]:
         """Apply transforms to the image."""
         if self.transforms and isinstance(self.transforms, A.Compose):
             image = self.transforms(image=image)["image"]
@@ -148,7 +150,9 @@ class TFImageClassificationDataset(
         self.shuffle = shuffle
 
         self.image_paths = self.dataframe[x_col].values
-        self.targets = self.dataframe[y_col].values if stage != "test" else None
+        self.targets = (
+            self.dataframe[y_col].values if stage != "test" else torch.ones(1)
+        )
         self.kwargs = kwargs
         self._on_epoch_end()
 

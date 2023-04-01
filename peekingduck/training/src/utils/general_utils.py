@@ -251,7 +251,7 @@ def return_list_of_files(
 
 
 def create_dataframe_with_image_info(
-    image_dir: List[Path],
+    image_dir: Union[List[str], List[Path]],
     class_name_to_id: Dict[str, int],
     save_path: Optional[str] = None,
 ) -> pd.DataFrame:

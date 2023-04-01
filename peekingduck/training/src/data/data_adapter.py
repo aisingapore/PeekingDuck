@@ -17,6 +17,8 @@
 from dataclasses import dataclass, field
 from typing import Any, Union
 from omegaconf import DictConfig
+
+import pandas as pd
 from torch.utils.data import DataLoader
 from albumentations import Compose
 
@@ -44,8 +46,8 @@ class DataAdapter:
             self.loader = TFImageClassificationDataset
 
     def train_dataloader(
-        self, dataset: AbstractDataSet, transforms: Compose
-    ) -> Union[DataLoader, TFImageClassificationDataset]:
+        self, dataset: Union[AbstractDataSet, pd.DataFrame], transforms: Compose
+    ) -> Union[DataLoader, AbstractDataSet]:
         """train_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
@@ -62,8 +64,8 @@ class DataAdapter:
         raise UnboundLocalError(f"Unsupported framework {self.cfg.adapter_type}")
 
     def validation_dataloader(
-        self, dataset: AbstractDataSet, transforms: Compose
-    ) -> Union[DataLoader, TFImageClassificationDataset]:
+        self, dataset: Union[AbstractDataSet, pd.DataFrame], transforms: Compose
+    ) -> Union[DataLoader, AbstractDataSet]:
         """validation_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             return self.loader(
@@ -80,8 +82,8 @@ class DataAdapter:
         raise UnboundLocalError(f"Unsupported framework {self.cfg.adapter_type}")
 
     def test_dataloader(
-        self, dataset: AbstractDataSet, transforms: Compose
-    ) -> Union[DataLoader, TFImageClassificationDataset]:
+        self, dataset: Union[AbstractDataSet, pd.DataFrame], transforms: Compose
+    ) -> Union[DataLoader, AbstractDataSet]:
         """test_dataloader"""
         if self.cfg.adapter_type == "pytorch":
             return self.loader(

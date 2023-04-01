@@ -20,10 +20,8 @@ from pytest import mark
 
 from hydra import compose, initialize
 import torch
-from tensorflow import keras
-from tensorflow.keras import layers
+import tensorflow as tf
 
-from src.data.data_adapter import DataAdapter
 from src.data.data_module import ImageClassificationDataModule
 
 from src.model_analysis.weights_biases import WeightsAndBiases
@@ -80,8 +78,8 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
 
         data_module.prepare_data()
         data_module.setup(stage="fit")
-        train_loader: DataAdapter = data_module.get_train_dataloader()
-        validation_loader: DataAdapter = data_module.get_validation_dataloader()
+        train_loader = data_module.get_train_dataloader()
+        validation_loader = data_module.get_validation_dataloader()
         assert train_loader
         inputs, _ = next(iter(train_loader))
         assert inputs.shape == expected
@@ -113,7 +111,7 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
     ],
 )
 def test_tensorflow_trainer(
-    overrides: List[str], validation_loss_key: str, expected: List[int]
+    overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
     """Test data_module"""
     with initialize(version_base=None, config_path="../../configs"):
@@ -128,29 +126,27 @@ def test_tensorflow_trainer(
 
         data_module.prepare_data()
         data_module.setup(stage="fit")
-        train_loader: DataAdapter = data_module.get_train_dataloader()
-        validation_loader: DataAdapter = data_module.get_validation_dataloader()
+        train_loader = data_module.get_train_dataloader()
+        validation_loader = data_module.get_validation_dataloader()
 
         num_classes = 10
         input_shape = (32, 32, 3)
 
         history = None
-        model = keras.Sequential(
+        model = tf.keras.Sequential(
             [
-                keras.Input(shape=input_shape),
-                layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
-                layers.MaxPooling2D(pool_size=(2, 2)),
-                layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
-                layers.MaxPooling2D(pool_size=(2, 2)),
-                layers.Flatten(),
-                layers.Dropout(0.5),
-                layers.Dense(num_classes, activation="softmax"),
+                tf.keras.Input(shape=input_shape),
+                tf.keras.layers.Conv2D(32, kernel_size=(3, 3), activation="relu"),
+                tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+                tf.keras.layers.Conv2D(64, kernel_size=(3, 3), activation="relu"),
+                tf.keras.layers.MaxPooling2D(pool_size=(2, 2)),
+                tf.keras.layers.Flatten(),
+                tf.keras.layers.Dropout(0.5),
+                tf.keras.layers.Dense(num_classes, activation="softmax"),
             ]
         )
 
-        """
         ## Train the model
-        """
         epochs = 5
 
         model.compile(
@@ -190,7 +186,7 @@ def test_tensorflow_trainer(
     ],
 )
 def test_pytorch_trainer(
-    overrides: List[str], validation_loss_key: str, expected: List[int]
+    overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
     """Test pytorch data_module"""
     with initialize(version_base=None, config_path="../../configs"):
@@ -205,8 +201,8 @@ def test_pytorch_trainer(
 
         data_module.prepare_data()
         data_module.setup(stage="fit")
-        train_loader: DataAdapter = data_module.get_train_dataloader()
-        validation_loader: DataAdapter = data_module.get_validation_dataloader()
+        train_loader = data_module.get_train_dataloader()
+        validation_loader = data_module.get_validation_dataloader()
 
         history = None
         WeightsAndBiases(cfg.model_analysis)
