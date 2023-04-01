@@ -132,7 +132,7 @@ class TensorflowTrainer:
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
-            verbose=0,
+            verbose="0",
             callbacks=self.callbacks,
         )
 
@@ -166,7 +166,7 @@ class TensorflowTrainer:
             train_dl,
             epochs=self.epochs,
             validation_data=val_dl,
-            verbose=0,
+            verbose="0",
             callbacks=self.callbacks,
         )
         history: dict = merge_dict_of_list(

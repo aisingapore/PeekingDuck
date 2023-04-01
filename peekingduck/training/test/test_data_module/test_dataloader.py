@@ -23,7 +23,6 @@ import torch
 import tensorflow as tf
 
 from src.data.data_module import ImageClassificationDataModule
-
 from src.model_analysis.weights_biases import WeightsAndBiases
 from src.training_pipeline import init_trainer
 
