@@ -37,8 +37,11 @@ class TFClassificationModelFactory(TFModelFactory):
         num_classes = model_config.num_classes
         prediction_layer_name = "prediction_modified"
 
+        input_tensor = tf.keras.layers.Input(
+            shape=(model_config.image_size, model_config.image_size, 3)
+        )
         model: tf.keras.Model = getattr(tf.keras.applications, model_name)(
-            include_top=True, weights="imagenet"
+            input_tensor=input_tensor, include_top=True, weights="imagenet"
         )
 
         # exclude the existing prediction layer
