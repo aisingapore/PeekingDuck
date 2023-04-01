@@ -31,10 +31,10 @@ class TFClassificationModelFactory(TFModelFactory):
     """Generic TensorFlow image classification model."""
 
     @classmethod
-    def create_model(cls, model_cfg: DictConfig) -> tf.keras.Model:
+    def create_model(cls, model_config: DictConfig) -> tf.keras.Model:
         """model factory method"""
-        model_name = model_cfg.model_name
-        num_classes = model_cfg.num_classes
+        model_name = model_config.model_name
+        num_classes = model_config.num_classes
         prediction_layer_name = "prediction_modified"
 
         model: tf.keras.Model = getattr(tf.keras.applications, model_name)(
@@ -45,7 +45,7 @@ class TFClassificationModelFactory(TFModelFactory):
         x = model.layers[-2].output
         # create the new prediction layer
         predictions = tf.keras.layers.Dense(
-            num_classes, activation=model_cfg.activation, name=prediction_layer_name
+            num_classes, activation=model_config.activation, name=prediction_layer_name
         )(x)
         # Create new model with modified classification layer
         model = tf.keras.Model(inputs=model.inputs, outputs=predictions)
