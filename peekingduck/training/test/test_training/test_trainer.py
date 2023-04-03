@@ -305,7 +305,6 @@ def test_tensorflow_model_with_loss(
                 "val_sparse_categorical_accuracy",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
-                # "callbacks.tensorflow=[EarlyStopping]",
             ],
             "val_loss",
             4.0,
