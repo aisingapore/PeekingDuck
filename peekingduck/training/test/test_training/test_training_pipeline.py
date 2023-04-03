@@ -15,7 +15,7 @@
 """Test training pipeline script"""
 from typing import List
 
-# import sys
+import sys
 from pytest import mark
 
 from hydra import compose, initialize
@@ -25,7 +25,6 @@ import src.training_pipeline
 
 # Drives some framework with the composed config.
 # In this case it calls src.training_pipeline.run(), passing it the composed config.
-# @mark.skipif(sys.platform != "linux", reason="Linux tests")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -66,6 +65,46 @@ import src.training_pipeline
     ],
 )
 def test_training_pipeline(
+    overrides: List[str], validation_loss_key: str, expected: float
+) -> None:
+    """test_training_pipeline"""
+    with initialize(version_base=None, config_path="../../configs"):
+        cfg = compose(
+            config_name="config",
+            overrides=overrides,
+        )
+        history = src.training_pipeline.run(cfg)
+        assert history is not None
+        assert validation_loss_key in history
+        assert len(history[validation_loss_key]) != 0
+        assert history[validation_loss_key][-1] < expected
+
+
+@mark.skipif(sys.platform != "linux", reason="Linux tests")
+@mark.parametrize(
+    "overrides, validation_loss_key, expected",
+    [
+        (
+            [
+                "project_name=cifar10",
+                "data_module=cifar10",
+                "framework=tensorflow",
+                "debug=True",
+                "data_module.dataset.download=True",
+                "data_module.dataset.image_size=224",
+                "data_module.dataset.num_classes=10",
+                "data_module.data_adapter.tensorflow.train.batch_size=32",
+                "data_module.data_adapter.tensorflow.validation.batch_size=32",
+                "data_module.data_adapter.tensorflow.test.batch_size=32",
+                "model.tensorflow.model_name=VGG16",
+                "trainer.tensorflow.global_train_params.debug_epochs=10",
+            ],
+            "val_loss",
+            2.4,
+        ),
+    ],
+)
+def test_training_pipeline_vgg16(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
     """test_training_pipeline"""
