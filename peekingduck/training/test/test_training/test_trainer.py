@@ -279,7 +279,7 @@ def test_tensorflow_model_with_loss(
         assert history.history[validation_loss_key][-1] >= expected
 
 
-@mark.skip(reason="debug tensorflow test")
+# @mark.skip(reason="debug tensorflow test")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -291,13 +291,13 @@ def test_tensorflow_model_with_loss(
                 "debug=True",
                 "device=cpu",
                 "data_module.dataset.download=False",
-                "data_module.dataset.image_size=224",
+                "data_module.dataset.image_size=32",
                 "data_module.dataset.num_classes=1",
                 "data_module.data_adapter.tensorflow.train.batch_size=128",
                 "data_module.data_adapter.tensorflow.validation.batch_size=128",
                 "data_module.data_adapter.tensorflow.test.batch_size=128",
                 "model.tensorflow.activation=null",
-                "model.tensorflow.model_name=ResNet50",
+                "model.tensorflow.model_name=MobileNetV3Large",
                 "model.tensorflow.fine_tune=False",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
@@ -317,12 +317,14 @@ def test_tensorflow_trainer(
             overrides=overrides,
         )
 
+        model_config = cfg.model[cfg.framework]
+
         # """Test Tensorflow datasource"""
         # Step 1: Create your input pipeline
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:400]", "test[:40]"],
+            split=["train[:1%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
@@ -334,7 +336,9 @@ def test_tensorflow_trainer(
             image = tf.cast(image, tf.float32)
             image /= 127.5
             image -= 1.0
-            image = tf.image.resize(image, (224, 224))
+            image = tf.image.resize(
+                image, (model_config.image_size, model_config.image_size)
+            )
             image = tf.image.grayscale_to_rgb(image)
             return image, label
 

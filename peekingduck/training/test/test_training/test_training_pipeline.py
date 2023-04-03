@@ -64,6 +64,7 @@ import src.training_pipeline
 def test_training_pipeline(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
+    """test_training_pipeline"""
     with initialize(version_base=None, config_path="../../configs"):
         cfg = compose(
             config_name="config",
