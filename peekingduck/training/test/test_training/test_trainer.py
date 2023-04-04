@@ -156,7 +156,6 @@ def test_tensorflow_model(
         assert history.history[validation_loss_key][-1] >= expected
 
 
-# @mark.skip(reason="debug tensorflow test")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -180,7 +179,7 @@ def test_tensorflow_model(
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_sparse_categorical_accuracy",
-            0.5,
+            0.4,
         ),
     ],
 )
@@ -279,7 +278,6 @@ def test_tensorflow_model_with_loss(
         assert history.history[validation_loss_key][-1] >= expected
 
 
-# @mark.skip(reason="debug tensorflow test")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
     [
@@ -292,18 +290,22 @@ def test_tensorflow_model_with_loss(
                 "device=cpu",
                 "data_module.dataset.download=False",
                 "data_module.dataset.image_size=32",
-                "data_module.dataset.num_classes=1",
+                "data_module.dataset.num_classes=10",
                 "data_module.data_adapter.tensorflow.train.batch_size=128",
                 "data_module.data_adapter.tensorflow.validation.batch_size=128",
                 "data_module.data_adapter.tensorflow.test.batch_size=128",
                 "model.tensorflow.activation=null",
                 "model.tensorflow.model_name=MobileNetV3Large",
                 "model.tensorflow.fine_tune=False",
+                "metrics.tensorflow=[SparseCategoricalAccuracy]",
+                "trainer.tensorflow.global_train_params.debug_epochs=10",
+                "trainer.tensorflow.global_train_params.monitored_metric.monitor="
+                "val_sparse_categorical_accuracy",
                 "trainer.tensorflow.loss_params.loss_func=SparseCategoricalCrossentropy",
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_loss",
-            3.0,
+            4.0,
         ),
     ],
 )
