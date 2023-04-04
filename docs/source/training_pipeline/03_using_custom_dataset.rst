@@ -182,23 +182,6 @@ Once you have prepared the csv file and have your images you can follow these 3 
 Testing the Pipeline
 ====================
 
-You can now test the training pipeline with the default training parameters using the following commands in terminal. The training pipeline uses the VGG16 model by default:
-
-.. code-block:: bash
-   :linenos:
-   
-   # Use the default configurations to test
-
-   cd PeekingDuck
-
-   # Tensorflow
-   python ./peekingduck/training/main.py debug=True framework=tensorflow
-
-   # Pytorch
-   python ./peekingduck/training/main.py debug=True framework=pytorch
-
-| View the results of each run at the specified output folder directory: :mod:`\./Peekingduck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
-| You can further configure your training by referring to the guide in section 2: :ref:`configuring_training_parameters`
-
+Refer to :ref:`getting-started-test-run` to test out the pipeline.
 
 This is the end of the documentation for the training pipeline. The next section will describe the PeekingDuck ecosystem.

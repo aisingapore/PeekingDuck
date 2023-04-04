@@ -4,6 +4,8 @@
 Overview
 ********
 
+* :ref:`getting-started-test-run`
+
 ==============
  Introduction 
 ==============
@@ -71,6 +73,7 @@ Refer to the next section to get started.
 
 This guide explains how you can prepare your environment and test out the default pipeline using either TensorFlow or Pytorch.
 
+It is highly recommended to create a new conda environment as instructed below. Installing PeekingDuck dependencies into existing conda environments may cause unexpected behaviours.
 
 Install PeekingDuck Training Pipeline
 -------------------------------------
@@ -86,55 +89,37 @@ Install PeekingDuck Training Pipeline
          - `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_
          - For CUDA GPU:
             - `Latest Compatible Nvidia Display Driver for your system <https://www.nvidia.com/download/index.aspx>`_
+            - Do not install CUDA Toolkit and cuDNN at this stage. They are bundled with PyTorch when installed by pip, and will be installed via conda for TensorFlow
       
-      **CPU**
+      **Install for CPU**
 
-      .. code-block:: bash
-         :linenos:
+      1. Create and activate the conda environment:
 
-         # Create conda environment & activate
-         conda create -n pkd-training python=3.8
-         conda activate pkd-training
+      .. admonition:: Terminal Session
 
-         # Clone PeekingDuck repository
-         git clone <https://github.com/aisingapore/PeekingDuck.git>
-         cd PeekdingDuck
-
-         # Install required packages
-         pip install -r peekingduck/training/requirements.txt
-
-      **CUDA GPU**
-
-      .. code-block:: bash
-         :linenos:
-
-         # Create conda environment & activate
-         conda create -n pkd-training python=3.8
-         conda activate pkd-training
-
-         # Clone PeekingDuck repository
-         git clone <https://github.com/aisingapore/PeekingDuck.git>
-         cd PeekdingDuck
-
-         # Install required packages
-         pip install -r peekingduck/training/requirements.txt
-
-         # Refer to the official guide from Tensorflow (https://www.tensorflow.org/install/pip) to install cuda and cudnn
-
-         # Create the bash file to automatically set the PATH variable for cuda when activating the environment
-         mkdir -p $CONDA_PREFIX/etc/conda/activate.d
+         | \ :blue:`[~user]` \ > \ :green:`conda create -n pkd-training python=3.8` \
+         | \ :blue:`[~user]` \ > \ :green:`conda activate pkd-training` \
          
-         echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
-         $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
-         
-         # Create the bash file to automatically reset the PATH variable when deactivating the environment
-         mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d
 
-         echo 'unset LD_LIBRARY_PATH'>\
-         $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
+      2. Clone PeekingDuck repository:
 
-         # Reinitialize environment
-         conda activate base && conda activate pkd-training
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+
+
+      3. Install required packages:
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
+
+      **Install for CUDA GPU**
+
+      1. Complete CPU installation steps.
+
+      2. Refer to the `official Tensorflow step-by-step instructions <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ to install CUDA and CuDNN for TensorFlow. Do take note of the additional steps for Ubuntu 22.04.
 
    .. tab:: Windows
 
@@ -146,56 +131,37 @@ Install PeekingDuck Training Pipeline
          - For CUDA GPU:
             - `Latest Compatible Nvidia Display Driver for your system <https://www.nvidia.com/download/index.aspx>`_
             - `WSL2 <https://learn.microsoft.com/en-us/windows/wsl/install>`_
-            - No need to install CUDA Toolkit and cuDNN at this stage. They are bundled with PyTorch, and will be installed via conda for TensorFlow
+            - No need to install CUDA Toolkit and cuDNN at this stage. They are bundled with PyTorch when installed by pip, and will be installed via conda for TensorFlow
 
-      **CPU**
+      **Install for CPU**
 
-      .. code-block:: bash
-         :linenos:
+      1. Create and activate the conda environment:
 
-         # Create conda environment & activate
-         conda create -n pkd-training python=3.8
-         conda activate pkd-training
+      .. admonition:: Terminal Session
 
-         # Clone PeekingDuck repository
-         git clone <https://github.com/aisingapore/PeekingDuck.git>
-         cd PeekdingDuck
-
-         # Install required packages
-         pip install -r peekingduck/training/requirements.txt
-
-      **CUDA GPU**
-
-      .. code-block:: bash
-         :linenos:
-
-         # Create conda environment & activate
-         conda create -n pkd-training python=3.8
-         conda activate pkd-training
-
-         # Clone PeekingDuck repository
-         git clone <https://github.com/aisingapore/PeekingDuck.git>
-         cd PeekdingDuck
-
-         # Install required packages
-         pip install -r peekingduck/training/requirements.txt
-
-         # Refer to the official guide from Tensorflow (https://www.tensorflow.org/install/pip) to install cuda and cudnn
-
-         # Create the bash file to automatically set the PATH variable for cuda when activating the environment
-         mkdir -p $CONDA_PREFIX/etc/conda/activate.d
-
-         echo 'export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CONDA_PREFIX/lib/'>\
-         $CONDA_PREFIX/etc/conda/activate.d/env_vars.sh
+         | \ :blue:`[~user]` \ > \ :green:`conda create -n pkd-training python=3.8` \
+         | \ :blue:`[~user]` \ > \ :green:`conda activate pkd-training` \
          
-         # Create the bash file to automatically reset the PATH variable when deactivating the environment
-         mkdir -p $CONDA_PREFIX/etc/conda/deactivate.d
 
-         echo 'unset LD_LIBRARY_PATH'>\
-         $CONDA_PREFIX/etc/conda/deactivate.d/env_vars.sh
+      2. Clone PeekingDuck repository:
 
-         # Reinitialize environment
-         conda activate base && conda activate pkd-training
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+
+
+      3. Install required packages:
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
+
+      **Install for CUDA GPU**
+
+      1. Complete CPU installation steps.
+
+      2. Refer to the `official Tensorflow step-by-step instructions <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ to install CUDA and CuDNN for TensorFlow.
 
    .. tab:: Mac 
     
@@ -207,30 +173,31 @@ Install PeekingDuck Training Pipeline
 
          On macOS, you can install miniforge with Homebrew by running
 
-         .. code-block:: bash
-            :linenos:
+         .. admonition:: Terminal Session
 
-            brew install miniforge
+            | \ :blue:`[~user]` \ > \ :green:`brew install miniforge` \
 
-      Install requirements
+      **Install requirements**
 
-         .. code-block:: bash
-            :linenos:
+      1. Clone PeekingDuck repository:
 
-            # Clone PeekingDuck repository
-            git clone <https://github.com/aisingapore/PeekingDuck.git>
-            cd PeekdingDuck
+      .. admonition:: Terminal Session
 
-            # Create conda environment & activate
-            conda env create -f peekingduck/training/requirements_mac.yaml
-            conda activate pkd-training
+         | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+      
+      2. Create conda environment & activate:
 
-      Install TensorFlow
+      .. admonition:: Terminal Session
 
-         .. code-block:: bash
-            :linenos:
-            
-            bash .peekingduck/training/scripts/install_tensorflow_macos.sh
+         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`conda env create -f peekingduck/training/requirements_mac.yaml` \
+         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`conda activate pkd-training` \
+
+      3. Install TensorFlow
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
 
 .. _setting-up-weights-and-biases:
 
@@ -239,30 +206,30 @@ Setting up Weights & Biases
 
 Follow the steps below to get configure weights & biases:
 
-1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your wandb account.
+1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your wandb account. Refer to the `wandb official guide <https://docs.wandb.ai/quickstart>`_ for setting up an account.
 2. (If not yet installed via requirements.txt) Pip install the wandb library on your machine in a Python 3 environment.
-3. Login to the wandb library on your machine. You will find your API key `here <https://wandb.ai/authorize>`_
 
-.. code-block:: bash
-   :linenos:
-   
-   pip install wandb
+.. admonition:: Terminal Session
 
-   # Login to weights & biases
-   wandb login
+   | \ :blue:`[~user]` \ > \ :green:`pip install wandb` \
 
-Refer to the `official guide <https://docs.wandb.ai/quickstart>`_ for setting up an account.
+3. Login to the wandb library on your machine with the API key. You will find your API key `here <https://wandb.ai/authorize>`_
 
-If you prefer private hosting instead, refer to the `official guide <https://docs.wandb.ai/guides/hosting>`_ to set up private hosting.
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`wandb login` \
+
+Refer to the `wandb quick start guide <https://docs.wandb.ai/quickstart>`_ for more details.
+
+If you prefer private hosting instead, refer to the `hosting guide <https://docs.wandb.ai/guides/hosting>`_ to set up private hosting.
 
 Also, if you prefer not to use weights & biases, you can disable it as such:
 
-.. code-block:: bash
-   :linenos:
-   
-   # Disable weights & biases
-   wandb disable
+.. admonition:: Terminal Session
 
+   | \ :blue:`[~user]` \ > \ :green:`wandb disable` \
+
+.. _getting-started-test-run:
 
 ========
 Test Run
@@ -270,19 +237,24 @@ Test Run
 
 You can test the training pipeline with the default :mod:`cifar10` dataset using the following commands in terminal:
 
-.. code-block:: bash
-   :linenos:
-   
-   # Use the default configurations to test
+.. admonition:: Terminal Session
 
-   cd PeekingDuck
+   | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
-   # Tensorflow
-   python ./peekingduck/training/main.py debug=True framework=tensorflow
+Test for Tensorflow:
 
-   # Pytorch
-   python ./peekingduck/training/main.py debug=True framework=pytorch
+.. admonition:: Terminal Session
 
-View the results of each run at the specified output folder directory: :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=tensorflow` \
 
-After running either of the commands without any errors, read on to the next page to see how you can configure the parameters for a more comprehensive training.
+Test for PyTorch:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
+
+
+View the results of each run at the specified output folder directory :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, 
+\ where the default value of the :mod:`<PROJECT_NAME>` is defined in the :ref:`config-files-mainconfig`.
+
+After installation and test run, refer to :ref:`configuring_training_parameters` for training customizations.

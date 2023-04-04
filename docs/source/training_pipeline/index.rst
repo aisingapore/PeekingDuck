@@ -3,7 +3,7 @@
 .. _training_pipeline:
 
 ***********************
-Training your own model
+Training Your Own Model
 ***********************
 
 .. toctree::

@@ -6,11 +6,10 @@ hydra-core
 pandas
 numpy
 scikit-learn
---extra-index-url https://download.pytorch.org/whl/cu113
-torch==1.12.1+cu113
-torchvision==0.13.1+cu113
+torch
+torchvision
 torchinfo
-tensorflow < 2.11 # 2.11 on cuda will encounter issue with the official CUDA installation guide during the training stage.
+tensorflow
 tqdm
 torchmetrics
 albumentations
