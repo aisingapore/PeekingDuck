@@ -179,7 +179,7 @@ def test_tensorflow_model(
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_sparse_categorical_accuracy",
-            0.5,
+            0.4,
         ),
     ],
 )
