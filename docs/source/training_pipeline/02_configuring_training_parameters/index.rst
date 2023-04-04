@@ -7,9 +7,7 @@ Configuring Training Parameters
 *******************************
 
 This section describes how you can configure the pipeline to suite your model training.
-This guide is written with the assumption that the user has prior knowledge of the technical terms associated with typical Machine Learning training pipelines.
-Readers will also need to have prior knowledge of the python programming language and yaml configuration files. 
-The following parts will describe the image classification section and the documentation conventions used.
+\ The following parts will describe the image classification section and the documentation conventions used.
 
 
 Image Classification
