@@ -43,59 +43,60 @@ Preparation & Integrating with Training Pipeline
 
 Once you have prepared the csv file and have your images you can follow these 3 steps described below.
 
-.. raw:: html
 
-   <h6>Step 1. Prepare the data folder as such</h6>
+Step 1. Prepare the data folder as such
+---------------------------------------
 
-(It is impotant to note that <your_dataset_folder> should be the same value as your project_name value).
+It is important to note that :mod:`<your_dataset_folder>` should be the same value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
 
-.. raw:: html
-   
-   <pre>
-      PeekingDuck/data/
-         ├── cifar10/...
-         ├── rsna/...
-         ├── vegfru/...
-         └── &#60;your_dataset_folder&#62;/
-               ├── &#60;your_images_folder&#62;/
-               │      ├── &#60;class_1&#62;/
-               │      │      ├── &#60;image_001&#62;.jpg
-               │      │      ├── &#60;image_002&#62;.jpg
-               │      │      ├── &#60;image_003&#62;.jpg
-               │      │      └── ...
-               │      ├── &#60;class_2&#62;/
-               │      │      ├── &#60;image_001&#62;.jpg
-               │      │      ├── &#60;image_002&#62;.jpg
-               │      │      ├── &#60;image_003&#62;.jpg
-               │      │      └── ...
-               │      └── &#60;class_3&#62;/
-               │             ├── &#60;image_001&#62;.jpg
-               │             ├── &#60;image_002&#62;.jpg
-               │             ├── &#60;image_003&#62;.jpg
-               │             └── ...
-               └── &#60;your_csv_file&#62;.yaml
-   </pre>
+
+.. parsed-literal::
+
+   \ :blue:`PeekingDuck/data/` \ |Blank|
+      ├── \ :blue:`cifar10/...` \ |Blank|
+      ├── \ :blue:`rsna/...` \ |Blank|
+      ├── \ :blue:`vegfru/...` \ |Blank|
+      └── \ :blue:`<your_dataset_folder>/` \ |Blank|
+            ├── \ :blue:`<your_images_folder>/` \ |Blank|
+            │      ├── \ :blue:`<class_1>/` \ |Blank|
+            │      │      ├── <image_001>.jpg
+            │      │      ├── <image_002>.jpg
+            │      │      ├── <image_003>.jpg
+            │      │      └── ...
+            │      ├── \ :blue:`<class_2>/` \ |Blank|
+            │      │      ├── <image_001>.jpg
+            │      │      ├── <image_002>.jpg
+            │      │      ├── <image_003>.jpg
+            │      │      └── ...
+            │      └── \ :blue:`<class_3>/` \ |Blank|
+            │             ├── <image_001>.jpg
+            │             ├── <image_002>.jpg
+            │             ├── <image_003>.jpg
+            │             └── ...
+            └── <your_csv_file>.yaml
+
+
 
 | After preparing your folder, you will need to create and edit the configuration files to connect your dataset to the training pipeline:
 | For better understanding of which configuration files to change, you can refer to the directory tree at :ref:`config-files-overview`
 
-.. raw:: html
 
-   <h6>Step 2. Create YAML files</h6>
+Step 2. Create YAML files
+-------------------------
 
-| Create a yaml file and give it a unique name with no spacing inside these 2 folders:
+| Create two yaml files under the :mod:`data_module` directory and :mod:`dataset` subdirectory.
+| The name of the files must be the same as the :mod:`data_module` value defined in the :ref:`config-files-mainconfig`.
 
-.. raw:: html
-   
-   <pre>
-      PeekingDuck/peekingduck/training/configs/data_module/
-               ├── data_adapter/...
-               ├── dataset/
-               │      └── 1. &#60;dataset_filename&#62;.yaml
-               ├── resample/...
-               ├── transform/...
-               └── 2. &#60;dataset_filename&#62;.yaml
-   </pre>
+.. parsed-literal::
+
+   \ :blue:`PeekingDuck/peekingduck/training/configs/data_module/` \ |Blank|
+            ├── \ :blue:`data_adapter/...` \ |Blank|
+            ├── \ :blue:`dataset/` \ |Blank|
+            │      └── 1. <dataset_filename>.yaml
+            ├── \ :blue:`resample/...` \ |Blank|
+            ├── \ :blue:`transform/...` \ |Blank|
+            └── 2. <dataset_filename>.yaml   
+
 
 | Folder 1: :mod:`.peekingduck/training/configs/data_module/dataset/<dataset_filename>.yaml`
 | Add this code snippet and change the values where necessary:
