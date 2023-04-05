@@ -54,24 +54,23 @@ Overview
 We are using the yaml syntax for the config file. Below is the folder structure and description of how users can understand and navigate the config structure. 
 Configuration files that are not user-customizable are not included in the table below.
 
-.. raw:: html
-    
-    <pre>
-        peekingduck/training/configs/
-          ├── callbacks/
+.. parsed-literal::
+
+    \ :blue:`peekingduck/training/configs/` \ |Blank|
+          ├── \ :blue:`callbacks/` \ |Blank|
           │      └── classification.yaml
-          ├── data_module/
-          │      ├── data_adapter/
+          ├── \ :blue:`data_module/` \ |Blank|
+          │      ├── \ :blue:`data_adapter/` \ |Blank|
           │      │      └── adapter.yaml
-          │      ├── dataset/
+          │      ├── \ :blue:`dataset/` \ |Blank|
           │      │      ├── cifar10.yaml
           │      │      ├── rsna.yaml
           │      │      ├── vegfru5.yaml
           │      │      ├── vegfru15.yaml
           │      │      └── vegfru25.yaml
-          │      ├── resample/
+          │      ├── \ :blue:`resample/` \ |Blank|
           │      │      └── train_test_split.yaml
-          │      ├── transform/
+          │      ├── \ :blue:`transform/` \ |Blank|
           │      │      ├── test.yaml
           │      │      └── train.yaml
           │      ├── cifar10.yaml
@@ -79,23 +78,21 @@ Configuration files that are not user-customizable are not included in the table
           │      ├── vegfru5.yaml
           │      ├── vegfru15.yaml
           │      └── vegfru25.yaml
-          ├── hydra/
-          │      └── job_logging
+          ├── \ :blue:`hydra/` \ |Blank|
+          │      └── \ :blue:`job_logging/` \ |Blank|
           │             └── custom.yaml
-          ├── metrics/
+          ├── \ :blue:`metrics/` \ |Blank|
           │      └── classification.yaml
-          ├── model/
+          ├── \ :blue:`model/` \ |Blank|
           │      └── classification.yaml
-          ├── model_analysis/
+          ├── \ :blue:`model_analysis/` \ |Blank|
           │      └── classification.yaml
-          ├── stores/
+          ├── \ :blue:`stores/` \ |Blank|
           │      └── classification.yaml
-          ├── trainer/
+          ├── \ :blue:`trainer/` \ |Blank|
           │      └── classification.yaml
           └── config.yaml
-    </pre>
 
-    <br><br>
 
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 | Folder/file under `configs` folder | Description                                                                                       |
