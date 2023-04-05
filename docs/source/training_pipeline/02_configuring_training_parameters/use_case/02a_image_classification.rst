@@ -793,17 +793,17 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 
 
 .. _`dataset/cifar-10`: https://www.cs.toronto.edu/~kriz/cifar.html#download
-.. _`csv/cifar-10`: <TODO: add link to csv file>
+.. _`csv/cifar-10`: https://raw.githubusercontent.com/aisingapore/PeekingDuck/feat-training/data/cifar10/train.csv
 
-.. _`dataset/vegfru5`: <TODO: add link to dataset>
-.. _`csv/vegfru5`: <TODO: add link to csv file>
-.. _`dataset/vegfru15`: <TODO: add link to dataset>
-.. _`csv/vegfru15`: <TODO: add link to csv file>
-.. _`dataset/vegfru25`: <TODO: add link to dataset>
-.. _`csv/vegfru25`: <TODO: add link to csv file>
+.. _`dataset/vegfru5`: https://github.com/ustc-vim/vegfru#VegFru
+.. _`csv/vegfru5`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru5.csv
+.. _`dataset/vegfru15`: https://github.com/ustc-vim/vegfru#VegFru
+.. _`csv/vegfru15`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru15.csv
+.. _`dataset/vegfru25`: https://github.com/ustc-vim/vegfru#VegFru
+.. _`csv/vegfru25`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru25.csv
 
-.. _`dataset/rsna`: <TODO: add link to dataset>
-.. _`csv/rsna`: <TODO: add link to csv file>
+.. _`dataset/rsna`: https://www.kaggle.com/competitions/rsna-breast-cancer-detection/data
+.. _`csv/rsna`: https://raw.githubusercontent.com/aisingapore/PeekingDuck/feat-training/data/rsna/train.csv
 
 .. _config-files-model:
 
