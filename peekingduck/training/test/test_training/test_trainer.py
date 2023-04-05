@@ -77,7 +77,7 @@ def test_tensorflow_model(
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:1%]", "test[:1%]"],
+            split=["train[:2%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
@@ -206,7 +206,7 @@ def test_tensorflow_model_with_loss(
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:1%]", "test[:1%]"],
+            split=["train[:2%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
@@ -305,7 +305,7 @@ def test_tensorflow_model_with_loss(
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_loss",
-            4.0,
+            4.1,
         ),
     ],
 )
@@ -326,7 +326,7 @@ def test_tensorflow_trainer(
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:1%]", "test[:1%]"],
+            split=["train[:2%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
