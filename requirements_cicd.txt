@@ -25,4 +25,4 @@ numba >= 0.56.4
 shapely >= 1.7.1
 timm >= 0.6.7
 transformers >= 4.21.2
-tensorflow-datasets
+tensorflow-datasets == 4.8.3
