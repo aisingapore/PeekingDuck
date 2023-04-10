@@ -20,3 +20,10 @@ tensorflow:
     - ProgbarLogger:
           count_mode: 'steps'
           stateful_metrics: Null
+    - ModelCheckpoint:
+          filepath: ${trainer.tensorflow.stores.model_artifacts_dir}
+          monitor: ${trainer.tensorflow.global_train_params.monitored_metric.monitor}
+          save_best_only: False
+          save_weights_only: False
+          mode: 'auto'
+          save_freq: 'epoch'

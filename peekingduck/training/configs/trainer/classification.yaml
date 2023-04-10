@@ -74,3 +74,8 @@ tensorflow:
         loss_func: "CategoricalCrossentropy"
         loss_params:
             from_logits: False
+    stores:
+        project_name: ${project_name}
+        unique_id: ${stores.unique_id} # field(default_factory=generate_uuid4)
+        model_artifacts_dir: "./outputs/${project_name}/${stores.unique_id}/"
+

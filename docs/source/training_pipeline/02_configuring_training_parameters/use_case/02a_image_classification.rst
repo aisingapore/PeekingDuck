@@ -1481,6 +1481,66 @@ Callbacks
                         <td>"val_categorical_accuracy"</td>
                         <td>Metric to be monitored.</td>
                     </tr>
+
+                    <tr class="row-even">
+                        <td colspan="2"><code class="xref"><span class="pre">ProgbarLogger</span></code></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-odd">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">count_mode</span></code></td>
+                        <td>'steps'</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">stateful_metrics</span></code></td>
+                        <td>Null</td>
+                        <td></td>
+                    </tr>
+
+                    <tr class="row-odd">
+                        <td colspan="2"><code class="xref"><span class="pre">ModelCheckpoint</span></code></td>
+                        <td></td>
+                        <td>Save model checkpoints based on specified save_freq parameter frequency.</td>
+                    </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre grey">filepath</span></code></td>
+                        <td class="grey">${trainer.tensorflow.stores.model_artifacts_dir}</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-odd">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre grey">monitor</span></code></td>
+                        <td class="grey">${trainer.tensorflow.global_train_params.monitored_metric.monitor}</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">save_best_only</span></code></td>
+                        <td>False</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-odd">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">save_weights_only</span></code></td>
+                        <td>False</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-even">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">mode</span></code></td>
+                        <td>'auto'</td>
+                        <td></td>
+                    </tr>
+                    <tr class="row-odd">
+                        <td><p></p></td>
+                        <td><code class="xref"><span class="pre">save_freq</span></code></td>
+                        <td>'epoch'</td>
+                        <td></td>
+                    </tr>
                 </tbody>
             </table>
         </div>
