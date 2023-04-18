@@ -27,9 +27,9 @@ def run(cfg: DictConfig) -> None:
         from src.use_case.classification_pipeline import run_classification
         run_classification(cfg)
 
-    # elif cfg.pipeline == "detection":
-    #     from src.use_case.detection_pipeline import run_detection
-    #     run_detection(cfg.trainer.yolox)
+    elif cfg.pipeline == "detection":
+        from src.use_case.detection_pipeline import run_detection
+        run_detection(cfg.trainer.yolox)
 
     # elif cfg.pipeline == "segmentation":
         # from src.use_case.segmentation_pipeline import run_segmentation
