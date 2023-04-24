@@ -169,8 +169,4 @@ venv.bak/
 .mypy_cache/
 
 
-# Include dir from training
-!peekingduck/training/src/model/yolox/data
-!peekingduck/training/src/model/weights
-
 ####################
