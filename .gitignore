@@ -162,3 +162,5 @@ data/
 !data/**/*.csv
 !peekingduck/training/src/model/yolox/data
 !peekingduck/training/src/model/yolox/data/datasets
+!peekingduck/training/src/model/weights
+peekingduck/training/src/model/weights/yolox_s.pth
