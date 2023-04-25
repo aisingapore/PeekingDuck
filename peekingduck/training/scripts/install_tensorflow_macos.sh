@@ -36,6 +36,19 @@ while (( $# )); do
     shift
 done
 
+# Check required argument: environment name
+if [ -z "$ENV_NAME" ]; then
+    echo "Usage:"
+    echo "  $SELF -n <env_name> [-py <python_ver>] [-f]"
+    echo ""
+    echo "  -n | --name  environment name (required)"
+    echo "  -py          python version, default=3.8"
+    echo "  -f | -full   default install default=basic, full includes CI/CD packages"
+    echo ""
+    echo "Create new conda environment and install PeekingDuck"
+    exit 1
+fi
+
 # Detect hardware
 if [[ $ARCHI != arm ]]; then
     echo "Hardware $ARCHI unsupported, this script only works for M1 Macs"
@@ -53,15 +66,40 @@ else
     echo "'conda' found at $CONDA"
 fi
 
+# Detect if conda env exists
+if { conda env list | grep ".*$ENV_NAME.*"; } >/dev/null 2>&1; then
+    echo "$ENV_NAME already exists, please choose a new name"
+    exit 1
+fi
+
+echo "Make new conda env=$ENV_NAME python=$PY_VER install=$INSTALL archi=$ARCHI macOS=$MACOS"
+
+conda create -y -n $ENV_NAME python=$PY_VER
+conda init bash
+source ~/.bash_profile
+conda activate $ENV_NAME
+echo "conda env=$CONDA_DEFAULT_ENV"
+
+# Install basic packages
+echo "Installing basic packages"
+conda install -y black click colorama opencv pyyaml requests scipy shapely tqdm typeguard
+
+# Install PyTorch
+echo "installing PyTorch"
+conda install -y -c pytorch pytorch::pytorch torchvision timm torchmetrics torchinfo
+
+# Install the training pipeline packages
+echo "installing training pipeline packages"
+pip install ipykernel nbformat pydantic hydra-core pandas numpy scikit-learn albumentations matplotlib wandb
 
 # Install Tensorflow
 if [[ $ARCHI == i386 ]]; then
     echo "Installing for Intel macOS"
     pip install tensorflow==2.7.0
-elif [[ $MACOS == 12.* ] || [ $MACOS == 13.* ]]; then
+elif [[ $MACOS == 12.* ]] || [[ $MACOS == 13.* ]]; then
     echo "Installing for macOS Monterey / Ventura"
     conda install -y -c apple tensorflow-deps
-    pip install tensorflow-macos tensorflow-metal
+    pip install tensorflow-macos==2.10.0 tensorflow-metal==0.6.0
 elif [[ $MACOS == 11.* ]]; then
     echo "installing for macOS Big Sur"
     conda install -y -c apple tensorflow-deps==2.6.0
@@ -70,3 +108,16 @@ else
     echo "Unsupported macOS version $MACOS, installation incomplete"
     exit 1
 fi
+
+# Install more packages
+if [ $INSTALL == "full" ]; then
+    echo "Installing CI/CD packages"
+    conda install -y bandit coverage mypy pylint pytest types-PyYAML types-requests \
+        types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints \
+        texttable
+    pip install lap sphinx-rtd-theme
+fi
+
+echo "-----------------------------"
+echo "Activate new environment with: conda activate $ENV_NAME"
+echo "Exiting $SELF"
