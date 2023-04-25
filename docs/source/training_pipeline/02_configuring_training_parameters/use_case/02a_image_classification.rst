@@ -126,7 +126,7 @@ Configuration files that are not user-customizable are not included in the table
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 | trainer                            | Control training related parameters including number of epochs,                                   |
 |                                    |                                                                                                   |
-|                                    | learning rate, loss funcion, metric and patience for early stopping                               |
+|                                    | learning rate, loss function, metric and patience for early stopping                               |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 | metrics                            | Choose training metrics to monitor during training                                                |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
@@ -142,7 +142,7 @@ For the second option, user can pass the arguments explicitly stated in the main
 .. code-block:: bash
    :linenos: 
 
-   cd PeekdingDuck
+   cd PeekingDuck
    python ./peekingduck/training/main.py debug=True framework=tensorflow project_name=abcxyz view_only=True
 
 To change the arguments in other configuration files such as `model`, `trainer`, etc., the user would need to chain up the arguments based on the hierarchy in the yaml files. Here is one example:
@@ -150,7 +150,7 @@ To change the arguments in other configuration files such as `model`, `trainer`,
 .. code-block:: bash
    :linenos: 
 
-   cd PeekdingDuck
+   cd PeekingDuck
    python ./peekingduck/training/main.py debug=True framework=pytorch model.pytorch.model_name=mobilenetv3_small_050 trainer.pytorch.global_train_params.debug_epochs=5
 
 Refer to the following sections to learn about the detailed configurations for customized training
@@ -339,7 +339,7 @@ Config File : ``peekingduck/training/configs/data_module/resample/train_test_spl
                     <td><p></p></td>
                     <td><code class="xref"><span class="pre">_target_</span></code></td>
                     <td><p>sklearn.model_selection.train_test_split</p></td>
-                    <td><p>Quick utility that wraps input validation, next(ShuffleSplit().split(X, y)), and application to input data into a single call for splitting (and optionally subsampling) data into a one-liner.</p></td>
+                    <td><p>Quick utility that wraps input validation, next(ShuffleSplit().split(X, y)), and application to input data into a single call for splitting (and optionally sub-sampling) data into a one-liner.</p></td>
                 </tr>
                 <tr>
                     <td><p></p></td>
@@ -409,7 +409,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 
    .. tab:: Cifar10
 
-      | https://www.cs.toronto.edu/~kriz/cifar.html. The CIFAR-10 dataset consists of 60000 32x32 colour images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. The dataset is divided into five training batches and one test batch, each with 10000 images. The test batch contains exactly 1000 randomly-selected images from each class. The training batches contain the remaining images in random order, but some training batches may contain more images from one class than another. Between them, the training batches contain exactly 5000 images from each class.
+      | https://www.cs.toronto.edu/~kriz/cifar.html. The CIFAR-10 dataset consists of 60000 32x32 color images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. The dataset is divided into five training batches and one test batch, each with 10000 images. The test batch contains exactly 1000 randomly-selected images from each class. The training batches contain the remaining images in random order, but some training batches may contain more images from one class than another. Between them, the training batches contain exactly 5000 images from each class.
 
       | You can download the dataset here : `dataset/cifar-10`_
       | You can download the labels csv file here : `csv/cifar-10`_
@@ -1368,7 +1368,7 @@ Callbacks
                     <tr class="row-even">
                         <td colspan="2"><code class="xref"><span class="pre">Logger</span></code></td>
                         <td></td>
-                        <td>Incharge of printing the train and validation loop metrics and summaries.</td>
+                        <td>In charge of printing the train and validation loop metrics and summaries.</td>
                     </tr>
                     <tr class="row-odd">
                         <td colspan="2"><code class="xref"><span class="pre">EarlyStopping</span></code></td>

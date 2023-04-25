@@ -6,7 +6,9 @@
 Using custom dataset
 ********************
 
-If you have already collected your own dataset, the following section describes how you can prepare your dataset, connect it to the training pipeline and use it for training a model.
+If you have already collected your own dataset, the following section describes\
+ how you can prepare your dataset, connect it to the training pipeline and use\
+ it for training a model.
 
 .. _custom_dataset:
 

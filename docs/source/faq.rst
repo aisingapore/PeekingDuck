@@ -47,7 +47,7 @@ If you are running PeekingDuck on the Windows Subsystem for Linux (WSL), this er
 may be caused by a WSL bug where the key buffer is not flushed. Please refer to this
 `GitHub issue <https://github.com/aisingapore/PeekingDuck/issues/630>`_ for more details.
 
-How to choose the pretrained model library between ``timm`` and ``torchvision`` for PyTorch adapter?
+How to choose between 'timm' and 'torchvision' model libraries for the PyTorch adapter?
 ----------------------------------------------------------------------------------------------------
 
 In general, ``torchvision`` is well established and officially supported by PyTorch with more flexibility for customization, 

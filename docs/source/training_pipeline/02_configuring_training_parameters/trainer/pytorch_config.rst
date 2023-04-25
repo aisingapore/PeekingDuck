@@ -293,7 +293,7 @@
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">size_average</span></code></p></td>
                         <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each minibatch. Ignored when reduce is False. Default: True</p></td>
+                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -307,7 +307,7 @@
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">reduce</span></code></p></td>
                         <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each minibatch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
+                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -347,7 +347,7 @@
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">size_average</span></code></p></td>
                         <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each minibatch. Ignored when reduce is False. Default: True</p></td>
+                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>
@@ -361,7 +361,7 @@
                         <td><p></p></td>
                         <td><p><code class="xref"><span class="pre">reduce</span></code></p></td>
                         <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each minibatch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
+                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
                     </tr>
                     <tr>
                         <td><p></p></td>

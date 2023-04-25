@@ -113,7 +113,7 @@
                         <td><p></p></td>
                         <td colspan="2"><code class="xref"><span class="pre">finetune_learning_rate</span></code></td>
                         <td><p>1e-5</p></td>
-                        <td><p>Learning rate used for reinitialising optimizer during fine tuning.</p></td>
+                        <td><p>Learning rate used for re-initializing optimizer during fine tuning.</p></td>
                     </tr>
                 </tbody>
             </table>
