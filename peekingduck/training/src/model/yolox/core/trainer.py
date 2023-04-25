@@ -12,9 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#!/usr/bin/env python3
-# Copyright (c) Megvii, Inc. and its affiliates.
-
 import datetime
 import os
 import time
