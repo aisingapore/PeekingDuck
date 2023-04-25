@@ -1,5 +1,5 @@
 download: False
-url: "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip"
+url: "https://storage.googleapis.com/peekingduck/data/rsna.zip"
 blob_file: "rsna.zip"
 root_dir: "data"
 train_dir: "./${.root_dir}/${project_name}"
@@ -7,7 +7,7 @@ test_dir: "./${.root_dir}/${project_name}"
 train_csv: "./${.root_dir}/${project_name}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "class_name" #class_name cancer
-target_col_id: "class_id"
+target_col_id: "cancer"
 stratify_by: "${.target_col_name}"
 classification_type: "multiclass"
 image_size: 224
