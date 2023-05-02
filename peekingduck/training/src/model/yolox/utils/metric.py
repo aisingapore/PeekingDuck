@@ -28,7 +28,7 @@ __all__ = [
     "get_total_and_free_memory_in_Mb",
     "occupy_mem",
     "gpu_mem_usage",
-    "mem_usage"
+    "mem_usage",
 ]
 
 
@@ -38,7 +38,7 @@ def get_total_and_free_memory_in_Mb(cuda_device):
     )
     devices_info = devices_info_str.read().strip().split("\n")
     if "CUDA_VISIBLE_DEVICES" in os.environ:
-        visible_devices = os.environ["CUDA_VISIBLE_DEVICES"].split(',')
+        visible_devices = os.environ["CUDA_VISIBLE_DEVICES"].split(",")
         cuda_device = int(visible_devices[cuda_device])
     total, used = devices_info[int(cuda_device)].split(",")
     return int(total), int(used)

@@ -64,13 +64,18 @@ class JitOp:
 
     def cxx_args(self) -> List:
         """Get optional list of compiler flags to forward"""
-        args = ["-O2"] if sys.platform == "win32" else ["-O3", "-std=c++14", "-g", "-Wno-reorder"]
+        args = (
+            ["-O2"]
+            if sys.platform == "win32"
+            else ["-O3", "-std=c++14", "-g", "-Wno-reorder"]
+        )
         return args
 
     def nvcc_args(self) -> List:
         """Get optional list of compiler flags to forward to nvcc when building CUDA sources"""
         args = [
-            "-O3", "--use_fast_math",
+            "-O3",
+            "--use_fast_math",
             "-std=c++17" if sys.platform == "win32" else "-std=c++14",
             "-U__CUDA_NO_HALF_OPERATORS__",
             "-U__CUDA_NO_HALF_CONVERSIONS__",
@@ -80,6 +85,7 @@ class JitOp:
 
     def build_op(self):
         from torch.utils.cpp_extension import CppExtension
+
         return CppExtension(
             name=self.absolute_name(),
             sources=self.sources(),
@@ -96,12 +102,14 @@ class JitOp:
             return importlib.import_module(self.absolute_name())
         except Exception:  # op not compiled, jit load
             from src.model.yolox.utils import wait_for_the_master
+
             with wait_for_the_master():  # to avoid race condition
                 return self.jit_load(verbose)
 
     def jit_load(self, verbose=True):
         from torch.utils.cpp_extension import load
         from loguru import logger
+
         try:
             import ninja  # noqa
         except ImportError:
@@ -131,19 +139,25 @@ class JitOp:
 
 
 class FastCOCOEvalOp(JitOp):
-
     def __init__(self, name="fast_cocoeval"):
         super().__init__(name=name)
 
     def absolute_name(self):
-        return f'src.model.yolox.layers.{self.name}'
+        return f"src.model.yolox.layers.{self.name}"
 
     def sources(self):
-        sources = glob.glob(os.path.join("src", "model","yolox", "layers", "cocoeval", "*.cpp"))
-        if not sources:  # source will be empty list if the so file is removed after install
+        sources = glob.glob(
+            os.path.join("src", "model", "yolox", "layers", "cocoeval", "*.cpp")
+        )
+        if (
+            not sources
+        ):  # source will be empty list if the so file is removed after install
             # use abosolute path to compile
             import src.model.yolox
-            code_path = os.path.join(src.model.yolox.__path__[0], "layers", "cocoeval", "*.cpp")
+
+            code_path = os.path.join(
+                src.model.yolox.__path__[0], "layers", "cocoeval", "*.cpp"
+            )
             sources = glob.glob(code_path)
         return sources
 

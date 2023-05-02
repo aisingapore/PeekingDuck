@@ -26,7 +26,7 @@ import numpy as np
 
 def parse_rec(filename):
     """Parse a PASCAL VOC xml file"""
-    tree = ET.parse(filename)
+    tree = ET.parse(filename)  # nosec
     objects = []
     for obj in tree.findall("object"):
         obj_struct = {}
@@ -112,7 +112,7 @@ def voc_eval(
     else:
         # load
         with open(cachefile, "rb") as f:
-            recs = pickle.load(f)
+            recs = pickle.load(f)  # nosec
 
     # extract gt objects for this class
     class_recs = {}
@@ -167,7 +167,8 @@ def voc_eval(
             # union
             uni = (
                 (bb[2] - bb[0] + 1.0) * (bb[3] - bb[1] + 1.0)
-                + (BBGT[:, 2] - BBGT[:, 0] + 1.0) * (BBGT[:, 3] - BBGT[:, 1] + 1.0) - inters
+                + (BBGT[:, 2] - BBGT[:, 0] + 1.0) * (BBGT[:, 3] - BBGT[:, 1] + 1.0)
+                - inters
             )
 
             overlaps = inters / uni

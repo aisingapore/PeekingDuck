@@ -1,4 +1,3 @@
-
 # Copyright 2023 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -92,7 +91,7 @@ class COCODataset(CacheDataset):
             cache_dir_name=f"cache_{name}",
             path_filename=path_filename,
             cache=cache,
-            cache_type=cache_type
+            cache_type=cache_type,
         )
 
     def __len__(self):

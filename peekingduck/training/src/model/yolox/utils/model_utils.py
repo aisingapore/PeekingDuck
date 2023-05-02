@@ -107,7 +107,9 @@ def fuse_model(model: nn.Module) -> nn.Module:
     return model
 
 
-def replace_module(module, replaced_module_type, new_module_type, replace_func=None) -> nn.Module:
+def replace_module(
+    module, replaced_module_type, new_module_type, replace_func=None
+) -> nn.Module:
     """
     Replace given type in module to a new type. mostly used in deploy.
 

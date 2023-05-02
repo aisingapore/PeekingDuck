@@ -130,9 +130,7 @@ class VOCDetection(CacheDataset):
         self._annopath = os.path.join("%s", "Annotations", "%s.xml")
         self._imgpath = os.path.join("%s", "JPEGImages", "%s.jpg")
         self._classes = VOC_CLASSES
-        self.cats = [
-            {"id": idx, "name": val} for idx, val in enumerate(VOC_CLASSES)
-        ]
+        self.cats = [{"id": idx, "name": val} for idx, val in enumerate(VOC_CLASSES)]
         self.class_ids = list(range(len(VOC_CLASSES)))
         self.ids = list()
         for (year, name) in image_sets:
@@ -147,7 +145,9 @@ class VOCDetection(CacheDataset):
         self.annotations = self._load_coco_annotations()
 
         path_filename = [
-            (self._imgpath % self.ids[i]).split(self.root + "\\")[1] # for windows systems
+            (self._imgpath % self.ids[i]).split(self.root + "\\")[
+                1
+            ]  # for windows systems
             # (self._imgpath % self.ids[i]).split(self.root + "/")[1] # for unix systems
             for i in range(self.num_imgs)
         ]
@@ -158,7 +158,7 @@ class VOCDetection(CacheDataset):
             cache_dir_name=f"cache_{self.name}",
             path_filename=path_filename,
             cache=cache,
-            cache_type=cache_type
+            cache_type=cache_type,
         )
 
     def __len__(self):
@@ -169,7 +169,7 @@ class VOCDetection(CacheDataset):
 
     def load_anno_from_ids(self, index):
         img_id = self.ids[index]
-        target = ET.parse(self._annopath % img_id).getroot()
+        target = ET.parse(self._annopath % img_id).getroot()  # nosec
 
         assert self.target_transform is not None
         res, img_info = self.target_transform(target)
@@ -291,7 +291,9 @@ class VOCDetection(CacheDataset):
     def _do_python_eval(self, output_dir="output", iou=0.5):
         rootpath = os.path.join(self.root, "VOC" + self._year)
         name = self.image_set[0][1]
-        annopath = os.path.join(rootpath, "Annotations", "{}.xml")  # for windows systems
+        annopath = os.path.join(
+            rootpath, "Annotations", "{}.xml"
+        )  # for windows systems
         # annopath = os.path.join(rootpath, "Annotations", "{:s}.xml")  # for unix systems
         imagesetfile = os.path.join(rootpath, "ImageSets", "Main", name + ".txt")
         cachedir = os.path.join(

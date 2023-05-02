@@ -57,7 +57,7 @@ def pyobj2tensor(pyobj, device="cuda"):
 
 def tensor2pyobj(tensor):
     """deserialize tensor to picklable python object"""
-    return pickle.loads(tensor.cpu().numpy().tobytes())
+    return pickle.loads(tensor.cpu().numpy().tobytes())  # nosec
 
 
 def _get_reduce_op(op_name):

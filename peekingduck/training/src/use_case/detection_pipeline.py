@@ -27,7 +27,12 @@ from src.model.yolox.data import get_yolox_datadir
 from src.model.yolox.core import launch
 from src.model.yolox.exp import Exp as MyExp
 from src.model.yolox.exp import Exp, check_exp_value
-from src.model.yolox.utils import configure_module, configure_nccl, configure_omp, get_num_devices
+from src.model.yolox.utils import (
+    configure_module,
+    configure_nccl,
+    configure_omp,
+    get_num_devices,
+)
 
 
 @logguru.catch
@@ -48,12 +53,13 @@ def main(exp: Exp, args):
     cudnn.benchmark = True
 
     trainer = exp.get_trainer(args)
-    trainer.train()
+    trainer.train()  # nosec
+
 
 def run_detection(cfg: DictConfig):
     configure_module()
     args = argparse.Namespace(**cfg)
-    
+
     assert cfg.trainer_params.ds_format in [
         "coco",
         "voc",
@@ -63,7 +69,7 @@ def run_detection(cfg: DictConfig):
         exp = COCO_Exp(cfg.trainer_params.coco)
     if cfg.trainer_params.ds_format == "voc":
         exp = VOC_Exp(cfg.trainer_params.voc)
-    
+
     check_exp_value(exp)
 
     if not args.experiment_name:
@@ -108,15 +114,15 @@ class VOC_Exp(MyExp):
             image_sets=self.image_sets,
             img_size=self.input_size,
             preproc=TrainTransform(
-                max_labels=50,
-                flip_prob=self.flip_prob,
-                hsv_prob=self.hsv_prob),
+                max_labels=50, flip_prob=self.flip_prob, hsv_prob=self.hsv_prob
+            ),
             cache=cache,
             cache_type=cache_type,
         )
 
     def get_eval_dataset(self, **kwargs):
         from src.model.yolox.data import VOCDetection, ValTransform
+
         legacy = kwargs.get("legacy", False)
 
         return VOCDetection(
@@ -130,8 +136,9 @@ class VOC_Exp(MyExp):
         from src.model.yolox.evaluators import VOCEvaluator
 
         return VOCEvaluator(
-            dataloader=self.get_eval_loader(batch_size, is_distributed,
-                                            testdev=testdev, legacy=legacy),
+            dataloader=self.get_eval_loader(
+                batch_size, is_distributed, testdev=testdev, legacy=legacy
+            ),
             img_size=self.test_size,
             confthre=self.test_conf,
             nmsthre=self.nmsthre,

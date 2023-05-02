@@ -81,7 +81,7 @@ class MixConcatDataset(torchConcatDataset):
 
 
 class Dataset(torchDataset):
-    """ This class is a subclass of the base :class:`torch.utils.data.Dataset`,
+    """This class is a subclass of the base :class:`torch.utils.data.Dataset`,
     that enables on the fly resizing of the ``input_dim``.
 
     Args:
@@ -136,7 +136,7 @@ class Dataset(torchDataset):
 
 
 class CacheDataset(Dataset, metaclass=ABCMeta):
-    """ This class is a subclass of the base :class:`yolox.data.datasets.Dataset`,
+    """This class is a subclass of the base :class:`yolox.data.datasets.Dataset`,
     that enables cache images to ram or disk.
 
     Args:
@@ -205,10 +205,13 @@ class CacheDataset(Dataset, metaclass=ABCMeta):
         cache_dir_name=None,
         path_filename=None,
     ):
-        assert num_imgs is not None, "num_imgs must be specified as the size of the dataset"
+        assert (
+            num_imgs is not None
+        ), "num_imgs must be specified as the size of the dataset"
         if self.cache_type == "disk":
-            assert (data_dir and cache_dir_name and path_filename) is not None, \
-                "data_dir, cache_name and path_filename must be specified if cache_type is disk"
+            assert (
+                data_dir and cache_dir_name and path_filename
+            ) is not None, "data_dir, cache_name and path_filename must be specified if cache_type is disk"
             self.path_filename = path_filename
 
         mem = psutil.virtual_memory()
@@ -227,10 +230,12 @@ class CacheDataset(Dataset, metaclass=ABCMeta):
                 )
 
         if self.cache and self.imgs is None:
-            if self.cache_type == 'ram':
+            if self.cache_type == "ram":
                 self.imgs = [None] * num_imgs
-                logger.info("You are using cached images in RAM to accelerate training!")
-            else:   # 'disk'
+                logger.info(
+                    "You are using cached images in RAM to accelerate training!"
+                )
+            else:  # 'disk'
                 if not os.path.exists(self.cache_dir):
                     os.mkdir(self.cache_dir)
                     logger.warning(
@@ -246,28 +251,25 @@ class CacheDataset(Dataset, metaclass=ABCMeta):
                     return
 
             logger.info(
-                "Caching images...\n"
-                "This might take some time for your dataset"
+                "Caching images...\n" "This might take some time for your dataset"
             )
 
             num_threads = min(8, max(1, os.cpu_count() - 1))
             b = 0
             load_imgs = ThreadPool(num_threads).imap(
-                partial(self.read_img, use_cache=False),
-                range(num_imgs)
+                partial(self.read_img, use_cache=False), range(num_imgs)
             )
             pbar = tqdm(enumerate(load_imgs), total=num_imgs)
-            for i, x in pbar:   # x = self.read_img(self, i, use_cache=False)
-                if self.cache_type == 'ram':
+            for i, x in pbar:  # x = self.read_img(self, i, use_cache=False)
+                if self.cache_type == "ram":
                     self.imgs[i] = x
-                else:   # 'disk'
+                else:  # 'disk'
                     cache_filename = f'{self.path_filename[i].split(".")[0]}.npy'
                     cache_path_filename = os.path.join(self.cache_dir, cache_filename)
                     os.makedirs(os.path.dirname(cache_path_filename), exist_ok=True)
                     np.save(cache_path_filename, x)
                 b += x.nbytes
-                pbar.desc = \
-                    f'Caching images ({b / gb:.1f}/{mem_required / gb:.1f}GB {self.cache_type})'
+                pbar.desc = f"Caching images ({b / gb:.1f}/{mem_required / gb:.1f}GB {self.cache_type})"
             pbar.close()
 
     def cal_cache_occupy(self, num_imgs):
@@ -291,6 +293,7 @@ def cache_read_img(use_cache=True):
                 whether to read the image from cache.
                 Defaults to True.
         """
+
         @wraps(read_img_fn)
         def wrapper(self, index, use_cache=use_cache):
             cache = self.cache and use_cache
@@ -301,11 +304,16 @@ def cache_read_img(use_cache=True):
                 elif self.cache_type == "disk":
                     img = np.load(
                         os.path.join(
-                            self.cache_dir, f"{self.path_filename[index].split('.')[0]}.npy"))
+                            self.cache_dir,
+                            f"{self.path_filename[index].split('.')[0]}.npy",
+                        )
+                    )
                 else:
                     raise ValueError(f"Unknown cache type: {self.cache_type}")
             else:
                 img = read_img_fn(self, index)
             return img
+
         return wrapper
+
     return decorator

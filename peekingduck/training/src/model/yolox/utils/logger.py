@@ -138,17 +138,20 @@ class WandbLogger(object):
     https://docs.wandb.ai/guides/track
     https://docs.wandb.ai/guides/integrations/other/yolox
     """
-    def __init__(self,
-                 project=None,
-                 name=None,
-                 id=None,
-                 entity=None,
-                 save_dir=None,
-                 config=None,
-                 val_dataset=None,
-                 num_eval_images=100,
-                 log_checkpoints=False,
-                 **kwargs):
+
+    def __init__(
+        self,
+        project=None,
+        name=None,
+        id=None,
+        entity=None,
+        save_dir=None,
+        config=None,
+        val_dataset=None,
+        num_eval_images=100,
+        log_checkpoints=False,
+        **kwargs,
+    ):
         """
         Args:
             project (str): wandb project name.
@@ -178,12 +181,12 @@ class WandbLogger(object):
         """
         try:
             import wandb
+
             self.wandb = wandb
         except ModuleNotFoundError:
             raise ModuleNotFoundError(
-                "wandb is not installed."
-                "Please install wandb using pip install wandb"
-                )
+                "wandb is not installed." "Please install wandb using pip install wandb"
+            )
 
         from src.model.yolox.data.datasets import VOCDetection
 
@@ -200,14 +203,14 @@ class WandbLogger(object):
             self.num_log_images = len(val_dataset)
         else:
             self.num_log_images = min(num_eval_images, len(val_dataset))
-        self.log_checkpoints = (log_checkpoints == "True" or log_checkpoints == "true")
+        self.log_checkpoints = log_checkpoints == "True" or log_checkpoints == "true"
         self._wandb_init = dict(
             project=self.project,
             name=self.name,
             id=self.id,
             entity=self.entity,
             dir=self.save_dir,
-            resume="allow"
+            resume="allow",
         )
         self._wandb_init.update(**kwargs)
 
@@ -225,9 +228,7 @@ class WandbLogger(object):
         if val_dataset and self.num_log_images != 0:
             self.val_dataset = val_dataset
             self.cats = val_dataset.cats
-            self.id_to_class = {
-                cls['id']: cls['name'] for cls in self.cats
-            }
+            self.id_to_class = {cls["id"]: cls["name"] for cls in self.cats}
             self._log_validation_set(val_dataset)
 
     @property
@@ -253,7 +254,9 @@ class WandbLogger(object):
             val_dataset (Dataset): validation dataset.
         """
         if self.val_artifact is None:
-            self.val_artifact = self.wandb.Artifact(name="validation_images", type="dataset")
+            self.val_artifact = self.wandb.Artifact(
+                name="validation_images", type="dataset"
+            )
             self.val_table = self.wandb.Table(columns=["id", "input"])
 
             for i in range(self.num_log_images):
@@ -266,10 +269,7 @@ class WandbLogger(object):
                 if isinstance(id, torch.Tensor):
                     id = id.item()
 
-                self.val_table.add_data(
-                    id,
-                    self.wandb.Image(img)
-                )
+                self.val_table.add_data(id, self.wandb.Image(img))
 
             self.val_artifact.add(self.val_table, "validation_images_table")
             self.run.use_artifact(self.val_artifact)
@@ -299,16 +299,18 @@ class WandbLogger(object):
                     act_scores.append(score)
                     act_cls.append(classes)
 
-            image_wise_data.update({
-                int(img_id): {
-                    "bboxes": [box.numpy().tolist() for box in act_box],
-                    "scores": [score.numpy().item() for score in act_scores],
-                    "categories": [
-                        self.val_dataset.class_ids[int(act_cls[ind])]
-                        for ind in range(len(act_box))
-                    ],
+            image_wise_data.update(
+                {
+                    int(img_id): {
+                        "bboxes": [box.numpy().tolist() for box in act_box],
+                        "scores": [score.numpy().item() for score in act_scores],
+                        "categories": [
+                            self.val_dataset.class_ids[int(act_cls[ind])]
+                            for ind in range(len(act_box))
+                        ],
+                    }
                 }
-            })
+            )
 
         return image_wise_data
 
@@ -330,7 +332,11 @@ class WandbLogger(object):
             self.run.log(metrics)
 
     def log_images(self, predictions):
-        if len(predictions) == 0 or self.val_artifact is None or self.num_log_images == 0:
+        if (
+            len(predictions) == 0
+            or self.val_artifact is None
+            or self.num_log_images == 0
+        ):
             return
 
         table_ref = self.val_artifact.get("validation_images_table")
@@ -367,10 +373,10 @@ class WandbLogger(object):
                             "minX": min(x0, x1),
                             "minY": min(y0, y1),
                             "maxX": max(x0, x1),
-                            "maxY": max(y0, y1)
+                            "maxY": max(y0, y1),
                         },
                         "class_id": prediction["categories"][i],
-                        "domain": "pixel"
+                        "domain": "pixel",
                     }
                     avg_scores[
                         self.id_to_class[prediction["categories"][i]]
@@ -388,14 +394,16 @@ class WandbLogger(object):
                 average_class_score.append(score)
             result_table.add_data(
                 idx,
-                self.wandb.Image(val[1], boxes={
+                self.wandb.Image(
+                    val[1],
+                    boxes={
                         "prediction": {
                             "box_data": boxes,
-                            "class_labels": self.id_to_class
+                            "class_labels": self.id_to_class,
                         }
-                    }
+                    },
                 ),
-                *average_class_score
+                *average_class_score,
             )
 
         self.wandb.log({"val_results/result_table": result_table})
@@ -419,9 +427,7 @@ class WandbLogger(object):
 
         filename = os.path.join(save_dir, model_name + "_ckpt.pth")
         artifact = self.wandb.Artifact(
-            name=f"run_{self.run.id}_model",
-            type="model",
-            metadata=metadata
+            name=f"run_{self.run.id}_model", type="model", metadata=metadata
         )
         artifact.add_file(filename, name="model_ckpt.pth")
 
@@ -445,8 +451,8 @@ class WandbLogger(object):
         for k, v in zip(args.opts[0::2], args.opts[1::2]):
             if k.startswith("wandb-"):
                 try:
-                    wandb_params.update({k[len(prefix):]: int(v)})
+                    wandb_params.update({k[len(prefix) :]: int(v)})
                 except ValueError:
-                    wandb_params.update({k[len(prefix):]: v})
+                    wandb_params.update({k[len(prefix) :]: v})
 
         return cls(config=vars(exp), val_dataset=val_dataset, **wandb_params)

@@ -11,7 +11,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-# 
+#
 # Code are based on
 # https://github.com/facebookresearch/detectron2/blob/master/detectron2/engine/launch.py
 # Copyright (c) Facebook, Inc. and its affiliates.

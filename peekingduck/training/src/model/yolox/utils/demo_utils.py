@@ -20,7 +20,12 @@ import cv2
 import numpy as np
 
 __all__ = [
-    "mkdir", "nms", "multiclass_nms", "demo_postprocess", "random_color", "visualize_assign"
+    "mkdir",
+    "nms",
+    "multiclass_nms",
+    "demo_postprocess",
+    "random_color",
+    "visualize_assign",
 ]
 
 
@@ -46,8 +51,13 @@ def visualize_assign(img, boxes, coords, match_results, save_name=None) -> np.nd
             # unmatched boxes are red
             color = (0, 0, 255)
             cv2.putText(
-                img, "unmatched", (int(x1), int(y1) - 5),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 1
+                img,
+                "unmatched",
+                (int(x1), int(y1) - 5),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.6,
+                color,
+                1,
             )
         else:
             for coord in assign_coords:
