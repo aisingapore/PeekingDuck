@@ -1,5 +1,5 @@
 download: False
-url: ""
+url: "https://storage.googleapis.com/peekingduck/data/vegfru.zip"
 blob_file: "vegfru.zip"
 root_dir: "data"
 train_dir: "./${.root_dir}/vegfru"

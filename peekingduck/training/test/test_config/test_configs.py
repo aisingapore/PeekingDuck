@@ -49,7 +49,7 @@ class TestDatasetConfig(unittest.TestCase):
 
             assert cfg.data_module.dataset == {
                 "download": True,
-                "url": "https://github.com/gao-hongnan/peekingduck-trainer/releases/download/v0.0.1-alpha/cifar10.zip",
+                "url": "https://storage.googleapis.com/peekingduck/data/cifar10.zip",
                 "blob_file": "cifar10.zip",
                 "root_dir": "data",
                 "train_dir": "./${.root_dir}/${project_name}",

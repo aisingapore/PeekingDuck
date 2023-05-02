@@ -4,14 +4,11 @@
 Overview
 ********
 
-* :ref:`getting-started-test-run`
-
 ==============
  Introduction 
 ==============
 
 Training a custom model with custom datasets is one of the key tasks when building computer vision solutions.
-
 Peeking Duck allows you to train a custom computer vision model with your own dataset without the need to write the boilerplate codes.
 
 This section will introduce you the key features of the training pipeline and how to get started.
@@ -59,7 +56,7 @@ The general workflow when using the training pipeline is:
 
 #. Organize your data with the required format 
 #. Place them at the designated directory
-#. Personalise your training if necessary 
+#. Personalize your training if necessary
 #. Execute from the terminal
 
 Refer to the next section to get started.
@@ -73,7 +70,7 @@ Refer to the next section to get started.
 
 This guide explains how you can prepare your environment and test out the default pipeline using either TensorFlow or Pytorch.
 
-It is highly recommended to create a new conda environment as instructed below. Installing PeekingDuck dependencies into existing conda environments may cause unexpected behaviours.
+It is highly recommended to create a new conda environment as instructed below. Installing PeekingDuck dependencies into existing conda environments may cause unexpected behaviors.
 
 Install PeekingDuck Training Pipeline
 -------------------------------------
@@ -82,7 +79,7 @@ Install PeekingDuck Training Pipeline
 
    .. tab:: Linux
 
-      Plarform:
+      Platform:
          - Ubuntu 20.04 LTS / 22.04 LTS
       Prerequisite:
          - `Git <https://github.com/git-guides/install-git>`_
@@ -106,14 +103,14 @@ Install PeekingDuck Training Pipeline
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
-         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
 
       3. Install required packages:
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
 
       **Install for CUDA GPU**
 
@@ -148,14 +145,14 @@ Install PeekingDuck Training Pipeline
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
-         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
 
       3. Install required packages:
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
 
       **Install for CUDA GPU**
 
@@ -184,20 +181,20 @@ Install PeekingDuck Training Pipeline
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
-         | \ :blue:`[~user]` \ > \ :green:`cd PeekdingDuck` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
       
       2. Create conda environment & activate:
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`conda env create -f peekingduck/training/requirements_mac.yaml` \
-         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`conda activate pkd-training` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`conda env create -f peekingduck/training/requirements_mac.yaml` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`conda activate pkd-training` \
 
       3. Install TensorFlow
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekdingDuck]` \ > \ :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
 
 .. _setting-up-weights-and-biases:
 
@@ -223,7 +220,7 @@ Refer to the `wandb quick start guide <https://docs.wandb.ai/quickstart>`_ for m
 
 If you prefer private hosting instead, refer to the `hosting guide <https://docs.wandb.ai/guides/hosting>`_ to set up private hosting.
 
-Also, if you prefer not to use weights & biases, you can disable it as such:
+Also, if you prefer not to use Weights & Biases, you can disable it as such:
 
 .. admonition:: Terminal Session
 
