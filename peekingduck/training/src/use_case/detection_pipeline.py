@@ -103,7 +103,6 @@ class COCO_Exp(MyExp):
 
 
 class VOC_Exp(MyExp):
-
     def __init__(self, cfg) -> None:
         super(VOC_Exp, self).__init__()
         for item in cfg:
@@ -131,7 +130,9 @@ class VOC_Exp(MyExp):
             preproc=ValTransform(legacy=legacy),
         )
 
-    def get_evaluator(self, batch_size, is_distributed, testdev=False, legacy=False) -> VOCEvaluator:
+    def get_evaluator(
+        self, batch_size, is_distributed, testdev=False, legacy=False
+    ) -> VOCEvaluator:
         return VOCEvaluator(
             dataloader=self.get_eval_loader(
                 batch_size, is_distributed, testdev=testdev, legacy=legacy
