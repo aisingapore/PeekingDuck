@@ -33,10 +33,12 @@ from src.model.yolox.utils import (
     configure_omp,
     get_num_devices,
 )
+from src.model.yolox.data import VOCDetection, TrainTransform, ValTransform
+from src.model.yolox.evaluators import VOCEvaluator
 
 
 @logguru.catch
-def main(exp: Exp, args):
+def main(exp: Exp, args) -> None:
     if exp.seed is not None:
         random.seed(exp.seed)
         torch.manual_seed(exp.seed)
@@ -56,7 +58,7 @@ def main(exp: Exp, args):
     trainer.train()  # nosec
 
 
-def run_detection(cfg: DictConfig):
+def run_detection(cfg: DictConfig) -> None:
     configure_module()
     args = argparse.Namespace(**cfg)
 
@@ -94,21 +96,20 @@ def run_detection(cfg: DictConfig):
 
 
 class COCO_Exp(MyExp):
-    def __init__(self, cfg):
+    def __init__(self, cfg) -> None:
         super(COCO_Exp, self).__init__()
         for item in cfg:
             setattr(self, item, cfg[item])
 
 
 class VOC_Exp(MyExp):
-    def __init__(self, cfg):
+
+    def __init__(self, cfg) -> None:
         super(VOC_Exp, self).__init__()
         for item in cfg:
             setattr(self, item, cfg[item])
 
-    def get_dataset(self, cache: bool, cache_type: str = "ram"):
-        from src.model.yolox.data import VOCDetection, TrainTransform
-
+    def get_dataset(self, cache: bool, cache_type: str = "ram") -> VOCDetection:
         return VOCDetection(
             data_dir=self.data_dir,
             image_sets=self.image_sets,
@@ -120,9 +121,7 @@ class VOC_Exp(MyExp):
             cache_type=cache_type,
         )
 
-    def get_eval_dataset(self, **kwargs):
-        from src.model.yolox.data import VOCDetection, ValTransform
-
+    def get_eval_dataset(self, **kwargs) -> VOCDetection:
         legacy = kwargs.get("legacy", False)
 
         return VOCDetection(
@@ -132,9 +131,7 @@ class VOC_Exp(MyExp):
             preproc=ValTransform(legacy=legacy),
         )
 
-    def get_evaluator(self, batch_size, is_distributed, testdev=False, legacy=False):
-        from src.model.yolox.evaluators import VOCEvaluator
-
+    def get_evaluator(self, batch_size, is_distributed, testdev=False, legacy=False) -> VOCEvaluator:
         return VOCEvaluator(
             dataloader=self.get_eval_loader(
                 batch_size, is_distributed, testdev=testdev, legacy=legacy

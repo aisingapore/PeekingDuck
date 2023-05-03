@@ -29,6 +29,7 @@ __all__ = [
     "visualize_assign",
 ]
 
+
 def random_color() -> random:
     return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
 
@@ -106,7 +107,9 @@ def nms(boxes, scores, nms_thr) -> List:
     return keep
 
 
-def multiclass_nms(boxes, scores, nms_thr, score_thr, class_agnostic=True) -> np.ndarray:
+def multiclass_nms(
+    boxes, scores, nms_thr, score_thr, class_agnostic=True
+) -> np.ndarray:
     """Multiclass NMS implemented in Numpy"""
     if class_agnostic:
         nms_method = multiclass_nms_class_agnostic

@@ -18,6 +18,7 @@ import os
 import sys
 from src.model.yolox.exp import Exp
 
+
 def get_exp_by_file(exp_file) -> Exp:
     try:
         sys.path.append(os.path.dirname(exp_file))

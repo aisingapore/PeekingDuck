@@ -18,7 +18,9 @@ from functools import partial
 
 
 class LRScheduler:
-    def __init__(self, name: str, lr: float, iters_per_epoch: int, total_epochs: int, **kwargs) -> None:
+    def __init__(
+        self, name: str, lr: float, iters_per_epoch: int, total_epochs: int, **kwargs
+    ) -> None:
         """
         Supported lr schedulers: [cos, warmcos, multistep]
 
