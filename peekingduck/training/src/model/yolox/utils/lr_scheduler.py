@@ -18,7 +18,7 @@ from functools import partial
 
 
 class LRScheduler:
-    def __init__(self, name, lr, iters_per_epoch, total_epochs, **kwargs):
+    def __init__(self, name: str, lr: float, iters_per_epoch: int, total_epochs: int, **kwargs) -> None:
         """
         Supported lr schedulers: [cos, warmcos, multistep]
 
@@ -41,10 +41,10 @@ class LRScheduler:
 
         self.lr_func = self._get_lr_func(name)
 
-    def update_lr(self, iters):
+    def update_lr(self, iters) -> partial:
         return self.lr_func(iters)
 
-    def _get_lr_func(self, name):
+    def _get_lr_func(self, name) -> partial:
         if name == "cos":  # cosine lr schedule
             lr_func = partial(cos_lr, self.lr, self.total_iters)
         elif name == "warmcos":
@@ -105,13 +105,13 @@ class LRScheduler:
         return lr_func
 
 
-def cos_lr(lr, total_iters, iters):
+def cos_lr(lr, total_iters, iters) -> float:
     """Cosine learning rate"""
     lr *= 0.5 * (1.0 + math.cos(math.pi * iters / total_iters))
     return lr
 
 
-def warm_cos_lr(lr, total_iters, warmup_total_iters, warmup_lr_start, iters):
+def warm_cos_lr(lr, total_iters, warmup_total_iters, warmup_lr_start, iters) -> float:
     """Cosine learning rate with warm up."""
     if iters <= warmup_total_iters:
         lr = (lr - warmup_lr_start) * iters / float(
@@ -137,7 +137,7 @@ def yolox_warm_cos_lr(
     warmup_lr_start,
     no_aug_iter,
     iters,
-):
+) -> float:
     """Cosine learning rate with warm up."""
     min_lr = lr * min_lr_ratio
     if iters <= warmup_total_iters:
@@ -171,7 +171,7 @@ def yolox_semi_warm_cos_lr(
     iters_per_epoch,
     iters_per_epoch_semi,
     iters,
-):
+) -> float:
     """Cosine learning rate with warm up."""
     min_lr = lr * min_lr_ratio
     if iters <= warmup_total_iters:
@@ -209,7 +209,7 @@ def yolox_semi_warm_cos_lr(
     return lr
 
 
-def multistep_lr(lr, milestones, gamma, iters):
+def multistep_lr(lr, milestones, gamma, iters) -> float:
     """MultiStep learning rate"""
     for milestone in milestones:
         lr *= gamma if iters >= milestone else 1.0

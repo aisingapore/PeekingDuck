@@ -22,6 +22,7 @@ http://arxiv.org/abs/1512.02325
 
 import math
 import random
+from typing import Tuple
 
 import cv2
 import numpy as np
@@ -29,7 +30,7 @@ import numpy as np
 from src.model.yolox.utils import xyxy2cxcywh
 
 
-def augment_hsv(img, hgain=5, sgain=30, vgain=30):
+def augment_hsv(img, hgain=5, sgain=30, vgain=30) -> None:
     hsv_augs = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain]  # random gains
     hsv_augs *= np.random.randint(0, 2, 3)  # random selection of h, s, v
     hsv_augs = hsv_augs.astype(np.int16)
@@ -44,7 +45,7 @@ def augment_hsv(img, hgain=5, sgain=30, vgain=30):
     )  # no return needed
 
 
-def get_aug_params(value, center=0):
+def get_aug_params(value, center=0) -> random:
     if isinstance(value, float):
         return random.uniform(center - value, center + value)
     elif len(value) == 2:
@@ -64,7 +65,7 @@ def get_affine_matrix(
     translate=0.1,
     scales=0.1,
     shear=10,
-):
+) -> Tuple(np.ones, random):
     twidth, theight = target_size
 
     # Rotation and Scale
@@ -94,7 +95,7 @@ def get_affine_matrix(
     return M, scale
 
 
-def apply_affine_to_bboxes(targets, target_size, M, scale):
+def apply_affine_to_bboxes(targets, target_size, M, scale) -> Tuple:
     num_gts = len(targets)
 
     # warp corner points
@@ -134,7 +135,7 @@ def random_affine(
     translate=0.1,
     scales=0.1,
     shear=10,
-):
+) -> Tuple(np.ndarray, Tuple):
     M, scale = get_affine_matrix(target_size, degrees, translate, scales, shear)
 
     img = cv2.warpAffine(img, M, dsize=target_size, borderValue=(114, 114, 114))
@@ -146,7 +147,7 @@ def random_affine(
     return img, targets
 
 
-def _mirror(image, boxes, prob=0.5):
+def _mirror(image, boxes, prob=0.5) -> Tuple(np.ndarray, np.ndarray):
     _, width, _ = image.shape
     if random.random() < prob:
         image = image[:, ::-1]
@@ -154,7 +155,7 @@ def _mirror(image, boxes, prob=0.5):
     return image, boxes
 
 
-def preproc(img, input_size, swap=(2, 0, 1)):
+def preproc(img, input_size, swap=(2, 0, 1)) -> Tuple(np, float):
     if len(img.shape) == 3:
         padded_img = np.ones((input_size[0], input_size[1], 3), dtype=np.uint8) * 114
     else:
@@ -174,12 +175,12 @@ def preproc(img, input_size, swap=(2, 0, 1)):
 
 
 class TrainTransform:
-    def __init__(self, max_labels=50, flip_prob=0.5, hsv_prob=1.0):
+    def __init__(self, max_labels=50, flip_prob=0.5, hsv_prob=1.0) -> None:
         self.max_labels = max_labels
         self.flip_prob = flip_prob
         self.hsv_prob = hsv_prob
 
-    def __call__(self, image, targets, input_dim):
+    def __call__(self, image, targets, input_dim) -> Tuple:
         boxes = targets[:, :4].copy()
         labels = targets[:, 4].copy()
         if len(boxes) == 0:
@@ -243,12 +244,12 @@ class ValTransform:
         data
     """
 
-    def __init__(self, swap=(2, 0, 1), legacy=False):
+    def __init__(self, swap=(2, 0, 1), legacy=False) -> None:
         self.swap = swap
         self.legacy = legacy
 
     # assume input is cv2 img for now
-    def __call__(self, img, res, input_size):
+    def __call__(self, img, res, input_size) -> Tuple(np.ndarray, np.zeros):
         img, _ = preproc(img, input_size, self.swap)
         if self.legacy:
             img = img[::-1, :, :].copy()

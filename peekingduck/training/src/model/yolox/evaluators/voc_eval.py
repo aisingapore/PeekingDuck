@@ -19,12 +19,13 @@
 
 import os
 import pickle
+from typing import List, Tuple
 import xml.etree.ElementTree as ET
 
 import numpy as np
 
 
-def parse_rec(filename):
+def parse_rec(filename) -> List:
     """Parse a PASCAL VOC xml file"""
     tree = ET.parse(filename)  # nosec
     objects = []
@@ -46,7 +47,7 @@ def parse_rec(filename):
     return objects
 
 
-def voc_ap(rec, prec, use_07_metric=False):
+def voc_ap(rec, prec, use_07_metric=False) -> np:
     """
     Compute VOC AP given precision and recall.
     If use_07_metric is true, uses the
@@ -88,7 +89,7 @@ def voc_eval(
     cachedir,
     ovthresh=0.5,
     use_07_metric=False,
-):
+) -> Tuple(float, np, np):
     # first load gt
     if not os.path.isdir(cachedir):
         os.mkdir(cachedir)

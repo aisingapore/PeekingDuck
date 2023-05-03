@@ -16,9 +16,9 @@
 import importlib
 import os
 import sys
+from src.model.yolox.exp import Exp
 
-
-def get_exp_by_file(exp_file):
+def get_exp_by_file(exp_file) -> Exp:
     try:
         sys.path.append(os.path.dirname(exp_file))
         current_exp = importlib.import_module(os.path.basename(exp_file).split(".")[0])
@@ -28,14 +28,14 @@ def get_exp_by_file(exp_file):
     return exp
 
 
-def get_exp_by_name(exp_name):
+def get_exp_by_name(exp_name) -> Exp:
     exp = exp_name.replace("-", "_")  # convert string like "yolox-s" to "yolox_s"
     module_name = ".".join(["yolox", "exp", "default", exp])
     exp_object = importlib.import_module(module_name).Exp()
     return exp_object
 
 
-def get_exp(exp_file=None, exp_name=None):
+def get_exp(exp_file=None, exp_name=None) -> Exp:
     """
     get Exp object by file or name. If exp_file and exp_name
     are both provided, get Exp by exp_file.

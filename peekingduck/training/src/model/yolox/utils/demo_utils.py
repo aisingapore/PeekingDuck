@@ -15,6 +15,7 @@
 
 import os
 import random
+from typing import List
 
 import cv2
 import numpy as np
@@ -28,8 +29,7 @@ __all__ = [
     "visualize_assign",
 ]
 
-
-def random_color():
+def random_color() -> random:
     return random.randint(0, 255), random.randint(0, 255), random.randint(0, 255)
 
 
@@ -71,12 +71,12 @@ def visualize_assign(img, boxes, coords, match_results, save_name=None) -> np.nd
     return img
 
 
-def mkdir(path):
+def mkdir(path) -> None:
     if not os.path.exists(path):
         os.makedirs(path)
 
 
-def nms(boxes, scores, nms_thr):
+def nms(boxes, scores, nms_thr) -> List:
     """Single class NMS implemented in Numpy."""
     x1 = boxes[:, 0]
     y1 = boxes[:, 1]
@@ -106,7 +106,7 @@ def nms(boxes, scores, nms_thr):
     return keep
 
 
-def multiclass_nms(boxes, scores, nms_thr, score_thr, class_agnostic=True):
+def multiclass_nms(boxes, scores, nms_thr, score_thr, class_agnostic=True) -> np.ndarray:
     """Multiclass NMS implemented in Numpy"""
     if class_agnostic:
         nms_method = multiclass_nms_class_agnostic
@@ -115,7 +115,7 @@ def multiclass_nms(boxes, scores, nms_thr, score_thr, class_agnostic=True):
     return nms_method(boxes, scores, nms_thr, score_thr)
 
 
-def multiclass_nms_class_aware(boxes, scores, nms_thr, score_thr):
+def multiclass_nms_class_aware(boxes, scores, nms_thr, score_thr) -> np.ndarray:
     """Multiclass NMS implemented in Numpy. Class-aware version."""
     final_dets = []
     num_classes = scores.shape[1]
@@ -139,7 +139,7 @@ def multiclass_nms_class_aware(boxes, scores, nms_thr, score_thr):
     return np.concatenate(final_dets, 0)
 
 
-def multiclass_nms_class_agnostic(boxes, scores, nms_thr, score_thr):
+def multiclass_nms_class_agnostic(boxes, scores, nms_thr, score_thr) -> np.ndarray:
     """Multiclass NMS implemented in Numpy. Class-agnostic version."""
     cls_inds = scores.argmax(1)
     cls_scores = scores[np.arange(len(cls_inds)), cls_inds]
@@ -158,7 +158,7 @@ def multiclass_nms_class_agnostic(boxes, scores, nms_thr, score_thr):
     return dets
 
 
-def demo_postprocess(outputs, img_size, p6=False):
+def demo_postprocess(outputs, img_size, p6=False) -> np.ndarray:
     grids = []
     expanded_strides = []
     strides = [8, 16, 32] if not p6 else [8, 16, 32, 64]
