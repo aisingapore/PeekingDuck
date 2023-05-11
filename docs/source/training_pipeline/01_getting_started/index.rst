@@ -194,7 +194,7 @@ Install PeekingDuck Training Pipeline
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`bash peekingduck/training/scripts/install_macos.sh` \
 
 .. _setting-up-weights-and-biases:
 
