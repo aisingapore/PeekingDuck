@@ -198,7 +198,7 @@ Install PeekingDuck Training Pipeline
 
 .. _setting-up-weights-and-biases:
 
-Setting up Weights & Biases
+Setting Up Weights & Biases
 ---------------------------
 
 Follow the steps below to get configure weights & biases:
