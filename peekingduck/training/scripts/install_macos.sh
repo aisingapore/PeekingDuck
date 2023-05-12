@@ -115,7 +115,7 @@ if [ $INSTALL == "full" ]; then
     echo "Installing CI/CD packages"
     conda install -y bandit coverage mypy pylint pytest types-PyYAML types-requests \
         types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints \
-        sphinx-copybutton sphinx-tabs texttable
+        sphinx-copybutton sphinx-tabs texttable tensorflow-datasets
 
     pip install lap sphinx-rtd-theme
 fi

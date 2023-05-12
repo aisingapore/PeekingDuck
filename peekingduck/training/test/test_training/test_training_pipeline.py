@@ -77,9 +77,11 @@ def test_training_pipeline(
         assert history is not None
         assert validation_loss_key in history
         assert len(history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history[validation_loss_key][-1] < expected
 
 
+# Test training pipeline script for VGG16
 @mark.skipif(sys.platform != "linux", reason="Linux tests")
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
@@ -117,4 +119,5 @@ def test_training_pipeline_vgg16(
         assert history is not None
         assert validation_loss_key in history
         assert len(history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history[validation_loss_key][-1] < expected

@@ -153,6 +153,7 @@ def test_tensorflow_model(
         assert hasattr(history, "history")
         assert validation_loss_key in history.history
         assert len(history.history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history.history[validation_loss_key][-1] >= expected
 
 
@@ -270,11 +271,11 @@ def test_tensorflow_model_with_loss(
             validation_data=ds_test,
             verbose="0",
         )
-
         assert history is not None
         assert hasattr(history, "history")
         assert validation_loss_key in history.history
         assert len(history.history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history.history[validation_loss_key][-1] >= expected
 
 
@@ -358,8 +359,8 @@ def test_tensorflow_trainer(
 
         trainer = init_trainer(cfg)
         history = trainer.train(ds_train, ds_test)
-
         assert history is not None
         assert validation_loss_key in history
         assert len(history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history[validation_loss_key][-1] < expected
