@@ -7,16 +7,6 @@ Configuring Training Parameters
 *******************************
 
 This section describes how you can configure the pipeline to suite your model training.
-\ The following parts will describe the image classification section and the documentation conventions used.
-
-
-Image Classification
-====================
-
-.. toctree::
-   :maxdepth: 3
-
-   /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
 
 
 Documentation Convention
@@ -73,3 +63,14 @@ Example
 | :grey:`device`                                    | :grey:`${device}`                                   | :grey:`Should not be changed.`      |
 +---------------------------------------------------+-----------------------------------------------------+-------------------------------------+
 
+
+
+Image Classification
+====================
+
+This section describes how you can configure the pipeline to train an image classification model.
+
+.. toctree::
+   :maxdepth: 3
+
+   /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
