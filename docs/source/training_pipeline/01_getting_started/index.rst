@@ -11,56 +11,44 @@ Overview
 Training a custom model with custom datasets is one of the key tasks when building computer vision solutions.
 Peeking Duck allows you to train a custom computer vision model with your own dataset without the need to write the boilerplate codes.
 
-This section will introduce you the key features of the training pipeline and how to get started.
-The following sections will introduce you how to train your own model with your own data by customizing the training parameters.
+This section will introduce you to the key features of the training pipeline and how to get started.
+The following sections describes how to train your own model with your own data by customizing the training parameters.
 
-The current version of PeekingDuck supports image classification model training. Object detection are being developed and will be available in future releases.
-
+Currently, PeekingDuck support model training for image classification.
+Model training for object detection will be available in a future release.
 
 Features
 --------
 
-.. raw:: html
-
-   <h6>Train with Tensorflow or PyTorch</h6>
+* Train with Tensorflow or PyTorch
 
 PeekingDuck supports official pre-trained models from both `TensorFlow <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ and `PyTorch <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
 
-.. raw:: html
-
-   <h6>Train with your own data</h6>
+* Train with your own data
 
 PeekingDuck supports data loading and model training on your own dataset. Refer to :ref:`using_custom_dataset` for more details.
 
-.. raw:: html
-
-   <h6>Customize training parameters</h6>
+* Customize training parameters
 
 With PeekingDuck, you can easily configure various training parameters via configuration yaml files or command line arguments. Refer to :ref:`configuring_training_parameters` for more details.
 
-.. raw:: html
-
-   <h6>Analyze right after training</h6>
+* Analyze right after training
 
 PeekingDuck uses Weights & Biases to analyze and visualize the training process and performances of the saved models. Refer to the :ref:`setting-up-weights-and-biases` section below for more details.
 
 
-How the training pipeline works
+How the Training Pipeline Works
 ===============================
 
-PeekingDuck training pipeline is designed with cross-platform compatibility in mind. A high-level overview of the architecture is shown here:
+PeekingDuck's training pipeline is designed to be compatible with PyTorch and Tensorflow. The architecture diagram is shown below:
 
 .. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
 
 The general workflow when using the training pipeline is:
 
-#. Organize your data with the required format 
-#. Place them at the designated directory
-#. Personalize your training if necessary
-#. Execute from the terminal
-
-Refer to the next section to get started.
-
+#. Organize training data with the required format in the designated directory.
+#. Customize training parameters, if necessary.
+#. Start model training from the terminal.
 
 ----------
 
@@ -68,9 +56,9 @@ Refer to the next section to get started.
  Getting Started
 ================
 
-This guide explains how you can prepare your environment and test out the default pipeline using either TensorFlow or Pytorch.
+This guide explains how you can prepare your environment and test out the default pipeline using either TensorFlow or PyTorch.
 
-It is highly recommended to create a new conda environment as instructed below. Installing PeekingDuck dependencies into existing conda environments may cause unexpected behaviors.
+It is highly recommended to create a new conda environment as instructed below, to avoid package conflicts and unexpected behaviors when running from an existing conda environment.
 
 Install PeekingDuck Training Pipeline
 -------------------------------------
