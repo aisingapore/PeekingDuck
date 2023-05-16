@@ -33,7 +33,7 @@ from src.training_pipeline import init_trainer
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "device=cpu",
@@ -48,7 +48,7 @@ from src.training_pipeline import init_trainer
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=pytorch",
                 "debug=True",
                 "device=cpu",
@@ -94,7 +94,7 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "device=cpu",
@@ -168,7 +168,7 @@ def test_tensorflow_trainer(
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=pytorch",
                 "debug=True",
                 "device=cpu",

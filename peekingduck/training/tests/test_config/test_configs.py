@@ -42,7 +42,7 @@ class TestDatasetConfig(unittest.TestCase):
                 config_name="config",
                 overrides=[
                     "project_name=CICD",
-                    "data_module=cifar10",
+                    "data_module/dataset=cifar10",
                     "data_module.dataset.root_dir=data",
                 ],
             )

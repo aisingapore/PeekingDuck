@@ -32,7 +32,7 @@ from src.utils.general_utils import seed_all
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "data_module.num_debug_samples=180",
@@ -51,7 +51,7 @@ from src.utils.general_utils import seed_all
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=pytorch",
                 "debug=True",
                 "data_module.num_debug_samples=180",
@@ -95,7 +95,7 @@ def test_training_pipeline(
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "data_module.num_debug_samples=180",
