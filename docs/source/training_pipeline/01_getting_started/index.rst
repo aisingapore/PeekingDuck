@@ -239,7 +239,7 @@ Test for PyTorch:
    | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
 
 
-View the results of each run at the specified output folder directory :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, 
+View the result of each run at the specified output folder directory, :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, 
 \ where the default value of the :mod:`<PROJECT_NAME>` is defined in the :ref:`config-files-mainconfig`.
 
-After installation and test run, refer to :ref:`configuring_training_parameters` for training customizations.
+After installation and test runs, refer to :ref:`configuring_training_parameters` for training customization.
