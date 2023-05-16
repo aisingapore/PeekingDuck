@@ -8,13 +8,18 @@ Overview
  Introduction 
 ==============
 
-Training a custom model with custom datasets is one of the key tasks when building computer vision solutions.
-Peeking Duck allows you to train a custom computer vision model with your own dataset without the need to write the boilerplate codes.
+Training a custom model with custom datasets is one of the key tasks when 
+building computer vision solutions.
+Peeking Duck allows you to train a custom computer vision model with your own 
+dataset without the need to write the boilerplate codes.
 
-This section will introduce you the key features of the training pipeline and how to get started.
-The following sections will introduce you how to train your own model with your own data by customizing the training parameters.
+This section will introduce you the key features of the training pipeline and 
+how to get started.
+The following sections will introduce you how to train your own model with your 
+own data by customizing the training parameters.
 
-The current version of PeekingDuck supports image classification model training. Object detection are being developed and will be available in future releases.
+The current version of PeekingDuck supports image classification model training. 
+Object detection are being developed and will be available in future releases.
 
 
 Features
@@ -24,31 +29,42 @@ Features
 
    <h6>Train with Tensorflow or PyTorch</h6>
 
-PeekingDuck supports official pre-trained models from both `TensorFlow <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ and `PyTorch <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
+PeekingDuck supports official pre-trained models from both 
+`TensorFlow 
+<https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ 
+and `PyTorch 
+<https://pytorch.org/vision/stable/models.html#classification>`_.
 
 .. raw:: html
 
    <h6>Train with your own data</h6>
 
-PeekingDuck supports data loading and model training on your own dataset. Refer to :ref:`using_custom_dataset` for more details.
+PeekingDuck supports data loading and model training on your own dataset. 
+Refer to :ref:`using_custom_dataset` for more details.
 
 .. raw:: html
 
    <h6>Customize training parameters</h6>
 
-With PeekingDuck, you can easily configure various training parameters via configuration yaml files or command line arguments. Refer to :ref:`configuring_training_parameters` for more details.
+With PeekingDuck, you can easily configure various training parameters via 
+configuration yaml files or command line arguments. 
+Refer to :ref:`configuring_training_parameters` for more details.
 
 .. raw:: html
 
    <h6>Analyze right after training</h6>
 
-PeekingDuck uses Weights & Biases to analyze and visualize the training process and performances of the saved models. Refer to the :ref:`setting-up-weights-and-biases` section below for more details.
+PeekingDuck uses Weights & Biases to analyze and visualize the training process 
+and performances of the saved models. 
+Refer to the :ref:`setting-up-weights-and-biases` section below for more
+details.
 
 
 How the training pipeline works
 ===============================
 
-PeekingDuck training pipeline is designed with cross-platform compatibility in mind. A high-level overview of the architecture is shown here:
+PeekingDuck training pipeline is designed with cross-platform compatibility in 
+mind. A high-level overview of the architecture is shown here:
 
 .. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
 
@@ -61,16 +77,18 @@ The general workflow when using the training pipeline is:
 
 Refer to the next section to get started.
 
-
 ----------
 
 ================
  Getting Started
 ================
 
-This guide explains how you can prepare your environment and test out the default pipeline using either TensorFlow or Pytorch.
+This guide explains how you can prepare your environment and test out the 
+default pipeline using either TensorFlow or Pytorch.
 
-It is highly recommended to create a new conda environment as instructed below. Installing PeekingDuck dependencies into existing conda environments may cause unexpected behaviors.
+It is highly recommended to create a new conda environment as instructed below. 
+Installing PeekingDuck dependencies into existing conda environments may cause 
+unexpected behaviors.
 
 Install PeekingDuck Training Pipeline
 -------------------------------------
@@ -85,8 +103,11 @@ Install PeekingDuck Training Pipeline
          - `Git <https://github.com/git-guides/install-git>`_
          - `Miniconda <https://docs.conda.io/en/latest/miniconda.html>`_
          - For CUDA GPU:
-            - `Latest Compatible Nvidia Display Driver for your system <https://www.nvidia.com/download/index.aspx>`_
-            - Do not install CUDA Toolkit and cuDNN at this stage. They are bundled with PyTorch when installed by pip, and will be installed via conda for TensorFlow
+            - `Latest Compatible Nvidia Display Driver for your
+              system <https://www.nvidia.com/download/index.aspx>`_
+            - Do not install CUDA Toolkit and cuDNN at this stage. 
+              They are bundled with PyTorch when installed by pip, 
+              and will be installed via conda for TensorFlow
       
       **Install for CPU**
 
@@ -136,15 +157,18 @@ Install PeekingDuck Training Pipeline
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user]` \ > \ :green:`conda create -n pkd-training python=3.8` \
-         | \ :blue:`[~user]` \ > \ :green:`conda activate pkd-training` \
+         | \ :blue:`[~user]` \ > \ :green:
+         `conda create -n pkd-training python=3.8` \
+         | \ :blue:`[~user]` \ > \ :green:
+         `conda activate pkd-training` \
          
 
       2. Clone PeekingDuck repository:
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user]` \ > \ :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
+         | \ :blue:`[~user]` \ > \ :green:
+         `git clone https://github.com/aisingapore/PeekingDuck.git` \
          | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
 
@@ -152,13 +176,16 @@ Install PeekingDuck Training Pipeline
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`pip install -r peekingduck/training/requirements.txt` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:
+         `pip install -r peekingduck/training/requirements.txt` \
 
       **Install for CUDA GPU**
 
       1. Complete CPU installation steps.
 
-      2. Refer to the `official Tensorflow step-by-step instructions <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ to install CUDA and CuDNN for TensorFlow.
+      2. Refer to the `official Tensorflow step-by-step instructions 
+         <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ 
+         to install CUDA and CuDNN for TensorFlow.
 
    .. tab:: Mac 
     
