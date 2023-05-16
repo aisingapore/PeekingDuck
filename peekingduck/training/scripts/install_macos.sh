@@ -7,6 +7,7 @@ set -e      # tell bash to exit on error
 # created 2022-03-06 initial version
 # updated 2022-04-12 for uninterrupted install
 # updated 2022-11-30 add typeguard, pytorch channel
+# updated 2023-04-01 add support for macos Ventura. new CI/CD packages
 #
 # Prerequisites: brew install miniforge
 #
@@ -114,7 +115,8 @@ if [ $INSTALL == "full" ]; then
     echo "Installing CI/CD packages"
     conda install -y bandit coverage mypy pylint pytest types-PyYAML types-requests \
         types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints \
-        texttable
+        sphinx-copybutton sphinx-tabs texttable tensorflow-datasets
+
     pip install lap sphinx-rtd-theme
 fi
 

@@ -25,10 +25,6 @@ import tensorflow_datasets as tfds
 from src.training_pipeline import init_trainer
 from src.model.tensorflow_model import TFClassificationModelFactory
 
-# from src.losses.adapter import LossAdapter
-# from src.metrics.tensorflow_metrics import TensorflowMetrics
-# from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
-
 
 @mark.parametrize(
     "overrides, validation_loss_key, expected",
@@ -153,6 +149,7 @@ def test_tensorflow_model(
         assert hasattr(history, "history")
         assert validation_loss_key in history.history
         assert len(history.history[validation_loss_key]) != 0
+        print(f"validation_loss: {history.history[validation_loss_key][-1]}")
         assert history.history[validation_loss_key][-1] >= expected
 
 
@@ -241,21 +238,6 @@ def test_tensorflow_model_with_loss(
 
         # create model
         model = TFClassificationModelFactory.create_model(model_config)
-        # init_optimizer
-        # opt = OptimizersAdapter.get_tensorflow_optimizer(
-        #     trainer_config.optimizer_params.optimizer,
-        #     scheduler,
-        #     trainer_config.optimizer_params.optimizer_params,
-        # )
-
-        # loss
-        # loss = LossAdapter.get_tensorflow_loss_func(
-        #     trainer_config.loss_params.loss_func,
-        #     trainer_config.loss_params.loss_params,
-        # )
-
-        # metric
-        # metrics = TensorflowMetrics().get_metrics(metrics=metrics_config)
 
         # compile model
         model.compile(
@@ -270,11 +252,11 @@ def test_tensorflow_model_with_loss(
             validation_data=ds_test,
             verbose="0",
         )
-
         assert history is not None
         assert hasattr(history, "history")
         assert validation_loss_key in history.history
         assert len(history.history[validation_loss_key]) != 0
+        print(f"validation_loss: {history.history[validation_loss_key][-1]}")
         assert history.history[validation_loss_key][-1] >= expected
 
 
@@ -358,8 +340,8 @@ def test_tensorflow_trainer(
 
         trainer = init_trainer(cfg)
         history = trainer.train(ds_train, ds_test)
-
         assert history is not None
         assert validation_loss_key in history
         assert len(history[validation_loss_key]) != 0
+        print(f"validation_loss: {history[validation_loss_key][-1]}")
         assert history[validation_loss_key][-1] < expected

@@ -41,6 +41,7 @@ extensions = [
     "sphinx_autodoc_typehints",
     "sphinx_copybutton",
     "sphinx_tabs.tabs",
+    "sphinxcontrib.jquery",
 ]
 myst_heading_anchors = 2
 

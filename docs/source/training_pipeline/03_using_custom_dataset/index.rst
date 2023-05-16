@@ -3,7 +3,7 @@
 .. _using_custom_dataset:
 
 ********************
-Using custom dataset
+Using Custom Dataset
 ********************
 
 If you have already collected your own dataset, the following section describes\
@@ -46,8 +46,8 @@ Preparation & Integrating with Training Pipeline
 Once you have prepared the csv file and have your images you can follow these 3 steps described below.
 
 
-Step 1. Prepare the data folder as such
----------------------------------------
+Step 1. Prepare Data Folder
+---------------------------
 
 It is important to note that :mod:`<your_dataset_folder>` should be the same value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
 
@@ -83,7 +83,7 @@ It is important to note that :mod:`<your_dataset_folder>` should be the same val
 | For better understanding of which configuration files to change, you can refer to the directory tree at :ref:`config-files-overview`
 
 
-Step 2. Create YAML files
+Step 2. Create YAML Files
 -------------------------
 
 | Create two yaml files under the :mod:`data_module` directory and :mod:`dataset` subdirectory.
@@ -153,9 +153,8 @@ Step 2. Create YAML files
    debug: ${debug}
    num_debug_samples: 25 # can be changed
 
-.. raw:: html
-
-   <h6>Step 3. Edit config.yaml</h6>
+Step 3. Edit Config.yaml
+-------------------------
 
 | Edit the data_module parameter in :mod:`.peekingduck/training/configs/config.yaml` file.
 
@@ -182,7 +181,7 @@ Step 2. Create YAML files
     - override hydra/job_logging: custom
     
 
-Testing the Pipeline
+Testing The Pipeline
 ====================
 
 Refer to :ref:`getting-started-test-run` to test out the pipeline.
