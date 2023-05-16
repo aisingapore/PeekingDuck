@@ -35,7 +35,7 @@ from src.callbacks.base import init_callbacks
 from src.callbacks.events import EVENTS
 from src.model.pytorch_base import PTModel
 from src.metrics.pytorch_metrics import PytorchMetrics
-from src.utils.general_utils import free_gpu_memory  # , init_logger
+from src.utils.general_utils import free_gpu_memory, seed_all
 from src.utils.pt_model_utils import set_trainable_layers, unfreeze_all_params
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
@@ -118,6 +118,9 @@ class PytorchTrainer:
         self.epoch_dict["train"] = {}
         self.epoch_dict["validation"] = {}
         self.best_valid_loss = np.inf
+
+        # seed all
+        seed_all(self.train_params.manual_seed)
 
         # init callbacks
         self.callbacks = init_callbacks(callbacks_config[self.framework])
@@ -281,7 +284,10 @@ class PytorchTrainer:
             train_trues.extend(targets.cpu())
             train_probs.extend(y_train_prob.cpu())
 
-        (train_trues_tensor, train_probs_tensor,) = (
+        (
+            train_trues_tensor,
+            train_probs_tensor,
+        ) = (
             torch.vstack(tensors=train_trues),
             torch.vstack(tensors=train_probs),
         )
