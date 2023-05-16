@@ -6,14 +6,20 @@
 Using Custom Dataset
 ********************
 
-If you have already collected your own dataset, the following section describes\
- how you can prepare your dataset, connect it to the training pipeline and use\
- it for training a model.
+Introduction
+============
+
+If you have already collected your own dataset, the following section describes \
+how you can prepare your dataset, connect it to the training pipeline and use \
+it for training a model.
 
 .. _custom_dataset:
 
-Label File Template
-===================
+Setup
+=====
+
+Image to Label Mapping
+----------------------
 
 | The table below describe the columns needed to create the csv file which will be used by the training pipeline to map your images to their labels.
 | `image_path`, `class_id` and  `class_name` are required columns in the `csv` file.
@@ -40,14 +46,8 @@ Below is an example of the csv file using the vegfru dataset:
 | data/vegfru/veg200_images/Chinese_artichoke/v_09_03_0031.jpg | 8        | Chinese_pumpkin   |
 +--------------------------------------------------------------+----------+-------------------+
 
-Preparation & Integrating with Training Pipeline
-================================================
-
-Once you have prepared the csv file and have your images you can follow these 3 steps described below.
-
-
-Step 1. Prepare Data Folder
----------------------------
+Data Folder Structure
+---------------------
 
 It is important to note that :mod:`<your_dataset_folder>` should be the same value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
 
@@ -75,33 +75,32 @@ It is important to note that :mod:`<your_dataset_folder>` should be the same val
             │             ├── <image_002>.jpg
             │             ├── <image_003>.jpg
             │             └── ...
-            └── <your_csv_file>.yaml
+            └── <image_to_label_map>.csv
 
 
+Configuration Files
+-------------------
 
-| After preparing your folder, you will need to create and edit the configuration files to connect your dataset to the training pipeline:
+| After preparing your data folder, you will need to create and edit the configuration files to connect your dataset to the training pipeline:
 | For better understanding of which configuration files to change, you can refer to the directory tree at :ref:`config-files-overview`
 
 
-Step 2. Create YAML Files
--------------------------
+a) dataset_filename.yaml
 
-| Create two yaml files under the :mod:`data_module` directory and :mod:`dataset` subdirectory.
-| The name of the files must be the same as the :mod:`data_module` value defined in the :ref:`config-files-mainconfig`.
+| Create a yaml file under the :mod:`data_module/dataset` folder directory.
+| The name of the files must be the same as the :mod:`data_module/dataset` value defined in the :ref:`config-files-mainconfig`.
 
 .. parsed-literal::
 
    \ :blue:`PeekingDuck/peekingduck/training/configs/data_module/` \ |Blank|
             ├── \ :blue:`data_adapter/...` \ |Blank|
             ├── \ :blue:`dataset/` \ |Blank|
-            │      └── 1. <dataset_filename>.yaml
+            │      └── <dataset_filename>.yaml
             ├── \ :blue:`resample/...` \ |Blank|
-            ├── \ :blue:`transform/...` \ |Blank|
-            └── 2. <dataset_filename>.yaml   
+            └── \ :blue:`transform/...` \ |Blank|
 
-
-| Folder 1: :mod:`.peekingduck/training/configs/data_module/dataset/<dataset_filename>.yaml`
 | Add this code snippet and change the values where necessary:
+| :mod:`.peekingduck/training/configs/data_module/dataset/<dataset_filename>.yaml`
 
 .. code-block:: bash
    :linenos:
@@ -129,32 +128,7 @@ Step 2. Create YAML Files
       - <class_2>
       - <class_3>
 
-
-| Folder 2: :mod:`.peekingduck/training/configs/data_module/<dataset_filename>.yaml`
-| Add this code snippet and change the values where necessary:
-
-.. code-block:: bash
-   :linenos:
-
-   defaults:
-      - dataset: <dataset_filename>    # Change this to your dataset file name
-      - resample: train_test_split
-      - transform:
-               - train
-               - test
-      - data_adapter:
-               - adapter
-
-   module:
-      _target_: src.data.data_module.ImageClassificationDataModule
-      _recursive_: False
-
-   framework: ${framework}
-   debug: ${debug}
-   num_debug_samples: 25 # can be changed
-
-Step 3. Edit Config.yaml
--------------------------
+b) config.yaml
 
 | Edit the data_module parameter in :mod:`.peekingduck/training/configs/config.yaml` file.
 
@@ -181,9 +155,30 @@ Step 3. Edit Config.yaml
     - override hydra/job_logging: custom
     
 
-Testing The Pipeline
-====================
+Run
+===
 
-Refer to :ref:`getting-started-test-run` to test out the pipeline.
+You can now test the training pipeline with your custom dataset using the following commands in terminal:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user]` \ > \ :green:`cd path-to-project-folder/PeekingDuck` \
+
+Test for Tensorflow:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=tensorflow` \
+
+Test for PyTorch:
+
+.. admonition:: Terminal Session
+
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
+
+
+View the results of each run at the specified output folder directory :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, \
+where the default value of the :mod:`<PROJECT_NAME>` is defined in the :ref:`config-files-mainconfig`.
+
 
 This is the end of the documentation for the training pipeline. The next section will describe the PeekingDuck ecosystem.
