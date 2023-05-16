@@ -33,7 +33,7 @@ from src.utils.general_utils import seed_all
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "device=cpu",
@@ -162,7 +162,7 @@ def test_tensorflow_model(
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "device=cpu",
@@ -272,7 +272,7 @@ def test_tensorflow_model_with_loss(
         (
             [
                 "project_name=cifar10",
-                "data_module=cifar10",
+                "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
                 "device=cpu",
