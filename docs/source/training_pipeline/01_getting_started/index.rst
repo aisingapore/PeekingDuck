@@ -21,17 +21,11 @@ development, they will be included in future releases.
 
 
 Features
---------
+========
 
-.. raw:: html
+* Train with Tensorflow or PyTorch
 
-   <h6>Train with TensorFlow or PyTorch</h6>
-
-PeekingDuck supports official pre-trained models from both 
-`TensorFlow 
-<https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ 
-and `PyTorch 
-<https://pytorch.org/vision/stable/models.html#classification>`_.
+PeekingDuck supports official pre-trained models from both `TensorFlow <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ and `PyTorch <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
 
 .. raw:: html
 
@@ -40,17 +34,13 @@ and `PyTorch
 PeekingDuck supports data loading and model training on your own dataset. 
 Refer to :ref:`using_custom_dataset` for more details.
 
-.. raw:: html
-
-   <h6>Customize training parameters</h6>
+* Customize training parameters
 
 With PeekingDuck, you can easily configure various training parameters via 
 configuration yaml files or command line arguments. 
 Refer to :ref:`configuring_training_parameters` for more details.
 
-.. raw:: html
-
-   <h6>Analyze right after training</h6>
+* Analyze right after training
 
 PeekingDuck uses Weights & Biases to analyze and visualize the training process 
 and performances of the saved models. 
@@ -58,22 +48,18 @@ Refer to the :ref:`setting-up-weights-and-biases` section below for more
 details.
 
 
-How the training pipeline works
+How the Training Pipeline Works
 ===============================
 
-PeekingDuck training pipeline is designed with cross-platform compatibility in 
-mind. A high-level overview of the architecture is shown here:
+PeekingDuck's training pipeline is designed to be compatible with PyTorch and Tensorflow. The architecture diagram is shown below:
 
 .. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
 
 The general workflow when using the training pipeline is:
 
-#. Organize your data with the required format 
-#. Place them at the designated directory
-#. Personalize your training if necessary
-#. Execute from the terminal
-
-Refer to the next section to get started.
+#. Organize training data with the required format in the designated directory.
+#. Customize training parameters, if necessary.
+#. Start model training from the terminal.
 
 ----------
 
@@ -82,11 +68,11 @@ Refer to the next section to get started.
 ================
 
 This guide explains how you can prepare your environment and test out the 
-default pipeline using either TensorFlow or Pytorch.
+default pipeline using either TensorFlow or PyTorch.
 
-It is highly recommended to create a new conda environment as instructed below. 
-Installing PeekingDuck dependencies into existing conda environments may cause 
-unexpected behaviors.
+It is highly recommended to create a new conda environment as instructed below, 
+to avoid package conflicts and unexpected behaviors when running from an 
+existing conda environment.
 
 Install PeekingDuck Training Pipeline
 -------------------------------------
@@ -277,8 +263,8 @@ Also, if you prefer not to use Weights & Biases, you can disable it as such:
 Test Run
 ========
 
-You can test the training pipeline with the default :mod:`cifar10` dataset using
- the following commands in terminal:
+You can test the training pipeline with the default :mod:`cifar10` dataset using 
+the following commands in terminal:
 
 .. admonition:: Terminal Session
 
@@ -288,21 +274,21 @@ Test for Tensorflow:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:
-   `python ./peekingduck/training/main.py debug=True framework=tensorflow` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
+      main.py debug=True framework=tensorflow` \
 
 Test for PyTorch:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:
-   `python ./peekingduck/training/main.py debug=True framework=pytorch` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
+      main.py debug=True framework=pytorch` \
 
 
-View the results of each run at the specified output folder directory 
+View the result of each run at the specified output folder directory, 
 :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, 
 \ where the default value of the :mod:`<PROJECT_NAME>` is defined in the 
 :ref:`config-files-mainconfig`.
 
-After installation and test run, refer to :ref:`configuring_training_parameters`
- for training customizations.
+After installation and test runs, refer to 
+:ref:`configuring_training_parameters` for training customization.

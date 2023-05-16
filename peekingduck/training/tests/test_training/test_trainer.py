@@ -24,6 +24,7 @@ import tensorflow_datasets as tfds
 
 from src.training_pipeline import init_trainer
 from src.model.tensorflow_model import TFClassificationModelFactory
+from src.utils.general_utils import seed_all
 
 
 @mark.parametrize(
@@ -49,7 +50,7 @@ from src.model.tensorflow_model import TFClassificationModelFactory
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_sparse_categorical_accuracy",
-            0.5,
+            0.73,
         ),
     ],
 )
@@ -67,9 +68,13 @@ def test_tensorflow_model(
         trainer_config = cfg.trainer[cfg.framework]
         train_params = trainer_config.global_train_params
         epochs = train_params.epochs
+        # Set Seed
+        seed_all(train_params.manual_seed)
+        tf.random.set_seed(train_params.manual_seed)
 
         # """Test Tensorflow datasource"""
         # Step 1: Create your input pipeline
+        read_config = tfds.ReadConfig(shuffle_seed=train_params.manual_seed)
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
@@ -77,6 +82,7 @@ def test_tensorflow_model(
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
+            read_config=read_config,
         )
 
         # ### Build a training pipeline
@@ -102,9 +108,6 @@ def test_tensorflow_model(
         ds_test = ds_test.batch(128)
         ds_test = ds_test.cache()
         ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
-
-        # Set Seed
-        tf.random.set_seed(train_params.manual_seed)
 
         # create model
         base_model: tf.keras.Model = getattr(
@@ -176,7 +179,7 @@ def test_tensorflow_model(
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_sparse_categorical_accuracy",
-            0.4,
+            0.63,
         ),
     ],
 )
@@ -198,8 +201,13 @@ def test_tensorflow_model_with_loss(
         train_params = trainer_config.global_train_params
         epochs = train_params.epochs
 
+        # Set Seed
+        tf.random.set_seed(train_params.manual_seed)
+        seed_all(train_params.manual_seed)
+
         # """Test Tensorflow datasource"""
         # Step 1: Create your input pipeline
+        read_config = tfds.ReadConfig(shuffle_seed=train_params.manual_seed)
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
@@ -207,6 +215,7 @@ def test_tensorflow_model_with_loss(
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
+            read_config=read_config,
         )
 
         # ### Build a training pipeline
@@ -232,9 +241,6 @@ def test_tensorflow_model_with_loss(
         ds_test = ds_test.batch(128)
         ds_test = ds_test.cache()
         ds_test = ds_test.prefetch(tf.data.AUTOTUNE)
-
-        # Set Seed
-        tf.random.set_seed(train_params.manual_seed)
 
         # create model
         model = TFClassificationModelFactory.create_model(model_config)
@@ -287,14 +293,14 @@ def test_tensorflow_model_with_loss(
                 "trainer.tensorflow.loss_params.loss_params.from_logits=True",
             ],
             "val_loss",
-            4.1,
+            2.5,
         ),
     ],
 )
 def test_tensorflow_trainer(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
-    """Test data_module"""
+    """Test trainer module"""
     with initialize(version_base=None, config_path="../../configs"):
         cfg = compose(
             config_name="config",
@@ -302,16 +308,21 @@ def test_tensorflow_trainer(
         )
 
         model_config = cfg.model[cfg.framework]
+        trainer_config = cfg.trainer[cfg.framework]
+        train_params = trainer_config.global_train_params
 
         # """Test Tensorflow datasource"""
         # Step 1: Create your input pipeline
+        seed_all(train_params.manual_seed)
+        read_config = tfds.ReadConfig(shuffle_seed=train_params.manual_seed)
         # ### Load a dataset
         (ds_train, ds_test), ds_info = tfds.load(
             "mnist",
-            split=["train[:2%]", "test[:1%]"],
+            split=["train[:5%]", "test[:1%]"],
             shuffle_files=True,
             as_supervised=True,
             with_info=True,
+            read_config=read_config,
         )
 
         # ### Build a training pipeline

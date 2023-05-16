@@ -28,7 +28,7 @@ from src.model.tensorflow_model import TFClassificationModelFactory
 from src.losses.adapter import LossAdapter
 from src.metrics.tensorflow_metrics import TensorflowMetrics
 from src.callbacks.tensorflow_callbacks import TensorFlowCallbacksAdapter
-from src.utils.general_utils import merge_dict_of_list
+from src.utils.general_utils import merge_dict_of_list, seed_all
 from src.utils.tf_model_utils import set_trainable_layers, unfreeze_all_layers
 
 # pylint:disable=too-many-instance-attributes,too-many-arguments
@@ -68,6 +68,7 @@ class TensorflowTrainer:
 
         # Set Seed
         tf.random.set_seed(self.train_params.manual_seed)
+        seed_all(self.train_params.manual_seed)
 
         # create model
         self.model = TFClassificationModelFactory.create_model(self.model_config)
