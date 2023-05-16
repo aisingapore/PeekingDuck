@@ -23,35 +23,33 @@ development, they will be included in future releases.
 Features
 ========
 
-* Train with Tensorflow or PyTorch
+* Train with TensorFlow or PyTorch
+   PeekingDuck supports official pre-trained models from both `TensorFlow 
+   <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ 
+   and `PyTorch 
+   <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
 
-PeekingDuck supports official pre-trained models from both `TensorFlow <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ and `PyTorch <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
-
-.. raw:: html
-
-   <h6>Train with your own data</h6>
-
-PeekingDuck supports data loading and model training on your own dataset. 
-Refer to :ref:`using_custom_dataset` for more details.
+* Train with your own data
+   PeekingDuck supports data loading and model training on your own dataset. 
+   Refer to :ref:`using_custom_dataset` for more details.
 
 * Customize training parameters
-
-With PeekingDuck, you can easily configure various training parameters via 
-configuration yaml files or command line arguments. 
-Refer to :ref:`configuring_training_parameters` for more details.
+   With PeekingDuck, you can easily configure various training parameters via 
+   configuration yaml files or command line arguments. 
+   Refer to :ref:`configuring_training_parameters` for more details.
 
 * Analyze right after training
-
-PeekingDuck uses Weights & Biases to analyze and visualize the training process 
-and performances of the saved models. 
-Refer to the :ref:`setting-up-weights-and-biases` section below for more
-details.
+   PeekingDuck uses Weights & Biases to analyze and visualize the training 
+   process and performances of the saved models.
+   Refer to the :ref:`setting-up-weights-and-biases` section below for more
+   details.
 
 
 How the Training Pipeline Works
 ===============================
 
-PeekingDuck's training pipeline is designed to be compatible with PyTorch and Tensorflow. The architecture diagram is shown below:
+PeekingDuck's training pipeline is designed to be compatible with PyTorch and 
+TensorFlow. The architecture diagram is shown below:
 
 .. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
 
@@ -124,7 +122,7 @@ Install PeekingDuck Training Pipeline
 
       1. Complete CPU installation steps.
 
-      2. Refer to the `official Tensorflow step-by-step instructions 
+      2. Refer to the `official TensorFlow step-by-step instructions 
          <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ 
          to install CUDA and CuDNN for TensorFlow. 
          For Ubuntu 22.04, do take note of the additional steps.
@@ -270,7 +268,7 @@ the following commands in terminal:
 
    | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
-Test for Tensorflow:
+Test for TensorFlow:
 
 .. admonition:: Terminal Session
 
