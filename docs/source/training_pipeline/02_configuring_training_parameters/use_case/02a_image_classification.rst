@@ -1,36 +1,5 @@
 .. include:: /include/substitution.rst
 
-.. raw:: html
-
-   <style>
-        .wy-table-responsive table td ul li{
-            list-style-type: none;
-        }
-
-        div.install .training-framework-btn {
-            display: inline-block;
-            margin: 12px 6px;
-            padding: 5px 11px;
-            background-color: #fff; /* #fff3cd */
-            border: none;
-            border-radius: 3px;
-            color: black;
-            font-size: 90%;
-            font-family: "Nunito", sans-serif;
-            font-weight: 400;
-        }
-
-        div.install .training-framework-btn.active {
-            background-color: #a76d60;
-            color: white;
-        }
-        .wy-table-responsive table td:last-child, .wy-table-responsive table th:last-child {
-            white-space: normal;
-            min-width: 450px;
-            max-width: 450px;
-        }
-    </style>
-
 *********************
 Image Classification
 *********************
@@ -51,7 +20,7 @@ Image Classification
 Overview
 ========
 
-We are using the yaml syntax for the config file. Below is the folder structure and description of how users can understand and navigate the config structure. 
+We use the yaml syntax for the config file. Below shows the folder structure and describes how users can understand and navigate the config structure. 
 Configuration files that are not user-customizable are not included in the table below.
 
 .. parsed-literal::
@@ -143,7 +112,7 @@ For the second option, user can pass the arguments explicitly stated in the main
    :linenos: 
 
    cd PeekingDuck
-   python ./peekingduck/training/main.py debug=True framework=tensorflow project_name=abcxyz view_only=True
+   python ./peekingduck/training/main.py debug=True framework=tensorflow project_name=my_project view_only=True
 
 To change the arguments in other configuration files such as `model`, `trainer`, etc., the user would need to chain up the arguments based on the hierarchy in the yaml files. Here is one example:
 
@@ -370,34 +339,18 @@ Config File : ``peekingduck/training/configs/data_module/resample/train_test_spl
         </table>
    </div>
 
-.. raw:: html
-
-   <div class="install">
-     <strong>Select Framework : </strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br>
+.. include:: /include/framework_selection_button.rst
 
 .. raw:: html
 
    <div class="install">
-      <div class="pkd-expandable training-pytorch">
-        <h4>Pytorch</h4>
 
 .. include:: /training_pipeline/02_configuring_training_parameters/data_module/pytorch_config.rst
-
-.. raw:: html
-
-   </div>
-      <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-
 .. include:: /training_pipeline/02_configuring_training_parameters/data_module/tensorflow_config.rst
 
 .. raw:: html
 
-   </div></div>
+   </div>
 
 .. raw:: html
 
@@ -810,14 +763,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 Model
 =====
 
-.. raw:: html
-
-   <div class="install">
-     <strong>Select Framework : </strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br>
+.. include:: /include/framework_selection_button.rst
 
 .. raw:: html
 
@@ -1130,53 +1076,26 @@ Config File : ``peekingduck/training/configs/model_analysis/classification.yaml`
 Trainer
 =======
 
+.. include:: /include/framework_selection_button.rst
+
+
 .. raw:: html
 
    <div class="install">
-     <strong>Select Framework : </strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br>
    
-
-.. raw:: html
-
-   <div class="install">
-      <div class="pkd-expandable training-pytorch">
-        <h4>Pytorch</h4>
-        <p>The trainer class will make use of these configs.</p>
-        <p>Config File : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/trainer/classification.yaml</span></code></p>
-
 .. include:: /training_pipeline/02_configuring_training_parameters/trainer/pytorch_config.rst
-
-.. raw:: html
-
-   </div>
-      <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <p>The trainer class will make use of these configs.</p>
-        <p>Config File : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/trainer/classification.yaml</span></code></p>
-
 .. include:: /training_pipeline/02_configuring_training_parameters/trainer/tensorflow_config.rst
 
 .. raw:: html
 
-   </div></div>
+   </div>
 
 .. _config-files-metrics:
 
 Metrics
 =======
 
-.. raw:: html
-
-   <div class="install">
-     <strong>Select Framework : </strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br>
+.. include:: /include/framework_selection_button.rst
 
 .. raw:: html
 
@@ -1330,14 +1249,7 @@ Metrics
 Callbacks
 =========
 
-.. raw:: html
-
-   <div class="install">
-     <strong>Select Framework : </strong>
-     <button class="training-framework-btn training-framework-py active">Pytorch</button>
-     <button class="training-framework-btn training-framework-tf">Tensorflow</button>
-   </div>
-   <br>
+.. include:: /include/framework_selection_button.rst
 
 .. raw:: html
 
@@ -1440,113 +1352,64 @@ Callbacks
                 </tbody>
             </table>
         </div>
-     
-     </div>
-     <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <p>Check out the <a href="https://www.tensorflow.org/api_docs/python/tf/keras/callbacks">TensorFlow v2 Callbacks</a> documentation for more details.
-        <br>While technically you can use any callbacks listed in the keras API, only EarlyStopping has been tested.</p>
-        <p>The table below shows the default values:</p>
-        <p>Config File : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/callbacks/classification.yaml</span></code></p>
-        <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td colspan="2"><code class="xref"><span class="pre">EarlyStopping</span></code></td>
-                        <td></td>
-                        <td>Stop training when a monitored metric has stopped improving.</td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">patience</span></code></td>
-                        <td>3</td>
-                        <td>Number of epochs with no improvement after which training will be stopped.</td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">restore_best_weights</span></code></td>
-                        <td>True</td>
-                        <td>Whether to restore model weights from the epoch with the best value of the monitored quantity.<br>If False, the model weights obtained at the last step of training are used.<br>An epoch will be restored regardless of the performance relative to the baseline.<br>If no epoch improves on baseline, training will run for patience epochs and restore weights from the best epoch in that set.</td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">monitor</span></code></td>
-                        <td>"val_categorical_accuracy"</td>
-                        <td>Metric to be monitored.</td>
-                    </tr>
 
-                    <tr class="row-even">
-                        <td colspan="2"><code class="xref"><span class="pre">ProgbarLogger</span></code></td>
-                        <td></td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">count_mode</span></code></td>
-                        <td>'steps'</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">stateful_metrics</span></code></td>
-                        <td>Null</td>
-                        <td></td>
-                    </tr>
+.. raw:: html
 
-                    <tr class="row-odd">
-                        <td colspan="2"><code class="xref"><span class="pre">ModelCheckpoint</span></code></td>
-                        <td></td>
-                        <td>Save model checkpoints based on specified save_freq parameter frequency.</td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre grey">filepath</span></code></td>
-                        <td class="grey">${trainer.tensorflow.stores.model_artifacts_dir}</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre grey">monitor</span></code></td>
-                        <td class="grey">${trainer.tensorflow.global_train_params.monitored_metric.monitor}</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">save_best_only</span></code></td>
-                        <td>False</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">save_weights_only</span></code></td>
-                        <td>False</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mode</span></code></td>
-                        <td>'auto'</td>
-                        <td></td>
-                    </tr>
-                    <tr class="row-odd">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">save_freq</span></code></td>
-                        <td>'epoch'</td>
-                        <td></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-     </div>
    </div>
+     <div class="pkd-expandable training-tensorflow">
+
+
+TensorFlow
+----------
+Check out the `TensorFlow v2 Callbacks <https://www.tensorflow.org/api_docs/python/tf/keras/callbacks>`_ documentation for more details.
+While technically you can use any callbacks listed in the keras API, only EarlyStopping has been tested.
+
+The table below shows the default values:
+
+Config File : ``peekingduck/training/configs/callbacks/classification.yaml``
+
++------------------------------------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| Key                                                        | Value                                                                             | Description                                                                                                                             |
++============================================================+===================================================================================+=========================================================================================================================================+
+| :mod:`EarlyStopping`                                       |                                                                                   | Stop training when a monitored metric has stopped improving.                                                                            |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`patience`                 | 3                                                                                 | Number of epochs with no improvement after which training will be stopped.                                                              |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`restore_best_weights`     | True                                                                              | Whether to restore model weights from the epoch with the best value of the monitored quantity.                                          |
+|                          |                                 |                                                                                   |                                                                                                                                         |
+|                          |                                 |                                                                                   | If False, the model weights obtained at the last step of training are used.                                                             |
+|                          |                                 |                                                                                   |                                                                                                                                         |
+|                          |                                 |                                                                                   | An epoch will be restored regardless of the performance relative to the baseline.                                                       |
+|                          |                                 |                                                                                   |                                                                                                                                         |
+|                          |                                 |                                                                                   | If no epoch improves on baseline, training will run for patience epochs and restore weights from the best epoch in that set.            |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`monitor`                  | "val_categorical_accuracy"                                                        | Metric to be monitored.                                                                                                                 |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| :mod:`ProgbarLogger`                                       |                                                                                   |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`count_mode`               | 'steps'                                                                           |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`stateful_metrics`         | Null                                                                              |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+| :mod:`ModelCheckpoint`                                     |                                                                                   | Save model checkpoints based on specified save_freq parameter frequency.                                                                |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :grey:`filepath`                | :grey:`${trainer.tensorflow.stores.model_artifacts_dir}`                          |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :grey:`monitor`                 | :grey:`${trainer.tensorflow.global_train_params.monitored_metric.monitor}`        |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`save_best_only`           | False                                                                             |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`save_weights_only`        | False                                                                             |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`mode`                     | 'auto'                                                                            |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+|                          | :mod:`save_freq`                | 'epoch'                                                                           |                                                                                                                                         |
++--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
+
+
+.. raw:: html
+
+   </div></div>
 
 .. _config-files-store:
 
@@ -1555,27 +1418,14 @@ Store
 
 Config File : ``peekingduck/training/configs/stores/classifications.yaml``
 
-.. raw:: html
-
-   <div class="wy-table-responsive">
-        <table class="docutils align-default">
-            <thead>
-                <tr class="row-odd">
-                    <th class="head"><p>Key</p></th>
-                    <th class="head"><p>Value</p></th>
-                    <th class="head"><p>Description</p></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="row-even">
-                    <td><code><span class="pre grey">unique_id</span></code></td>
-                    <td><p class="grey">${now:%Y%m%d_%H%M%S}</p></td>
-                    <td>Used in:<ul>
-                        <li>- Hydra run and sweep directory path</li>
-                        <li>- Model analysis run_name</li>
-                        <li>- Pytorch Training model artifacts directory</li>
-                    </ul></td>
-                </tr>
-            </tbody>
-        </table>
-   </div>
++----------------------------------+-----------------------------------+------------------------------------------------------------+
+| Key                              | Value                             | Description                                                |
++==================================+===================================+============================================================+
+| :grey:`unique_id`                | :grey:`${now:%Y%m%d_%H%M%S}`      | :grey:`Used in:`                                           |
+|                                  |                                   |                                                            |
+|                                  |                                   | :grey:`- Hydra run and sweep directory path`               |
+|                                  |                                   |                                                            |
+|                                  |                                   | :grey:`- Model analysis run_name`                          |
+|                                  |                                   |                                                            |
+|                                  |                                   | :grey:`- Pytorch Training model artifacts directory`       |
++----------------------------------+-----------------------------------+------------------------------------------------------------+

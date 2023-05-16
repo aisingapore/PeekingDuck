@@ -1,3 +1,10 @@
+
+.. raw:: html
+
+   <div class="pkd-expandable training-pytorch">
+        <h4>Pytorch</h4>
+
+
 .. tabs::
 
    .. tab:: Adapter
@@ -253,3 +260,8 @@
                 </tbody>
             </table>
          </div>
+
+
+.. raw:: html
+
+   </div>
