@@ -1,10 +1,6 @@
 
-.. raw:: html
-
-   <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
-        <p>The trainer class will make use of these configs.</p>
-        <p>Config File : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/trainer/classification.yaml</span></code></p>
+| The trainer class will make use of these configs.
+| Config File : ``peekingduck/training/configs/trainer/classification.yaml``
 
 
 .. tabs::
@@ -283,8 +279,3 @@
                 </tbody>
             </table>
          </div>
-
-
-.. raw:: html
-
-   </div>
