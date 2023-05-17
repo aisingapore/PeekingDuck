@@ -1,9 +1,9 @@
-dataset_format    : 'voc' # 'coco' | 'voc'
+dataset_format: "voc" # 'coco' | 'voc'
 coco:
-  data_dir          : 'data/coco_format' # data\coco_format_colorful_fashion_dataset_for_object_detection
-  train_ann         : 'instances_train2017.json'
-  val_ann           : 'instances_val2017.json'
-  test_ann          : null # 'instances_test2017.json'
+  data_dir: "data/coco_format" # data\coco_format_colorful_fashion_dataset_for_object_detection
+  train_ann: "instances_train.json"
+  val_ann: "instances_val.json"
+  test_ann: null # 'instances_test2017.json'
 voc:
-  data_dir          : 'data/voc_format'
-  image_sets        : [['2007', 'trainval']]
+  data_dir: "data/voc_format"
+  image_sets: [["2007", "trainval"]]
