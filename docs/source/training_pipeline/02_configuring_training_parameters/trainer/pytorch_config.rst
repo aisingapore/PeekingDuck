@@ -1,183 +1,71 @@
 
-.. raw:: html
-
-   <div class="pkd-expandable training-pytorch">
-        <h4>Pytorch</h4>
-        <p>The trainer class will make use of these configs.</p>
-        <p>Config File : <code class="docutils literal notranslate"><span class="pre">peekingduck/training/configs/trainer/classification.yaml</span></code></p>
+| The trainer class will make use of these configs.
+| Config File : ``peekingduck/training/configs/trainer/classification.yaml``
 
 
 .. tabs::
 
    .. tab:: General
+      
+      Global trainer parameters.
 
-      .. raw:: html 
-
-         <p>Global trainer parameters.</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="3" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3"><p><code class="xref"><span class="pre">global_train_params</span></code></p></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code><span class="pre grey">manual_seed</span></code></p></td>
-                        <td><p class="grey">${random_state}</p></td>
-                        <td><p>Random seed. Default value will reference directly from main config file.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">epochs</span></code></p></td>
-                        <td><p>10</p></td>
-                        <td><p>Number of epochs to train</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">patience</span></code></p></td>
-                        <td><p>3</p></td>
-                        <td><p>Main reference value for early stopping patience count.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code><span class="pre grey">model_name</span></code></p></td>
-                        <td><p class="grey">${model.pytorch.model_name}</p></td>
-                        <td><p>Use for printing to logs. Default value will reference directly from model config.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code><span class="pre grey">debug</span></code></p></td>
-                        <td><p class="grey">${debug}</p></td>
-                        <td><p>Flag for checking if debug is set to True of False. Reference directly from main config file.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">debug_epochs</span></code></p></td>
-                        <td><p>3</p></td>
-                        <td><p>When debug is set to True, this value will be used for training.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code><span class="pre grey">classification_type</span></code></p></td>
-                        <td><p class="grey">${data_module.dataset.classification_type}</p></td>
-                        <td><p>Used in initializing PyTorch metrics. Values can be: 'binary', 'multiclass' or 'multilabel'. Default value references from dataset config file.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">monitored_metric</span></code></p></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">monitor</span></code></p></td>
-                        <td><p>val_MulticlassAccuracy</p></td>
-                        <td><p>The metric used for monitoring the best validation score. This should be one of the keys in metrics list with a 'val_' prefix.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">mode</span></code></p></td>
-                        <td><p>max</p></td>
-                        <td><p>"min" | "max"
-                            <br>In min mode, training will stop when the quantity monitored has stopped decreasing.
-                            <br>In "max" mode it will stop when the quantity monitored has stopped increasing.</p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+        +--------------------------------------------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        | Key                                                                                        | Value                                                  | Description                                                                                                                                        |
+        +============================================================================================+========================================================+====================================================================================================================================================+
+        | :mod:`global_train_params`                                                                 |                                                        |                                                                                                                                                    |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :grey:`manual_seed`                                   | :grey:`${random_state}`                                | Random seed. Default value will reference directly from main config file.                                                                          |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :mod:`epochs`                                         | 10                                                     | Number of epochs to train                                                                                                                          |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :mod:`patience`                                       | 3                                                      | Main reference value for early stopping patience count.                                                                                            |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :grey:`model_name`                                    | :grey:`${model.pytorch.model_name}`                    | Use for printing to logs. Default value will reference directly from model config.                                                                 |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :grey:`debug`                                         | :grey:`${debug}`                                       | Flag for checking if debug is set to True of False. Reference directly from main config file.                                                      |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :mod:`debug_epochs`                                   | 3                                                      | When debug is set to True, this value will be used for training.                                                                                   |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :grey:`classification_type`                           | :grey:`${data_module.dataset.classification_type}`     | Used in initializing PyTorch metrics. Values can be: 'binary', 'multiclass' or 'multilabel'. Default value references from dataset config file.    |
+        +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    | :mod:`monitored_metric`                               |                                                        |                                                                                                                                                    |
+        +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    |                                 | :mod:`monitor`      | val_MulticlassAccuracy                                 | The metric used for monitoring the best validation score. This should be one of the keys in metrics list with a 'val_' prefix.                     |
+        +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                                    |                                 | :mod:`mode`         | max                                                    | "min" | "max"                                                                                                                                      |
+        |                                    |                                 |                     |                                                        |                                                                                                                                                    |
+        |                                    |                                 |                     |                                                        | In min mode, training will stop when the quantity monitored has stopped decreasing.                                                                |
+        |                                    |                                 |                     |                                                        |                                                                                                                                                    |
+        |                                    |                                 |                     |                                                        | In ""max"" mode it will stop when the quantity monitored has stopped increasing."                                                                  |
+        +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
    .. tab:: Optimizer
 
-      .. raw:: html 
+      These parameters will be used for initializing the optimizer. Implemented using the `torch.optim <https://pytorch.org/docs/stable/optim.html#algorithms>`_ package. Refer to `this documentation <https://pytorch.org/docs/stable/optim.html#algorithms>`_ for alternatives. Below is the default values using the Adam optimizer.
 
-         <p>These parameters will be used for initializing the optimizer. Implemented using the <a target="_blank" href="https://pytorch.org/docs/stable/optim.html#algorithms">torch.optim</a> package. Refer to <a target="_blank" href="https://pytorch.org/docs/stable/optim.html#algorithms">this documentation</a> for alternatives. Below is the default values using the Adam optimizer.</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="3" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3"><code class="xref"><span class="pre">optimizer_params</span></code></td>
-                        <td><p></p</td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">optimizer</span></code></td>
-                        <td><p>"Adam"</p></td>
-                        <td><p>For further details regarding the algorithm we refer to <a class="reference external" href="https://arxiv.org/abs/1412.6980">Adam: A Method for Stochastic Optimization</a>.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">optimizer_params</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">lr</span></code></td>
-                        <td><p>1e-5</p></td>
-                        <td><p>
-                            (float, optional) – learning rate (default: 1e-5).
-                        </p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">betas</span></code></td>
-                        <td><p>[0.9, 0.999]</p></td>
-                        <td><p>(Tuple[float, float], optional) – coefficients used for computing running averages of gradient and its square (default: (0.9, 0.999))</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">amsgrad</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p>(bool, optional) – whether to use the AMSGrad variant of this algorithm from the paper On the Convergence of Adam and Beyond (default: False)</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">eps</span></code></td>
-                        <td><p>0.0000007</p></td>
-                        <td><p>(float, optional) – term added to the denominator to improve numerical stability (default: 7e-7)</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">finetune_params</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">lr</span></code></td>
-                        <td><p>1e-5</p></td>
-                        <td><p>
-                            (float, optional) – learning rate.
-                        </p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+        +-----------------------------------------------------------------------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        | Key                                                                         | Value           | Description                                                                                                                                        |
+        +=============================================================================+=================+====================================================================================================================================================+
+        | :mod:`optimizer_params`                                                     |                 |                                                                                                                                                    |
+        +-----------------------------+-----------------------------------------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             | :mod:`optimizer`                              | "Adam"          | For further details regarding the algorithm we refer to `Adam: A Method for Stochastic Optimization <https://arxiv.org/abs/1412.6980>`_.           |
+        +-----------------------------+-----------------------------------------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             | :mod:`optimizer_params`                       |                 |                                                                                                                                                    |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             |                             | :mod:`lr`       | 1.00E-05        | (float, optional) – learning rate (default: 1e-5).                                                                                                 |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             |                             | :mod:`betas`    | [0.9, 0.999]    | (Tuple[float, float], optional) – coefficients used for computing running averages of gradient and its square (default: (0.9, 0.999))              |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             |                             | :mod:`amsgrad`  | FALSE           | (bool, optional) – whether to use the AMSGrad variant of this algorithm from the paper On the Convergence of Adam and Beyond (default: False)      |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             |                             | :mod:`eps`      | 0.0000007       | (float, optional) – term added to the denominator to improve numerical stability (default: 7e-7)                                                   |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             | :mod:`finetune_params`                        |                 |                                                                                                                                                    |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+        |                             |                             | :mod:`lr`       | 1.00E-05        | (float, optional) – learning rate.                                                                                                                 |
+        +-----------------------------+-----------------------------+-----------------+-----------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
+
 
    .. tab:: Scheduler
 
@@ -432,8 +320,3 @@
                 </tbody>
             </table>
          </div>
-
-
-.. raw:: html
-
-   </div>

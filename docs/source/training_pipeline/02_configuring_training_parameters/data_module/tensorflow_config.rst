@@ -1,7 +1,5 @@
-.. raw:: html
 
-   <div class="pkd-expandable training-tensorflow">
-        <h4>Tensorflow</h4>
+
 
 .. tabs::
 
@@ -417,7 +415,3 @@
             </table>
          </div>
 
-
-.. raw:: html
-
-   </div>
