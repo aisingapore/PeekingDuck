@@ -26,7 +26,7 @@ if _EXP_PATH.is_dir():
     # where setup(package_dir=) does not work: https://github.com/pypa/setuptools/issues/230
 
     class _ExpFinder(abc.MetaPathFinder):
-        def find_spec(self, name, path, target=None) -> util:
+        def find_spec(self, name, path, target=None):
             if not name.startswith("yolox.exp.default"):
                 return
             project_name = name.split(".")[-1] + ".py"
