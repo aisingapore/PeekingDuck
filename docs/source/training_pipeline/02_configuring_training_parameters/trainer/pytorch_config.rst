@@ -69,254 +69,91 @@
 
    .. tab:: Scheduler
 
-      .. raw:: html 
+      These parameters will be used for initializing the scheduler. Implemented using the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ package. Refer to `PyTorch Optimizer Learning Rate <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ for scheduler choices. Scheduler is defaulted to null.
 
-         <p>These parameters will be used for initializing the scheduler. Implemented using the <a target="_blank" href="https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate">torch.optim.lr_scheduler</a> package. Refer to <a target="_blank" href="https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate">PyTorch Optimizer Learning Rate</a> for scheduler choices. Scheduler is defaulted to null.</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td colspan="2"><code class="xref"><span class="pre">scheduler_params</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">scheduler</span></code></td>
-                        <td><p>null</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">scheduler_params</span></code></td>
-                        <td><p>null</p></td>
-                        <td><p></p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +------------------------------------------------------------+-----------------+-----------------------------+
+      | Key                                                        | Value           | Description                 |
+      +============================================================+=================+=============================+
+      | :mod:`scheduler_params`                                    |                 |                             |
+      +------------------------------+-----------------------------+-----------------+-----------------------------+
+      |                              | :mod:`scheduler`            | null            |                             |
+      +------------------------------+-----------------------------+-----------------+-----------------------------+
+      |                              | :mod:`scheduler_params`     | null            |                             |
+      +------------------------------+-----------------------------+-----------------+-----------------------------+
 
-      .. raw:: html 
+      Any of the scheduler listed in the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ method can be used. Below is an example using a OneCycleLR scheduler:
 
-         <p>Any of the scheduler listed in the <a target="_blank" href="https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate">torch.optim.lr_scheduler</a> method can be used. Below is an example using a OneCycleLR scheduler:</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="3" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="row-even">
-                        <td colspan="3"><code class="xref"><span class="pre">scheduler_params</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">scheduler</span></code></td>
-                        <td><p>"OneCycleLR"</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td colspan="2"><code class="xref"><span class="pre">scheduler_params</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr class="row-even">
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">max_lr</span></code></td>
-                        <td><p>1e-3</p></td>
-                        <td><p></p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +----------------------------------------------------------------------------------+-----------------+-----------------------------+
+      | Key                                                                              | Value           | Description                 |
+      +==================================================================================+=================+=============================+
+      | :mod:`scheduler_params`                                                          |                 |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`scheduler`                                  | "OneCycleLR"    |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`scheduler_params`                           |                 |                             |
+      +------------------------------+----------------------------+----------------------+-----------------+-----------------------------+
+      |                              |                            | :mod:`max_lr`        | 1e-3            |                             |
+      +------------------------------+----------------------------+----------------------+-----------------+-----------------------------+
 
-         <p>You can also read <a target="_blank" href="https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863">this article</a> to find a suitable scheduler for your use case.</p>
+      You can also read `this article <https://towardsdatascience.com/a-visual-guide-to-learning-rate-schedulers-in-pytorch-24bbb262c863>`_ to find a suitable scheduler for your use case.
+
 
    .. tab:: Loss
 
-      .. raw:: html 
+      Refer to `PyTorch Loss Functions <https://pytorch.org/docs/stable/nn.html#loss-functions>`_ for more details and alternatives. The training pipeline defaults to using CrossEntropyLoss as the loss function for both train and validation loops.
 
-         <p>Refer to <a target="_blank" href="https://pytorch.org/docs/stable/nn.html#loss-functions">PyTorch Loss Functions</a> for more details and alternatives. The training pipeline defaults to using CrossEntropyLoss as the loss function for both train and validation loops.</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="3" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="3"><p><code class="xref"><span class="pre">criterion_params</span></code></p></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">train_criterion</span></code></p></td>
-                        <td><p>"CrossEntropyLoss"</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">train_criterion_params</span></code></p></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">weight</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(Tensor, optional) – a manual rescaling weight given to each class. If given, has to be a Tensor of size C.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">size_average</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">ignore_index</span></code></p></td>
-                        <td><p>-100</p></td>
-                        <td><p>(int, optional) – Specifies a target value that is ignored and does not contribute to the input gradient. When size_average is True, the loss is averaged over non-ignored targets. Note that ignore_index is only applicable when the target contains class indices.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">reduce</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">reduction</span></code></p></td>
-                        <td><p>"mean"</p></td>
-                        <td><p>(str, optional) – Specifies the reduction to apply to the output: 'none' | 'mean' | 'sum'. 'none': no reduction will be applied, 'mean': the weighted mean of the output is taken, 'sum': the output will be summed. Note: size_average and reduce are in the process of being deprecated, and in the meantime, specifying either of those two args will override reduction. Default: 'mean'</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">label_smoothing</span></code></p></td>
-                        <td><p>0.0</p></td>
-                        <td><p>(float, optional) – A float in [0.0, 1.0]. Specifies the amount of smoothing when computing the loss, where 0.0 means no smoothing. The targets become a mixture of the original ground truth and a uniform distribution as described in Rethinking the Inception Architecture for Computer Vision. Default: 0.0.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">valid_criterion</span></code></p></td>
-                        <td><p>"CrossEntropyLoss"</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td colspan="2"><p><code class="xref"><span class="pre">valid_criterion_params</span></code></p></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">weight</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(Tensor, optional) – a manual rescaling weight given to each class. If given, has to be a Tensor of size C.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">size_average</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">ignore_index</span></code></p></td>
-                        <td><p>-100</p></td>
-                        <td><p>(int, optional) – Specifies a target value that is ignored and does not contribute to the input gradient. When size_average is True, the loss is averaged over non-ignored targets. Note that ignore_index is only applicable when the target contains class indices.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">reduce</span></code></p></td>
-                        <td><p>null</p></td>
-                        <td><p>(bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">reduction</span></code></p></td>
-                        <td><p>"mean"</p></td>
-                        <td><p>(str, optional) – Specifies the reduction to apply to the output: 'none' | 'mean' | 'sum'. 'none': no reduction will be applied, 'mean': the weighted mean of the output is taken, 'sum': the output will be summed. Note: size_average and reduce are in the process of being deprecated, and in the meantime, specifying either of those two args will override reduction. Default: 'mean'</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                        <td><p><code class="xref"><span class="pre">label_smoothing</span></code></p></td>
-                        <td><p>0.0</p></td>
-                        <td><p>(float, optional) – A float in [0.0, 1.0]. Specifies the amount of smoothing when computing the loss, where 0.0 means no smoothing. The targets become a mixture of the original ground truth and a uniform distribution as described in Rethinking the Inception Architecture for Computer Vision. Default: 0.0.</p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +--------------------------------------------------------------------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      | Key                                                                                        | Value                  | Description                                                                                                                                                                                                                                                                                                                                                                                           |
+      +============================================================================================+========================+=======================================================================================================================================================================================================================================================================================================================================================================================================+
+      | :mod`criterion_params`                                                                     |                        |                                                                                                                                                                                                                                                                                                                                                                                                       |
+      +--------------------------+-----------------------------------------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          | :mod`train_criterion`                                           | "CrossEntropyLoss"     |                                                                                                                                                                                                                                                                                                                                                                                                       |
+      +--------------------------+-----------------------------------------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          | :mod`train_criterion_params`                                    |                        |                                                                                                                                                                                                                                                                                                                                                                                                       |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`weight`                  | null                   | (Tensor, optional) – a manual rescaling weight given to each class. If given, has to be a Tensor of size C.                                                                                                                                                                                                                                                                                           |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`size_average`            | null                   | (bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True                                                                  |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`ignore_index`            | -100                   | (int, optional) – Specifies a target value that is ignored and does not contribute to the input gradient. When size_average is True, the loss is averaged over non-ignored targets. Note that ignore_index is only applicable when the target contains class indices.                                                                                                                                 |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`reduce`                  | null                   | (bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True                                                                                                                                  |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`reduction`               | "mean"                 | (str, optional) – Specifies the reduction to apply to the output: 'none' | 'mean' | 'sum'. 'none': no reduction will be applied, 'mean': the weighted mean of the output is taken, 'sum': the output will be summed. Note: size_average and reduce are in the process of being deprecated, and in the meantime, specifying either of those two args will override reduction. Default: 'mean'          |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`label_smoothing`         | 0                      | (float, optional) – A float in [0.0, 1.0]. Specifies the amount of smoothing when computing the loss, where 0.0 means no smoothing. The targets become a mixture of the original ground truth and a uniform distribution as described in Rethinking the Inception Architecture for Computer Vision. Default: 0.0.                                                                                     |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          | :mod`valid_criterion`                                           | "CrossEntropyLoss"     |                                                                                                                                                                                                                                                                                                                                                                                                       |
+      +--------------------------+-----------------------------------------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          | :mod`valid_criterion_params`                                    |                        |                                                                                                                                                                                                                                                                                                                                                                                                       |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`weight`                  | null                   | (Tensor, optional) – a manual rescaling weight given to each class. If given, has to be a Tensor of size C.                                                                                                                                                                                                                                                                                           |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`size_average`            | null                   | (bool, optional) – Deprecated (see reduction). By default, the losses are averaged over each loss element in the batch. Note that for some losses, there are multiple elements per sample. If the field size_average is set to False, the losses are instead summed for each mini-batch. Ignored when reduce is False. Default: True                                                                  |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`ignore_index`            | -100                   | (int, optional) – Specifies a target value that is ignored and does not contribute to the input gradient. When size_average is True, the loss is averaged over non-ignored targets. Note that ignore_index is only applicable when the target contains class indices.                                                                                                                                 |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`reduce`                  | null                   | (bool, optional) – Deprecated (see reduction). By default, the losses are averaged or summed over observations for each mini-batch depending on size_average. When reduce is False, returns a loss per batch element instead and ignores size_average. Default: True                                                                                                                                  |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`reduction`               | "mean"                 | (str, optional) – Specifies the reduction to apply to the output: 'none' | 'mean' | 'sum'. 'none': no reduction will be applied, 'mean': the weighted mean of the output is taken, 'sum': the output will be summed. Note: size_average and reduce are in the process of being deprecated, and in the meantime, specifying either of those two args will override reduction. Default: 'mean'          |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+      |                          |                                 | :mod`label_smoothing`         | 0                      | (float, optional) – A float in [0.0, 1.0]. Specifies the amount of smoothing when computing the loss, where 0.0 means no smoothing. The targets become a mixture of the original ground truth and a uniform distribution as described in Rethinking the Inception Architecture for Computer Vision. Default: 0.0.                                                                                     |
+      +--------------------------+---------------------------------+-------------------------------+------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
    .. tab:: Stores
 
-      .. raw:: html 
+      Config used in saving model artifacts.
 
-         <p>Config used in saving model artifacts.</p>
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">stores</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">project_name</span></code></td>
-                        <td><p class="grey">${project_name}</p></td>
-                        <td><p>For used in model artifacts directory. Reference from main config file.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">unique_id</span></code></td>
-                        <td><p class="grey">${stores.unique_id}</p></td>
-                        <td><p>For used in model artifacts directory. Reference from store config file.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">model_artifacts_dir</span></code></td>
-                        <td><p class="grey">"./outputs/${project_name}/${stores.unique_id}/"</p></td>
-                        <td><p>The path to store the model artifacts.</p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +-----------------------------------------------------------------+-----------------------------------------------------------------+-----------------------------------------------------------------------------------+
+      | Key                                                             | Value                                                           | Description                                                                       |
+      +=================================================================+=================================================================+===================================================================================+
+      | :mod:`stores`                                                   |                                                                 |                                                                                   |
+      +------------------------------+----------------------------------+-----------------------------------------------------------------+-----------------------------------------------------------------------------------+
+      |                              | :grey:`project_name`             | :grey:`${project_name}`                                         | For used in model artifacts directory. Reference from main config file.           |
+      +------------------------------+----------------------------------+-----------------+-----------------------------------------------+-----------------------------------------------------------------------------------+
+      |                              | :grey:`unique_id`                | :grey:`${stores.unique_id}`                                     | For used in model artifacts directory. Reference from store config file.          |
+      +------------------------------+----------------------------------+-----------------------------------------------------------------+-----------------------------------------------------------------------------------+
+      |                              | :grey:`model_artifacts_dir`      | :grey:`"./outputs/${project_name}/${stores.unique_id}/"`        | The path to store the model artifacts.                                            |
+      +------------------------------+----------------------------------+-----------------------------------------------------------------+-----------------------------------------------------------------------------------+
+
