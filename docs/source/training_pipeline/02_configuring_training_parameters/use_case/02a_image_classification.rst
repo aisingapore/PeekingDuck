@@ -479,7 +479,7 @@ Model
 
 .. tabs::
 
-   .. tab:: Pytorch
+   .. tab:: PyTorch
 
       Config File : ``peekingduck/training/configs/model/classification.yaml``
 
@@ -628,7 +628,7 @@ Trainer
 
 .. tabs::
 
-   .. tab:: Pytorch
+   .. tab:: PyTorch
 
       .. include:: /training_pipeline/02_configuring_training_parameters/trainer/pytorch_config.rst
 
@@ -647,7 +647,7 @@ Metrics
 
 .. tabs::
 
-   .. tab:: Pytorch
+   .. tab:: PyTorch
 
         | Refer to `Torch Metrics <https://torchmetrics.readthedocs.io/en/stable/all-metrics.html>`_ documentation for more metrics you can use and their details.
         | Values listed here are taken from the torch metrics api. It is important to note that the values are case-sensitive.
@@ -736,7 +736,7 @@ Callbacks
 
 .. tabs::
 
-   .. tab:: Pytorch
+   .. tab:: PyTorch
 
         These are the only available callbacks currently. It is important to note that the callbacks are automatically sorted (as per the list sequence below) during initialization:
 

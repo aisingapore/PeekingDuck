@@ -9,7 +9,7 @@ Overview
 ==============
 
 Training custom computer vision models with custom datasets is a crucial aspect 
-of building computer vision solutions. Peeking Duck simplifies this process by 
+of building computer vision solutions. PeekingDuck simplifies this process by 
 eliminating the need for writing boilerplate code. In this section, we will 
 explore the key features of the training pipeline and provide a guide on getting 
 started. Subsequent sections will demonstrate how to train your own model using 
@@ -39,9 +39,9 @@ Features
    Refer to :ref:`configuring_training_parameters` for more details.
 
 * Analyze right after training
-   PeekingDuck uses Weights & Biases to analyze and visualize the training 
+   PeekingDuck uses `Weights & Biases to analyze <https://wandb.ai/site>`_ and visualize the training 
    process and performances of the saved models.
-   Refer to the :ref:`setting-up-weights-and-biases` section below for more
+   Refer to the :ref:`Setting Up Weights and Biases` section below for more
    details.
 
 
@@ -55,7 +55,7 @@ TensorFlow. The architecture diagram is shown below:
 
 The general workflow when using the training pipeline is:
 
-#. Organize training data with the required format in the designated directory.
+#. Organize training dataset with the required format in the designated directory.
 #. Customize training parameters, if necessary.
 #. Start model training from the terminal.
 
@@ -206,8 +206,8 @@ Install PeekingDuck Training Pipeline
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:
-            `conda env create -f peekingduck/training/requirements_mac.yaml` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`conda env create -f peekingduck/training/requirements_mac.yaml` \
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
             :green:`conda activate pkd-training` \
 
@@ -215,15 +215,19 @@ Install PeekingDuck Training Pipeline
 
       .. admonition:: Terminal Session
 
-         | \ :blue:`[~user/PeekingDuck]` \ > \ :green:
-            `bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
 
-.. _setting-up-weights-and-biases:
 
+
+
+.. _Setting Up Weights and Biases:
+
+===========================
 Setting Up Weights & Biases
----------------------------
+===========================
 
-Follow the steps below to get configure weights & biases:
+Follow the steps below to configure weights & biases:
 
 1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your 
    wandb account. 
@@ -236,12 +240,16 @@ Follow the steps below to get configure weights & biases:
 
    | \ :blue:`[~user]` \ > \ :green:`pip install wandb` \
 
-3. Login to the wandb library on your machine with the API key. You will find 
+3. Login to the wandb library on your machine with the API key. You can find 
    your API key `here <https://wandb.ai/authorize>`_
 
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user]` \ > \ :green:`wandb login` \
+   | \ :green:`wandb: Logging into wandb.ai.`
+   | \ :green:`wandb: You can find your API key in your browser here: https://wandb.ai/authorize`
+   | \ :green:`wandb: Paste an API key from your profile and hit enter, or press ctrl+c to quit:` 
+   | \ :green:`wandb: Appending key for api.wandb.ai to your netrc file: /Users/.netrc`
 
 Refer to the `wandb quick start guide <https://docs.wandb.ai/quickstart>`_ 
 for more details.
@@ -249,11 +257,12 @@ for more details.
 If you prefer private hosting instead, refer to the `hosting guide 
 <https://docs.wandb.ai/guides/hosting>`_ to set up private hosting.
 
-Also, if you prefer not to use Weights & Biases, you can disable it as such:
+Also, if you prefer not to use Weights & Biases, you can disable using the following command:
 
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user]` \ > \ :green:`wandb disable` \
+
 
 .. _getting-started-test-run:
 

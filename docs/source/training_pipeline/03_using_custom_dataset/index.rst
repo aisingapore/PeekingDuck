@@ -34,7 +34,7 @@ Image to Label Mapping
 | `class_name`      | `string`         | image class name      |
 +-------------------+------------------+-----------------------+
 
-Below is an example of the csv file using the vegfru dataset:
+Below is a snippet example of the csv file using used in the `vegfru <https://github.com/ustc-vim/vegfru>`_ dataset:
 
 +--------------------------------------------------------------+----------+-------------------+
 | image_path                                                   | class_id | class_name        |
@@ -180,5 +180,4 @@ Test for PyTorch:
 View the results of each run at the specified output folder directory :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, \
 where the default value of the :mod:`<PROJECT_NAME>` is defined in the :ref:`config-files-mainconfig`.
 
-
-This is the end of the documentation for the training pipeline. The next section will describe the PeekingDuck ecosystem.
+You can refer to :ref:`configuring_training_parameters` for more details on how to customize your training parameters.
