@@ -20,7 +20,7 @@ Image Classification
 Overview
 ========
 
-We use the yaml syntax for the config file. Below shows the folder structure and describes how users can understand and navigate the config structure. 
+We use the YAML syntax for the config file. Below shows the folder structure and describes how users can understand and navigate the config structure. 
 Configuration files that are not user-customizable are not included in the table below.
 
 .. parsed-literal::
@@ -95,18 +95,18 @@ Configuration files that are not user-customizable are not included in the table
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 | trainer                            | Control training related parameters including number of epochs,                                   |
 |                                    |                                                                                                   |
-|                                    | learning rate, loss function, metric and patience for early stopping                               |
+|                                    | learning rate, loss function, metric and patience for early stopping                              |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 | metrics                            | Choose training metrics to monitor during training                                                |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
 
 There are two ways to change the default configuration:
 
-1. Update the parameter values inside yaml file for the respective configuration
+1. Update the parameter values inside YAML file for the respective configuration
 
-2. Pass the argument in command line.
+2. Pass the argument in the command line.
 
-For the second option, user can pass the arguments explicitly stated in the main `config.yaml` file directly in the command line, such as follows:
+For the second option, you can pass the arguments explicitly stated in the main `config.yaml` file directly in the command line, such as follows:
 
 .. code-block:: bash
    :linenos: 
@@ -133,7 +133,7 @@ Refer to the following sections to learn about the detailed configurations for c
 Main Config
 ===========
 
-Config File : ``peekingduck/training/configs/config.yaml``
+Config File: ``peekingduck/training/configs/config.yaml``
 
 +--------------------------------------------------------------------------------------+----------------------------------------------------------+-------------------------------------------------------------------------------------+
 | Key                                                                                  | Value                                                    | Description                                                                         |
@@ -205,7 +205,7 @@ Config File : ``peekingduck/training/configs/data_module/resample/train_test_spl
 +--------------------------+------------------------------+----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                          | :mod:`_target_`              | sklearn.model_selection.train_test_split           | Quick utility that wraps input validation, next(ShuffleSplit().split(X, y)), and application to input data into a single call for splitting (and optionally sub-sampling) data into a one-liner.                                                                                                        |
 +--------------------------+------------------------------+----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-|                          | :mod:`_partial_`             | True                                               | Partial initialization of function to allow stratify in dataset.                                                                                                                                                                                                                                        |
+|                          | :mod:`_partial_`             | True                                               | Partial initialization of function to allow stratify in the dataset.                                                                                                                                                                                                                                    |
 +--------------------------+------------------------------+----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 |                          | :mod:`test_size`             | 0.125                                              | If float, should be between 0.0 and 1.0 and represent the proportion of the dataset to include in the test split. If int, represents the absolute number of test samples. If None, the value is set to the complement of the train size. If train_size is also None, it will be set to 0.25.            |
 +--------------------------+------------------------------+----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -238,17 +238,24 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 
    .. tab:: Cifar10
 
-      | https://www.cs.toronto.edu/~kriz/cifar.html. The CIFAR-10 dataset consists of 60000 32x32 color images in 10 classes, with 6000 images per class. There are 50000 training images and 10000 test images. The dataset is divided into five training batches and one test batch, each with 10000 images. The test batch contains exactly 1000 randomly-selected images from each class. The training batches contain the remaining images in random order, but some training batches may contain more images from one class than another. Between them, the training batches contain exactly 5000 images from each class.
+      | https://www.cs.toronto.edu/~kriz/cifar.html. The CIFAR-10 dataset 
+      consists of 60000 32x32 color images in 10 classes, with 6000 images per class. 
+      There are 50000 training images and 10000 test images. The dataset is 
+      divided into five training batches and one test batch, each with 10000 images. 
+      The test batch contains exactly 1000 randomly-selected images from each class. 
+      The training batches contain the remaining images in random order, but some training 
+      batches may contain more images from one class than another. Between them, 
+      the training batches contain exactly 5000 images from each class.
 
       | You can download the dataset here : `dataset/cifar-10`_
-      | You can download the labels csv file here : `csv/cifar-10`_
+      | You can download the labels CSV file here : `csv/cifar-10`_
 
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
         | Key                           | Value                                                                                                                  | Description                                                                    |
         +===============================+========================================================================================================================+================================================================================+
-        | :mod:`download`               | FALSE                                                                                                                  | Download from url below                                                        |
+        | :mod:`download`               | FALSE                                                                                                                  | Download from URL below                                                        |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`url`                    | `https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>`_   | URL to download dataset                                                        |
+        | :mod:`url`                    | `https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz <https://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz>`_   | URL to download the dataset                                                    |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
         | :mod:`blob_file`              | "cifar10.zip"                                                                                                          |                                                                                |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
@@ -260,21 +267,21 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
         | :mod:`train_csv`              | "./${.root_dir}/${project_name}/train.csv"                                                                             |                                                                                |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`image_path_col_name`    | "image_path"                                                                                                           | csv file column name to image path. Allow absolute path or relative path.      |
+        | :mod:`image_path_col_name`    | "image_path"                                                                                                           | CSV file column name to image path. Allow absolute path or relative path.      |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`target_col_name`        | "class_name"                                                                                                           | csv file column name to target string.                                         |
+        | :mod:`target_col_name`        | "class_name"                                                                                                           | CSV file column name to target string.                                         |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`target_col_id`          | "class_id"                                                                                                             | csv file column name to target integer.                                        |
+        | :mod:`target_col_id`          | "class_id"                                                                                                             | CSV file column name to target integer.                                        |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`stratify_by`            | "${.target_col_name}"                                                                                                  | csv file column name to be stratify by.                                        |
+        | :mod:`stratify_by`            | "${.target_col_name}"                                                                                                  | CSV file column name to be stratify by.                                        |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
         | :mod:`classification_type`    | "multiclass"                                                                                                           | Task type.                                                                     |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`image_size`             | 224                                                                                                                    | resized image pixel size.                                                      |
+        | :mod:`image_size`             | 224                                                                                                                    | Resized image pixel size.                                                      |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`num_classes`            | 10                                                                                                                     | number of classes.                                                             |
+        | :mod:`num_classes`            | 10                                                                                                                     | Number of classes.                                                             |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`class_name_to_id`       | airplane: 0                                                                                                            | dict mapping between target `string` and `integer`.                            |
+        | :mod:`class_name_to_id`       | airplane: 0                                                                                                            | Dictionary mapping between target `string` and `integer`.                      |
         |                               |                                                                                                                        |                                                                                |
         |                               | automobile: 1                                                                                                          |                                                                                |
         |                               |                                                                                                                        |                                                                                |
@@ -295,7 +302,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
         |                               | truck: 9                                                                                                               |                                                                                |
         |                               |                                                                                                                        |                                                                                |
         +-------------------------------+------------------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------+
-        | :mod:`classes`                | `-` airplane                                                                                                           | list of classes name                                                           |
+        | :mod:`classes`                | `-` airplane                                                                                                           | List of class labels                                                           |
         |                               |                                                                                                                        |                                                                                |
         |                               | `-` automobile                                                                                                         |                                                                                |
         |                               |                                                                                                                        |                                                                                |
@@ -320,17 +327,17 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 
    .. tab:: Vegfru
 
-      Based on dataset from https://github.com/ustc-vim/vegfru. For the paper "VegFru: A Domain-Specific Dataset for Fine-grained Visual Categorization".
+      Based on the dataset from https://github.com/ustc-vim/vegfru. For the paper "VegFru: A Domain-Specific Dataset for Fine-grained Visual Categorization".
 
-      | You can download the dataset here : `dataset/vegfru5`_ | `dataset/vegfru15`_ | `dataset/vegfru25`_
-      | You can download the labels csv file here : `csv/vegfru5`_ | `csv/vegfru15`_ | `csv/vegfru25`_
+      | You can download the dataset here : `dataset/vegfru`_
+      | You can download the labels CSV file here : `csv/vegfru5`_ | `csv/vegfru15`_ | `csv/vegfru25`_
       
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
         | Key                              | VegFru5                                              | VegFru15                                         | VegFru25                                   | Description                                                                   |
         +==================================+======================================================+==================================================+============================================+===============================================================================+
-        | :mod:`download`                  | FALSE                                                                                                                                                | Download from url below                                                       |
+        | :mod:`download`                  | FALSE                                                                                                                                                | Download from URL below                                                       |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`url`                       | ""                                                                                                                                                   | URL to download dataset                                                       |
+        | :mod:`url`                       | ""                                                                                                                                                   | URL to download the dataset                                                   |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
         | :mod:`blob_file`                 | "vegfru.zip"                                                                                                                                         |                                                                               |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
@@ -342,23 +349,23 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
         | :mod:`train_csv`                 | "./${.root_dir}/vegfru/vegfru5.csv"                  | "./${.root_dir}/vegfru/vegfru15.csv"             | "./${.root_dir}/vegfru/train.csv"          |                                                                               |
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`image_path_col_name`       | "image_path"                                                                                                                                         | csv file column name to image path. Allow absolute path or relative path.     |
+        | :mod:`image_path_col_name`       | "image_path"                                                                                                                                         | CSV file column name to image path. Allow absolute path or relative path.     |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`target_col_name`           | "class_name"                                                                                                                                         | csv file column name to target string.                                        |
+        | :mod:`target_col_name`           | "class_name"                                                                                                                                         | CSV file column name to target string.                                        |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`target_col_id`             | "class_id"                                                                                                                                           | csv file column name to target integer.                                       |
+        | :mod:`target_col_id`             | "class_id"                                                                                                                                           | CSV file column name to target integer.                                       |
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`stratify_by`               | class_id                                             | class_id                                         | class_name                                 | csv file column name to be stratify by.                                       |
+        | :mod:`stratify_by`               | class_id                                             | class_id                                         | class_name                                 | CSV file column name to be stratify by.                                       |
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
         | :mod:`classification_type`       | "multiclass"                                                                                                                                         | Task type.                                                                    |
         +----------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`image_size`                | 224                                                                                                                                                  | image pixel size.                                                             |
+        | :mod:`image_size`                | 224                                                                                                                                                  | Image pixel size.                                                             |
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`num_classes`               | 5                                                    | 15                                               | 25                                         | number of classes.                                                            |
+        | :mod:`num_classes`               | 5                                                    | 15                                               | 25                                         | Number of classes.                                                            |
         +----------------------------------+------------------------------------------------------+--------------------------------------------------+--------------------------------------------+-------------------------------------------------------------------------------+
-        | :mod:`class_name_to_id`          | "garlic": 0                                          | "garlic": 0                                      | "alliaceous": 0                            | dict mapping between target `string` and `integer`.                           |
+        | :mod:`class_name_to_id`          | "garlic": 0                                          | "garlic": 0                                      | "alliaceous": 0                            | Dictionary mapping between the class label and its id.                        |
         |                                  |                                                      |                                                  |                                            |                                                                               |
-        |                                  | "cattail": 1                                         | "cattail": 1                                     | "aquatic_vegetable": 1                     |                                                                               | 
+        |                                  | "cattail": 1                                         | "cattail": 1                                     | "aquatic_vegetable": 1                     | `string` and `integer`                                                        | 
         |                                  |                                                      |                                                  |                                            |                                                                               |
         |                                  | "soybean": 2                                         | "soybean": 2                                     | "beans": 2                                 |                                                                               |
         |                                  |                                                      |                                                  |                                            |                                                                               |
@@ -414,14 +421,14 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
       https://www.kaggle.com/competitions/rsna-breast-cancer-detection/data. The goal of this dataset is to identify cases of breast cancer in mammograms from screening exams. It is important to identify cases of cancer for obvious reasons, but false positives also have downsides for patients. As millions of women get mammograms each year, a useful machine learning tool could help a great many people.
 
       | You can download the dataset here : `dataset/rsna`_
-      | You can download the labels csv file here : `csv/rsna`_
+      | You can download the labels CSV file here : `csv/rsna`_
 
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
         | Key                            | Value                                              | Description                                                                |
         +================================+====================================================+============================================================================+
-        | :mod:`download`                | False                                              | Download from url below                                                    |
+        | :mod:`download`                | False                                              | Download from URL below                                                    |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`url`                     |                                                    | URL to download dataset                                                    |
+        | :mod:`url`                     | ""                                                 | URL to download the dataset                                                |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
         | :mod:`blob_file`               | "rsna.zip"                                         |                                                                            |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
@@ -433,40 +440,38 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
         | :mod:`train_csv`               | "./${.root_dir}/${project_name}/train.csv"         |                                                                            |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`image_path_col_name`     | "image_path"                                       | csv file column name to image path. Allow absolute path or relative path.  |
+        | :mod:`image_path_col_name`     | "image_path"                                       | CSV file column name to image path. Allow absolute path or relative path.  |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`target_col_name`         | "class_name"                                       | csv file column name to target string.                                     |
+        | :mod:`target_col_name`         | "class_name"                                       | CSV file column name to target string.                                     |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`target_col_id`           | "class_id"                                         | csv file column name to target integer.                                    |
+        | :mod:`target_col_id`           | "class_id"                                         | CSV file column name to target integer.                                    |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`stratify_by`             | "${.target_col_name}"                              | csv file column name to be stratify by.                                    |
+        | :mod:`stratify_by`             | "${.target_col_name}"                              | CSV file column name to be stratify by.                                    |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
         | :mod:`classification_type`     | "multiclass"                                       | Task type.                                                                 |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`image_size`              | 224                                                | resized image pixel size.                                                  |
+        | :mod:`image_size`              | 224                                                | Resized image pixel size.                                                  |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`num_classes`             | 2                                                  | number of classes.                                                         |
+        | :mod:`num_classes`             | 2                                                  | Number of classes.                                                         |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
-        | :mod:`class_name_to_id`        | benign: 0                                          | dict mapping between target `string` and `integer`.                        |
+        | :mod:`class_name_to_id`        | benign: 0                                          | Dictionary mapping between the class label and its id.                     |
         |                                |                                                    |                                                                            |
-        |                                | malignant: 1                                       |                                                                            |
+        |                                | malignant: 1                                       | `string` and `integer`                                                     |
         +--------------------------------+----------------------------------------------------+----------------------------------------------------------------------------+
 
 
 
 
-.. _`dataset/cifar-10`: https://www.cs.toronto.edu/~kriz/cifar.html#download
-.. _`csv/cifar-10`: https://raw.githubusercontent.com/aisingapore/PeekingDuck/feat-training/data/cifar10/train.csv
+.. _`dataset/cifar-10`: https://storage.googleapis.com/peekingduck/data/cifar10.zip
+.. _`csv/cifar-10`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/cifar10/train.csv
 
-.. _`dataset/vegfru5`: https://github.com/ustc-vim/vegfru#VegFru
+.. _`dataset/vegfru`: https://storage.googleapis.com/peekingduck/data/vegfru.zip
 .. _`csv/vegfru5`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru5.csv
-.. _`dataset/vegfru15`: https://github.com/ustc-vim/vegfru#VegFru
 .. _`csv/vegfru15`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru15.csv
-.. _`dataset/vegfru25`: https://github.com/ustc-vim/vegfru#VegFru
 .. _`csv/vegfru25`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/vegfru/vegfru25.csv
 
-.. _`dataset/rsna`: https://www.kaggle.com/competitions/rsna-breast-cancer-detection/data
-.. _`csv/rsna`: https://raw.githubusercontent.com/aisingapore/PeekingDuck/feat-training/data/rsna/train.csv
+.. _`dataset/rsna`: https://storage.googleapis.com/peekingduck/data/rsna.zip
+.. _`csv/rsna`: https://github.com/aisingapore/PeekingDuck/blob/feat-training/data/rsna/train.csv
 
 
 ----------
@@ -506,7 +511,7 @@ Model
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 | Refer to the `official docs <https://timm.fast.ai/#List-Models-with-Pretrained-Weights>`_ for advanced searching.                                                                                                                                                       |
         +------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-        | :mod:`weights`                                       | "DEFAULT"                                       | | Only applicable for :mod:`torchvision` adapter.                                                                                                                                                                                                                       |
+        | :mod:`weights`                                       | "DEFAULT"                                       | | Only applicable to :mod:`torchvision` adapters.                                                                                                                                                                                                                       |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 | | Set as :mod:`DEFAULT` (recommended) to use default pre-trained weights, or change to alternative pre-trained weights (if supported) described in the documentation for the specific model.                                                                            |
@@ -514,7 +519,7 @@ Model
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 | Refer to `mobilenet_v3_large <https://pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v3_large.html#torchvision.models.MobileNet_V3_Large_Weights>`_ for an example.                                                                            |
         +------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-        | :mod:`pretrained`                                    | True                                            | Only applicable for :mod:`timm` adapter.                                                                                                                                                                                                                                |
+        | :mod:`pretrained`                                    | True                                            | Only applicable to :mod:`timm` adapters.                                                                                                                                                                                                                                |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 | If set to :mod:`False`, the weights will be initialized randomly.                                                                                                                                                                                                       |
         +------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -534,21 +539,21 @@ Model
         |                                                      |                                                 | | Specify which block within the model to fine-tune, accessed by the name.                                                                                                                                                                                              |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
-        |                                                      |                                                 | | The settings will depend on the selected model, since each model architecture names the sub-modules differently.                                                                                                                                                      |
+        |                                                      |                                                 | | The settings will depend on the selected model since each model architecture names the sub-modules differently.                                                                                                                                                       |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 | | The sub-keys are the name of the modules to fine-tune, which can be viewed in the model print-out when setting :mod:`view_only` to :mod:`True` in the main configuration file.                                                                                        |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
         |                                                      |                                                 |                                                                                                                                                                                                                                                                         |
-        |                                                      |                                                 | The values represent the layer/sub-modules to fine-tune, which can be an integer or a list of string. For an integer "n", it sets the last "n" layer/sub-modules to fine-tune. For a list of string, it sets the layer/sub-modules to fine-tune by names.               |
+        |                                                      |                                                 | The values represent the layer/sub-modules to fine-tune, which can be an integer or a list of strings. For an integer "n", it sets the last "n" layer/sub-modules to fine-tune. For a list of strings, it sets the layer/sub-modules to fine-tune by names.             |
         +------------------------------+-----------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         |                              | :mod:`features`       | 7                                               | This is an example value. For "vgg16" model,                                                                                                                                                                                                                            |
         |                              |                       |                                                 |                                                                                                                                                                                                                                                                         |
-        |                              |                       |                                                 | it will set the last :mod:`7` layers within the :mod:`feature` module as trainable                                                                                                                                                                                      |
+        |                              |                       |                                                 | this will set the last :mod:`7` layers within the :mod:`feature` module as trainable                                                                                                                                                                                    |
         +------------------------------+-----------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         |                              | :mod:`pre_logits`     | [ "fc1", "act1", "drop", "fc2", "act2" ]        | This is an example value. For "vgg16" model,                                                                                                                                                                                                                            |
         |                              |                       |                                                 |                                                                                                                                                                                                                                                                         |
-        |                              |                       |                                                 | it will set the :mod:`"fc1", "act1", "drop", "fc2", "act2"` modules as trainable                                                                                                                                                                                        |
+        |                              |                       |                                                 | this will set the :mod:`"fc1", "act1", "drop", "fc2", "act2"` modules as trainable                                                                                                                                                                                      |
         +------------------------------+-----------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
         | :grey:`num_classes`                                  | :grey:`${data_module.dataset.num_classes}`      | :grey:`Should not be changed. For hydra interpolation.`                                                                                                                                                                                                                 |
         +------------------------------------------------------+-------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+

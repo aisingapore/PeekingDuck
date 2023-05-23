@@ -14,15 +14,15 @@
         +============================================================================================+========================================================+====================================================================================================================================================+
         | :mod:`global_train_params`                                                                 |                                                        |                                                                                                                                                    |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-        |                                    | :grey:`manual_seed`                                   | :grey:`${random_state}`                                | Random seed. Default value will reference directly from main config file.                                                                          |
+        |                                    | :grey:`manual_seed`                                   | :grey:`${random_state}`                                | Random seed. Default value will reference directly from the main config file.                                                                      |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
         |                                    | :mod:`epochs`                                         | 10                                                     | Number of epochs to train                                                                                                                          |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
         |                                    | :mod:`patience`                                       | 3                                                      | Main reference value for early stopping patience count.                                                                                            |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-        |                                    | :grey:`model_name`                                    | :grey:`${model.pytorch.model_name}`                    | Use for printing to logs. Default value will reference directly from model config.                                                                 |
+        |                                    | :grey:`model_name`                                    | :grey:`${model.pytorch.model_name}`                    | Use for printing to logs. Default value will reference directly from the model config.                                                             |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-        |                                    | :grey:`debug`                                         | :grey:`${debug}`                                       | Flag for checking if debug is set to True of False. Reference directly from main config file.                                                      |
+        |                                    | :grey:`debug`                                         | :grey:`${debug}`                                       | Flag for checking if debug is set to True or False. Reference directly from the main config file.                                                  |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
         |                                    | :mod:`debug_epochs`                                   | 3                                                      | When debug is set to True, this value will be used for training.                                                                                   |
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -30,13 +30,13 @@
         +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
         |                                    | :mod:`monitored_metric`                               |                                                        |                                                                                                                                                    |
         +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-        |                                    |                                 | :mod:`monitor`      | val_MulticlassAccuracy                                 | The metric used for monitoring the best validation score. This should be one of the keys in metrics list with a 'val_' prefix.                     |
+        |                                    |                                 | :mod:`monitor`      | val_MulticlassAccuracy                                 | The metric used for monitoring the best validation score. This should be one of the keys in the metrics list with a 'val_' prefix.                 |
         +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
         |                                    |                                 | :mod:`mode`         | max                                                    | "min" | "max"                                                                                                                                      |
         |                                    |                                 |                     |                                                        |                                                                                                                                                    |
-        |                                    |                                 |                     |                                                        | In min mode, training will stop when the quantity monitored has stopped decreasing.                                                                |
+        |                                    |                                 |                     |                                                        | In "min" mode, training will stop when the quantity monitored has stopped decreasing.                                                              |
         |                                    |                                 |                     |                                                        |                                                                                                                                                    |
-        |                                    |                                 |                     |                                                        | In ""max"" mode it will stop when the quantity monitored has stopped increasing."                                                                  |
+        |                                    |                                 |                     |                                                        | In "max" mode it will stop when the quantity monitored has stopped increasing."                                                                    |
         +------------------------------------+---------------------------------+---------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 
@@ -69,7 +69,7 @@
 
    .. tab:: Scheduler
 
-      These parameters will be used for initializing the scheduler. Implemented using the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ package. Refer to `PyTorch Optimizer Learning Rate <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ for scheduler choices. Scheduler is defaulted to null.
+      These parameters will be used for initializing the scheduler. Implemented using the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ package. Refer to `PyTorch Optimizer Learning Rate <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ for scheduler choices. By default, no scheduler is used.
 
       +------------------------------------------------------------+-----------------+-----------------------------+
       | Key                                                        | Value           | Description                 |
@@ -81,7 +81,7 @@
       |                              | :mod:`scheduler_params`     | null            |                             |
       +------------------------------+-----------------------------+-----------------+-----------------------------+
 
-      Any of the scheduler listed in the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ method can be used. Below is an example using a OneCycleLR scheduler:
+      Any of the schedulers listed in the `torch.optim.lr_scheduler <https://pytorch.org/docs/stable/optim.html#how-to-adjust-learning-rate>`_ method can be used. Below is an example using the OneCycleLR scheduler:
 
       +----------------------------------------------------------------------------------+-----------------+-----------------------------+
       | Key                                                                              | Value           | Description                 |
@@ -143,7 +143,7 @@
 
    .. tab:: Stores
 
-      Config used in saving model artifacts.
+      Configuration used for saving model artifacts.
 
       +-----------------------------------------------------------------+-----------------------------------------------------------------+-----------------------------------------------------------------------------------+
       | Key                                                             | Value                                                           | Description                                                                       |

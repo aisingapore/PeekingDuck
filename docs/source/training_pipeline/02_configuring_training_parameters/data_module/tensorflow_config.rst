@@ -102,13 +102,13 @@
    .. tab:: Transform
 
       * Train
-      | Transformation to be applied to training dataset.
+      | Transformation to be applied to the training dataset.
       | Config File : ``peekingduck/training/configs/data_module/transform/train.yaml``      
 
       +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
       | Key                                                  | Value                                                                 | Description                                                                                             |
       +======================================================+=======================================================================+=========================================================================================================+
-      | :mod:`_target_`                                      | albumentations.augmentations.crops.transforms.RandomResizedCrop       | Torchvision's variant of crop a random part of the input and rescale it to some size.                   |
+      | :mod:`_target_`                                      | albumentations.augmentations.crops.transforms.RandomResizedCrop       | Torchvision's variant of cropping a random part of the input and rescaling it to some size.             |
       +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
       |                              | :grey:`height`        | :grey:`${data_module.dataset.image_size}`                             |                                                                                                         |
       +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
@@ -128,7 +128,7 @@
       +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 
       * Test
-      | Transformation to be applied to test and validation dataset.
+      | Transformation to be applied to the test and validation dataset.
       | Config File : ``peekingduck/training/configs/data_module/transform/test.yaml``
 
       +------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+

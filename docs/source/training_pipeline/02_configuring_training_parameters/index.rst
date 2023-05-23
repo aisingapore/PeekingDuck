@@ -6,7 +6,7 @@
 Configuring Training Parameters
 *******************************
 
-This section describes how you can configure the pipeline to suite your model training.
+This section describes how you can configure the pipeline to suit your model training.
 
 
 Documentation Convention
