@@ -5,7 +5,7 @@ Overview
 ********
 
 ==============
- Introduction 
+Introduction
 ==============
 
 Training custom computer vision models with custom datasets is a crucial aspect 
@@ -39,8 +39,8 @@ Features
    Refer to :ref:`configuring_training_parameters` for more details.
 
 * Analyze model performance after training
-   PeekingDuck uses `Weights & Biases <https://wandb.ai/site>`_ to analyze and visualize the training 
-   process and performances of the saved models.
+   PeekingDuck uses `Weights & Biases <https://wandb.ai/site>`_ to analyze and 
+   visualize the training process and performances of the saved models.
    Refer to the :ref:`Setting Up Weights and Biases` section below for more
    details.
 
@@ -55,7 +55,8 @@ TensorFlow. The architecture diagram is shown below:
 
 The general workflow when using the training pipeline is:
 
-#. Organize the training dataset with the required format in the designated directory.
+#. Organize the training dataset with the required format in the designated 
+   directory.
 #. Customize training parameters, if necessary.
 #. Start model training from the terminal.
 
@@ -72,8 +73,9 @@ It is highly recommended to create a new conda environment as instructed below,
 to avoid package conflicts and unexpected behaviors when running from an 
 existing conda environment.
 
+
 Install PeekingDuck Training Pipeline
--------------------------------------
+=====================================
 
 .. tabs::
 
@@ -223,7 +225,6 @@ Install PeekingDuck Training Pipeline
 
 .. _Setting Up Weights and Biases:
 
-===========================
 Setting Up Weights & Biases
 ===========================
 
@@ -246,10 +247,10 @@ Follow the steps below to configure weights & biases:
 .. admonition:: Terminal Session
 
    | \ :blue:`[~user]` \ > \ :green:`wandb login` \
-   | \ :green:`wandb: Logging into wandb.ai.`
-   | \ :green:`wandb: You can find your API key in your browser here: https://wandb.ai/authorize`
-   | \ :green:`wandb: Paste an API key from your profile and hit enter, or press ctrl+c to quit:` 
-   | \ :green:`wandb: Appending key for api.wandb.ai to your netrc file: /Users/.netrc`
+   | Logging into wandb.ai.
+   | You can find your API key in your browser here: https://wandb.ai/authorize
+   | Paste an API key from your profile and hit enter, or press ctrl+c to quit: 
+   | Appending key for api.wandb.ai to your netrc file: /Users/.netrc
 
 Refer to the `wandb quick start guide <https://docs.wandb.ai/quickstart>`_ 
 for more details.
@@ -266,7 +267,6 @@ Also, if you prefer not to use Weights & Biases, you can disable using the follo
 
 .. _getting-started-test-run:
 
-========
 Test Run
 ========
 
