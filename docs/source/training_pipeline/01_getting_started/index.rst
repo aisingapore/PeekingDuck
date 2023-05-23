@@ -29,17 +29,17 @@ Features
    and `PyTorch 
    <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
 
-* Train with your own data
-   PeekingDuck supports data loading and model training on your own dataset. 
+* Train with your data
+   PeekingDuck supports data loading and model training on your dataset. 
    Refer to :ref:`using_custom_dataset` for more details.
 
 * Customize training parameters
    With PeekingDuck, you can easily configure various training parameters via 
-   configuration yaml files or command line arguments. 
+   configuration YAML files or command line arguments. 
    Refer to :ref:`configuring_training_parameters` for more details.
 
-* Analyze right after training
-   PeekingDuck uses `Weights & Biases to analyze <https://wandb.ai/site>`_ and visualize the training 
+* Analyze model performance after training
+   PeekingDuck uses `Weights & Biases <https://wandb.ai/site>`_ to analyze and visualize the training 
    process and performances of the saved models.
    Refer to the :ref:`Setting Up Weights and Biases` section below for more
    details.
@@ -55,7 +55,7 @@ TensorFlow. The architecture diagram is shown below:
 
 The general workflow when using the training pipeline is:
 
-#. Organize training dataset with the required format in the designated directory.
+#. Organize the training dataset with the required format in the designated directory.
 #. Customize training parameters, if necessary.
 #. Start model training from the terminal.
 
@@ -88,7 +88,7 @@ Install PeekingDuck Training Pipeline
             - `Latest Compatible Nvidia Display Driver for your
               system <https://www.nvidia.com/download/index.aspx>`_
             - Do not install CUDA Toolkit and cuDNN at this stage. 
-              They are bundled with PyTorch when installed by pip, 
+              They are bundled with PyTorch when installed by pip 
               and will be installed via conda for TensorFlow.
       
       **Install for CPU**
@@ -139,7 +139,7 @@ Install PeekingDuck Training Pipeline
               <https://www.nvidia.com/download/index.aspx>`_
             - `WSL2 <https://learn.microsoft.com/en-us/windows/wsl/install>`_
             - No need to install CUDA Toolkit and cuDNN at this stage. They are 
-              bundled with PyTorch when installed by pip, and will be installed 
+              bundled with PyTorch when installed by pip and will be installed 
               via conda for TensorFlow.
 
       **Install for CPU**
@@ -271,7 +271,7 @@ Test Run
 ========
 
 You can test the training pipeline with the default :mod:`cifar10` dataset using 
-the following commands in terminal:
+the following commands in the terminal:
 
 .. admonition:: Terminal Session
 

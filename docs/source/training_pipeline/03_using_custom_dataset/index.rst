@@ -9,7 +9,7 @@ Using Custom Dataset
 Introduction
 ============
 
-If you have already collected your own dataset, the following section describes \
+If you have already collected your dataset, the following section describes \
 how you can prepare your dataset, connect it to the training pipeline and use \
 it for training a model.
 
@@ -21,18 +21,18 @@ Setup
 Image to Label Mapping
 ----------------------
 
-| The table below describe the columns needed to create the csv file which will be used by the training pipeline to map your images to their labels.
-| `image_path`, `class_id` and  `class_name` are required columns in the `csv` file.
+| The table below describes the columns needed to create the CSV file which will be used by the training pipeline to map your images to their labels.
+| `image_path`, `class_id` and  `class_name` are required columns in the `CSV` file.
 
-+-------------------+------------------+-----------------------+
-| Columns           | Data type        | Description           |
-+===================+==================+=======================+
-| `image_path`      | `string`         | path to image file    |
-+-------------------+------------------+-----------------------+
-| `class_id`        | `integer`        | image class           |
-+-------------------+------------------+-----------------------+
-| `class_name`      | `string`         | image class name      |
-+-------------------+------------------+-----------------------+
++-------------------+------------------+---------------------------+
+| Columns           | Data type        | Description               |
++===================+==================+===========================+
+| `image_path`      | `string`         | path to the image file    |
++-------------------+------------------+---------------------------+
+| `class_id`        | `integer`        | image class               |
++-------------------+------------------+---------------------------+
+| `class_name`      | `string`         | image class name          |
++-------------------+------------------+---------------------------+
 
 Below is a snippet example of the csv file using used in the `vegfru <https://github.com/ustc-vim/vegfru>`_ dataset:
 
@@ -78,11 +78,58 @@ It is important to note that :mod:`<your_dataset_folder>` should be the same val
             └── <image_to_label_map>.csv
 
 
+.. _03-config-folder-structure:
+
+Configuration Folder Structure
+------------------------------
+
+Below shows the folder structure and describes how you can understand and navigate the config structure. 
+
+.. parsed-literal::
+
+    \ :blue:`peekingduck/training/configs/` \ |Blank|
+          ├── \ :blue:`callbacks/` \ |Blank|
+          │      └── classification.yaml
+          ├── \ :blue:`data_module/` \ |Blank|
+          │      ├── \ :blue:`data_adapter/` \ |Blank|
+          │      │      └── adapter.yaml
+          │      ├── \ :blue:`dataset/` \ |Blank|
+          │      │      ├── cifar10.yaml
+          │      │      ├── rsna.yaml
+          │      │      ├── vegfru5.yaml
+          │      │      ├── vegfru15.yaml
+          │      │      └── vegfru25.yaml
+          │      ├── \ :blue:`resample/` \ |Blank|
+          │      │      └── train_test_split.yaml
+          │      ├── \ :blue:`transform/` \ |Blank|
+          │      │      ├── test.yaml
+          │      │      └── train.yaml
+          │      ├── cifar10.yaml
+          │      ├── rsna.yaml
+          │      ├── vegfru5.yaml
+          │      ├── vegfru15.yaml
+          │      └── vegfru25.yaml
+          ├── \ :blue:`hydra/` \ |Blank|
+          │      └── \ :blue:`job_logging/` \ |Blank|
+          │             └── custom.yaml
+          ├── \ :blue:`metrics/` \ |Blank|
+          │      └── classification.yaml
+          ├── \ :blue:`model/` \ |Blank|
+          │      └── classification.yaml
+          ├── \ :blue:`model_analysis/` \ |Blank|
+          │      └── classification.yaml
+          ├── \ :blue:`stores/` \ |Blank|
+          │      └── classification.yaml
+          ├── \ :blue:`trainer/` \ |Blank|
+          │      └── classification.yaml
+          └── config.yaml
+
+
 Configuration Files
 -------------------
 
 | After preparing your data folder, you will need to create and edit the configuration files to connect your dataset to the training pipeline:
-| For better understanding of which configuration files to change, you can refer to the directory tree at :ref:`config-files-overview`
+| For better understanding of which configuration files to change, you can refer to the directory tree at :ref:`03-config-folder-structure`
 
 
 a) dataset_filename.yaml
