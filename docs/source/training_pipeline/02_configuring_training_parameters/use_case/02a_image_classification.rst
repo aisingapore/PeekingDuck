@@ -655,7 +655,7 @@ Metrics
    .. tab:: PyTorch
 
         | Refer to `Torch Metrics <https://torchmetrics.readthedocs.io/en/stable/all-metrics.html>`_ documentation for more metrics you can use and their details.
-        | Values listed here are taken from the torch metrics api. It is important to note that the values are case-sensitive.
+        | Values listed here are taken from the torch metrics API. It is important to note that the values are case-sensitive.
         | The table below shows the default metrics:
  
 
@@ -702,7 +702,7 @@ Metrics
    .. tab:: TensorFlow
 
         | Refer to the `TensorFlow v2 Metrics <https://www.tensorflow.org/api_docs/python/tf/keras/metrics>`_ documentation for more metrics you can use and their details.
-        | Values listed here are taken from the tensorflow keras metrics api. It is important to note that the values are case-sensitive.
+        | Values listed here are taken from the TensorFlow Keras metrics API. It is important to note that the values are case-sensitive.
         | The table below shows the default metrics:
 
 
@@ -764,7 +764,7 @@ Callbacks
         +---------------------------+-----------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
         |                           | :grey:`patience`      | :grey:`${trainer.pytorch.global_train_params.patience}`                   | Number of epochs with no improvement after which training will be stopped.               |
         +---------------------------+-----------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-        |                           | :grey:`monitor`       | :grey:`${trainer.pytorch.global_train_params.monitored_metric.monitor}`   | Name of the metric to monitor, should be one of the keys in metrics list.                |
+        |                           | :grey:`monitor`       | :grey:`${trainer.pytorch.global_train_params.monitored_metric.monitor}`   | Name of the metric to monitor, should be one of the keys in the metrics list.            |
         +---------------------------+-----------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
         |                           | :grey:`mode`          | :grey:`${trainer.pytorch.global_train_params.monitored_metric.mode}`      | | "min" or "max"                                                                         |
         |                           |                       |                                                                           |                                                                                          |
@@ -784,7 +784,7 @@ Callbacks
         |                                                   |                                                                           |                                                                                          |
         |                                                   |                                                                           | So, the average score is the average of all batches in the dataloader.                   |
         |                                                   |                                                                           |                                                                                          |
-        |                                                   |                                                                           | for eg, if train set has 1000 samples and batch size is 100,                             |
+        |                                                   |                                                                           | for eg, if the train set has 1000 samples and the batch size is 100,                     |
         |                                                   |                                                                           |                                                                                          |
         |                                                   |                                                                           | then the model will have traversed through 10 batches in 1 epoch.                        |
         |                                                   |                                                                           |                                                                                          |
@@ -798,7 +798,7 @@ Callbacks
         +---------------------------------------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
         | :mod:`ModelCheckpoint`                            |                                                                           | Callback to save the model or model weights at some frequency.                           |
         +---------------------------+-----------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
-        |                           | :grey:`monitor`       | :grey:`${trainer.pytorch.global_train_params.monitored_metric.monitor}`   | Name of the metric to monitor, should be one of the keys in metrics list.                |
+        |                           | :grey:`monitor`       | :grey:`${trainer.pytorch.global_train_params.monitored_metric.monitor}`   | Name of the metric to monitor, should be one of the keys in the metrics list.            |
         +---------------------------+-----------------------+---------------------------------------------------------------------------+------------------------------------------------------------------------------------------+
         |                           | :grey:`mode`          | :grey:`${trainer.pytorch.global_train_params.monitored_metric.mode}`      | | "max" or "min"                                                                         |
         |                           |                       |                                                                           |                                                                                          |
@@ -812,7 +812,7 @@ Callbacks
    .. tab:: TensorFlow
 
         Check out the `TensorFlow v2 Callbacks <https://www.tensorflow.org/api_docs/python/tf/keras/callbacks>`_ documentation for more details.
-        While technically you can use any callbacks listed in the keras API, only EarlyStopping has been tested.
+        While technically you can use any callbacks listed in the Keras API, only EarlyStopping has been tested.
 
         The table below shows the default values:
 
@@ -831,7 +831,7 @@ Callbacks
         |                          |                                 |                                                                                   |                                                                                                                                         |
         |                          |                                 |                                                                                   | An epoch will be restored regardless of the performance relative to the baseline.                                                       |
         |                          |                                 |                                                                                   |                                                                                                                                         |
-        |                          |                                 |                                                                                   | If no epoch improves on baseline, training will run for patience epochs and restore weights from the best epoch in that set.            |
+        |                          |                                 |                                                                                   | If no epoch improves on the baseline, training will run for patience epochs and restore weights from the best epoch in that set.        |
         +--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
         |                          | :mod:`monitor`                  | "val_categorical_accuracy"                                                        | Metric to be monitored.                                                                                                                 |
         +--------------------------+---------------------------------+-----------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------------------------------------+
