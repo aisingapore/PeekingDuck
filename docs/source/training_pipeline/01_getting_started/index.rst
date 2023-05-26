@@ -11,7 +11,7 @@ Introduction
 Training custom computer vision models with custom datasets is a crucial aspect 
 of building computer vision solutions. PeekingDuck simplifies this process by 
 eliminating the need for writing boilerplate code. In this section, we will 
-explore the key features of the training pipeline and provide a guide on getting 
+explore the key features of the training pipeline and provide a guide to get 
 started. Subsequent sections will demonstrate how to train your own model using 
 your specific data by customizing the training parameters.
 
@@ -66,12 +66,12 @@ The general workflow when using the training pipeline is:
  Getting Started
 ================
 
-This guide explains how you can prepare your environment and test out the 
-default pipeline using either TensorFlow or PyTorch.
+This guide explains how you can prepare your virtual environment and test out 
+the default training pipeline using either TensorFlow or PyTorch.
 
-It is highly recommended to create a new conda environment as instructed below, 
-to avoid package conflicts and unexpected behaviors when running from an 
-existing conda environment.
+It is highly recommended to create a new conda environment as instructed below. 
+This is to avoid package conflicts and unexpected behaviors when installing the 
+training pipeline into and running from an existing conda environment.
 
 
 Install PeekingDuck Training Pipeline
@@ -235,7 +235,7 @@ Follow the steps below to configure weights & biases:
    Refer to the `wandb official guide <https://docs.wandb.ai/quickstart>`_ for 
    setting up an account.
 2. (If not yet installed via requirements.txt) Pip install the wandb library on 
-   your machine in a Python 3 environment.
+   your machine in a Python 3 environment with the following command:
 
 .. admonition:: Terminal Session
 
@@ -258,7 +258,8 @@ for more details.
 If you prefer private hosting instead, refer to the `hosting guide 
 <https://docs.wandb.ai/guides/hosting>`_ to set up private hosting.
 
-Also, if you prefer not to use Weights & Biases, you can disable using the following command:
+Also, if you prefer not to use Weights & Biases, you can disable it using the 
+following command:
 
 .. admonition:: Terminal Session
 
@@ -292,9 +293,9 @@ Test for PyTorch:
       main.py debug=True framework=pytorch` \
 
 
-View the result of each run at the specified output folder directory, 
-:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, 
-\ where the default value of the :mod:`<PROJECT_NAME>` is defined in the 
+View the result of each run at the specified output folder directory: 
+:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
+The default value of :mod:`<PROJECT_NAME>` is defined in the 
 :ref:`config-files-mainconfig`.
 
 After installation and test runs, refer to 

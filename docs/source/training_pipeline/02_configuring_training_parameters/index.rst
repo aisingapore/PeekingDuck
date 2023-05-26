@@ -6,7 +6,8 @@
 Configuring Training Parameters
 *******************************
 
-This section describes how you can configure the pipeline to suit your model training.
+This section describes how you can configure the pipeline to suit your model 
+training.
 
 
 Documentation Convention
@@ -14,11 +15,9 @@ Documentation Convention
 
 .. _documentation_convention:
 
-| There will be multiple instances talking about the configuration files that you will be interacting with to change the pipeline settings.
-
-| These configuration files will be displayed in a table format, illustrated in the following table.
-| The text color scheme shown is used to illustrate which of the values can be changed, and the ones that should not:
-
+The following table shows the documentation convention for the training 
+pipeline configurations. The color scheme is used to differentiate between the 
+values that can be changed and the ones that should not:
 
 +----------------+------------------------------------------------+
 | Color          | Context                                        |
@@ -28,10 +27,7 @@ Documentation Convention
 | :mod:`Black`   | This value can be changed                      |
 +----------------+------------------------------------------------+
 
-
-Example
-*******
-
+The table below shows one example based on the above convention:
 
 +---------------------------------------------------+-----------------------------------------------------+-------------------------------------+
 | Key                                               | Value                                               |   Action                            |
@@ -51,8 +47,6 @@ Example
 | :mod:`fine_tune_all`                              |  True                                               | Can be changed.                     |
 +---------------------------------------------------+-----------------------------------------------------+-------------------------------------+
 | :mod:`fine_tune_modules`                          |                                                     | Can be changed.                     |
-+---------------------------------------------------+-----------------------------------------------------+-------------------------------------+
-| :mod:`fine_tune_modules`                          |                                                     | Can be changed.                     |
 +------------------------------+--------------------+-----------------------------------------------------+-------------------------------------+
 |                              | :mod:`features`    | 7                                                   | Can be changed.                     |
 +------------------------------+--------------------+-----------------------------------------------------+-------------------------------------+
@@ -65,12 +59,13 @@ Example
 
 
 
-Image Classification
-====================
+Use Cases
+=========
 
-This section describes how you can configure the pipeline to train an image classification model.
+Refer to the below chapters for detailed configurations for the corresponding 
+use cases:
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
 
    /training_pipeline/02_configuring_training_parameters/use_case/02a_image_classification
