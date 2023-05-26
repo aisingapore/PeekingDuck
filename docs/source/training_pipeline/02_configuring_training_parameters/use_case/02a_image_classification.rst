@@ -77,11 +77,11 @@ Configuration files that are not user-customizable are not included in the table
 | data_module                        | Controls the batch size for train / test dataset, shuffling control, etc.                         |
 |  └── data_adapter                  |                                                                                                   |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
-| data_module                        | Contains configuration for each dataset in separate .yaml files.                                  |
+| data_module                        | | Contains configuration for each dataset in separate .yaml files.                                |
 |  └── dataset                       |                                                                                                   |
-|                                    | Customization for the image size and number of classes for image classification.                  |
+|                                    | | Customization for the image size and number of classes for image classification.                |
 |                                    |                                                                                                   |
-|                                    | User can choose to download the sample dataset when running the pipeline.                         |
+|                                    | | User can choose to download the sample dataset when running the pipeline.                       |
 |                                    |                                                                                                   |
 |                                    | User need to create a separate .yaml file within the folder for custom dataset.                   |
 +------------------------------------+---------------------------------------------------------------------------------------------------+
