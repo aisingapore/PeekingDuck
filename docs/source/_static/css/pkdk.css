@@ -254,6 +254,6 @@ div.install .training-framework-btn.active {
 }
 .wy-table-responsive table td:last-child, .wy-table-responsive table th:last-child {
     white-space: normal;
-    min-width: 450px;
+    min-width: 300px;
     max-width: 450px;
 }

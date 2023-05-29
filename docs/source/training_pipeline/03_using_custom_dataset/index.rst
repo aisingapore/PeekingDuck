@@ -9,9 +9,9 @@ Using Custom Dataset
 Introduction
 ============
 
-If you have already collected your dataset, the following section describes \
-how you can prepare your dataset, connect it to the training pipeline and use \
-it for training a model.
+If you have already collected your dataset, the following section describes how 
+you can prepare your dataset, connect it to the training pipeline and use it 
+for training a model.
 
 .. _custom_dataset:
 
@@ -21,8 +21,10 @@ Setup
 Image to Label Mapping
 ----------------------
 
-| The table below describes the columns needed to create the CSV file which will be used by the training pipeline to map your images to their labels.
-| `image_path`, `class_id` and  `class_name` are required columns in the `CSV` file.
+| The table below describes the columns needed to create the CSV file which 
+  will be used by the training pipeline to map your images to their labels.
+| `image_path`, `class_id` and  `class_name` are required columns in the `CSV` 
+  file.
 
 +-------------------+------------------+---------------------------+
 | Columns           | Data type        | Description               |
@@ -34,7 +36,8 @@ Image to Label Mapping
 | `class_name`      | `string`         | image class name          |
 +-------------------+------------------+---------------------------+
 
-Below is a snippet example of the CSV file using used in the `vegfru <https://github.com/ustc-vim/vegfru>`_ dataset:
+Below is a snippet example of the CSV file using used in the `vegfru <https://
+github.com/ustc-vim/vegfru>`_ dataset:
 
 +--------------------------------------------------------------+----------+-------------------+
 | image_path                                                   | class_id | class_name        |
@@ -49,7 +52,8 @@ Below is a snippet example of the CSV file using used in the `vegfru <https://gi
 Data Folder Structure
 ---------------------
 
-It is important to note that :mod:`<your_dataset_folder>` should be the same value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
+It is important to note that :mod:`<your_dataset_folder>` should be the same 
+value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
 
 
 .. parsed-literal::
@@ -83,7 +87,8 @@ It is important to note that :mod:`<your_dataset_folder>` should be the same val
 Configuration Folder Structure
 ------------------------------
 
-Below shows the folder structure and describes how you can understand and navigate the config structure. 
+Below shows the folder structure and describes how you can understand and 
+navigate the config structure. 
 
 .. parsed-literal::
 
@@ -128,14 +133,17 @@ Below shows the folder structure and describes how you can understand and naviga
 Configuration Files
 -------------------
 
-| After preparing your data folder, you will need to create and edit the configuration files to connect your dataset to the training pipeline:
-| For a better understanding of which configuration files to change, you can refer to the directory tree at :ref:`03-config-folder-structure`
+| After preparing your data folder, you will need to create and edit the 
+  configuration files to connect your dataset to the training pipeline:
+| For a better understanding of which configuration files to change, you can 
+  refer to the directory tree at :ref:`03-config-folder-structure`
 
 
 a) dataset_filename.yaml
 
 | Create a YAML file under the :mod:`data_module/dataset` folder directory.
-| The name of the files must be the same as the :mod:`data_module/dataset` value defined in the :ref:`config-files-mainconfig`.
+| The name of the files must be the same as the :mod:`data_module/dataset` 
+  value defined in the :ref:`config-files-mainconfig`.
 
 .. parsed-literal::
 
@@ -205,7 +213,8 @@ b) config.yaml
 Run
 ===
 
-You can now test the training pipeline with your custom dataset using the following commands in the terminal:
+You can now test the training pipeline with your custom dataset using the 
+following commands in the terminal:
 
 .. admonition:: Terminal Session
 
@@ -215,16 +224,21 @@ Test for Tensorflow:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=tensorflow` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
+     main.py debug=True framework=tensorflow` \
 
 Test for PyTorch:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
+     main.py debug=True framework=pytorch` \
 
 
-View the results of each run at the specified output folder directory :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, \
-where the default value of the :mod:`<PROJECT_NAME>` is defined in the :ref:`config-files-mainconfig`.
+View the results of each run at the specified output folder directory 
+:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, \
+where the default value of the :mod:`<PROJECT_NAME>` is defined in the 
+:ref:`config-files-mainconfig`.
 
-You can refer to :ref:`configuring_training_parameters` for more details on how to customize your training parameters.
+You can refer to :ref:`configuring_training_parameters` for more details on how 
+to customize your training parameters.

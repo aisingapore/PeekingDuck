@@ -2,7 +2,6 @@
 | The trainer class will make use of these configs.
 | Config File : ``peekingduck/training/configs/trainer/classification.yaml``
 
-
 .. tabs::
 
    .. tab:: General 
@@ -14,21 +13,25 @@
       +=================================================================+=================================================================+============================================================================================================+
       | :mod:`global_train_params`                                      |                                                                 |                                                                                                            |
       +------------------------------+----------------------------------+-----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
-      |                              | :grey:`manual_seed`              | :grey:`${random_state}`                                         | Random seed. Default value will reference directly from the main config file.                                  |
+      |                              | :grey:`manual_seed`              | :grey:`${random_state}`                                         | Random seed. Default value will reference directly from the main config file.                              |
       +------------------------------+----------------------------------+-----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
       |                              | :mod:`epochs`                    | 10                                                              | Number of epochs to train                                                                                  |
       +------------------------------+----------------------------------+-----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
-      |                              | :grey:`debug`                    | :grey:`${debug}`                                                | Flag for checking if debug is set to True or False. Reference directly from the main config file.              |
+      |                              | :grey:`debug`                    | :grey:`${debug}`                                                | Flag for checking if debug is set to True or False. Reference directly from the main config file.          |
       +------------------------------+----------------------------------+-----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
       |                              | :mod:`debug_epochs`              | 3                                                               | When debug is set to True, this value will be used for training.                                           |
       +------------------------------+----------------------------------+-----------------------------------------------------------------+------------------------------------------------------------------------------------------------------------+
 
    .. tab:: Optimizer
 
-      These parameters will be used for initializing the optimizer. Implemented using the `tf.keras.optimizers <https://keras.io/api/optimizers/>`_ package. Refer to `this documentation <https://keras.io/api/optimizers/>`_ for alternatives. Below is the default values using the Adam optimizer.
+      These parameters will be used for initializing the optimizer. Implemented 
+      using the `tf.keras.optimizers <https://keras.io/api/optimizers/>`_ 
+      package. Refer to `this documentation <https://keras.io/api/optimizers/>`_ 
+      for alternatives. Below is the default values using the Adam optimizer.
       
 
-      Note that the learning rate parameter is not specified here but will refer to the scheduler config file instead.
+      Note that the learning rate parameter is not specified here but will refer 
+      to the scheduler config file instead.
 
       +--------------------------------------------------------------------------------------------+------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
       | Key                                                                                        | Value                  | Description                                                                                                                                                                                                               |
@@ -53,7 +56,12 @@
 
    .. tab:: Scheduler
 
-      These parameters will be used for initializing the scheduler. Implemented using the `tf.keras.optimizers.schedules <https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/schedules>`_ package. Refer to `TensorFlow Learning Rate Schedule <https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/schedules>`_ for scheduler choices. Scheduler is defaulted to null with a base learning rate of 1e-5.
+      These parameters will be used for initializing the scheduler. Implemented 
+      using the `tf.keras.optimizers.schedules <https://www.tensorflow.org/
+      api_docs/python/tf/keras/optimizers/schedules>`_ package. Refer to 
+      `TensorFlow Learning Rate Schedule <https://www.tensorflow.org/api_docs/
+      python/tf/keras/optimizers/schedules>`_ for scheduler choices. Scheduler 
+      is defaulted to null with a base learning rate of 1e-5.
 
       +----------------------------------------------------------------------------------+-----------------+-----------------------------+
       | Key                                                                              | Value           | Description                 |
@@ -67,7 +75,10 @@
       |                              |                          | :mod:`learning_rate`   | 1e-5            |                             |
       +------------------------------+--------------------------+------------------------+-----------------+-----------------------------+
 
-      Any of the schedulers listed in the `tf.keras.optimizers.schedules <https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/schedules>`_ package can be used. Below is an example using the CosineDecayRestarts scheduler:
+      Any of the schedulers listed in the `tf.keras.optimizers.schedules 
+      <https://www.tensorflow.org/api_docs/python/tf/keras/optimizers/
+      schedules>`_ package can be used. Below is an example using the 
+      CosineDecayRestarts scheduler:
 
       +------------------------------------------------------------------------------------------------+-----------------------------+-----------------------------+
       | Key                                                                                            | Value                       | Description                 |
@@ -92,14 +103,16 @@
 
    .. tab:: Loss
 
-      Refer to `TensorFlow Loss Functions <https://www.tensorflow.org/api_docs/python/tf/keras/losses>`_ for more details and alternatives. The training pipeline defaults to using CategoricalCrossentropy as the loss function.
+      Refer to `TensorFlow Loss Functions <https://www.tensorflow.org/api_docs/
+      python/tf/keras/losses>`_ for more details and alternatives. The training 
+      pipeline defaults to using CategoricalCrossentropy as the loss function.
 
       +----------------------------------------------------------------------------------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
       | Key                                                                              | Value                           | Description                                                                                                                 |
       +==================================================================================+=================================+=============================================================================================================================+
       | :mod:`loss_params`                                                               |                                 |                                                                                                                             |
       +------------------------------+---------------------------------------------------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
-      |                              | :mod:`loss_func`                                  | "CategoricalCrossentropy"       | Computes the cross entropy loss between the labels and predictions.                                                          |
+      |                              | :mod:`loss_func`                                  | "CategoricalCrossentropy"       | Computes the cross entropy loss between the labels and predictions.                                                         |
       +------------------------------+---------------------------------------------------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
       |                              | :mod:`loss_params`                                |                                 |                                                                                                                             |
       +------------------------------+--------------------------+------------------------+---------------------------------+-----------------------------------------------------------------------------------------------------------------------------+
