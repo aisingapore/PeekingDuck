@@ -62,9 +62,9 @@ The general workflow when using the training pipeline is:
 
 ----------
 
-================
- Getting Started
-================
+===============
+Getting Started
+===============
 
 This guide explains how you can prepare your virtual environment and test out 
 the default training pipeline using either TensorFlow or PyTorch.
@@ -204,23 +204,13 @@ Install PeekingDuck Training Pipeline
             :green:`git clone https://github.com/aisingapore/PeekingDuck.git` \
          | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
       
-      2. Create conda environment & activate:
+      
+      2. Create conda environment and install required packages:
 
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`conda env create -f peekingduck/training/requirements_mac.yaml` \
-         | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`conda activate pkd-training` \
-
-      3. Install TensorFlow
-
-      .. admonition:: Terminal Session
-
-         | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`bash peekingduck/training/scripts/install_tensorflow_macos.sh` \
-
-
+            :green:`bash peekingduck/training/scripts/install_training_pipeline_macos.sh` \
 
 
 .. _Setting Up Weights and Biases:
