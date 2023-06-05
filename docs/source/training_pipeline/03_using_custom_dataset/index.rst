@@ -224,15 +224,15 @@ Test for Tensorflow:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
-     main.py debug=True framework=tensorflow` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ 
+      :green:`python ./peekingduck/training/main.py debug=True framework=tensorflow` \
 
 Test for PyTorch:
 
 .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ :green:`python ./peekingduck/training/
-     main.py debug=True framework=pytorch` \
+   | \ :blue:`[~user/PeekingDuck]` \ > \ 
+      :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
 
 
 View the results of each run at the specified output folder directory 
