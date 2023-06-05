@@ -3,8 +3,7 @@
    .. tab:: Adapter
 
       | Configuration for Data Adapter to pipeline the dataset to the model. 
-      | Config File: ``peekingduck/training/configs/data_module/data_adapter/
-        adapter.yaml``
+      | Config File: ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
 
       +----------------------------------------------------------------------------------+-----------------+-----------------------------+
       | Key                                                                              | Value           | Description                 |
@@ -47,8 +46,7 @@
       * Train
 
       | Transformation to be applied to training dataset.
-      | Config File : ``peekingduck/training/configs/data_module/transform/
-        train.yaml``
+      | Config File : ``peekingduck/training/configs/data_module/transform/train.yaml``
 
       +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
       | Key                                                  | Value                                                                 | Description                                                                                             |
@@ -77,8 +75,7 @@
       * Test
 
       | Transformation to be applied to test and validation dataset.
-      | Config File : ``peekingduck/training/configs/data_module/transform/
-        test.yaml``
+      | Config File : ``peekingduck/training/configs/data_module/transform/test.yaml``
 
       +------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
       | Key                                                  | Value                                                                 | Description              |

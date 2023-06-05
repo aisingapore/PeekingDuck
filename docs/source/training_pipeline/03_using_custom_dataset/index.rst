@@ -109,11 +109,7 @@ navigate the config structure.
           │      ├── \ :blue:`transform/` \ |Blank|
           │      │      ├── test.yaml
           │      │      └── train.yaml
-          │      ├── cifar10.yaml
-          │      ├── rsna.yaml
-          │      ├── vegfru5.yaml
-          │      ├── vegfru15.yaml
-          │      └── vegfru25.yaml
+          │      └── classification.yaml
           ├── \ :blue:`hydra/` \ |Blank|
           │      └── \ :blue:`job_logging/` \ |Blank|
           │             └── custom.yaml
