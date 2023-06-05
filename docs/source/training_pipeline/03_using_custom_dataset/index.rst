@@ -63,23 +63,27 @@ value as the :mod:`project_name` value defined in the :ref:`config-files-maincon
       ├── \ :blue:`rsna/...` \ |Blank|
       ├── \ :blue:`vegfru/...` \ |Blank|
       └── \ :blue:`<your_dataset_folder>/` \ |Blank|
-            ├── \ :blue:`<your_images_folder>/` \ |Blank|
-            │      ├── \ :blue:`<class_1>/` \ |Blank|
-            │      │      ├── <image_001>.jpg
-            │      │      ├── <image_002>.jpg
-            │      │      ├── <image_003>.jpg
-            │      │      └── ...
-            │      ├── \ :blue:`<class_2>/` \ |Blank|
-            │      │      ├── <image_001>.jpg
-            │      │      ├── <image_002>.jpg
-            │      │      ├── <image_003>.jpg
-            │      │      └── ...
-            │      └── \ :blue:`<class_3>/` \ |Blank|
-            │             ├── <image_001>.jpg
-            │             ├── <image_002>.jpg
-            │             ├── <image_003>.jpg
-            │             └── ...
-            └── <image_to_label_map>.csv
+               ├── \ :blue:`<class_1>/` \ |Blank|
+               │      ├── <image_001>.jpg
+               │      ├── <image_002>.jpg
+               │      ├── <image_003>.jpg
+               │      └── ...
+               ├── \ :blue:`<class_2>/` \ |Blank|
+               │      ├── <image_001>.jpg
+               │      ├── <image_002>.jpg
+               │      ├── <image_003>.jpg
+               │      └── ...
+               ├── \ :blue:`<class_3>/` \ |Blank|
+               │      ├── <image_001>.jpg
+               │      ├── <image_002>.jpg
+               │      ├── <image_003>.jpg
+               │      └── ...
+               ├── \ :blue:`.../` \ |Blank|
+               │      ├── <...>.jpg
+               │      ├── <...>.jpg
+               │      ├── <...>.jpg               
+               │      └── ...
+               └── <image_to_label_map>.csv
 
 
 .. _03-config-folder-structure:
