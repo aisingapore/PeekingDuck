@@ -1,5 +1,5 @@
 device: "auto" # "auto" to select available gpu. "cpu"|"cuda"|"mps"
-project_name: "cifar10" # rsna | cifar10 | vegfru | vegfru5 | vegfru20
+project_name: "myproject" # rsna | cifar10 | vegfru | vegfru5 | vegfru20
 debug: True
 framework: "tensorflow" # 'pytorch' | 'tensorflow'
 random_state: 11

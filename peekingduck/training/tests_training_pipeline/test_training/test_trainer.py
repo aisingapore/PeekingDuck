@@ -32,7 +32,7 @@ from src.utils.general_utils import seed_all
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_tensorflow_model",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
@@ -161,7 +161,7 @@ def test_tensorflow_model(
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_tensorflow_model_with_loss",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
@@ -271,7 +271,7 @@ def test_tensorflow_model_with_loss(
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_tensorflow_trainer",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",

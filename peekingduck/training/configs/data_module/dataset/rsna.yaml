@@ -2,9 +2,10 @@ download: False
 url: "https://storage.googleapis.com/peekingduck/data/rsna.zip"
 blob_file: "rsna.zip"
 root_dir: "data"
-train_dir: "./${.root_dir}/${project_name}"
-test_dir: "./${.root_dir}/${project_name}"
-train_csv: "./${.root_dir}/${project_name}/train.csv"
+dataset: "rsna"
+train_dir: "./${.root_dir}/${.dataset}"
+test_dir: "./${.root_dir}/${.dataset}"
+train_csv: "./${.root_dir}/${.dataset}/train.csv"
 image_path_col_name: "image_path"
 target_col_name: "class_name" #class_name cancer
 target_col_id: "cancer"

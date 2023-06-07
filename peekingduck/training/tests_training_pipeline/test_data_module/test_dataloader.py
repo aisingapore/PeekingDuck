@@ -32,7 +32,7 @@ from src.training_pipeline import init_trainer
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_data_module",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
@@ -93,7 +93,7 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_tensorflow_trainer",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
@@ -167,7 +167,7 @@ def test_tensorflow_trainer(
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_pytorch_trainer",
                 "data_module/dataset=cifar10",
                 "framework=pytorch",
                 "debug=True",

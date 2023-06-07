@@ -31,7 +31,7 @@ from src.utils.general_utils import seed_all
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_training_pipeline",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
@@ -94,7 +94,7 @@ def test_training_pipeline(
     [
         (
             [
-                "project_name=cifar10",
+                "project_name=test_training_pipeline_vgg16",
                 "data_module/dataset=cifar10",
                 "framework=tensorflow",
                 "debug=True",
