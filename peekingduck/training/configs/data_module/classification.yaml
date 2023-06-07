@@ -1,5 +1,5 @@
 defaults:
-      - dataset: cifar10
+      - dataset: cifar10  # rsna | cifar10 | vegfru | vegfru5 | vegfru20
       - resample: train_test_split
       - transform:
               - train
@@ -13,4 +13,4 @@ module:
 
 framework: ${framework}
 debug: ${debug}
-num_debug_samples: 100
+num_debug_samples: 25

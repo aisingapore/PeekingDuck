@@ -7,6 +7,7 @@ set -e      # tell bash to exit on error
 # created 2022-03-06 initial version
 # updated 2022-04-12 for uninterrupted install
 # updated 2022-11-30 add typeguard, pytorch channel
+# updated 2023-04-01 add support for macos Ventura. new CI/CD packages
 #
 # Prerequisites: brew install miniforge
 #
@@ -86,7 +87,7 @@ conda install -y black click colorama opencv pyyaml requests scipy shapely tqdm 
 
 # Install PyTorch
 echo "installing PyTorch"
-conda install -y -c pytorch pytorch::pytorch torchvision timm torchmetrics torchinfo
+pip install torch torchvision timm torchmetrics torchinfo
 
 # Install the training pipeline packages
 echo "installing training pipeline packages"
@@ -98,13 +99,12 @@ if [[ $ARCHI == i386 ]]; then
     pip install tensorflow==2.7.0
 elif [[ $MACOS == 12.* ]] || [[ $MACOS == 13.* ]]; then
     echo "Installing for macOS Monterey / Ventura"
-    conda install -y -c apple tensorflow-deps
-    pip install tensorflow-macos==2.10.0 tensorflow-metal==0.6.0
+    pip install tensorflow tensorflow-metal tensorflow-datasets
 elif [[ $MACOS == 11.* ]]; then
     echo "installing for macOS Big Sur"
     conda install -y -c apple tensorflow-deps==2.6.0
     pip install tensorflow-estimator==2.6.0 tensorflow-macos==2.6.0 tensorflow-metal==0.2.0
-else
+elsef
     echo "Unsupported macOS version $MACOS, installation incomplete"
     exit 1
 fi
@@ -114,7 +114,8 @@ if [ $INSTALL == "full" ]; then
     echo "Installing CI/CD packages"
     conda install -y bandit coverage mypy pylint pytest types-PyYAML types-requests \
         types-setuptools types-six beautifulsoup4 myst-parser sphinx-autodoc-typehints \
-        texttable
+        sphinx-copybutton sphinx-tabs texttable
+
     pip install lap sphinx-rtd-theme
 fi
 

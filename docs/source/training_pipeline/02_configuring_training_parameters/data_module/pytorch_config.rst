@@ -2,254 +2,95 @@
 
    .. tab:: Adapter
 
-      | Configuration for Data Adapter to pipeline the dataset to the model.
-      | Config File : ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
+      | Configuration for Data Adapter to pipeline the dataset to the model. 
+      | Config File: ``peekingduck/training/configs/data_module/data_adapter/adapter.yaml``
 
-      .. raw:: html 
-
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">adapter_type</span></code></td>
-                        <td><p>"pytorch"</p></td>
-                        <td><p>framework</p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">train</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">batch_size</span></code></td>
-                        <td><p>32</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">shuffle</span></code></td>
-                        <td><p>True</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">pin_memory</span></code></td>
-                        <td><p>True</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">drop_last</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">valid</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">batch_size</span></code></td>
-                        <td><p>32</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">shuffle</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">pin_memory</span></code></td>
-                        <td><p>True</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">drop_last</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">test</span></code></td>
-                        <td><p></p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">batch_size</span></code></td>
-                        <td><p>1</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">shuffle</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">pin_memory</span></code></td>
-                        <td><p>True</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">drop_last</span></code></td>
-                        <td><p>False</p></td>
-                        <td><p></p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +----------------------------------------------------------------------------------+-----------------+-----------------------------+
+      | Key                                                                              | Value           | Description                 |
+      +==================================================================================+=================+=============================+
+      | :mod:`adapter_type`                                                              | "pytorch"       | framework                   |
+      +----------------------------------------------------------------------------------+-----------------+-----------------------------+
+      | :mod:`train`                                                                     |                 |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`batch_size`                                 | 32              |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`shuffle`                                    | True            |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`pin_memory`                                 | True            |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`drop_last`                                  | False           |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      | :mod:`valid`                                                                     |                 |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`batch_size`                                 | 32              |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`shuffle`                                    | False           |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`pin_memory`                                 | True            |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`drop_last`                                  | False           |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      | :mod:`test`                                                                      |                 |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`batch_size`                                 | 1               |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`shuffle`                                    | False           |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`pin_memory`                                 | True            |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
+      |                              | :mod:`drop_last`                                  | False           |                             |
+      +------------------------------+---------------------------------------------------+-----------------+-----------------------------+
 
    .. tab:: Transform
 
-      .. raw:: html 
-
-         <h5>Train</h5>
+      * Train
 
       | Transformation to be applied to training dataset.
       | Config File : ``peekingduck/training/configs/data_module/transform/train.yaml``
 
-      .. raw:: html 
+      +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      | Key                                                  | Value                                                                 | Description                                                                                             |
+      +======================================================+=======================================================================+=========================================================================================================+
+      | :mod:`_target_`                                      | albumentations.augmentations.crops.transforms.RandomResizedCrop       | Torchvision's variant of cropping a random part of the input and rescaling it to some size.             |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :grey:`height`        | :grey:`${data_module.dataset.image_size}`                             |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :grey:`width`         | :grey:`${data_module.dataset.image_size}`                             |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :mod:`scale`          | [0.9, 1]                                                              |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :mod:`ratio`          | [1, 1]                                                                |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      | :mod:`_target_`                                      | albumentations.augmentations.geometric.transforms.Flip                |                                                                                                         |
+      +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      | :mod:`_target_`                                      | albumentations.augmentations.transforms.Normalize                     |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :mod:`mean`           | [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]         |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      |                              | :mod:`std`            | [0.24703225141799082, 0.24348516474564, 0.26158783926049628]          |                                                                                                         |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
+      | :mod:`_target_`                                      | albumentations.pytorch.transforms.ToTensorV2                          |                                                                                                         |
+      +------------------------------------------------------+-----------------------------------------------------------------------+---------------------------------------------------------------------------------------------------------+
 
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.augmentations.crops.transforms.RandomResizedCrop</p></td>
-                        <td><p>Torchvision's variant of crop a random part of the input and rescale it to some size.</p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">height</span></code></td>
-                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">width</span></code></td>
-                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">scale</span></code></td>
-                        <td><p>[0.9, 1]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">ratio</span></code></td>
-                        <td><p>[1, 1]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.augmentations.geometric.transforms.Flip</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.augmentations.transforms.Normalize</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mean</span></code></td>
-                        <td><p>[0.4913997551666284, 0.48215855929893703, 0.4465309133731618]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">std</span></code></td>
-                        <td><p>[0.24703225141799082, 0.24348516474564, 0.26158783926049628]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.pytorch.transforms.ToTensorV2</p></td>
-                        <td><p></p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      * Test
 
-         <h5>Test</h5>
-         
       | Transformation to be applied to test and validation dataset.
       | Config File : ``peekingduck/training/configs/data_module/transform/test.yaml``
 
-      .. raw:: html 
-
-         <div class="wy-table-responsive">
-            <table class="docutils align-default">
-                <thead>
-                    <tr colspan="2" class="row-odd">
-                        <th colspan="2" class="head"><p>Key</p></th>
-                        <th class="head"><p>Value</p></th>
-                        <th class="head"><p>Description</p></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.augmentations.geometric.resize.Resize</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">height</span></code></td>
-                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code><span class="pre grey">width</span></code></td>
-                        <td><p class="grey">${data_module.dataset.image_size}</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.augmentations.transforms.Normalize</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">mean</span></code></td>
-                        <td><p>[0.4913997551666284, 0.48215855929893703, 0.4465309133731618]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td><p></p></td>
-                        <td><code class="xref"><span class="pre">std</span></code></td>
-                        <td><p>[0.24703225141799082, 0.24348516474564, 0.26158783926049628]</p></td>
-                        <td><p></p></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><code class="xref"><span class="pre">_target_</span></code></td>
-                        <td><p>albumentations.pytorch.transforms.ToTensorV2</p></td>
-                        <td><p></p></td>
-                    </tr>
-                </tbody>
-            </table>
-         </div>
+      +------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+
+      | Key                                                  | Value                                                                 | Description              |
+      +======================================================+=======================================================================+==========================+
+      | :mod:`_target_`                                      | albumentations.augmentations.geometric.resize.Resize                  |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      |                              | :grey:`height`        | :grey:`${data_module.dataset.image_size}`                             |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      |                              | :grey:`width`         | :grey:`${data_module.dataset.image_size}`                             |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      | :mod:`_target_`                                      | albumentations.augmentations.transforms.Normalize                     |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      |                              | :mod:`mean`           | [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]         |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      |                              | :mod:`std`            | [0.24703225141799082, 0.24348516474564, 0.26158783926049628]          |                          |
+      +------------------------------+-----------------------+-----------------------------------------------------------------------+--------------------------+
+      | :mod:`_target_`                                      | albumentations.pytorch.transforms.ToTensorV2                          |                          |
+      +------------------------------------------------------+-----------------------------------------------------------------------+--------------------------+

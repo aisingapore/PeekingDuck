@@ -42,7 +42,7 @@ class TestDatasetConfig(unittest.TestCase):
                 config_name="config",
                 overrides=[
                     "project_name=CICD",
-                    "data_module=cifar10",
+                    "data_module/dataset=cifar10",
                     "data_module.dataset.root_dir=data",
                 ],
             )
@@ -52,9 +52,10 @@ class TestDatasetConfig(unittest.TestCase):
                 "url": "https://storage.googleapis.com/peekingduck/data/cifar10.zip",
                 "blob_file": "cifar10.zip",
                 "root_dir": "data",
-                "train_dir": "./${.root_dir}/${project_name}",
-                "test_dir": "./${.root_dir}/${project_name}",
-                "train_csv": "./${.root_dir}/${project_name}/train.csv",
+                "dataset": "cifar10",
+                "train_dir": "./${.root_dir}/${.dataset}",
+                "test_dir": "./${.root_dir}/${.dataset}",
+                "train_csv": "./${.root_dir}/${.dataset}/train.csv",
                 "image_path_col_name": "image_path",
                 "target_col_name": "class_name",
                 "target_col_id": "class_id",
