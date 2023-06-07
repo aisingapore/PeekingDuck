@@ -22,7 +22,6 @@ logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=inval
 
 
 def run(cfg: DictConfig) -> None:
-
     if cfg.use_case.pipeline == "classification":
         from src.use_case.classification_pipeline import run_classification
 
@@ -32,9 +31,3 @@ def run(cfg: DictConfig) -> None:
         from src.use_case.detection_pipeline import run_detection
 
         run_detection(cfg.trainer.yolox)
-
-    # elif cfg.pipeline == "segmentation":
-    # from src.use_case.segmentation_pipeline import run_segmentation
-    # run_detection(cfg)
-    # print("what is the pipeline: ", cfg.pipeline)
-    # print("what is the usecase: ", cfg.use_case.name)
