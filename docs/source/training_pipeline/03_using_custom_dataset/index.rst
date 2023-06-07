@@ -164,9 +164,10 @@ a) dataset_filename.yaml
    url: ""
    blob_file: ""
    root_dir: "data"  # can be changed
-   train_dir: "./${.root_dir}/${project_name}"  # <your_dataset_folder> should be the same as the project_name value
-   test_dir: "./${.root_dir}/${project_name}"  # <your_dataset_folder> should be the same as the project_name value
-   train_csv: "./${.root_dir}/${project_name}/<your_csv_file>.csv"  # <your_dataset_folder> should be the same as the project_name value
+   dataset: "<your_dataset_folder>"  # <your_dataset_folder> your dataset folder name
+   train_dir: "./${.root_dir}/${.dataset}"  # your training data folder
+   test_dir: "./${.root_dir}/${.dataset}"  # your testing data folder
+   train_csv: "./${.root_dir}/${.dataset}/<your_csv_file>.csv"  # your training csv file
    image_path_col_name: "image_path"
    target_col_name: "class_name"
    target_col_id: "class_id"
@@ -191,7 +192,7 @@ b) config.yaml
    :linenos:
 
     device: "auto"
-    project_name: "<your_dataset_folder>" # change this value
+    project_name: "<my_project_name>" # change this value to your project name
     debug: True
     framework: "tensorflow"
     random_state: 11
