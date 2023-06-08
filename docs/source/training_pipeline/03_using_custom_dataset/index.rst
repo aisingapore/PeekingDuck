@@ -18,43 +18,11 @@ for training a model.
 Setup
 =====
 
-Image to Label Mapping
-----------------------
-
-| The table below describes the columns needed to create the CSV file which 
-  will be used by the training pipeline to map your images to their labels.
-| `image_path`, `class_id` and  `class_name` are required columns in the `CSV` 
-  file.
-
-+-------------------+------------------+---------------------------+
-| Columns           | Data type        | Description               |
-+===================+==================+===========================+
-| `image_path`      | `string`         | path to the image file    |
-+-------------------+------------------+---------------------------+
-| `class_id`        | `integer`        | image class               |
-+-------------------+------------------+---------------------------+
-| `class_name`      | `string`         | image class name          |
-+-------------------+------------------+---------------------------+
-
-Below is a snippet example of the CSV file using used in the `vegfru <https://
-github.com/ustc-vim/vegfru>`_ dataset:
-
-+--------------------------------------------------------------+----------+-------------------+
-| image_path                                                   | class_id | class_name        |
-+==============================================================+==========+===================+
-| data/vegfru/veg200_images/Chinese_artichoke/v_14_01_0001.jpg | 13       | Chinese_artichoke |
-+--------------------------------------------------------------+----------+-------------------+
-| data/vegfru/veg200_images/Chinese_artichoke/v_06_03_0007.jpg | 3        | Chinese_kale      |
-+--------------------------------------------------------------+----------+-------------------+
-| data/vegfru/veg200_images/Chinese_artichoke/v_09_03_0031.jpg | 8        | Chinese_pumpkin   |
-+--------------------------------------------------------------+----------+-------------------+
-
-Data Folder Structure
+Data Folder Structure   
 ---------------------
 
-It is important to note that :mod:`<your_dataset_folder>` should be the same 
-value as the :mod:`project_name` value defined in the :ref:`config-files-mainconfig`.
-
+To work with the PeekingDuck training pipeline, the training dataset needs to 
+be arranged in the folder structure below:
 
 .. parsed-literal::
 
@@ -84,6 +52,62 @@ value as the :mod:`project_name` value defined in the :ref:`config-files-maincon
                │      ├── <...>.jpg               
                │      └── ...
                └── <image_to_label_map>.csv
+
+
+Image to Label Mapping
+----------------------
+
+| The table below describes the columns needed to create the CSV file which 
+  will be used by the training pipeline to map your images to their labels.
+| `image_path`, `class_id` and  `class_name` are required columns in the `CSV` 
+  file.
+
++-------------------+------------------+---------------------------+
+| Column            | Data type        | Description               |
++===================+==================+===========================+
+| `image_path`      | `string`         | path to the image file    |
++-------------------+------------------+---------------------------+
+| `class_id`        | `integer`        | image class               |
++-------------------+------------------+---------------------------+
+| `class_name`      | `string`         | image class name          |
++-------------------+------------------+---------------------------+
+
+The CSV file should be in the format below:
+
++----------------------------------------------------+--------------+------------+
+| image_path                                         | class_id     | class_name |
++====================================================+==============+============+
+| data/<your_dataset_folder>/<class_1>/<image_1>.jpg | <class_id_1> | <class_1>  |
++----------------------------------------------------+--------------+------------+
+| data/<your_dataset_folder>/<class_1>/<image_2>.jpg | <class_id_1> | <class_1>  |
++----------------------------------------------------+--------------+------------+
+| …                                                  | …            | …          |
++----------------------------------------------------+--------------+------------+
+| data/<your_dataset_folder>/<class_2>/<image_1>.jpg | <class_id_2> | <class_2>  |
++----------------------------------------------------+--------------+------------+
+| data/<your_dataset_folder>/<class_2>/<image_2>.jpg | <class_id_2> | <class_2>  |
++----------------------------------------------------+--------------+------------+
+| …                                                  | …            | …          |
++----------------------------------------------------+--------------+------------+
+| data/<your_dataset_folder>/<class_m>/<image_1>.jpg | <class_id_m> | <class_m>  |
++----------------------------------------------------+--------------+------------+
+| …                                                  | …            | …          |
++----------------------------------------------------+--------------+------------+
+| data/<your_dataset_folder>/<class_m>/<image_n>.jpg | <class_id_m> | <class_m>  |
++----------------------------------------------------+--------------+------------+
+
+Below is a snippet example of the CSV file using used in the `vegfru <https://
+github.com/ustc-vim/vegfru>`_ dataset:
+
++------------------------------------------------+----------+------------------------------+
+| image_path                                     | class_id | class_name                   |
++================================================+==========+==============================+
+| data/vegfru/Chinese_artichoke/v_14_01_0001.jpg | 13       | Chinese_artichoke            |
++------------------------------------------------+----------+------------------------------+
+| data/vegfru/Chinese_artichoke/v_06_03_0007.jpg | 3        | Chinese_kale                 |
++------------------------------------------------+----------+------------------------------+
+| data/vegfru/Chinese_artichoke/v_09_03_0031.jpg | 8        | Chinese_pumpkin              |
++------------------------------------------------+----------+------------------------------+
 
 
 .. _03-config-folder-structure:
@@ -134,12 +158,13 @@ Configuration Files
 -------------------
 
 | After preparing your data folder, you will need to create and edit the 
-  configuration files to connect your dataset to the training pipeline:
+  configuration files to connect your dataset to the training pipeline.
+
 | For a better understanding of which configuration files to change, you can 
-  refer to the directory tree at :ref:`03-config-folder-structure`
+  refer to the directory tree at :ref:`03-config-folder-structure`.
 
 
-a) dataset_filename.yaml
+1. dataset_filename.yaml
 
 | Create a YAML file under the :mod:`data_module/dataset` folder directory.
 | The name of the files must be the same as the :mod:`data_module/dataset` 
@@ -184,7 +209,7 @@ a) dataset_filename.yaml
       - <class_2>
       - <class_3>
 
-b) config.yaml
+2. config.yaml
 
 | Edit the data_module parameter in :mod:`.peekingduck/training/configs/config.yaml` file.
 
