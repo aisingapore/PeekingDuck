@@ -17,7 +17,7 @@ import torch
 import torch.nn as nn
 
 
-# pylint: skip-file
+# type: ignore
 class IOUloss(nn.Module):
     def __init__(self, reduction="none", loss_type="iou"):
         super(IOUloss, self).__init__()

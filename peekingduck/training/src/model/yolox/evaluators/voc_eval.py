@@ -24,7 +24,7 @@ import xml.etree.ElementTree as ET
 import numpy as np
 
 
-# pylint: skip-file
+# type: ignore
 def parse_rec(filename):
     """Parse a PASCAL VOC xml file"""
     tree = ET.parse(filename)  # nosec

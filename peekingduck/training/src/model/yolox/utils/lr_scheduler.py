@@ -17,7 +17,7 @@ import math
 from functools import partial
 
 
-# pylint: skip-file
+# type: ignore
 class LRScheduler:
     def __init__(self, name, lr, iters_per_epoch, total_epochs, **kwargs):
         """

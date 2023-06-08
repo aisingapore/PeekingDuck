@@ -39,7 +39,7 @@ from src.model.yolox.utils import (
 )
 
 
-# pylint: skip-file
+# type: ignore
 def per_class_AR_table(
     coco_eval, class_names=COCO_CLASSES, headers=["class", "AR"], colums=6
 ):

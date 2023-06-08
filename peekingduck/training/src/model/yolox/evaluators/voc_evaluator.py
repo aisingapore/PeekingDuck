@@ -33,7 +33,7 @@ from src.model.yolox.utils import (
 )
 
 
-# pylint: skip-file
+# type: ignore
 class VOCEvaluator:
     """
     VOC AP Evaluation class.

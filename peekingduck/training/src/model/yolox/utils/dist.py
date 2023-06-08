@@ -50,7 +50,7 @@ __all__ = [
 _LOCAL_PROCESS_GROUP = None
 
 
-# pylint: skip-file
+# type: ignore
 def get_num_devices():
     gpu_list = os.getenv("CUDA_VISIBLE_DEVICES", None)
     if gpu_list is not None:

@@ -19,7 +19,7 @@ from .yolo_head import YOLOXHead
 from .yolo_pafpn import YOLOPAFPN
 
 
-# pylint: skip-file
+# type: ignore
 class YOLOX(nn.Module):
     """
     YOLOX model module. The module list is defined by create_yolov3_modules function.

@@ -30,7 +30,7 @@ __all__ = [
 ]
 
 
-# pylint: skip-file
+# type: ignore
 def filter_box(output, scale_range):
     """
     output: (N, 5+class) shape

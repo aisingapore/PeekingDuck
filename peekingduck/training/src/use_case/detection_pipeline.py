@@ -37,7 +37,7 @@ from src.model.yolox.data import VOCDetection, TrainTransform, ValTransform
 from src.model.yolox.evaluators import VOCEvaluator
 
 
-# pylint: skip-file
+# type: ignore
 @logguru.catch
 def main(exp: Exp, args) -> None:
     """Main function for YOLOX training"""

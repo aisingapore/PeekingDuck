@@ -32,7 +32,7 @@ __all__ = [
 ]
 
 
-# pylint: skip-file
+# type: ignore
 def get_total_and_free_memory_in_Mb(cuda_device):
     devices_info_str = os.popen(
         "nvidia-smi --query-gpu=memory.total,memory.used --format=csv,nounits,noheader"

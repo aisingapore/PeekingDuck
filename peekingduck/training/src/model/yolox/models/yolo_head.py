@@ -26,7 +26,7 @@ from .losses import IOUloss
 from .network_blocks import BaseConv, DWConv
 
 
-# pylint: skip-file
+# type: ignore
 class YOLOXHead(nn.Module):
     def __init__(
         self,

@@ -20,7 +20,7 @@ from .darknet import CSPDarknet
 from .network_blocks import BaseConv, CSPLayer, DWConv
 
 
-# pylint: skip-file
+# type: ignore
 class YOLOPAFPN(nn.Module):
     """
     YOLOv3 model. Darknet 53 is the default backbone of this model.

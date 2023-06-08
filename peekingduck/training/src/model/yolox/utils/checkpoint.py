@@ -19,7 +19,7 @@ from loguru import logger
 import torch
 
 
-# pylint: skip-file
+# type: ignore
 def load_ckpt(model, ckpt):
     model_state_dict = model.state_dict()
     load_dict = {}

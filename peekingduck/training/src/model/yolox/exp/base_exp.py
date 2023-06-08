@@ -25,7 +25,7 @@ from torch.nn import Module
 from src.model.yolox.utils import LRScheduler
 
 
-# pylint: skip-file
+# type: ignore
 class BaseExp(metaclass=ABCMeta):
     """Basic class for any experiment."""
 
