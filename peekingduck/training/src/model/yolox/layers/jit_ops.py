@@ -24,6 +24,7 @@ from typing import List
 __all__ = ["JitOp", "FastCOCOEvalOp"]
 
 
+# pylint: skip-file
 class JitOp:
     """
     Just-in-time compilation of ops.

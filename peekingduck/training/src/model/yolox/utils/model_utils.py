@@ -30,6 +30,7 @@ __all__ = [
 ]
 
 
+# pylint: skip-file
 def get_model_info(model: nn.Module, tsize: Sequence[int]) -> str:
     from thop import profile
 

@@ -18,6 +18,7 @@ import os
 import sys
 
 
+# pylint: skip-file
 def get_exp_by_file(exp_file):
     try:
         sys.path.append(os.path.dirname(exp_file))

@@ -47,8 +47,8 @@ def init_trainer(cfg: DictConfig) -> Trainer:
     return trainer
 
 
-def run_classification(cfg: DictConfig):
-
+def run_classification(cfg: DictConfig) -> None:
+    """Run Classification Pipeline"""
     assert cfg.framework in [
         "pytorch",
         "tensorflow",

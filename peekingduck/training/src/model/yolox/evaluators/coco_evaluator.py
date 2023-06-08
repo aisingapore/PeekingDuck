@@ -39,6 +39,7 @@ from src.model.yolox.utils import (
 )
 
 
+# pylint: skip-file
 def per_class_AR_table(
     coco_eval, class_names=COCO_CLASSES, headers=["class", "AR"], colums=6
 ):
@@ -241,7 +242,7 @@ class COCOEvaluator:
     def convert_to_coco_format(self, outputs, info_imgs, ids, return_outputs=False):
         data_list = []
         image_wise_data = defaultdict(dict)
-        for (output, img_h, img_w, img_id) in zip(
+        for output, img_h, img_w, img_id in zip(
             outputs, info_imgs[0], info_imgs[1], ids
         ):
             if output is None:

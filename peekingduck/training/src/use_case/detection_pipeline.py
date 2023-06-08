@@ -37,8 +37,10 @@ from src.model.yolox.data import VOCDetection, TrainTransform, ValTransform
 from src.model.yolox.evaluators import VOCEvaluator
 
 
+# pylint: skip-file
 @logguru.catch
 def main(exp: Exp, args) -> None:
+    """Main function for YOLOX training"""
     if exp.seed is not None:
         random.seed(exp.seed)
         torch.manual_seed(exp.seed)
@@ -59,6 +61,7 @@ def main(exp: Exp, args) -> None:
 
 
 def run_detection(cfg: DictConfig) -> None:
+    """Run Detection Pipeline"""
     configure_module()
     args = argparse.Namespace(**cfg)
 

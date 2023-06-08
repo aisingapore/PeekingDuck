@@ -30,6 +30,7 @@ __all__ = [
 ]
 
 
+# pylint: skip-file
 def filter_box(output, scale_range):
     """
     output: (N, 5+class) shape
@@ -53,7 +54,6 @@ def postprocess(
 
     output = [None for _ in range(len(prediction))]
     for i, image_pred in enumerate(prediction):
-
         # If none are remaining => process next image
         if not image_pred.size(0):
             continue

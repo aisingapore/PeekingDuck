@@ -29,6 +29,7 @@ import numpy as np
 from src.model.yolox.utils import xyxy2cxcywh
 
 
+# pylint: skip-file
 def augment_hsv(img, hgain=5, sgain=30, vgain=30):
     hsv_augs = np.random.uniform(-1, 1, 3) * [hgain, sgain, vgain]  # random gains
     hsv_augs *= np.random.randint(0, 2, 3)  # random selection of h, s, v

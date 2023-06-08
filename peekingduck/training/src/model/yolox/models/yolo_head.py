@@ -26,6 +26,7 @@ from .losses import IOUloss
 from .network_blocks import BaseConv, DWConv
 
 
+# pylint: skip-file
 class YOLOXHead(nn.Module):
     def __init__(
         self,
@@ -444,7 +445,6 @@ class YOLOXHead(nn.Module):
         obj_preds,
         mode="gpu",
     ):
-
         if mode == "cpu":
             print("-----------Using CPU for the Current Batch-------------")
             gt_bboxes_per_image = gt_bboxes_per_image.cpu().float()

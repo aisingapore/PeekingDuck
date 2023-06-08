@@ -17,6 +17,7 @@ import torch
 import torch.nn as nn
 
 
+# pylint: skip-file
 class SiLU(nn.Module):
     """export-friendly version of nn.SiLU()"""
 

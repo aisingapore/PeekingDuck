@@ -41,6 +41,7 @@ _CKPT_FULL_PATH = {
 }
 
 
+# pylint: skip-file
 def create_yolox_model(
     name: str,
     pretrained: bool = True,

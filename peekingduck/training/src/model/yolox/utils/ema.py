@@ -21,6 +21,7 @@ import torch.nn as nn
 __all__ = ["ModelEMA", "is_parallel"]
 
 
+# pylint: skip-file
 def is_parallel(model):
     """check if model is in parallel mode."""
     parallel_type = (
