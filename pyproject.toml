@@ -23,3 +23,4 @@ ignored-modules = ["cv2", "tensorflow"]
 ignore_missing_imports = true
 disallow_untyped_defs = true
 disable_error_code = ['override', 'attr-defined']
+exclude = ['peekingduck/training/src/model/yolox', 'peekingduck/training/src/use_case/detection_pipeline.py']
