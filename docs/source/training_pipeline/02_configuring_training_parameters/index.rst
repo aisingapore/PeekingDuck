@@ -64,7 +64,7 @@ Configuration Structure
 We use the YAML syntax for the config file. Below shows the folder structure 
 and describes how users can understand and navigate the config structure. 
 Configuration files that are not user-customizable are not included in the 
-table below.
+view below.
 
 .. parsed-literal::
 
@@ -85,54 +85,58 @@ table below.
           │      ├── \ :blue:`transform/` \ |Blank|
           │      │      ├── test.yaml
           │      │      └── train.yaml
-          │      └── classification.yaml
-          ├── \ :blue:`hydra/` \ |Blank|
-          │      └── \ :blue:`job_logging/` \ |Blank|
-          │             └── custom.yaml
+          │      ├── classification.yaml
+          │      └── detection.yaml
           ├── \ :blue:`metrics/` \ |Blank|
           │      └── classification.yaml
           ├── \ :blue:`model/` \ |Blank|
           │      └── classification.yaml
-          ├── \ :blue:`model_analysis/` \ |Blank|
-          │      └── classification.yaml
-          ├── \ :blue:`stores/` \ |Blank|
-          │      └── classification.yaml
           ├── \ :blue:`trainer/` \ |Blank|
-          │      └── classification.yaml
+          │      ├── classification.yaml
+          │      └── detection.yaml
           ├── \ :blue:`use_case/` \ |Blank|
-          │      └── classification.yaml
+          │      ├── classification.yaml
+          │      └── detection.yaml
           └── config.yaml
 
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| Folder/file under `configs` folder | Description                                                                                                                                                                         |
-+====================================+=====================================================================================================================================================================================+
-| config.yaml                        | Main configuration file for high-level training settings such as project name, framework, debug mode, view mode, etc.                                                               |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| data_module                        | Main configuration file for data module.                                                                                                                                            |
-|  └── classification.yaml           |                                                                                                                                                                                     |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| data_module                        | Adapter for TensorFlow and PyTorch configurations that controls the batch size for train/test dataset, shuffling control, etc.                                                      |
-|  └── data_adapter                  |                                                                                                                                                                                     |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| data_module                        | | Configurations for training dataset in separate .yaml files, including options for downloading the dataset, image size, number of classes, mapping of the class names to id, etc. |
-|  └── dataset                       |                                                                                                                                                                                     |
-|                                    | A separate YAML file needs to be created for each custom dataset.                                                                                                                   |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| data_module                        | Controls train/test split and shuffling.                                                                                                                                            |
-|  └── resample                      |                                                                                                                                                                                     |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| data_module                        | Controls image augmentations and transformations for train and test, such as cropping, flipping, etc.                                                                               |
-|  └── transform                     |                                                                                                                                                                                     |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| metrics                            | Choose training metrics to monitor during training                                                                                                                                  |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| model                              | Controls selection of pre-trained models and fine-tuning model settings.                                                                                                            |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
-| trainer                            | Control training related parameters including number of epochs, learning rate, loss function, metric and patience for early stopping                                                |
-+------------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Folder/file under configs folder | Description                                                                                                                                                                         |
++==================================+=====================================================================================================================================================================================+
+| config.yaml                      | Main configuration file that defines the project name and use case (classification / objection / ...).                                                                              |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| callbacks                        | Specify callbacks for TensorFlow or PyTorch. Applicable to classification only.                                                                                                     |
+|  └── classification.yaml         |                                                                                                                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| data_module                      | Main configuration files for data module.                                                                                                                                           |
+|  | └── classification.yaml       |                                                                                                                                                                                     |
+|  └── detection.yaml              |                                                                                                                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| data_module                      | Adapter for TensorFlow and PyTorch configurations that controls the batch size for train/test dataset, shuffling control, etc.                                                      |
+|  └── data_adapter                |                                                                                                                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| data_module                      | | Configurations for training dataset in separate .yaml files, including options for downloading the dataset, image size, number of classes, mapping of the class names to id, etc. |
+|  └── dataset                     |                                                                                                                                                                                     |
+|                                  | A separate YAML file needs to be created for each custom dataset.                                                                                                                   |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| data_module                      | Controls train/test split and shuffling.                                                                                                                                            |
+|  └── resample                    |                                                                                                                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| data_module                      | Controls image augmentations and transformations for train and test, such as cropping, flipping, etc.                                                                               |
+|  └── transform                   |                                                                                                                                                                                     |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| metrics                          | Choose training metrics to monitor during training                                                                                                                                  |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| model                            | Controls selection of pre-trained models and fine-tuning model settings.                                                                                                            |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| trainer                          | Control training related parameters including number of epochs, learning rate, loss function, metric and patience for early stopping                                                |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| use_case                         | Define high-level configurations for each use case (classification / detection / ...)                                                                                               |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+Changing the Configurations
+===========================
 
 There are two ways to change the default configuration:
-
 
 1. Update the parameter values inside YAML file for the respective 
    configuration.
@@ -158,8 +162,7 @@ hierarchy in the yaml files. Here is one example:
    cd PeekingDuck
    python ./peekingduck/training/main.py debug=True framework=pytorch model.pytorch.model_name=mobilenetv3_small_050 trainer.pytorch.global_train_params.debug_epochs=5
 
-Refer to the following sections to learn about the detailed configurations for 
-customized training:
+Refer to the following sections for the detailed configurations for each use case:
 
 .. toctree::
    :maxdepth: 1
