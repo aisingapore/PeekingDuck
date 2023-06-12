@@ -22,7 +22,7 @@ from hydra import compose, initialize
 import tensorflow as tf
 import tensorflow_datasets as tfds
 
-from src.training_pipeline import init_trainer
+from src.use_case.classification_pipeline import init_trainer
 from src.model.tensorflow_model import TFClassificationModelFactory
 from src.utils.general_utils import seed_all
 
@@ -33,10 +33,13 @@ from src.utils.general_utils import seed_all
         (
             [
                 "project_name=test_tensorflow_model",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
+                "use_case.device=cpu",
                 "data_module.dataset.download=False",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.num_classes=10",
@@ -64,8 +67,8 @@ def test_tensorflow_model(
             overrides=overrides,
         )
 
-        model_config = cfg.model[cfg.framework]
-        trainer_config = cfg.trainer[cfg.framework]
+        model_config = cfg.model[cfg.use_case.framework]
+        trainer_config = cfg.trainer[cfg.use_case.framework]
         train_params = trainer_config.global_train_params
         epochs = train_params.epochs
         # Set Seed
@@ -162,10 +165,13 @@ def test_tensorflow_model(
         (
             [
                 "project_name=test_tensorflow_model_with_loss",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
+                "use_case.device=cpu",
                 "data_module.dataset.download=False",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.num_classes=10",
@@ -193,11 +199,8 @@ def test_tensorflow_model_with_loss(
             overrides=overrides,
         )
 
-        model_config = cfg.model[cfg.framework]
-        # metrics_config = cfg.metrics[cfg.framework]
-        # callbacks_config = cfg.callbacks[cfg.framework]
-        trainer_config = cfg.trainer[cfg.framework]
-        # data_config = cfg.data_module
+        model_config = cfg.model[cfg.use_case.framework]
+        trainer_config = cfg.trainer[cfg.use_case.framework]
         train_params = trainer_config.global_train_params
         epochs = train_params.epochs
 
@@ -272,10 +275,13 @@ def test_tensorflow_model_with_loss(
         (
             [
                 "project_name=test_tensorflow_trainer",
+                "use_case=classification",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
+                "use_case.device=cpu",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
-                "device=cpu",
                 "data_module.dataset.download=False",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.num_classes=10",
@@ -307,8 +313,8 @@ def test_tensorflow_trainer(
             overrides=overrides,
         )
 
-        model_config = cfg.model[cfg.framework]
-        trainer_config = cfg.trainer[cfg.framework]
+        model_config = cfg.model[cfg.use_case.framework]
+        trainer_config = cfg.trainer[cfg.use_case.framework]
         train_params = trainer_config.global_train_params
 
         # """Test Tensorflow datasource"""

@@ -27,8 +27,11 @@ def test_config_overrides() -> None:
         3. The config path is relative to the file calling initialize (this file)
         config is relative to a module
         """
-        cfg = compose(config_name="config", overrides=["framework=pytorch"])
-        assert cfg.framework == "pytorch"
+        cfg = compose(
+            config_name="config",
+            overrides=["use_case=classification", "use_case.framework=pytorch"],
+        )
+        assert cfg.use_case.framework == "pytorch"
 
 
 # Usage in unittest style tests is similar.
@@ -42,8 +45,11 @@ class TestDatasetConfig(unittest.TestCase):
                 config_name="config",
                 overrides=[
                     "project_name=CICD",
+                    "use_case=classification",
                     "data_module/dataset=cifar10",
-                    "data_module.dataset.root_dir=data",
+                    "use_case.framework=tensorflow",
+                    "use_case.debug=True",
+                    "use_case.device=cpu",
                 ],
             )
 

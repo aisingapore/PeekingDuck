@@ -15,19 +15,20 @@
 """Trainer Pipeline"""
 
 import logging
+from typing import Any, Dict, Optional
 from omegaconf import DictConfig
 from configs import LOGGER_NAME
 
 logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=invalid-name
 
 
-def run(cfg: DictConfig) -> None:
+def run(cfg: DictConfig) -> Optional[Dict[str, Any]]:
     if cfg.use_case.pipeline == "classification":
         from src.use_case.classification_pipeline import run_classification
 
-        run_classification(cfg)
+        return run_classification(cfg)
 
     elif cfg.use_case.pipeline == "detection":
         from src.use_case.detection_pipeline import run_detection
 
-        run_detection(cfg.trainer.yolox)
+        return run_detection(cfg.trainer.yolox)

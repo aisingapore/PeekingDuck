@@ -24,7 +24,7 @@ import tensorflow as tf
 
 from src.data.data_module import ImageClassificationDataModule
 from src.model_analysis.weights_biases import WeightsAndBiases
-from src.training_pipeline import init_trainer
+from src.use_case.classification_pipeline import init_trainer
 
 
 @mark.parametrize(
@@ -33,10 +33,13 @@ from src.training_pipeline import init_trainer
         (
             [
                 "project_name=test_data_module",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.device=cpu",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
                 "data_module.dataset.image_size=224",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.tensorflow.train.batch_size=32",
@@ -47,11 +50,12 @@ from src.training_pipeline import init_trainer
         ),
         (
             [
-                "project_name=cifar10",
+                "project_name=test_data_module",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=pytorch",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=pytorch",
+                "use_case.debug=True",
+                "use_case.device=cpu",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.pytorch.train.batch_size=32",
@@ -94,10 +98,11 @@ def test_data_module(overrides: List[str], expected: List[int]) -> None:
         (
             [
                 "project_name=test_tensorflow_trainer",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.device=cpu",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.tensorflow.train.batch_size=32",
@@ -168,10 +173,11 @@ def test_tensorflow_trainer(
         (
             [
                 "project_name=test_pytorch_trainer",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=pytorch",
-                "debug=True",
-                "device=cpu",
+                "use_case.framework=pytorch",
+                "use_case.debug=True",
+                "use_case.device=cpu",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
                 "data_module.data_adapter.pytorch.train.batch_size=32",

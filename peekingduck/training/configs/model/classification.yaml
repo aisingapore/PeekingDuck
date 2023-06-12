@@ -15,7 +15,7 @@ pytorch:
     model_type:
         _target_: src.model.pytorch_model.PTClassificationModel
     num_classes: ${data_module.dataset.num_classes}
-    device: ${device}
+    device: ${use_case.device}
 
 tensorflow:
     task: ${use_case}
@@ -25,7 +25,7 @@ tensorflow:
     num_classes: ${data_module.dataset.num_classes}
     activation: "softmax"
     image_size: ${data_module.dataset.image_size}
-    device: ${device}
+    device: ${use_case.device}
     pretrained: True
     fine_tune: True # True or False
     fine_tune_all: False # fine tune the entire model

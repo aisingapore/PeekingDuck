@@ -32,9 +32,12 @@ from src.utils.general_utils import seed_all
         (
             [
                 "project_name=test_training_pipeline",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
                 "data_module.num_debug_samples=180",
                 "data_module.dataset.download=True",
                 "data_module.dataset.image_size=32",
@@ -50,10 +53,13 @@ from src.utils.general_utils import seed_all
         ),
         (
             [
-                "project_name=cifar10",
+                "project_name=test_training_pipeline",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=pytorch",
-                "debug=True",
+                "use_case.framework=pytorch",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
                 "data_module.num_debug_samples=180",
                 "data_module.dataset.image_size=32",
                 "data_module.dataset.download=True",
@@ -76,7 +82,7 @@ def test_training_pipeline(
             config_name="config",
             overrides=overrides,
         )
-        trainer_config = cfg.trainer[cfg.framework]
+        trainer_config = cfg.trainer[cfg.use_case.framework]
         train_params = trainer_config.global_train_params
         seed_all(train_params.manual_seed)
         history = src.training_pipeline.run(cfg)
@@ -95,9 +101,12 @@ def test_training_pipeline(
         (
             [
                 "project_name=test_training_pipeline_vgg16",
+                "use_case=classification",
                 "data_module/dataset=cifar10",
-                "framework=tensorflow",
-                "debug=True",
+                "use_case.framework=tensorflow",
+                "use_case.debug=True",
+                "use_case.random_state=11",
+                "use_case.view_only=False",
                 "data_module.num_debug_samples=180",
                 "data_module.dataset.download=True",
                 "data_module.dataset.image_size=224",
@@ -122,7 +131,7 @@ def test_training_pipeline_vgg16(
             config_name="config",
             overrides=overrides,
         )
-        trainer_config = cfg.trainer[cfg.framework]
+        trainer_config = cfg.trainer[cfg.use_case.framework]
         train_params = trainer_config.global_train_params
         seed_all(train_params.manual_seed)
         history = src.training_pipeline.run(cfg)
