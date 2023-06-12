@@ -23,12 +23,16 @@ logger: logging.Logger = logging.getLogger(LOGGER_NAME)  # pylint: disable=inval
 
 
 def run(cfg: DictConfig) -> Optional[Dict[str, Any]]:
+    """Run Trainer Pipeline"""
+    history: Optional[Dict[str, Any]] = None
     if cfg.use_case.pipeline == "classification":
         from src.use_case.classification_pipeline import run_classification
 
-        return run_classification(cfg)
+        history = run_classification(cfg)
 
     elif cfg.use_case.pipeline == "detection":
         from src.use_case.detection_pipeline import run_detection
 
-        return run_detection(cfg.trainer.yolox)
+        run_detection(cfg.trainer.yolox)
+
+    return history
