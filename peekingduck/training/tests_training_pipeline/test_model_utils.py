@@ -74,7 +74,7 @@ class TestModelUtils(unittest.TestCase):
             self.assertTrue(module.training)
 
         # only backbone set to eval
-        assert self.model.backbone.eval is not None
+        assert isinstance(self.model.backbone, nn.Module)
         self.model.backbone.eval()
         with adjust_status(self.model, training=False):
             for module in self.model.modules():
@@ -110,10 +110,8 @@ class TestModelUtils(unittest.TestCase):
             self.assertTrue(module.training)
 
         freeze_module(self.model, "backbone")
-        assert self.model.backbone.modules is not None
-        assert self.model.head.modules is not None
-        assert self.model.backbone.parameters is not None
-        assert self.model.backbone.parameters is not None
+        assert isinstance(self.model.backbone, nn.Module)
+        assert isinstance(self.model.head, nn.Module)
 
         for module in self.model.backbone.modules():
             self.assertFalse(module.training)
