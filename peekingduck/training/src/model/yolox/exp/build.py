@@ -31,7 +31,7 @@ def get_exp_by_file(exp_file):
 
 def get_exp_by_name(exp_name):
     exp = exp_name.replace("-", "_")  # convert string like "yolox-s" to "yolox_s"
-    module_name = ".".join(["yolox", "exp", "default", exp])
+    module_name = ".".join(["src", "model", "yolox", "exp", "default", exp])
     exp_object = importlib.import_module(module_name).Exp()
     return exp_object
 

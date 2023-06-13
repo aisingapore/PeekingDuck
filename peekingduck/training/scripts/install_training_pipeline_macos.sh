@@ -91,7 +91,8 @@ pip install torch torchvision timm torchmetrics torchinfo
 
 # Install the training pipeline packages
 echo "installing training pipeline packages"
-pip install ipykernel nbformat pydantic hydra-core pandas numpy scikit-learn albumentations matplotlib wandb
+pip install ipykernel nbformat pydantic hydra-core pandas numpy scikit-learn \
+    loguru tabulate albumentations matplotlib wandb
 
 # Install Tensorflow
 if [[ $ARCHI == i386 ]]; then
