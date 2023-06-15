@@ -66,7 +66,8 @@ def run_detection(cfg: DictConfig) -> None:
     configure_module()
     args = argparse.Namespace(**cfg.trainer.yolox)
     if args.logger == "wandb":
-        args.append(argparse.Namespace(**cfg.model_analysis.wandb))
+        for item in cfg.model_analysis.wandb:
+            args.__dict__[item] = cfg.model_analysis.wandb[item]
 
     assert cfg.data_module.dataset_format in [
         "coco",
