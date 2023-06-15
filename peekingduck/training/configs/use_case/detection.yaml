@@ -1,3 +1,2 @@
 pipeline: "detection"
 random_state: 11
-view_only: False

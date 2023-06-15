@@ -19,6 +19,7 @@ import argparse
 import random
 import warnings
 import torch
+import torch.nn as nn
 import torch.backends.cudnn as cudnn
 
 from loguru import logger as logguru
@@ -63,17 +64,22 @@ def main(exp: Exp, args) -> None:
 def run_detection(cfg: DictConfig) -> None:
     """Run Detection Pipeline"""
     configure_module()
-    args = argparse.Namespace(**cfg)
+    args = argparse.Namespace(**cfg.trainer.yolox)
+    if args.logger == "wandb":
+        args.append(argparse.Namespace(**cfg.model_analysis.wandb))
 
-    assert cfg.trainer_params.ds_format in [
+    assert cfg.data_module.dataset_format in [
         "coco",
         "voc",
-    ], f"Unsupported format {cfg.trainer_params.ds_format}"
+    ], f"Unsupported format {cfg.data_module.dataset_format}"
 
-    if cfg.trainer_params.ds_format == "coco":
-        exp = COCO_Exp(cfg.trainer_params.coco)
-    if cfg.trainer_params.ds_format == "voc":
-        exp = VOC_Exp(cfg.trainer_params.voc)
+    if cfg.trainer.yolox.model != "yolox_nano":
+        if cfg.data_module.dataset_format == "coco":
+            exp = COCO_Exp(cfg)
+        if cfg.data_module.dataset_format == "voc":
+            exp = VOC_Exp(cfg)
+    else:
+        exp = YOLOX_NANO_Exp(cfg)
 
     check_exp_value(exp)
 
@@ -96,20 +102,42 @@ def run_detection(cfg: DictConfig) -> None:
         dist_url=dist_url,
         args=(exp, args),
     )
-
+    
 
 class COCO_Exp(MyExp):
     def __init__(self, cfg) -> None:
         super(COCO_Exp, self).__init__()
-        for item in cfg:
-            setattr(self, item, cfg[item])
 
+        dataset_config = cfg.data_module.dataset
+        for item in dataset_config:
+            setattr(self, item, dataset_config[item])
+
+        model_config = cfg.model[cfg.trainer.yolox.model]
+        for item in model_config:
+            setattr(self, item, model_config[item])
+        
+        self.seed = cfg.trainer.yolox.seed
+        self.max_epoch = cfg.trainer.yolox.max_epoch
+        self.output_dir = cfg.trainer.yolox.output_dir
+        self.exp_name = cfg.project_name
+        
 
 class VOC_Exp(MyExp):
     def __init__(self, cfg) -> None:
         super(VOC_Exp, self).__init__()
-        for item in cfg:
-            setattr(self, item, cfg[item])
+
+        dataset_config = cfg.data_module.dataset
+        for item in dataset_config:
+            setattr(self, item, dataset_config[item])
+
+        model_config = cfg.model[cfg.trainer.yolox.model]
+        for item in model_config:
+            setattr(self, item, model_config[item])
+        
+        self.seed = cfg.trainer.yolox.seed
+        self.max_epoch = cfg.trainer.yolox.max_epoch
+        self.output_dir = cfg.trainer.yolox.output_dir
+        self.exp_name = cfg.project_name
 
     def get_dataset(self, cache: bool, cache_type: str = "ram") -> VOCDetection:
         return VOCDetection(
@@ -145,3 +173,46 @@ class VOC_Exp(MyExp):
             nmsthre=self.nmsthre,
             num_classes=self.num_classes,
         )
+
+
+class YOLOX_NANO_Exp(MyExp):
+    def __init__(self, cfg) -> None:
+        super(YOLOX_NANO_Exp, self).__init__()
+
+        dataset_config = cfg.data_module.dataset
+        for item in dataset_config:
+            setattr(self, item, dataset_config[item])
+
+        model_config = cfg.model[cfg.trainer.yolox.model]
+        for item in model_config:
+            setattr(self, item, model_config[item])
+        
+        self.seed = cfg.trainer.yolox.seed
+        self.max_epoch = cfg.trainer.yolox.max_epoch
+        self.output_dir = cfg.trainer.yolox.output_dir
+        self.exp_name = cfg.project_name
+
+    def get_model(self, sublinear=False):
+        def init_yolo(M):
+            for m in M.modules():
+                if isinstance(m, nn.BatchNorm2d):
+                    m.eps = 1e-3
+                    m.momentum = 0.03
+        if "model" not in self.__dict__:
+            from src.model.yolox.models import YOLOX, YOLOPAFPN, YOLOXHead
+            in_channels = [256, 512, 1024]
+            # NANO model use depthwise = True, which is main difference.
+            backbone = YOLOPAFPN(
+                self.depth, self.width, in_channels=in_channels,
+                act=self.act, depthwise=True,
+            )
+            head = YOLOXHead(
+                self.num_classes, self.width, in_channels=in_channels,
+                act=self.act, depthwise=True
+            )
+            self.model = YOLOX(backbone, head)
+
+        self.model.apply(init_yolo)
+        self.model.head.initialize_biases(1e-2)
+        return self.model
+        

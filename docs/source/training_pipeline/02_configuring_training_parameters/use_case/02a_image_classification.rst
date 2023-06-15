@@ -4,17 +4,17 @@
 Image Classification
 *********************
 
-* :ref:`config-files-mainconfig`
-* :ref:`config-files-datamodule`
-* :ref:`config-files-model`
-* :ref:`config-files-modelanalysis`
-* :ref:`config-files-trainer`
-* :ref:`config-files-metrics`
-* :ref:`config-files-callbacks`
-* :ref:`config-files-store`
+* :ref:`classification-config-files-mainconfig`
+* :ref:`classification-config-files-datamodule`
+* :ref:`classification-config-files-model`
+* :ref:`classification-config-files-modelanalysis`
+* :ref:`classification-config-files-trainer`
+* :ref:`classification-config-files-metrics`
+* :ref:`classification-config-files-callbacks`
+* :ref:`classification-config-files-store`
 
 
-.. _config-files-mainconfig:
+.. _classification-config-files-mainconfig:
 
 Main Config
 ===========
@@ -64,7 +64,7 @@ Config File: ``peekingduck/training/configs/config.yaml``
 ----------
 
 
-.. _config-files-datamodule:
+.. _classification-config-files-datamodule:
 
 Data Module
 ===========
@@ -376,7 +376,7 @@ Config File : ``peekingduck/training/configs/data_module/dataset/``
 ----------
 
 
-.. _config-files-model:
+.. _classification-config-files-model:
 
 Model
 =====
@@ -500,7 +500,7 @@ Model
 ----------
 
 
-.. _config-files-modelanalysis:
+.. _classification-config-files-modelanalysis:
 
 Model Analysis
 ==============
@@ -525,7 +525,7 @@ Config File : ``peekingduck/training/configs/model_analysis/classification.yaml`
 ----------
 
 
-.. _config-files-trainer:
+.. _classification-config-files-trainer:
 
 Trainer
 =======
@@ -546,7 +546,7 @@ Trainer
 ----------
 
 
-.. _config-files-metrics:
+.. _classification-config-files-metrics:
 
 Metrics
 =======
@@ -639,7 +639,7 @@ Metrics
 ----------
 
 
-.. _config-files-callbacks:
+.. _classification-config-files-callbacks:
 
 Callbacks
 =========
@@ -770,7 +770,7 @@ Callbacks
 ----------
 
 
-.. _config-files-store:
+.. _classification-config-files-store:
 
 Store
 =====

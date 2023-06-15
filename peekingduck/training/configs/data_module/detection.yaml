@@ -1,9 +1,3 @@
-dataset_format: "voc" # 'coco' | 'voc'
-coco:
-  data_dir: "data/coco_format" # data\coco_format_colorful_fashion_dataset_for_object_detection
-  train_ann: "instances_train.json"
-  val_ann: "instances_val.json"
-  test_ann: null # 'instances_test2017.json'
-voc:
-  data_dir: "data/voc_format"
-  image_sets: [["2007", "trainval"]]
+dataset_format    : "coco" # 'coco' | 'voc'
+defaults:
+      - dataset: fashion # fashion | < custom dataset yaml file name > 

@@ -2,119 +2,27 @@ yolox:
     experiment_name: ${project_name}
     name: null
     resume: False 
-    devices: 1
-    batch_size: 64
+    devices: 1    
+    batch_size: 8
+    max_epoch: 10
     fp16: True
-    occupy: True
-    ckpt: "./peekingduck/training/src/model/weights/yolox_s.pth"
+    occupy: null
+    model: "yolox_s" # "yolox_s" | "yolox_m" | "yolox_l" | "yolox_x" | "yolox_nano" | "yolox_tiny"
+    ckpt: ""
     logger: "tensorboard" # "tensorboard" | "wandb"
-
-    # --------------- Core Config -------------- #
-    # wandb-project: ${project_name} # <project-name>
-    # wandb-entity: peekingduck # <entity>
-    # wandb-name: null # <run-name>
-    # wandb-id: null # <run-id>
-    # wandb-save_dir: null # <save-dir>
-    # wandb-num_eval_imges: null # <num-images>
-    # wandb-log_checkpoints: True # <bool>
-
     cache: null
     dist_url: null
     num_machines: 1
     machine_rank: null
     dist_backend: null
     output_dir: './peekingduck/training/outputs'
-    trainer_params:
-      ds_format: ${data_module.dataset_format}
-      coco:
-        # --------------- Core Config -------------- #
-        num_classes       : 11
-        max_epoch         : 10
-        depth             : 0.33
-        width             : 0.50
-        input_size        : [224, 224]
-        test_size         : [224, 224]
-        data_num_workers  : 4
-        eval_interval     : 1
-        data_dir          : ${data_module.coco.data_dir}
-        train_ann         : ${data_module.coco.train_ann}
-        val_ann           : ${data_module.coco.val_ann}
-        exp_name          : ${trainer.yolox.experiment_name}
-        output_dir        : ${trainer.yolox.output_dir}
-        # --------------- Transform Config -------------- #
-        mosaic_prob       : 1.0
-        mixup_prob        : 1.0
-        hsv_prob          : 1.0
-        flip_prob         : 0.5
-        # --------------- Additional Config -------------- #
-        # seed              : null
-        # warmup_epochs     : 1
-        # print_interval    : 10
-        # act               : 'silu'
-        # multiscale_range  : 5
-        # dataset           : null
-        # test_ann          : ${data_module.coco.test_ann}
-        # degrees           : 10.0
-        # translate         : 0.1
-        # mosaic_scale      : [0.1, 2]
-        # enable_mixup      : True
-        # mixup_scale       : [0.5, 1.5]
-        # shear             : 2.0        
-        # warmup_lr         : 0
-        # min_lr_ratio      : 0.05
-        # basic_lr_per_img  : 0.00015625
-        # scheduler         : 'yoloxwarmcos'
-        # no_aug_epochs     : 15
-        # ema               : True
-        # weight_decay      : 0.0005
-        # momentum          : 0.9
-        # save_history_ckpt : True
-        # test_conf         : 0.01
-        # nmsthre           : 0.65
+    seed : ${use_case.random_state}
 
-      voc:
-        # --------------- Core Config -------------- #
-        num_classes       : 10
-        max_epoch         : 10
-        depth             : 0.33
-        width             : 0.50
-        input_size        : [224, 224]
-        test_size         : [224, 224]
-        data_dir          : ${data_module.voc.data_dir}
-        image_sets        : ${data_module.voc.image_sets}
-        exp_name          : ${trainer.yolox.experiment_name}
-        output_dir        : ${trainer.yolox.output_dir}
-        # --------------- Transform Config -------------- #
-        mosaic_prob       : 1.0
-        mixup_prob        : 1.0
-        hsv_prob          : 1.0
-        flip_prob         : 0.5
-        # --------------- Additional Config -------------- #
-        # seed              : null
-        # warmup_epochs     : 1
-        # print_interval    : 10
-        # eval_interval     : 1
-        # act               : 'silu'
-        # data_num_workers  : 4
-        # multiscale_range  : 5
-        # dataset           : null
-        # train_ann         : null
-        # val_ann           : null
-        # test_ann          : null
-        # degrees           : 10.0
-        # translate         : 0.1
-        # mosaic_scale      : [0.1, 2]
-        # enable_mixup      : True
-        # mixup_scale       : [0.5, 1.5]
-        # shear             : 2.0        
-        # warmup_lr         : 0
-        # min_lr_ratio      : 0.05
-        # basic_lr_per_img  : 0.00015625
-        # scheduler         : 'yoloxwarmcos'
-        # no_aug_epochs     : 15
-        # ema               : True
-        # weight_decay      : 0.0005
-        # momentum          : 0.9
-        # save_history_ckpt : True
-        # test_conf         : 0.01
-        # nmsthre           : 0.65
+    # defaults:
+    # - yolox_s: ${model.detection.yolox_s}
+    # - yolox_m: ${model.detection.yolox_m}
+    # - yolox_l: ${model.detection.yolox_l}
+    # - yolox_x: ${model.detection.yolox_x}
+    # - yolox_nano: ${model.detection.yolox_nano}
+    # - yolox_tiny: ${model.detection.yolox_tiny}
+

@@ -33,6 +33,6 @@ def run(cfg: DictConfig) -> Optional[Dict[str, Any]]:
     elif cfg.use_case.pipeline == "detection":
         from src.use_case.detection_pipeline import run_detection
 
-        run_detection(cfg.trainer.yolox)
+        run_detection(cfg)
 
     return history
