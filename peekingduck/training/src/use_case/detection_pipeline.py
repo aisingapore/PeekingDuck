@@ -102,7 +102,7 @@ def run_detection(cfg: DictConfig) -> None:
         dist_url=dist_url,
         args=(exp, args),
     )
-    
+
 
 class COCO_Exp(MyExp):
     def __init__(self, cfg) -> None:
@@ -115,12 +115,12 @@ class COCO_Exp(MyExp):
         model_config = cfg.model[cfg.trainer.yolox.model]
         for item in model_config:
             setattr(self, item, model_config[item])
-        
+
         self.seed = cfg.trainer.yolox.seed
         self.max_epoch = cfg.trainer.yolox.max_epoch
         self.output_dir = cfg.trainer.yolox.output_dir
         self.exp_name = cfg.project_name
-        
+
 
 class VOC_Exp(MyExp):
     def __init__(self, cfg) -> None:
@@ -133,7 +133,7 @@ class VOC_Exp(MyExp):
         model_config = cfg.model[cfg.trainer.yolox.model]
         for item in model_config:
             setattr(self, item, model_config[item])
-        
+
         self.seed = cfg.trainer.yolox.seed
         self.max_epoch = cfg.trainer.yolox.max_epoch
         self.output_dir = cfg.trainer.yolox.output_dir
@@ -186,7 +186,7 @@ class YOLOX_NANO_Exp(MyExp):
         model_config = cfg.model[cfg.trainer.yolox.model]
         for item in model_config:
             setattr(self, item, model_config[item])
-        
+
         self.seed = cfg.trainer.yolox.seed
         self.max_epoch = cfg.trainer.yolox.max_epoch
         self.output_dir = cfg.trainer.yolox.output_dir
@@ -198,21 +198,28 @@ class YOLOX_NANO_Exp(MyExp):
                 if isinstance(m, nn.BatchNorm2d):
                     m.eps = 1e-3
                     m.momentum = 0.03
+
         if "model" not in self.__dict__:
             from src.model.yolox.models import YOLOX, YOLOPAFPN, YOLOXHead
+
             in_channels = [256, 512, 1024]
             # NANO model use depthwise = True, which is main difference.
             backbone = YOLOPAFPN(
-                self.depth, self.width, in_channels=in_channels,
-                act=self.act, depthwise=True,
+                self.depth,
+                self.width,
+                in_channels=in_channels,
+                act=self.act,
+                depthwise=True,
             )
             head = YOLOXHead(
-                self.num_classes, self.width, in_channels=in_channels,
-                act=self.act, depthwise=True
+                self.num_classes,
+                self.width,
+                in_channels=in_channels,
+                act=self.act,
+                depthwise=True,
             )
             self.model = YOLOX(backbone, head)
 
         self.model.apply(init_yolo)
         self.model.head.initialize_biases(1e-2)
         return self.model
-        
