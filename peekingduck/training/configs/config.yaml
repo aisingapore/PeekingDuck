@@ -1,4 +1,4 @@
-project_name: "myproject"  # To be configured for each experiment < rsna | cifar10 | vegfru | vegfru5 | vegfru20 | myproject | ... >
+project_name: "myproject"  # To be configured for each experiment
 
 defaults:
   - use_case: detection  # To be configured for each experiment < classification | detection | segmentation | ... >

@@ -1,3 +1,8 @@
-# Refer to use_case/detection.yaml for more details
-# Refer to trainer/detection.yaml for more details
-# Refer to data_module/detection.yaml for more details
+wandb:
+    wandb_project: ${project_name} # <project-name>
+    wandb_entity: ${project_name} # <entity>
+    wandb_name: "${project_name}-${stores.unique_id}" # <run-name>
+    wandb_id: ${stores.unique_id} # <run-id>
+    wandb_save_dir: "./outputs/${project_name}/${stores.unique_id}/" # <save-dir>
+    wandb_num_eval_images: null # <num-images>
+    wandb_log_checkpoints: True # <bool>
