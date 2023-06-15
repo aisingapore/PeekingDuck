@@ -1,5 +1,3 @@
-entity: "peekingduck"
-project: "${project_name}"
-run_name: "${stores.unique_id}"
-framework: "${framework}"
-debug: ${debug}
+# Refer to use_case/detection.yaml for more details
+# Refer to trainer/detection.yaml for more details
+# Refer to data_module/detection.yaml for more details
