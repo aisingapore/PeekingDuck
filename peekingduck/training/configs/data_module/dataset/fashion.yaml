@@ -1,6 +1,6 @@
 num_classes       : 11
 data_dir          : "data/coco_format" # "data/coco_format" | "data/voc_format"
-train_ann         : "instances_train.json"
-val_ann           : "instances_val.json"
-test_ann          : "instances_test.json"
+train_ann         : "instances_train2017.json"
+val_ann           : "instances_val2017.json"
+test_ann          : null
 image_sets        : null # null | [["2007"]]

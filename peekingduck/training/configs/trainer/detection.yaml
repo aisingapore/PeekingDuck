@@ -8,7 +8,7 @@ yolox:
     fp16: True
     occupy: null
     model: "yolox_s" # "yolox_s" | "yolox_m" | "yolox_l" | "yolox_x" | "yolox_nano" | "yolox_tiny"
-    ckpt: ""
+    ckpt: null
     logger: "tensorboard" # "tensorboard" | "wandb"
     cache: null
     dist_url: null
