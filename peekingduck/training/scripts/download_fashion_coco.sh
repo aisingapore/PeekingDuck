@@ -6,7 +6,7 @@ mkdir COCO
 cd COCO
 mkdir annotations
 
-wget https://storage.googleapis.com/peekingduck/data/yolox.v1i.coco.zip
+curl -O https://storage.googleapis.com/peekingduck/data/yolox.v1i.coco.zip
 
 unzip yolox.v1i.coco.zip
 rm yolox.v1i.coco.zip
