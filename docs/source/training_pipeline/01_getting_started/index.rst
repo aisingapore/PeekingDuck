@@ -77,6 +77,9 @@ training pipeline into and running from an existing conda environment.
 Install PeekingDuck Training Pipeline
 =====================================
 
+Take note that PeekingDuck training pipeline for **object detection** requires 
+**CUDA GPU** to perform the training.
+
 .. tabs::
 
    .. tab:: Linux
@@ -174,9 +177,14 @@ Install PeekingDuck Training Pipeline
 
       **Install for CUDA GPU**
 
-      1. Complete CPU installation steps.
+      1. Complete CPU installation step 1 and 2 (before :green:`pip install`).
 
-      2. Refer to the `official Tensorflow step-by-step instructions 
+      2. Install PyTorch with the 
+         `official guide <https://pytorch.org/get-started/locally/>`_
+
+      3. Complete CPU installation step 3 (:green:`pip install`)
+
+      4. Refer to the `official Tensorflow step-by-step instructions 
          <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ 
          to install CUDA and CuDNN for TensorFlow.
 
