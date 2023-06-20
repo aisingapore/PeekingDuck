@@ -72,11 +72,11 @@ def run_detection(cfg: DictConfig) -> None:
         for item in cfg.model_analysis.wandb:
             args.__dict__[item] = cfg.model_analysis.wandb[item]
 
-    url: str = cfg.dataset.url
-    blob_file: str = cfg.dataset.blob_file
-    root_dir: Path = Path(cfg.dataset.root_dir)
+    url: str = cfg.data_module.dataset.url
+    blob_file: str = cfg.data_module.dataset.blob_file
+    root_dir: Path = Path(cfg.data_module.dataset.root_dir)
     
-    if cfg.dataset.download:
+    if cfg.data_module.dataset.download:
         logguru.info(f"downloading from {url} to {blob_file} in {root_dir}")
         download_to(url, blob_file, root_dir)
         extract_file(root_dir, blob_file)
