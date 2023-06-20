@@ -13,9 +13,8 @@
 # limitations under the License.
 
 """Test training pipeline script"""
-from typing import List
-
 import sys
+from typing import List
 from pytest import mark
 
 from hydra import compose, initialize

@@ -13,56 +13,6 @@
 # limitations under the License.
 """
     Optimizer Class Adapter for Tensorflow
-
-    # @staticmethod
-    # def Adadelta(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Adadelta(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def Adafactor(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Adafactor(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def Adagrad(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Adagrad(learning_rate=learning_rate, **parameters)
-
-    @staticmethod
-    def Adam(learning_rate: LearningRateSchedule, parameters):
-        return .Adam(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod # This is not released yet for tf-macos==2.10
-    # def AdamW(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     # return tf.keras.optimizers.experimental.AdamW(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def Adamax(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Adamax(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def Ftrl(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Ftrl(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def Nadam(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.Nadam(learning_rate=learning_rate, **parameters)
-
-    # @staticmethod
-    # def RMSprop(learning_rate: LearningRateSchedule, parameters):
-    #     raise NotImplementedError
-    #     return tf.keras.optimizers.RMSprop(learning_rate=learning_rate, **parameters)
-
-    @staticmethod
-    def SGD(learning_rate: LearningRateSchedule, parameters):
-        return tf.keras.optimizers.SGD(learning_rate=learning_rate, **parameters)
-
-
 """
 from typing import Any, Dict
 
@@ -72,7 +22,7 @@ import tensorflow as tf
 
 
 class OptimizersAdapter:
-    """Optimizers Adapter"""
+    """Tensorflow Optimizers Adapter"""
 
     @staticmethod
     def get_tensorflow_optimizer(
@@ -93,7 +43,7 @@ class OptimizersAdapter:
         optimizer: str,
         optimizer_params: Dict[str, Any],
     ) -> torch.optim.Optimizer:
-        """Get the optimizer for the model.
+        """Get the pytorch optimizer for the model.
         Note:
             Do not invoke self.model directly in this call as it may affect model initalization.
             https://stackoverflow.com/questions/70107044/can-i-define-a-method-as-an-attribute

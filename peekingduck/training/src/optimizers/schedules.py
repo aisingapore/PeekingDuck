@@ -12,32 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """
-Scheduler Class to interact with Tensorflow
-
-    @staticmethod
-    def PiecewiseConstantDecay(parameters):
-        return tf.keras.optimizers.schedules.PiecewiseConstantDecay(**parameters)
-
-    @staticmethod
-    def ExponentialDecay(parameters):
-        return tf.keras.optimizers.schedules.ExponentialDecay(**parameters)
-
-    @staticmethod
-    def CosineDecay(parameters):
-        return tf.keras.optimizers.schedules.CosineDecay(**parameters)
-
-    @staticmethod
-    def InverseTimeDecay(parameters):
-        return tf.keras.optimizers.schedules.InverseTimeDecay(**parameters)
-
-    @staticmethod
-    def PolynomialDecay(parameters):
-        return tf.keras.optimizers.schedules.PolynomialDecay(**parameters)
-
-    @staticmethod
-    def CosineDecayRestarts(parameters):
-        return tf.keras.optimizers.schedules.CosineDecayRestarts(**parameters)
-
+Scheduler Class to interact with Tensorflow and Pytorch Optimizers
 """
 
 from omegaconf import DictConfig
@@ -52,7 +27,7 @@ class OptimizerSchedules:
     def get_tensorflow_scheduler(
         name: str, parameters: DictConfig
     ) -> tf.keras.optimizers.schedules.LearningRateSchedule:
-        """get_tensorflow_scheduler"""
+        """Get the scheduler for the tensorflow optimizer."""
         return (
             getattr(tf.keras.optimizers.schedules, name)(**parameters)
             if len(parameters) > 0
@@ -63,7 +38,7 @@ class OptimizerSchedules:
     def get_pytorch_scheduler(
         optimizer: torch.optim.Optimizer, scheduler: str, parameters: DictConfig
     ) -> torch.optim.lr_scheduler._LRScheduler:
-        """Get the scheduler for the optimizer."""
+        """Get the scheduler for the pytorch optimizer."""
         return getattr(torch.optim.lr_scheduler, scheduler)(
             optimizer=optimizer, **parameters
         )

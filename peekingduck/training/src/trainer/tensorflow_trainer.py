@@ -17,6 +17,7 @@
 import logging
 from typing import Any, Dict, List, Optional, Union
 from omegaconf import DictConfig
+
 import tensorflow as tf
 from tqdm.keras import TqdmCallback  # for progress bar
 from configs import LOGGER_NAME
