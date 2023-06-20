@@ -1,2 +1,2 @@
 pipeline: "detection"
-random_state: 11
+random_state: null

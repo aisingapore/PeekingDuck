@@ -21,7 +21,7 @@ import warnings
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-
+from pathlib import Path
 from loguru import logger as logguru
 from omegaconf import DictConfig
 from src.model.yolox.data import get_yolox_datadir
@@ -36,7 +36,10 @@ from src.model.yolox.utils import (
 )
 from src.model.yolox.data import VOCDetection, TrainTransform, ValTransform
 from src.model.yolox.evaluators import VOCEvaluator
-
+from src.utils.general_utils import (
+    download_to,
+    extract_file
+)
 
 # type: ignore
 @logguru.catch
@@ -69,10 +72,20 @@ def run_detection(cfg: DictConfig) -> None:
         for item in cfg.model_analysis.wandb:
             args.__dict__[item] = cfg.model_analysis.wandb[item]
 
+    url: str = cfg.dataset.url
+    blob_file: str = cfg.dataset.blob_file
+    root_dir: Path = Path(cfg.dataset.root_dir)
+    
+    if cfg.dataset.download:
+        logguru.info(f"downloading from {url} to {blob_file} in {root_dir}")
+        download_to(url, blob_file, root_dir)
+        extract_file(root_dir, blob_file)
+
     assert cfg.data_module.dataset_format in [
         "coco",
         "voc",
     ], f"Unsupported format {cfg.data_module.dataset_format}"
+
 
     if cfg.trainer.yolox.model != "yolox_nano":
         if cfg.data_module.dataset_format == "coco":

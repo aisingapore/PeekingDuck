@@ -1,6 +1,10 @@
+download: True
+url: "https://storage.googleapis.com/peekingduck/data/fashion_coco_format.zip"
+blob_file: "fashion_coco_format.zip"
+root_dir: "data"
 num_classes       : 11
-data_dir          : "data/coco_format" # "data/coco_format" | "data/voc_format"
+data_dir          : "${.root_dir}/fashion_coco_format" # "data/fashion_coco_format" | "data/fashion_voc_format"
 train_ann         : "instances_train2017.json"
 val_ann           : "instances_val2017.json"
 test_ann          : null
-image_sets        : null # null | [["2007"]]
+image_sets        : null # null | [['2007', 'trainval']]
