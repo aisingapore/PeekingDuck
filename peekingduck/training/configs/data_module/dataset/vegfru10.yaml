@@ -1,0 +1,26 @@
+download: False
+url: "https://storage.googleapis.com/peekingduck/data/vegfru.zip"
+blob_file: "vegfru.zip"
+root_dir: "data"
+dataset: "vegfru"
+train_dir: "./${.root_dir}/${.dataset}"
+test_dir: "./${.root_dir}/${.dataset}"
+train_csv: "./${.root_dir}/${.dataset}/vegfru10.csv"
+image_path_col_name: "image_path"
+target_col_name: "class_name"
+target_col_id: "class_id"
+stratify_by: "class_id"
+classification_type: "multiclass"
+image_size: 224
+num_classes: 10
+class_name_to_id:
+  "garlic": 0
+  "cattail": 1
+  "soybean": 2
+  "red_cabbage": 3
+  "mung_bean_sprouts": 4
+  "pakchoi": 5
+  "eggplant": 6
+  "chrysanthemum": 7
+  "snake_gourd": 8
+  "nameko": 9

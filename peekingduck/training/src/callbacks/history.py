@@ -15,42 +15,55 @@
 
 """Implements Model History.
 NOTE:
-1. self.history is instantiated on_trainer_start and we do not need to create
-    it in trainer anymore.
-2. After everything, we assign self.history to trainer.history so we can call
-    trainer.history for results.
+    1. self.history is instantiated on_trainer_start and we do not need to create
+        it in trainer anymore.
+    2. After everything, we assign self.history to trainer.history so we can call
+        trainer.history for results.
 """
+from collections import defaultdict
+from typing import Any, DefaultDict, Dict, List
 
-from typing import Any, DefaultDict, List
+import wandb
 
 from src.callbacks.base import Callback
+from src.callbacks.order import CallbackOrder
 from src.trainer.base import Trainer
 
-# pylint: disable=unused-argument
+
 class History(Callback):
-    """Callback to record history of training."""
+    """Class to log metrics to console and save them to a CSV file."""
 
     def __init__(self) -> None:
-        """Constructor method."""
-        super().__init__()
-        self.history: DefaultDict(str, List[Any])
+        """Constructor class for History Class."""
+        super().__init__(order=CallbackOrder.HISTORY)
+        self.history: DefaultDict[str, List[Any]]
 
-    def on_trainer_start(self, trainer: Trainer) -> None:
-        """Initializes history."""
-        ...
+    def on_trainer_start(
+        self, trainer: Trainer  # pylint: disable=unused-argument
+    ) -> None:
+        """When the trainer starts, we should initialize the history.
+        This is init method of Trainer.
+        """
+        self.history = defaultdict(list)
 
     def on_train_epoch_end(self, trainer: Trainer) -> None:
-        """Updates train history after each epoch."""
-        ...
+        """Method to update history object at the end of every epoch."""
+        self._update(history=trainer.epoch_dict["train"])
 
     def on_valid_epoch_end(self, trainer: Trainer) -> None:
-        """Updates valid history after each epoch."""
-        ...
+        """Method to update history object at the end of every epoch."""
+        self._update(history=trainer.epoch_dict["validation"])
 
     def on_trainer_end(self, trainer: Trainer) -> None:
-        """Assigns history to trainer."""
-        ...
+        """Method assigns accumulated history to history attribute
+        back to Trainer class."""
+        trainer.history = self.history
 
-    def _update(self, history: DefaultDict[str, List[Any]]) -> None:
-        """Updates history object."""
-        ...
+    def _update(self, history: Dict[str, Any]) -> None:
+        """Updates the history object with the latest metrics."""
+        wandb.log(history)
+        for key in history:
+            if key not in self.history:
+                self.history[key] = [history.get(key)]
+            else:
+                self.history[key].append(history.get(key))

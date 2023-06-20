@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # Copyright 2023 AI Singapore
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,41 +13,31 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Controller for training pipeline."""
+"""Main function for training pipeline"""
 
 import logging
 
+from omegaconf import OmegaConf, DictConfig
 import hydra
-from configs.base import Config
 from hydra.core.hydra_config import HydraConfig
-from omegaconf import DictConfig, OmegaConf
-from rich.pretty import pprint
 
-# from hydra.utils import instantiate
+from src.training_pipeline import run
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 
-def hydra_to_pydantic(config: DictConfig) -> Config:
-    """Converts Hydra config to Pydantic config."""
-    OmegaConf.resolve(config)
-    return Config(**config)
-
-
-@hydra.main(version_base=None, config_path="configs", config_name="config")
-def main(config: DictConfig) -> None:
-    """Main entry to training pipeline."""
-    logger.info(f"Config representation:\n{OmegaConf.to_yaml(config)}")
-    logger.info(f"Output dir: {HydraConfig.get().runtime.output_dir}")
-
-    # callbacks = instantiate(config.callbacks.callbacks)
-
-    config = hydra_to_pydantic(config)
-    pprint(config)
-
-    # pass config to training pipeline
-    # run(config)
+# pylint: disable=no-value-for-parameter,logging-fstring-interpolation
+@hydra.main(
+    version_base=None,
+    config_path="configs",
+    config_name="config",
+)
+def main(cfg: DictConfig) -> None:
+    """main"""
+    logger.debug(OmegaConf.to_yaml(cfg))
+    logger.info(f"runtime.output_dir{HydraConfig.get().runtime.output_dir}")
+    run(cfg)
 
 
 if __name__ == "__main__":
-    main()  # pylint: disable=no-value-for-parameter
+    main()

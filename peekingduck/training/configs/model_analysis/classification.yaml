@@ -1,0 +1,5 @@
+entity: "peekingduck"
+project: "${project_name}"
+run_name: "${stores.unique_id}"
+framework: "${framework}"
+debug: ${debug}

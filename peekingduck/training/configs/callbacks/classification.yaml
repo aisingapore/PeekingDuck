@@ -1,0 +1,29 @@
+pytorch:
+    # Options: EarlyStopping | History | MetricMeter | ModelCheckpoint
+    - Logger
+    - EarlyStopping:
+          patience: ${trainer.pytorch.global_train_params.patience}
+          monitor: ${trainer.pytorch.global_train_params.monitored_metric.monitor}
+          mode: ${trainer.pytorch.global_train_params.monitored_metric.mode}
+    - History
+    - MetricMeter
+    - ModelCheckpoint:
+          monitor: ${trainer.pytorch.global_train_params.monitored_metric.monitor}
+          mode: ${trainer.pytorch.global_train_params.monitored_metric.mode}
+
+tensorflow:
+    # Options: EarlyStopping | ModelCheckpoint | ProgbarLogger | BackupAndRestore | BaseLogger | CSVLogger | LambdaCallback | LearningRateScheduler | ReduceLROnPlateau | RemoteMonitor | TensorBoard | TerminateOnNaN
+    - EarlyStopping:
+          patience: 3
+          restore_best_weights: True
+          monitor: ${trainer.tensorflow.global_train_params.monitored_metric.monitor}
+    - ProgbarLogger:
+          count_mode: 'steps'
+          stateful_metrics: Null
+    - ModelCheckpoint:
+          filepath: ${trainer.tensorflow.stores.model_artifacts_dir}
+          monitor: ${trainer.tensorflow.global_train_params.monitored_metric.monitor}
+          save_best_only: False
+          save_weights_only: False
+          mode: 'auto'
+          save_freq: 'epoch'

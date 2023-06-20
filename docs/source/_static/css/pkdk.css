@@ -179,6 +179,10 @@ div.highlight span.pkd-raw-terminal:before {
   color: orange;
 }
 
+.grey {
+   color: grey;
+}
+
 /*****************************************************************************
  * Terminal session box
  *****************************************************************************/
@@ -221,4 +225,35 @@ div.highlight span.pkd-raw-terminal:before {
 
 .toggle .header.open:before {
   content: "▼";
+}
+
+
+/*****************************************************************************
+ * Framework Selection Button for Training Pipeline
+ *****************************************************************************/
+.wy-table-responsive table td ul li{
+    list-style-type: none;
+}
+
+div.install .training-framework-btn {
+    display: inline-block;
+    margin: 12px 6px;
+    padding: 5px 11px;
+    background-color: #fff; /* #fff3cd */
+    border: none;
+    border-radius: 3px;
+    color: black;
+    font-size: 90%;
+    font-family: "Nunito", sans-serif;
+    font-weight: 400;
+}
+
+div.install .training-framework-btn.active {
+    background-color: #a76d60;
+    color: white;
+}
+.wy-table-responsive table td:last-child, .wy-table-responsive table th:last-child {
+    white-space: normal;
+    min-width: 300px;
+    max-width: 450px;
 }

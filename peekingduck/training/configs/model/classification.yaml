@@ -1,0 +1,41 @@
+pytorch:
+    adapter: "timm" # torchvision | timm
+    task: ${use_case}
+    # model name references:
+    # https://pytorch.org/vision/stable/models.html#classification
+    # https://huggingface.co/docs/timm/reference/models#timm.list_models
+    model_name: "vgg16" # resnet18 efficientnet_v2_s vgg11-19 vgg16 mobilenet_v3_small
+    weights: "DEFAULT" # for torchvision >= 0.13. Refer to official doc for customized values.
+    pretrained: True # for timm only
+    fine_tune: True
+    fine_tune_all: False # fine tune the entire model
+    fine_tune_modules:
+        features: 7
+        pre_logits: ["fc1", "act1", "drop", "fc2", "act2"]
+    model_type:
+        _target_: src.model.pytorch_model.PTClassificationModel
+    num_classes: ${data_module.dataset.num_classes}
+    device: ${device}
+
+tensorflow:
+    task: ${use_case}
+    model_name: "VGG16" # VGG16 ResNet50 EfficientNetV2S
+    model_type:
+        _target_: src.model.tensorflow_model.TFClassificationModelFactory
+    num_classes: ${data_module.dataset.num_classes}
+    activation: "softmax"
+    image_size: ${data_module.dataset.image_size}
+    device: ${device}
+    pretrained: True
+    fine_tune: True # True or False
+    fine_tune_all: False # fine tune the entire model
+    # prediction layer need to be included. If not, the weights will not be updated
+    fine_tune_layers:
+        [
+            "prediction_modified",
+            "fc2",
+            "fc1",
+            "block5_conv3",
+            "block5_conv2",
+            "block5_conv1",
+        ]

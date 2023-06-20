@@ -11,6 +11,8 @@
 
 .. role:: green
 
+.. role:: grey
+
 .. role:: greenbox
 
 

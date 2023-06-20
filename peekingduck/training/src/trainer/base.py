@@ -12,20 +12,35 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-"""Trainer base class."""
+"""Trainer class protocol"""
 
-from abc import ABC, abstractmethod
+from typing import Any, Dict, Protocol, Union
+from omegaconf import DictConfig
 
-from configs.base import Config
+from torch.utils.data import DataLoader
+
+from src.data.base import AbstractDataSet
 
 
-class Trainer(ABC):
-    """Trainer base class."""
+# pylint: disable=too-many-arguments
+class Trainer(Protocol):
+    """Object used to facilitate training."""
 
-    def __init__(self, config: Config) -> None:
-        super().__init__()
-        self.config = config
+    def setup(
+        self,
+        trainer_config: DictConfig,
+        model_config: DictConfig,
+        callbacks_config: DictConfig,
+        metrics_config: DictConfig,
+        data_config: DictConfig,
+        device: str = "",
+    ) -> None:
+        """Setup"""
 
-    @abstractmethod
-    def fit(self) -> None:
-        """Trains the model."""
+    def train(
+        self,
+        train_loader: Union[DataLoader, AbstractDataSet],
+        validation_loader: Union[DataLoader, AbstractDataSet],
+    ) -> Dict[str, Any]:
+        """Trainer train"""
+        ...

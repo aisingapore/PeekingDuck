@@ -1,0 +1,37 @@
+download: True
+url: "https://storage.googleapis.com/peekingduck/data/cifar10.zip"
+blob_file: "cifar10.zip"
+root_dir: "data"
+dataset: "cifar10"
+train_dir: "./${.root_dir}/${.dataset}"
+test_dir: "./${.root_dir}/${.dataset}"
+train_csv: "./${.root_dir}/${.dataset}/train.csv"
+image_path_col_name: "image_path"
+target_col_name: "class_name" #class_id
+target_col_id: "class_id"
+stratify_by: "${.target_col_name}"
+classification_type: "multiclass"
+image_size: 224 # for tensorflow this needs to meet the requirement of the corresponding model input size
+num_classes: 10
+class_name_to_id:
+  airplane: 0
+  automobile: 1
+  bird: 2
+  cat: 3
+  deer: 4
+  dog: 5
+  frog: 6
+  horse: 7
+  ship: 8
+  truck: 9
+classes:
+  - airplane
+  - automobile
+  - bird
+  - cat
+  - deer
+  - dog
+  - frog
+  - horse
+  - ship
+  - truck

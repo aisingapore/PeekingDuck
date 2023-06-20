@@ -140,6 +140,7 @@ cython_debug/
 # Ignore all data dir except the one in tests/
 data/
 !tests/data/
+!data/**/*.csv
 
 # Other likely dirs that should not be committed
 logs/
@@ -154,3 +155,7 @@ docs/source/peekingduck.*
 docs/source/nodes
 # Other likely files that should not be committed
 .DS_Store
+peekingduck/training/.gitignore
+**/outputs
+**/multirun
+**/wandb

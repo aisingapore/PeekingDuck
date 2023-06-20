@@ -1,20 +1,26 @@
-defaults:
-  - datamodule: base
-  - model: base
-  - stores: base
-  - callbacks: base
-  # - trainer: common
-  # - metrics: common
-  # You typically want _self_ somewhere after the schema (base_config)
-  - _self_
+device: "auto" # "auto" to select available gpu. "cpu"|"cuda"|"mps"
+project_name: "myproject" # rsna | cifar10 | vegfru | vegfru5 | vegfru20
+debug: True
+framework: "tensorflow" # 'pytorch' | 'tensorflow'
+random_state: 11
+view_only: False
 
-general:
-  num_classes: 10
-  device: "cpu"
-  project_name: "peekingduck"
-  debug: true
-  seed: 1992
+defaults:
+  - use_case: classification
+  - data_module/dataset: cifar10  # rsna | cifar10 | vegfru | vegfru5 | vegfru20
+  - data_module: ${use_case}
+  - model: ${use_case}
+  - trainer: ${use_case}
+  - callbacks: ${use_case}
+  - metrics: ${use_case}
+  - model_analysis: ${use_case}
+  - stores: ${use_case}
+  - _self_
+  - override hydra/job_logging: custom
 
 hydra:
   run:
-    dir: "outputs/${general.project_name}/${stores.unique_id}" # in sync with stores
+    dir: "outputs/${project_name}/${stores.unique_id}"
+  sweep:
+    dir: outputs/${project_name}/${stores.unique_id}
+    subdir: ${hydra.job.num}
