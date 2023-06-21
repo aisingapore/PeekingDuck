@@ -179,7 +179,6 @@ class TestKeypointsTo3dLoc:
         np.testing.assert_equal(ans_body_some, node._get_torso_keypoints(body_some))
 
     def test_enough_torso_keypoints(self, node, torso_full, torso_one):
-
         assert node._enough_torso_keypoints(torso_full)
         assert not node._enough_torso_keypoints(torso_one)
 

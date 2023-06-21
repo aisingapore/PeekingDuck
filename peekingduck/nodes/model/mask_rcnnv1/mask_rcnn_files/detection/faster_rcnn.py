@@ -189,7 +189,6 @@ class FasterRCNN(g_rnn.GeneralizedRCNN):
         box_detections_per_img: int = 100,
         bbox_reg_weights: Optional[Tuple[float, float, float, float]] = None,
     ):
-
         if not hasattr(backbone, "out_channels"):
             raise ValueError(
                 "backbone should contain an attribute out_channels "

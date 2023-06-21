@@ -194,7 +194,6 @@ class MaskRCNN(faster_rcnn.FasterRCNN):
         mask_head: Optional[nn.Module] = None,
         mask_predictor: Optional[nn.Module] = None,
     ):
-
         assert isinstance(mask_roi_pool, (poolers.MultiScaleRoIAlign, type(None)))
 
         if num_classes is not None:

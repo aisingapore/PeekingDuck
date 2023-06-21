@@ -351,7 +351,6 @@ class WandbLogger(object):
         result_table = self.wandb.Table(columns=columns)
 
         for idx, val in table_ref.iterrows():
-
             avg_scores = defaultdict(int)
             num_occurrences = defaultdict(int)
 

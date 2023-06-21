@@ -60,7 +60,6 @@ class MixConcatDataset(torchConcatDataset):
             self.input_dim = self.datasets[0].input_dim
 
     def __getitem__(self, index):
-
         if not isinstance(index, int):
             idx = index[1]
         if idx < 0:

@@ -60,7 +60,6 @@ class Node(AbstractNode):
         super().__init__(config, node_path=__name__, **kwargs)
 
     def run(self, inputs: Dict[str, Any]) -> Dict[str, Any]:
-
         bbox_scores = inputs["bbox_scores"] if "bbox_scores" in inputs else None
         color_choice = self.color_choice if "color_choice" in self.__dict__ else None
 

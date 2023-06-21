@@ -314,7 +314,6 @@ class PredictionModule(nn.Module):  # pylint: disable=too-many-instance-attribut
         index: int = 0,
         input_size: Optional[int] = None,
     ) -> None:
-
         super().__init__()
         self.params = [in_channels, out_channels, aspect_ratios, scales, parent, index]
         self.num_classes = NUM_CLASSES

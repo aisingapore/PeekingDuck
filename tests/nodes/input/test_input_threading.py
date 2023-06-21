@@ -34,6 +34,7 @@ RTSP_URL_JAPAN_2 = (
 )
 URL_LIST = [RTSP_URL_JAPAN_1, RTSP_URL_JAPAN_2, RTSP_URL_GERMANY]
 
+
 # Helper Functions
 def get_fps_number(avg_fps_msg: str) -> float:
     """Decodes FPS number from given "Avg FPS" string output by Peeking Duck

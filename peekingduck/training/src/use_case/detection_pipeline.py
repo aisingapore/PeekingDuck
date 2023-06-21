@@ -14,16 +14,18 @@
 
 """Detection Trainer Pipeline"""
 
-import os
 import argparse
 import random
 import warnings
+from pathlib import Path
+
+from loguru import logger as logguru
+from omegaconf import DictConfig
+
 import torch
 import torch.nn as nn
 import torch.backends.cudnn as cudnn
-from pathlib import Path
-from loguru import logger as logguru
-from omegaconf import DictConfig
+
 from src.model.yolox.data import get_yolox_datadir
 from src.model.yolox.core import launch
 from src.model.yolox.exp import Exp as MyExp
@@ -36,10 +38,8 @@ from src.model.yolox.utils import (
 )
 from src.model.yolox.data import VOCDetection, TrainTransform, ValTransform
 from src.model.yolox.evaluators import VOCEvaluator
-from src.utils.general_utils import (
-    download_to,
-    extract_file
-)
+from src.utils.general_utils import download_to, extract_file
+
 
 # type: ignore
 @logguru.catch
@@ -50,8 +50,8 @@ def main(exp: Exp, args) -> None:
         torch.manual_seed(exp.seed)
         cudnn.deterministic = True
         warnings.warn(
-            "You have chosen to seed training. This will turn on the CUDNN deterministic setting, "
-            "which can slow down your training considerably! You may see unexpected behavior "
+            "You have chosen to seed training. This will turn on the CUDNN deterministic setting,"
+            "which can slow down your training considerably! You may see unexpected behavior"
             "when restarting from checkpoints."
         )
 
@@ -75,7 +75,7 @@ def run_detection(cfg: DictConfig) -> None:
     url: str = cfg.data_module.dataset.url
     blob_file: str = cfg.data_module.dataset.blob_file
     root_dir: Path = Path(cfg.data_module.dataset.root_dir)
-    
+
     if cfg.data_module.dataset.download:
         logguru.info(f"downloading from {url} to {blob_file} in {root_dir}")
         download_to(url, blob_file, root_dir)
@@ -85,7 +85,6 @@ def run_detection(cfg: DictConfig) -> None:
         "coco",
         "voc",
     ], f"Unsupported format {cfg.data_module.dataset_format}"
-
 
     if cfg.trainer.yolox.model != "yolox_nano":
         if cfg.data_module.dataset_format == "coco":

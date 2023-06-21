@@ -153,7 +153,6 @@ class DeclarativeLoader:  # pylint: disable=too-few-public-methods, too-many-ins
             self.config_updates_cli is not None
             and node_name in self.config_updates_cli.keys()
         ):
-
             config = self._edit_config(
                 config, self.config_updates_cli[node_name], node_name
             )
