@@ -123,7 +123,6 @@ class BasicBlock(nn.Module):
     """Basic Block for ResNet"""
 
     expansion: int = 1
-
     # pylint: disable=too-many-arguments
     def __init__(
         self,

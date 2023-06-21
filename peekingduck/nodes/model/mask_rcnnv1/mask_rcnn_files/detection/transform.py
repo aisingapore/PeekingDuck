@@ -146,6 +146,7 @@ class GeneralizedRCNNTransform(nn.Module):
             ImageList: An object containing padded images and the original image sizes
         """
         for i, image in enumerate(images):
+
             if image.dim() != 3:
                 raise ValueError(
                     "images is expected to be a list of 3d tensors "

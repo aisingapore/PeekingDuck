@@ -16,7 +16,6 @@
 
 import logging
 from typing import Any, Dict, Optional
-
 from omegaconf import DictConfig
 from configs import LOGGER_NAME
 

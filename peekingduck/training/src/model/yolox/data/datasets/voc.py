@@ -133,7 +133,7 @@ class VOCDetection(CacheDataset):
         self.cats = [{"id": idx, "name": val} for idx, val in enumerate(VOC_CLASSES)]
         self.class_ids = list(range(len(VOC_CLASSES)))
         self.ids = list()
-        for year, name in image_sets:
+        for (year, name) in image_sets:
             self._year = year
             rootpath = os.path.join(self.root, "VOC" + year)
             for line in open(
@@ -305,6 +305,7 @@ class VOCDetection(CacheDataset):
         if output_dir is not None and not os.path.isdir(output_dir):
             os.mkdir(output_dir)
         for i, cls in enumerate(VOC_CLASSES):
+
             if cls == "__background__":
                 continue
 

@@ -68,7 +68,7 @@ class Node(AbstractNode):
         )
 
         quickfind = QuickFind(len(inputs["obj_3D_locs"]))
-        for idx_1, idx_2 in nearby_obj_pairs:
+        for (idx_1, idx_2) in nearby_obj_pairs:
             if not quickfind.connected(idx_1, idx_2):
                 quickfind.union(idx_1, idx_2)
 

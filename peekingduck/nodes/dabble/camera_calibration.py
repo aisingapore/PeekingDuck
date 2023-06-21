@@ -200,6 +200,7 @@ class Node(AbstractNode):
                 text_to_draw = TOO_SMALL
 
         if detect_corners_success and corners_valid == CORNERS_OK:
+
             self.image_points.append(corners)
             self.num_detections += 1
 

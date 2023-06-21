@@ -58,6 +58,7 @@ class TestBrightness:
         np.testing.assert_equal(results["img"][0][0], original_img[0][0] + 50)
 
     def test_darken_image(self, brightness_decrease):
+
         original_img = np.ones(shape=(28, 28, 3), dtype=np.uint8) * 100
         print(original_img[0][0])
         input1 = {"img": original_img.copy()}
