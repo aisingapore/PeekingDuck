@@ -1,9 +1,16 @@
 download: True
-url: "https://storage.googleapis.com/peekingduck/data/fashion_coco_format.zip"
+
+url: "https://storage.googleapis.com/peekingduck/data/fashion_coco_format.zip" 
+# "https://storage.googleapis.com/peekingduck/data/fashion_coco_format.zip" | "https://storage.googleapis.com/peekingduck/data/fashion_voc_format.zip"
+
 blob_file: "fashion_coco_format.zip"
+# "fashion_coco_format.zip" | "fashion_voc_format.zip"
+
+data_dir          : "${.root_dir}/fashion_dataset_for_object_detection_coco_format"
+# "data/fashion_dataset_for_object_detection_coco_format" | "data/fashion_dataset_for_object_detection_voc_format"
+
 root_dir: "data"
 num_classes       : 11
-data_dir          : "${.root_dir}/fashion_coco_format" # "data/fashion_coco_format" | "data/fashion_voc_format"
 train_ann         : "instances_train2017.json"
 val_ann           : "instances_val2017.json"
 test_ann          : null
