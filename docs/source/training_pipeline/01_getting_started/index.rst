@@ -16,18 +16,21 @@ started. Subsequent sections will demonstrate how to train your own model using
 your specific data by customizing the training parameters.
 
 Please note that the current version of PeekingDuck focuses on image 
-classification model training. While object detection capabilities are under 
-development, they will be included in future releases.
+classification and object detection model training only.
 
 
 Features
 ========
 
-* Train with TensorFlow or PyTorch
+* Image classification training with TensorFlow or PyTorch
    PeekingDuck supports official pre-trained models from both `TensorFlow 
    <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_ 
    and `PyTorch 
    <https://www.tensorflow.org/api_docs/python/tf/keras/applications#modules>`_.
+
+* Object Detection training with VOC or COCO format
+   PeekingDuck supports `YOLOX <https://github.com/Megvii-BaseDetection/YOLOX>`_
+   object detection training. Easily customize parameters using YAML configuration files.
 
 * Train with your data
    PeekingDuck supports data loading and model training on your dataset. 
@@ -51,7 +54,7 @@ How the Training Pipeline Works
 PeekingDuck's training pipeline is designed to be compatible with PyTorch and 
 TensorFlow. The architecture diagram is shown below:
 
-.. image:: /assets/diagrams/C4Diagram-L4_SimplifiedOverview.png
+.. image:: /assets/diagrams/training_pipeline_c4_classification_detection_overview_diagram.png
 
 The general workflow when using the training pipeline is:
 
@@ -121,7 +124,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`pip install -r peekingduck/training/requirements.txt` \
+            :green:`pip install -r peekingduck/training/requirements_linux.txt` \
 
       **Install for CUDA GPU**
 
@@ -173,7 +176,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`pip install -r peekingduck/training/requirements.txt` \
+            :green:`pip install -r peekingduck/training/requirements_windows.txt` \
 
       **Install for CUDA GPU**
 
@@ -269,32 +272,70 @@ following command:
 Test Run
 ========
 
-You can test the training pipeline with the default :mod:`cifar10` dataset using 
-the following commands in the terminal:
+Select a use case and follow the steps to test the training pipeline.
 
-.. admonition:: Terminal Session
+.. tabs::
 
-   | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
+   .. tab:: Image Classification
 
-Test for TensorFlow:
+      Follow the commands below to train a PyTorch or TensorFlow image
+      classification training pipeline using the default :mod:`cifar10` dataset:
 
-.. admonition:: Terminal Session
+      .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ 
-      :green:`python ./peekingduck/training/main.py debug=True framework=tensorflow` \
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
 
-Test for PyTorch:
+      Test for TensorFlow:
 
-.. admonition:: Terminal Session
+      .. admonition:: Terminal Session
 
-   | \ :blue:`[~user/PeekingDuck]` \ > \ 
-      :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`python ./peekingduck/training/main.py project_name=my_tensorflow_classification_project debug=True use_case=classification use_case.framework=tensorflow` \
+
+      Test for PyTorch:
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`python ./peekingduck/training/main.py project_name=my_pytorch_classification_project debug=True use_case=classification use_case.framework=pytorch` \
 
 
-View the result of each run at the specified output folder directory: 
-:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
-The default value of :mod:`<PROJECT_NAME>` is defined in the 
-:ref:`config-files-mainconfig`.
+      View the result of each run at the specified output folder directory: 
+      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
+      The default value of :mod:`<PROJECT_NAME>` is defined in the 
+      :ref:`config-files-mainconfig`.
+
+
+   .. tab:: Object Detection
+
+      The object detection training pipeline supports both COCO and VOC format.
+      Follow the commands below to train an object detection training pipeline 
+      using the default :mod:`fashion` dataset:
+
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
+
+      Test for COCO Format:
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`python ./peekingduck/training/main.py project_name=my_detection_coco_project use_case=detection data_module.detection.dataset_format=coco data_module.dataset=fashion_coco_format` \
+
+      Test for VOC Format:
+
+      .. admonition:: Terminal Session
+
+         | \ :blue:`[~user/PeekingDuck]` \ > \ 
+            :green:`python ./peekingduck/training/main.py project_name=my_detection_voc_project use_case=detection data_module.detection.dataset_format=voc data_module.dataset=fashion_voc_format` \
+
+
+      View the result of each run at the specified output folder directory: 
+      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
+      The default value of :mod:`<PROJECT_NAME>` is defined in the 
+      :ref:`config-files-mainconfig`.
 
 After installation and test runs, refer to 
 :ref:`configuring_training_parameters` for training customization.
