@@ -65,6 +65,8 @@ from src.utils.general_utils import seed_all
                 "data_module.data_adapter.pytorch.train.batch_size=32",
                 "data_module.data_adapter.pytorch.validation.batch_size=32",
                 "data_module.data_adapter.pytorch.test.batch_size=32",
+                "model.pytorch.adapter=timm",
+                "model.pytorch.model_name=vgg16",
                 "trainer.pytorch.stores.model_artifacts_dir=null",
             ],
             "valid_loss",
