@@ -1,0 +1,10 @@
+download: True
+url               : "https://storage.googleapis.com/peekingduck/data/fashion_coco_format.zip"
+blob_file         : "fashion_coco_format.zip"
+root_dir          : "data"
+data_dir          : "${.root_dir}/fashion_dataset_for_object_detection_coco_format"
+num_classes       : 11
+train_ann         : "instances_train2017.json"
+val_ann           : "instances_val2017.json"
+test_ann          : null
+image_sets        : null
