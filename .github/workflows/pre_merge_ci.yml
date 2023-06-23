@@ -22,6 +22,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install wheel
           pip install -r requirements.txt
+          pip install torch torchvision --extra-index-url https://download.pytorch.org/whl/cu118
           pip install -r requirements_cicd.txt
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
