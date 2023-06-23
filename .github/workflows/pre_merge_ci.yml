@@ -20,8 +20,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install wheel
-          pip install torch==2.0.1+cu118 torchvision==0.15.2+cu118 --extra-index-url https://download.pytorch.org/whl/cu118
-          pip install timm>=0.6.12 torchinfo>=1.7.1 torchmetrics>=0.11.1 thop
           pip install -r requirements.txt
           pip install -r requirements_cicd.txt
       - name: Run lint checks
