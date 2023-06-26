@@ -21,8 +21,8 @@ Setup
 Data Folder Structure   
 ---------------------
 
-To work with the PeekingDuck training pipeline, the training dataset needs to 
-be arranged in the folder structure below:
+To work with the PeekingDuck image classification training pipeline,
+the training dataset needs to be arranged in the folder structure below:
 
 .. parsed-literal::
 
@@ -110,13 +110,12 @@ github.com/ustc-vim/vegfru>`_ dataset:
 +------------------------------------------------+----------+------------------------------+
 
 
-.. _03-config-folder-structure:
+.. _03a-config-folder-structure:
 
 Configuration Folder Structure
 ------------------------------
 
-Below shows the folder structure and describes how you can understand and 
-navigate the config structure. 
+Below shows the folder structure and the files related to image classification configuration.
 
 .. parsed-literal::
 
@@ -129,18 +128,13 @@ navigate the config structure.
           │      ├── \ :blue:`dataset/` \ |Blank|
           │      │      ├── cifar10.yaml
           │      │      ├── rsna.yaml
-          │      │      ├── vegfru5.yaml
-          │      │      ├── vegfru15.yaml
-          │      │      └── vegfru25.yaml
+          │      │      └── vegfru.yaml
           │      ├── \ :blue:`resample/` \ |Blank|
           │      │      └── train_test_split.yaml
           │      ├── \ :blue:`transform/` \ |Blank|
           │      │      ├── test.yaml
           │      │      └── train.yaml
           │      └── classification.yaml
-          ├── \ :blue:`hydra/` \ |Blank|
-          │      └── \ :blue:`job_logging/` \ |Blank|
-          │             └── custom.yaml
           ├── \ :blue:`metrics/` \ |Blank|
           │      └── classification.yaml
           ├── \ :blue:`model/` \ |Blank|
@@ -161,14 +155,12 @@ Configuration Files
   configuration files to connect your dataset to the training pipeline.
 
 | For a better understanding of which configuration files to change, you can 
-  refer to the directory tree at :ref:`03-config-folder-structure`.
+  refer to the directory tree at :ref:`03a-config-folder-structure`.
 
 
-1. dataset_filename.yaml
+1. Create a Dataset File
 
 | Create a YAML file under the :mod:`data_module/dataset` folder directory.
-| The name of the files must be the same as the :mod:`data_module/dataset` 
-  value defined in the :ref:`config-files-mainconfig`.
 
 .. parsed-literal::
 
@@ -209,23 +201,44 @@ Configuration Files
       - <class_2>
       - <class_3>
 
-2. config.yaml
+2. Edit Data Module File
 
-| Edit the data_module parameter in :mod:`.peekingduck/training/configs/config.yaml` file.
+| Edit the YAML file under the :mod:`configs/data_module` folder directory.
+
+.. parsed-literal::
+
+   \ :blue:`PeekingDuck/peekingduck/training/configs/data_module/` \ |Blank|
+            ├── \ :blue:`data_adapter/...` \ |Blank|
+            ├── \ :blue:`dataset/...` \ |Blank|
+            ├── \ :blue:`resample/...` \ |Blank|
+            ├── \ :blue:`transform/...` \ |Blank|
+            └── classification.yaml
+
+| Change the values where necessary:
+| :mod:`.peekingduck/training/configs/data_module/classification.yaml`
 
 .. code-block:: bash
    :linenos:
 
-    device: "auto"
-    project_name: "<my_project_name>" # change this value to your project name
-    debug: True
-    framework: "tensorflow"
-    random_state: 11
-    view_only: False
+      defaults:
+            - dataset: cifar10 # Change this value to the file name from the previous step
+
+
+3. Edit Main Config File
+
+| Edit the project name and use_case parameter in :mod:`.peekingduck/training/configs/config.yaml` file.
+
+
+.. code-block:: bash
+   :linenos:
+
+    project_name: "<my_project_name>" # Change this value to your project name
 
     defaults:
-    - use_case: classification
-    - data_module: <dataset_filename> # change this value
+    - use_case: classification # < classification | detection >  # Ensure this value is set to classification
+
+    # Do NOT change the following
+    - data_module: ${use_case}
     - model: ${use_case}
     - trainer: ${use_case}
     - callbacks: ${use_case}
@@ -234,13 +247,14 @@ Configuration Files
     - stores: ${use_case}
     - _self_
     - override hydra/job_logging: custom
-    
+
 
 Run
 ===
 
-You can now test the training pipeline with your custom dataset using the 
-following commands in the terminal:
+Assuming you have followed through the above steps, you can now test the 
+image classification training pipeline with your custom dataset using the 
+following commands in the terminal for either Tensorflow or PyTorch:
 
 .. admonition:: Terminal Session
 
@@ -261,10 +275,8 @@ Test for PyTorch:
       :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
 
 
-View the results of each run at the specified output folder directory 
-:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`, \
-where the default value of the :mod:`<PROJECT_NAME>` is defined in the 
-:ref:`config-files-mainconfig`.
+View the result of your training at the specified output folder directory: 
+:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
-You can refer to :ref:`configuring_training_parameters` for more details on how 
+You can refer to this page :ref:`configuring_training_parameters_classification` for more details on how 
 to customize your training parameters.

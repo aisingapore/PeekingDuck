@@ -124,7 +124,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`pip install -r peekingduck/training/requirements_linux.txt` \
+            :green:`pip install -r peekingduck/training/requirements.txt` \
 
       **Install for CUDA GPU**
 
@@ -176,7 +176,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`pip install -r peekingduck/training/requirements_windows.txt` \
+            :green:`pip install -r peekingduck/training/requirements.txt` \
 
       **Install for CUDA GPU**
 
@@ -301,16 +301,19 @@ Select a use case and follow the steps to test the training pipeline.
 
 
       View the result of each run at the specified output folder directory: 
-      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
-      The default value of :mod:`<PROJECT_NAME>` is defined in the 
-      :ref:`config-files-mainconfig`.
+      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
 
    .. tab:: Object Detection
 
-      The object detection training pipeline supports both COCO and VOC format.
+      The object detection training pipeline supports both COCO and VOC dataset formats.
       Follow the commands below to train an object detection training pipeline 
       using the default :mod:`fashion` dataset:
+
+
+      .. note::
+
+         Object Detection training pipeline requires a Nvidia GPU with CUDA support to run
 
 
       .. admonition:: Terminal Session
@@ -322,20 +325,18 @@ Select a use case and follow the steps to test the training pipeline.
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`python ./peekingduck/training/main.py project_name=my_detection_coco_project use_case=detection data_module.detection.dataset_format=coco data_module.dataset=fashion_coco_format` \
+            :green:`python ./peekingduck/training/main.py project_name=my_detection_coco_project use_case=detection data_module.dataset_format=coco data_module/dataset=fashion_coco_format` \
 
       Test for VOC Format:
 
       .. admonition:: Terminal Session
 
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
-            :green:`python ./peekingduck/training/main.py project_name=my_detection_voc_project use_case=detection data_module.detection.dataset_format=voc data_module.dataset=fashion_voc_format` \
+            :green:`python ./peekingduck/training/main.py project_name=my_detection_voc_project use_case=detection data_module.dataset_format=voc data_module/dataset=fashion_voc_format` \
 
 
       View the result of each run at the specified output folder directory: 
-      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`. 
-      The default value of :mod:`<PROJECT_NAME>` is defined in the 
-      :ref:`config-files-mainconfig`.
+      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
-After installation and test runs, refer to 
-:ref:`configuring_training_parameters` for training customization.
+
+You can refer to the next page for more details on how to customize your training parameters.

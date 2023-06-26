@@ -76,10 +76,10 @@ view below.
           │      │      └── adapter.yaml
           │      ├── \ :blue:`dataset/` \ |Blank|
           │      │      ├── cifar10.yaml
+          │      │      ├── fashion_coco_format.yaml
+          │      │      ├── fashion_voc_format.yaml
           │      │      ├── rsna.yaml
-          │      │      ├── vegfru5.yaml
-          │      │      ├── vegfru15.yaml
-          │      │      └── vegfru25.yaml
+          │      │      └── vegfru.yaml
           │      ├── \ :blue:`resample/` \ |Blank|
           │      │      └── train_test_split.yaml
           │      ├── \ :blue:`transform/` \ |Blank|
@@ -90,7 +90,10 @@ view below.
           ├── \ :blue:`metrics/` \ |Blank|
           │      └── classification.yaml
           ├── \ :blue:`model/` \ |Blank|
-          │      └── classification.yaml
+          │      ├── classification.yaml
+          │      └── detection.yaml
+          ├── \ :blue:`model_analysis/` \ |Blank|
+          │      └── detection.yaml
           ├── \ :blue:`trainer/` \ |Blank|
           │      ├── classification.yaml
           │      └── detection.yaml
@@ -108,7 +111,8 @@ view below.
 |  └── classification.yaml         |                                                                                                                                                                                     |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | data_module                      | Main configuration files for data module.                                                                                                                                           |
-|  | └── classification.yaml       |                                                                                                                                                                                     |
+|  ├── classification.yaml         |                                                                                                                                                                                     |
+|                                  |                                                                                                                                                                                     |
 |  └── detection.yaml              |                                                                                                                                                                                     |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | data_module                      | Adapter for TensorFlow and PyTorch configurations that controls the batch size for train/test dataset, shuffling control, etc.                                                      |
@@ -127,6 +131,8 @@ view below.
 | metrics                          | Choose training metrics to monitor during training                                                                                                                                  |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | model                            | Controls selection of pre-trained models and fine-tuning model settings.                                                                                                            |
++----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| model_analysis                   | Configure model analysis parameters like weights and biases.                                                                                                                        |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | trainer                          | Control training related parameters including number of epochs, learning rate, loss function, metric and patience for early stopping                                                |
 +----------------------------------+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
@@ -161,6 +167,10 @@ hierarchy in the yaml files. Here is one example:
 
    cd PeekingDuck
    python ./peekingduck/training/main.py debug=True framework=pytorch model.pytorch.model_name=mobilenetv3_small_050 trainer.pytorch.global_train_params.debug_epochs=5
+
+
+Supported Use Cases
+===================
 
 Refer to the following sections for the detailed configurations for each use case:
 
