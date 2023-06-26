@@ -44,6 +44,10 @@ from src.utils.general_utils import download_to, extract_file
 @logguru.catch
 def main(exp: Exp, args) -> None:
     """Main function for YOLOX training"""
+    assert (
+        torch.cuda.is_available()
+    ), "CUDA is not available. Object Detection only work on CUDA platform."
+
     if exp.seed is not None:
         random.seed(exp.seed)
         torch.manual_seed(exp.seed)
