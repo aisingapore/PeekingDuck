@@ -15,14 +15,5 @@ yolox:
     num_machines: 1
     machine_rank: null
     dist_backend: null
-    output_dir: './peekingduck/training/outputs'
+    output_dir: './outputs'
     seed : ${use_case.random_state}
-
-    # defaults:
-    # - yolox_s: ${model.detection.yolox_s}
-    # - yolox_m: ${model.detection.yolox_m}
-    # - yolox_l: ${model.detection.yolox_l}
-    # - yolox_x: ${model.detection.yolox_x}
-    # - yolox_nano: ${model.detection.yolox_nano}
-    # - yolox_tiny: ${model.detection.yolox_tiny}
-
