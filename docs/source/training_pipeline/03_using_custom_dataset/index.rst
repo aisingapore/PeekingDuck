@@ -6,7 +6,7 @@
 Using Custom Dataset
 ********************
 
-This section describes how you can use your own custom dataset for training.
+This section describes how you can use your custom dataset for training.
 
 Refer to the following sections for each use case:
 

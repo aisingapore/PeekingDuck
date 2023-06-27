@@ -24,7 +24,7 @@ Formatting Dataset Folder
 =========================
 
 To work with the PeekingDuck object detection training pipeline, the training dataset needs to 
-be arranged in either of the format below:
+be arranged in either of the formats below:
 
 COCO format
 -----------
@@ -50,8 +50,8 @@ This is how the folder structure would look like:
                       ├── <val_image_003>.jpg
                       └── ...
 
-Distribute your images into the training (train2017) and validation (val2017) folder, 
-and prepare the train and validation json annotation files according to the `COCO (Common Objects in Context) format <https://cocodataset.org/#format-data>`_.
+Distribute your images into the training (train2017) and validation (val2017) folders, 
+and prepare the train and validation JSON annotation files according to the `COCO (Common Objects in Context) format <https://cocodataset.org/#format-data>`_.
 
 VOC Format
 ----------
@@ -88,12 +88,12 @@ You can use this tool to assist in converting your dataset to the above format:
 Dataset Classes Global Variable
 -------------------------------
 
-After preparing the dataset folder, you will need to prepare the dataset classes global variable. 
+After preparing the dataset folder, you will need to prepare the dataset classes' global variable. 
 Depending on the dataset format you are using, you will need to edit the following files:
 
 .. note::
 
-   The classes listed in the following sets has to follow the id order in your
+   The classes listed in the following sets have to follow the ID order in your
    dataset annotation file.
 
 For COCO Format locate this file : :mod:`./peekingduck/training/src/model/yolox/data/datasets/coco_classes.py`
@@ -200,8 +200,8 @@ Setting up configuration
    num_classes       : 11 # change this - number of labels in your dataset
 
    # FOR COCO FORMAT
-   train_ann         : "instances_train2017.json" # change this - name of your train json annotation file + .json extension
-   val_ann           : "instances_val2017.json" # change this - name of your val json annotation file + .json extension
+   train_ann         : "instances_train2017.json" # change this - name of your train JSON annotation file + .json extension
+   val_ann           : "instances_val2017.json" # change this - name of your val JSON annotation file + .json extension
    test_ann          : null
    image_sets        : null
 
@@ -315,7 +315,7 @@ following commands in the terminal:
       :green:`python ./peekingduck/training/main.py` \
 
 
-View the result of your training at the specified output folder directory: 
+View the result of your training in the specified output folder directory: 
 :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
 You can refer to this page :ref:`configuring_training_parameters_detection` for more details on how 

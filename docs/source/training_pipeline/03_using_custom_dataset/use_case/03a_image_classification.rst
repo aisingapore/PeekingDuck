@@ -275,7 +275,7 @@ Test for PyTorch:
       :green:`python ./peekingduck/training/main.py debug=True framework=pytorch` \
 
 
-View the result of your training at the specified output folder directory: 
+View the result of your training in the specified output folder directory: 
 :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
 You can refer to this page :ref:`configuring_training_parameters_classification` for more details on how 

@@ -16,7 +16,7 @@ Object Detection
 
 .. note::
 
-    Object Detection training pipeline requires a Nvidia GPU with CUDA support to run
+    Object Detection training pipeline requires an Nvidia GPU with CUDA support to run
 
 .. _detection-config-files-mainconfig:
 
@@ -104,7 +104,7 @@ Config File : ``peekingduck/training/configs/data_module/detection.yaml``
 
 .. _detection-config-files-dataset:
 
-Dateset
+Dataset
 =======
 
 .. tabs::
@@ -325,7 +325,7 @@ Trainer
 +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 |                                    | :mod:`output_dir`                                     | './outputs'                                            |                                                                                                                                                    |
 +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
-|                                    | :grey:`seed`                                          | :grey:`${use_case.random_state}`                       | Random seed. Default value will reference directly from the main use case config file.                                                             |
+|                                    | :grey:`seed`                                          | :grey:`${use_case.random_state}`                       | Random seed. Default value will reference directly from the main object detection use case config file.                                                             |
 +------------------------------------+-------------------------------------------------------+--------------------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------------------+
 
 

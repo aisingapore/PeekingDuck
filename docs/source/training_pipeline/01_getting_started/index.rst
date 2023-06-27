@@ -12,7 +12,7 @@ Training custom computer vision models with custom datasets is a crucial aspect
 of building computer vision solutions. PeekingDuck simplifies this process by 
 eliminating the need for writing boilerplate code. In this section, we will 
 explore the key features of the training pipeline and provide a guide to get 
-started. Subsequent sections will demonstrate how to train your own model using 
+started. Subsequent sections will demonstrate how to train your model using 
 your specific data by customizing the training parameters.
 
 Please note that the current version of PeekingDuck focuses on image 
@@ -80,7 +80,7 @@ training pipeline into and running from an existing conda environment.
 Install PeekingDuck Training Pipeline
 =====================================
 
-Take note that PeekingDuck training pipeline for **object detection** requires 
+Take note that the PeekingDuck training pipeline for **object detection** requires 
 **CUDA GPU** to perform the training.
 
 .. tabs::
@@ -187,7 +187,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
 
       3. Complete CPU installation step 3 (:green:`pip install`)
 
-      4. Refer to the `official Tensorflow step-by-step instructions 
+      4. Refer to the `official TensorFlow step-by-step instructions 
          <https://www.tensorflow.org/install/pip#step-by-step_instructions>`_ 
          to install CUDA and CuDNN for TensorFlow.
 
@@ -199,7 +199,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
          - `Git <https://github.com/git-guides/install-git>`_
          - `Miniforge <https://github.com/conda-forge/miniforge#homebrew>`_
 
-         On macOS, you can install miniforge with Homebrew by running
+         On macOS, you can install MiniForge with Homebrew by running
 
          .. admonition:: Terminal Session
 
@@ -216,7 +216,7 @@ Take note that PeekingDuck training pipeline for **object detection** requires
          | \ :blue:`[~user]` \ > \ :green:`cd PeekingDuck` \
       
       
-      2. Create conda environment and install required packages:
+      2. Create Conda environment and install required packages:
 
       .. admonition:: Terminal Session
 
@@ -231,7 +231,7 @@ Setting Up Weights & Biases
 
 Follow the steps below to configure weights & biases:
 
-1. `Sign up <https://wandb.ai/site>`_ for a free account and then login to your 
+1. `Sign up <https://wandb.ai/site>`_ for a free account and then log in to your 
    wandb account. 
    Refer to the `wandb official guide <https://docs.wandb.ai/quickstart>`_ for 
    setting up an account.
@@ -242,7 +242,7 @@ Follow the steps below to configure weights & biases:
 
    | \ :blue:`[~user]` \ > \ :green:`pip install wandb` \
 
-3. Login to the wandb library on your machine with the API key. You can find 
+3. Log in to the wandb library on your machine with the API key. You can find 
    your API key `here <https://wandb.ai/authorize>`_
 
 .. admonition:: Terminal Session
@@ -300,9 +300,6 @@ Select a use case and follow the steps to test the training pipeline.
             :green:`python ./peekingduck/training/main.py project_name=my_pytorch_classification_project debug=True use_case=classification use_case.framework=pytorch` \
 
 
-      View the result of each run at the specified output folder directory: 
-      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
-
 
    .. tab:: Object Detection
 
@@ -313,7 +310,7 @@ Select a use case and follow the steps to test the training pipeline.
 
       .. note::
 
-         Object Detection training pipeline requires a Nvidia GPU with CUDA support to run
+         Object Detection training pipeline requires an Nvidia GPU with CUDA support to run
 
 
       .. admonition:: Terminal Session
@@ -335,8 +332,7 @@ Select a use case and follow the steps to test the training pipeline.
             :green:`python ./peekingduck/training/main.py project_name=my_detection_voc_project use_case=detection data_module.dataset_format=voc data_module/dataset=fashion_voc_format` \
 
 
-      View the result of each run at the specified output folder directory: 
-      :mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
-
+View the result of your training in the specified output folder directory: 
+:mod:`\./PeekingDuck/outputs/\<PROJECT_NAME\>/\<DATE_TIME\>`.
 
 You can refer to the next page for more details on how to customize your training parameters.
