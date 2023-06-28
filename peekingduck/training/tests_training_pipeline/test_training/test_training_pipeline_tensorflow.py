@@ -30,7 +30,7 @@ from src.utils.general_utils import seed_all
     [
         (
             [
-                "project_name=test_training_pipeline",
+                "project_name=test_training_pipeline_tensorflow",
                 "use_case=classification",
                 "data_module/dataset=cifar10",
                 "use_case.framework=tensorflow",
@@ -50,31 +50,9 @@ from src.utils.general_utils import seed_all
             "val_loss",
             2.4,
         ),
-        (
-            [
-                "project_name=test_training_pipeline",
-                "use_case=classification",
-                "data_module/dataset=cifar10",
-                "use_case.framework=pytorch",
-                "use_case.debug=True",
-                "use_case.random_state=11",
-                "use_case.view_only=False",
-                "data_module.num_debug_samples=180",
-                "data_module.dataset.image_size=32",
-                "data_module.dataset.download=True",
-                "data_module.data_adapter.pytorch.train.batch_size=16",
-                "data_module.data_adapter.pytorch.validation.batch_size=16",
-                "data_module.data_adapter.pytorch.test.batch_size=16",
-                "model.pytorch.adapter=timm",
-                "model.pytorch.model_name=vgg16",
-                "trainer.pytorch.stores.model_artifacts_dir=null",
-            ],
-            "valid_loss",
-            1.5,
-        ),
     ],
 )
-def test_training_pipeline(
+def test_training_pipeline_tensorflow(
     overrides: List[str], validation_loss_key: str, expected: float
 ) -> None:
     """test_training_pipeline"""
