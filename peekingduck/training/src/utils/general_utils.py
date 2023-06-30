@@ -15,7 +15,7 @@
 """general utils"""
 
 # mypy: ignore-errors
-# pylint: skip-file
+# type: ignore
 import functools
 import gc
 import inspect

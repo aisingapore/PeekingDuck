@@ -137,11 +137,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# Ignore all data dir except the one in tests/
-data/
-!tests/data/
-!data/**/*.csv
-
 # Other likely dirs that should not be committed
 logs/
 peekingduck_weights/
@@ -153,9 +148,19 @@ dist/
 peekingduck.egg-info/
 docs/source/peekingduck.*
 docs/source/nodes
+
 # Other likely files that should not be committed
 .DS_Store
 peekingduck/training/.gitignore
 **/outputs
 **/multirun
 **/wandb
+
+# Ignore all data dir except the one in tests/
+data/
+!tests/data/
+!data/**/*.csv
+!peekingduck/training/src/model/yolox/data
+!peekingduck/training/src/model/yolox/data/datasets
+!peekingduck/training/src/model/weights
+peekingduck/training/src/model/weights/yolox_s.pth

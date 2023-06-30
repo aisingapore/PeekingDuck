@@ -1,10 +1,10 @@
 pytorch:
     global_train_params:
-        manual_seed: ${random_state}
+        manual_seed: ${use_case.random_state}
         epochs: 3
         patience: 3
         model_name: ${model.pytorch.model_name}
-        debug: ${debug}
+        debug: ${use_case.debug}
         debug_epochs: 2
         fine_tune_epochs: 5
         classification_type: ${data_module.dataset.classification_type}
@@ -49,9 +49,9 @@ pytorch:
 
 tensorflow:
     global_train_params:
-        manual_seed: ${random_state}
+        manual_seed: ${use_case.random_state}
         epochs: 10
-        debug: ${debug}
+        debug: ${use_case.debug}
         debug_epochs: 3
         # fine_tune_epochs: 5
         monitored_metric:

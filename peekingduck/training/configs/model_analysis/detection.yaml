@@ -1,0 +1,8 @@
+wandb:
+    wandb-project: ${project_name} # <project-name>
+    wandb-entity: ${project_name} # <entity>
+    wandb-name: "${project_name}-${stores.unique_id}" # <run-name>
+    wandb-id: ${stores.unique_id} # <run-id>
+    wandb-save_dir: "./outputs/${project_name}/${stores.unique_id}/" # <save-dir>
+    wandb-num_eval_images: null # <num-images>
+    wandb-log_checkpoints: True # <bool>

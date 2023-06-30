@@ -1,13 +1,9 @@
-device: "auto" # "auto" to select available gpu. "cpu"|"cuda"|"mps"
-project_name: "myproject" # rsna | cifar10 | vegfru | vegfru5 | vegfru20
-debug: True
-framework: "tensorflow" # 'pytorch' | 'tensorflow'
-random_state: 11
-view_only: False
+project_name: "myproject"  # To be configured for each experiment
 
 defaults:
-  - use_case: classification
-  - data_module/dataset: cifar10  # rsna | cifar10 | vegfru | vegfru5 | vegfru20
+  - use_case: detection  # classification | detection
+
+  # Do NOT change the following
   - data_module: ${use_case}
   - model: ${use_case}
   - trainer: ${use_case}
