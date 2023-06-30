@@ -1,0 +1,16 @@
+defaults:
+      - dataset: cifar10 # rsna | cifar10 | vegfru | vegfru5 | vegfru20
+      - resample: train_test_split
+      - transform:
+              - train
+              - test
+      - data_adapter:
+              - adapter
+
+module:
+      _target_: src.data.data_module.ImageClassificationDataModule
+      _recursive_: False
+
+framework: ${use_case.framework}
+debug: ${use_case.debug}
+num_debug_samples: 25

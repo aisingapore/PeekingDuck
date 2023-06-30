@@ -1,0 +1,22 @@
+pytorch:
+  test:
+    - _target_: albumentations.augmentations.geometric.resize.Resize
+      height: ${data_module.dataset.image_size}
+      width: ${data_module.dataset.image_size}
+    - _target_: albumentations.augmentations.transforms.Normalize
+      mean: [0.4913997551666284, 0.48215855929893703, 0.4465309133731618]
+      std: [0.24703225141799082, 0.24348516474564, 0.26158783926049628]
+    - _target_: albumentations.pytorch.transforms.ToTensorV2
+
+tensorflow:
+  test:
+    - _target_: albumentations.augmentations.geometric.resize.Resize
+      height: ${data_module.dataset.image_size}
+      width: ${data_module.dataset.image_size}
+    - _target_: src.transforms.augmentations.TFPreprocessImage
+      preprocessor: keras.applications.vgg16.preprocess_input
+      p: 1.
+    # - _target_: albumentations.augmentations.transforms.Normalize
+    #   mean: [103.939, 116.779, 123.68]
+    #   std: [1, 1, 1]
+

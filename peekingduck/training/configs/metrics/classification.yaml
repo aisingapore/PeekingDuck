@@ -1,0 +1,19 @@
+pytorch:
+      # Options: Accuracy | Precision | Recall | AUROC | CalibrationError
+      - Accuracy:
+              average: "micro"
+      - Precision:
+              average: "macro"
+      - Recall
+      - AUROC:
+              average: "weighted"
+
+tensorflow:
+      # Options: Accuracy | Precision | Recall | AUC
+      - "CategoricalAccuracy"
+      - Precision:
+              thresholds: 0.5
+      - Recall:
+              thresholds: 0.5
+      - AUC:
+              multi_label: True

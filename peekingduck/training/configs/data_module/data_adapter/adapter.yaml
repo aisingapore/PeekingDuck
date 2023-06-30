@@ -1,0 +1,68 @@
+pytorch:
+  adapter_type: "pytorch"
+
+  train:
+    batch_size: 32
+    shuffle: True
+    pin_memory: True
+    drop_last: False
+
+  validation:
+    batch_size: 32
+    shuffle: False
+    pin_memory: True
+    drop_last: False
+
+  test:
+    batch_size: 1
+    shuffle: False
+    pin_memory: True
+    drop_last: False
+
+tensorflow:
+  adapter_type: "tensorflow"
+
+  train:
+    batch_size: 32
+    shuffle: True
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_id}
+    target_size:
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
+    color_mode: "rgb"
+    num_classes: ${data_module.dataset.num_classes}
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "training"
+
+  validation:
+    batch_size: 32
+    shuffle: False
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_id}
+    target_size:
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
+    color_mode: "rgb"
+    num_classes: ${data_module.dataset.num_classes}
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "validation"
+
+  test:
+    batch_size: 1
+    shuffle: False
+    x_col: ${data_module.dataset.image_path_col_name}
+    y_col: ${data_module.dataset.target_col_id}
+    target_size:
+      - ${data_module.dataset.image_size}
+      - ${data_module.dataset.image_size}
+    color_mode: "rgb"
+    num_classes: ${data_module.dataset.num_classes}
+    classes: ${data_module.dataset.class_name_to_id}
+    class_mode: "categorical"
+    interpolation: "nearest"
+    subset: "validation"

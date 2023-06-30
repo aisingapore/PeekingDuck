@@ -1,6 +1,7 @@
 #!/bin/sh
 
-if ! (mypy --show-error-codes \
+if ! (mypy --config-file pyproject.toml \
+           --show-error-codes \
            --ignore-missing-imports \
            --disallow-untyped-defs \
            --disable-error-code override \

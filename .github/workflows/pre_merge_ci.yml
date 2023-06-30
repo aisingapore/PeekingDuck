@@ -9,23 +9,26 @@ jobs:
         os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v4
         with:
           python-version: 3.8
           cache: "pip"
+          cache-dependency-path: '**/requirements*.txt'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install wheel
-          pip install -r requirements_lint.txt
+          pip install -r requirements.txt
           pip install -r requirements_cicd.txt
       - name: Run lint checks
         uses: ./.github/actions/linting-checks # note only works after checkout@v2
       - name: Run unit tests
-        uses: GabrielBB/xvfb-action@v1.6
+        uses: coactions/setup-xvfb@v1
         with:
-          run: bash ./scripts/run_tests.sh unit
+          run: |
+            wandb disabled
+            bash ./scripts/run_tests.sh unit
       - name: Run broken link report
         run: python ./scripts/check_links.py

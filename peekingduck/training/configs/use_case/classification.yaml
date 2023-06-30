@@ -1,0 +1,6 @@
+pipeline: "classification"
+device: "auto" # "auto" to select available gpu. "cpu"|"cuda"|"mps"
+framework: "pytorch" # 'pytorch' | 'tensorflow'
+random_state: 11
+view_only: False
+debug: True

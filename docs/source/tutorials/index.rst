@@ -21,3 +21,4 @@ through these tutorials in order, especially if you are new to PeekingDuck.
    /tutorials/05_calling_peekingduck_in_python
    /tutorials/06_using_your_own_models
    /tutorials/07_using_model_hub_nodes
+   /tutorials/08_training_your_own_model
