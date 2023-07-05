@@ -2,7 +2,8 @@ click >= 7.1.2
 colorama == 0.4.4
 huggingface_hub >= 0.9.1
 numpy >= 1.18.5
-opencv-contrib-python >= 4.5.2.54
+opencv-contrib-python >= 4.5.2.54, <= 4.7.0.72
+opencv-python-headless >= 4.5.2.54, <= 4.7.0.72
 protobuf <= 3.20.1
 pyyaml >= 5.3
 requests == 2.24.0
