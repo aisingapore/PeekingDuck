@@ -1,0 +1,18 @@
+download: False
+url: "https://storage.googleapis.com/peekingduck/data/rsna.zip"
+blob_file: "rsna.zip"
+root_dir: "data"
+dataset: "rsna"
+train_dir: "./${.root_dir}/${.dataset}"
+test_dir: "./${.root_dir}/${.dataset}"
+train_csv: "./${.root_dir}/${.dataset}/train.csv"
+image_path_col_name: "image_path"
+target_col_name: "class_name" #class_name cancer
+target_col_id: "cancer"
+stratify_by: "${.target_col_name}"
+classification_type: "multiclass"
+image_size: 224
+num_classes: 2
+class_name_to_id:
+  benign: 0
+  malignant: 1

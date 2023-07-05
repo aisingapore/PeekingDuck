@@ -1,0 +1,3 @@
+dataset_format    : "coco" # 'coco' | 'voc'
+defaults:
+      - dataset: fashion_coco_format # fashion_coco_format | fashion_voc_format | < custom dataset yaml file name > 

@@ -1,0 +1,10 @@
+download: True
+url               : "https://storage.googleapis.com/peekingduck/data/fashion_voc_format.zip"
+blob_file         : "fashion_voc_format.zip"
+root_dir          : "data"
+data_dir          : "${.root_dir}/fashion_dataset_for_object_detection_voc_format"
+num_classes       : 10
+train_ann         : null
+val_ann           : null
+test_ann          : null
+image_sets        : [['2007', 'trainval']]

@@ -1,0 +1,19 @@
+yolox:
+    experiment_name: ${project_name}
+    name: null
+    resume: False 
+    devices: 1    
+    batch_size: 8
+    max_epoch: 10
+    fp16: True
+    occupy: null
+    model: "yolox_s" # "yolox_s" | "yolox_m" | "yolox_l" | "yolox_x" | "yolox_nano" | "yolox_tiny"
+    ckpt: null
+    logger: "tensorboard" # "tensorboard" | "wandb"
+    cache: null
+    dist_url: null
+    num_machines: 1
+    machine_rank: null
+    dist_backend: null
+    output_dir: './outputs'
+    seed : ${use_case.random_state}

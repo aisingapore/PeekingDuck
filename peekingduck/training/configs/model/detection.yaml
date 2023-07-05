@@ -1,0 +1,68 @@
+yolox_s:
+    depth           : 0.33
+    width           : 0.50
+    input_size      : [224, 224]
+    test_size       : [224, 224]
+yolox_m:
+    depth           : 0.67
+    width           : 0.75
+yolox_l:
+    depth           : 0.1
+    width           : 0.1
+yolox_x:
+    depth           : 1.33
+    width           : 1.25
+yolox_nano:
+    depth           : 0.33
+    width           : 0.25
+    mosaic_scale    : [0.5, 1.5]
+    random_size     : [10, 20]
+    input_size      : [416, 416]
+    test_size       : [416, 416]
+    mosaic_prob     : 0.5
+    enable_mixup    : False
+yolox_tiny:
+    depth           : 0.33
+    width           : 0.375
+    mosaic_scale    : [0.5, 1.5]
+    random_size     : [10, 20]
+    input_size      : [416, 416]
+    test_size       : [416, 416]
+    enable_mixup    : False
+
+# --------------- OTHER PARAMETERS YOU CAN TWEAK -------------- #
+
+    # input_size        : [640, 640]
+    # test_size         : [640, 640]
+    # data_num_workers  : 4
+    # eval_interval     : 1
+    # seed              : null
+    
+    # mosaic_prob       : 1.0
+    # mixup_prob        : 1.0
+    # hsv_prob          : 1.0
+    # flip_prob         : 0.5
+    
+    # warmup_epochs     : 1
+    # print_interval    : 10
+    # act               : 'silu'
+    # multiscale_range  : 5
+    # dataset           : null
+    # test_ann          : ${data_module.coco.test_ann}
+    # degrees           : 10.0
+    # translate         : 0.1
+    # mosaic_scale      : [0.1, 2]
+    # enable_mixup      : True
+    # mixup_scale       : [0.5, 1.5]
+    # shear             : 2.0        
+    # warmup_lr         : 0
+    # min_lr_ratio      : 0.05
+    # basic_lr_per_img  : 0.00015625
+    # scheduler         : 'yoloxwarmcos'
+    # no_aug_epochs     : 15
+    # ema               : True
+    # weight_decay      : 0.0005
+    # momentum          : 0.9
+    # save_history_ckpt : True
+    # test_conf         : 0.01
+    # nmsthre           : 0.65
