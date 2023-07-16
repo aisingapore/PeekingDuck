@@ -286,7 +286,7 @@ Test the training pipeline with one of the following use cases.
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
             :green:`python ./peekingduck/training/main.py \\` \
             :green:`project_name=my_tensorflow_classification_project \\` |br|
-            :green:`+debug=True \\` |br|
+            :green:`debug=True \\` |br|
             :green:`use_case=classification \\` |br|
             :green:`use_case.framework=tensorflow`
 
@@ -297,7 +297,7 @@ Test the training pipeline with one of the following use cases.
          | \ :blue:`[~user/PeekingDuck]` \ > \ 
             :green:`python ./peekingduck/training/main.py \\` \
             :green:`project_name=my_pytorch_classification_project \\` |br|
-            :green:`+debug=True \\` |br|
+            :green:`debug=True \\` |br|
             :green:`use_case=classification \\` |br|
             :green:`use_case.framework=pytorch`
 
