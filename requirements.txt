@@ -1,4 +1,4 @@
-click >= 7.1.2
+click >= 7.1.2, < 8.0.0
 colorama == 0.4.4
 huggingface_hub >= 0.9.1
 numpy >= 1.18.5
